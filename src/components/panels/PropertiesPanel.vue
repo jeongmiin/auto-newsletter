@@ -94,30 +94,6 @@
         </div>
       </div>
 
-      <!-- 스타일 설정 -->
-      <div class="p-4 border-t">
-        <h3 class="text-sm font-medium text-gray-700 mb-3">스타일</h3>
-        <div class="space-y-3">
-          <div>
-            <label class="block text-xs text-gray-600 mb-1">배경색</label>
-            <input
-  :value="String(selectedModule.styles.backgroundColor || '#ffffff')"
-              @input="updateStyle('backgroundColor', ($event.target as HTMLInputElement).value)"
-              type="color"
-              class="w-full h-8 border border-gray-300 rounded"
-            />
-          </div>
-          <div>
-            <label class="block text-xs text-gray-600 mb-1">텍스트 색상</label>
-            <input
-  :value="String(selectedModule.styles.textColor || '#000000')"
-              @input="updateStyle('textColor', ($event.target as HTMLInputElement).value)"
-              type="color"
-              class="w-full h-8 border border-gray-300 rounded"
-            />
-          </div>
-        </div>
-      </div>
 
       <!-- 모듈 제거 버튼 -->
       <div class="p-4 border-t">

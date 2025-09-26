@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { ModuleInstance, ModuleMetadata } from '@/types'
+import { formatTextWithBreaks } from '@/utils/textUtils'
 
 export const useModuleStore = defineStore('module', () => {
   const modules = ref<ModuleInstance[]>([])
@@ -47,28 +48,49 @@ export const useModuleStore = defineStore('module', () => {
         {
           id: 'Module02',
           name: '모듈 02',
-          description: '이미지와 텍스트, 버튼이 포함된 모듈',
+          description: '이미지와 텍스트, 테이블, 버튼이 포함된 모듈',
           category: 'image',
           icon: '🖼️',
           htmlFile: 'Module02.html',
           editableProps: [
             {
+              key: 'imageUrl',
+              label: '이미지 URL',
+              type: 'url',
+              placeholder: 'https://design.messeesang.com/e-dm/newsletter/images/img-1column.png',
+            },
+            { key: 'imageAlt', label: '이미지 설명', type: 'text', placeholder: '이미지' },
+            {
               key: 'title',
-              label: '제목',
+              label: '콘텐츠 타이틀',
               type: 'text',
               required: true,
-              placeholder: '제목을 입력하세요',
+              placeholder: '콘텐츠 타이틀',
             },
-            { key: 'imageUrl', label: '이미지 URL', type: 'url', placeholder: 'https://...' },
-            { key: 'imageAlt', label: '이미지 설명', type: 'text', placeholder: '이미지 설명' },
             {
               key: 'description',
-              label: '설명',
+              label: '콘텐츠 텍스트',
               type: 'textarea',
-              placeholder: '설명을 입력하세요',
+              placeholder: '콘텐츠 텍스트',
             },
-            { key: 'buttonText', label: '버튼 텍스트', type: 'text', placeholder: '버튼 텍스트' },
-            { key: 'buttonUrl', label: '버튼 링크', type: 'url', placeholder: 'https://...' },
+            {
+              key: 'tableTitle',
+              label: '테이블 타이틀',
+              type: 'text',
+              placeholder: '테이블 타이틀',
+            },
+            {
+              key: 'tableContent',
+              label: '테이블 콘텐츠',
+              type: 'textarea',
+              placeholder: '테이블 콘텐츠 텍스트',
+            },
+            { key: 'buttonText', label: '버튼 텍스트', type: 'text', placeholder: '큰 버튼 →' },
+            { key: 'buttonUrl', label: '버튼 링크', type: 'url', placeholder: '#' },
+            { key: 'showTable', label: '테이블 표시', type: 'boolean' },
+            { key: 'showButton', label: '버튼 표시', type: 'boolean' },
+            { key: 'buttonBgColor', label: '버튼 배경색', type: 'color' },
+            { key: 'buttonTextColor', label: '버튼 글자색', type: 'color' },
           ],
         },
         {
@@ -149,31 +171,125 @@ export const useModuleStore = defineStore('module', () => {
               type: 'url',
               placeholder: 'https://design.messeesang.com/e-dm/newsletter/images/img-2column.png',
             },
+            // 요소 표시/숨김 제어
+            { key: 'showLeftSmallBtn', label: '왼쪽 작은 버튼 표시', type: 'boolean' },
+            { key: 'showLeftBigBtn', label: '왼쪽 큰 버튼 표시', type: 'boolean' },
+            { key: 'showRightSmallBtn', label: '오른쪽 작은 버튼 표시', type: 'boolean' },
+            { key: 'showRightBigBtn', label: '오른쪽 큰 버튼 표시', type: 'boolean' },
+            // 버튼 스타일 설정
+            { key: 'leftSmallBtnBgColor', label: '왼쪽 작은 버튼 배경색', type: 'color' },
+            { key: 'leftSmallBtnTextColor', label: '왼쪽 작은 버튼 글자색', type: 'color' },
+            { key: 'leftBigBtnBgColor', label: '왼쪽 큰 버튼 배경색', type: 'color' },
+            { key: 'leftBigBtnTextColor', label: '왼쪽 큰 버튼 글자색', type: 'color' },
+            { key: 'rightSmallBtnBgColor', label: '오른쪽 작은 버튼 배경색', type: 'color' },
+            { key: 'rightSmallBtnTextColor', label: '오른쪽 작은 버튼 글자색', type: 'color' },
+            { key: 'rightBigBtnBgColor', label: '오른쪽 큰 버튼 배경색', type: 'color' },
+            { key: 'rightBigBtnTextColor', label: '오른쪽 큰 버튼 글자색', type: 'color' },
           ],
         },
         {
           id: 'Module05',
           name: '모듈 05',
-          description: 'CTA 버튼',
-          category: 'button',
+          description: '2단 이미지와 텍스트, 버튼이 포함된 모듈',
+          category: 'image',
           icon: '🔘',
           htmlFile: 'Module05.html',
           editableProps: [
+            // 첫 번째 섹션
             {
-              key: 'buttonText',
-              label: '버튼 텍스트',
-              type: 'text',
-              required: true,
-              placeholder: '버튼 텍스트',
-            },
-            {
-              key: 'buttonUrl',
-              label: '버튼 링크',
+              key: 'topLeftImageUrl',
+              label: '위쪽 왼쪽 이미지 URL',
               type: 'url',
-              required: true,
-              placeholder: 'https://...',
+              placeholder: 'https://design.messeesang.com/e-dm/newsletter/images/img-2column.png',
             },
-            { key: 'buttonColor', label: '버튼 색상', type: 'color' },
+            {
+              key: 'topLeftImageAlt',
+              label: '위쪽 왼쪽 이미지 설명',
+              type: 'text',
+              placeholder: '이미지',
+            },
+            {
+              key: 'topRightTitle',
+              label: '위쪽 오른쪽 타이틀',
+              type: 'text',
+              placeholder: '콘텐츠 타이틀',
+            },
+            {
+              key: 'topRightTableTitle',
+              label: '위쪽 오른쪽 테이블 타이틀',
+              type: 'text',
+              placeholder: '콘텐츠 타이틀',
+            },
+            {
+              key: 'topRightSmallBtnText',
+              label: '위쪽 오른쪽 작은 버튼',
+              type: 'text',
+              placeholder: '작은 버튼 →',
+            },
+            {
+              key: 'topRightSmallBtnUrl',
+              label: '위쪽 오른쪽 작은 버튼 링크',
+              type: 'url',
+              placeholder: '#',
+            },
+
+            // 두 번째 섹션
+            {
+              key: 'bottomLeftImageUrl',
+              label: '아래쪽 왼쪽 이미지 URL',
+              type: 'url',
+              placeholder: 'https://design.messeesang.com/e-dm/newsletter/images/img-2column.png',
+            },
+            {
+              key: 'bottomLeftImageAlt',
+              label: '아래쪽 왼쪽 이미지 설명',
+              type: 'text',
+              placeholder: '이미지',
+            },
+            {
+              key: 'bottomRightTitle',
+              label: '아래쪽 오른쪽 타이틀',
+              type: 'text',
+              placeholder: '콘텐츠 타이틀',
+            },
+            {
+              key: 'bottomRightTableTitle',
+              label: '아래쪽 오른쪽 테이블 타이틀',
+              type: 'text',
+              placeholder: '콘텐츠 타이틀',
+            },
+            {
+              key: 'bottomRightSmallBtnText',
+              label: '아래쪽 오른쪽 작은 버튼',
+              type: 'text',
+              placeholder: '작은 버튼 →',
+            },
+            {
+              key: 'bottomRightSmallBtnUrl',
+              label: '아래쪽 오른쪽 작은 버튼 링크',
+              type: 'url',
+              placeholder: '#',
+            },
+
+            // 큰 버튼
+            {
+              key: 'bigButtonText',
+              label: '큰 버튼 텍스트',
+              type: 'text',
+              placeholder: '큰 버튼 →',
+            },
+            { key: 'bigButtonUrl', label: '큰 버튼 링크', type: 'url', placeholder: '#' },
+
+            // 스타일링
+            { key: 'smallBtnBgColor', label: '작은 버튼 배경색', type: 'color' },
+            { key: 'smallBtnTextColor', label: '작은 버튼 글자색', type: 'color' },
+            { key: 'bigBtnBgColor', label: '큰 버튼 배경색', type: 'color' },
+            { key: 'bigBtnTextColor', label: '큰 버튼 글자색', type: 'color' },
+
+            // 표시/숨김
+            { key: 'showTopSmallBtn', label: '위쪽 작은 버튼 표시', type: 'boolean' },
+            { key: 'showBottomSmallBtn', label: '아래쪽 작은 버튼 표시', type: 'boolean' },
+            { key: 'showBigBtn', label: '큰 버튼 표시', type: 'boolean' },
           ],
         },
       ]
@@ -184,6 +300,98 @@ export const useModuleStore = defineStore('module', () => {
       console.error('모듈 메타데이터 로드 실패:', error)
       return []
     }
+  }
+
+  // 버튼 스타일 적용 함수
+  const applyButtonStyles = (html: string, properties: any): string => {
+    let styledHtml = html
+
+    // 작은 버튼 스타일 적용
+    let smallBtnStyleIndex = 0
+    styledHtml = styledHtml.replace(
+      /<a href="[^"]*" target="_blank"\s*style="[^"]*display:\s*inline-block[^"]*background-color:#e5e5e5[^"]*"/g,
+      (match) => {
+        const isLeft = smallBtnStyleIndex === 0
+        const bgColor = isLeft ? properties.leftSmallBtnBgColor : properties.rightSmallBtnBgColor
+        const textColor = isLeft ? properties.leftSmallBtnTextColor : properties.rightSmallBtnTextColor
+
+        let newMatch = match
+        if (bgColor) {
+          newMatch = newMatch.replace(/background-color:#e5e5e5/, `background-color:${bgColor}`)
+          newMatch = newMatch.replace(/bgcolor:\s*#e5e5e5/, `bgcolor: ${bgColor}`)
+        }
+        if (textColor) {
+          newMatch = newMatch.replace(/color:#333333/, `color:${textColor}`)
+        }
+
+        smallBtnStyleIndex++
+        return newMatch
+      }
+    )
+
+    // 큰 버튼 스타일 적용
+    let bigBtnStyleIndex = 0
+    styledHtml = styledHtml.replace(
+      /<a href="[^"]*"\s*style="[^"]*background-color:#111111[^"]*"/g,
+      (match) => {
+        const isLeft = bigBtnStyleIndex === 0
+        const bgColor = isLeft ? properties.leftBigBtnBgColor : properties.rightBigBtnBgColor
+        const textColor = isLeft ? properties.leftBigBtnTextColor : properties.rightBigBtnTextColor
+
+        let newMatch = match
+        if (bgColor) {
+          newMatch = newMatch.replace(/background-color:#111111/, `background-color:${bgColor}`)
+          newMatch = newMatch.replace(/bgcolor:\s*#111111/, `bgcolor: ${bgColor}`)
+        }
+        if (textColor) {
+          newMatch = newMatch.replace(/color:#ffffff/, `color:${textColor}`)
+        }
+
+        bigBtnStyleIndex++
+        return newMatch
+      }
+    )
+
+    return styledHtml
+  }
+
+  // 버튼 표시/숨김 처리 함수 - 완전 제거 방식
+  const handleButtonVisibility = (html: string, properties: any): string => {
+    let visibilityHtml = html
+
+    // 작은 버튼들의 span 태그를 완전히 제거
+    let spanIndex = 0
+    visibilityHtml = visibilityHtml.replace(
+      /<span align="left" style="display: block; padding:15px 0px; box-sizing: border-box;">[\s\S]*?<\/span>/g,
+      (match) => {
+        const isLeft = spanIndex === 0
+        const shouldShow = isLeft ? properties.showLeftSmallBtn === true : properties.showRightSmallBtn === true
+        spanIndex++
+
+        if (!shouldShow) {
+          return '' // 완전히 제거
+        }
+        return match
+      }
+    )
+
+    // 큰 버튼들을 완전히 제거
+    let bigBtnIndex = 0
+    visibilityHtml = visibilityHtml.replace(
+      /<a href="[^"]*"\s*style="([^"]*)"\s*[^>]*target="_blank">큰 버튼[\s\S]*?<\/a>/g,
+      (match) => {
+        const isLeft = bigBtnIndex === 0
+        const shouldShow = isLeft ? properties.showLeftBigBtn === true : properties.showRightBigBtn === true
+        bigBtnIndex++
+
+        if (!shouldShow) {
+          return '' // 완전히 제거
+        }
+        return match
+      }
+    )
+
+    return visibilityHtml
   }
 
   // 모듈 추가
@@ -301,9 +509,12 @@ export const useModuleStore = defineStore('module', () => {
         return html
           .replace(
             /모듈 섹션 타이틀 영역/g,
-            String(properties.mainTitle || '모듈 섹션 타이틀 영역'),
+            formatTextWithBreaks(String(properties.mainTitle || '모듈 섹션 타이틀 영역')),
           )
-          .replace(/서브 타이틀 영역/g, String(properties.subTitle || '서브 타이틀 영역'))
+          .replace(
+            /서브 타이틀 영역/g,
+            formatTextWithBreaks(String(properties.subTitle || '서브 타이틀 영역')),
+          )
 
       case 'Module04':
         let modifiedHtml = html
@@ -388,15 +599,125 @@ export const useModuleStore = defineStore('module', () => {
           },
         )
 
+        // 버튼 스타일 적용
+        modifiedHtml = applyButtonStyles(modifiedHtml, properties)
+
+        // 버튼 표시/숨김 처리
+        modifiedHtml = handleButtonVisibility(modifiedHtml, properties)
+
         return modifiedHtml
 
       case 'Module02':
-        // Module02의 경우 추후 HTML 파일 내용에 따라 구현
-        return html
+        let module02Html = html
+          .replace(
+            /src="https:\/\/design\.messeesang\.com\/e-dm\/newsletter\/images\/img-1column\.png"/g,
+            `src="${properties.imageUrl || 'https://design.messeesang.com/e-dm/newsletter/images/img-1column.png'}"`,
+          )
+          .replace(/alt="이미지"/g, `alt="${properties.imageAlt || '이미지'}"`)
+          .replace(
+            /콘텐츠 타이틀/g,
+            formatTextWithBreaks(String(properties.title || '콘텐츠 타이틀')),
+          )
+          .replace(
+            /콘텐츠 텍스트/g,
+            formatTextWithBreaks(String(properties.description || '콘텐츠 텍스트')),
+          )
+          .replace(
+            /테이블 타이틀/g,
+            formatTextWithBreaks(String(properties.tableTitle || '테이블 타이틀')),
+          )
+          .replace(
+            /테이블 콘텐츠 텍스트/g,
+            formatTextWithBreaks(String(properties.tableContent || '테이블 콘텐츠 텍스트')),
+          )
+          .replace(/큰 버튼 →/g, String(properties.buttonText || '큰 버튼 →'))
+          .replace(/href="#"/g, `href="${properties.buttonUrl || '#'}"`)
+
+        // 테이블 완전 제거 (showTable이 false인 경우)
+        if (properties.showTable !== true) {
+          module02Html = module02Html.replace(
+            /<tr>\s*<td style="padding:0px 20px; box-sizing: border-box;">\s*<table align="center"[\s\S]*?<\/table>\s*<\/td>\s*<\/tr>/,
+            ''
+          )
+        }
+
+        // 버튼 완전 제거 (showButton이 false인 경우)
+        if (properties.showButton !== true) {
+          module02Html = module02Html.replace(
+            /<!-- 버튼 -->\s*<tr>\s*<td align="center"[\s\S]*?<\/tr>\s*<!-- \/\/버튼 -->/,
+            ''
+          )
+        }
+
+        return module02Html
 
       case 'Module05':
-        // Module05의 경우 추후 HTML 파일 내용에 따라 구현
-        return html
+        let module05Html = html
+
+        // 이미지 URL 교체
+        let imgIndexM05 = 0
+        module05Html = module05Html.replace(
+          /src="https:\/\/design\.messeesang\.com\/e-dm\/newsletter\/images\/img-2column\.png"/g,
+          () => {
+            const replacement =
+              imgIndexM05 === 0
+                ? `src="${properties.topLeftImageUrl || 'https://design.messeesang.com/e-dm/newsletter/images/img-2column.png'}"`
+                : `src="${properties.bottomLeftImageUrl || 'https://design.messeesang.com/e-dm/newsletter/images/img-2column.png'}"`
+            imgIndexM05++
+            return replacement
+          },
+        )
+
+        // 콘텐츠 타이틀 교체 (div 안의 콘텐츠 타이틀)
+        let titleIndexM05 = 0
+        module05Html = module05Html.replace(/>콘텐츠 타이틀</g, () => {
+          const replacement =
+            titleIndexM05 === 0
+              ? `>${formatTextWithBreaks(String(properties.topRightTitle || '콘텐츠 타이틀'))}<`
+              : titleIndexM05 === 2
+                ? `>${formatTextWithBreaks(String(properties.bottomRightTitle || '콘텐츠 타이틀'))}<`
+                : `>${formatTextWithBreaks(String(properties.topRightTableTitle || '콘텐츠 타이틀'))}<`
+          titleIndexM05++
+          return replacement
+        })
+
+        // 작은 버튼 텍스트 교체
+        let smallBtnIndexM05 = 0
+        module05Html = module05Html.replace(/작은 버튼 →/g, () => {
+          const replacement =
+            smallBtnIndexM05 === 0
+              ? String(properties.topRightSmallBtnText || '작은 버튼 →')
+              : String(properties.bottomRightSmallBtnText || '작은 버튼 →')
+          smallBtnIndexM05++
+          return replacement
+        })
+
+        // 큰 버튼 텍스트 교체
+        module05Html = module05Html.replace(
+          /큰 버튼 →/g,
+          String(properties.bigButtonText || '큰 버튼 →'),
+        )
+
+        // href 교체
+        let hrefIndexM05 = 0
+        module05Html = module05Html.replace(/href="#"/g, () => {
+          let replacement = 'href="#"'
+          switch (hrefIndexM05) {
+            case 0:
+              replacement = `href="${properties.topRightSmallBtnUrl || '#'}"`
+              break
+            case 1:
+              replacement = `href="${properties.bottomRightSmallBtnUrl || '#'}"`
+              break
+            case 2:
+              replacement = `href="${properties.bigButtonUrl || '#'}"`
+              break
+          }
+          hrefIndexM05++
+          return replacement
+        })
+
+        return module05Html
 
       default:
         // 기본적으로 {{key}} 형태의 플레이스홀더 교체
@@ -469,6 +790,7 @@ export const useModuleStore = defineStore('module', () => {
     moduleMetadata.editableProps.forEach((prop) => {
       switch (prop.type) {
         case 'boolean':
+          // 표시/숨김 관련 속성들은 false가 기본값
           props[prop.key] = false
           break
         case 'color':

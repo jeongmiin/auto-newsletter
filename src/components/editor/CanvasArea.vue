@@ -5,7 +5,7 @@
       <div
         :class="[
           'bg-white shadow-lg transition-all duration-300',
-          canvasWidth === 'mobile' ? 'w-80' : 'w-full max-w-3xl',
+          canvasWidth === 'mobile' ? 'w-80' : 'w-full max-w-[680px]',
         ]"
         style="min-height: 600px"
       >
