@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 
@@ -11,17 +12,19 @@ import ToastService from 'primevue/toastservice'
 import ConfirmationService from 'primevue/confirmationservice'
 import Aura from '@primevue/themes/aura'
 
-// 컴포넌트
+// PrimeVue 컴포넌트
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
-import Textarea from 'primevue/Textarea'
-import Editor from 'primevue/Editor'
+import Textarea from 'primevue/textarea'
 import Checkbox from 'primevue/checkbox'
-import CheckboxGroup from 'primevue/checkboxgroup'
 import Toast from 'primevue/toast'
 import ConfirmDialog from 'primevue/confirmdialog'
 
 const app = createApp(App)
+
+// Pinia 상태 관리
+const pinia = createPinia()
+app.use(pinia)
 
 // Router 사용
 app.use(router)
@@ -46,9 +49,7 @@ app.use(ConfirmationService)
 app.component('Button', Button)
 app.component('InputText', InputText)
 app.component('Textarea', Textarea)
-app.component('Editor', Editor)
 app.component('Checkbox', Checkbox)
-app.component('CheckboxGroup', CheckboxGroup)
 app.component('Toast', Toast)
 app.component('ConfirmDialog', ConfirmDialog)
 
