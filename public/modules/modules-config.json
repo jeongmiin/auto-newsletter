@@ -1,0 +1,416 @@
+{
+  "modules": [
+    {
+      "id": "SectionTitle",
+      "name": "섹션 타이틀",
+      "description": "제목과 부제목이 있는 헤더",
+      "category": "header",
+      "icon": "📋",
+      "htmlFile": "SectionTitle.html",
+      "editableProps": [
+        {
+          "key": "mainTitle",
+          "label": "메인 타이틀",
+          "type": "text",
+          "placeholder": "모듈 섹션 타이틀 영역",
+          "required": true
+        },
+        {
+          "key": "subTitle",
+          "label": "서브 타이틀",
+          "type": "textarea",
+          "placeholder": "서브 타이틀 영역\n여러 줄 입력 가능"
+        }
+      ]
+    },
+    {
+      "id": "Module02",
+      "name": "모듈 02",
+      "description": "이미지와 텍스트, 테이블, 버튼이 포함된 모듈",
+      "category": "image",
+      "icon": "🖼️",
+      "htmlFile": "Module02.html",
+      "editableProps": [
+        {
+          "key": "imageUrl",
+          "label": "이미지 URL",
+          "type": "url",
+          "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-1column.png"
+        },
+        {
+          "key": "imageAlt",
+          "label": "이미지 설명 Alt",
+          "type": "text",
+          "placeholder": "이미지"
+        },
+        {
+          "key": "title",
+          "label": "콘텐츠 타이틀",
+          "type": "text",
+          "required": true,
+          "placeholder": "콘텐츠 타이틀"
+        },
+        {
+          "key": "description",
+          "label": "콘텐츠 텍스트",
+          "type": "textarea",
+          "placeholder": "콘텐츠 텍스트"
+        },
+        {
+          "key": "additionalContents",
+          "label": "추가 콘텐츠 관리",
+          "type": "additional-contents"
+        },
+        {
+          "key": "showTable",
+          "label": "테이블 표시",
+          "type": "boolean"
+        },
+        {
+          "key": "tableTitle",
+          "label": "테이블 타이틀",
+          "type": "text",
+          "placeholder": "테이블 타이틀"
+        },
+        {
+          "key": "tableContent",
+          "label": "테이블 콘텐츠",
+          "type": "textarea",
+          "placeholder": "테이블 콘텐츠 텍스트"
+        },
+        {
+          "key": "tableRows",
+          "label": "동적 테이블 행",
+          "type": "table-rows",
+          "defaultRows": []
+        },
+        {
+          "key": "showButton",
+          "label": "버튼 표시",
+          "type": "boolean"
+        },
+        {
+          "key": "buttonText",
+          "label": "버튼 텍스트",
+          "type": "text",
+          "placeholder": "큰 버튼 →"
+        },
+        {
+          "key": "buttonUrl",
+          "label": "버튼 링크",
+          "type": "url",
+          "placeholder": "#"
+        },
+        {
+          "key": "buttonBgColor",
+          "label": "버튼 배경색",
+          "type": "color"
+        },
+        {
+          "key": "buttonTextColor",
+          "label": "버튼 글자색",
+          "type": "color"
+        }
+      ]
+    },
+    {
+      "id": "Module04",
+      "name": "모듈 04",
+      "description": "이미지와 텍스트가 있는 2단 구성 모듈",
+      "category": "image",
+      "icon": "📄",
+      "htmlFile": "Module04.html",
+      "editableProps": [
+        {
+          "key": "leftImageUrl",
+          "label": "왼쪽 이미지 URL",
+          "type": "url",
+          "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png"
+        },
+        {
+          "key": "leftTitle",
+          "label": "왼쪽 타이틀",
+          "type": "text",
+          "placeholder": "콘텐츠 타이틀",
+          "required": true
+        },
+        {
+          "key": "leftContent",
+          "label": "왼쪽 텍스트",
+          "type": "textarea",
+          "placeholder": "콘텐츠 텍스트"
+        },
+        {
+          "key": "rightImageUrl",
+          "label": "오른쪽 이미지 URL",
+          "type": "url",
+          "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png"
+        },
+        {
+          "key": "rightTitle",
+          "label": "오른쪽 타이틀",
+          "type": "text",
+          "placeholder": "콘텐츠 타이틀"
+        },
+        {
+          "key": "rightContent",
+          "label": "오른쪽 텍스트",
+          "type": "textarea",
+          "placeholder": "콘텐츠 텍스트"
+        },
+        {
+          "key": "showLeftSmallBtn",
+          "label": "왼쪽 작은 버튼 표시",
+          "type": "boolean"
+        },
+        {
+          "key": "leftSmallBtnText",
+          "label": "왼쪽 작은 버튼",
+          "type": "text",
+          "placeholder": "작은 버튼 →"
+        },
+        {
+          "key": "leftSmallBtnUrl",
+          "label": "왼쪽 작은 버튼 링크",
+          "type": "url",
+          "placeholder": "#"
+        },
+        {
+          "key": "leftSmallBtnBgColor",
+          "label": "왼쪽 작은 버튼 배경색",
+          "type": "color"
+        },
+        {
+          "key": "leftSmallBtnTextColor",
+          "label": "왼쪽 작은 버튼 글자색",
+          "type": "color"
+        },
+        {
+          "key": "showLeftBigBtn",
+          "label": "왼쪽 큰 버튼 표시",
+          "type": "boolean"
+        },
+        {
+          "key": "leftBigBtnText",
+          "label": "왼쪽 큰 버튼",
+          "type": "text",
+          "placeholder": "큰 버튼 →"
+        },
+        {
+          "key": "leftBigBtnUrl",
+          "label": "왼쪽 큰 버튼 링크",
+          "type": "url",
+          "placeholder": "#"
+        },
+        {
+          "key": "leftBigBtnBgColor",
+          "label": "왼쪽 큰 버튼 배경색",
+          "type": "color"
+        },
+        {
+          "key": "leftBigBtnTextColor",
+          "label": "왼쪽 큰 버튼 글자색",
+          "type": "color"
+        },
+        {
+          "key": "showRightSmallBtn",
+          "label": "오른쪽 작은 버튼 표시",
+          "type": "boolean"
+        },
+        {
+          "key": "rightSmallBtnText",
+          "label": "오른쪽 작은 버튼",
+          "type": "text",
+          "placeholder": "작은 버튼 →"
+        },
+        {
+          "key": "rightSmallBtnUrl",
+          "label": "오른쪽 작은 버튼 링크",
+          "type": "url",
+          "placeholder": "#"
+        },
+        {
+          "key": "rightSmallBtnBgColor",
+          "label": "오른쪽 작은 버튼 배경색",
+          "type": "color"
+        },
+        {
+          "key": "rightSmallBtnTextColor",
+          "label": "오른쪽 작은 버튼 글자색",
+          "type": "color"
+        },
+        {
+          "key": "showRightBigBtn",
+          "label": "오른쪽 큰 버튼 표시",
+          "type": "boolean"
+        },
+        {
+          "key": "rightBigBtnText",
+          "label": "오른쪽 큰 버튼",
+          "type": "text",
+          "placeholder": "큰 버튼 →"
+        },
+        {
+          "key": "rightBigBtnUrl",
+          "label": "오른쪽 큰 버튼 링크",
+          "type": "url",
+          "placeholder": "#"
+        },
+        {
+          "key": "rightBigBtnBgColor",
+          "label": "오른쪽 큰 버튼 배경색",
+          "type": "color"
+        },
+        {
+          "key": "rightBigBtnTextColor",
+          "label": "오른쪽 큰 버튼 글자색",
+          "type": "color"
+        },
+        {
+          "key": "additionalContents",
+          "label": "추가 콘텐츠 관리",
+          "type": "additional-contents"
+        }
+      ]
+    },
+    {
+      "id": "Module05",
+      "name": "모듈 05",
+      "description": "2단 이미지와 텍스트, 버튼이 포함된 모듈",
+      "category": "image",
+      "icon": "🔘",
+      "htmlFile": "Module05.html",
+      "editableProps": [
+        {
+          "key": "topLeftImageUrl",
+          "label": "위쪽 왼쪽 이미지 URL",
+          "type": "url",
+          "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png"
+        },
+        {
+          "key": "topLeftImageAlt",
+          "label": "위쪽 왼쪽 이미지 설명 Alt",
+          "type": "text",
+          "placeholder": "이미지"
+        },
+        {
+          "key": "topRightTitle",
+          "label": "위쪽 오른쪽 타이틀",
+          "type": "text",
+          "placeholder": "콘텐츠 타이틀"
+        },
+        {
+          "key": "topRightTableTitle",
+          "label": "위쪽 오른쪽 테이블 타이틀",
+          "type": "text",
+          "placeholder": "콘텐츠 타이틀"
+        },
+        {
+          "key": "bottomLeftImageUrl",
+          "label": "아래쪽 왼쪽 이미지 URL",
+          "type": "url",
+          "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png"
+        },
+        {
+          "key": "bottomLeftImageAlt",
+          "label": "아래쪽 왼쪽 이미지 설명 Alt",
+          "type": "text",
+          "placeholder": "이미지"
+        },
+        {
+          "key": "bottomRightTitle",
+          "label": "아래쪽 오른쪽 타이틀",
+          "type": "text",
+          "placeholder": "콘텐츠 타이틀"
+        },
+        {
+          "key": "bottomRightTableTitle",
+          "label": "아래쪽 오른쪽 테이블 타이틀",
+          "type": "text",
+          "placeholder": "콘텐츠 타이틀"
+        },
+        {
+          "key": "showTopSmallBtn",
+          "label": "위쪽 작은 버튼 표시",
+          "type": "boolean"
+        },
+        {
+          "key": "topRightSmallBtnText",
+          "label": "위쪽 오른쪽 작은 버튼",
+          "type": "text",
+          "placeholder": "작은 버튼 →"
+        },
+        {
+          "key": "topRightSmallBtnUrl",
+          "label": "위쪽 오른쪽 작은 버튼 링크",
+          "type": "url",
+          "placeholder": "#"
+        },
+        {
+          "key": "showBottomSmallBtn",
+          "label": "아래쪽 작은 버튼 표시",
+          "type": "boolean"
+        },
+        {
+          "key": "bottomRightSmallBtnText",
+          "label": "아래쪽 오른쪽 작은 버튼",
+          "type": "text",
+          "placeholder": "작은 버튼 →"
+        },
+        {
+          "key": "bottomRightSmallBtnUrl",
+          "label": "아래쪽 오른쪽 작은 버튼 링크",
+          "type": "url",
+          "placeholder": "#"
+        },
+        {
+          "key": "smallBtnBgColor",
+          "label": "작은 버튼 배경색",
+          "type": "color"
+        },
+        {
+          "key": "smallBtnTextColor",
+          "label": "작은 버튼 글자색",
+          "type": "color"
+        },
+        {
+          "key": "showBigBtn",
+          "label": "큰 버튼 표시",
+          "type": "boolean"
+        },
+        {
+          "key": "bigButtonText",
+          "label": "큰 버튼 텍스트",
+          "type": "text",
+          "placeholder": "큰 버튼 →"
+        },
+        {
+          "key": "bigButtonUrl",
+          "label": "큰 버튼 링크",
+          "type": "url",
+          "placeholder": "#"
+        },
+        {
+          "key": "bigBtnBgColor",
+          "label": "큰 버튼 배경색",
+          "type": "color"
+        },
+        {
+          "key": "bigBtnTextColor",
+          "label": "큰 버튼 글자색",
+          "type": "color"
+        },
+        {
+          "key": "additionalContentsTop",
+          "label": "상단 추가 콘텐츠",
+          "type": "additional-contents"
+        },
+        {
+          "key": "additionalContentsBottom",
+          "label": "하단 추가 콘텐츠",
+          "type": "additional-contents"
+        }
+      ]
+    }
+  ]
+}

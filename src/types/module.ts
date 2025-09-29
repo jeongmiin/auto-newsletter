@@ -12,10 +12,11 @@ export interface ModuleMetadata {
 export interface EditableProp {
   key: string
   label: string
-  type: 'text' | 'textarea' | 'color' | 'number' | 'url' | 'image' | 'select' | 'boolean'
+  type: 'text' | 'textarea' | 'color' | 'number' | 'url' | 'image' | 'select' | 'boolean' | 'table-rows' | 'content-titles' | 'content-texts' | 'additional-contents'
   options?: string[]
   placeholder?: string
   required?: boolean
+  defaultRows?: TableRow[]
 }
 
 export interface ModuleStyles {
@@ -29,6 +30,30 @@ export interface ModuleStyles {
   borderRadius?: string
   borderColor?: string
   borderWidth?: string
+}
+
+export interface TableRow {
+  id: string
+  header: string
+  data: string
+}
+
+export interface ContentTitle {
+  id: string
+  text: string
+}
+
+export interface ContentText {
+  id: string
+  content: string
+}
+
+export interface AdditionalContent {
+  id: string
+  type: 'title' | 'text'
+  htmlTemplate: string
+  data: Record<string, string>
+  order: number
 }
 
 export interface ModuleInstance {
