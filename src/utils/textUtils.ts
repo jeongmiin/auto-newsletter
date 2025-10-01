@@ -21,11 +21,15 @@ export const escapeHtml = (text: string): string => {
 }
 
 // 빈 값 처리 유틸 함수들
-export const isEmptyValue = (value: any): boolean => {
-  return !value || String(value).trim() === ''
+export const isEmptyValue = (value: unknown): boolean => {
+  if (value === null || value === undefined) return true
+  if (typeof value === 'string') return value.trim() === ''
+  if (typeof value === 'number') return false
+  if (typeof value === 'boolean') return false
+  return !value
 }
 
-export const shouldRenderElement = (value: any): boolean => {
+export const shouldRenderElement = (value: unknown): boolean => {
   return !isEmptyValue(value)
 }
 

@@ -16,6 +16,7 @@ export interface EditableProp {
   options?: string[]
   placeholder?: string
   required?: boolean
+  default?: string | number | boolean  // 🐛 버그 수정 3: default 값 지원
   defaultRows?: TableRow[]
 }
 

@@ -2,23 +2,6 @@
   <div class="flex items-center justify-between px-4 bg-white border-b p-2">
     <!-- 왼쪽: 기본 액션들 -->
     <div class="flex items-center space-x-2">
-      <!-- <button
-        @click="undo"
-        :disabled="!canUndo"
-        class="p-2 text-gray-600 hover:text-gray-800 disabled:text-gray-300"
-        title="실행취소"
-      >
-        ↶
-      </button>
-      <button
-        @click="redo"
-        :disabled="!canRedo"
-        class="p-2 text-gray-600 hover:text-gray-800 disabled:text-gray-300"
-        title="다시실행"
-      >
-        ↷
-      </button>
-      <div class="w-px h-6 bg-gray-300"></div> -->
       <button @click="clearAll" class="px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded">
         전체 삭제
       </button>
@@ -79,22 +62,28 @@ import { useEditorStore } from '@/stores/editorStore'
 const moduleStore = useModuleStore()
 const editorStore = useEditorStore()
 
-// const canUndo = computed(() => editorStore.canUndo)
-// const canRedo = computed(() => editorStore.canRedo)
 const canvasWidth = computed(() => editorStore.canvasWidth)
 
-// const undo = () => editorStore.undo()
-// const redo = () => editorStore.redo()
-const clearAll = () => moduleStore.clearAll()
-const setCanvasWidth = (width: 'mobile' | 'desktop') => editorStore.setCanvasWidth(width)
+const clearAll = (): void => {
+  moduleStore.clearAll()
+}
 
-const previewEmail = () => {
+const setCanvasWidth = (width: 'mobile' | 'desktop'): void => {
+  editorStore.setCanvasWidth(width)
+}
+
+const previewEmail = (): void => {
   window.open('/preview', '_blank')
 }
 
-const exportHtml = async () => {
-  const html = await moduleStore.generateHtml()
-  navigator.clipboard.writeText(html)
-  alert('HTML이 복사되었습니다!')
+const exportHtml = async (): Promise<void> => {
+  try {
+    const html = await moduleStore.generateHtml()
+    await navigator.clipboard.writeText(html)
+    alert('HTML이 복사되었습니다!')
+  } catch (error) {
+    console.error('HTML 복사 실패:', error)
+    alert('HTML 복사에 실패했습니다.')
+  }
 }
 </script>

@@ -104,12 +104,14 @@
         {
           "key": "buttonBgColor",
           "label": "버튼 배경색",
-          "type": "color"
+          "type": "color",
+          "default": "#111111"
         },
         {
           "key": "buttonTextColor",
           "label": "버튼 글자색",
-          "type": "color"
+          "type": "color",
+          "default": "#ffffff"
         }
       ]
     },

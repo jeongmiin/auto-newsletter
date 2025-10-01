@@ -362,8 +362,12 @@ const editableProps = computed(() => selectedModuleMetadata.value?.editableProps
 
 // 동적 테이블 행 데이터
 const tableRows = computed(() => {
-  if (!selectedModule.value?.properties.tableRows) return []
-  return selectedModule.value.properties.tableRows as TableRow[]
+  if (!selectedModule.value) return []
+  if (!selectedModule.value.properties.tableRows) return []
+
+  const rows = selectedModule.value.properties.tableRows as TableRow[]
+  console.log('[tableRows computed] 현재 행 수:', rows.length, rows)
+  return rows
 })
 
 // 동적 콘텐츠 타이틀 데이터
@@ -391,9 +395,21 @@ const removeModule = () => {
 
 // 동적 테이블 행 관리 함수들
 const addNewTableRow = () => {
+  console.log('=== [PropertiesPanel] 테이블 행 추가 시작 ===')
+  console.log('selectedModule:', selectedModule.value)
+  console.log('selectedModule.id:', selectedModule.value?.id)
+  console.log('현재 tableRows:', selectedModule.value?.properties.tableRows)
+
   if (selectedModule.value) {
+    console.log('moduleStore.addTableRow 호출:', selectedModule.value.id)
     moduleStore.addTableRow(selectedModule.value.id)
+
+    // 추가 후 확인
+    console.log('추가 후 tableRows:', selectedModule.value?.properties.tableRows)
+  } else {
+    console.error('selectedModule이 null입니다!')
   }
+  console.log('=== [PropertiesPanel] 테이블 행 추가 완료 ===')
 }
 
 const updateRowField = (rowId: string, field: 'header' | 'data', value: string) => {
