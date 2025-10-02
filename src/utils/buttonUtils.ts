@@ -30,6 +30,18 @@ export interface Module05ButtonProperties {
   showBigBtn?: boolean
 }
 
+export interface Module053ButtonProperties {
+  topSmallBtnBgColor?: string
+  topSmallBtnTextColor?: string
+  bottomSmallBtnBgColor?: string
+  bottomSmallBtnTextColor?: string
+  bigBtnBgColor?: string
+  bigBtnTextColor?: string
+  showTopSmallBtn?: boolean
+  showBottomSmallBtn?: boolean
+  showBigBtn?: boolean
+}
+
 /**
  * 버튼 스타일 정규식 매칭을 통해 색상 변경
  */
@@ -140,40 +152,42 @@ export function applyModule05ButtonStyles(
 ): string {
   let styledHtml = html
 
-  // 작은 버튼 스타일 적용
-  if (properties.smallBtnBgColor || properties.smallBtnTextColor) {
-    const smallButtonRegex = /<a href="[^"]*" target="_blank"\s*style="([^"]*)"/g
-    styledHtml = styledHtml.replace(smallButtonRegex, (match, existingStyle) => {
-      let newStyle = existingStyle
-      if (properties.smallBtnBgColor) {
-        newStyle = newStyle.replace(/background-color:#e5e5e5/, `background-color:${properties.smallBtnBgColor}`)
-        newStyle = newStyle.replace(/bgcolor: #e5e5e5/, `bgcolor: ${properties.smallBtnBgColor}`)
-      }
-      if (properties.smallBtnTextColor) {
-        newStyle = newStyle.replace(/color:#333333/, `color:${properties.smallBtnTextColor}`)
-      }
-      return match.replace(existingStyle, newStyle)
-    })
-  }
+  // 작은 버튼 스타일 적용 (항상 적용, 기본값 포함)
+  const smallButtonRegex = /<a href="[^"]*" target="_blank"\s*style="([^"]*)"/g
+  styledHtml = styledHtml.replace(smallButtonRegex, (match, existingStyle) => {
+    let newStyle = existingStyle
 
-  // 큰 버튼 스타일 적용
-  if (properties.bigBtnBgColor || properties.bigBtnTextColor) {
-    const bigButtonRegex = /<a href="[^"]*"\s*style="([^"]*)"/g
-    styledHtml = styledHtml.replace(bigButtonRegex, (match, existingStyle) => {
-      if (existingStyle.includes('background-color:#111111')) {
-        let newStyle = existingStyle
-        if (properties.bigBtnBgColor) {
-          newStyle = newStyle.replace(/background-color:#111111/, `background-color:${properties.bigBtnBgColor}`)
-          newStyle = newStyle.replace(/bgcolor: #111111/, `bgcolor: ${properties.bigBtnBgColor}`)
-        }
-        if (properties.bigBtnTextColor) {
-          newStyle = newStyle.replace(/color:#ffffff/, `color:${properties.bigBtnTextColor}`)
-        }
-        return match.replace(existingStyle, newStyle)
-      }
-      return match
-    })
-  }
+    // 배경색 변경
+    const bgColor = properties.smallBtnBgColor || BUTTON_COLORS.smallBg
+    newStyle = newStyle.replace(/background-color:#e5e5e5/, `background-color:${bgColor}`)
+    newStyle = newStyle.replace(/bgcolor: #e5e5e5/, `bgcolor: ${bgColor}`)
+
+    // 텍스트 색상 변경 (기본값 #ffffff 적용)
+    const textColor = properties.smallBtnTextColor || '#ffffff'
+    newStyle = newStyle.replace(/color:#333333/, `color:${textColor}`)
+
+    return match.replace(existingStyle, newStyle)
+  })
+
+  // 큰 버튼 스타일 적용 (항상 적용, 기본값 포함)
+  const bigButtonRegex = /<a href="[^"]*"\s*style="([^"]*)"/g
+  styledHtml = styledHtml.replace(bigButtonRegex, (match, existingStyle) => {
+    if (existingStyle.includes('background-color:#111111')) {
+      let newStyle = existingStyle
+
+      // 배경색 변경
+      const bgColor = properties.bigBtnBgColor || BUTTON_COLORS.bigBg
+      newStyle = newStyle.replace(/background-color:#111111/, `background-color:${bgColor}`)
+      newStyle = newStyle.replace(/bgcolor: #111111/, `bgcolor: ${bgColor}`)
+
+      // 텍스트 색상 변경 (기본값 #ffffff 적용)
+      const textColor = properties.bigBtnTextColor || BUTTON_COLORS.bigText
+      newStyle = newStyle.replace(/color:#ffffff/, `color:${textColor}`)
+
+      return match.replace(existingStyle, newStyle)
+    }
+    return match
+  })
 
   return styledHtml
 }
@@ -187,28 +201,18 @@ export function handleModule05ButtonVisibility(
 ): string {
   let visibilityHtml = html
 
-  // 위쪽 작은 버튼 제거
-  if (properties.showTopSmallBtn !== true) {
-    visibilityHtml = visibilityHtml.replace(
-      /<span align="left" style="display: block; padding:15px 0px; box-sizing: border-box;">\s*<a href="[^"]*" target="_blank"[^>]*>[^<]*작은 버튼[^<]*<\/a>\s*<\/span>/,
-      ''
-    )
-  }
+  // 작은 버튼 처리 (위쪽과 아래쪽을 개별적으로)
+  let smallBtnIndex = 0
+  const smallButtonRegex = /<span align="left" style="display: block; padding:15px 0px; box-sizing: border-box;">\s*<a href="[^"]*" target="_blank"[^>]*>[^<]*작은 버튼[^<]*<\/a>\s*<\/span>/g
 
-  // 아래쪽 작은 버튼 제거
-  if (properties.showBottomSmallBtn !== true) {
-    const spans = visibilityHtml.match(/<span align="left" style="display: block; padding:15px 0px; box-sizing: border-box;">\s*<a href="[^"]*" target="_blank"[^>]*>[^<]*작은 버튼[^<]*<\/a>\s*<\/span>/g)
-    if (spans && spans.length > 1) {
-      let spanCount = 0
-      visibilityHtml = visibilityHtml.replace(
-        /<span align="left" style="display: block; padding:15px 0px; box-sizing: border-box;">\s*<a href="[^"]*" target="_blank"[^>]*>[^<]*작은 버튼[^<]*<\/a>\s*<\/span>/g,
-        (match) => {
-          spanCount++
-          return spanCount === 2 ? '' : match
-        }
-      )
-    }
-  }
+  visibilityHtml = visibilityHtml.replace(smallButtonRegex, (match) => {
+    const isTop = smallBtnIndex === 0
+    const shouldShow = isTop
+      ? properties.showTopSmallBtn === true
+      : properties.showBottomSmallBtn === true
+    smallBtnIndex++
+    return shouldShow ? match : ''
+  })
 
   // 큰 버튼 제거
   if (properties.showBigBtn !== true) {
@@ -242,4 +246,94 @@ export function applyModule02ButtonStyles(
     }
     return match + styleAdditions
   })
+}
+
+/**
+ * Module05-3 버튼 스타일 적용
+ */
+export function applyModule053ButtonStyles(
+  html: string,
+  properties: Module053ButtonProperties
+): string {
+  let styledHtml = html
+
+  // 작은 버튼 스타일 적용 (상단과 하단 개별 적용)
+  let smallBtnIndex = 0
+  const smallButtonRegex = /<a href="[^"]*" target="_blank"\s*style="([^"]*)"/g
+
+  styledHtml = styledHtml.replace(smallButtonRegex, (match, existingStyle) => {
+    const isTop = smallBtnIndex === 0
+    let newStyle = existingStyle
+
+    // 배경색 변경
+    const bgColor = isTop
+      ? (properties.topSmallBtnBgColor || '#111111')
+      : (properties.bottomSmallBtnBgColor || '#111111')
+    newStyle = newStyle.replace(/background-color:#111111/, `background-color:${bgColor}`)
+    newStyle = newStyle.replace(/bgcolor:#111111/, `bgcolor:${bgColor}`)
+
+    // 텍스트 색상 변경 (기본값 #ffffff 적용)
+    const textColor = isTop
+      ? (properties.topSmallBtnTextColor || '#ffffff')
+      : (properties.bottomSmallBtnTextColor || '#ffffff')
+    newStyle = newStyle.replace(/color:#ffffff/, `color:${textColor}`)
+
+    smallBtnIndex++
+    return match.replace(existingStyle, newStyle)
+  })
+
+  // 큰 버튼 스타일 적용
+  const bigButtonRegex = /<a href="[^"]*"\s*style="([^"]*)"/g
+  styledHtml = styledHtml.replace(bigButtonRegex, (match, existingStyle) => {
+    if (existingStyle.includes('width:100%')) {
+      let newStyle = existingStyle
+
+      // 배경색 변경
+      const bgColor = properties.bigBtnBgColor || '#111111'
+      newStyle = newStyle.replace(/background-color:#111111/, `background-color:${bgColor}`)
+      newStyle = newStyle.replace(/bgcolor:#111111/, `bgcolor:${bgColor}`)
+
+      // 텍스트 색상 변경 (기본값 #ffffff 적용)
+      const textColor = properties.bigBtnTextColor || '#ffffff'
+      newStyle = newStyle.replace(/color:#ffffff/, `color:${textColor}`)
+
+      return match.replace(existingStyle, newStyle)
+    }
+    return match
+  })
+
+  return styledHtml
+}
+
+/**
+ * Module05-3 버튼 표시/숨김 처리
+ */
+export function handleModule053ButtonVisibility(
+  html: string,
+  properties: Module053ButtonProperties
+): string {
+  let visibilityHtml = html
+
+  // 작은 버튼 처리 (상단과 하단을 개별적으로)
+  let smallBtnIndex = 0
+  const smallButtonRegex = /<!-- 상단 작은 버튼 시작 -->[\s\S]*?<!-- 상단 작은 버튼 끝 -->|<!-- 하단 작은 버튼 시작 -->[\s\S]*?<!-- 하단 작은 버튼 끝 -->/g
+
+  visibilityHtml = visibilityHtml.replace(smallButtonRegex, (match) => {
+    const isTop = smallBtnIndex === 0
+    const shouldShow = isTop
+      ? properties.showTopSmallBtn === true
+      : properties.showBottomSmallBtn === true
+    smallBtnIndex++
+    return shouldShow ? match : ''
+  })
+
+  // 큰 버튼 제거
+  if (properties.showBigBtn !== true) {
+    visibilityHtml = visibilityHtml.replace(
+      /<!-- 큰 버튼 시작 -->[\s\S]*?<!-- 큰 버튼 끝 -->/,
+      ''
+    )
+  }
+
+  return visibilityHtml
 }

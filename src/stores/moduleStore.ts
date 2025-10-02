@@ -15,6 +15,7 @@ import {
   replaceModule04Content,
   replaceModule02Content,
   replaceModule05Content,
+  replaceModule053Content,
   replaceDefaultTemplate,
 } from '@/utils/moduleContentReplacer'
 
@@ -522,6 +523,9 @@ export const useModuleStore = defineStore('module', () => {
 
       case 'Module05':
         return replaceModule05Content(html, properties, insertAdditionalContents)
+
+      case 'Module05-3':
+        return replaceModule053Content(html, properties)
 
       default:
         return replaceDefaultTemplate(html, properties)

@@ -525,6 +525,11 @@ const getFieldVisibility = (prop: EditableProp) => {
     return getModule05ButtonVisibility(prop.key, properties)
   }
 
+  // Module05-3 버튼 관련 필드들
+  if (isModule053ButtonField(prop.key)) {
+    return getModule053ButtonVisibility(prop.key, properties)
+  }
+
   return ''
 }
 
@@ -552,6 +557,15 @@ const isModule05ButtonField = (key: string) => {
     'bottomRightSmallBtnText', 'bottomRightSmallBtnUrl',
     'bigButtonText', 'bigButtonUrl',
     'smallBtnBgColor', 'smallBtnTextColor', 'bigBtnBgColor', 'bigBtnTextColor'
+  ]
+  return buttonFields.includes(key)
+}
+
+const isModule053ButtonField = (key: string) => {
+  const buttonFields = [
+    'topSmallBtnText', 'topSmallBtnUrl', 'topSmallBtnBgColor', 'topSmallBtnTextColor',
+    'bottomSmallBtnText', 'bottomSmallBtnUrl', 'bottomSmallBtnBgColor', 'bottomSmallBtnTextColor',
+    'bigBtnText', 'bigBtnUrl', 'bigBtnBgColor', 'bigBtnTextColor'
   ]
   return buttonFields.includes(key)
 }
@@ -603,6 +617,25 @@ const getModule05ButtonVisibility = (key: string, properties: Record<string, unk
 
   // Big Button Style
   if (['bigBtnBgColor', 'bigBtnTextColor'].includes(key)) {
+    return properties.showBigBtn === true ? '' : 'hidden'
+  }
+
+  return ''
+}
+
+const getModule053ButtonVisibility = (key: string, properties: Record<string, unknown>) => {
+  // Top Small Button 관련
+  if (['topSmallBtnText', 'topSmallBtnUrl', 'topSmallBtnBgColor', 'topSmallBtnTextColor'].includes(key)) {
+    return properties.showTopSmallBtn === true ? '' : 'hidden'
+  }
+
+  // Bottom Small Button 관련
+  if (['bottomSmallBtnText', 'bottomSmallBtnUrl', 'bottomSmallBtnBgColor', 'bottomSmallBtnTextColor'].includes(key)) {
+    return properties.showBottomSmallBtn === true ? '' : 'hidden'
+  }
+
+  // Big Button 관련
+  if (['bigBtnText', 'bigBtnUrl', 'bigBtnBgColor', 'bigBtnTextColor'].includes(key)) {
     return properties.showBigBtn === true ? '' : 'hidden'
   }
 

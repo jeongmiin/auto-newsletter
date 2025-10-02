@@ -8,6 +8,8 @@ import {
   applyModule05ButtonStyles,
   handleModule05ButtonVisibility,
   applyModule02ButtonStyles,
+  applyModule053ButtonStyles,
+  handleModule053ButtonVisibility,
 } from './buttonUtils'
 import {
   removeTableFromHtml,
@@ -317,6 +319,145 @@ export async function replaceModule05Content(
   module05Html = applyModule05ButtonStyles(module05Html, properties)
 
   return module05Html
+}
+
+/**
+ * Module05-3 콘텐츠 교체
+ */
+export async function replaceModule053Content(
+  html: string,
+  properties: Record<string, unknown>
+): Promise<string> {
+  let module053Html = html
+
+  // 섹션 타이틀 교체
+  let titleIndex = 0
+  module053Html = module053Html.replace(/상단 섹션 타이틀|하단 섹션 타이틀/g, () => {
+    const isTop = titleIndex === 0
+    const titleValue = isTop ? properties.topSectionTitle : properties.bottomSectionTitle
+    const replacement = shouldRenderElement(titleValue)
+      ? safeFormatText(String(titleValue))
+      : isTop ? '상단 섹션 타이틀' : '하단 섹션 타이틀'
+    titleIndex++
+    return replacement
+  })
+
+  // 섹션 텍스트 교체
+  let textIndex = 0
+  module053Html = module053Html.replace(/상단 섹션 텍스트|하단 섹션 텍스트/g, () => {
+    const isTop = textIndex === 0
+    const textValue = isTop ? properties.topSectionText : properties.bottomSectionText
+    const replacement = shouldRenderElement(textValue)
+      ? safeFormatText(String(textValue))
+      : isTop ? '상단 섹션 텍스트' : '하단 섹션 텍스트'
+    textIndex++
+    return replacement
+  })
+
+  // 이미지 URL 교체
+  let imgIndex = 0
+  module053Html = module053Html.replace(REGEX_PATTERNS.imageUrl2Column, () => {
+    const url = imgIndex === 0
+      ? (properties.topLeftImageUrl || DEFAULT_TWO_COLUMN_IMAGE_URL)
+      : (properties.bottomLeftImageUrl || DEFAULT_TWO_COLUMN_IMAGE_URL)
+    imgIndex++
+    return `src="${url}"`
+  })
+
+  // 이미지 alt 교체
+  let altIndex = 0
+  module053Html = module053Html.replace(REGEX_PATTERNS.imageAlt, () => {
+    const alt = altIndex === 0
+      ? (properties.topLeftImageAlt || '이미지')
+      : (properties.bottomLeftImageAlt || '이미지')
+    altIndex++
+    return `alt="${alt}"`
+  })
+
+  // 오른쪽 타이틀 1 교체
+  let rightTitle1Index = 0
+  module053Html = module053Html.replace(/상단 오른쪽 첫 번째 타이틀|하단 오른쪽 첫 번째 타이틀/g, () => {
+    const isTop = rightTitle1Index === 0
+    const titleValue = isTop ? properties.topRightTitle1 : properties.bottomRightTitle1
+    const replacement = shouldRenderElement(titleValue)
+      ? safeFormatText(String(titleValue))
+      : isTop ? '상단 오른쪽 첫 번째 타이틀' : '하단 오른쪽 첫 번째 타이틀'
+    rightTitle1Index++
+    return replacement
+  })
+
+  // 오른쪽 텍스트 1 교체
+  let rightText1Index = 0
+  module053Html = module053Html.replace(/상단 오른쪽 첫 번째 텍스트|하단 오른쪽 첫 번째 텍스트/g, () => {
+    const isTop = rightText1Index === 0
+    const textValue = isTop ? properties.topRightText1 : properties.bottomRightText1
+    const replacement = shouldRenderElement(textValue)
+      ? safeFormatText(String(textValue))
+      : isTop ? '상단 오른쪽 첫 번째 텍스트' : '하단 오른쪽 첫 번째 텍스트'
+    rightText1Index++
+    return replacement
+  })
+
+  // 오른쪽 타이틀 2 교체
+  let rightTitle2Index = 0
+  module053Html = module053Html.replace(/상단 오른쪽 두 번째 타이틀|하단 오른쪽 두 번째 타이틀/g, () => {
+    const isTop = rightTitle2Index === 0
+    const titleValue = isTop ? properties.topRightTitle2 : properties.bottomRightTitle2
+    const replacement = shouldRenderElement(titleValue)
+      ? safeFormatText(String(titleValue))
+      : isTop ? '상단 오른쪽 두 번째 타이틀' : '하단 오른쪽 두 번째 타이틀'
+    rightTitle2Index++
+    return replacement
+  })
+
+  // 오른쪽 텍스트 2 교체
+  let rightText2Index = 0
+  module053Html = module053Html.replace(/상단 오른쪽 두 번째 텍스트|하단 오른쪽 두 번째 텍스트/g, () => {
+    const isTop = rightText2Index === 0
+    const textValue = isTop ? properties.topRightText2 : properties.bottomRightText2
+    const replacement = shouldRenderElement(textValue)
+      ? safeFormatText(String(textValue))
+      : isTop ? '상단 오른쪽 두 번째 텍스트' : '하단 오른쪽 두 번째 텍스트'
+    rightText2Index++
+    return replacement
+  })
+
+  // 작은 버튼 텍스트 교체
+  let smallBtnIndex = 0
+  module053Html = module053Html.replace(REGEX_PATTERNS.smallButton, () => {
+    const isTop = smallBtnIndex === 0
+    const btnValue = isTop ? properties.topSmallBtnText : properties.bottomSmallBtnText
+    const replacement = shouldRenderElement(btnValue) ? String(btnValue) : '작은 버튼 →'
+    smallBtnIndex++
+    return replacement
+  })
+
+  // 큰 버튼 텍스트 교체
+  const bigButtonText = shouldRenderElement(properties.bigBtnText)
+    ? String(properties.bigBtnText)
+    : '큰 버튼 →'
+  module053Html = module053Html.replace(REGEX_PATTERNS.bigButton, bigButtonText)
+
+  // href 교체
+  const hrefReplacements = [
+    properties.topSmallBtnUrl || '#',
+    properties.bottomSmallBtnUrl || '#',
+    properties.bigBtnUrl || '#'
+  ]
+  let hrefIndex = 0
+  module053Html = module053Html.replace(REGEX_PATTERNS.href, () => {
+    const url = hrefReplacements[hrefIndex] || '#'
+    hrefIndex++
+    return `href="${url}"`
+  })
+
+  // 버튼 스타일 적용
+  module053Html = applyModule053ButtonStyles(module053Html, properties)
+
+  // 버튼 표시/숨김 처리
+  module053Html = handleModule053ButtonVisibility(module053Html, properties)
+
+  return module053Html
 }
 
 /**
