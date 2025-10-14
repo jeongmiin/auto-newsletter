@@ -23,9 +23,17 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
+    // public 폴더를 dist로 복사 (명시적 설정)
+    copyPublicDir: true,
     // 소스맵 생성으로 디버깅 용이
     sourcemap: true,
     // 청크 크기 경고 제한 증가
     chunkSizeWarningLimit: 1000,
+    // Rollup 옵션
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+      },
+    },
   },
 })

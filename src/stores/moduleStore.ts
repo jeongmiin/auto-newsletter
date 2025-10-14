@@ -37,13 +37,21 @@ export const useModuleStore = defineStore('module', () => {
 
   // ============= Module Metadata =============
   /**
+   * 경로 정규화 헬퍼 함수
+   */
+  const normalizePath = (path: string): string => {
+    // 중복 슬래시 제거
+    return path.replace(/\/+/g, '/')
+  }
+
+  /**
    * 사용 가능한 모듈 메타데이터 로드
    */
   const loadAvailableModules = async (): Promise<ModuleMetadata[]> => {
     try {
       // 개발/프로덕션 환경에 따른 경로 처리
       const basePath = import.meta.env.BASE_URL || '/'
-      const configPath = `${basePath}modules/modules-config.json`
+      const configPath = normalizePath(`${basePath}modules/modules-config.json`)
 
       console.log('[loadAvailableModules] Base URL:', basePath)
       console.log('[loadAvailableModules] Config path:', configPath)
@@ -362,17 +370,20 @@ export const useModuleStore = defineStore('module', () => {
     try {
       const basePath = import.meta.env.BASE_URL || '/'
       const filename = type === 'title' ? 'ModuleContent_title.html' : 'ModuleContent_text.html'
-      const templatePath = `${basePath}modules/${filename}`
+      const templatePath = normalizePath(`${basePath}modules/${filename}`)
 
-      console.log('[loadContentTemplate] Loading template:', templatePath)
+      console.log('[loadContentTemplate] 🔍 Loading template:', templatePath)
 
       const response = await fetch(templatePath)
       if (!response.ok) {
+        console.error('[loadContentTemplate] ❌ Failed:', templatePath, response.status)
         throw new Error(`Failed to load sub-module: ${response.status}`)
       }
-      return await response.text()
+      const html = await response.text()
+      console.log('[loadContentTemplate] ✅ Success:', filename, html.length, 'bytes')
+      return html
     } catch (error) {
-      console.error(`[loadContentTemplate] Failed to load sub-module (${type}):`, error)
+      console.error(`[loadContentTemplate] ❌ Error loading sub-module (${type}):`, error)
       return ''
     }
   }
@@ -555,14 +566,16 @@ export const useModuleStore = defineStore('module', () => {
 
     for (const module of modules.value.sort((a, b) => a.order - b.order)) {
       try {
-        const modulePath = `${basePath}modules/${module.moduleId}.html`
-        console.log('[generateHtml] Loading module:', modulePath)
+        const modulePath = normalizePath(`${basePath}modules/${module.moduleId}.html`)
+        console.log('[generateHtml] 🔍 Loading module:', modulePath)
 
         const response = await fetch(modulePath)
         if (!response.ok) {
+          console.error('[generateHtml] ❌ Failed:', modulePath, response.status)
           throw new Error(`Failed to load module HTML: ${response.status}`)
         }
         let html = await response.text()
+        console.log('[generateHtml] ✅ Success:', module.moduleId, html.length, 'bytes')
 
         html = await replaceModuleContent(html, module)
 
