@@ -75,9 +75,30 @@ export function useModuleRenderer(moduleId: string) {
       moduleMetadata.value =
         moduleStore.availableModules.find((m) => m.id === module.moduleId) || null
 
-      // HTML 파일 로드
-      const response = await fetch(`/modules/${module.moduleId}.html`)
+      // HTML 파일 로드 (BASE_URL 경로 고려)
+      const basePath = import.meta.env.BASE_URL || '/'
+      const htmlPath = `${basePath}modules/${module.moduleId}.html`.replace(/\/+/g, '/')
+
+      console.log('[useModuleRenderer] 🔍 HTML 로드 시도:', {
+        basePath,
+        moduleId: module.moduleId,
+        htmlPath,
+        isProd: import.meta.env.PROD
+      })
+
+      const response = await fetch(htmlPath)
+
+      if (!response.ok) {
+        console.error('[useModuleRenderer] ❌ HTML 로드 실패:', {
+          htmlPath,
+          status: response.status,
+          statusText: response.statusText
+        })
+        throw new Error(`HTTP ${response.status}: ${htmlPath}`)
+      }
+
       let html = await response.text()
+      console.log('[useModuleRenderer] ✅ HTML 로드 성공:', module.moduleId, html.length, 'bytes')
 
       console.log('[useModuleRenderer] 콘텐츠 교체 시작')
       console.log('[useModuleRenderer] module.properties:', module.properties)
@@ -92,10 +113,22 @@ export function useModuleRenderer(moduleId: string) {
       }
 
       renderedHtml.value = html
-      console.log('[useModuleRenderer] 렌더링 완료')
+      console.log('[useModuleRenderer] ✅ 렌더링 완료')
     } catch (error) {
-      console.error('Failed to load module HTML:', error)
-      renderedHtml.value = `<div class="p-4 text-center text-red-500">모듈을 로드할 수 없습니다</div>`
+      console.error('[useModuleRenderer] ❌ 모듈 로드 실패:', error)
+      const basePath = import.meta.env.BASE_URL || '/'
+      const expectedPath = `${basePath}modules/${module.moduleId}.html`.replace(/\/+/g, '/')
+      renderedHtml.value = `
+        <div class="p-6 text-center bg-red-50 border-2 border-red-300 rounded-lg">
+          <div class="text-red-600 font-bold text-lg mb-2">❌ 모듈을 로드할 수 없습니다</div>
+          <div class="text-sm text-gray-600 mb-2">모듈 ID: ${module.moduleId}</div>
+          <div class="text-xs text-gray-500 mb-2">경로: ${expectedPath}</div>
+          <div class="text-xs text-red-500">${error instanceof Error ? error.message : String(error)}</div>
+          <div class="mt-4 text-xs text-gray-400">
+            💡 개발자 도구(F12) → Console/Network 탭에서 상세 정보를 확인하세요
+          </div>
+        </div>
+      `
     }
   }
 
