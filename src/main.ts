@@ -6,6 +6,50 @@ import router from './router'
 // CSS를 먼저 import
 import './assets/main.css'
 
+// ============= 전역 에러 핸들러 =============
+// Unhandled Promise Rejection 감지
+window.addEventListener('unhandledrejection', (event) => {
+  console.error('[Global] Unhandled promise rejection:', event.reason)
+  console.error('[Global] Promise:', event.promise)
+})
+
+// 전역 에러 핸들러
+window.addEventListener('error', (event) => {
+  console.error('[Global] Error:', event.error)
+  console.error('[Global] Message:', event.message)
+})
+
+// Fetch 요청 로깅 (디버깅용)
+const originalFetch = window.fetch
+window.fetch = async (...args: Parameters<typeof fetch>) => {
+  const firstArg = args[0]
+  const url =
+    typeof firstArg === 'string'
+      ? firstArg
+      : firstArg instanceof Request
+        ? firstArg.url
+        : String(firstArg)
+  console.log('[Fetch] Request:', url)
+
+  try {
+    const response = await originalFetch(...args)
+    if (!response.ok) {
+      console.error('[Fetch] Failed:', url, 'Status:', response.status, response.statusText)
+    } else {
+      console.log('[Fetch] Success:', url, 'Status:', response.status)
+    }
+    return response
+  } catch (error) {
+    console.error('[Fetch] Error:', url, error)
+    throw error
+  }
+}
+
+// 환경 정보 로깅
+console.log('[App] Base URL:', import.meta.env.BASE_URL)
+console.log('[App] Mode:', import.meta.env.MODE)
+console.log('[App] Production:', import.meta.env.PROD)
+
 // PrimeVue 관련 import
 import PrimeVue from 'primevue/config'
 import ToastService from 'primevue/toastservice'

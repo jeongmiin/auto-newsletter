@@ -41,12 +41,20 @@ export const useModuleStore = defineStore('module', () => {
    */
   const loadAvailableModules = async (): Promise<ModuleMetadata[]> => {
     try {
-      const response = await fetch('/modules/modules-config.json')
+      // 개발/프로덕션 환경에 따른 경로 처리
+      const basePath = import.meta.env.BASE_URL || '/'
+      const configPath = `${basePath}modules/modules-config.json`
+
+      console.log('[loadAvailableModules] Base URL:', basePath)
+      console.log('[loadAvailableModules] Config path:', configPath)
+
+      const response = await fetch(configPath)
       if (!response.ok) {
         throw new Error(`Failed to load modules: ${response.status} ${response.statusText}`)
       }
 
       const data = await response.json()
+      console.log('[loadAvailableModules] Loaded data:', data)
 
       if (!data || !Array.isArray(data.modules)) {
         throw new Error('Invalid modules configuration format')
@@ -65,10 +73,11 @@ export const useModuleStore = defineStore('module', () => {
         console.warn('Some modules were excluded due to invalid format')
       }
 
+      console.log('[loadAvailableModules] Validated modules count:', validatedModules.length)
       availableModules.value = validatedModules
       return validatedModules
     } catch (error) {
-      console.error('Failed to load module metadata:', error)
+      console.error('[loadAvailableModules] Failed to load module metadata:', error)
       if (typeof window !== 'undefined') {
         console.warn('Cannot load module configuration. Using empty modules.')
       }
@@ -351,14 +360,19 @@ export const useModuleStore = defineStore('module', () => {
    */
   const loadContentTemplate = async (type: 'title' | 'text'): Promise<string> => {
     try {
+      const basePath = import.meta.env.BASE_URL || '/'
       const filename = type === 'title' ? 'ModuleContent_title.html' : 'ModuleContent_text.html'
-      const response = await fetch(`/modules/${filename}`)
+      const templatePath = `${basePath}modules/${filename}`
+
+      console.log('[loadContentTemplate] Loading template:', templatePath)
+
+      const response = await fetch(templatePath)
       if (!response.ok) {
         throw new Error(`Failed to load sub-module: ${response.status}`)
       }
       return await response.text()
     } catch (error) {
-      console.error(`Failed to load sub-module (${type}):`, error)
+      console.error(`[loadContentTemplate] Failed to load sub-module (${type}):`, error)
       return ''
     }
   }
@@ -537,10 +551,17 @@ export const useModuleStore = defineStore('module', () => {
    */
   const generateHtml = async (): Promise<string> => {
     let fullHtml = ''
+    const basePath = import.meta.env.BASE_URL || '/'
 
     for (const module of modules.value.sort((a, b) => a.order - b.order)) {
       try {
-        const response = await fetch(`/modules/${module.moduleId}.html`)
+        const modulePath = `${basePath}modules/${module.moduleId}.html`
+        console.log('[generateHtml] Loading module:', modulePath)
+
+        const response = await fetch(modulePath)
+        if (!response.ok) {
+          throw new Error(`Failed to load module HTML: ${response.status}`)
+        }
         let html = await response.text()
 
         html = await replaceModuleContent(html, module)
@@ -551,7 +572,7 @@ export const useModuleStore = defineStore('module', () => {
 
         fullHtml += html + '\n'
       } catch (error) {
-        console.error(`Failed to generate HTML for module ${module.moduleId}:`, error)
+        console.error(`[generateHtml] Failed to generate HTML for module ${module.moduleId}:`, error)
       }
     }
 
