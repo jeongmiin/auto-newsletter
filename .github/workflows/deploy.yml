@@ -38,6 +38,31 @@ jobs:
         env:
           NODE_ENV: production
 
+      - name: Verify build output
+        run: |
+          echo "=========================================="
+          echo "📁 dist 폴더 구조 확인"
+          echo "=========================================="
+          ls -lah dist/
+          echo ""
+          echo "=========================================="
+          echo "📦 modules 폴더 확인"
+          echo "=========================================="
+          if [ -d "dist/modules" ]; then
+            ls -lah dist/modules/
+            echo ""
+            echo "✅ modules 폴더 존재"
+            echo "📄 파일 개수: $(ls -1 dist/modules/ | wc -l)"
+          else
+            echo "❌ ERROR: modules 폴더가 없습니다!"
+            exit 1
+          fi
+          echo ""
+          echo "=========================================="
+          echo "📄 modules 폴더 내 파일 목록"
+          echo "=========================================="
+          find dist/modules/ -type f -exec echo "  - {}" \;
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 

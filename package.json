@@ -8,9 +8,10 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "run-p type-check \"build-only {@}\" --",
+    "build": "run-p type-check \"build-only {@}\" -- && npm run verify-build",
     "preview": "vite preview",
     "build-only": "vite build",
+    "verify-build": "node -e \"const fs = require('fs'); const path = require('path'); const modulesDir = path.join('dist', 'modules'); if (!fs.existsSync(modulesDir)) { console.error('❌ ERROR: dist/modules folder does not exist!'); process.exit(1); } const files = fs.readdirSync(modulesDir); console.log('✅ dist/modules exists with', files.length, 'files'); files.forEach(f => console.log('  -', f));\"",
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix",
     "format": "prettier --write src/"
