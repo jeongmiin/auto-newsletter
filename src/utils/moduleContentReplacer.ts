@@ -76,25 +76,31 @@ export async function replaceModule04Content(
     return replacement
   })
 
-  // 작은 버튼 텍스트 교체
+  // 작은 버튼 텍스트 교체 (span 내부의 a 태그 텍스트)
   let smallBtnIndex = 0
-  modifiedHtml = modifiedHtml.replace(REGEX_PATTERNS.smallButton, () => {
-    const isLeft = smallBtnIndex === 0
-    const btnValue = isLeft ? properties.leftSmallBtnText : properties.rightSmallBtnText
-    const replacement = shouldRenderElement(btnValue) ? String(btnValue) : '작은 버튼 →'
-    smallBtnIndex++
-    return replacement
-  })
+  modifiedHtml = modifiedHtml.replace(
+    /(<span align="left"[^>]*>[\s\S]*?<a [^>]*>)([^<]*)(작은[\s\n]*버튼[^<]*)?(<\/a>[\s\S]*?<\/span>)/g,
+    (match, prefix, text, btnText, suffix) => {
+      const isLeft = smallBtnIndex === 0
+      const btnValue = isLeft ? properties.leftSmallBtnText : properties.rightSmallBtnText
+      const replacement = shouldRenderElement(btnValue) ? String(btnValue) : '작은 버튼 →'
+      smallBtnIndex++
+      return `${prefix}${replacement}${suffix}`
+    }
+  )
 
-  // 큰 버튼 텍스트 교체
+  // 큰 버튼 텍스트 교체 (width:100% 스타일을 가진 a 태그)
   let bigBtnIndex = 0
-  modifiedHtml = modifiedHtml.replace(REGEX_PATTERNS.bigButton, () => {
-    const isLeft = bigBtnIndex === 0
-    const btnValue = isLeft ? properties.leftBigBtnText : properties.rightBigBtnText
-    const replacement = shouldRenderElement(btnValue) ? String(btnValue) : '큰 버튼 →'
-    bigBtnIndex++
-    return replacement
-  })
+  modifiedHtml = modifiedHtml.replace(
+    /(<a [^>]*width:100%[^>]*>)([^<]*)(큰[\s\n]*버튼[^<]*)?(<\/a>)/g,
+    (match, prefix, text, btnText, suffix) => {
+      const isLeft = bigBtnIndex === 0
+      const btnValue = isLeft ? properties.leftBigBtnText : properties.rightBigBtnText
+      const replacement = shouldRenderElement(btnValue) ? String(btnValue) : '큰 버튼 →'
+      bigBtnIndex++
+      return `${prefix}${replacement}${suffix}`
+    }
+  )
 
   // href 링크 교체
   const hrefReplacements = [

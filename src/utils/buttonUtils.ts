@@ -130,9 +130,9 @@ export function handleModule04ButtonVisibility(
     return shouldShow ? match : ''
   })
 
-  // 큰 버튼 제거
+  // 큰 버튼 제거 - width:100% 스타일을 가진 a 태그로 식별 (텍스트 무관)
   let bigBtnIndex = 0
-  const bigButtonRegex = /<a href="[^"]*"\s*style="([^"]*)"[^>]*target="_blank">큰 버튼[\s\S]*?<\/a>/g
+  const bigButtonRegex = /<a href="[^"]*"\s*style="[^"]*width:100%[^"]*"\s*target="_blank">[^<]*<\/a>/g
   visibilityHtml = visibilityHtml.replace(bigButtonRegex, (match) => {
     const isLeft = bigBtnIndex === 0
     const shouldShow = isLeft ? properties.showLeftBigBtn === true : properties.showRightBigBtn === true
