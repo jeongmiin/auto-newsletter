@@ -28,7 +28,7 @@
       "name": "모듈 02",
       "description": "이미지와 텍스트, 테이블, 버튼이 포함된 모듈",
       "category": "image",
-      "icon": "🖼️",
+      "icon": "02",
       "htmlFile": "Module02.html",
       "editableProps": [
         {
@@ -122,7 +122,7 @@
       "name": "모듈 04",
       "description": "이미지와 텍스트가 있는 2단 구성 모듈",
       "category": "image",
-      "icon": "📄",
+      "icon": "04",
       "htmlFile": "Module04.html",
       "editableProps": [
         {
@@ -294,7 +294,7 @@
       "name": "모듈 05",
       "description": "2단 이미지와 텍스트, 버튼이 포함된 모듈",
       "category": "image",
-      "icon": "🔘",
+      "icon": "05",
       "htmlFile": "Module05.html",
       "editableProps": [
         {
@@ -318,7 +318,7 @@
         {
           "key": "topRightTableTitle",
           "label": "위 텍스트",
-          "type": "text",
+          "type": "textarea",
           "placeholder": "콘텐츠 텍스트"
         },
         {
@@ -342,7 +342,7 @@
         {
           "key": "bottomRightTableTitle",
           "label": "아래 텍스트",
-          "type": "text",
+          "type": "textarea",
           "placeholder": "콘텐츠 텍스트"
         },
         {
@@ -440,7 +440,7 @@
       "name": "모듈 05-3",
       "description": "2개 섹션, 각각 타이틀/텍스트/이미지/작은버튼, 하단 큰 버튼",
       "category": "image",
-      "icon": "🔘",
+      "icon": "5-3",
       "htmlFile": "Module05-3.html",
       "editableProps": [
         {

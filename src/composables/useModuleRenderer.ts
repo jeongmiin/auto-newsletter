@@ -7,6 +7,7 @@ import {
   replaceModule04Content,
   replaceModule02Content,
   replaceModule05Content,
+  replaceModule053Content,
   replaceDefaultTemplate,
 } from '@/utils/moduleContentReplacer'
 
@@ -50,6 +51,9 @@ export function useModuleRenderer(moduleId: string) {
 
       case 'Module05':
         return replaceModule05Content(html, properties, moduleStore.insertAdditionalContents)
+
+      case 'Module05-3':
+        return replaceModule053Content(html, properties)
 
       default:
         return replaceDefaultTemplate(html, properties)

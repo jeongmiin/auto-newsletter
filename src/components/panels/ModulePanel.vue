@@ -35,7 +35,7 @@
             <div class="w-8 h-8 bg-gray-200 rounded flex items-center justify-center">
               <span class="text-xs">{{ module.icon }}</span>
             </div>
-            <div>
+            <div class="flex-1">
               <div class="font-medium text-sm">{{ module.name }}</div>
               <div class="text-xs text-gray-500">{{ module.description }}</div>
             </div>

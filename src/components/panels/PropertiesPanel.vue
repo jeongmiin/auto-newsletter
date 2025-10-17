@@ -24,7 +24,10 @@
       <!-- 속성 편집 폼 -->
       <div class="p-4 space-y-4">
         <div v-for="prop in editableProps" :key="prop.key" :class="getFieldVisibility(prop)">
-          <label class="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            v-show="prop.type !== 'boolean'"
+            class="block text-sm font-medium text-gray-700 mb-1"
+          >
             {{ prop.label }}
           </label>
 
@@ -79,7 +82,7 @@
           </select>
 
           <!-- 체크박스 -->
-          <label v-else-if="prop.type === 'boolean'" class="flex items-center space-x-2">
+          <label v-else-if="prop.type === 'boolean'" class="flex items-baseline space-x-2">
             <input
               type="checkbox"
               :checked="Boolean(selectedModule.properties[prop.key])"
@@ -122,7 +125,9 @@
                     <label class="block text-xs text-gray-600 mb-1">헤더(th)</label>
                     <input
                       :value="row.header"
-                      @input="updateRowField(row.id, 'header', ($event.target as HTMLInputElement).value)"
+                      @input="
+                        updateRowField(row.id, 'header', ($event.target as HTMLInputElement).value)
+                      "
                       placeholder="항목명"
                       class="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
@@ -131,7 +136,9 @@
                     <label class="block text-xs text-gray-600 mb-1">데이터(td)</label>
                     <input
                       :value="row.data"
-                      @input="updateRowField(row.id, 'data', ($event.target as HTMLInputElement).value)"
+                      @input="
+                        updateRowField(row.id, 'data', ($event.target as HTMLInputElement).value)
+                      "
                       placeholder="내용"
                       class="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
@@ -142,7 +149,7 @@
 
             <!-- 행이 없을 때 안내 -->
             <div v-else class="text-center py-4 text-gray-500 text-sm">
-              추가된 테이블 행이 없습니다.<br>
+              추가된 테이블 행이 없습니다.<br />
               "테이블 행 추가" 버튼을 클릭해서 행을 추가해보세요.
             </div>
           </div>
@@ -179,7 +186,9 @@
                   <label class="block text-xs text-gray-600 mb-1">타이틀 텍스트</label>
                   <input
                     :value="title.text"
-                    @input="updateContentTitleField(title.id, ($event.target as HTMLInputElement).value)"
+                    @input="
+                      updateContentTitleField(title.id, ($event.target as HTMLInputElement).value)
+                    "
                     placeholder="콘텐츠 타이틀을 입력하세요"
                     class="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
@@ -189,7 +198,7 @@
 
             <!-- 타이틀이 없을 때 안내 -->
             <div v-else class="text-center py-4 text-gray-500 text-sm">
-              추가된 콘텐츠 타이틀이 없습니다.<br>
+              추가된 콘텐츠 타이틀이 없습니다.<br />
               "콘텐츠 타이틀 추가" 버튼을 클릭해서 타이틀을 추가해보세요.
             </div>
           </div>
@@ -226,7 +235,9 @@
                   <label class="block text-xs text-gray-600 mb-1">콘텐츠 내용</label>
                   <textarea
                     :value="text.content"
-                    @input="updateContentTextField(text.id, ($event.target as HTMLTextAreaElement).value)"
+                    @input="
+                      updateContentTextField(text.id, ($event.target as HTMLTextAreaElement).value)
+                    "
                     placeholder="콘텐츠 내용을 입력하세요"
                     rows="3"
                     class="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -237,7 +248,7 @@
 
             <!-- 텍스트가 없을 때 안내 -->
             <div v-else class="text-center py-4 text-gray-500 text-sm">
-              추가된 콘텐츠 텍스트가 없습니다.<br>
+              추가된 콘텐츠 텍스트가 없습니다.<br />
               "콘텐츠 텍스트 추가" 버튼을 클릭해서 텍스트를 추가해보세요.
             </div>
           </div>
@@ -250,14 +261,12 @@
                 @click="addNewAdditionalContent('title', prop.key)"
                 class="flex-1 py-2 px-3 bg-amber-50 text-amber-700 border border-amber-200 rounded-md hover:bg-amber-100 transition-colors flex items-center justify-center space-x-1"
               >
-                <span>📋</span>
                 <span>타이틀 추가</span>
               </button>
               <button
                 @click="addNewAdditionalContent('text', prop.key)"
                 class="flex-1 py-2 px-3 bg-teal-50 text-teal-700 border border-teal-200 rounded-md hover:bg-teal-100 transition-colors flex items-center justify-center space-x-1"
               >
-                <span>📝</span>
                 <span>텍스트 추가</span>
               </button>
             </div>
@@ -309,7 +318,14 @@
                   <label class="block text-xs text-gray-600 mb-1">타이틀 텍스트</label>
                   <input
                     :value="content.data.title_text || ''"
-                    @input="updateAdditionalContentData(content.id, 'title_text', ($event.target as HTMLInputElement).value, prop.key)"
+                    @input="
+                      updateAdditionalContentData(
+                        content.id,
+                        'title_text',
+                        ($event.target as HTMLInputElement).value,
+                        prop.key,
+                      )
+                    "
                     placeholder="타이틀을 입력하세요"
                     class="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
@@ -318,7 +334,14 @@
                   <label class="block text-xs text-gray-600 mb-1">텍스트 내용</label>
                   <textarea
                     :value="content.data.text_content || ''"
-                    @input="updateAdditionalContentData(content.id, 'text_content', ($event.target as HTMLTextAreaElement).value, prop.key)"
+                    @input="
+                      updateAdditionalContentData(
+                        content.id,
+                        'text_content',
+                        ($event.target as HTMLTextAreaElement).value,
+                        prop.key,
+                      )
+                    "
                     placeholder="텍스트 내용을 입력하세요"
                     rows="3"
                     class="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -329,7 +352,7 @@
 
             <!-- 콘텐츠가 없을 때 안내 -->
             <div v-else class="text-center py-4 text-gray-500 text-sm">
-              추가된 콘텐츠가 없습니다.<br>
+              추가된 콘텐츠가 없습니다.<br />
               "타이틀 추가" 또는 "텍스트 추가" 버튼을 클릭해서 콘텐츠를 추가해보세요.
             </div>
           </div>
@@ -385,7 +408,6 @@ const contentTexts = computed(() => {
 const updateProperty = (key: string, value: unknown) => {
   moduleStore.updateModuleProperty(key, value)
 }
-
 
 const removeModule = () => {
   if (selectedModule.value) {
@@ -475,9 +497,19 @@ const addNewAdditionalContent = async (type: 'title' | 'text', propertyKey: stri
   }
 }
 
-const updateAdditionalContentData = (contentId: string, dataKey: string, value: string, propertyKey: string) => {
+const updateAdditionalContentData = (
+  contentId: string,
+  dataKey: string,
+  value: string,
+  propertyKey: string,
+) => {
   if (selectedModule.value) {
-    moduleStore.updateAdditionalContent(selectedModule.value.id, contentId, { [dataKey]: value }, propertyKey)
+    moduleStore.updateAdditionalContent(
+      selectedModule.value.id,
+      contentId,
+      { [dataKey]: value },
+      propertyKey,
+    )
   }
 }
 
@@ -543,51 +575,98 @@ const isButtonRelatedField = (key: string) => {
 
 const isModule04ButtonField = (key: string) => {
   const buttonFields = [
-    'leftSmallBtnText', 'leftSmallBtnUrl', 'leftSmallBtnBgColor', 'leftSmallBtnTextColor',
-    'leftBigBtnText', 'leftBigBtnUrl', 'leftBigBtnBgColor', 'leftBigBtnTextColor',
-    'rightSmallBtnText', 'rightSmallBtnUrl', 'rightSmallBtnBgColor', 'rightSmallBtnTextColor',
-    'rightBigBtnText', 'rightBigBtnUrl', 'rightBigBtnBgColor', 'rightBigBtnTextColor'
+    'leftSmallBtnText',
+    'leftSmallBtnUrl',
+    'leftSmallBtnBgColor',
+    'leftSmallBtnTextColor',
+    'leftBigBtnText',
+    'leftBigBtnUrl',
+    'leftBigBtnBgColor',
+    'leftBigBtnTextColor',
+    'rightSmallBtnText',
+    'rightSmallBtnUrl',
+    'rightSmallBtnBgColor',
+    'rightSmallBtnTextColor',
+    'rightBigBtnText',
+    'rightBigBtnUrl',
+    'rightBigBtnBgColor',
+    'rightBigBtnTextColor',
   ]
   return buttonFields.includes(key)
 }
 
 const isModule05ButtonField = (key: string) => {
   const buttonFields = [
-    'topRightSmallBtnText', 'topRightSmallBtnUrl',
-    'bottomRightSmallBtnText', 'bottomRightSmallBtnUrl',
-    'bigButtonText', 'bigButtonUrl',
-    'smallBtnBgColor', 'smallBtnTextColor', 'bigBtnBgColor', 'bigBtnTextColor'
+    'topRightSmallBtnText',
+    'topRightSmallBtnUrl',
+    'bottomRightSmallBtnText',
+    'bottomRightSmallBtnUrl',
+    'bigButtonText',
+    'bigButtonUrl',
+    'smallBtnBgColor',
+    'smallBtnTextColor',
+    'bigBtnBgColor',
+    'bigBtnTextColor',
   ]
   return buttonFields.includes(key)
 }
 
 const isModule053ButtonField = (key: string) => {
   const buttonFields = [
-    'topSmallBtnText', 'topSmallBtnUrl', 'topSmallBtnBgColor', 'topSmallBtnTextColor',
-    'bottomSmallBtnText', 'bottomSmallBtnUrl', 'bottomSmallBtnBgColor', 'bottomSmallBtnTextColor',
-    'bigBtnText', 'bigBtnUrl', 'bigBtnBgColor', 'bigBtnTextColor'
+    'topSmallBtnText',
+    'topSmallBtnUrl',
+    'topSmallBtnBgColor',
+    'topSmallBtnTextColor',
+    'bottomSmallBtnText',
+    'bottomSmallBtnUrl',
+    'bottomSmallBtnBgColor',
+    'bottomSmallBtnTextColor',
+    'bigBtnText',
+    'bigBtnUrl',
+    'bigBtnBgColor',
+    'bigBtnTextColor',
   ]
   return buttonFields.includes(key)
 }
 
 const getModule04ButtonVisibility = (key: string, properties: Record<string, unknown>) => {
   // Left Small Button 관련
-  if (['leftSmallBtnText', 'leftSmallBtnUrl', 'leftSmallBtnBgColor', 'leftSmallBtnTextColor'].includes(key)) {
+  if (
+    [
+      'leftSmallBtnText',
+      'leftSmallBtnUrl',
+      'leftSmallBtnBgColor',
+      'leftSmallBtnTextColor',
+    ].includes(key)
+  ) {
     return properties.showLeftSmallBtn === true ? '' : 'hidden'
   }
 
   // Left Big Button 관련
-  if (['leftBigBtnText', 'leftBigBtnUrl', 'leftBigBtnBgColor', 'leftBigBtnTextColor'].includes(key)) {
+  if (
+    ['leftBigBtnText', 'leftBigBtnUrl', 'leftBigBtnBgColor', 'leftBigBtnTextColor'].includes(key)
+  ) {
     return properties.showLeftBigBtn === true ? '' : 'hidden'
   }
 
   // Right Small Button 관련
-  if (['rightSmallBtnText', 'rightSmallBtnUrl', 'rightSmallBtnBgColor', 'rightSmallBtnTextColor'].includes(key)) {
+  if (
+    [
+      'rightSmallBtnText',
+      'rightSmallBtnUrl',
+      'rightSmallBtnBgColor',
+      'rightSmallBtnTextColor',
+    ].includes(key)
+  ) {
     return properties.showRightSmallBtn === true ? '' : 'hidden'
   }
 
   // Right Big Button 관련
-  if (['rightBigBtnText', 'rightBigBtnUrl', 'rightBigBtnBgColor', 'rightBigBtnTextColor'].includes(key)) {
+  if (
+    ['rightBigBtnText', 'rightBigBtnUrl', 'rightBigBtnBgColor', 'rightBigBtnTextColor'].includes(
+      key,
+    )
+  ) {
     return properties.showRightBigBtn === true ? '' : 'hidden'
   }
 
@@ -612,7 +691,9 @@ const getModule05ButtonVisibility = (key: string, properties: Record<string, unk
 
   // Small Button Style (둘 다 표시된 경우에만)
   if (['smallBtnBgColor', 'smallBtnTextColor'].includes(key)) {
-    return (properties.showTopSmallBtn === true || properties.showBottomSmallBtn === true) ? '' : 'hidden'
+    return properties.showTopSmallBtn === true || properties.showBottomSmallBtn === true
+      ? ''
+      : 'hidden'
   }
 
   // Big Button Style
@@ -625,12 +706,23 @@ const getModule05ButtonVisibility = (key: string, properties: Record<string, unk
 
 const getModule053ButtonVisibility = (key: string, properties: Record<string, unknown>) => {
   // Top Small Button 관련
-  if (['topSmallBtnText', 'topSmallBtnUrl', 'topSmallBtnBgColor', 'topSmallBtnTextColor'].includes(key)) {
+  if (
+    ['topSmallBtnText', 'topSmallBtnUrl', 'topSmallBtnBgColor', 'topSmallBtnTextColor'].includes(
+      key,
+    )
+  ) {
     return properties.showTopSmallBtn === true ? '' : 'hidden'
   }
 
   // Bottom Small Button 관련
-  if (['bottomSmallBtnText', 'bottomSmallBtnUrl', 'bottomSmallBtnBgColor', 'bottomSmallBtnTextColor'].includes(key)) {
+  if (
+    [
+      'bottomSmallBtnText',
+      'bottomSmallBtnUrl',
+      'bottomSmallBtnBgColor',
+      'bottomSmallBtnTextColor',
+    ].includes(key)
+  ) {
     return properties.showBottomSmallBtn === true ? '' : 'hidden'
   }
 

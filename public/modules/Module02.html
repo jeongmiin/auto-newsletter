@@ -10,13 +10,13 @@
     <tr>
       <td
         style="padding:0px 20px 15px; box-sizing: border-box; font-size:18px; font-weight:700; color:#333333; word-break:keep-all; letter-spacing:-0.03em; line-height:1.5em; font-family:AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif;">
-        콘텐츠 타이틀
+        {{title}}
       </td>
     </tr>
     <tr>
       <td
         style="padding:0px 20px; box-sizing: border-box; font-size:14px; font-weight:400; color:#333333; word-break:keep-all; letter-spacing:-0.03em; line-height:1.7em; font-family:AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif;">
-        콘텐츠 텍스트
+        {{description}}
       </td>
     </tr>
 
@@ -29,10 +29,10 @@
             <tr>
               <th scope="row"
                 style="font-size:14px; font-weight:400; border-bottom:1px #a7a7a7 solid; background:#f6f6f6; bgcolor: #f6f6f6; text-align:center; color:#333333; letter-spacing:-0.03em; line-height:2em; font-family:AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif; word-break:keep-all;"
-                width="20%"><strong>테이블 타이틀</strong></th>
+                width="20%"><strong>{{tableTitle}}</strong></th>
               <td
                 style="font-size:14px; font-weight:400; border-bottom:1px #a7a7a7 solid; background:#ffffff; bgcolor: #ffffff; text-align:left; word-break:keep-all; color:#333333; padding-left:10px; letter-spacing:-0.03em; line-height:2em; font-family:AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif; box-sizing: border-box;"
-                width="80%">테이블 콘텐츠 텍스트</td>
+                width="80%">{{tableContent}}</td>
             </tr>
             <!-- 추가 tr 위치 -->
           </tbody>
@@ -44,7 +44,7 @@
       <td align="center" style=" padding:20px; box-sizing: border-box;">
         <a href="#"
           style="width:100%; text-decoration:none; display: block; padding:15px 0px; box-sizing: border-box; background-color:#111111; bgcolor: #111111; border-radius:5px; text-align:center; font-family: AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif; color:#ffffff; font-size:15px; font-weight:700;"
-          target="_blank">큰 버튼 →</a>
+          target="_blank">{{buttonText}}</a>
       </td>
     </tr>
     <!-- //버튼 -->
