@@ -22,13 +22,28 @@ export function removeButtonFromHtml(html: string): string {
 }
 
 /**
- * 서브 타이틀 div 제거
+ * 서브 타이틀 전체 요소 제거 (tr 태그 포함)
  */
 export function removeSubTitleDiv(html: string): string {
-  return html.replace(
+  // 1. 주석으로 마킹된 서브 타이틀 블록 제거 (권장)
+  let result = html.replace(
+    /<!-- 서브 타이틀 -->\s*<tr>[\s\S]*?<\/tr>\s*<!-- \/\/서브 타이틀 -->/g,
+    ''
+  )
+
+  // 2. 플레이스홀더를 포함하는 td 태그 제거 (백업)
+  result = result.replace(
+    /<tr>\s*<td[^>]*>[\s\S]*?{{subTitle}}[\s\S]*?<\/td>\s*<\/tr>/g,
+    ''
+  )
+
+  // 3. "서브 타이틀 영역" 텍스트를 포함하는 div 제거 (레거시 지원)
+  result = result.replace(
     /<div[^>]*>[\s\S]*?서브 타이틀 영역[\s\S]*?<\/div>/g,
     ''
   )
+
+  return result
 }
 
 /**

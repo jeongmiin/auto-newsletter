@@ -14,8 +14,8 @@ export const REGEX_PATTERNS = {
   tableContent: /테이블 콘텐츠 텍스트/g,
   bigButton: /큰 버튼 →/g,
   smallButton: /작은 버튼 →/g,
-  sectionTitle: /모듈 섹션 타이틀 영역/g,
-  subTitle: /서브 타이틀 영역/g,
+  sectionTitle: /{{mainTitle}}|모듈 섹션 타이틀 영역/g,  // 플레이스홀더 또는 레거시 텍스트
+  subTitle: /{{subTitle}}|서브 타이틀 영역/g,  // 플레이스홀더 또는 레거시 텍스트
 }
 
 // HTML 마커

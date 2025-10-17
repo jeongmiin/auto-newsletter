@@ -1,12 +1,10 @@
 import type { ModuleInstance, TableRow, AdditionalContent } from '@/types'
-import { formatTextWithBreaks, shouldRenderElement, safeFormatText } from './textUtils'
+import { formatTextWithBreaks, shouldRenderElement, safeFormatText, replaceTextOrRemoveElement, isEmptyValue } from './textUtils'
 import { DEFAULT_TWO_COLUMN_IMAGE_URL, DEFAULT_IMAGE_URL, REGEX_PATTERNS, HTML_MARKERS } from '@/constants/defaults'
 import {
   applyModule04SmallButtonStyles,
   applyModule04BigButtonStyles,
   handleModule04ButtonVisibility,
-  applyModule05ButtonStyles,
-  handleModule05ButtonVisibility,
   applyModule02ButtonStyles,
   applyModule053ButtonStyles,
   handleModule053ButtonVisibility,
@@ -25,10 +23,10 @@ import {
 export function replaceSectionTitleContent(html: string, properties: Record<string, unknown>): string {
   let sectionHtml = html
 
-  // 메인 타이틀 처리
-  const mainTitle = shouldRenderElement(properties.mainTitle)
-    ? safeFormatText(String(properties.mainTitle))
-    : '모듈 섹션 타이틀 영역'
+  // 메인 타이틀 처리 - 빈 값이면 빈 문자열 (필수 항목이므로 요소는 유지)
+  const mainTitle = isEmptyValue(properties.mainTitle)
+    ? ''  // 빈 값이면 빈 문자열 표시
+    : safeFormatText(String(properties.mainTitle))
   sectionHtml = sectionHtml.replace(REGEX_PATTERNS.sectionTitle, mainTitle)
 
   // 서브 타이틀 처리 - 빈 값이면 요소 제거
@@ -52,52 +50,60 @@ export async function replaceModule04Content(
 ): Promise<string> {
   let modifiedHtml = html
 
-  // 타이틀 교체
+  // 타이틀 교체 - 빈 값이면 요소 제거
   let titleIndex = 0
   modifiedHtml = modifiedHtml.replace(REGEX_PATTERNS.contentTitle, () => {
     const isLeft = titleIndex === 0
     const titleValue = isLeft ? properties.leftTitle : properties.rightTitle
-    const replacement = shouldRenderElement(titleValue)
-      ? safeFormatText(String(titleValue))
-      : '콘텐츠 타이틀'
     titleIndex++
-    return replacement
+
+    // 빈 값이면 빈 문자열 반환 (요소가 제거됨)
+    if (isEmptyValue(titleValue)) {
+      return ''
+    }
+    return safeFormatText(String(titleValue))
   })
 
-  // 콘텐츠 텍스트 교체
+  // 콘텐츠 텍스트 교체 - 빈 값이면 요소 제거
   let contentIndex = 0
   modifiedHtml = modifiedHtml.replace(REGEX_PATTERNS.contentText, () => {
     const isLeft = contentIndex === 0
     const contentValue = isLeft ? properties.leftContent : properties.rightContent
-    const replacement = shouldRenderElement(contentValue)
-      ? safeFormatText(String(contentValue))
-      : '콘텐츠 텍스트'
     contentIndex++
-    return replacement
+
+    // 빈 값이면 빈 문자열 반환 (요소가 제거됨)
+    if (isEmptyValue(contentValue)) {
+      return ''
+    }
+    return safeFormatText(String(contentValue))
   })
 
-  // 작은 버튼 텍스트 교체 (span 내부의 a 태그 텍스트)
+  // 작은 버튼 텍스트 교체 (span 내부의 a 태그 텍스트) - 빈 값이면 기본 텍스트 제거
   let smallBtnIndex = 0
   modifiedHtml = modifiedHtml.replace(
     /(<span align="left"[^>]*>[\s\S]*?<a [^>]*>)([^<]*)(작은[\s\n]*버튼[^<]*)?(<\/a>[\s\S]*?<\/span>)/g,
     (match, prefix, text, btnText, suffix) => {
       const isLeft = smallBtnIndex === 0
       const btnValue = isLeft ? properties.leftSmallBtnText : properties.rightSmallBtnText
-      const replacement = shouldRenderElement(btnValue) ? String(btnValue) : '작은 버튼 →'
       smallBtnIndex++
+
+      // 빈 값이면 빈 문자열 (버튼은 남기되 텍스트만 제거)
+      const replacement = isEmptyValue(btnValue) ? '' : String(btnValue)
       return `${prefix}${replacement}${suffix}`
     }
   )
 
-  // 큰 버튼 텍스트 교체 (width:100% 스타일을 가진 a 태그)
+  // 큰 버튼 텍스트 교체 (width:100% 스타일을 가진 a 태그) - 빈 값이면 기본 텍스트 제거
   let bigBtnIndex = 0
   modifiedHtml = modifiedHtml.replace(
     /(<a [^>]*width:100%[^>]*>)([^<]*)(큰[\s\n]*버튼[^<]*)?(<\/a>)/g,
     (match, prefix, text, btnText, suffix) => {
       const isLeft = bigBtnIndex === 0
       const btnValue = isLeft ? properties.leftBigBtnText : properties.rightBigBtnText
-      const replacement = shouldRenderElement(btnValue) ? String(btnValue) : '큰 버튼 →'
       bigBtnIndex++
+
+      // 빈 값이면 빈 문자열 (버튼은 남기되 텍스트만 제거)
+      const replacement = isEmptyValue(btnValue) ? '' : String(btnValue)
       return `${prefix}${replacement}${suffix}`
     }
   )
@@ -159,35 +165,35 @@ export async function replaceModule02Content(
     .replace(REGEX_PATTERNS.imageUrl1Column, `src="${properties.imageUrl || DEFAULT_IMAGE_URL}"`)
     .replace(REGEX_PATTERNS.imageAlt, `alt="${properties.imageAlt || '이미지'}"`)
 
-  // 콘텐츠 타이틀 처리
-  const title = shouldRenderElement(properties.title)
-    ? safeFormatText(String(properties.title))
-    : '콘텐츠 타이틀'
+  // 콘텐츠 타이틀 처리 - 빈 값이면 빈 문자열 (필수 항목이므로 요소는 유지)
+  const title = isEmptyValue(properties.title)
+    ? ''
+    : safeFormatText(String(properties.title))
   module02Html = module02Html.replace(REGEX_PATTERNS.contentTitle, title)
 
-  // 테이블 타이틀 처리
-  const tableTitle = shouldRenderElement(properties.tableTitle)
-    ? safeFormatText(String(properties.tableTitle))
-    : '테이블 타이틀'
+  // 테이블 타이틀 처리 - 빈 값이면 빈 문자열
+  const tableTitle = isEmptyValue(properties.tableTitle)
+    ? ''
+    : safeFormatText(String(properties.tableTitle))
   module02Html = module02Html.replace(REGEX_PATTERNS.tableTitle, tableTitle)
 
   // 🐛 버그 수정 1: "테이블 콘텐츠 텍스트"를 먼저 교체해야 "콘텐츠 텍스트"와 충돌하지 않음
-  // 테이블 콘텐츠 처리 (먼저 교체)
-  const tableContent = shouldRenderElement(properties.tableContent)
-    ? safeFormatText(String(properties.tableContent))
-    : '테이블 콘텐츠 텍스트'
+  // 테이블 콘텐츠 처리 (먼저 교체) - 빈 값이면 빈 문자열
+  const tableContent = isEmptyValue(properties.tableContent)
+    ? ''
+    : safeFormatText(String(properties.tableContent))
   module02Html = module02Html.replace(REGEX_PATTERNS.tableContent, tableContent)
 
-  // 콘텐츠 텍스트 처리 (나중에 교체)
-  const description = shouldRenderElement(properties.description)
-    ? safeFormatText(String(properties.description))
-    : '콘텐츠 텍스트'
+  // 콘텐츠 텍스트 처리 (나중에 교체) - 빈 값이면 빈 문자열
+  const description = isEmptyValue(properties.description)
+    ? ''
+    : safeFormatText(String(properties.description))
   module02Html = module02Html.replace(REGEX_PATTERNS.contentText, description)
 
-  // 버튼 텍스트 처리
-  const buttonText = shouldRenderElement(properties.buttonText)
-    ? String(properties.buttonText)
-    : '큰 버튼 →'
+  // 버튼 텍스트 처리 - 빈 값이면 빈 문자열
+  const buttonText = isEmptyValue(properties.buttonText)
+    ? ''
+    : String(properties.buttonText)
   module02Html = module02Html.replace(REGEX_PATTERNS.bigButton, buttonText)
   module02Html = module02Html.replace(REGEX_PATTERNS.href, `href="${properties.buttonUrl || '#'}"`)
 
@@ -229,7 +235,7 @@ export async function replaceModule02Content(
 }
 
 /**
- * Module05 콘텐츠 교체
+ * Module05 콘텐츠 교체 - 완전히 새로운 플레이스홀더 기반 방식
  */
 export async function replaceModule05Content(
   html: string,
@@ -238,65 +244,91 @@ export async function replaceModule05Content(
 ): Promise<string> {
   let module05Html = html
 
-  // 이미지 URL 교체
-  let imgIndex = 0
-  module05Html = module05Html.replace(REGEX_PATTERNS.imageUrl2Column, () => {
-    const url = imgIndex === 0
-      ? (properties.topLeftImageUrl || DEFAULT_TWO_COLUMN_IMAGE_URL)
-      : (properties.bottomLeftImageUrl || DEFAULT_TWO_COLUMN_IMAGE_URL)
-    imgIndex++
-    return `src="${url}"`
-  })
+  console.log('[Module05] 콘텐츠 교체 시작:', properties)
 
-  // 콘텐츠 타이틀 교체
-  let titleIndex = 0
-  module05Html = module05Html.replace(/>콘텐츠 타이틀</g, () => {
-    let titleValue
-    if (titleIndex === 0) {
-      titleValue = properties.topRightTitle
-    } else if (titleIndex === 2) {
-      titleValue = properties.bottomRightTitle
-    } else {
-      titleValue = properties.topRightTableTitle
-    }
+  // === 이미지 URL 교체 ===
+  module05Html = module05Html.replace(/{{topLeftImageUrl}}/g, String(properties.topLeftImageUrl || DEFAULT_TWO_COLUMN_IMAGE_URL))
+  module05Html = module05Html.replace(/{{topLeftImageAlt}}/g, String(properties.topLeftImageAlt || '이미지'))
+  module05Html = module05Html.replace(/{{bottomLeftImageUrl}}/g, String(properties.bottomLeftImageUrl || DEFAULT_TWO_COLUMN_IMAGE_URL))
+  module05Html = module05Html.replace(/{{bottomLeftImageAlt}}/g, String(properties.bottomLeftImageAlt || '이미지'))
 
-    const replacement = shouldRenderElement(titleValue)
-      ? `>${safeFormatText(String(titleValue))}<`
-      : `>콘텐츠 타이틀<`
-    titleIndex++
-    return replacement
-  })
+  // === 위쪽 타이틀 교체 - 빈 값이면 요소 제거 ===
+  if (isEmptyValue(properties.topRightTitle)) {
+    // 타이틀을 포함하는 div 전체 제거
+    module05Html = module05Html.replace(/<!-- 위쪽 타이틀 -->[\s\S]*?<!-- \/\/위쪽 타이틀 -->/g, '')
+    module05Html = module05Html.replace(/<div[^>]*>[\s\S]*?{{topRightTitle}}[\s\S]*?<\/div>/g, '')
+    module05Html = module05Html.replace(/{{topRightTitle}}/g, '')
+  } else {
+    module05Html = module05Html.replace(/{{topRightTitle}}/g, String(properties.topRightTitle))
+  }
 
-  // 작은 버튼 텍스트 교체
-  let smallBtnIndex = 0
-  module05Html = module05Html.replace(REGEX_PATTERNS.smallButton, () => {
-    const isTop = smallBtnIndex === 0
-    const btnValue = isTop ? properties.topRightSmallBtnText : properties.bottomRightSmallBtnText
-    const replacement = shouldRenderElement(btnValue) ? String(btnValue) : '작은 버튼 →'
-    smallBtnIndex++
-    return replacement
-  })
+  // === 위쪽 테이블 타이틀 교체 - 빈 값이면 요소 제거 ===
+  if (isEmptyValue(properties.topRightTableTitle)) {
+    // 테이블을 포함하는 전체 제거
+    module05Html = module05Html.replace(/<!-- 위쪽 테이블 -->[\s\S]*?<!-- \/\/위쪽 테이블 -->/g, '')
+    module05Html = module05Html.replace(/<table[^>]*>[\s\S]*?{{topRightTableTitle}}[\s\S]*?<\/table>/g, '')
+    module05Html = module05Html.replace(/{{topRightTableTitle}}/g, '')
+  } else {
+    module05Html = module05Html.replace(/{{topRightTableTitle}}/g, safeFormatText(String(properties.topRightTableTitle)))
+  }
 
-  // 큰 버튼 텍스트 교체
-  const bigButtonText = shouldRenderElement(properties.bigButtonText)
-    ? String(properties.bigButtonText)
-    : '큰 버튼 →'
-  module05Html = module05Html.replace(REGEX_PATTERNS.bigButton, bigButtonText)
+  // === 아래쪽 타이틀 교체 - 빈 값이면 요소 제거 ===
+  if (isEmptyValue(properties.bottomRightTitle)) {
+    module05Html = module05Html.replace(/<!-- 아래쪽 타이틀 -->[\s\S]*?<!-- \/\/아래쪽 타이틀 -->/g, '')
+    module05Html = module05Html.replace(/<div[^>]*>[\s\S]*?{{bottomRightTitle}}[\s\S]*?<\/div>/g, '')
+    module05Html = module05Html.replace(/{{bottomRightTitle}}/g, '')
+  } else {
+    module05Html = module05Html.replace(/{{bottomRightTitle}}/g, String(properties.bottomRightTitle))
+  }
 
-  // href 교체
-  const hrefReplacements = [
-    properties.topRightSmallBtnUrl || '#',
-    properties.bottomRightSmallBtnUrl || '#',
-    properties.bigButtonUrl || '#',
-  ]
-  let hrefIndex = 0
-  module05Html = module05Html.replace(REGEX_PATTERNS.href, () => {
-    const url = hrefReplacements[hrefIndex] || '#'
-    hrefIndex++
-    return `href="${url}"`
-  })
+  // === 아래쪽 테이블 타이틀 교체 - 빈 값이면 요소 제거 ===
+  if (isEmptyValue(properties.bottomRightTableTitle)) {
+    module05Html = module05Html.replace(/<!-- 아래쪽 테이블 -->[\s\S]*?<!-- \/\/아래쪽 테이블 -->/g, '')
+    module05Html = module05Html.replace(/<table[^>]*>[\s\S]*?{{bottomRightTableTitle}}[\s\S]*?<\/table>/g, '')
+    module05Html = module05Html.replace(/{{bottomRightTableTitle}}/g, '')
+  } else {
+    module05Html = module05Html.replace(/{{bottomRightTableTitle}}/g, safeFormatText(String(properties.bottomRightTableTitle)))
+  }
 
-  // 추가 콘텐츠 삽입 (상단)
+  // === 버튼 색상 ===
+  const smallBtnBgColor = properties.smallBtnBgColor || '#e5e5e5'
+  const smallBtnTextColor = properties.smallBtnTextColor || '#ffffff'
+  const bigBtnBgColor = properties.bigBtnBgColor || '#111111'
+  const bigBtnTextColor = properties.bigBtnTextColor || '#ffffff'
+
+  module05Html = module05Html.replace(/{{smallBtnBgColor}}/g, String(smallBtnBgColor))
+  module05Html = module05Html.replace(/{{smallBtnTextColor}}/g, String(smallBtnTextColor))
+  module05Html = module05Html.replace(/{{bigBtnBgColor}}/g, String(bigBtnBgColor))
+  module05Html = module05Html.replace(/{{bigBtnTextColor}}/g, String(bigBtnTextColor))
+
+  // === 위쪽 작은 버튼 처리 ===
+  if (properties.showTopSmallBtn !== true) {
+    module05Html = module05Html.replace(/<!-- 위쪽 작은 버튼 -->[\s\S]*?<!-- \/\/위쪽 작은 버튼 -->/g, '')
+  } else {
+    const topSmallBtnText = isEmptyValue(properties.topRightSmallBtnText) ? '' : String(properties.topRightSmallBtnText)
+    module05Html = module05Html.replace(/{{topRightSmallBtnText}}/g, topSmallBtnText)
+    module05Html = module05Html.replace(/{{topRightSmallBtnUrl}}/g, String(properties.topRightSmallBtnUrl || '#'))
+  }
+
+  // === 아래쪽 작은 버튼 처리 ===
+  if (properties.showBottomSmallBtn !== true) {
+    module05Html = module05Html.replace(/<!-- 아래쪽 작은 버튼 -->[\s\S]*?<!-- \/\/아래쪽 작은 버튼 -->/g, '')
+  } else {
+    const bottomSmallBtnText = isEmptyValue(properties.bottomRightSmallBtnText) ? '' : String(properties.bottomRightSmallBtnText)
+    module05Html = module05Html.replace(/{{bottomRightSmallBtnText}}/g, bottomSmallBtnText)
+    module05Html = module05Html.replace(/{{bottomRightSmallBtnUrl}}/g, String(properties.bottomRightSmallBtnUrl || '#'))
+  }
+
+  // === 큰 버튼 처리 ===
+  if (properties.showBigBtn !== true) {
+    module05Html = module05Html.replace(/<!-- 큰 버튼 -->[\s\S]*?<!-- \/\/큰 버튼 -->/g, '')
+  } else {
+    const bigBtnText = isEmptyValue(properties.bigButtonText) ? '' : String(properties.bigButtonText)
+    module05Html = module05Html.replace(/{{bigButtonText}}/g, bigBtnText)
+    module05Html = module05Html.replace(/{{bigButtonUrl}}/g, String(properties.bigButtonUrl || '#'))
+  }
+
+  // === 추가 콘텐츠 삽입 (상단) ===
   if (properties.additionalContentsTop && Array.isArray(properties.additionalContentsTop) && properties.additionalContentsTop.length > 0) {
     module05Html = await insertAdditionalContents(
       module05Html,
@@ -307,7 +339,7 @@ export async function replaceModule05Content(
     module05Html = removeMarker(module05Html, HTML_MARKERS.additionalContentTop)
   }
 
-  // 추가 콘텐츠 삽입 (하단)
+  // === 추가 콘텐츠 삽입 (하단) ===
   if (properties.additionalContentsBottom && Array.isArray(properties.additionalContentsBottom) && properties.additionalContentsBottom.length > 0) {
     module05Html = await insertAdditionalContents(
       module05Html,
@@ -318,12 +350,7 @@ export async function replaceModule05Content(
     module05Html = removeMarker(module05Html, HTML_MARKERS.additionalContentBottom)
   }
 
-  // 버튼 표시/숨김 처리
-  module05Html = handleModule05ButtonVisibility(module05Html, properties)
-
-  // 버튼 스타일 적용
-  module05Html = applyModule05ButtonStyles(module05Html, properties)
-
+  console.log('[Module05] 콘텐츠 교체 완료')
   return module05Html
 }
 
@@ -336,26 +363,26 @@ export async function replaceModule053Content(
 ): Promise<string> {
   let module053Html = html
 
-  // 섹션 타이틀 교체
+  // 섹션 타이틀 교체 - 빈 값이면 빈 문자열
   let titleIndex = 0
   module053Html = module053Html.replace(/상단 섹션 타이틀|하단 섹션 타이틀/g, () => {
     const isTop = titleIndex === 0
     const titleValue = isTop ? properties.topSectionTitle : properties.bottomSectionTitle
-    const replacement = shouldRenderElement(titleValue)
-      ? safeFormatText(String(titleValue))
-      : isTop ? '상단 섹션 타이틀' : '하단 섹션 타이틀'
+    const replacement = isEmptyValue(titleValue)
+      ? ''  // 빈 값이면 빈 문자열
+      : safeFormatText(String(titleValue))
     titleIndex++
     return replacement
   })
 
-  // 섹션 텍스트 교체
+  // 섹션 텍스트 교체 - 빈 값이면 빈 문자열
   let textIndex = 0
   module053Html = module053Html.replace(/상단 섹션 텍스트|하단 섹션 텍스트/g, () => {
     const isTop = textIndex === 0
     const textValue = isTop ? properties.topSectionText : properties.bottomSectionText
-    const replacement = shouldRenderElement(textValue)
-      ? safeFormatText(String(textValue))
-      : isTop ? '상단 섹션 텍스트' : '하단 섹션 텍스트'
+    const replacement = isEmptyValue(textValue)
+      ? ''  // 빈 값이면 빈 문자열
+      : safeFormatText(String(textValue))
     textIndex++
     return replacement
   })
@@ -380,68 +407,68 @@ export async function replaceModule053Content(
     return `alt="${alt}"`
   })
 
-  // 오른쪽 타이틀 1 교체
+  // 오른쪽 타이틀 1 교체 - 빈 값이면 빈 문자열
   let rightTitle1Index = 0
   module053Html = module053Html.replace(/상단 오른쪽 첫 번째 타이틀|하단 오른쪽 첫 번째 타이틀/g, () => {
     const isTop = rightTitle1Index === 0
     const titleValue = isTop ? properties.topRightTitle1 : properties.bottomRightTitle1
-    const replacement = shouldRenderElement(titleValue)
-      ? safeFormatText(String(titleValue))
-      : isTop ? '상단 오른쪽 첫 번째 타이틀' : '하단 오른쪽 첫 번째 타이틀'
+    const replacement = isEmptyValue(titleValue)
+      ? ''
+      : safeFormatText(String(titleValue))
     rightTitle1Index++
     return replacement
   })
 
-  // 오른쪽 텍스트 1 교체
+  // 오른쪽 텍스트 1 교체 - 빈 값이면 빈 문자열
   let rightText1Index = 0
   module053Html = module053Html.replace(/상단 오른쪽 첫 번째 텍스트|하단 오른쪽 첫 번째 텍스트/g, () => {
     const isTop = rightText1Index === 0
     const textValue = isTop ? properties.topRightText1 : properties.bottomRightText1
-    const replacement = shouldRenderElement(textValue)
-      ? safeFormatText(String(textValue))
-      : isTop ? '상단 오른쪽 첫 번째 텍스트' : '하단 오른쪽 첫 번째 텍스트'
+    const replacement = isEmptyValue(textValue)
+      ? ''
+      : safeFormatText(String(textValue))
     rightText1Index++
     return replacement
   })
 
-  // 오른쪽 타이틀 2 교체
+  // 오른쪽 타이틀 2 교체 - 빈 값이면 빈 문자열
   let rightTitle2Index = 0
   module053Html = module053Html.replace(/상단 오른쪽 두 번째 타이틀|하단 오른쪽 두 번째 타이틀/g, () => {
     const isTop = rightTitle2Index === 0
     const titleValue = isTop ? properties.topRightTitle2 : properties.bottomRightTitle2
-    const replacement = shouldRenderElement(titleValue)
-      ? safeFormatText(String(titleValue))
-      : isTop ? '상단 오른쪽 두 번째 타이틀' : '하단 오른쪽 두 번째 타이틀'
+    const replacement = isEmptyValue(titleValue)
+      ? ''
+      : safeFormatText(String(titleValue))
     rightTitle2Index++
     return replacement
   })
 
-  // 오른쪽 텍스트 2 교체
+  // 오른쪽 텍스트 2 교체 - 빈 값이면 빈 문자열
   let rightText2Index = 0
   module053Html = module053Html.replace(/상단 오른쪽 두 번째 텍스트|하단 오른쪽 두 번째 텍스트/g, () => {
     const isTop = rightText2Index === 0
     const textValue = isTop ? properties.topRightText2 : properties.bottomRightText2
-    const replacement = shouldRenderElement(textValue)
-      ? safeFormatText(String(textValue))
-      : isTop ? '상단 오른쪽 두 번째 텍스트' : '하단 오른쪽 두 번째 텍스트'
+    const replacement = isEmptyValue(textValue)
+      ? ''
+      : safeFormatText(String(textValue))
     rightText2Index++
     return replacement
   })
 
-  // 작은 버튼 텍스트 교체
+  // 작은 버튼 텍스트 교체 - 빈 값이면 빈 문자열
   let smallBtnIndex = 0
   module053Html = module053Html.replace(REGEX_PATTERNS.smallButton, () => {
     const isTop = smallBtnIndex === 0
     const btnValue = isTop ? properties.topSmallBtnText : properties.bottomSmallBtnText
-    const replacement = shouldRenderElement(btnValue) ? String(btnValue) : '작은 버튼 →'
+    const replacement = isEmptyValue(btnValue) ? '' : String(btnValue)
     smallBtnIndex++
     return replacement
   })
 
-  // 큰 버튼 텍스트 교체
-  const bigButtonText = shouldRenderElement(properties.bigBtnText)
-    ? String(properties.bigBtnText)
-    : '큰 버튼 →'
+  // 큰 버튼 텍스트 교체 - 빈 값이면 빈 문자열
+  const bigButtonText = isEmptyValue(properties.bigBtnText)
+    ? ''
+    : String(properties.bigBtnText)
   module053Html = module053Html.replace(REGEX_PATTERNS.bigButton, bigButtonText)
 
   // href 교체

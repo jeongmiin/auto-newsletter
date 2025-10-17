@@ -65,7 +65,7 @@
           "key": "showTable",
           "label": "테이블 표시",
           "type": "boolean",
-          "default": true
+          "default": false
         },
         {
           "key": "tableTitle",
@@ -89,7 +89,7 @@
           "key": "showButton",
           "label": "버튼 표시",
           "type": "boolean",
-          "default": true
+          "default": false
         },
         {
           "key": "buttonText",
@@ -299,85 +299,85 @@
       "editableProps": [
         {
           "key": "topLeftImageUrl",
-          "label": "위쪽 왼쪽 이미지 URL",
+          "label": "위 이미지 URL",
           "type": "url",
           "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png"
         },
         {
           "key": "topLeftImageAlt",
-          "label": "위쪽 왼쪽 이미지 설명 Alt",
+          "label": "위 이미지 설명 Alt",
           "type": "text",
           "placeholder": "이미지"
         },
         {
           "key": "topRightTitle",
-          "label": "위쪽 오른쪽 타이틀",
+          "label": "위 타이틀",
           "type": "text",
           "placeholder": "콘텐츠 타이틀"
         },
         {
           "key": "topRightTableTitle",
-          "label": "위쪽 오른쪽 테이블 타이틀",
+          "label": "위 텍스트",
           "type": "text",
-          "placeholder": "콘텐츠 타이틀"
+          "placeholder": "콘텐츠 텍스트"
         },
         {
           "key": "bottomLeftImageUrl",
-          "label": "아래쪽 왼쪽 이미지 URL",
+          "label": "아래 이미지 URL",
           "type": "url",
           "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png"
         },
         {
           "key": "bottomLeftImageAlt",
-          "label": "아래쪽 왼쪽 이미지 설명 Alt",
+          "label": "아래 이미지 설명 Alt",
           "type": "text",
           "placeholder": "이미지"
         },
         {
           "key": "bottomRightTitle",
-          "label": "아래쪽 오른쪽 타이틀",
+          "label": "아래 타이틀",
           "type": "text",
           "placeholder": "콘텐츠 타이틀"
         },
         {
           "key": "bottomRightTableTitle",
-          "label": "아래쪽 오른쪽 테이블 타이틀",
+          "label": "아래 텍스트",
           "type": "text",
-          "placeholder": "콘텐츠 타이틀"
+          "placeholder": "콘텐츠 텍스트"
         },
         {
           "key": "showTopSmallBtn",
-          "label": "위쪽 작은 버튼 표시",
+          "label": "위 작은 버튼 표시",
           "type": "boolean",
           "default": false
         },
         {
           "key": "topRightSmallBtnText",
-          "label": "위쪽 오른쪽 작은 버튼",
+          "label": "위 작은 버튼",
           "type": "text",
           "placeholder": "작은 버튼 →"
         },
         {
           "key": "topRightSmallBtnUrl",
-          "label": "위쪽 오른쪽 작은 버튼 링크",
+          "label": "위 작은 버튼 링크",
           "type": "url",
           "placeholder": "#"
         },
         {
           "key": "showBottomSmallBtn",
-          "label": "아래쪽 작은 버튼 표시",
+          "label": "아래 작은 버튼 표시",
           "type": "boolean",
           "default": false
         },
         {
           "key": "bottomRightSmallBtnText",
-          "label": "아래쪽 오른쪽 작은 버튼",
+          "label": "아래 작은 버튼",
           "type": "text",
           "placeholder": "작은 버튼 →"
         },
         {
           "key": "bottomRightSmallBtnUrl",
-          "label": "아래쪽 오른쪽 작은 버튼 링크",
+          "label": "아래 작은 버튼 링크",
           "type": "url",
           "placeholder": "#"
         },
@@ -438,7 +438,7 @@
     {
       "id": "Module05-3",
       "name": "모듈 05-3",
-      "description": "상단/하단 2개 섹션, 각각 타이틀/텍스트/이미지/작은버튼, 하단 큰 버튼",
+      "description": "2개 섹션, 각각 타이틀/텍스트/이미지/작은버튼, 하단 큰 버튼",
       "category": "image",
       "icon": "🔘",
       "htmlFile": "Module05-3.html",
