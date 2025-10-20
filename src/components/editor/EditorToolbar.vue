@@ -38,12 +38,12 @@
 
     <!-- 오른쪽: 내보내기 -->
     <div class="flex items-center space-x-2">
-      <button
+      <!-- <button
         @click="previewEmail"
         class="px-4 py-2 text-sm bg-gray-100 text-gray-700 hover:bg-gray-200 rounded"
       >
         미리보기
-      </button>
+      </button> -->
       <button
         @click="exportHtml"
         class="px-4 py-2 text-sm bg-blue-600 text-white hover:bg-blue-700 rounded"
