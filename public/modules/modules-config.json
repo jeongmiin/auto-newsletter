@@ -57,11 +57,6 @@
           "placeholder": "콘텐츠 텍스트"
         },
         {
-          "key": "additionalContents",
-          "label": "추가 콘텐츠 관리",
-          "type": "additional-contents"
-        },
-        {
           "key": "showTable",
           "label": "테이블 표시",
           "type": "boolean",
@@ -323,6 +318,29 @@
           "placeholder": "콘텐츠 텍스트"
         },
         {
+          "key": "showTopSmallBtn",
+          "label": "위 작은 버튼 표시",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "topRightSmallBtnText",
+          "label": "위 작은 버튼",
+          "type": "text",
+          "placeholder": "작은 버튼 →"
+        },
+        {
+          "key": "topRightSmallBtnUrl",
+          "label": "위 작은 버튼 링크",
+          "type": "url",
+          "placeholder": "#"
+        },
+        {
+          "key": "additionalContentsTop",
+          "label": "위 추가 콘텐츠",
+          "type": "additional-contents"
+        },
+        {
           "key": "bottomLeftImageUrl",
           "label": "아래 이미지 URL",
           "type": "url",
@@ -345,24 +363,6 @@
           "label": "아래 텍스트",
           "type": "textarea",
           "placeholder": "콘텐츠 텍스트"
-        },
-        {
-          "key": "showTopSmallBtn",
-          "label": "위 작은 버튼 표시",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "key": "topRightSmallBtnText",
-          "label": "위 작은 버튼",
-          "type": "text",
-          "placeholder": "작은 버튼 →"
-        },
-        {
-          "key": "topRightSmallBtnUrl",
-          "label": "위 작은 버튼 링크",
-          "type": "url",
-          "placeholder": "#"
         },
         {
           "key": "showBottomSmallBtn",
@@ -395,6 +395,11 @@
           "default": "#ffffff"
         },
         {
+          "key": "additionalContentsBottom",
+          "label": "아래 추가 콘텐츠",
+          "type": "additional-contents"
+        },
+        {
           "key": "showBigBtn",
           "label": "큰 버튼 표시",
           "type": "boolean",
@@ -423,16 +428,6 @@
           "label": "큰 버튼 글자색",
           "type": "color",
           "default": "#ffffff"
-        },
-        {
-          "key": "additionalContentsTop",
-          "label": "상단 추가 콘텐츠",
-          "type": "additional-contents"
-        },
-        {
-          "key": "additionalContentsBottom",
-          "label": "하단 추가 콘텐츠",
-          "type": "additional-contents"
         }
       ]
     },

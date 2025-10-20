@@ -6,6 +6,9 @@ import router from './router'
 // CSS를 먼저 import
 import './assets/main.css'
 
+// Quill 에디터 스타일
+import 'quill/dist/quill.snow.css'
+
 // ============= 전역 에러 핸들러 =============
 // Unhandled Promise Rejection 감지
 window.addEventListener('unhandledrejection', (event) => {

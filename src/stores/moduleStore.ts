@@ -27,7 +27,7 @@ export const useModuleStore = defineStore('module', () => {
 
   // ============= Computed =============
   const selectedModule = computed(
-    () => modules.value.find((m) => m.id === selectedModuleId.value) || null
+    () => modules.value.find((m) => m.id === selectedModuleId.value) || null,
   )
 
   const selectedModuleMetadata = computed(() => {
@@ -135,7 +135,7 @@ export const useModuleStore = defineStore('module', () => {
    */
   const updateModuleStyle = (styleKey: string, value: unknown): void => {
     if (!selectedModule.value) return
-    (selectedModule.value.styles as Record<string, unknown>)[styleKey] = value
+    ;(selectedModule.value.styles as Record<string, unknown>)[styleKey] = value
   }
 
   /**
@@ -167,7 +167,6 @@ export const useModuleStore = defineStore('module', () => {
   const moveModuleUp = (moduleId: string): void => {
     const index = modules.value.findIndex((m) => m.id === moduleId)
     if (index <= 0) return
-
     ;[modules.value[index], modules.value[index - 1]] = [
       modules.value[index - 1],
       modules.value[index],
@@ -181,7 +180,6 @@ export const useModuleStore = defineStore('module', () => {
   const moveModuleDown = (moduleId: string): void => {
     const index = modules.value.findIndex((m) => m.id === moduleId)
     if (index < 0 || index >= modules.value.length - 1) return
-
     ;[modules.value[index], modules.value[index + 1]] = [
       modules.value[index + 1],
       modules.value[index],
@@ -249,7 +247,10 @@ export const useModuleStore = defineStore('module', () => {
     // modules ref를 강제로 트리거하여 Vue에게 변경을 알림
     triggerRef(modules)
 
-    console.log('[addTableRow] 추가 완료 - 새 행 수:', (module.properties.tableRows as TableRow[]).length)
+    console.log(
+      '[addTableRow] 추가 완료 - 새 행 수:',
+      (module.properties.tableRows as TableRow[]).length,
+    )
     console.log('[addTableRow] triggerRef 실행')
   }
 
@@ -257,7 +258,7 @@ export const useModuleStore = defineStore('module', () => {
     moduleId: string,
     rowId: string,
     field: 'header' | 'data',
-    value: string
+    value: string,
   ): void => {
     const module = modules.value.find((m) => m.id === moduleId)
     if (!module || !module.properties.tableRows) return
@@ -273,7 +274,7 @@ export const useModuleStore = defineStore('module', () => {
     if (!module || !module.properties.tableRows) return
 
     const index = (module.properties.tableRows as TableRow[]).findIndex(
-      (r: TableRow) => r.id === rowId
+      (r: TableRow) => r.id === rowId,
     )
     if (index !== -1) {
       ;(module.properties.tableRows as TableRow[]).splice(index, 1)
@@ -302,7 +303,7 @@ export const useModuleStore = defineStore('module', () => {
     if (!module || !module.properties.contentTitles) return
 
     const title = (module.properties.contentTitles as ContentTitle[]).find(
-      (t: ContentTitle) => t.id === titleId
+      (t: ContentTitle) => t.id === titleId,
     )
     if (title) {
       title.text = text
@@ -314,7 +315,7 @@ export const useModuleStore = defineStore('module', () => {
     if (!module || !module.properties.contentTitles) return
 
     const index = (module.properties.contentTitles as ContentTitle[]).findIndex(
-      (t: ContentTitle) => t.id === titleId
+      (t: ContentTitle) => t.id === titleId,
     )
     if (index !== -1) {
       ;(module.properties.contentTitles as ContentTitle[]).splice(index, 1)
@@ -343,7 +344,7 @@ export const useModuleStore = defineStore('module', () => {
     if (!module || !module.properties.contentTexts) return
 
     const text = (module.properties.contentTexts as ContentText[]).find(
-      (t: ContentText) => t.id === textId
+      (t: ContentText) => t.id === textId,
     )
     if (text) {
       text.content = content
@@ -355,7 +356,7 @@ export const useModuleStore = defineStore('module', () => {
     if (!module || !module.properties.contentTexts) return
 
     const index = (module.properties.contentTexts as ContentText[]).findIndex(
-      (t: ContentText) => t.id === textId
+      (t: ContentText) => t.id === textId,
     )
     if (index !== -1) {
       ;(module.properties.contentTexts as ContentText[]).splice(index, 1)
@@ -391,7 +392,7 @@ export const useModuleStore = defineStore('module', () => {
   const addAdditionalContent = async (
     moduleId: string,
     type: 'title' | 'text',
-    propertyKey: string = 'additionalContents'
+    propertyKey: string = 'additionalContents',
   ): Promise<void> => {
     const module = modules.value.find((m) => m.id === moduleId)
     if (!module) return
@@ -422,13 +423,13 @@ export const useModuleStore = defineStore('module', () => {
     moduleId: string,
     contentId: string,
     data: Record<string, string>,
-    propertyKey: string = 'additionalContents'
+    propertyKey: string = 'additionalContents',
   ): void => {
     const module = modules.value.find((m) => m.id === moduleId)
     if (!module || !module.properties[propertyKey]) return
 
     const content = (module.properties[propertyKey] as AdditionalContent[]).find(
-      (c: AdditionalContent) => c.id === contentId
+      (c: AdditionalContent) => c.id === contentId,
     )
     if (content) {
       content.data = { ...content.data, ...data }
@@ -438,27 +439,29 @@ export const useModuleStore = defineStore('module', () => {
   const removeAdditionalContent = (
     moduleId: string,
     contentId: string,
-    propertyKey: string = 'additionalContents'
+    propertyKey: string = 'additionalContents',
   ): void => {
     const module = modules.value.find((m) => m.id === moduleId)
     if (!module || !module.properties[propertyKey]) return
 
     const index = (module.properties[propertyKey] as AdditionalContent[]).findIndex(
-      (c: AdditionalContent) => c.id === contentId
+      (c: AdditionalContent) => c.id === contentId,
     )
     if (index !== -1) {
       ;(module.properties[propertyKey] as AdditionalContent[]).splice(index, 1)
       const contents = module.properties[propertyKey] as AdditionalContent[]
-      contents.sort((a, b) => a.order - b.order).forEach((content, idx) => {
-        content.order = idx + 1
-      })
+      contents
+        .sort((a, b) => a.order - b.order)
+        .forEach((content, idx) => {
+          content.order = idx + 1
+        })
     }
   }
 
   const moveAdditionalContentUp = (
     moduleId: string,
     contentId: string,
-    propertyKey: string = 'additionalContents'
+    propertyKey: string = 'additionalContents',
   ): void => {
     const module = modules.value.find((m) => m.id === moduleId)
     if (!module || !module.properties[propertyKey]) return
@@ -467,16 +470,18 @@ export const useModuleStore = defineStore('module', () => {
     const index = contents.findIndex((c: AdditionalContent) => c.id === contentId)
     if (index > 0) {
       ;[contents[index], contents[index - 1]] = [contents[index - 1], contents[index]]
-      contents.sort((a, b) => a.order - b.order).forEach((content, idx) => {
-        content.order = idx + 1
-      })
+      contents
+        .sort((a, b) => a.order - b.order)
+        .forEach((content, idx) => {
+          content.order = idx + 1
+        })
     }
   }
 
   const moveAdditionalContentDown = (
     moduleId: string,
     contentId: string,
-    propertyKey: string = 'additionalContents'
+    propertyKey: string = 'additionalContents',
   ): void => {
     const module = modules.value.find((m) => m.id === moduleId)
     if (!module || !module.properties[propertyKey]) return
@@ -485,9 +490,11 @@ export const useModuleStore = defineStore('module', () => {
     const index = contents.findIndex((c: AdditionalContent) => c.id === contentId)
     if (index < contents.length - 1) {
       ;[contents[index], contents[index + 1]] = [contents[index + 1], contents[index]]
-      contents.sort((a, b) => a.order - b.order).forEach((content, idx) => {
-        content.order = idx + 1
-      })
+      contents
+        .sort((a, b) => a.order - b.order)
+        .forEach((content, idx) => {
+          content.order = idx + 1
+        })
     }
   }
 
@@ -509,7 +516,7 @@ export const useModuleStore = defineStore('module', () => {
   const insertAdditionalContents = async (
     baseHtml: string,
     contents: AdditionalContent[],
-    insertMarker: string
+    insertMarker: string,
   ): Promise<string> => {
     if (!contents || contents.length === 0) {
       return baseHtml.replace(insertMarker, '')
@@ -530,10 +537,7 @@ export const useModuleStore = defineStore('module', () => {
   /**
    * 모듈별 콘텐츠 교체
    */
-  const replaceModuleContent = async (
-    html: string,
-    module: ModuleInstance
-  ): Promise<string> => {
+  const replaceModuleContent = async (html: string, module: ModuleInstance): Promise<string> => {
     const { moduleId, properties } = module
 
     switch (moduleId) {
@@ -585,7 +589,10 @@ export const useModuleStore = defineStore('module', () => {
 
         fullHtml += html + '\n'
       } catch (error) {
-        console.error(`[generateHtml] Failed to generate HTML for module ${module.moduleId}:`, error)
+        console.error(
+          `[generateHtml] Failed to generate HTML for module ${module.moduleId}:`,
+          error,
+        )
       }
     }
 
@@ -594,14 +601,10 @@ export const useModuleStore = defineStore('module', () => {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generated Email</title>
-    <style>
-        body { margin: 0; padding: 0; font-family: Arial, sans-serif; }
-        .email-container { max-width: 680px; margin: 0 auto; }
-    </style>
+    <title>Auto Newsletter</title>
 </head>
-<body>
-    <div class="email-container">
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; ">
+    <div style="max-width: 680px; margin: 0 auto;">
         ${fullHtml}
     </div>
 </body>

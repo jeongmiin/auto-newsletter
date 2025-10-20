@@ -40,15 +40,13 @@
             class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
 
-          <!-- 텍스트에어리어 -->
-          <textarea
+          <!-- Quill 에디터 -->
+          <QuillEditor
             v-else-if="prop.type === 'textarea'"
-            :value="String(selectedModule.properties[prop.key] || '')"
-            @input="updateProperty(prop.key, ($event.target as HTMLInputElement).value)"
+            :model-value="String(selectedModule.properties[prop.key] || '')"
+            @update:model-value="updateProperty(prop.key, $event)"
             :placeholder="prop.placeholder"
-            rows="3"
-            class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          ></textarea>
+          />
 
           <!-- 컬러 선택 -->
           <input
@@ -233,15 +231,11 @@
 
                 <div>
                   <label class="block text-xs text-gray-600 mb-1">콘텐츠 내용</label>
-                  <textarea
-                    :value="text.content"
-                    @input="
-                      updateContentTextField(text.id, ($event.target as HTMLTextAreaElement).value)
-                    "
+                  <QuillEditor
+                    :model-value="text.content"
+                    @update:model-value="updateContentTextField(text.id, $event)"
                     placeholder="콘텐츠 내용을 입력하세요"
-                    rows="3"
-                    class="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  ></textarea>
+                  />
                 </div>
               </div>
             </div>
@@ -332,20 +326,13 @@
                 </div>
                 <div v-else>
                   <label class="block text-xs text-gray-600 mb-1">텍스트 내용</label>
-                  <textarea
-                    :value="content.data.text_content || ''"
-                    @input="
-                      updateAdditionalContentData(
-                        content.id,
-                        'text_content',
-                        ($event.target as HTMLTextAreaElement).value,
-                        prop.key,
-                      )
+                  <QuillEditor
+                    :model-value="content.data.text_content || ''"
+                    @update:model-value="
+                      updateAdditionalContentData(content.id, 'text_content', $event, prop.key)
                     "
                     placeholder="텍스트 내용을 입력하세요"
-                    rows="3"
-                    class="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  ></textarea>
+                  />
                 </div>
               </div>
             </div>
@@ -376,6 +363,7 @@
 import { computed } from 'vue'
 import { useModuleStore } from '@/stores/moduleStore'
 import type { TableRow, EditableProp, ContentTitle, ContentText, AdditionalContent } from '@/types'
+import QuillEditor from '@/components/QuillEditor.vue'
 
 const moduleStore = useModuleStore()
 

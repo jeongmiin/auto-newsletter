@@ -1,12 +1,31 @@
 // 텍스트 처리 유틸리티 함수들
 
+/**
+ * Quill 에디터에서 나온 HTML 또는 일반 텍스트를 처리
+ * Quill은 이미 HTML을 반환하므로 변환 없이 그대로 사용
+ * 일반 텍스트의 경우에만 줄바꿈을 <br>로 변환
+ */
 export const formatTextWithBreaks = (text: string): string => {
   if (!text) return ''
+
+  // HTML 태그가 이미 포함되어 있으면 그대로 반환 (Quill 에디터 출력)
+  if (/<[^>]+>/.test(text)) {
+    return text
+  }
+
+  // 일반 텍스트인 경우에만 줄바꿈 변환
   return text.replace(/\n/g, '<br>')
 }
 
 export const preserveLineBreaks = (text: string): string => {
   if (!text) return ''
+
+  // HTML 태그가 이미 포함되어 있으면 그대로 반환 (Quill 에디터 출력)
+  if (/<[^>]+>/.test(text)) {
+    return text
+  }
+
+  // 일반 텍스트인 경우에만 줄바꿈 변환
   return text.replace(/\r?\n/g, '<br>')
 }
 

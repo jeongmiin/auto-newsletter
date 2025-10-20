@@ -72,9 +72,9 @@ const setCanvasWidth = (width: 'mobile' | 'desktop'): void => {
   editorStore.setCanvasWidth(width)
 }
 
-const previewEmail = (): void => {
-  window.open('/preview', '_blank')
-}
+// const previewEmail = (): void => {
+//   window.open('/preview', '_blank')
+// }
 
 const exportHtml = async (): Promise<void> => {
   try {

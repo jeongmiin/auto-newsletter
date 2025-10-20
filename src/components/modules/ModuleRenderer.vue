@@ -87,4 +87,87 @@ const { renderedHtml, moduleMetadata } = useModuleRenderer(props.module.id)
   max-width: 100%;
   height: auto;
 }
+
+/* Quill 에디터 콘텐츠 스타일 - 미리보기에서 서식 표시 */
+/* 블록 요소: margin, padding 제거 (인라인 스타일과 일치) */
+.module-content :deep(p),
+.module-content :deep(h1),
+.module-content :deep(h2),
+.module-content :deep(h3) {
+  margin: 0;
+  padding: 0;
+}
+
+.module-content :deep(strong) {
+  font-weight: 700;
+}
+
+.module-content :deep(em) {
+  font-style: italic;
+}
+
+.module-content :deep(u) {
+  text-decoration: underline;
+}
+
+.module-content :deep(s) {
+  text-decoration: line-through;
+}
+
+.module-content :deep(ul) {
+  padding: 0;
+  margin: 0;
+}
+.module-content :deep(ol) {
+  padding: 0;
+  margin: 0;
+  counter-reset: item;
+  list-style: none;
+}
+
+.module-content :deep(li) {
+  margin: 0.25em 0;
+}
+.module-content :deep(ol li) {
+  counter-increment: item;
+}
+.module-content :deep(ol li::before) {
+  content: counter(item) '. ';
+  font-weight: bold;
+}
+
+/* data-list="bullet"일 때 · 표시 */
+.module-content :deep(ol:has(li[data-list='bullet'])) {
+  counter-reset: none;
+}
+
+.module-content :deep(ol li[data-list='bullet']) {
+  counter-increment: none;
+}
+
+.module-content :deep(ol li[data-list='bullet']::before) {
+  content: '· ';
+  font-weight: 700;
+}
+.module-content :deep(a) {
+  color: #0066cc;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+/* 헤더 크기 설정 (margin은 위의 통합 규칙에서 0으로 설정됨) */
+.module-content :deep(h1) {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.module-content :deep(h2) {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.module-content :deep(h3) {
+  font-size: 18px;
+  font-weight: 700;
+}
 </style>
