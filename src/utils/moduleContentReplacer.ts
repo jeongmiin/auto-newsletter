@@ -16,6 +16,80 @@ import {
   generateTableRowsHtml,
   removeMarker,
 } from './htmlUtils'
+import { processQuillHtml } from './quillHtmlProcessor'
+
+/**
+ * ModuleBasicHeader 모듈 콘텐츠 교체 - 플레이스홀더 기반 방식
+ */
+export function replaceModuleBasicHeaderContent(html: string, properties: Record<string, unknown>): string {
+  let headerHtml = html
+
+  console.log('[ModuleBasicHeader] 🔧 플레이스홀더 교체 시작')
+
+  // === 로고 이미지 URL 플레이스홀더 교체 ===
+  const logoImageUrl = properties.logoImageUrl || 'https://design.messeesang.com/e-dm/newsletter/images/logo-gray.png'
+  headerHtml = headerHtml.replace(/\{\{logoImageUrl\}\}/g, String(logoImageUrl))
+  console.log('[ModuleBasicHeader] ✅ logoImageUrl:', logoImageUrl)
+
+  // === 로고 대체 텍스트 플레이스홀더 교체 ===
+  const logoAlt = properties.logoAlt || '로고'
+  headerHtml = headerHtml.replace(/\{\{logoAlt\}\}/g, String(logoAlt))
+  console.log('[ModuleBasicHeader] ✅ logoAlt:', logoAlt)
+
+  // === 헤더 텍스트 플레이스홀더 교체 (Quill HTML 처리) ===
+  const headerText = isEmptyValue(properties.headerText)
+    ? ''
+    : processQuillHtml(String(properties.headerText))
+  headerHtml = headerHtml.replace(/\{\{headerText\}\}/g, headerText)
+  console.log('[ModuleBasicHeader] ✅ headerText 처리 완료 (길이:', headerText.length, 'bytes)')
+
+  console.log('[ModuleBasicHeader] ✅ 플레이스홀더 교체 완료')
+
+  return headerHtml
+}
+
+/**
+ * ModuleDescText 모듈 콘텐츠 교체 - 플레이스홀더 기반 방식
+ */
+export function replaceModuleDescTextContent(html: string, properties: Record<string, unknown>): string {
+  let descHtml = html
+
+  console.log('[ModuleDescText] 🔧 플레이스홀더 교체 시작')
+
+  // === 설명 텍스트 플레이스홀더 교체 (Quill HTML 처리) ===
+  const descriptionText = isEmptyValue(properties.descriptionText)
+    ? ''
+    : processQuillHtml(String(properties.descriptionText))
+  descHtml = descHtml.replace(/\{\{descriptionText\}\}/g, descriptionText)
+  console.log('[ModuleDescText] ✅ descriptionText 처리 완료 (길이:', descriptionText.length, 'bytes)')
+
+  console.log('[ModuleDescText] ✅ 플레이스홀더 교체 완료')
+
+  return descHtml
+}
+
+/**
+ * ModuleImg 모듈 콘텐츠 교체 - 플레이스홀더 기반 방식
+ */
+export function replaceModuleImgContent(html: string, properties: Record<string, unknown>): string {
+  let imgHtml = html
+
+  console.log('[ModuleImg] 🔧 플레이스홀더 교체 시작')
+
+  // === 이미지 URL 플레이스홀더 교체 ===
+  const imageUrl = properties.imageUrl || 'https://design.messeesang.com/e-dm/newsletter/images/img-1column.png'
+  imgHtml = imgHtml.replace(/\{\{imageUrl\}\}/g, String(imageUrl))
+  console.log('[ModuleImg] ✅ imageUrl:', imageUrl)
+
+  // === 이미지 Alt 텍스트 플레이스홀더 교체 ===
+  const imageAlt = properties.imageAlt || '이미지'
+  imgHtml = imgHtml.replace(/\{\{imageAlt\}\}/g, String(imageAlt))
+  console.log('[ModuleImg] ✅ imageAlt:', imageAlt)
+
+  console.log('[ModuleImg] ✅ 플레이스홀더 교체 완료')
+
+  return imgHtml
+}
 
 /**
  * SectionTitle 모듈 콘텐츠 교체 - 플레이스홀더 기반 방식

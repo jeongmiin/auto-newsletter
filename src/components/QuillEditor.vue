@@ -81,6 +81,7 @@ onMounted(() => {
         ['bold', 'italic', 'underline', 'strike'], // 텍스트 스타일
         [{ header: [1, 2, 3, false] }], // 헤더
         [{ list: 'ordered' }, { list: 'bullet' }], // 리스트
+        [{ align: [] }], // ✅ 정렬 버튼 추가 (left, center, right, justify)
         [{ color: customColors }, { background: customColors }], // HEX 색상 팔레트
         ['link'], // 링크
         ['clean'], // 서식 제거
@@ -191,6 +192,19 @@ onBeforeUnmount(() => {
 :deep(.ql-editor.ql-blank::before) {
   color: #aaa;
   font-style: italic;
+}
+
+/* ✅ Quill 정렬 클래스 스타일 (에디터 내 미리보기용) */
+:deep(.ql-editor .ql-align-center) {
+  text-align: center;
+}
+
+:deep(.ql-editor .ql-align-right) {
+  text-align: right;
+}
+
+:deep(.ql-editor .ql-align-justify) {
+  text-align: justify;
 }
 
 /* 툴바 스타일 */

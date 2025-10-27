@@ -58,6 +58,23 @@
   font-weight: normal;
 }
 
+/*
+  ✅ 모듈 미리보기용: 테이블 요소는 inline 스타일 보존
+
+  문제: 전역 margin: 0이 테이블의 inline style을 덮어씀
+  해결: .module-content 내부의 테이블은 margin/padding 리셋 제외
+*/
+.module-content table,
+.module-content tbody,
+.module-content thead,
+.module-content tfoot,
+.module-content tr,
+.module-content td,
+.module-content th {
+  margin: revert;
+  padding: revert;
+}
+
 body {
   min-height: 100vh;
   color: var(--color-text);

@@ -1,6 +1,37 @@
 {
   "modules": [
     {
+      "id": "ModuleBasicHeader",
+      "name": "기본 헤더",
+      "description": "로고와 뉴스레터 타이틀이 포함된 기본 헤더",
+      "category": "header",
+      "icon": "📰",
+      "htmlFile": "ModuleBasicHeader.html",
+      "editableProps": [
+        {
+          "key": "logoImageUrl",
+          "label": "로고 이미지 URL",
+          "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/logo-gray.png",
+          "placeholder": "이미지 URL을 입력하세요"
+        },
+        {
+          "key": "logoAlt",
+          "label": "로고 대체 텍스트",
+          "type": "text",
+          "default": "로고",
+          "placeholder": "로고"
+        },
+        {
+          "key": "headerText",
+          "label": "헤더 텍스트",
+          "type": "textarea",
+          "default": "<h1 style=\"margin:5px 0; font-size:20px; color:#111111; font-weight:400; line-height:1.5em; word-break:keep-all; font-family:AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif;\">NEWSLETTER <strong>VOL.1</strong></h1>",
+          "placeholder": "헤더 텍스트를 입력하세요"
+        }
+      ]
+    },
+    {
       "id": "SectionTitle",
       "name": "섹션 타이틀",
       "description": "제목과 부제목이 있는 헤더",
@@ -20,6 +51,47 @@
           "label": "서브 타이틀",
           "type": "textarea",
           "placeholder": "서브 타이틀 영역\n여러 줄 입력 가능"
+        }
+      ]
+    },
+    {
+      "id": "ModuleDescText",
+      "name": "설명 텍스트",
+      "description": "단순 텍스트 콘텐츠 블록",
+      "category": "text",
+      "icon": "📝",
+      "htmlFile": "ModuleDescText.html",
+      "editableProps": [
+        {
+          "key": "descriptionText",
+          "label": "설명 텍스트",
+          "type": "textarea",
+          "default": "<p style=\"margin:0; padding:0;\">콘텐츠 텍스트를 입력하세요.</p>",
+          "placeholder": "텍스트를 입력하세요"
+        }
+      ]
+    },
+    {
+      "id": "ModuleImg",
+      "name": "이미지",
+      "description": "단일 이미지 블록",
+      "category": "image",
+      "icon": "🖼️",
+      "htmlFile": "ModuleImg.html",
+      "editableProps": [
+        {
+          "key": "imageUrl",
+          "label": "이미지 URL",
+          "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-1column.png",
+          "placeholder": "이미지 URL을 입력하세요"
+        },
+        {
+          "key": "imageAlt",
+          "label": "이미지 설명 (Alt)",
+          "type": "text",
+          "default": "이미지",
+          "placeholder": "이미지 설명"
         }
       ]
     },

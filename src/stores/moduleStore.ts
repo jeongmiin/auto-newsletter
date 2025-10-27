@@ -11,6 +11,9 @@ import type {
 import { formatTextWithBreaks } from '@/utils/textUtils'
 import { generateUniqueId, applyStylesToHtml } from '@/utils/htmlUtils'
 import {
+  replaceModuleBasicHeaderContent,
+  replaceModuleDescTextContent,
+  replaceModuleImgContent,
   replaceSectionTitleContent,
   replaceModule04Content,
   replaceModule02Content,
@@ -541,6 +544,15 @@ export const useModuleStore = defineStore('module', () => {
     const { moduleId, properties } = module
 
     switch (moduleId) {
+      case 'ModuleBasicHeader':
+        return replaceModuleBasicHeaderContent(html, properties)
+
+      case 'ModuleDescText':
+        return replaceModuleDescTextContent(html, properties)
+
+      case 'ModuleImg':
+        return replaceModuleImgContent(html, properties)
+
       case 'SectionTitle':
         return replaceSectionTitleContent(html, properties)
 

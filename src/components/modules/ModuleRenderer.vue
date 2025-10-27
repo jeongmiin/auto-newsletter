@@ -6,8 +6,10 @@
       isSelected ? 'border-blue-500 bg-blue-50/50' : 'border-transparent hover:border-gray-300',
     ]"
   >
-    <!-- 모듈 컨텐츠 -->
-    <div v-html="renderedHtml" class="module-content"></div>
+    <!-- 모듈 컨텐츠 - isolation 레이어로 CSS 리셋 방지 -->
+    <div class="module-content-wrapper">
+      <div v-html="renderedHtml" class="module-content"></div>
+    </div>
 
     <!-- 선택시 표시되는 컨트롤 버튼들 -->
     <div
@@ -79,6 +81,23 @@ const { renderedHtml, moduleMetadata } = useModuleRenderer(props.module.id)
 </script>
 
 <style scoped>
+/*
+  ⚠️ 핵심 문제 해결:
+
+  문제:
+  - 테이블의 inline style="padding:30px 20px"가 미리보기에서 무시됨
+  - Tailwind preflight가 전역적으로 padding: 0을 적용하기 때문
+
+  해결:
+  - 테이블 요소에 padding 값을 명시적으로 허용
+  - inline 스타일이 항상 우선순위를 갖도록 설정
+*/
+
+/* CSS 격리 레이어 */
+.module-content-wrapper {
+  isolation: isolate;
+}
+
 .module-content :deep(*) {
   max-width: 100%;
 }
@@ -88,14 +107,53 @@ const { renderedHtml, moduleMetadata } = useModuleRenderer(props.module.id)
   height: auto;
 }
 
-/* Quill 에디터 콘텐츠 스타일 - 미리보기에서 서식 표시 */
-/* 블록 요소: margin, padding 제거 (인라인 스타일과 일치) */
-.module-content :deep(p),
-.module-content :deep(h1),
-.module-content :deep(h2),
-.module-content :deep(h3) {
-  margin: 0;
-  padding: 0;
+/*
+  ✅ 테이블 inline 스타일 보존 전략:
+
+  문제:
+  - Tailwind preflight의 * { margin: 0 }이 inline style을 덮어쓸 수 있음
+  - 테이블의 style="padding:30px 20px"이 적용 안 됨
+
+  해결:
+  - 테이블 요소들만 all: unset으로 리셋 해제
+  - 그 다음 필요한 기본 스타일만 재적용
+*/
+
+/*
+  ✅ 최종 해결책: inline 스타일 강제 적용
+
+  문제:
+  - Tailwind의 * { margin: 0 }이 inline 스타일을 덮어씀
+  - all: unset도 작동하지 않음
+
+  해결:
+  - 테이블 요소에 대해서만 전역 리셋을 무효화
+  - initial 또는 unset 사용하여 브라우저 기본값으로 복원
+*/
+
+.module-content :deep(table) {
+  border-spacing: 0;
+  border-collapse: collapse;
+  /* Tailwind/base.css의 margin: 0을 무효화 */
+  margin: initial;
+  padding: initial;
+}
+
+/*
+  Quill 에디터 콘텐츠 스타일 - 미리보기에서 서식 표시
+  블록 요소: margin, padding 제거 (인라인 스타일과 일치)
+  단, td/th 내부의 텍스트 요소만 적용하여 테이블 자체의 padding은 보존
+*/
+.module-content :deep(td p),
+.module-content :deep(td h1),
+.module-content :deep(td h2),
+.module-content :deep(td h3),
+.module-content :deep(th p),
+.module-content :deep(th h1),
+.module-content :deep(th h2),
+.module-content :deep(th h3) {
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .module-content :deep(strong) {

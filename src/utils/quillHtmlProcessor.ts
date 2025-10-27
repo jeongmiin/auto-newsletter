@@ -120,18 +120,86 @@ export const addZeroSpacingToBlocks = (html: string): string => {
 }
 
 /**
+ * Quill 정렬 클래스를 인라인 스타일로 변환
+ * - ql-align-center → text-align: center
+ * - ql-align-right → text-align: right
+ * - ql-align-justify → text-align: justify
+ */
+export const convertQuillAlignToInline = (html: string): string => {
+  if (!html) return ''
+
+  console.log('[convertQuillAlignToInline] 🔧 정렬 클래스 → 인라인 스타일 변환 시작')
+
+  // 정렬 클래스 매핑
+  const alignMap: Record<string, string> = {
+    'ql-align-center': 'center',
+    'ql-align-right': 'right',
+    'ql-align-justify': 'justify',
+  }
+
+  // 각 정렬 클래스 처리
+  Object.entries(alignMap).forEach(([className, alignValue]) => {
+    // class="ql-align-xxx" 또는 class="other ql-align-xxx" 패턴 찾기
+    const classRegex = new RegExp(
+      `(<(?:p|h1|h2|h3)[^>]*?)class="([^"]*?${className}[^"]*?)"([^>]*?>)`,
+      'gi'
+    )
+
+    html = html.replace(classRegex, (match, before, classAttr, after) => {
+      // 기존 클래스에서 정렬 클래스 제거
+      let newClasses = classAttr.replace(className, '').trim()
+      newClasses = newClasses.replace(/\s+/g, ' ') // 중복 공백 제거
+
+      // style 속성 확인
+      const styleMatch = (before + after).match(/style="([^"]*)"/)
+      let style = styleMatch ? styleMatch[1].trim() : ''
+
+      // text-align 추가 (기존에 없는 경우에만)
+      if (!style.includes('text-align')) {
+        style = style ? `${style}; text-align: ${alignValue}` : `text-align: ${alignValue}`
+      }
+
+      // class 속성 재구성 (빈 값이면 제거)
+      const classStr = newClasses ? ` class="${newClasses}"` : ''
+
+      // style 속성이 이미 있으면 제거하고 새로 추가
+      let cleanBefore = before.replace(/\s*style="[^"]*"/gi, '').trim()
+      let cleanAfter = after.replace(/\s*style="[^"]*"/gi, '').trim()
+
+      // 최종 태그 재구성
+      return `${cleanBefore}${classStr} style="${style};"${cleanAfter}`
+    })
+  })
+
+  // 빈 class 속성 제거
+  html = html.replace(/\s*class=""\s*/g, ' ')
+
+  console.log('[convertQuillAlignToInline] ✅ 정렬 클래스 변환 완료')
+
+  return html
+}
+
+/**
  * Quill HTML 통합 처리 함수
  * 1. RGB → HEX 변환
  * 2. 블록 요소에 margin: 0, padding: 0 추가
+ * 3. Quill 정렬 클래스를 인라인 스타일로 변환
  */
 export const processQuillHtml = (html: string): string => {
   if (!html) return ''
+
+  console.log('[processQuillHtml] 🔧 Quill HTML 처리 시작')
 
   // 1. RGB → HEX 변환
   html = convertRgbToHex(html)
 
   // 2. 블록 요소에 margin: 0, padding: 0 추가
   html = addZeroSpacingToBlocks(html)
+
+  // 3. ✅ Quill 정렬 클래스를 인라인 스타일로 변환
+  html = convertQuillAlignToInline(html)
+
+  console.log('[processQuillHtml] ✅ Quill HTML 처리 완료')
 
   return html
 }
