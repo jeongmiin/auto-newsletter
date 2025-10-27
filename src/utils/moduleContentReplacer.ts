@@ -374,10 +374,8 @@ export async function replaceModule05Content(
   // === 이미지 URL 교체 ===
   module05Html = module05Html.replace(/{{topLeftImageUrl}}/g, String(properties.topLeftImageUrl || DEFAULT_TWO_COLUMN_IMAGE_URL))
   module05Html = module05Html.replace(/{{topLeftImageAlt}}/g, String(properties.topLeftImageAlt || '이미지'))
-  module05Html = module05Html.replace(/{{bottomLeftImageUrl}}/g, String(properties.bottomLeftImageUrl || DEFAULT_TWO_COLUMN_IMAGE_URL))
-  module05Html = module05Html.replace(/{{bottomLeftImageAlt}}/g, String(properties.bottomLeftImageAlt || '이미지'))
 
-  // === 위쪽 타이틀 교체 - 빈 값이면 요소 제거 ===
+  // === 타이틀 교체 - 빈 값이면 요소 제거 ===
   if (isEmptyValue(properties.topRightTitle)) {
     // 타이틀을 포함하는 div 전체 제거
     module05Html = module05Html.replace(/<!-- 위쪽 타이틀 -->[\s\S]*?<!-- \/\/위쪽 타이틀 -->/g, '')
@@ -387,7 +385,7 @@ export async function replaceModule05Content(
     module05Html = module05Html.replace(/{{topRightTitle}}/g, String(properties.topRightTitle))
   }
 
-  // === 위쪽 테이블 타이틀 교체 - 빈 값이면 요소 제거 ===
+  // === 테이블 타이틀 교체 - 빈 값이면 요소 제거 ===
   if (isEmptyValue(properties.topRightTableTitle)) {
     // 테이블을 포함하는 전체 제거
     module05Html = module05Html.replace(/<!-- 위쪽 테이블 -->[\s\S]*?<!-- \/\/위쪽 테이블 -->/g, '')
@@ -395,24 +393,6 @@ export async function replaceModule05Content(
     module05Html = module05Html.replace(/{{topRightTableTitle}}/g, '')
   } else {
     module05Html = module05Html.replace(/{{topRightTableTitle}}/g, safeFormatText(String(properties.topRightTableTitle)))
-  }
-
-  // === 아래쪽 타이틀 교체 - 빈 값이면 요소 제거 ===
-  if (isEmptyValue(properties.bottomRightTitle)) {
-    module05Html = module05Html.replace(/<!-- 아래쪽 타이틀 -->[\s\S]*?<!-- \/\/아래쪽 타이틀 -->/g, '')
-    module05Html = module05Html.replace(/<div[^>]*>[\s\S]*?{{bottomRightTitle}}[\s\S]*?<\/div>/g, '')
-    module05Html = module05Html.replace(/{{bottomRightTitle}}/g, '')
-  } else {
-    module05Html = module05Html.replace(/{{bottomRightTitle}}/g, String(properties.bottomRightTitle))
-  }
-
-  // === 아래쪽 테이블 타이틀 교체 - 빈 값이면 요소 제거 ===
-  if (isEmptyValue(properties.bottomRightTableTitle)) {
-    module05Html = module05Html.replace(/<!-- 아래쪽 테이블 -->[\s\S]*?<!-- \/\/아래쪽 테이블 -->/g, '')
-    module05Html = module05Html.replace(/<table[^>]*>[\s\S]*?{{bottomRightTableTitle}}[\s\S]*?<\/table>/g, '')
-    module05Html = module05Html.replace(/{{bottomRightTableTitle}}/g, '')
-  } else {
-    module05Html = module05Html.replace(/{{bottomRightTableTitle}}/g, safeFormatText(String(properties.bottomRightTableTitle)))
   }
 
   // === 버튼 색상 ===
@@ -426,22 +406,13 @@ export async function replaceModule05Content(
   module05Html = module05Html.replace(/{{bigBtnBgColor}}/g, String(bigBtnBgColor))
   module05Html = module05Html.replace(/{{bigBtnTextColor}}/g, String(bigBtnTextColor))
 
-  // === 위쪽 작은 버튼 처리 ===
+  // === 작은 버튼 처리 ===
   if (properties.showTopSmallBtn !== true) {
     module05Html = module05Html.replace(/<!-- 위쪽 작은 버튼 -->[\s\S]*?<!-- \/\/위쪽 작은 버튼 -->/g, '')
   } else {
     const topSmallBtnText = isEmptyValue(properties.topRightSmallBtnText) ? '' : String(properties.topRightSmallBtnText)
     module05Html = module05Html.replace(/{{topRightSmallBtnText}}/g, topSmallBtnText)
     module05Html = module05Html.replace(/{{topRightSmallBtnUrl}}/g, String(properties.topRightSmallBtnUrl || '#'))
-  }
-
-  // === 아래쪽 작은 버튼 처리 ===
-  if (properties.showBottomSmallBtn !== true) {
-    module05Html = module05Html.replace(/<!-- 아래쪽 작은 버튼 -->[\s\S]*?<!-- \/\/아래쪽 작은 버튼 -->/g, '')
-  } else {
-    const bottomSmallBtnText = isEmptyValue(properties.bottomRightSmallBtnText) ? '' : String(properties.bottomRightSmallBtnText)
-    module05Html = module05Html.replace(/{{bottomRightSmallBtnText}}/g, bottomSmallBtnText)
-    module05Html = module05Html.replace(/{{bottomRightSmallBtnUrl}}/g, String(properties.bottomRightSmallBtnUrl || '#'))
   }
 
   // === 큰 버튼 처리 ===
@@ -453,7 +424,7 @@ export async function replaceModule05Content(
     module05Html = module05Html.replace(/{{bigButtonUrl}}/g, String(properties.bigButtonUrl || '#'))
   }
 
-  // === 추가 콘텐츠 삽입 (상단) ===
+  // === 추가 콘텐츠 삽입 ===
   if (properties.additionalContentsTop && Array.isArray(properties.additionalContentsTop) && properties.additionalContentsTop.length > 0) {
     module05Html = await insertAdditionalContents(
       module05Html,
@@ -462,17 +433,6 @@ export async function replaceModule05Content(
     )
   } else {
     module05Html = removeMarker(module05Html, HTML_MARKERS.additionalContentTop)
-  }
-
-  // === 추가 콘텐츠 삽입 (하단) ===
-  if (properties.additionalContentsBottom && Array.isArray(properties.additionalContentsBottom) && properties.additionalContentsBottom.length > 0) {
-    module05Html = await insertAdditionalContents(
-      module05Html,
-      properties.additionalContentsBottom as AdditionalContent[],
-      HTML_MARKERS.additionalContentBottom
-    )
-  } else {
-    module05Html = removeMarker(module05Html, HTML_MARKERS.additionalContentBottom)
   }
 
   console.log('[Module05] 콘텐츠 교체 완료')

@@ -530,6 +530,26 @@
           "default": "#ffffff"
         },
         {
+          "key": "showBigBtn",
+          "label": "큰 버튼 표시",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "bigButtonText",
+          "label": "큰 버튼 텍스트",
+          "type": "text",
+          "default": "큰 버튼 →",
+          "placeholder": "큰 버튼 텍스트"
+        },
+        {
+          "key": "bigButtonUrl",
+          "label": "큰 버튼 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "#"
+        },
+        {
           "key": "additionalContentsTop",
           "label": "추가 콘텐츠",
           "type": "additional-contents"
