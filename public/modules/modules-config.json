@@ -64,7 +64,7 @@
       "editableProps": [
         {
           "key": "descriptionText",
-          "label": "설명 텍스트",
+          "label": "텍스트",
           "type": "textarea",
           "default": "<p style=\"margin:0; padding:0;\">콘텐츠 텍스트를 입력하세요.</p>",
           "placeholder": "텍스트를 입력하세요"
@@ -92,6 +92,104 @@
           "type": "text",
           "default": "이미지",
           "placeholder": "이미지 설명"
+        }
+      ]
+    },
+    {
+      "id": "ModuleOneButton",
+      "name": "단일 버튼",
+      "description": "하나의 버튼이 있는 블록",
+      "category": "button",
+      "icon": "🔘",
+      "htmlFile": "ModuleOneButton.html",
+      "editableProps": [
+        {
+          "key": "buttonText",
+          "label": "버튼 텍스트",
+          "type": "text",
+          "default": "큰 버튼 →",
+          "placeholder": "버튼 텍스트를 입력하세요"
+        },
+        {
+          "key": "buttonUrl",
+          "label": "버튼 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 링크 URL을 입력하세요"
+        },
+        {
+          "key": "buttonBgColor",
+          "label": "버튼 배경색",
+          "type": "color",
+          "default": "#111111"
+        },
+        {
+          "key": "buttonTextColor",
+          "label": "버튼 글자색",
+          "type": "color",
+          "default": "#ffffff"
+        }
+      ]
+    },
+    {
+      "id": "ModuleTwoButton",
+      "name": "2개 버튼",
+      "description": "두 개의 버튼이 나란히 있는 블록",
+      "category": "button",
+      "icon": "🔘🔘",
+      "htmlFile": "ModuleTwoButton.html",
+      "editableProps": [
+        {
+          "key": "button1Text",
+          "label": "첫 번째 버튼 텍스트",
+          "type": "text",
+          "default": "버튼 1 →",
+          "placeholder": "버튼 텍스트를 입력하세요"
+        },
+        {
+          "key": "button1Url",
+          "label": "첫 번째 버튼 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 링크 URL을 입력하세요"
+        },
+        {
+          "key": "button1BgColor",
+          "label": "첫 번째 버튼 배경색",
+          "type": "color",
+          "default": "#111111"
+        },
+        {
+          "key": "button1TextColor",
+          "label": "첫 번째 버튼 글자색",
+          "type": "color",
+          "default": "#ffffff"
+        },
+        {
+          "key": "button2Text",
+          "label": "두 번째 버튼 텍스트",
+          "type": "text",
+          "default": "버튼 2 →",
+          "placeholder": "버튼 텍스트를 입력하세요"
+        },
+        {
+          "key": "button2Url",
+          "label": "두 번째 버튼 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 링크 URL을 입력하세요"
+        },
+        {
+          "key": "button2BgColor",
+          "label": "두 번째 버튼 배경색",
+          "type": "color",
+          "default": "#111111"
+        },
+        {
+          "key": "button2TextColor",
+          "label": "두 번째 버튼 글자색",
+          "type": "color",
+          "default": "#ffffff"
         }
       ]
     },
@@ -360,97 +458,50 @@
     {
       "id": "Module05",
       "name": "모듈 05",
-      "description": "2단 이미지와 텍스트, 버튼이 포함된 모듈",
+      "description": "2컬럼 이미지와 텍스트, 버튼이 포함된 모듈",
       "category": "image",
       "icon": "05",
       "htmlFile": "Module05.html",
       "editableProps": [
         {
           "key": "topLeftImageUrl",
-          "label": "위 이미지 URL",
+          "label": "이미지 URL",
           "type": "url",
           "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png"
         },
         {
           "key": "topLeftImageAlt",
-          "label": "위 이미지 설명 Alt",
+          "label": "이미지 설명 Alt",
           "type": "text",
           "placeholder": "이미지"
         },
         {
           "key": "topRightTitle",
-          "label": "위 타이틀",
+          "label": "타이틀",
           "type": "text",
           "placeholder": "콘텐츠 타이틀"
         },
         {
           "key": "topRightTableTitle",
-          "label": "위 텍스트",
+          "label": "텍스트",
           "type": "textarea",
           "placeholder": "콘텐츠 텍스트"
         },
         {
           "key": "showTopSmallBtn",
-          "label": "위 작은 버튼 표시",
+          "label": "작은 버튼 표시",
           "type": "boolean",
           "default": false
         },
         {
           "key": "topRightSmallBtnText",
-          "label": "위 작은 버튼",
+          "label": "작은 버튼",
           "type": "text",
           "placeholder": "작은 버튼 →"
         },
         {
           "key": "topRightSmallBtnUrl",
-          "label": "위 작은 버튼 링크",
-          "type": "url",
-          "placeholder": "#"
-        },
-        {
-          "key": "additionalContentsTop",
-          "label": "위 추가 콘텐츠",
-          "type": "additional-contents"
-        },
-        {
-          "key": "bottomLeftImageUrl",
-          "label": "아래 이미지 URL",
-          "type": "url",
-          "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png"
-        },
-        {
-          "key": "bottomLeftImageAlt",
-          "label": "아래 이미지 설명 Alt",
-          "type": "text",
-          "placeholder": "이미지"
-        },
-        {
-          "key": "bottomRightTitle",
-          "label": "아래 타이틀",
-          "type": "text",
-          "placeholder": "콘텐츠 타이틀"
-        },
-        {
-          "key": "bottomRightTableTitle",
-          "label": "아래 텍스트",
-          "type": "textarea",
-          "placeholder": "콘텐츠 텍스트"
-        },
-        {
-          "key": "showBottomSmallBtn",
-          "label": "아래 작은 버튼 표시",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "key": "bottomRightSmallBtnText",
-          "label": "아래 작은 버튼",
-          "type": "text",
-          "placeholder": "작은 버튼 →"
-        },
-        {
-          "key": "bottomRightSmallBtnUrl",
-          "label": "아래 작은 버튼 링크",
+          "label": "작은 버튼 링크",
           "type": "url",
           "placeholder": "#"
         },
@@ -467,29 +518,6 @@
           "default": "#ffffff"
         },
         {
-          "key": "additionalContentsBottom",
-          "label": "아래 추가 콘텐츠",
-          "type": "additional-contents"
-        },
-        {
-          "key": "showBigBtn",
-          "label": "큰 버튼 표시",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "key": "bigButtonText",
-          "label": "큰 버튼 텍스트",
-          "type": "text",
-          "placeholder": "큰 버튼 →"
-        },
-        {
-          "key": "bigButtonUrl",
-          "label": "큰 버튼 링크",
-          "type": "url",
-          "placeholder": "#"
-        },
-        {
           "key": "bigBtnBgColor",
           "label": "큰 버튼 배경색",
           "type": "color",
@@ -500,6 +528,11 @@
           "label": "큰 버튼 글자색",
           "type": "color",
           "default": "#ffffff"
+        },
+        {
+          "key": "additionalContentsTop",
+          "label": "추가 콘텐츠",
+          "type": "additional-contents"
         }
       ]
     },
@@ -513,7 +546,7 @@
       "editableProps": [
         {
           "key": "topSectionTitle",
-          "label": "위 회색 타이틀",
+          "label": "회색 타이틀",
           "type": "text",
           "placeholder": "상단 섹션 타이틀",
           "required": true
@@ -526,7 +559,7 @@
         },
         {
           "key": "topLeftImageUrl",
-          "label": "위 이미지 URL",
+          "label": "이미지 URL",
           "type": "url",
           "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png"
         },
@@ -538,133 +571,43 @@
         },
         {
           "key": "topRightTitle1",
-          "label": "위 첫 번째 타이틀",
+          "label": "오른쪽 타이틀",
           "type": "text",
-          "placeholder": "위 첫 번째 타이틀"
+          "placeholder": "오른쪽 타이틀"
         },
         {
           "key": "topRightText1",
-          "label": "위 첫 번째 텍스트",
+          "label": "오른쪽 텍스트",
           "type": "textarea",
-          "placeholder": "위 첫 번째 텍스트"
-        },
-        {
-          "key": "topRightTitle2",
-          "label": "위 두 번째 타이틀",
-          "type": "text",
-          "placeholder": "위 두 번째 타이틀"
-        },
-        {
-          "key": "topRightText2",
-          "label": "위 두 번째 텍스트",
-          "type": "textarea",
-          "placeholder": "위 두 번째 텍스트"
+          "placeholder": "오른쪽 텍스트"
         },
         {
           "key": "showTopSmallBtn",
-          "label": "위 작은 버튼 표시",
+          "label": "작은 버튼 표시",
           "type": "boolean",
           "default": false
         },
         {
           "key": "topSmallBtnText",
-          "label": "위 작은 버튼 텍스트",
+          "label": "작은 버튼 텍스트",
           "type": "text",
           "placeholder": "작은 버튼 →"
         },
         {
           "key": "topSmallBtnUrl",
-          "label": "위 작은 버튼 링크",
+          "label": "작은 버튼 링크",
           "type": "url",
           "placeholder": "#"
         },
         {
           "key": "topSmallBtnBgColor",
-          "label": "위 작은 버튼 배경색",
+          "label": "작은 버튼 배경색",
           "type": "color",
           "default": "#111111"
         },
         {
           "key": "topSmallBtnTextColor",
-          "label": "위 작은 버튼 글자색",
-          "type": "color",
-          "default": "#ffffff"
-        },
-        {
-          "key": "bottomSectionTitle",
-          "label": "아래 회색 타이틀",
-          "type": "text",
-          "placeholder": "아래 섹션 타이틀"
-        },
-        {
-          "key": "bottomSectionText",
-          "label": "아래 섹션 텍스트",
-          "type": "textarea",
-          "placeholder": "아래 섹션 텍스트"
-        },
-        {
-          "key": "bottomLeftImageUrl",
-          "label": "아래 이미지 URL",
-          "type": "url",
-          "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png"
-        },
-        {
-          "key": "bottomLeftImageAlt",
-          "label": "아래 이미지 설명 Alt",
-          "type": "text",
-          "placeholder": "이미지"
-        },
-        {
-          "key": "bottomRightTitle1",
-          "label": "아래 첫 번째 타이틀",
-          "type": "text",
-          "placeholder": "아래 첫 번째 타이틀"
-        },
-        {
-          "key": "bottomRightText1",
-          "label": "아래 첫 번째 텍스트",
-          "type": "textarea",
-          "placeholder": "아래 첫 번째 텍스트"
-        },
-        {
-          "key": "bottomRightTitle2",
-          "label": "아래 두 번째 타이틀",
-          "type": "text",
-          "placeholder": "아래 두 번째 타이틀"
-        },
-        {
-          "key": "bottomRightText2",
-          "label": "아래 두 번째 텍스트",
-          "type": "textarea",
-          "placeholder": "아래 두 번째 텍스트"
-        },
-        {
-          "key": "showBottomSmallBtn",
-          "label": "아래 작은 버튼 표시",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "key": "bottomSmallBtnText",
-          "label": "아래 작은 버튼 텍스트",
-          "type": "text",
-          "placeholder": "작은 버튼 →"
-        },
-        {
-          "key": "bottomSmallBtnUrl",
-          "label": "아래 작은 버튼 링크",
-          "type": "url",
-          "placeholder": "#"
-        },
-        {
-          "key": "bottomSmallBtnBgColor",
-          "label": "아래 작은 버튼 배경색",
-          "type": "color",
-          "default": "#111111"
-        },
-        {
-          "key": "bottomSmallBtnTextColor",
-          "label": "아래 작은 버튼 글자색",
+          "label": "작은 버튼 글자색",
           "type": "color",
           "default": "#ffffff"
         },

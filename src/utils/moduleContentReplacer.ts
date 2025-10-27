@@ -92,6 +92,92 @@ export function replaceModuleImgContent(html: string, properties: Record<string,
 }
 
 /**
+ * ModuleOneButton 모듈 콘텐츠 교체 - 플레이스홀더 기반 방식
+ */
+export function replaceModuleOneButtonContent(html: string, properties: Record<string, unknown>): string {
+  let buttonHtml = html
+
+  console.log('[ModuleOneButton] 🔧 플레이스홀더 교체 시작')
+
+  // === 버튼 텍스트 플레이스홀더 교체 ===
+  const buttonText = properties.buttonText || '큰 버튼 →'
+  buttonHtml = buttonHtml.replace(/\{\{buttonText\}\}/g, String(buttonText))
+  console.log('[ModuleOneButton] ✅ buttonText:', buttonText)
+
+  // === 버튼 URL 플레이스홀더 교체 ===
+  const buttonUrl = properties.buttonUrl || '#'
+  buttonHtml = buttonHtml.replace(/\{\{buttonUrl\}\}/g, String(buttonUrl))
+  console.log('[ModuleOneButton] ✅ buttonUrl:', buttonUrl)
+
+  // === 버튼 배경색 플레이스홀더 교체 ===
+  const buttonBgColor = properties.buttonBgColor || '#111111'
+  buttonHtml = buttonHtml.replace(/\{\{buttonBgColor\}\}/g, String(buttonBgColor))
+  console.log('[ModuleOneButton] ✅ buttonBgColor:', buttonBgColor)
+
+  // === 버튼 글자색 플레이스홀더 교체 ===
+  const buttonTextColor = properties.buttonTextColor || '#ffffff'
+  buttonHtml = buttonHtml.replace(/\{\{buttonTextColor\}\}/g, String(buttonTextColor))
+  console.log('[ModuleOneButton] ✅ buttonTextColor:', buttonTextColor)
+
+  console.log('[ModuleOneButton] ✅ 플레이스홀더 교체 완료')
+
+  return buttonHtml
+}
+
+/**
+ * ModuleTwoButton 모듈 콘텐츠 교체 - 플레이스홀더 기반 방식
+ */
+export function replaceModuleTwoButtonContent(html: string, properties: Record<string, unknown>): string {
+  let buttonHtml = html
+
+  console.log('[ModuleTwoButton] 🔧 플레이스홀더 교체 시작')
+
+  // === 첫 번째 버튼 텍스트 플레이스홀더 교체 ===
+  const button1Text = properties.button1Text || '버튼 1 →'
+  buttonHtml = buttonHtml.replace(/\{\{button1Text\}\}/g, String(button1Text))
+  console.log('[ModuleTwoButton] ✅ button1Text:', button1Text)
+
+  // === 첫 번째 버튼 URL 플레이스홀더 교체 ===
+  const button1Url = properties.button1Url || '#'
+  buttonHtml = buttonHtml.replace(/\{\{button1Url\}\}/g, String(button1Url))
+  console.log('[ModuleTwoButton] ✅ button1Url:', button1Url)
+
+  // === 첫 번째 버튼 배경색 플레이스홀더 교체 ===
+  const button1BgColor = properties.button1BgColor || '#111111'
+  buttonHtml = buttonHtml.replace(/\{\{button1BgColor\}\}/g, String(button1BgColor))
+  console.log('[ModuleTwoButton] ✅ button1BgColor:', button1BgColor)
+
+  // === 첫 번째 버튼 글자색 플레이스홀더 교체 ===
+  const button1TextColor = properties.button1TextColor || '#ffffff'
+  buttonHtml = buttonHtml.replace(/\{\{button1TextColor\}\}/g, String(button1TextColor))
+  console.log('[ModuleTwoButton] ✅ button1TextColor:', button1TextColor)
+
+  // === 두 번째 버튼 텍스트 플레이스홀더 교체 ===
+  const button2Text = properties.button2Text || '버튼 2 →'
+  buttonHtml = buttonHtml.replace(/\{\{button2Text\}\}/g, String(button2Text))
+  console.log('[ModuleTwoButton] ✅ button2Text:', button2Text)
+
+  // === 두 번째 버튼 URL 플레이스홀더 교체 ===
+  const button2Url = properties.button2Url || '#'
+  buttonHtml = buttonHtml.replace(/\{\{button2Url\}\}/g, String(button2Url))
+  console.log('[ModuleTwoButton] ✅ button2Url:', button2Url)
+
+  // === 두 번째 버튼 배경색 플레이스홀더 교체 ===
+  const button2BgColor = properties.button2BgColor || '#111111'
+  buttonHtml = buttonHtml.replace(/\{\{button2BgColor\}\}/g, String(button2BgColor))
+  console.log('[ModuleTwoButton] ✅ button2BgColor:', button2BgColor)
+
+  // === 두 번째 버튼 글자색 플레이스홀더 교체 ===
+  const button2TextColor = properties.button2TextColor || '#ffffff'
+  buttonHtml = buttonHtml.replace(/\{\{button2TextColor\}\}/g, String(button2TextColor))
+  console.log('[ModuleTwoButton] ✅ button2TextColor:', button2TextColor)
+
+  console.log('[ModuleTwoButton] ✅ 플레이스홀더 교체 완료')
+
+  return buttonHtml
+}
+
+/**
  * SectionTitle 모듈 콘텐츠 교체 - 플레이스홀더 기반 방식
  */
 export function replaceSectionTitleContent(html: string, properties: Record<string, unknown>): string {
@@ -330,7 +416,7 @@ export async function replaceModule05Content(
   }
 
   // === 버튼 색상 ===
-  const smallBtnBgColor = properties.smallBtnBgColor || '#e5e5e5'
+  const smallBtnBgColor = properties.smallBtnBgColor || '#000000'
   const smallBtnTextColor = properties.smallBtnTextColor || '#ffffff'
   const bigBtnBgColor = properties.bigBtnBgColor || '#111111'
   const bigBtnTextColor = properties.bigBtnTextColor || '#ffffff'

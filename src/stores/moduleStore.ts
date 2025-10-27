@@ -14,6 +14,8 @@ import {
   replaceModuleBasicHeaderContent,
   replaceModuleDescTextContent,
   replaceModuleImgContent,
+  replaceModuleOneButtonContent,
+  replaceModuleTwoButtonContent,
   replaceSectionTitleContent,
   replaceModule04Content,
   replaceModule02Content,
@@ -552,6 +554,12 @@ export const useModuleStore = defineStore('module', () => {
 
       case 'ModuleImg':
         return replaceModuleImgContent(html, properties)
+
+      case 'ModuleOneButton':
+        return replaceModuleOneButtonContent(html, properties)
+
+      case 'ModuleTwoButton':
+        return replaceModuleTwoButtonContent(html, properties)
 
       case 'SectionTitle':
         return replaceSectionTitleContent(html, properties)
