@@ -1,5 +1,5 @@
-import type { ModuleInstance, TableRow, AdditionalContent } from '@/types'
-import { formatTextWithBreaks, shouldRenderElement, safeFormatText, replaceTextOrRemoveElement, isEmptyValue } from './textUtils'
+import type { TableRow, AdditionalContent } from '@/types'
+import { shouldRenderElement, safeFormatText, isEmptyValue } from './textUtils'
 import { DEFAULT_TWO_COLUMN_IMAGE_URL, DEFAULT_IMAGE_URL, REGEX_PATTERNS, HTML_MARKERS } from '@/constants/defaults'
 import {
   applyModule04SmallButtonStyles,

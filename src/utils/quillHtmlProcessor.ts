@@ -163,8 +163,8 @@ export const convertQuillAlignToInline = (html: string): string => {
       const classStr = newClasses ? ` class="${newClasses}"` : ''
 
       // style 속성이 이미 있으면 제거하고 새로 추가
-      let cleanBefore = before.replace(/\s*style="[^"]*"/gi, '').trim()
-      let cleanAfter = after.replace(/\s*style="[^"]*"/gi, '').trim()
+      const cleanBefore = before.replace(/\s*style="[^"]*"/gi, '').trim()
+      const cleanAfter = after.replace(/\s*style="[^"]*"/gi, '').trim()
 
       // 최종 태그 재구성
       return `${cleanBefore}${classStr} style="${style};"${cleanAfter}`

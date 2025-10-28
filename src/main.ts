@@ -93,11 +93,15 @@ app.use(ToastService)
 app.use(ConfirmationService)
 
 // 전역 컴포넌트 등록
+/* eslint-disable vue/multi-word-component-names */
+/* eslint-disable vue/no-reserved-component-names */
 app.component('Button', Button)
 app.component('InputText', InputText)
 app.component('Textarea', Textarea)
 app.component('Checkbox', Checkbox)
 app.component('Toast', Toast)
 app.component('ConfirmDialog', ConfirmDialog)
+/* eslint-enable vue/no-reserved-component-names */
+/* eslint-enable vue/multi-word-component-names */
 
 app.mount('#app')

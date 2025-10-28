@@ -26,7 +26,6 @@ export interface Module05ButtonProperties {
   bigBtnBgColor?: string
   bigBtnTextColor?: string
   showTopSmallBtn?: boolean
-  showBottomSmallBtn?: boolean
   showBigBtn?: boolean
 }
 
@@ -223,24 +222,17 @@ export function handleModule05ButtonVisibility(
 ): string {
   let visibilityHtml = html
 
-  // 작은 버튼 처리 (위쪽과 아래쪽을 개별적으로)
-  let smallBtnIndex = 0
-  const smallButtonRegex =
-    /<span align="left" style="display: block; padding:15px 0px; box-sizing: border-box;">\s*<a href="[^"]*" target="_blank"[^>]*>[^<]*작은 버튼[^<]*<\/a>\s*<\/span>/g
-
-  visibilityHtml = visibilityHtml.replace(smallButtonRegex, (match) => {
-    const isTop = smallBtnIndex === 0
-    const shouldShow = isTop
-      ? properties.showTopSmallBtn === true
-      : properties.showBottomSmallBtn === true
-    smallBtnIndex++
-    return shouldShow ? match : ''
-  })
+  // 작은 버튼 처리 (단일 섹션만 존재)
+  if (properties.showTopSmallBtn !== true) {
+    const smallButtonRegex =
+      /<div style="display: block; padding:15px 0px; box-sizing: border-box; text-align: left;">\s*<a href="[^"]*" target="_blank"[^>]*>[^<]*<\/a>\s*<\/div>/g
+    visibilityHtml = visibilityHtml.replace(smallButtonRegex, '')
+  }
 
   // 큰 버튼 제거
   if (properties.showBigBtn !== true) {
     visibilityHtml = visibilityHtml.replace(
-      /<tr>\s*<td align="center" style="padding:20px; box-sizing: border-box;">\s*<a href="[^"]*"[^>]*>[^<]*큰 버튼[^<]*<\/a>\s*<\/td>\s*<\/tr>/,
+      /<tr>\s*<td align="center" style="padding:20px; box-sizing: border-box;">\s*<a href="[^"]*"[^>]*>[^<]*<\/a>\s*<\/td>\s*<\/tr>/,
       '',
     )
   }

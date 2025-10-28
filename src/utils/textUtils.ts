@@ -53,7 +53,7 @@ export const shouldRenderElement = (value: unknown): boolean => {
 }
 
 // 안전한 텍스트 처리 함수 (빈 값 체크 포함)
-export const safeFormatText = (text: string, defaultValue: string = ''): string => {
+export const safeFormatText = (text: string): string => {
   if (isEmptyValue(text)) return ''
   return formatTextWithBreaks(String(text))
 }
