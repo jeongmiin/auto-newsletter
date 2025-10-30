@@ -1,28 +1,20 @@
 <table align="center" border="0" cellpadding="0" cellspacing="0"
-  style=" width:100%; max-width: 680px; border-collapse:collapse;" width="100%">
+  style="width:100%; max-width: 680px; border-collapse:collapse;" width="100%">
   <tbody>
     <tr>
-      <td style="width:100%; padding:20px; background-color: #fcfcfc; bgcolor: #fcfcfc; border: 1px solid #cccccc;">
-        <span style="text-decoration:none; background-color:#666666; bgcolor: #666666; border-radius:30px; padding:4px 16px; color:#ffffff; font-size:14px; line-height:1.7em; font-weight:700; box-sizing: border-box; display: inline-block; margin-bottom: 10px;">
-          카테고리 위치
-        </span>
-        <table cellpadding="0" cellspacing="0">
-          <tbody>
-            <tr>
-              <td style="padding-right: 3px; white-space: nowrap; font-size: 14px; font-weight:700; line-height:1.7em; vertical-align: top;">• 콘텐츠 타이틀 : </td>
-              <td style="font-size: 14px; line-height:1.7em;">콘텐츠 텍스트</td>
-            </tr>
-            <!-- 추가 tr 위치 -->
-          </tbody>
-        </table>
+      <td style="width:100%; padding: 0 20px 20px;">
+        <div
+          style="width:100%; padding:20px; background-color: #fcfcfc; border: 1px solid #cccccc; box-sizing: border-box;">
+          <span
+            style="text-decoration:none; background-color:{{categoryBgColor}}; border-radius:30px; padding:4px 16px 3px; color:{{categoryTextColor}}; font-size:14px; font-weight:700; line-height:1.7em; box-sizing: border-box; display: inline-block; margin-bottom: 10px;">
+            {{categoryText}}
+          </span>
+          <div
+            style="font-size: 14px; line-height:1.7em; padding: 0 3px;">
+            {{contentText}}
+          </div>
+        </div>
       </td>
-    </tr>
-    <!-- 추가 tr 위치 -->
-    <tr>
-      <td height="10px"></td>
-    </tr>
-    <tr>
-      <td height="40px;"></td>
     </tr>
   </tbody>
 </table>

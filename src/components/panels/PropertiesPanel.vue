@@ -531,7 +531,12 @@ const getFieldVisibility = (prop: EditableProp) => {
   }
 
   // 버튼 관련 필드들의 조건부 표시
+  // ModuleOneButton과 ModuleTwoButton은 단독 버튼 모듈이므로 조건부 표시를 하지 않음
   if (isButtonRelatedField(prop.key)) {
+    const moduleMetadata = selectedModuleMetadata.value
+    if (moduleMetadata?.id === 'ModuleOneButton' || moduleMetadata?.id === 'ModuleTwoButton') {
+      return '' // 항상 표시
+    }
     return properties.showButton === true ? '' : 'hidden'
   }
 

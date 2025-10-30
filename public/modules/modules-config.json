@@ -194,11 +194,82 @@
       ]
     },
     {
+      "id": "Module01-1",
+      "name": "01-1",
+      "description": "타이틀과 설명글이 있는 2컬럼 박스",
+      "category": "text",
+      "icon": "모듈",
+      "htmlFile": "Module01-1.html",
+      "editableProps": [
+        {
+          "key": "leftTitle",
+          "label": "타이틀",
+          "type": "text",
+          "placeholder": "타이틀 영역",
+          "required": true
+        },
+        {
+          "key": "leftContent",
+          "label": "콘텐츠 텍스트",
+          "type": "textarea",
+          "placeholder": "콘텐츠 텍스트"
+        },
+        {
+          "key": "rightTitle",
+          "label": "타이틀",
+          "type": "text",
+          "placeholder": "타이틀 영역",
+          "required": true
+        },
+        {
+          "key": "rightContent",
+          "label": "콘텐츠 텍스트",
+          "type": "textarea",
+          "placeholder": "콘텐츠 텍스트"
+        }
+      ]
+    },
+    {
+      "id": "Module01-2",
+      "name": "01-2",
+      "description": "카테고리와 설명글 박스",
+      "category": "text",
+      "icon": "모듈",
+      "htmlFile": "Module01-2.html",
+      "editableProps": [
+        {
+          "key": "categoryText",
+          "label": "카테고리",
+          "type": "text",
+          "placeholder": "카테고리 영역",
+          "required": true
+        },
+        {
+          "key": "categoryBgColor",
+          "label": "카테고리 배경색",
+          "type": "color",
+          "default": "#666666"
+        },
+        {
+          "key": "categoryTextColor",
+          "label": "카테고리 글자색",
+          "type": "color",
+          "default": "#ffffff"
+        },
+        {
+          "key": "contentText",
+          "label": "콘텐츠 텍스트",
+          "type": "textarea",
+          "placeholder": "콘텐츠 텍스트"
+        }
+      ]
+    },
+    {
       "id": "Module02",
-      "name": "모듈 02",
+      "name": "02",
       "description": "이미지와 텍스트, 테이블, 버튼이 포함된 모듈",
       "category": "image",
-      "icon": "02",
+      "icon": "모듈",
       "htmlFile": "Module02.html",
       "editableProps": [
         {
@@ -284,10 +355,10 @@
     },
     {
       "id": "Module04",
-      "name": "모듈 04",
+      "name": "04",
       "description": "이미지와 텍스트가 있는 2단 구성 모듈",
       "category": "image",
-      "icon": "04",
+      "icon": "모듈",
       "htmlFile": "Module04.html",
       "editableProps": [
         {
@@ -457,10 +528,10 @@
     },
     {
       "id": "Module05",
-      "name": "모듈 05",
+      "name": "05",
       "description": "2컬럼 이미지와 텍스트, 버튼이 포함된 모듈",
       "category": "image",
-      "icon": "05",
+      "icon": "모듈",
       "htmlFile": "Module05.html",
       "editableProps": [
         {
@@ -557,11 +628,154 @@
       ]
     },
     {
+      "id": "Module05-1",
+      "name": "05-1",
+      "description": "2컬럼 이미지와 강조된 타이틀",
+      "category": "text",
+      "icon": "모듈",
+      "htmlFile": "Module05-1.html",
+      "editableProps": [
+        {
+          "key": "ImageUrl",
+          "label": "이미지 URL",
+          "type": "url",
+          "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png"
+        },
+        {
+          "key": "ImageAlt",
+          "label": "이미지 설명 (Alt)",
+          "type": "text",
+          "placeholder": "이미지"
+        },
+        {
+          "key": "boxTitle",
+          "label": "타이틀",
+          "type": "text",
+          "placeholder": "콘텐츠 텍스트"
+        },
+        {
+          "key": "boxBgColor",
+          "label": "텍스트 박스 배경색",
+          "type": "color",
+          "default": "#e5e5e5"
+        },
+        {
+          "key": "boxColor",
+          "label": "텍스트 박스 글자색",
+          "type": "color",
+          "default": "#111111"
+        },
+        {
+          "key": "contentText",
+          "label": "텍스트",
+          "type": "textarea",
+          "placeholder": "콘텐츠 텍스트",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "Module05-2",
+      "name": "05-2",
+      "description": "이미지 + 텍스트 + 4개의 작은 버튼",
+      "category": "image",
+      "icon": "모듈",
+      "htmlFile": "Module05-2.html",
+      "editableProps": [
+        {
+          "key": "imageUrl",
+          "label": "이미지 URL",
+          "type": "url",
+          "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png"
+        },
+        {
+          "key": "imageAlt",
+          "label": "이미지 설명 (Alt)",
+          "type": "text",
+          "placeholder": "이미지"
+        },
+        {
+          "key": "contentText",
+          "label": "텍스트",
+          "type": "textarea",
+          "placeholder": "텍스트 내용을 입력하세요"
+        },
+        {
+          "key": "button1Text",
+          "label": "버튼 1 텍스트",
+          "type": "text",
+          "default": "작은 버튼 →",
+          "placeholder": "버튼 텍스트"
+        },
+        {
+          "key": "button1Url",
+          "label": "버튼 1 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 URL"
+        },
+        {
+          "key": "button2Text",
+          "label": "버튼 2 텍스트",
+          "type": "text",
+          "default": "작은 버튼 →",
+          "placeholder": "버튼 텍스트"
+        },
+        {
+          "key": "button2Url",
+          "label": "버튼 2 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 URL"
+        },
+        {
+          "key": "button3Text",
+          "label": "버튼 3 텍스트",
+          "type": "text",
+          "default": "작은 버튼 →",
+          "placeholder": "버튼 텍스트"
+        },
+        {
+          "key": "button3Url",
+          "label": "버튼 3 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 URL"
+        },
+        {
+          "key": "button4Text",
+          "label": "버튼 4 텍스트",
+          "type": "text",
+          "default": "작은 버튼 →",
+          "placeholder": "버튼 텍스트"
+        },
+        {
+          "key": "button4Url",
+          "label": "버튼 4 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 URL"
+        },
+        {
+          "key": "buttonBgColor",
+          "label": "버튼 배경색",
+          "type": "color",
+          "default": "#e5e5e5"
+        },
+        {
+          "key": "buttonTextColor",
+          "label": "버튼 글자색",
+          "type": "color",
+          "default": "#333333"
+        }
+      ]
+    },
+    {
       "id": "Module05-3",
-      "name": "모듈 05-3",
+      "name": "05-3",
       "description": "2개 섹션, 각각 타이틀/텍스트/이미지/작은버튼, 하단 큰 버튼",
       "category": "image",
-      "icon": "5-3",
+      "icon": "모듈",
       "htmlFile": "Module05-3.html",
       "editableProps": [
         {
@@ -585,7 +799,7 @@
         },
         {
           "key": "topLeftImageAlt",
-          "label": "이미지 설명 Alt",
+          "label": "이미지 설명 (Alt)",
           "type": "text",
           "placeholder": "이미지"
         },
@@ -660,6 +874,248 @@
           "label": "큰 버튼 글자색",
           "type": "color",
           "default": "#ffffff"
+        }
+      ]
+    },
+    {
+      "id": "Module06",
+      "name": "06",
+      "description": "2개 섹션, 각각 타이틀 + 이미지 + 텍스트 + 버튼",
+      "category": "image",
+      "icon": "모듈",
+      "htmlFile": "Module06.html",
+      "editableProps": [
+        {
+          "key": "leftTitle",
+          "label": "왼쪽 타이틀",
+          "type": "text",
+          "placeholder": "왼쪽 섹션 타이틀"
+        },
+        {
+          "key": "leftTitleBgColor",
+          "label": "왼쪽 타이틀 배경색",
+          "type": "color",
+          "default": "#e5e5e5"
+        },
+        {
+          "key": "leftTitleColor",
+          "label": "왼쪽 타이틀 글자색",
+          "type": "color",
+          "default": "#111111"
+        },
+        {
+          "key": "leftImageUrl",
+          "label": "왼쪽 이미지 URL",
+          "type": "url",
+          "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png"
+        },
+        {
+          "key": "leftImageAlt",
+          "label": "왼쪽 이미지 설명 (Alt)",
+          "type": "text",
+          "placeholder": "이미지"
+        },
+        {
+          "key": "leftContent",
+          "label": "왼쪽 텍스트",
+          "type": "textarea",
+          "placeholder": "왼쪽 섹션 텍스트"
+        },
+        {
+          "key": "leftButtonText",
+          "label": "왼쪽 버튼 텍스트",
+          "type": "text",
+          "default": "더보기 →",
+          "placeholder": "버튼 텍스트"
+        },
+        {
+          "key": "leftButtonUrl",
+          "label": "왼쪽 버튼 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 URL"
+        },
+        {
+          "key": "rightTitle",
+          "label": "오른쪽 타이틀",
+          "type": "text",
+          "placeholder": "오른쪽 섹션 타이틀"
+        },
+        {
+          "key": "rightTitleBgColor",
+          "label": "오른쪽 타이틀 배경색",
+          "type": "color",
+          "default": "#e5e5e5"
+        },
+        {
+          "key": "rightTitleColor",
+          "label": "오른쪽 타이틀 글자색",
+          "type": "color",
+          "default": "#111111"
+        },
+        {
+          "key": "rightImageUrl",
+          "label": "오른쪽 이미지 URL",
+          "type": "url",
+          "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png"
+        },
+        {
+          "key": "rightImageAlt",
+          "label": "오른쪽 이미지 설명 (Alt)",
+          "type": "text",
+          "placeholder": "이미지"
+        },
+        {
+          "key": "rightContent",
+          "label": "오른쪽 텍스트",
+          "type": "textarea",
+          "placeholder": "오른쪽 섹션 텍스트"
+        },
+        {
+          "key": "rightButtonText",
+          "label": "오른쪽 버튼 텍스트",
+          "type": "text",
+          "default": "더보기 →",
+          "placeholder": "버튼 텍스트"
+        },
+        {
+          "key": "rightButtonUrl",
+          "label": "오른쪽 버튼 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 URL"
+        },
+        {
+          "key": "buttonBgColor",
+          "label": "버튼 배경색",
+          "type": "color",
+          "default": "#111111"
+        },
+        {
+          "key": "buttonTextColor",
+          "label": "버튼 글자색",
+          "type": "color",
+          "default": "#ffffff"
+        }
+      ]
+    },
+    {
+      "id": "Module07",
+      "name": "07",
+      "description": "이미지 왼쪽 + 텍스트/버튼 오른쪽",
+      "category": "image",
+      "icon": "모듈",
+      "htmlFile": "Module07.html",
+      "editableProps": [
+        {
+          "key": "imageUrl",
+          "label": "이미지 URL",
+          "type": "url",
+          "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png"
+        },
+        {
+          "key": "imageAlt",
+          "label": "이미지 설명 (Alt)",
+          "type": "text",
+          "placeholder": "이미지"
+        },
+        {
+          "key": "title",
+          "label": "타이틀",
+          "type": "text",
+          "placeholder": "타이틀을 입력하세요"
+        },
+        {
+          "key": "contentText",
+          "label": "텍스트",
+          "type": "textarea",
+          "placeholder": "텍스트 내용을 입력하세요"
+        },
+        {
+          "key": "buttonText",
+          "label": "버튼 텍스트",
+          "type": "text",
+          "default": "더보기 →",
+          "placeholder": "버튼 텍스트"
+        },
+        {
+          "key": "buttonUrl",
+          "label": "버튼 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 URL"
+        },
+        {
+          "key": "buttonBgColor",
+          "label": "버튼 배경색",
+          "type": "color",
+          "default": "#e5e5e5"
+        },
+        {
+          "key": "buttonTextColor",
+          "label": "버튼 글자색",
+          "type": "color",
+          "default": "#333333"
+        }
+      ]
+    },
+    {
+      "id": "Module07_reverse",
+      "name": "07-reverse",
+      "description": "텍스트/버튼 왼쪽 + 이미지 오른쪽",
+      "category": "image",
+      "icon": "모듈",
+      "htmlFile": "Module07_reverse.html",
+      "editableProps": [
+        {
+          "key": "imageUrl",
+          "label": "이미지 URL",
+          "type": "url",
+          "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png"
+        },
+        {
+          "key": "imageAlt",
+          "label": "이미지 설명 (Alt)",
+          "type": "text",
+          "placeholder": "이미지"
+        },
+        {
+          "key": "title",
+          "label": "타이틀",
+          "type": "text",
+          "placeholder": "타이틀을 입력하세요"
+        },
+        {
+          "key": "contentText",
+          "label": "텍스트",
+          "type": "textarea",
+          "placeholder": "텍스트 내용을 입력하세요"
+        },
+        {
+          "key": "buttonText",
+          "label": "버튼 텍스트",
+          "type": "text",
+          "default": "더보기 →",
+          "placeholder": "버튼 텍스트"
+        },
+        {
+          "key": "buttonUrl",
+          "label": "버튼 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 URL"
+        },
+        {
+          "key": "buttonBgColor",
+          "label": "버튼 배경색",
+          "type": "color",
+          "default": "#e5e5e5"
+        },
+        {
+          "key": "buttonTextColor",
+          "label": "버튼 글자색",
+          "type": "color",
+          "default": "#333333"
         }
       ]
     }

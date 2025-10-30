@@ -21,6 +21,13 @@ import {
   replaceModule02Content,
   replaceModule05Content,
   replaceModule053Content,
+  replaceModule051Content,
+  replaceModule052Content,
+  replaceModule06Content,
+  replaceModule07Content,
+  replaceModule07ReverseContent,
+  replaceModule011Content,
+  replaceModule012Content,
   replaceDefaultTemplate,
 } from '@/utils/moduleContentReplacer'
 
@@ -573,8 +580,29 @@ export const useModuleStore = defineStore('module', () => {
       case 'Module05':
         return replaceModule05Content(html, properties, insertAdditionalContents)
 
+      case 'Module01-1':
+        return replaceModule011Content(html, properties)
+
+      case 'Module01-2':
+        return replaceModule012Content(html, properties)
+
+      case 'Module05-1':
+        return replaceModule051Content(html, properties)
+
+      case 'Module05-2':
+        return replaceModule052Content(html, properties)
+
       case 'Module05-3':
         return replaceModule053Content(html, properties)
+
+      case 'Module06':
+        return replaceModule06Content(html, properties)
+
+      case 'Module07':
+        return replaceModule07Content(html, properties)
+
+      case 'Module07_reverse':
+        return replaceModule07ReverseContent(html, properties)
 
       default:
         return replaceDefaultTemplate(html, properties)

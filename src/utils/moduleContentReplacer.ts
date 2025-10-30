@@ -540,6 +540,257 @@ export async function replaceModule053Content(
 }
 
 /**
+ * 공통 플레이스홀더 교체 헬퍼 함수
+ */
+function replacePlaceholder(html: string, key: string, value: unknown): string {
+  const regex = new RegExp(`{{${key}}}`, 'g')
+  return html.replace(regex, String(value))
+}
+
+/**
+ * 여러 플레이스홀더를 한번에 교체하는 헬퍼 함수
+ */
+function replacePlaceholders(html: string, replacements: Record<string, unknown>): string {
+  let result = html
+  for (const [key, value] of Object.entries(replacements)) {
+    result = replacePlaceholder(result, key, value)
+  }
+  return result
+}
+
+/**
+ * Module01-1 모듈 콘텐츠 교체 - 플레이스홀더 기반 방식
+ */
+export function replaceModule011Content(html: string, properties: Record<string, unknown>): string {
+  let result = html
+
+  console.log('[Module01-1] 🔧 플레이스홀더 교체 시작')
+
+  // 왼쪽 컬럼
+  const leftTitle = properties.leftTitle || ''
+  const leftContent = isEmptyValue(properties.leftContent)
+    ? ''
+    : processQuillHtml(String(properties.leftContent))
+
+  result = replacePlaceholder(result, 'leftTitle', leftTitle)
+  result = replacePlaceholder(result, 'leftContent', leftContent)
+
+  // 오른쪽 컬럼
+  const rightTitle = properties.rightTitle || ''
+  const rightContent = isEmptyValue(properties.rightContent)
+    ? ''
+    : processQuillHtml(String(properties.rightContent))
+
+  result = replacePlaceholder(result, 'rightTitle', rightTitle)
+  result = replacePlaceholder(result, 'rightContent', rightContent)
+
+  console.log('[Module01-1] ✅ 플레이스홀더 교체 완료')
+  return result
+}
+
+/**
+ * Module01-2 모듈 콘텐츠 교체 - 플레이스홀더 기반 방식
+ */
+export function replaceModule012Content(html: string, properties: Record<string, unknown>): string {
+  let result = html
+
+  console.log('[Module01-2] 🔧 플레이스홀더 교체 시작')
+
+  // 카테고리
+  const categoryText = properties.categoryText || ''
+  const categoryBgColor = properties.categoryBgColor || '#666666'
+  const categoryTextColor = properties.categoryTextColor || '#ffffff'
+
+  result = replacePlaceholder(result, 'categoryText', categoryText)
+  result = replacePlaceholder(result, 'categoryBgColor', categoryBgColor)
+  result = replacePlaceholder(result, 'categoryTextColor', categoryTextColor)
+
+  // 콘텐츠 텍스트
+  const contentText = isEmptyValue(properties.contentText)
+    ? ''
+    : processQuillHtml(String(properties.contentText))
+
+  result = replacePlaceholder(result, 'contentText', contentText)
+
+  console.log('[Module01-2] ✅ 플레이스홀더 교체 완료')
+  return result
+}
+
+/**
+ * Module05-1 모듈 콘텐츠 교체 - 플레이스홀더 기반 방식
+ */
+export function replaceModule051Content(html: string, properties: Record<string, unknown>): string {
+  let result = html
+
+  console.log('[Module05-1] 🔧 플레이스홀더 교체 시작')
+
+  // 이미지
+  const ImageUrl = properties.ImageUrl || DEFAULT_TWO_COLUMN_IMAGE_URL
+  const ImageAlt = properties.ImageAlt || '이미지'
+
+  result = replacePlaceholder(result, 'ImageUrl', ImageUrl)
+  result = replacePlaceholder(result, 'ImageAlt', ImageAlt)
+
+  // 박스 타이틀 및 색상
+  const boxTitle = properties.boxTitle || ''
+  const boxBgColor = properties.boxBgColor || '#e5e5e5'
+  const boxColor = properties.boxColor || '#111111'
+
+  result = replacePlaceholder(result, 'boxTitle', boxTitle)
+  result = replacePlaceholder(result, 'boxBgColor', boxBgColor)
+  result = replacePlaceholder(result, 'boxColor', boxColor)
+
+  // 콘텐츠 텍스트
+  const contentText = isEmptyValue(properties.contentText)
+    ? ''
+    : processQuillHtml(String(properties.contentText))
+
+  result = replacePlaceholder(result, 'contentText', contentText)
+
+  console.log('[Module05-1] ✅ 플레이스홀더 교체 완료')
+  return result
+}
+
+/**
+ * Module05-2 모듈 콘텐츠 교체 - 플레이스홀더 기반 방식
+ */
+export function replaceModule052Content(html: string, properties: Record<string, unknown>): string {
+  let module052Html = html
+
+  console.log('[Module05-2] 🔧 플레이스홀더 교체 시작')
+
+  // 이미지 URL & Alt
+  const imageUrl = properties.imageUrl || DEFAULT_TWO_COLUMN_IMAGE_URL
+  module052Html = module052Html.replace(/\{\{imageUrl\}\}/g, String(imageUrl))
+  const imageAlt = properties.imageAlt || '이미지'
+  module052Html = module052Html.replace(/\{\{imageAlt\}\}/g, String(imageAlt))
+
+  // 텍스트 (Quill HTML 처리)
+  const contentText = isEmptyValue(properties.contentText)
+    ? ''
+    : processQuillHtml(String(properties.contentText))
+  module052Html = module052Html.replace(/\{\{contentText\}\}/g, contentText)
+
+  // 4개 버튼
+  for (let i = 1; i <= 4; i++) {
+    const buttonText = properties[`button${i}Text`] || `더보기${i} →`
+    const buttonUrl = properties[`button${i}Url`] || '#'
+    module052Html = module052Html.replace(new RegExp(`\\{\\{button${i}Text\\}\\}`, 'g'), String(buttonText))
+    module052Html = module052Html.replace(new RegExp(`\\{\\{button${i}Url\\}\\}`, 'g'), String(buttonUrl))
+  }
+
+  // 버튼 색상
+  const buttonBgColor = properties.buttonBgColor || '#e5e5e5'
+  const buttonTextColor = properties.buttonTextColor || '#333333'
+  module052Html = module052Html.replace(/\{\{buttonBgColor\}\}/g, String(buttonBgColor))
+  module052Html = module052Html.replace(/\{\{buttonTextColor\}\}/g, String(buttonTextColor))
+
+  console.log('[Module05-2] ✅ 플레이스홀더 교체 완료')
+  return module052Html
+}
+
+/**
+ * Module06 모듈 콘텐츠 교체 - 플레이스홀더 기반 방식
+ */
+export function replaceModule06Content(html: string, properties: Record<string, unknown>): string {
+  let module06Html = html
+
+  console.log('[Module06] 🔧 플레이스홀더 교체 시작')
+
+  // 왼쪽 섹션
+  const leftTitle = properties.leftTitle || ''
+  const leftTitleBgColor = properties.leftTitleBgColor || '#e5e5e5'
+  const leftTitleColor = properties.leftTitleColor || '#111111'
+  const leftImageUrl = properties.leftImageUrl || DEFAULT_TWO_COLUMN_IMAGE_URL
+  const leftImageAlt = properties.leftImageAlt || '이미지'
+  const leftContent = isEmptyValue(properties.leftContent)
+    ? ''
+    : processQuillHtml(String(properties.leftContent))
+  const leftButtonText = properties.leftButtonText || '더보기 →'
+  const leftButtonUrl = properties.leftButtonUrl || '#'
+
+  module06Html = module06Html.replace(/\{\{leftTitle\}\}/g, String(leftTitle))
+  module06Html = module06Html.replace(/\{\{leftTitleBgColor\}\}/g, String(leftTitleBgColor))
+  module06Html = module06Html.replace(/\{\{leftTitleColor\}\}/g, String(leftTitleColor))
+  module06Html = module06Html.replace(/\{\{leftImageUrl\}\}/g, String(leftImageUrl))
+  module06Html = module06Html.replace(/\{\{leftImageAlt\}\}/g, String(leftImageAlt))
+  module06Html = module06Html.replace(/\{\{leftContent\}\}/g, leftContent)
+  module06Html = module06Html.replace(/\{\{leftButtonText\}\}/g, String(leftButtonText))
+  module06Html = module06Html.replace(/\{\{leftButtonUrl\}\}/g, String(leftButtonUrl))
+
+  // 오른쪽 섹션
+  const rightTitle = properties.rightTitle || ''
+  const rightTitleBgColor = properties.rightTitleBgColor || '#e5e5e5'
+  const rightTitleColor = properties.rightTitleColor || '#111111'
+  const rightImageUrl = properties.rightImageUrl || DEFAULT_TWO_COLUMN_IMAGE_URL
+  const rightImageAlt = properties.rightImageAlt || '이미지'
+  const rightContent = isEmptyValue(properties.rightContent)
+    ? ''
+    : processQuillHtml(String(properties.rightContent))
+  const rightButtonText = properties.rightButtonText || '더보기 →'
+  const rightButtonUrl = properties.rightButtonUrl || '#'
+
+  module06Html = module06Html.replace(/\{\{rightTitle\}\}/g, String(rightTitle))
+  module06Html = module06Html.replace(/\{\{rightTitleBgColor\}\}/g, String(rightTitleBgColor))
+  module06Html = module06Html.replace(/\{\{rightTitleColor\}\}/g, String(rightTitleColor))
+  module06Html = module06Html.replace(/\{\{rightImageUrl\}\}/g, String(rightImageUrl))
+  module06Html = module06Html.replace(/\{\{rightImageAlt\}\}/g, String(rightImageAlt))
+  module06Html = module06Html.replace(/\{\{rightContent\}\}/g, rightContent)
+  module06Html = module06Html.replace(/\{\{rightButtonText\}\}/g, String(rightButtonText))
+  module06Html = module06Html.replace(/\{\{rightButtonUrl\}\}/g, String(rightButtonUrl))
+
+  // 버튼 색상
+  const buttonBgColor = properties.buttonBgColor || '#111111'
+  const buttonTextColor = properties.buttonTextColor || '#ffffff'
+  module06Html = module06Html.replace(/\{\{buttonBgColor\}\}/g, String(buttonBgColor))
+  module06Html = module06Html.replace(/\{\{buttonTextColor\}\}/g, String(buttonTextColor))
+
+  console.log('[Module06] ✅ 플레이스홀더 교체 완료')
+  return module06Html
+}
+
+/**
+ * Module07 / Module07_reverse 공통 교체 로직
+ */
+function replaceModule07Common(html: string, properties: Record<string, unknown>, moduleName: string): string {
+  console.log(`[${moduleName}] 🔧 플레이스홀더 교체 시작`)
+
+  const contentText = isEmptyValue(properties.contentText)
+    ? ''
+    : processQuillHtml(String(properties.contentText))
+
+  const replacements = {
+    imageUrl: properties.imageUrl || DEFAULT_TWO_COLUMN_IMAGE_URL,
+    imageAlt: properties.imageAlt || '이미지',
+    title: properties.title || '',
+    contentText,
+    buttonText: properties.buttonText || '더보기 →',
+    buttonUrl: properties.buttonUrl || '#',
+    buttonBgColor: properties.buttonBgColor || '#e5e5e5',
+    buttonTextColor: properties.buttonTextColor || '#333333',
+  }
+
+  const result = replacePlaceholders(html, replacements)
+
+  console.log(`[${moduleName}] ✅ 플레이스홀더 교체 완료`)
+  return result
+}
+
+/**
+ * Module07 모듈 콘텐츠 교체 - 플레이스홀더 기반 방식
+ */
+export function replaceModule07Content(html: string, properties: Record<string, unknown>): string {
+  return replaceModule07Common(html, properties, 'Module07')
+}
+
+/**
+ * Module07_reverse 모듈 콘텐츠 교체 - 플레이스홀더 기반 방식
+ */
+export function replaceModule07ReverseContent(html: string, properties: Record<string, unknown>): string {
+  return replaceModule07Common(html, properties, 'Module07_reverse')
+}
+
+/**
  * 기본 템플릿 교체 ({{key}} 플레이스홀더)
  */
 export function replaceDefaultTemplate(html: string, properties: Record<string, unknown>): string {
