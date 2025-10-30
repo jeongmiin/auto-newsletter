@@ -12,12 +12,13 @@ export interface ModuleMetadata {
 export interface EditableProp {
   key: string
   label: string
-  type: 'text' | 'textarea' | 'color' | 'number' | 'url' | 'image' | 'select' | 'boolean' | 'table-rows' | 'content-titles' | 'content-texts' | 'additional-contents'
+  type: 'text' | 'textarea' | 'color' | 'number' | 'url' | 'image' | 'select' | 'boolean' | 'checkbox' | 'table-rows' | 'content-titles' | 'content-texts' | 'additional-contents'
   options?: string[]
   placeholder?: string
   required?: boolean
   default?: string | number | boolean  // 🐛 버그 수정 3: default 값 지원
   defaultRows?: TableRow[]
+  showWhen?: string  // 조건부 표시를 위한 필드
 }
 
 export interface ModuleStyles {

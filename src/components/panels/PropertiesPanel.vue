@@ -23,7 +23,12 @@
 
       <!-- 속성 편집 폼 -->
       <div class="p-4 space-y-4">
-        <div v-for="prop in editableProps" :key="prop.key" :class="getFieldVisibility(prop)">
+        <div
+          v-for="prop in editableProps"
+          :key="prop.key"
+          :class="getFieldVisibility(prop)"
+          v-show="!prop.showWhen || selectedModule.properties[prop.showWhen] === true"
+        >
           <label
             v-show="prop.type !== 'boolean'"
             class="block text-sm font-medium text-gray-700 mb-1"
@@ -80,7 +85,10 @@
           </select>
 
           <!-- 체크박스 -->
-          <label v-else-if="prop.type === 'boolean'" class="flex items-baseline space-x-2">
+          <label
+            v-else-if="prop.type === 'boolean' || prop.type === 'checkbox'"
+            class="flex items-baseline space-x-2"
+          >
             <input
               type="checkbox"
               :checked="Boolean(selectedModule.properties[prop.key])"

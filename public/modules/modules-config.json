@@ -677,7 +677,7 @@
     {
       "id": "Module05-2",
       "name": "05-2",
-      "description": "이미지 + 텍스트 + 4개의 작은 버튼",
+      "description": "이미지 + 텍스트 + 4개의 독립적인 버튼",
       "category": "image",
       "icon": "모듈",
       "htmlFile": "Module05-2.html",
@@ -701,72 +701,148 @@
           "placeholder": "텍스트 내용을 입력하세요"
         },
         {
+          "key": "showButton1",
+          "label": "버튼 1 표시",
+          "type": "boolean",
+          "default": false
+        },
+        {
           "key": "button1Text",
           "label": "버튼 1 텍스트",
           "type": "text",
-          "default": "작은 버튼 →",
-          "placeholder": "버튼 텍스트"
+          "default": "버튼 1 →",
+          "placeholder": "버튼 텍스트",
+          "showWhen": "showButton1"
         },
         {
           "key": "button1Url",
           "label": "버튼 1 링크",
           "type": "url",
           "default": "#",
-          "placeholder": "버튼 URL"
+          "placeholder": "버튼 URL",
+          "showWhen": "showButton1"
+        },
+        {
+          "key": "button1BgColor",
+          "label": "버튼 1 배경색",
+          "type": "color",
+          "default": "#e5e5e5",
+          "showWhen": "showButton1"
+        },
+        {
+          "key": "button1TextColor",
+          "label": "버튼 1 글자색",
+          "type": "color",
+          "default": "#333333",
+          "showWhen": "showButton1"
+        },
+        {
+          "key": "showButton2",
+          "label": "버튼 2 표시",
+          "type": "boolean",
+          "default": false
         },
         {
           "key": "button2Text",
           "label": "버튼 2 텍스트",
           "type": "text",
-          "default": "작은 버튼 →",
-          "placeholder": "버튼 텍스트"
+          "default": "버튼 2 →",
+          "placeholder": "버튼 텍스트",
+          "showWhen": "showButton2"
         },
         {
           "key": "button2Url",
           "label": "버튼 2 링크",
           "type": "url",
           "default": "#",
-          "placeholder": "버튼 URL"
+          "placeholder": "버튼 URL",
+          "showWhen": "showButton2"
+        },
+        {
+          "key": "button2BgColor",
+          "label": "버튼 2 배경색",
+          "type": "color",
+          "default": "#e5e5e5",
+          "showWhen": "showButton2"
+        },
+        {
+          "key": "button2TextColor",
+          "label": "버튼 2 글자색",
+          "type": "color",
+          "default": "#333333",
+          "showWhen": "showButton2"
+        },
+        {
+          "key": "showButton3",
+          "label": "버튼 3 표시",
+          "type": "boolean",
+          "default": false
         },
         {
           "key": "button3Text",
           "label": "버튼 3 텍스트",
           "type": "text",
-          "default": "작은 버튼 →",
-          "placeholder": "버튼 텍스트"
+          "default": "버튼 3 →",
+          "placeholder": "버튼 텍스트",
+          "showWhen": "showButton3"
         },
         {
           "key": "button3Url",
           "label": "버튼 3 링크",
           "type": "url",
           "default": "#",
-          "placeholder": "버튼 URL"
+          "placeholder": "버튼 URL",
+          "showWhen": "showButton3"
+        },
+        {
+          "key": "button3BgColor",
+          "label": "버튼 3 배경색",
+          "type": "color",
+          "default": "#e5e5e5",
+          "showWhen": "showButton3"
+        },
+        {
+          "key": "button3TextColor",
+          "label": "버튼 3 글자색",
+          "type": "color",
+          "default": "#333333",
+          "showWhen": "showButton3"
+        },
+        {
+          "key": "showButton4",
+          "label": "버튼 4 표시",
+          "type": "boolean",
+          "default": false
         },
         {
           "key": "button4Text",
           "label": "버튼 4 텍스트",
           "type": "text",
-          "default": "작은 버튼 →",
-          "placeholder": "버튼 텍스트"
+          "default": "버튼 4 →",
+          "placeholder": "버튼 텍스트",
+          "showWhen": "showButton4"
         },
         {
           "key": "button4Url",
           "label": "버튼 4 링크",
           "type": "url",
           "default": "#",
-          "placeholder": "버튼 URL"
+          "placeholder": "버튼 URL",
+          "showWhen": "showButton4"
         },
         {
-          "key": "buttonBgColor",
-          "label": "버튼 배경색",
+          "key": "button4BgColor",
+          "label": "버튼 4 배경색",
           "type": "color",
-          "default": "#e5e5e5"
+          "default": "#e5e5e5",
+          "showWhen": "showButton4"
         },
         {
-          "key": "buttonTextColor",
-          "label": "버튼 글자색",
+          "key": "button4TextColor",
+          "label": "버튼 4 글자색",
           "type": "color",
-          "default": "#333333"
+          "default": "#333333",
+          "showWhen": "showButton4"
         }
       ]
     },
@@ -837,13 +913,13 @@
           "key": "topSmallBtnBgColor",
           "label": "작은 버튼 배경색",
           "type": "color",
-          "default": "#111111"
+          "default": "#e5e5e5"
         },
         {
           "key": "topSmallBtnTextColor",
           "label": "작은 버튼 글자색",
           "type": "color",
-          "default": "#ffffff"
+          "default": "#333333"
         },
         {
           "key": "showBigBtn",
@@ -922,18 +998,40 @@
           "placeholder": "왼쪽 섹션 텍스트"
         },
         {
+          "key": "showLeftButton",
+          "label": "왼쪽 버튼 표시",
+          "type": "boolean",
+          "default": false
+        },
+        {
           "key": "leftButtonText",
           "label": "왼쪽 버튼 텍스트",
           "type": "text",
-          "default": "더보기 →",
-          "placeholder": "버튼 텍스트"
+          "default": "작은 버튼 →",
+          "placeholder": "버튼 텍스트",
+          "showWhen": "showLeftButton"
         },
         {
           "key": "leftButtonUrl",
           "label": "왼쪽 버튼 링크",
           "type": "url",
           "default": "#",
-          "placeholder": "버튼 URL"
+          "placeholder": "버튼 URL",
+          "showWhen": "showLeftButton"
+        },
+        {
+          "key": "leftButtonBgColor",
+          "label": "왼쪽 버튼 배경색",
+          "type": "color",
+          "default": "#e5e5e5",
+          "showWhen": "showLeftButton"
+        },
+        {
+          "key": "leftButtonTextColor",
+          "label": "왼쪽 버튼 글자색",
+          "type": "color",
+          "default": "#333333",
+          "showWhen": "showLeftButton"
         },
         {
           "key": "rightTitle",
@@ -972,30 +1070,40 @@
           "placeholder": "오른쪽 섹션 텍스트"
         },
         {
+          "key": "showRightButton",
+          "label": "오른쪽 버튼 표시",
+          "type": "boolean",
+          "default": false
+        },
+        {
           "key": "rightButtonText",
           "label": "오른쪽 버튼 텍스트",
           "type": "text",
-          "default": "더보기 →",
-          "placeholder": "버튼 텍스트"
+          "default": "작은 버튼 →",
+          "placeholder": "버튼 텍스트",
+          "showWhen": "showRightButton"
         },
         {
           "key": "rightButtonUrl",
           "label": "오른쪽 버튼 링크",
           "type": "url",
           "default": "#",
-          "placeholder": "버튼 URL"
+          "placeholder": "버튼 URL",
+          "showWhen": "showRightButton"
         },
         {
-          "key": "buttonBgColor",
-          "label": "버튼 배경색",
+          "key": "rightButtonBgColor",
+          "label": "오른쪽 버튼 배경색",
           "type": "color",
-          "default": "#111111"
+          "default": "#e5e5e5",
+          "showWhen": "showRightButton"
         },
         {
-          "key": "buttonTextColor",
-          "label": "버튼 글자색",
+          "key": "rightButtonTextColor",
+          "label": "오른쪽 버튼 글자색",
           "type": "color",
-          "default": "#ffffff"
+          "default": "#333333",
+          "showWhen": "showRightButton"
         }
       ]
     },
@@ -1032,30 +1140,40 @@
           "placeholder": "텍스트 내용을 입력하세요"
         },
         {
+          "key": "showButton",
+          "label": "버튼 표시",
+          "type": "boolean",
+          "default": false
+        },
+        {
           "key": "buttonText",
           "label": "버튼 텍스트",
           "type": "text",
           "default": "더보기 →",
-          "placeholder": "버튼 텍스트"
+          "placeholder": "버튼 텍스트",
+          "showWhen": "showButton"
         },
         {
           "key": "buttonUrl",
           "label": "버튼 링크",
           "type": "url",
           "default": "#",
-          "placeholder": "버튼 URL"
+          "placeholder": "버튼 URL",
+          "showWhen": "showButton"
         },
         {
           "key": "buttonBgColor",
           "label": "버튼 배경색",
           "type": "color",
-          "default": "#e5e5e5"
+          "default": "#e5e5e5",
+          "showWhen": "showButton"
         },
         {
           "key": "buttonTextColor",
           "label": "버튼 글자색",
           "type": "color",
-          "default": "#333333"
+          "default": "#333333",
+          "showWhen": "showButton"
         }
       ]
     },
@@ -1092,30 +1210,40 @@
           "placeholder": "텍스트 내용을 입력하세요"
         },
         {
+          "key": "showButton",
+          "label": "버튼 표시",
+          "type": "boolean",
+          "default": false
+        },
+        {
           "key": "buttonText",
           "label": "버튼 텍스트",
           "type": "text",
           "default": "더보기 →",
-          "placeholder": "버튼 텍스트"
+          "placeholder": "버튼 텍스트",
+          "showWhen": "showButton"
         },
         {
           "key": "buttonUrl",
           "label": "버튼 링크",
           "type": "url",
           "default": "#",
-          "placeholder": "버튼 URL"
+          "placeholder": "버튼 URL",
+          "showWhen": "showButton"
         },
         {
           "key": "buttonBgColor",
           "label": "버튼 배경색",
           "type": "color",
-          "default": "#e5e5e5"
+          "default": "#e5e5e5",
+          "showWhen": "showButton"
         },
         {
           "key": "buttonTextColor",
           "label": "버튼 글자색",
           "type": "color",
-          "default": "#333333"
+          "default": "#333333",
+          "showWhen": "showButton"
         }
       ]
     }

@@ -3,11 +3,23 @@ import type { ModuleInstance, ModuleMetadata } from '@/types'
 import { useModuleStore } from '@/stores/moduleStore'
 import { applyStylesToHtml } from '@/utils/htmlUtils'
 import {
+  replaceModuleBasicHeaderContent,
+  replaceModuleDescTextContent,
+  replaceModuleImgContent,
+  replaceModuleOneButtonContent,
+  replaceModuleTwoButtonContent,
   replaceSectionTitleContent,
   replaceModule04Content,
   replaceModule02Content,
   replaceModule05Content,
   replaceModule053Content,
+  replaceModule011Content,
+  replaceModule012Content,
+  replaceModule051Content,
+  replaceModule052Content,
+  replaceModule06Content,
+  replaceModule07Content,
+  replaceModule07ReverseContent,
   replaceDefaultTemplate,
 } from '@/utils/moduleContentReplacer'
 
@@ -39,7 +51,24 @@ export function useModuleRenderer(moduleId: string) {
   ): Promise<string> => {
     const { moduleId: mId, properties } = moduleInstance
 
+    console.log('[useModuleRenderer] replaceModuleContent - moduleId:', mId)
+
     switch (mId) {
+      case 'ModuleBasicHeader':
+        return replaceModuleBasicHeaderContent(html, properties)
+
+      case 'ModuleDescText':
+        return replaceModuleDescTextContent(html, properties)
+
+      case 'ModuleImg':
+        return replaceModuleImgContent(html, properties)
+
+      case 'ModuleOneButton':
+        return replaceModuleOneButtonContent(html, properties)
+
+      case 'ModuleTwoButton':
+        return replaceModuleTwoButtonContent(html, properties)
+
       case 'SectionTitle':
         return replaceSectionTitleContent(html, properties)
 
@@ -52,10 +81,37 @@ export function useModuleRenderer(moduleId: string) {
       case 'Module05':
         return replaceModule05Content(html, properties, moduleStore.insertAdditionalContents)
 
+      case 'Module01-1':
+        return replaceModule011Content(html, properties)
+
+      case 'Module01-2':
+        return replaceModule012Content(html, properties)
+
+      case 'Module05-1':
+        return replaceModule051Content(html, properties)
+
+      case 'Module05-2':
+        console.log('[useModuleRenderer] Module05-2 렌더링 시작')
+        console.log('[useModuleRenderer] showButton1:', properties.showButton1)
+        console.log('[useModuleRenderer] showButton2:', properties.showButton2)
+        console.log('[useModuleRenderer] showButton3:', properties.showButton3)
+        console.log('[useModuleRenderer] showButton4:', properties.showButton4)
+        return replaceModule052Content(html, properties)
+
       case 'Module05-3':
         return replaceModule053Content(html, properties)
 
+      case 'Module06':
+        return replaceModule06Content(html, properties)
+
+      case 'Module07':
+        return replaceModule07Content(html, properties)
+
+      case 'Module07_reverse':
+        return replaceModule07ReverseContent(html, properties)
+
       default:
+        console.log('[useModuleRenderer] Using default template for:', mId)
         return replaceDefaultTemplate(html, properties)
     }
   }

@@ -671,6 +671,7 @@ export const useModuleStore = defineStore('module', () => {
 
       switch (prop.type) {
         case 'boolean':
+        case 'checkbox':
           props[prop.key] = false
           break
         case 'color':
