@@ -77,7 +77,6 @@ export const convertRgbToHex = (html: string): string => {
  * 테스트용 함수 - 콘솔에서 변환 결과 확인
  */
 export const testColorConversion = () => {
-  console.log('=== RGB to HEX 색상 변환 테스트 ===')
 
   const testCases = [
     'rgb(255, 0, 0)',
@@ -90,8 +89,5 @@ export const testColorConversion = () => {
   ]
 
   testCases.forEach((test) => {
-    console.log('변환 전:', test)
-    console.log('변환 후:', convertRgbToHex(test))
-    console.log('---')
   })
 }

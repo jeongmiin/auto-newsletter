@@ -26,7 +26,6 @@
         <div
           v-for="prop in editableProps"
           :key="prop.key"
-          :class="getFieldVisibility(prop)"
           v-show="!prop.showWhen || selectedModule.properties[prop.showWhen] === true"
         >
           <label
@@ -36,9 +35,33 @@
             {{ prop.label }}
           </label>
 
-          <!-- 텍스트 입력 -->
+          <!-- 텍스트 입력 (컬러 필드) -->
+          <div
+            v-if="prop.type === 'text' && isColorField(prop.key)"
+            class="flex items-center gap-2"
+          >
+            <input
+              :value="String(selectedModule.properties[prop.key] || '')"
+              @input="handleColorInput(prop.key, ($event.target as HTMLInputElement).value)"
+              :placeholder="prop.placeholder || '#000000'"
+              class="flex-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm"
+              spellcheck="false"
+            />
+            <!-- 컬러 미리보기 -->
+            <div
+              class="w-10 h-10 border-2 border-gray-300 rounded-md flex-shrink-0 shadow-sm transition-transform hover:scale-110 cursor-pointer"
+              :style="{ backgroundColor: getColorValue(prop.key) }"
+              :title="getColorValue(prop.key)"
+            ></div>
+            <!-- 컬러 값 표시 -->
+            <span class="text-xs text-gray-500 font-mono min-w-[70px]">{{
+              getColorValue(prop.key)
+            }}</span>
+          </div>
+
+          <!-- 텍스트 입력 (일반) -->
           <input
-            v-if="prop.type === 'text'"
+            v-else-if="prop.type === 'text'"
             :value="String(selectedModule.properties[prop.key] || '')"
             @input="updateProperty(prop.key, ($event.target as HTMLInputElement).value)"
             :placeholder="prop.placeholder"
@@ -51,15 +74,6 @@
             :model-value="String(selectedModule.properties[prop.key] || '')"
             @update:model-value="updateProperty(prop.key, $event)"
             :placeholder="prop.placeholder"
-          />
-
-          <!-- 컬러 선택 -->
-          <input
-            v-else-if="prop.type === 'color'"
-            :value="String(selectedModule.properties[prop.key] || '')"
-            @input="updateProperty(prop.key, ($event.target as HTMLInputElement).value)"
-            type="color"
-            class="w-full h-10 border border-gray-300 rounded-md"
           />
 
           <!-- URL 입력 -->
@@ -372,6 +386,7 @@ import { computed } from 'vue'
 import { useModuleStore } from '@/stores/moduleStore'
 import type { TableRow, EditableProp, ContentTitle, ContentText, AdditionalContent } from '@/types'
 import QuillEditor from '@/components/QuillEditor.vue'
+import { normalizeColorInput, isValidHexColor } from '@/utils/colorHelper'
 
 const moduleStore = useModuleStore()
 
@@ -385,7 +400,6 @@ const tableRows = computed(() => {
   if (!selectedModule.value.properties.tableRows) return []
 
   const rows = selectedModule.value.properties.tableRows as TableRow[]
-  console.log('[tableRows computed] 현재 행 수:', rows.length, rows)
   return rows
 })
 
@@ -413,21 +427,14 @@ const removeModule = () => {
 
 // 동적 테이블 행 관리 함수들
 const addNewTableRow = () => {
-  console.log('=== [PropertiesPanel] 테이블 행 추가 시작 ===')
-  console.log('selectedModule:', selectedModule.value)
-  console.log('selectedModule.id:', selectedModule.value?.id)
-  console.log('현재 tableRows:', selectedModule.value?.properties.tableRows)
 
   if (selectedModule.value) {
-    console.log('moduleStore.addTableRow 호출:', selectedModule.value.id)
     moduleStore.addTableRow(selectedModule.value.id)
 
     // 추가 후 확인
-    console.log('추가 후 tableRows:', selectedModule.value?.properties.tableRows)
   } else {
     console.error('selectedModule이 null입니다!')
   }
-  console.log('=== [PropertiesPanel] 테이블 행 추가 완료 ===')
 }
 
 const updateRowField = (rowId: string, field: 'header' | 'data', value: string) => {
@@ -527,211 +534,28 @@ const moveAdditionalContentDown = (contentId: string, propertyKey: string) => {
   }
 }
 
-// 조건부 필드 표시 로직
-const getFieldVisibility = (prop: EditableProp) => {
-  if (!selectedModule.value) return ''
-
-  const properties = selectedModule.value.properties
-
-  // 테이블 관련 필드들의 조건부 표시
-  if (isTableRelatedField(prop.key)) {
-    return properties.showTable === true ? '' : 'hidden'
-  }
-
-  // 버튼 관련 필드들의 조건부 표시
-  // ModuleOneButton과 ModuleTwoButton은 단독 버튼 모듈이므로 조건부 표시를 하지 않음
-  if (isButtonRelatedField(prop.key)) {
-    const moduleMetadata = selectedModuleMetadata.value
-    if (moduleMetadata?.id === 'ModuleOneButton' || moduleMetadata?.id === 'ModuleTwoButton') {
-      return '' // 항상 표시
-    }
-    return properties.showButton === true ? '' : 'hidden'
-  }
-
-  // Module04 버튼 관련 필드들
-  if (isModule04ButtonField(prop.key)) {
-    return getModule04ButtonVisibility(prop.key, properties)
-  }
-
-  // Module05 버튼 관련 필드들
-  if (isModule05ButtonField(prop.key)) {
-    return getModule05ButtonVisibility(prop.key, properties)
-  }
-
-  // Module05-3 버튼 관련 필드들
-  if (isModule053ButtonField(prop.key)) {
-    return getModule053ButtonVisibility(prop.key, properties)
-  }
-
-  return ''
+// 컬러 필드 감지
+const isColorField = (key: string) => {
+  return key.toLowerCase().includes('color') || key.toLowerCase().includes('colour')
 }
 
-const isTableRelatedField = (key: string) => {
-  return ['tableTitle', 'tableContent', 'tableRows'].includes(key)
+// 컬러 입력 핸들러
+const handleColorInput = (key: string, value: string) => {
+  const normalized = normalizeColorInput(value)
+
+  // 유효성 검사 (경고만, 입력은 허용)
+  if (normalized && !isValidHexColor(normalized)) {
+    console.warn(`⚠️ [ColorInput] 유효하지 않은 HEX 컬러: ${normalized}`)
+  } else if (normalized) {
+  }
+
+  updateProperty(key, normalized)
 }
 
-const isButtonRelatedField = (key: string) => {
-  return ['buttonText', 'buttonUrl', 'buttonBgColor', 'buttonTextColor'].includes(key)
-}
-
-const isModule04ButtonField = (key: string) => {
-  const buttonFields = [
-    'leftSmallBtnText',
-    'leftSmallBtnUrl',
-    'leftSmallBtnBgColor',
-    'leftSmallBtnTextColor',
-    'leftBigBtnText',
-    'leftBigBtnUrl',
-    'leftBigBtnBgColor',
-    'leftBigBtnTextColor',
-    'rightSmallBtnText',
-    'rightSmallBtnUrl',
-    'rightSmallBtnBgColor',
-    'rightSmallBtnTextColor',
-    'rightBigBtnText',
-    'rightBigBtnUrl',
-    'rightBigBtnBgColor',
-    'rightBigBtnTextColor',
-  ]
-  return buttonFields.includes(key)
-}
-
-const isModule05ButtonField = (key: string) => {
-  const buttonFields = [
-    'topRightSmallBtnText',
-    'topRightSmallBtnUrl',
-    'bottomRightSmallBtnText',
-    'bottomRightSmallBtnUrl',
-    'bigButtonText',
-    'bigButtonUrl',
-    'smallBtnBgColor',
-    'smallBtnTextColor',
-    'bigBtnBgColor',
-    'bigBtnTextColor',
-  ]
-  return buttonFields.includes(key)
-}
-
-const isModule053ButtonField = (key: string) => {
-  const buttonFields = [
-    'topSmallBtnText',
-    'topSmallBtnUrl',
-    'topSmallBtnBgColor',
-    'topSmallBtnTextColor',
-    'bottomSmallBtnText',
-    'bottomSmallBtnUrl',
-    'bottomSmallBtnBgColor',
-    'bottomSmallBtnTextColor',
-    'bigBtnText',
-    'bigBtnUrl',
-    'bigBtnBgColor',
-    'bigBtnTextColor',
-  ]
-  return buttonFields.includes(key)
-}
-
-const getModule04ButtonVisibility = (key: string, properties: Record<string, unknown>) => {
-  // Left Small Button 관련
-  if (
-    [
-      'leftSmallBtnText',
-      'leftSmallBtnUrl',
-      'leftSmallBtnBgColor',
-      'leftSmallBtnTextColor',
-    ].includes(key)
-  ) {
-    return properties.showLeftSmallBtn === true ? '' : 'hidden'
-  }
-
-  // Left Big Button 관련
-  if (
-    ['leftBigBtnText', 'leftBigBtnUrl', 'leftBigBtnBgColor', 'leftBigBtnTextColor'].includes(key)
-  ) {
-    return properties.showLeftBigBtn === true ? '' : 'hidden'
-  }
-
-  // Right Small Button 관련
-  if (
-    [
-      'rightSmallBtnText',
-      'rightSmallBtnUrl',
-      'rightSmallBtnBgColor',
-      'rightSmallBtnTextColor',
-    ].includes(key)
-  ) {
-    return properties.showRightSmallBtn === true ? '' : 'hidden'
-  }
-
-  // Right Big Button 관련
-  if (
-    ['rightBigBtnText', 'rightBigBtnUrl', 'rightBigBtnBgColor', 'rightBigBtnTextColor'].includes(
-      key,
-    )
-  ) {
-    return properties.showRightBigBtn === true ? '' : 'hidden'
-  }
-
-  return ''
-}
-
-const getModule05ButtonVisibility = (key: string, properties: Record<string, unknown>) => {
-  // Top Small Button 관련
-  if (['topRightSmallBtnText', 'topRightSmallBtnUrl'].includes(key)) {
-    return properties.showTopSmallBtn === true ? '' : 'hidden'
-  }
-
-  // Bottom Small Button 관련
-  if (['bottomRightSmallBtnText', 'bottomRightSmallBtnUrl'].includes(key)) {
-    return properties.showBottomSmallBtn === true ? '' : 'hidden'
-  }
-
-  // Big Button 관련
-  if (['bigButtonText', 'bigButtonUrl'].includes(key)) {
-    return properties.showBigBtn === true ? '' : 'hidden'
-  }
-
-  // Small Button Style (둘 다 표시된 경우에만)
-  if (['smallBtnBgColor', 'smallBtnTextColor'].includes(key)) {
-    return properties.showTopSmallBtn === true || properties.showBottomSmallBtn === true
-      ? ''
-      : 'hidden'
-  }
-
-  // Big Button Style
-  if (['bigBtnBgColor', 'bigBtnTextColor'].includes(key)) {
-    return properties.showBigBtn === true ? '' : 'hidden'
-  }
-
-  return ''
-}
-
-const getModule053ButtonVisibility = (key: string, properties: Record<string, unknown>) => {
-  // Top Small Button 관련
-  if (
-    ['topSmallBtnText', 'topSmallBtnUrl', 'topSmallBtnBgColor', 'topSmallBtnTextColor'].includes(
-      key,
-    )
-  ) {
-    return properties.showTopSmallBtn === true ? '' : 'hidden'
-  }
-
-  // Bottom Small Button 관련
-  if (
-    [
-      'bottomSmallBtnText',
-      'bottomSmallBtnUrl',
-      'bottomSmallBtnBgColor',
-      'bottomSmallBtnTextColor',
-    ].includes(key)
-  ) {
-    return properties.showBottomSmallBtn === true ? '' : 'hidden'
-  }
-
-  // Big Button 관련
-  if (['bigBtnText', 'bigBtnUrl', 'bigBtnBgColor', 'bigBtnTextColor'].includes(key)) {
-    return properties.showBigBtn === true ? '' : 'hidden'
-  }
-
-  return ''
+// 컬러 값 가져오기 (미리보기용)
+const getColorValue = (key: string) => {
+  const value = String(selectedModule.value?.properties[key] || '')
+  // 유효한 HEX 컬러면 그대로, 아니면 기본 회색
+  return isValidHexColor(value) ? value : '#cccccc'
 }
 </script>

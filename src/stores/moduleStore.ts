@@ -65,8 +65,6 @@ export const useModuleStore = defineStore('module', () => {
       const basePath = import.meta.env.BASE_URL || '/'
       const configPath = normalizePath(`${basePath}modules/modules-config.json`)
 
-      console.log('[loadAvailableModules] Base URL:', basePath)
-      console.log('[loadAvailableModules] Config path:', configPath)
 
       const response = await fetch(configPath)
       if (!response.ok) {
@@ -74,7 +72,6 @@ export const useModuleStore = defineStore('module', () => {
       }
 
       const data = await response.json()
-      console.log('[loadAvailableModules] Loaded data:', data)
 
       if (!data || !Array.isArray(data.modules)) {
         throw new Error('Invalid modules configuration format')
@@ -93,7 +90,6 @@ export const useModuleStore = defineStore('module', () => {
         console.warn('Some modules were excluded due to invalid format')
       }
 
-      console.log('[loadAvailableModules] Validated modules count:', validatedModules.length)
       availableModules.value = validatedModules
       return validatedModules
     } catch (error) {
@@ -135,11 +131,9 @@ export const useModuleStore = defineStore('module', () => {
    */
   const updateModuleProperty = (propertyKey: string, value: unknown): void => {
     if (!selectedModule.value) return
-    console.log('[updateModuleProperty]', propertyKey, '=', value)
     selectedModule.value.properties[propertyKey] = value
     // 🐛 해결책: 속성 변경 후 modules ref 트리거
     triggerRef(modules)
-    console.log('[updateModuleProperty] triggerRef 실행')
   }
 
   /**
@@ -231,7 +225,6 @@ export const useModuleStore = defineStore('module', () => {
 
   // ============= Table Row Management =============
   const addTableRow = (moduleId: string, header: string = '', data: string = ''): void => {
-    console.log('[moduleStore.addTableRow] 시작 - moduleId:', moduleId)
 
     const moduleIndex = modules.value.findIndex((m) => m.id === moduleId)
     if (moduleIndex === -1) {
@@ -240,30 +233,21 @@ export const useModuleStore = defineStore('module', () => {
     }
 
     const module = modules.value[moduleIndex]
-    console.log('[addTableRow] Module 찾음:', module.id, module.moduleId)
 
     const newRow: TableRow = {
       id: generateUniqueId('row'),
       header,
       data,
     }
-    console.log('[addTableRow] 새 행 생성:', newRow)
 
     // tableRows 초기화 및 추가
     const currentRows = (module.properties.tableRows as TableRow[]) || []
-    console.log('[addTableRow] 현재 행 수:', currentRows.length)
 
     // 🐛 해결책: modules.value를 직접 변경하고 triggerRef로 강제 업데이트
     module.properties.tableRows = [...currentRows, newRow]
 
     // modules ref를 강제로 트리거하여 Vue에게 변경을 알림
     triggerRef(modules)
-
-    console.log(
-      '[addTableRow] 추가 완료 - 새 행 수:',
-      (module.properties.tableRows as TableRow[]).length,
-    )
-    console.log('[addTableRow] triggerRef 실행')
   }
 
   const updateTableRow = (
@@ -385,7 +369,6 @@ export const useModuleStore = defineStore('module', () => {
       const filename = type === 'title' ? 'ModuleContent_title.html' : 'ModuleContent_text.html'
       const templatePath = normalizePath(`${basePath}modules/${filename}`)
 
-      console.log('[loadContentTemplate] 🔍 Loading template:', templatePath)
 
       const response = await fetch(templatePath)
       if (!response.ok) {
@@ -393,7 +376,6 @@ export const useModuleStore = defineStore('module', () => {
         throw new Error(`Failed to load sub-module: ${response.status}`)
       }
       const html = await response.text()
-      console.log('[loadContentTemplate] ✅ Success:', filename, html.length, 'bytes')
       return html
     } catch (error) {
       console.error(`[loadContentTemplate] ❌ Error loading sub-module (${type}):`, error)
@@ -619,7 +601,6 @@ export const useModuleStore = defineStore('module', () => {
     for (const module of modules.value.sort((a, b) => a.order - b.order)) {
       try {
         const modulePath = normalizePath(`${basePath}modules/${module.moduleId}.html`)
-        console.log('[generateHtml] 🔍 Loading module:', modulePath)
 
         const response = await fetch(modulePath)
         if (!response.ok) {
@@ -627,7 +608,6 @@ export const useModuleStore = defineStore('module', () => {
           throw new Error(`Failed to load module HTML: ${response.status}`)
         }
         let html = await response.text()
-        console.log('[generateHtml] ✅ Success:', module.moduleId, html.length, 'bytes')
 
         html = await replaceModuleContent(html, module)
 

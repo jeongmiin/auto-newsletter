@@ -128,7 +128,6 @@ export const addZeroSpacingToBlocks = (html: string): string => {
 export const convertQuillAlignToInline = (html: string): string => {
   if (!html) return ''
 
-  console.log('[convertQuillAlignToInline] 🔧 정렬 클래스 → 인라인 스타일 변환 시작')
 
   // 정렬 클래스 매핑
   const alignMap: Record<string, string> = {
@@ -174,7 +173,6 @@ export const convertQuillAlignToInline = (html: string): string => {
   // 빈 class 속성 제거
   html = html.replace(/\s*class=""\s*/g, ' ')
 
-  console.log('[convertQuillAlignToInline] ✅ 정렬 클래스 변환 완료')
 
   return html
 }
@@ -188,7 +186,6 @@ export const convertQuillAlignToInline = (html: string): string => {
 export const processQuillHtml = (html: string): string => {
   if (!html) return ''
 
-  console.log('[processQuillHtml] 🔧 Quill HTML 처리 시작')
 
   // 1. RGB → HEX 변환
   html = convertRgbToHex(html)
@@ -199,7 +196,6 @@ export const processQuillHtml = (html: string): string => {
   // 3. ✅ Quill 정렬 클래스를 인라인 스타일로 변환
   html = convertQuillAlignToInline(html)
 
-  console.log('[processQuillHtml] ✅ Quill HTML 처리 완료')
 
   return html
 }
@@ -208,7 +204,6 @@ export const processQuillHtml = (html: string): string => {
  * 테스트용 함수 - 블록 요소 spacing 테스트
  */
 export const testBlockSpacing = () => {
-  console.log('=== 블록 요소 spacing 테스트 ===\n')
 
   const testCases = [
     '<p>일반 문단</p>',
@@ -223,15 +218,11 @@ export const testBlockSpacing = () => {
   ]
 
   testCases.forEach((html, index) => {
-    console.log(`테스트 ${index + 1}:`)
-    console.log('입력:', html)
     const result = processQuillHtml(html)
-    console.log('출력:', result)
 
     // margin: 0과 padding: 0 포함 여부 확인
     const hasMargin = result.includes('margin: 0')
     const hasPadding = result.includes('padding: 0')
-    console.log(`검증: ${hasMargin && hasPadding ? '✅ PASS' : '❌ FAIL'}\n`)
   })
 }
 
@@ -250,7 +241,6 @@ export const verifyBlockSpacing = (html: string): Record<string, { total: number
 
     stats[tag] = { total: totalCount, processed: withSpacingCount }
 
-    console.log(`📊 <${tag}> 태그: ${withSpacingCount}/${totalCount} 처리됨`)
 
     if (totalCount > 0 && withSpacingCount < totalCount) {
       console.warn(`⚠️ 일부 <${tag}> 태그에 margin/padding: 0이 누락되었습니다`)

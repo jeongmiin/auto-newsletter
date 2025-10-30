@@ -32,27 +32,22 @@ export function replaceModuleBasicHeaderContent(
 ): string {
   let headerHtml = html
 
-  console.log('[ModuleBasicHeader] 🔧 플레이스홀더 교체 시작')
 
   // === 로고 이미지 URL 플레이스홀더 교체 ===
   const logoImageUrl =
     properties.logoImageUrl || 'https://design.messeesang.com/e-dm/newsletter/images/logo-gray.png'
   headerHtml = headerHtml.replace(/\{\{logoImageUrl\}\}/g, String(logoImageUrl))
-  console.log('[ModuleBasicHeader] ✅ logoImageUrl:', logoImageUrl)
 
   // === 로고 대체 텍스트 플레이스홀더 교체 ===
   const logoAlt = properties.logoAlt || '로고'
   headerHtml = headerHtml.replace(/\{\{logoAlt\}\}/g, String(logoAlt))
-  console.log('[ModuleBasicHeader] ✅ logoAlt:', logoAlt)
 
   // === 헤더 텍스트 플레이스홀더 교체 (Quill HTML 처리) ===
   const headerText = isEmptyValue(properties.headerText)
     ? ''
     : processQuillHtml(String(properties.headerText))
   headerHtml = headerHtml.replace(/\{\{headerText\}\}/g, headerText)
-  console.log('[ModuleBasicHeader] ✅ headerText 처리 완료 (길이:', headerText.length, 'bytes)')
 
-  console.log('[ModuleBasicHeader] ✅ 플레이스홀더 교체 완료')
 
   return headerHtml
 }
@@ -66,20 +61,12 @@ export function replaceModuleDescTextContent(
 ): string {
   let descHtml = html
 
-  console.log('[ModuleDescText] 🔧 플레이스홀더 교체 시작')
 
   // === 설명 텍스트 플레이스홀더 교체 (Quill HTML 처리) ===
   const descriptionText = isEmptyValue(properties.descriptionText)
     ? ''
     : processQuillHtml(String(properties.descriptionText))
   descHtml = descHtml.replace(/\{\{descriptionText\}\}/g, descriptionText)
-  console.log(
-    '[ModuleDescText] ✅ descriptionText 처리 완료 (길이:',
-    descriptionText.length,
-    'bytes)',
-  )
-
-  console.log('[ModuleDescText] ✅ 플레이스홀더 교체 완료')
 
   return descHtml
 }
@@ -90,20 +77,16 @@ export function replaceModuleDescTextContent(
 export function replaceModuleImgContent(html: string, properties: Record<string, unknown>): string {
   let imgHtml = html
 
-  console.log('[ModuleImg] 🔧 플레이스홀더 교체 시작')
 
   // === 이미지 URL 플레이스홀더 교체 ===
   const imageUrl =
     properties.imageUrl || 'https://design.messeesang.com/e-dm/newsletter/images/img-1column.png'
   imgHtml = imgHtml.replace(/\{\{imageUrl\}\}/g, String(imageUrl))
-  console.log('[ModuleImg] ✅ imageUrl:', imageUrl)
 
   // === 이미지 Alt 텍스트 플레이스홀더 교체 ===
   const imageAlt = properties.imageAlt || '이미지'
   imgHtml = imgHtml.replace(/\{\{imageAlt\}\}/g, String(imageAlt))
-  console.log('[ModuleImg] ✅ imageAlt:', imageAlt)
 
-  console.log('[ModuleImg] ✅ 플레이스홀더 교체 완료')
 
   return imgHtml
 }
@@ -117,29 +100,23 @@ export function replaceModuleOneButtonContent(
 ): string {
   let buttonHtml = html
 
-  console.log('[ModuleOneButton] 🔧 플레이스홀더 교체 시작')
 
   // === 버튼 텍스트 플레이스홀더 교체 ===
   const buttonText = properties.buttonText || '큰 버튼 →'
   buttonHtml = buttonHtml.replace(/\{\{buttonText\}\}/g, String(buttonText))
-  console.log('[ModuleOneButton] ✅ buttonText:', buttonText)
 
   // === 버튼 URL 플레이스홀더 교체 ===
   const buttonUrl = properties.buttonUrl || '#'
   buttonHtml = buttonHtml.replace(/\{\{buttonUrl\}\}/g, String(buttonUrl))
-  console.log('[ModuleOneButton] ✅ buttonUrl:', buttonUrl)
 
   // === 버튼 배경색 플레이스홀더 교체 ===
   const buttonBgColor = properties.buttonBgColor || '#111111'
   buttonHtml = buttonHtml.replace(/\{\{buttonBgColor\}\}/g, String(buttonBgColor))
-  console.log('[ModuleOneButton] ✅ buttonBgColor:', buttonBgColor)
 
   // === 버튼 글자색 플레이스홀더 교체 ===
   const buttonTextColor = properties.buttonTextColor || '#ffffff'
   buttonHtml = buttonHtml.replace(/\{\{buttonTextColor\}\}/g, String(buttonTextColor))
-  console.log('[ModuleOneButton] ✅ buttonTextColor:', buttonTextColor)
 
-  console.log('[ModuleOneButton] ✅ 플레이스홀더 교체 완료')
 
   return buttonHtml
 }
@@ -153,49 +130,39 @@ export function replaceModuleTwoButtonContent(
 ): string {
   let buttonHtml = html
 
-  console.log('[ModuleTwoButton] 🔧 플레이스홀더 교체 시작')
 
   // === 첫 번째 버튼 텍스트 플레이스홀더 교체 ===
   const button1Text = properties.button1Text || '버튼 1 →'
   buttonHtml = buttonHtml.replace(/\{\{button1Text\}\}/g, String(button1Text))
-  console.log('[ModuleTwoButton] ✅ button1Text:', button1Text)
 
   // === 첫 번째 버튼 URL 플레이스홀더 교체 ===
   const button1Url = properties.button1Url || '#'
   buttonHtml = buttonHtml.replace(/\{\{button1Url\}\}/g, String(button1Url))
-  console.log('[ModuleTwoButton] ✅ button1Url:', button1Url)
 
   // === 첫 번째 버튼 배경색 플레이스홀더 교체 ===
   const button1BgColor = properties.button1BgColor || '#111111'
   buttonHtml = buttonHtml.replace(/\{\{button1BgColor\}\}/g, String(button1BgColor))
-  console.log('[ModuleTwoButton] ✅ button1BgColor:', button1BgColor)
 
   // === 첫 번째 버튼 글자색 플레이스홀더 교체 ===
   const button1TextColor = properties.button1TextColor || '#ffffff'
   buttonHtml = buttonHtml.replace(/\{\{button1TextColor\}\}/g, String(button1TextColor))
-  console.log('[ModuleTwoButton] ✅ button1TextColor:', button1TextColor)
 
   // === 두 번째 버튼 텍스트 플레이스홀더 교체 ===
   const button2Text = properties.button2Text || '버튼 2 →'
   buttonHtml = buttonHtml.replace(/\{\{button2Text\}\}/g, String(button2Text))
-  console.log('[ModuleTwoButton] ✅ button2Text:', button2Text)
 
   // === 두 번째 버튼 URL 플레이스홀더 교체 ===
   const button2Url = properties.button2Url || '#'
   buttonHtml = buttonHtml.replace(/\{\{button2Url\}\}/g, String(button2Url))
-  console.log('[ModuleTwoButton] ✅ button2Url:', button2Url)
 
   // === 두 번째 버튼 배경색 플레이스홀더 교체 ===
   const button2BgColor = properties.button2BgColor || '#111111'
   buttonHtml = buttonHtml.replace(/\{\{button2BgColor\}\}/g, String(button2BgColor))
-  console.log('[ModuleTwoButton] ✅ button2BgColor:', button2BgColor)
 
   // === 두 번째 버튼 글자색 플레이스홀더 교체 ===
   const button2TextColor = properties.button2TextColor || '#ffffff'
   buttonHtml = buttonHtml.replace(/\{\{button2TextColor\}\}/g, String(button2TextColor))
-  console.log('[ModuleTwoButton] ✅ button2TextColor:', button2TextColor)
 
-  console.log('[ModuleTwoButton] ✅ 플레이스홀더 교체 완료')
 
   return buttonHtml
 }
@@ -456,7 +423,6 @@ export async function replaceModule05Content(
 ): Promise<string> {
   let module05Html = html
 
-  console.log('[Module05] 콘텐츠 교체 시작:', properties)
 
   // === 이미지 URL 교체 ===
   module05Html = module05Html.replace(
@@ -548,7 +514,6 @@ export async function replaceModule05Content(
     module05Html = removeMarker(module05Html, HTML_MARKERS.additionalContentTop)
   }
 
-  console.log('[Module05] 콘텐츠 교체 완료')
   return module05Html
 }
 
@@ -712,16 +677,6 @@ function replacePlaceholder(html: string, key: string, value: unknown): string {
   return html.replace(regex, String(value))
 }
 
-/**
- * 여러 플레이스홀더를 한번에 교체하는 헬퍼 함수
- */
-function replacePlaceholders(html: string, replacements: Record<string, unknown>): string {
-  let result = html
-  for (const [key, value] of Object.entries(replacements)) {
-    result = replacePlaceholder(result, key, value)
-  }
-  return result
-}
 
 /**
  * Module01-1 모듈 콘텐츠 교체 - 플레이스홀더 기반 방식
@@ -729,7 +684,6 @@ function replacePlaceholders(html: string, replacements: Record<string, unknown>
 export function replaceModule011Content(html: string, properties: Record<string, unknown>): string {
   let result = html
 
-  console.log('[Module01-1] 🔧 플레이스홀더 교체 시작')
 
   // 왼쪽 컬럼
   const leftTitle = properties.leftTitle || ''
@@ -749,7 +703,6 @@ export function replaceModule011Content(html: string, properties: Record<string,
   result = replacePlaceholder(result, 'rightTitle', rightTitle)
   result = replacePlaceholder(result, 'rightContent', rightContent)
 
-  console.log('[Module01-1] ✅ 플레이스홀더 교체 완료')
   return result
 }
 
@@ -759,7 +712,6 @@ export function replaceModule011Content(html: string, properties: Record<string,
 export function replaceModule012Content(html: string, properties: Record<string, unknown>): string {
   let result = html
 
-  console.log('[Module01-2] 🔧 플레이스홀더 교체 시작')
 
   // 카테고리
   const categoryText = properties.categoryText || ''
@@ -777,7 +729,6 @@ export function replaceModule012Content(html: string, properties: Record<string,
 
   result = replacePlaceholder(result, 'contentText', contentText)
 
-  console.log('[Module01-2] ✅ 플레이스홀더 교체 완료')
   return result
 }
 
@@ -787,7 +738,6 @@ export function replaceModule012Content(html: string, properties: Record<string,
 export function replaceModule051Content(html: string, properties: Record<string, unknown>): string {
   let result = html
 
-  console.log('[Module05-1] 🔧 플레이스홀더 교체 시작')
 
   // 이미지
   const ImageUrl = properties.ImageUrl || DEFAULT_TWO_COLUMN_IMAGE_URL
@@ -812,7 +762,6 @@ export function replaceModule051Content(html: string, properties: Record<string,
 
   result = replacePlaceholder(result, 'contentText', contentText)
 
-  console.log('[Module05-1] ✅ 플레이스홀더 교체 완료')
   return result
 }
 
@@ -823,7 +772,6 @@ export function replaceModule051Content(html: string, properties: Record<string,
 export function replaceModule052Content(html: string, properties: Record<string, unknown>): string {
   let module052Html = html
 
-  console.log('[Module05-2] 🔧 플레이스홀더 교체 시작')
 
   // 이미지 URL & Alt
   const imageUrl = properties.imageUrl || DEFAULT_TWO_COLUMN_IMAGE_URL
@@ -847,11 +795,9 @@ export function replaceModule052Content(html: string, properties: Record<string,
     module052Html = module052Html.replace(/\{\{button1Url\}\}/g, String(button1Url))
     module052Html = module052Html.replace(/\{\{button1BgColor\}\}/g, String(button1BgColor))
     module052Html = module052Html.replace(/\{\{button1TextColor\}\}/g, String(button1TextColor))
-    console.log('[Module05-2] ✅ 버튼 1 표시')
   } else {
     // 한 줄에 있어도 제거 가능 (s 플래그 추가)
     module052Html = module052Html.replace(/<!-- 버튼 1 -->.*?<!-- \/\/버튼 1 -->/gs, '')
-    console.log('[Module05-2] ❌ 버튼 1 숨김')
   }
 
   // 버튼 2 표시/숨김
@@ -864,10 +810,8 @@ export function replaceModule052Content(html: string, properties: Record<string,
     module052Html = module052Html.replace(/\{\{button2Url\}\}/g, String(button2Url))
     module052Html = module052Html.replace(/\{\{button2BgColor\}\}/g, String(button2BgColor))
     module052Html = module052Html.replace(/\{\{button2TextColor\}\}/g, String(button2TextColor))
-    console.log('[Module05-2] ✅ 버튼 2 표시')
   } else {
     module052Html = module052Html.replace(/<!-- 버튼 2 -->.*?<!-- \/\/버튼 2 -->/gs, '')
-    console.log('[Module05-2] ❌ 버튼 2 숨김')
   }
 
   // 버튼 3 표시/숨김
@@ -880,10 +824,8 @@ export function replaceModule052Content(html: string, properties: Record<string,
     module052Html = module052Html.replace(/\{\{button3Url\}\}/g, String(button3Url))
     module052Html = module052Html.replace(/\{\{button3BgColor\}\}/g, String(button3BgColor))
     module052Html = module052Html.replace(/\{\{button3TextColor\}\}/g, String(button3TextColor))
-    console.log('[Module05-2] ✅ 버튼 3 표시')
   } else {
     module052Html = module052Html.replace(/<!-- 버튼 3 -->.*?<!-- \/\/버튼 3 -->/gs, '')
-    console.log('[Module05-2] ❌ 버튼 3 숨김')
   }
 
   // 버튼 4 표시/숨김
@@ -896,13 +838,10 @@ export function replaceModule052Content(html: string, properties: Record<string,
     module052Html = module052Html.replace(/\{\{button4Url\}\}/g, String(button4Url))
     module052Html = module052Html.replace(/\{\{button4BgColor\}\}/g, String(button4BgColor))
     module052Html = module052Html.replace(/\{\{button4TextColor\}\}/g, String(button4TextColor))
-    console.log('[Module05-2] ✅ 버튼 4 표시')
   } else {
     module052Html = module052Html.replace(/<!-- 버튼 4 -->.*?<!-- \/\/버튼 4 -->/gs, '')
-    console.log('[Module05-2] ❌ 버튼 4 숨김')
   }
 
-  console.log('[Module05-2] ✅ 플레이스홀더 교체 완료')
   return module052Html
 }
 
@@ -912,7 +851,6 @@ export function replaceModule052Content(html: string, properties: Record<string,
 export function replaceModule06Content(html: string, properties: Record<string, unknown>): string {
   let module06Html = html
 
-  console.log('[Module06] 🔧 플레이스홀더 교체 시작')
 
   // 왼쪽 섹션
   const leftTitle = properties.leftTitle || ''
@@ -942,10 +880,8 @@ export function replaceModule06Content(html: string, properties: Record<string, 
     module06Html = module06Html.replace(/\{\{leftButtonUrl\}\}/g, String(leftButtonUrl))
     module06Html = module06Html.replace(/\{\{leftButtonBgColor\}\}/g, String(leftButtonBgColor))
     module06Html = module06Html.replace(/\{\{leftButtonTextColor\}\}/g, String(leftButtonTextColor))
-    console.log('[Module06] ✅ 왼쪽 버튼 표시')
   } else {
     module06Html = module06Html.replace(/<!-- 왼쪽 버튼 -->.*?<!-- \/\/왼쪽 버튼 -->/gs, '')
-    console.log('[Module06] ❌ 왼쪽 버튼 숨김')
   }
 
   // 오른쪽 섹션
@@ -979,13 +915,10 @@ export function replaceModule06Content(html: string, properties: Record<string, 
       /\{\{rightButtonTextColor\}\}/g,
       String(rightButtonTextColor),
     )
-    console.log('[Module06] ✅ 오른쪽 버튼 표시')
   } else {
     module06Html = module06Html.replace(/<!-- 오른쪽 버튼 -->.*?<!-- \/\/오른쪽 버튼 -->/gs, '')
-    console.log('[Module06] ❌ 오른쪽 버튼 숨김')
   }
 
-  console.log('[Module06] ✅ 플레이스홀더 교체 완료')
   return module06Html
 }
 
@@ -995,10 +928,8 @@ export function replaceModule06Content(html: string, properties: Record<string, 
 function replaceModule07Common(
   html: string,
   properties: Record<string, unknown>,
-  moduleName: string,
 ): string {
   let module07Html = html
-  console.log(`[${moduleName}] 🔧 플레이스홀더 교체 시작`)
 
   const contentText = isEmptyValue(properties.contentText)
     ? ''
@@ -1025,13 +956,10 @@ function replaceModule07Common(
     module07Html = module07Html.replace(/\{\{buttonUrl\}\}/g, String(buttonUrl))
     module07Html = module07Html.replace(/\{\{buttonBgColor\}\}/g, String(buttonBgColor))
     module07Html = module07Html.replace(/\{\{buttonTextColor\}\}/g, String(buttonTextColor))
-    console.log(`[${moduleName}] ✅ 버튼 표시`)
   } else {
     module07Html = module07Html.replace(/<!-- 버튼 -->.*?<!-- \/\/버튼 -->/gs, '')
-    console.log(`[${moduleName}] ❌ 버튼 숨김`)
   }
 
-  console.log(`[${moduleName}] ✅ 플레이스홀더 교체 완료`)
   return module07Html
 }
 
@@ -1039,7 +967,7 @@ function replaceModule07Common(
  * Module07 모듈 콘텐츠 교체 - 플레이스홀더 기반 방식
  */
 export function replaceModule07Content(html: string, properties: Record<string, unknown>): string {
-  return replaceModule07Common(html, properties, 'Module07')
+  return replaceModule07Common(html, properties)
 }
 
 /**
@@ -1049,7 +977,7 @@ export function replaceModule07ReverseContent(
   html: string,
   properties: Record<string, unknown>,
 ): string {
-  return replaceModule07Common(html, properties, 'Module07_reverse')
+  return replaceModule07Common(html, properties)
 }
 
 /**

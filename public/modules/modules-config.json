@@ -120,13 +120,13 @@
         {
           "key": "buttonBgColor",
           "label": "버튼 배경색",
-          "type": "color",
+          "type": "text",
           "default": "#111111"
         },
         {
           "key": "buttonTextColor",
           "label": "버튼 글자색",
-          "type": "color",
+          "type": "text",
           "default": "#ffffff"
         }
       ]
@@ -156,13 +156,13 @@
         {
           "key": "button1BgColor",
           "label": "첫 번째 버튼 배경색",
-          "type": "color",
+          "type": "text",
           "default": "#111111"
         },
         {
           "key": "button1TextColor",
           "label": "첫 번째 버튼 글자색",
-          "type": "color",
+          "type": "text",
           "default": "#ffffff"
         },
         {
@@ -182,13 +182,13 @@
         {
           "key": "button2BgColor",
           "label": "두 번째 버튼 배경색",
-          "type": "color",
+          "type": "text",
           "default": "#111111"
         },
         {
           "key": "button2TextColor",
           "label": "두 번째 버튼 글자색",
-          "type": "color",
+          "type": "text",
           "default": "#ffffff"
         }
       ]
@@ -247,13 +247,13 @@
         {
           "key": "categoryBgColor",
           "label": "카테고리 배경색",
-          "type": "color",
+          "type": "text",
           "default": "#666666"
         },
         {
           "key": "categoryTextColor",
           "label": "카테고리 글자색",
-          "type": "color",
+          "type": "text",
           "default": "#ffffff"
         },
         {
@@ -307,19 +307,22 @@
           "key": "tableTitle",
           "label": "테이블 타이틀",
           "type": "text",
-          "placeholder": "테이블 타이틀"
+          "placeholder": "테이블 타이틀",
+          "showWhen": "showTable"
         },
         {
           "key": "tableContent",
           "label": "테이블 콘텐츠",
           "type": "textarea",
-          "placeholder": "테이블 콘텐츠 텍스트"
+          "placeholder": "테이블 콘텐츠 텍스트",
+          "showWhen": "showTable"
         },
         {
           "key": "tableRows",
           "label": "동적 테이블 행",
           "type": "table-rows",
-          "defaultRows": []
+          "defaultRows": [],
+          "showWhen": "showTable"
         },
         {
           "key": "showButton",
@@ -331,25 +334,29 @@
           "key": "buttonText",
           "label": "버튼 텍스트",
           "type": "text",
-          "placeholder": "큰 버튼 →"
+          "placeholder": "큰 버튼 →",
+          "showWhen": "showButton"
         },
         {
           "key": "buttonUrl",
           "label": "버튼 링크",
           "type": "url",
-          "placeholder": "#"
+          "placeholder": "#",
+          "showWhen": "showButton"
         },
         {
           "key": "buttonBgColor",
           "label": "버튼 배경색",
-          "type": "color",
-          "default": "#111111"
+          "type": "text",
+          "default": "#111111",
+          "showWhen": "showButton"
         },
         {
           "key": "buttonTextColor",
           "label": "버튼 글자색",
-          "type": "color",
-          "default": "#ffffff"
+          "type": "text",
+          "default": "#ffffff",
+          "showWhen": "showButton"
         }
       ]
     },
@@ -390,25 +397,29 @@
           "key": "leftSmallBtnText",
           "label": "왼쪽 작은 버튼",
           "type": "text",
-          "placeholder": "작은 버튼 →"
+          "placeholder": "작은 버튼 →",
+          "showWhen": "showLeftSmallBtn"
         },
         {
           "key": "leftSmallBtnUrl",
           "label": "왼쪽 작은 버튼 링크",
           "type": "url",
-          "placeholder": "#"
+          "placeholder": "#",
+          "showWhen": "showLeftSmallBtn"
         },
         {
           "key": "leftSmallBtnBgColor",
           "label": "왼쪽 작은 버튼 배경색",
-          "type": "color",
-          "default": "#000000"
+          "type": "text",
+          "default": "#000000",
+          "showWhen": "showLeftSmallBtn"
         },
         {
           "key": "leftSmallBtnTextColor",
           "label": "왼쪽 작은 버튼 글자색",
-          "type": "color",
-          "default": "#ffffff"
+          "type": "text",
+          "default": "#ffffff",
+          "showWhen": "showLeftSmallBtn"
         },
         {
           "key": "showLeftBigBtn",
@@ -420,25 +431,29 @@
           "key": "leftBigBtnText",
           "label": "왼쪽 큰 버튼",
           "type": "text",
-          "placeholder": "큰 버튼 →"
+          "placeholder": "큰 버튼 →",
+          "showWhen": "showLeftBigBtn"
         },
         {
           "key": "leftBigBtnUrl",
           "label": "왼쪽 큰 버튼 링크",
           "type": "url",
-          "placeholder": "#"
+          "placeholder": "#",
+          "showWhen": "showLeftBigBtn"
         },
         {
           "key": "leftBigBtnBgColor",
           "label": "왼쪽 큰 버튼 배경색",
-          "type": "color",
-          "default": "#111111"
+          "type": "text",
+          "default": "#111111",
+          "showWhen": "showLeftBigBtn"
         },
         {
           "key": "leftBigBtnTextColor",
           "label": "왼쪽 큰 버튼 글자색",
-          "type": "color",
-          "default": "#ffffff"
+          "type": "text",
+          "default": "#ffffff",
+          "showWhen": "showLeftBigBtn"
         },
         {
           "key": "rightImageUrl",
@@ -458,7 +473,6 @@
           "type": "textarea",
           "placeholder": "콘텐츠 텍스트"
         },
-
         {
           "key": "showRightSmallBtn",
           "label": "오른쪽 작은 버튼 표시",
@@ -469,25 +483,29 @@
           "key": "rightSmallBtnText",
           "label": "오른쪽 작은 버튼",
           "type": "text",
-          "placeholder": "작은 버튼 →"
+          "placeholder": "작은 버튼 →",
+          "showWhen": "showRightSmallBtn"
         },
         {
           "key": "rightSmallBtnUrl",
           "label": "오른쪽 작은 버튼 링크",
           "type": "url",
-          "placeholder": "#"
+          "placeholder": "#",
+          "showWhen": "showRightSmallBtn"
         },
         {
           "key": "rightSmallBtnBgColor",
           "label": "오른쪽 작은 버튼 배경색",
-          "type": "color",
-          "default": "#000000"
+          "type": "text",
+          "default": "#000000",
+          "showWhen": "showRightSmallBtn"
         },
         {
           "key": "rightSmallBtnTextColor",
           "label": "오른쪽 작은 버튼 글자색",
-          "type": "color",
-          "default": "#ffffff"
+          "type": "text",
+          "default": "#ffffff",
+          "showWhen": "showRightSmallBtn"
         },
         {
           "key": "showRightBigBtn",
@@ -499,25 +517,29 @@
           "key": "rightBigBtnText",
           "label": "오른쪽 큰 버튼",
           "type": "text",
-          "placeholder": "큰 버튼 →"
+          "placeholder": "큰 버튼 →",
+          "showWhen": "showRightBigBtn"
         },
         {
           "key": "rightBigBtnUrl",
           "label": "오른쪽 큰 버튼 링크",
           "type": "url",
-          "placeholder": "#"
+          "placeholder": "#",
+          "showWhen": "showRightBigBtn"
         },
         {
           "key": "rightBigBtnBgColor",
           "label": "오른쪽 큰 버튼 배경색",
-          "type": "color",
-          "default": "#111111"
+          "type": "text",
+          "default": "#111111",
+          "showWhen": "showRightBigBtn"
         },
         {
           "key": "rightBigBtnTextColor",
           "label": "오른쪽 큰 버튼 글자색",
-          "type": "color",
-          "default": "#ffffff"
+          "type": "text",
+          "default": "#ffffff",
+          "showWhen": "showRightBigBtn"
         },
         {
           "key": "additionalContents",
@@ -568,37 +590,43 @@
           "key": "topRightSmallBtnText",
           "label": "작은 버튼",
           "type": "text",
-          "placeholder": "작은 버튼 →"
+          "placeholder": "작은 버튼 →",
+          "showWhen": "showTopSmallBtn"
         },
         {
           "key": "topRightSmallBtnUrl",
           "label": "작은 버튼 링크",
           "type": "url",
-          "placeholder": "#"
+          "placeholder": "#",
+          "showWhen": "showTopSmallBtn"
         },
         {
           "key": "smallBtnBgColor",
           "label": "작은 버튼 배경색",
-          "type": "color",
-          "default": "#000000"
+          "type": "text",
+          "default": "#000000",
+          "showWhen": "showTopSmallBtn"
         },
         {
           "key": "smallBtnTextColor",
           "label": "작은 버튼 글자색",
-          "type": "color",
-          "default": "#ffffff"
+          "type": "text",
+          "default": "#ffffff",
+          "showWhen": "showTopSmallBtn"
         },
         {
           "key": "bigBtnBgColor",
           "label": "큰 버튼 배경색",
-          "type": "color",
-          "default": "#111111"
+          "type": "text",
+          "default": "#111111",
+          "showWhen": "showBigBtn"
         },
         {
           "key": "bigBtnTextColor",
           "label": "큰 버튼 글자색",
-          "type": "color",
-          "default": "#ffffff"
+          "type": "text",
+          "default": "#ffffff",
+          "showWhen": "showBigBtn"
         },
         {
           "key": "showBigBtn",
@@ -611,14 +639,16 @@
           "label": "큰 버튼 텍스트",
           "type": "text",
           "default": "큰 버튼 →",
-          "placeholder": "큰 버튼 텍스트"
+          "placeholder": "큰 버튼 텍스트",
+          "showWhen": "showBigBtn"
         },
         {
           "key": "bigButtonUrl",
           "label": "큰 버튼 링크",
           "type": "url",
           "default": "#",
-          "placeholder": "#"
+          "placeholder": "#",
+          "showWhen": "showBigBtn"
         },
         {
           "key": "additionalContentsTop",
@@ -656,13 +686,13 @@
         {
           "key": "boxBgColor",
           "label": "텍스트 박스 배경색",
-          "type": "color",
+          "type": "text",
           "default": "#e5e5e5"
         },
         {
           "key": "boxColor",
           "label": "텍스트 박스 글자색",
-          "type": "color",
+          "type": "text",
           "default": "#111111"
         },
         {
@@ -725,14 +755,14 @@
         {
           "key": "button1BgColor",
           "label": "버튼 1 배경색",
-          "type": "color",
+          "type": "text",
           "default": "#e5e5e5",
           "showWhen": "showButton1"
         },
         {
           "key": "button1TextColor",
           "label": "버튼 1 글자색",
-          "type": "color",
+          "type": "text",
           "default": "#333333",
           "showWhen": "showButton1"
         },
@@ -761,14 +791,14 @@
         {
           "key": "button2BgColor",
           "label": "버튼 2 배경색",
-          "type": "color",
+          "type": "text",
           "default": "#e5e5e5",
           "showWhen": "showButton2"
         },
         {
           "key": "button2TextColor",
           "label": "버튼 2 글자색",
-          "type": "color",
+          "type": "text",
           "default": "#333333",
           "showWhen": "showButton2"
         },
@@ -797,14 +827,14 @@
         {
           "key": "button3BgColor",
           "label": "버튼 3 배경색",
-          "type": "color",
+          "type": "text",
           "default": "#e5e5e5",
           "showWhen": "showButton3"
         },
         {
           "key": "button3TextColor",
           "label": "버튼 3 글자색",
-          "type": "color",
+          "type": "text",
           "default": "#333333",
           "showWhen": "showButton3"
         },
@@ -833,14 +863,14 @@
         {
           "key": "button4BgColor",
           "label": "버튼 4 배경색",
-          "type": "color",
+          "type": "text",
           "default": "#e5e5e5",
           "showWhen": "showButton4"
         },
         {
           "key": "button4TextColor",
           "label": "버튼 4 글자색",
-          "type": "color",
+          "type": "text",
           "default": "#333333",
           "showWhen": "showButton4"
         }
@@ -901,25 +931,29 @@
           "key": "topSmallBtnText",
           "label": "작은 버튼 텍스트",
           "type": "text",
-          "placeholder": "작은 버튼 →"
+          "placeholder": "작은 버튼 →",
+          "showWhen": "showTopSmallBtn"
         },
         {
           "key": "topSmallBtnUrl",
           "label": "작은 버튼 링크",
           "type": "url",
-          "placeholder": "#"
+          "placeholder": "#",
+          "showWhen": "showTopSmallBtn"
         },
         {
           "key": "topSmallBtnBgColor",
           "label": "작은 버튼 배경색",
-          "type": "color",
-          "default": "#e5e5e5"
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showTopSmallBtn"
         },
         {
           "key": "topSmallBtnTextColor",
           "label": "작은 버튼 글자색",
-          "type": "color",
-          "default": "#333333"
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showTopSmallBtn"
         },
         {
           "key": "showBigBtn",
@@ -931,25 +965,29 @@
           "key": "bigBtnText",
           "label": "큰 버튼 텍스트",
           "type": "text",
-          "placeholder": "큰 버튼 →"
+          "placeholder": "큰 버튼 →",
+          "showWhen": "showBigBtn"
         },
         {
           "key": "bigBtnUrl",
           "label": "큰 버튼 링크",
           "type": "url",
-          "placeholder": "#"
+          "placeholder": "#",
+          "showWhen": "showBigBtn"
         },
         {
           "key": "bigBtnBgColor",
           "label": "큰 버튼 배경색",
-          "type": "color",
-          "default": "#111111"
+          "type": "text",
+          "default": "#111111",
+          "showWhen": "showBigBtn"
         },
         {
           "key": "bigBtnTextColor",
           "label": "큰 버튼 글자색",
-          "type": "color",
-          "default": "#ffffff"
+          "type": "text",
+          "default": "#ffffff",
+          "showWhen": "showBigBtn"
         }
       ]
     },
@@ -970,13 +1008,13 @@
         {
           "key": "leftTitleBgColor",
           "label": "왼쪽 타이틀 배경색",
-          "type": "color",
+          "type": "text",
           "default": "#e5e5e5"
         },
         {
           "key": "leftTitleColor",
           "label": "왼쪽 타이틀 글자색",
-          "type": "color",
+          "type": "text",
           "default": "#111111"
         },
         {
@@ -1022,14 +1060,14 @@
         {
           "key": "leftButtonBgColor",
           "label": "왼쪽 버튼 배경색",
-          "type": "color",
+          "type": "text",
           "default": "#e5e5e5",
           "showWhen": "showLeftButton"
         },
         {
           "key": "leftButtonTextColor",
           "label": "왼쪽 버튼 글자색",
-          "type": "color",
+          "type": "text",
           "default": "#333333",
           "showWhen": "showLeftButton"
         },
@@ -1042,13 +1080,13 @@
         {
           "key": "rightTitleBgColor",
           "label": "오른쪽 타이틀 배경색",
-          "type": "color",
+          "type": "text",
           "default": "#e5e5e5"
         },
         {
           "key": "rightTitleColor",
           "label": "오른쪽 타이틀 글자색",
-          "type": "color",
+          "type": "text",
           "default": "#111111"
         },
         {
@@ -1094,14 +1132,14 @@
         {
           "key": "rightButtonBgColor",
           "label": "오른쪽 버튼 배경색",
-          "type": "color",
+          "type": "text",
           "default": "#e5e5e5",
           "showWhen": "showRightButton"
         },
         {
           "key": "rightButtonTextColor",
           "label": "오른쪽 버튼 글자색",
-          "type": "color",
+          "type": "text",
           "default": "#333333",
           "showWhen": "showRightButton"
         }
@@ -1164,14 +1202,14 @@
         {
           "key": "buttonBgColor",
           "label": "버튼 배경색",
-          "type": "color",
+          "type": "text",
           "default": "#e5e5e5",
           "showWhen": "showButton"
         },
         {
           "key": "buttonTextColor",
           "label": "버튼 글자색",
-          "type": "color",
+          "type": "text",
           "default": "#333333",
           "showWhen": "showButton"
         }
@@ -1234,14 +1272,14 @@
         {
           "key": "buttonBgColor",
           "label": "버튼 배경색",
-          "type": "color",
+          "type": "text",
           "default": "#e5e5e5",
           "showWhen": "showButton"
         },
         {
           "key": "buttonTextColor",
           "label": "버튼 글자색",
-          "type": "color",
+          "type": "text",
           "default": "#333333",
           "showWhen": "showButton"
         }

@@ -34,10 +34,7 @@ export function useModuleRenderer(moduleId: string) {
   // 🐛 핵심 수정: store에서 직접 현재 모듈을 가져와 반응성 보장
   const currentModule = computed(() => {
     const found = moduleStore.modules.find(m => m.id === moduleId)
-    console.log('[useModuleRenderer computed] moduleId:', moduleId, 'found:', !!found)
     if (found) {
-      console.log('[useModuleRenderer computed] properties:', found.properties)
-      console.log('[useModuleRenderer computed] tableRows:', found.properties.tableRows)
     }
     return found
   })
@@ -51,7 +48,6 @@ export function useModuleRenderer(moduleId: string) {
   ): Promise<string> => {
     const { moduleId: mId, properties } = moduleInstance
 
-    console.log('[useModuleRenderer] replaceModuleContent - moduleId:', mId)
 
     switch (mId) {
       case 'ModuleBasicHeader':
@@ -91,11 +87,6 @@ export function useModuleRenderer(moduleId: string) {
         return replaceModule051Content(html, properties)
 
       case 'Module05-2':
-        console.log('[useModuleRenderer] Module05-2 렌더링 시작')
-        console.log('[useModuleRenderer] showButton1:', properties.showButton1)
-        console.log('[useModuleRenderer] showButton2:', properties.showButton2)
-        console.log('[useModuleRenderer] showButton3:', properties.showButton3)
-        console.log('[useModuleRenderer] showButton4:', properties.showButton4)
         return replaceModule052Content(html, properties)
 
       case 'Module05-3':
@@ -111,7 +102,6 @@ export function useModuleRenderer(moduleId: string) {
         return replaceModule07ReverseContent(html, properties)
 
       default:
-        console.log('[useModuleRenderer] Using default template for:', mId)
         return replaceDefaultTemplate(html, properties)
     }
   }
@@ -126,7 +116,6 @@ export function useModuleRenderer(moduleId: string) {
       return
     }
 
-    console.log('[useModuleRenderer] loadModuleHtml 시작 - moduleId:', module.moduleId)
     try {
       // 모듈 메타데이터 설정
       if (moduleStore.availableModules.length === 0) {
@@ -138,13 +127,6 @@ export function useModuleRenderer(moduleId: string) {
       // HTML 파일 로드 (BASE_URL 경로 고려)
       const basePath = import.meta.env.BASE_URL || '/'
       const htmlPath = `${basePath}modules/${module.moduleId}.html`.replace(/\/+/g, '/')
-
-      console.log('[useModuleRenderer] 🔍 HTML 로드 시도:', {
-        basePath,
-        moduleId: module.moduleId,
-        htmlPath,
-        isProd: import.meta.env.PROD
-      })
 
       const response = await fetch(htmlPath)
 
@@ -158,11 +140,7 @@ export function useModuleRenderer(moduleId: string) {
       }
 
       let html = await response.text()
-      console.log('[useModuleRenderer] ✅ HTML 로드 성공:', module.moduleId, html.length, 'bytes')
 
-      console.log('[useModuleRenderer] 콘텐츠 교체 시작')
-      console.log('[useModuleRenderer] module.properties:', module.properties)
-      console.log('[useModuleRenderer] tableRows:', module.properties.tableRows)
 
       // 콘텐츠 교체
       html = await replaceModuleContent(html, module)
@@ -173,7 +151,6 @@ export function useModuleRenderer(moduleId: string) {
       }
 
       renderedHtml.value = html
-      console.log('[useModuleRenderer] ✅ 렌더링 완료')
     } catch (error) {
       console.error('[useModuleRenderer] ❌ 모듈 로드 실패:', error)
       const basePath = import.meta.env.BASE_URL || '/'
@@ -197,7 +174,6 @@ export function useModuleRenderer(moduleId: string) {
     currentModule,
     (newModule) => {
       if (newModule) {
-        console.log('[useModuleRenderer watch] currentModule 변경 감지 - 재렌더링')
         loadModuleHtml()
       }
     },
