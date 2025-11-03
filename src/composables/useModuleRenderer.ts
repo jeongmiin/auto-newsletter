@@ -20,6 +20,10 @@ import {
   replaceModule06Content,
   replaceModule07Content,
   replaceModule07ReverseContent,
+  replaceModuleFooterContent,
+  replaceModule10Content,
+  replaceModule101Content,
+  replaceModuleSubTitleContent,
   replaceDefaultTemplate,
 } from '@/utils/moduleContentReplacer'
 
@@ -100,6 +104,18 @@ export function useModuleRenderer(moduleId: string) {
 
       case 'Module07_reverse':
         return replaceModule07ReverseContent(html, properties)
+
+      case 'ModuleFooter':
+        return replaceModuleFooterContent(html, properties)
+
+      case 'Module10':
+        return replaceModule10Content(html, properties)
+
+      case 'Module10-1':
+        return replaceModule101Content(html, properties)
+
+      case 'ModuleSubTitle':
+        return replaceModuleSubTitleContent(html, properties)
 
       default:
         return replaceDefaultTemplate(html, properties)

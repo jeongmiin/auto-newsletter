@@ -1,7 +1,7 @@
 <template>
   <div class="h-full flex flex-col">
     <!-- 패널 헤더 -->
-    <div class="p-4 border-b">
+    <div class="p-3 border-b">
       <h2 class="text-lg font-semibold text-gray-800">모듈</h2>
     </div>
 
@@ -58,7 +58,7 @@ const modules = ref<ModuleMetadata[]>([])
 
 const categories = [
   { id: 'all', name: '전체' },
-  { id: 'header', name: '헤더' },
+  { id: 'common', name: '공통' },
   { id: 'text', name: '텍스트' },
   { id: 'image', name: '이미지' },
   { id: 'button', name: '버튼' },

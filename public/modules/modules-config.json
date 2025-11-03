@@ -4,8 +4,8 @@
       "id": "ModuleBasicHeader",
       "name": "기본 헤더",
       "description": "로고와 뉴스레터 타이틀이 포함된 기본 헤더",
-      "category": "header",
-      "icon": "📰",
+      "category": "common",
+      "icon": "H",
       "htmlFile": "ModuleBasicHeader.html",
       "editableProps": [
         {
@@ -26,7 +26,7 @@
           "key": "headerText",
           "label": "헤더 텍스트",
           "type": "textarea",
-          "default": "<h1 style=\"margin:5px 0; font-size:20px; color:#111111; font-weight:400; line-height:1.5em; word-break:keep-all; font-family:AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif;\">NEWSLETTER <strong>VOL.1</strong></h1>",
+          "default": "<h1 style=\" font-size:20px; color:#111111; font-weight:400; line-height:1.5em; word-break:keep-all; font-family:AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif;\">NEWSLETTER <strong>VOL.1</strong></h1>",
           "placeholder": "헤더 텍스트를 입력하세요"
         }
       ]
@@ -35,8 +35,8 @@
       "id": "SectionTitle",
       "name": "섹션 타이틀",
       "description": "제목과 부제목이 있는 헤더",
-      "category": "header",
-      "icon": "📋",
+      "category": "common",
+      "icon": "T",
       "htmlFile": "SectionTitle.html",
       "editableProps": [
         {
@@ -59,7 +59,7 @@
       "name": "설명 텍스트",
       "description": "단순 텍스트 콘텐츠 블록",
       "category": "text",
-      "icon": "📝",
+      "icon": "T",
       "htmlFile": "ModuleDescText.html",
       "editableProps": [
         {
@@ -76,7 +76,7 @@
       "name": "이미지",
       "description": "단일 이미지 블록",
       "category": "image",
-      "icon": "🖼️",
+      "icon": "IMG",
       "htmlFile": "ModuleImg.html",
       "editableProps": [
         {
@@ -100,7 +100,7 @@
       "name": "단일 버튼",
       "description": "하나의 버튼이 있는 블록",
       "category": "button",
-      "icon": "🔘",
+      "icon": "B",
       "htmlFile": "ModuleOneButton.html",
       "editableProps": [
         {
@@ -136,7 +136,7 @@
       "name": "2개 버튼",
       "description": "두 개의 버튼이 나란히 있는 블록",
       "category": "button",
-      "icon": "🔘🔘",
+      "icon": "B",
       "htmlFile": "ModuleTwoButton.html",
       "editableProps": [
         {
@@ -190,6 +190,149 @@
           "label": "두 번째 버튼 글자색",
           "type": "text",
           "default": "#ffffff"
+        }
+      ]
+    },
+    {
+      "id": "ModuleFooter",
+      "name": "하단 푸터",
+      "description": "푸터 - 회사정보, SNS 링크, 수신거부",
+      "category": "common",
+      "icon": "F",
+      "htmlFile": "ModuleFooter.html",
+      "editableProps": [
+        {
+          "key": "topText",
+          "label": "상단 텍스트",
+          "type": "textarea",
+          "default": "<strong>코리아빌드 사무국</strong> (주)메쎄이상",
+          "placeholder": "회사명 등 상단 텍스트"
+        },
+        {
+          "key": "addressText",
+          "label": "주소",
+          "type": "textarea",
+          "default": "서울시 마포구 월드컵북로&nbsp;58길&nbsp;9 ES타워&nbsp;(03922)",
+          "placeholder": "회사 주소"
+        },
+        {
+          "key": "websiteUrl",
+          "label": "웹사이트 URL",
+          "type": "text",
+          "default": "www.koreabuild.co.kr",
+          "placeholder": "웹사이트 주소"
+        },
+        {
+          "key": "phone",
+          "label": "전화번호",
+          "type": "text",
+          "default": "02-6121-6362",
+          "placeholder": "팩스 또는 전화번호"
+        },
+        {
+          "key": "email",
+          "label": "이메일",
+          "type": "text",
+          "default": "hvackorea@esgroup.net",
+          "placeholder": "회사 이메일"
+        },
+        {
+          "key": "showHome",
+          "label": "홈 아이콘 표시",
+          "type": "boolean",
+          "default": true
+        },
+        {
+          "key": "homeUrl",
+          "label": "홈 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "홈페이지 URL",
+          "showWhen": "showHome"
+        },
+        {
+          "key": "showFacebook",
+          "label": "페이스북 아이콘 표시",
+          "type": "boolean",
+          "default": true
+        },
+        {
+          "key": "facebookUrl",
+          "label": "페이스북 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "페이스북 URL",
+          "showWhen": "showFacebook"
+        },
+        {
+          "key": "showBlog",
+          "label": "블로그 아이콘 표시",
+          "type": "boolean",
+          "default": true
+        },
+        {
+          "key": "blogUrl",
+          "label": "블로그 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "블로그 URL",
+          "showWhen": "showBlog"
+        },
+        {
+          "key": "showYoutube",
+          "label": "유튜브 아이콘 표시",
+          "type": "boolean",
+          "default": true
+        },
+        {
+          "key": "youtubeUrl",
+          "label": "유튜브 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "유튜브 URL",
+          "showWhen": "showYoutube"
+        },
+        {
+          "key": "showInstagram",
+          "label": "인스타그램 아이콘 표시",
+          "type": "boolean",
+          "default": true
+        },
+        {
+          "key": "instagramUrl",
+          "label": "인스타그램 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "인스타그램 URL",
+          "showWhen": "showInstagram"
+        },
+        {
+          "key": "showKakao",
+          "label": "카카오톡 아이콘 표시",
+          "type": "boolean",
+          "default": true
+        },
+        {
+          "key": "kakaoUrl",
+          "label": "카카오톡 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "카카오톡 채널 URL",
+          "showWhen": "showKakao"
+        },
+        {
+          "key": "unsubscribeUrl",
+          "label": "수신거부 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "수신거부 페이지 URL"
+        },
+        {
+          "key": "inquiryEmail",
+          "label": "문의 이메일",
+          "type": "text",
+          "default": "hvackorea@esgroup.net",
+          "placeholder": "문의용 이메일 주소"
         }
       ]
     },
@@ -411,14 +554,14 @@
           "key": "leftSmallBtnBgColor",
           "label": "왼쪽 작은 버튼 배경색",
           "type": "text",
-          "default": "#000000",
+          "default": "#e5e5e5",
           "showWhen": "showLeftSmallBtn"
         },
         {
           "key": "leftSmallBtnTextColor",
           "label": "왼쪽 작은 버튼 글자색",
           "type": "text",
-          "default": "#ffffff",
+          "default": "#333333",
           "showWhen": "showLeftSmallBtn"
         },
         {
@@ -497,14 +640,14 @@
           "key": "rightSmallBtnBgColor",
           "label": "오른쪽 작은 버튼 배경색",
           "type": "text",
-          "default": "#000000",
+          "default": "#e5e5e5",
           "showWhen": "showRightSmallBtn"
         },
         {
           "key": "rightSmallBtnTextColor",
           "label": "오른쪽 작은 버튼 글자색",
           "type": "text",
-          "default": "#ffffff",
+          "default": "#333333",
           "showWhen": "showRightSmallBtn"
         },
         {
@@ -604,14 +747,14 @@
           "key": "smallBtnBgColor",
           "label": "작은 버튼 배경색",
           "type": "text",
-          "default": "#000000",
+          "default": "#e5e5e5",
           "showWhen": "showTopSmallBtn"
         },
         {
           "key": "smallBtnTextColor",
           "label": "작은 버튼 글자색",
           "type": "text",
-          "default": "#ffffff",
+          "default": "#333333",
           "showWhen": "showTopSmallBtn"
         },
         {
@@ -734,7 +877,7 @@
           "key": "showButton1",
           "label": "버튼 1 표시",
           "type": "boolean",
-          "default": false
+          "default": true
         },
         {
           "key": "button1Text",
@@ -770,7 +913,7 @@
           "key": "showButton2",
           "label": "버튼 2 표시",
           "type": "boolean",
-          "default": false
+          "default": true
         },
         {
           "key": "button2Text",
@@ -890,6 +1033,18 @@
           "type": "text",
           "placeholder": "상단 섹션 타이틀",
           "required": true
+        },
+        {
+          "key": "topSectionTitleBgColor",
+          "label": "타이틀 배경색",
+          "type": "text",
+          "default": "#e5e5e5"
+        },
+        {
+          "key": "topSectionTitleTextColor",
+          "label": "타이틀 글자색",
+          "type": "text",
+          "default": "#111111"
         },
         {
           "key": "topSectionText",
@@ -1282,6 +1437,179 @@
           "type": "text",
           "default": "#333333",
           "showWhen": "showButton"
+        }
+      ]
+    },
+    {
+      "id": "ModuleSubTitle",
+      "name": "(모듈10번) 서브 타이틀",
+      "description": "섹션 구분 서브타이틀",
+      "category": "text",
+      "icon": "T",
+      "htmlFile": "ModuleSubTitle.html",
+      "editableProps": [
+        {
+          "key": "subtitleText",
+          "label": "서브타이틀 텍스트",
+          "type": "textarea",
+          "placeholder": "기조연설 (14:20~14:40)",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "Module10",
+      "name": "10",
+      "description": "이미지 + 라벨 + 타이틀 + 부제목 (1열)",
+      "category": "image",
+      "icon": "모듈",
+      "htmlFile": "Module10.html",
+      "editableProps": [
+        {
+          "key": "imageUrl",
+          "label": "이미지 URL",
+          "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-speaker.png"
+        },
+        {
+          "key": "imageAlt",
+          "label": "이미지 설명 (Alt)",
+          "type": "text",
+          "default": "이미지"
+        },
+        {
+          "key": "showLabel",
+          "label": "라벨 표시",
+          "type": "boolean",
+          "default": true
+        },
+        {
+          "key": "labelText",
+          "label": "라벨 텍스트",
+          "type": "text",
+          "default": "기조연설",
+          "showWhen": "showLabel"
+        },
+        {
+          "key": "labelBgColor",
+          "label": "라벨 배경색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showLabel"
+        },
+        {
+          "key": "labelTextColor",
+          "label": "라벨 글자색",
+          "type": "text",
+          "default": "#ffffff",
+          "showWhen": "showLabel"
+        },
+        {
+          "key": "title",
+          "label": "타이틀",
+          "type": "textarea",
+          "placeholder": "타이틀 텍스트",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "Module10-1",
+      "name": "10-1",
+      "description": "이미지 + 라벨 + 타이틀 + 부제목 (2열)",
+      "category": "image",
+      "icon": "모듈",
+      "htmlFile": "Module10-1.html",
+      "editableProps": [
+        {
+          "key": "leftImageUrl",
+          "label": "왼쪽 이미지 URL",
+          "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-speaker.png"
+        },
+        {
+          "key": "leftImageAlt",
+          "label": "왼쪽 이미지 설명 (Alt)",
+          "type": "text",
+          "default": "이미지"
+        },
+        {
+          "key": "showLeftLabel",
+          "label": "왼쪽 라벨 표시",
+          "type": "boolean",
+          "default": true
+        },
+        {
+          "key": "leftLabelText",
+          "label": "왼쪽 라벨 텍스트",
+          "type": "text",
+          "default": "10:10 ~ 10:15",
+          "showWhen": "showLeftLabel"
+        },
+        {
+          "key": "leftLabelBgColor",
+          "label": "왼쪽 라벨 배경색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showLeftLabel"
+        },
+        {
+          "key": "leftLabelTextColor",
+          "label": "왼쪽 라벨 글자색",
+          "type": "text",
+          "default": "#ffffff",
+          "showWhen": "showLeftLabel"
+        },
+        {
+          "key": "leftTitle",
+          "label": "왼쪽 타이틀",
+          "type": "textarea",
+          "placeholder": "왼쪽 타이틀"
+        },
+        {
+          "key": "rightImageUrl",
+          "label": "오른쪽 이미지 URL",
+          "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-speaker.png"
+        },
+        {
+          "key": "rightImageAlt",
+          "label": "오른쪽 이미지 설명 (Alt)",
+          "type": "text",
+          "default": "이미지"
+        },
+        {
+          "key": "showRightLabel",
+          "label": "오른쪽 라벨 표시",
+          "type": "boolean",
+          "default": true
+        },
+        {
+          "key": "rightLabelText",
+          "label": "오른쪽 라벨 텍스트",
+          "type": "text",
+          "default": "10:10 ~ 10:15",
+          "showWhen": "showRightLabel"
+        },
+        {
+          "key": "rightLabelBgColor",
+          "label": "오른쪽 라벨 배경색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showRightLabel"
+        },
+        {
+          "key": "rightLabelTextColor",
+          "label": "오른쪽 라벨 글자색",
+          "type": "text",
+          "default": "#ffffff",
+          "showWhen": "showRightLabel"
+        },
+        {
+          "key": "rightTitle",
+          "label": "오른쪽 타이틀",
+          "type": "textarea",
+          "placeholder": "오른쪽 타이틀"
         }
       ]
     }

@@ -534,6 +534,17 @@ export async function replaceModule053Content(
       : safeFormatText(String(properties.topSectionTitle)),
   )
 
+  // === 상단 섹션 타이틀 색상 교체 ===
+  module053Html = module053Html.replace(
+    /\{\{topSectionTitleBgColor\}\}/g,
+    String(properties.topSectionTitleBgColor || '#e5e5e5'),
+  )
+
+  module053Html = module053Html.replace(
+    /\{\{topSectionTitleTextColor\}\}/g,
+    String(properties.topSectionTitleTextColor || '#111111'),
+  )
+
   module053Html = module053Html.replace(
     /\{\{topSectionText\}\}/g,
     isEmptyValue(properties.topSectionText)
@@ -978,6 +989,180 @@ export function replaceModule07ReverseContent(
   properties: Record<string, unknown>,
 ): string {
   return replaceModule07Common(html, properties)
+}
+
+/**
+ * ModuleFooter 모듈 콘텐츠 교체 - 플레이스홀더 기반 방식 + SNS 아이콘 조건부 표시
+ */
+export function replaceModuleFooterContent(html: string, properties: Record<string, unknown>): string {
+  let footerHtml = html
+
+  // 기본 텍스트 필드 교체
+  const topText = properties.topText || '<strong>코리아빌드 사무국</strong> (주)메쎄이상'
+  const addressText = properties.addressText || '서울시 마포구 월드컵북로&nbsp;58길&nbsp;9 ES타워&nbsp;(03922)'
+  const websiteUrl = properties.websiteUrl || 'www.koreabuild.co.kr'
+  const phone = properties.phone || '02-6121-6362'
+  const email = properties.email || 'hvackorea@esgroup.net'
+  const unsubscribeUrl = properties.unsubscribeUrl || '#'
+  const inquiryEmail = properties.inquiryEmail || 'hvackorea@esgroup.net'
+
+  footerHtml = footerHtml.replace(/\{\{topText\}\}/g, String(topText))
+  footerHtml = footerHtml.replace(/\{\{addressText\}\}/g, String(addressText))
+  footerHtml = footerHtml.replace(/\{\{websiteUrl\}\}/g, String(websiteUrl))
+  footerHtml = footerHtml.replace(/\{\{phone\}\}/g, String(phone))
+  footerHtml = footerHtml.replace(/\{\{email\}\}/g, String(email))
+  footerHtml = footerHtml.replace(/\{\{unsubscribeUrl\}\}/g, String(unsubscribeUrl))
+  footerHtml = footerHtml.replace(/\{\{inquiryEmail\}\}/g, String(inquiryEmail))
+
+  // SNS 아이콘 조건부 표시 (showWhen 패턴)
+  // 홈
+  if (properties.showHome === true) {
+    const homeUrl = properties.homeUrl || '#'
+    footerHtml = footerHtml.replace(/\{\{homeUrl\}\}/g, String(homeUrl))
+  } else {
+    footerHtml = footerHtml.replace(/<!-- 홈 -->.*?<!-- \/\/홈 -->/gs, '')
+  }
+
+  // 페이스북
+  if (properties.showFacebook === true) {
+    const facebookUrl = properties.facebookUrl || '#'
+    footerHtml = footerHtml.replace(/\{\{facebookUrl\}\}/g, String(facebookUrl))
+  } else {
+    footerHtml = footerHtml.replace(/<!-- 페이스북 -->.*?<!-- \/\/페이스북 -->/gs, '')
+  }
+
+  // 블로그
+  if (properties.showBlog === true) {
+    const blogUrl = properties.blogUrl || '#'
+    footerHtml = footerHtml.replace(/\{\{blogUrl\}\}/g, String(blogUrl))
+  } else {
+    footerHtml = footerHtml.replace(/<!-- 블로그 -->.*?<!-- \/\/블로그 -->/gs, '')
+  }
+
+  // 유튜브
+  if (properties.showYoutube === true) {
+    const youtubeUrl = properties.youtubeUrl || '#'
+    footerHtml = footerHtml.replace(/\{\{youtubeUrl\}\}/g, String(youtubeUrl))
+  } else {
+    footerHtml = footerHtml.replace(/<!-- 유튜브 -->.*?<!-- \/\/유튜브 -->/gs, '')
+  }
+
+  // 인스타그램
+  if (properties.showInstagram === true) {
+    const instagramUrl = properties.instagramUrl || '#'
+    footerHtml = footerHtml.replace(/\{\{instagramUrl\}\}/g, String(instagramUrl))
+  } else {
+    footerHtml = footerHtml.replace(/<!-- 인스타그램 -->.*?<!-- \/\/인스타그램 -->/gs, '')
+  }
+
+  // 카카오톡
+  if (properties.showKakao === true) {
+    const kakaoUrl = properties.kakaoUrl || '#'
+    footerHtml = footerHtml.replace(/\{\{kakaoUrl\}\}/g, String(kakaoUrl))
+  } else {
+    footerHtml = footerHtml.replace(/<!-- 카카오톡 -->.*?<!-- \/\/카카오톡 -->/gs, '')
+  }
+
+  return footerHtml
+}
+
+/**
+ * Module10 모듈 콘텐츠 교체 - 이미지 + 라벨 + 타이틀 (1열)
+ */
+export function replaceModule10Content(html: string, properties: Record<string, unknown>): string {
+  let module10Html = html
+
+  // 기본 필드 교체
+  const imageUrl = properties.imageUrl || 'https://design.messeesang.com/e-dm/newsletter/images/img-speaker.png'
+  const imageAlt = properties.imageAlt || '이미지'
+  const title = properties.title || ''
+
+  module10Html = module10Html.replace(/\{\{imageUrl\}\}/g, String(imageUrl))
+  module10Html = module10Html.replace(/\{\{imageAlt\}\}/g, String(imageAlt))
+  module10Html = module10Html.replace(/\{\{title\}\}/g, String(title))
+
+  // 라벨 조건부 표시
+  if (properties.showLabel === true) {
+    const labelText = properties.labelText || '기조연설'
+    const labelBgColor = properties.labelBgColor || '#333333'
+    const labelTextColor = properties.labelTextColor || '#ffffff'
+
+    module10Html = module10Html.replace(/\{\{labelText\}\}/g, String(labelText))
+    module10Html = module10Html.replace(/\{\{labelBgColor\}\}/g, String(labelBgColor))
+    module10Html = module10Html.replace(/\{\{labelTextColor\}\}/g, String(labelTextColor))
+  } else {
+    module10Html = module10Html.replace(/<!-- 라벨 -->.*?<!-- \/\/라벨 -->/gs, '')
+  }
+
+  return module10Html
+}
+
+/**
+ * Module10-1 모듈 콘텐츠 교체 - 이미지 + 라벨 + 타이틀 (2열)
+ */
+export function replaceModule101Content(html: string, properties: Record<string, unknown>): string {
+  let module101Html = html
+
+  // 왼쪽 필드 교체
+  const leftImageUrl = properties.leftImageUrl || 'https://design.messeesang.com/e-dm/newsletter/images/img-speaker.png'
+  const leftImageAlt = properties.leftImageAlt || '이미지'
+  const leftTitle = properties.leftTitle || ''
+
+  module101Html = module101Html.replace(/\{\{leftImageUrl\}\}/g, String(leftImageUrl))
+  module101Html = module101Html.replace(/\{\{leftImageAlt\}\}/g, String(leftImageAlt))
+  module101Html = module101Html.replace(/\{\{leftTitle\}\}/g, String(leftTitle))
+
+  // 왼쪽 라벨 조건부 표시
+  if (properties.showLeftLabel === true) {
+    const leftLabelText = properties.leftLabelText || '10:10 ~ 10:15'
+    const leftLabelBgColor = properties.leftLabelBgColor || '#333333'
+    const leftLabelTextColor = properties.leftLabelTextColor || '#ffffff'
+
+    module101Html = module101Html.replace(/\{\{leftLabelText\}\}/g, String(leftLabelText))
+    module101Html = module101Html.replace(/\{\{leftLabelBgColor\}\}/g, String(leftLabelBgColor))
+    module101Html = module101Html.replace(/\{\{leftLabelTextColor\}\}/g, String(leftLabelTextColor))
+  } else {
+    module101Html = module101Html.replace(/<!-- 왼쪽 라벨 -->.*?<!-- \/\/왼쪽 라벨 -->/gs, '')
+  }
+
+  // 오른쪽 필드 교체
+  const rightImageUrl = properties.rightImageUrl || 'https://design.messeesang.com/e-dm/newsletter/images/img-speaker.png'
+  const rightImageAlt = properties.rightImageAlt || '이미지'
+  const rightTitle = properties.rightTitle || ''
+
+  module101Html = module101Html.replace(/\{\{rightImageUrl\}\}/g, String(rightImageUrl))
+  module101Html = module101Html.replace(/\{\{rightImageAlt\}\}/g, String(rightImageAlt))
+  module101Html = module101Html.replace(/\{\{rightTitle\}\}/g, String(rightTitle))
+
+  // 오른쪽 라벨 조건부 표시
+  if (properties.showRightLabel === true) {
+    const rightLabelText = properties.rightLabelText || '10:10 ~ 10:15'
+    const rightLabelBgColor = properties.rightLabelBgColor || '#333333'
+    const rightLabelTextColor = properties.rightLabelTextColor || '#ffffff'
+
+    module101Html = module101Html.replace(/\{\{rightLabelText\}\}/g, String(rightLabelText))
+    module101Html = module101Html.replace(/\{\{rightLabelBgColor\}\}/g, String(rightLabelBgColor))
+    module101Html = module101Html.replace(/\{\{rightLabelTextColor\}\}/g, String(rightLabelTextColor))
+  } else {
+    module101Html = module101Html.replace(/<!-- 오른쪽 라벨 -->.*?<!-- \/\/오른쪽 라벨 -->/gs, '')
+  }
+
+  return module101Html
+}
+
+/**
+ * ModuleSubTitle 모듈 콘텐츠 교체 - 서브타이틀
+ */
+export function replaceModuleSubTitleContent(html: string, properties: Record<string, unknown>): string {
+  let subtitleHtml = html
+
+  const subtitleText = isEmptyValue(properties.subtitleText)
+    ? '기조연설 (14:20~14:40)'
+    : safeFormatText(String(properties.subtitleText))
+
+  subtitleHtml = subtitleHtml.replace(/\{\{subtitleText\}\}/g, subtitleText)
+
+  return subtitleHtml
 }
 
 /**

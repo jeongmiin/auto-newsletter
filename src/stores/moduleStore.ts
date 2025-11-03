@@ -28,6 +28,10 @@ import {
   replaceModule07ReverseContent,
   replaceModule011Content,
   replaceModule012Content,
+  replaceModuleFooterContent,
+  replaceModule10Content,
+  replaceModule101Content,
+  replaceModuleSubTitleContent,
   replaceDefaultTemplate,
 } from '@/utils/moduleContentReplacer'
 
@@ -465,7 +469,7 @@ export const useModuleStore = defineStore('module', () => {
     if (index > 0) {
       ;[contents[index], contents[index - 1]] = [contents[index - 1], contents[index]]
       contents
-        .sort((a, b) => a.order - b.order)
+        .sort((a, b) => a.order - b.order) 
         .forEach((content, idx) => {
           content.order = idx + 1
         })
@@ -585,6 +589,18 @@ export const useModuleStore = defineStore('module', () => {
 
       case 'Module07_reverse':
         return replaceModule07ReverseContent(html, properties)
+
+      case 'ModuleFooter':
+        return replaceModuleFooterContent(html, properties)
+
+      case 'Module10':
+        return replaceModule10Content(html, properties)
+
+      case 'Module10-1':
+        return replaceModule101Content(html, properties)
+
+      case 'ModuleSubTitle':
+        return replaceModuleSubTitleContent(html, properties)
 
       default:
         return replaceDefaultTemplate(html, properties)
