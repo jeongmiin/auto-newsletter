@@ -108,7 +108,8 @@ onMounted(() => {
     html = processQuillHtml(html)
 
     // 빈 내용 처리
-    const isEmpty = html === '<p style="margin: 0; padding: 0;"><br></p>' || html.trim() === ''
+    const isEmpty =
+      html === '<p style="margin: 0; padding: 0; line-height: 1.5;"><br></p>' || html.trim() === ''
     emit('update:modelValue', isEmpty ? '' : html)
   })
 })
@@ -121,7 +122,8 @@ watch(
 
     const currentHtml = quill.root.innerHTML
     const isEmpty =
-      currentHtml === '<p style="margin: 0; padding: 0;"><br></p>' || currentHtml.trim() === ''
+      currentHtml === '<p style="margin: 0; padding: 0; line-height: 1.5;"><br></p>' ||
+      currentHtml.trim() === ''
     const currentValue = isEmpty ? '' : currentHtml
 
     // 현재 값과 다를 때만 업데이트 (무한 루프 방지)

@@ -50,6 +50,12 @@
       >
         HTML 복사
       </button>
+      <button
+        @click="downloadHtmlFile"
+        class="px-4 py-2 text-sm bg-green-600 text-white hover:bg-green-700 rounded"
+      >
+        HTML 내보내기
+      </button>
     </div>
   </div>
 </template>
@@ -271,6 +277,123 @@ const exportHtml = async (): Promise<void> => {
   } catch (error) {
     console.error('HTML 복사 실패:', error)
     alert('HTML 복사에 실패했습니다.')
+  }
+}
+
+/**
+ * HTML 파일 다운로드: 최종 HTML을 파일로 내보내기
+ */
+const downloadHtmlFile = async (): Promise<void> => {
+  try {
+    console.group('📥 HTML 파일 다운로드')
+
+    const modules = moduleStore.modules
+    console.log('모듈 개수:', modules.length)
+
+    if (!modules || modules.length === 0) {
+      console.warn('내보낼 모듈이 없음')
+      alert('내보낼 모듈이 없습니다')
+      console.groupEnd()
+      return
+    }
+
+    // 최종 HTML 생성
+    let finalHtml = await moduleStore.generateHtml()
+
+    console.log('생성된 HTML 길이:', finalHtml.length, 'bytes')
+
+    // Quill HTML 처리 (RGB→HEX, margin/padding 제거)
+    finalHtml = processQuillHtml(finalHtml)
+
+    console.log('처리 후 HTML 길이:', finalHtml.length, 'bytes')
+
+    // 완전한 HTML 문서 생성 (이메일용 최적화)
+    const fullHtmlDocument = `<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Newsletter</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background-color: #f5f5f5;
+    }
+    /* 이메일 콘텐츠 스타일 */
+    p, h1, h2, h3 {
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      font-size: 2em;
+      font-weight: bold;
+    }
+    h2 {
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+    h3 {
+      font-size: 1.17em;
+      font-weight: bold;
+    }
+    strong {
+      font-weight: 700;
+    }
+    em {
+      font-style: italic;
+    }
+    a {
+      color: #0066cc;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+${finalHtml}
+</body>
+</html>`
+
+    // 현재 날짜와 시간으로 파일명 생성
+    const now = new Date()
+    const timestamp = now
+      .toISOString()
+      .slice(0, 19)
+      .replace(/:/g, '-')
+      .replace('T', '_')
+    const filename = `newsletter_${timestamp}.html`
+
+    // Blob 생성 및 다운로드
+    const blob = new Blob([fullHtmlDocument], { type: 'text/html; charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+
+    // 다운로드 링크 생성 및 클릭
+    const link = document.createElement('a')
+    link.href = url
+    link.download = filename
+    document.body.appendChild(link)
+    link.click()
+
+    // 정리
+    link.remove()
+    URL.revokeObjectURL(url)
+
+    console.log('✅ HTML 파일 다운로드 완료:', filename)
+    console.groupEnd()
+
+    alert(`HTML 파일이 다운로드되었습니다!\n파일명: ${filename}`)
+  } catch (error) {
+    console.error('❌ HTML 파일 다운로드 실패:', error)
+    console.groupEnd()
+    alert(
+      'HTML 파일 다운로드에 실패했습니다: ' +
+        (error instanceof Error ? error.message : '알 수 없는 오류'),
+    )
   }
 }
 </script>

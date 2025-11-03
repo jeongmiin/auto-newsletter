@@ -81,7 +81,7 @@ export const addZeroSpacingToBlocks = (html: string): string => {
   html = html.replace(tagPattern, (match, tagName, attributes, attrContent) => {
     // 속성이 없는 경우
     if (!attributes) {
-      return `<${tagName} style="margin: 0; padding: 0;">`
+      return `<${tagName} style="margin: 0; padding: 0; line-height: 1.5;">`
     }
 
     // style 속성 추출
@@ -102,17 +102,14 @@ export const addZeroSpacingToBlocks = (html: string): string => {
       }
 
       // 세미콜론 정리 (중복 제거, 앞뒤 공백 제거)
-      existingStyle = existingStyle
-        .replace(/;+/g, ';')
-        .replace(/^;\s*/, '')
-        .replace(/;\s*$/, '')
+      existingStyle = existingStyle.replace(/;+/g, ';').replace(/^;\s*/, '').replace(/;\s*$/, '')
 
       // style 교체
       const newAttributes = attrContent.replace(/style="[^"]*"/, `style="${existingStyle};"`)
       return `<${tagName} ${newAttributes}>`
     } else {
       // style이 없는 경우 추가
-      return `<${tagName} ${attrContent} style="margin: 0; padding: 0;">`
+      return `<${tagName} ${attrContent} style="margin: 0; padding: 0; line-height: 1.5;">`
     }
   })
 
@@ -128,7 +125,6 @@ export const addZeroSpacingToBlocks = (html: string): string => {
 export const convertQuillAlignToInline = (html: string): string => {
   if (!html) return ''
 
-
   // 정렬 클래스 매핑
   const alignMap: Record<string, string> = {
     'ql-align-center': 'center',
@@ -141,7 +137,7 @@ export const convertQuillAlignToInline = (html: string): string => {
     // class="ql-align-xxx" 또는 class="other ql-align-xxx" 패턴 찾기
     const classRegex = new RegExp(
       `(<(?:p|h1|h2|h3)[^>]*?)class="([^"]*?${className}[^"]*?)"([^>]*?>)`,
-      'gi'
+      'gi',
     )
 
     html = html.replace(classRegex, (match, before, classAttr, after) => {
@@ -173,7 +169,6 @@ export const convertQuillAlignToInline = (html: string): string => {
   // 빈 class 속성 제거
   html = html.replace(/\s*class=""\s*/g, ' ')
 
-
   return html
 }
 
@@ -186,7 +181,6 @@ export const convertQuillAlignToInline = (html: string): string => {
 export const processQuillHtml = (html: string): string => {
   if (!html) return ''
 
-
   // 1. RGB → HEX 변환
   html = convertRgbToHex(html)
 
@@ -196,7 +190,6 @@ export const processQuillHtml = (html: string): string => {
   // 3. ✅ Quill 정렬 클래스를 인라인 스타일로 변환
   html = convertQuillAlignToInline(html)
 
-
   return html
 }
 
@@ -204,7 +197,6 @@ export const processQuillHtml = (html: string): string => {
  * 테스트용 함수 - 블록 요소 spacing 테스트
  */
 export const testBlockSpacing = () => {
-
   const testCases = [
     '<p>일반 문단</p>',
     '<h1>헤더 1</h1>',
@@ -229,18 +221,19 @@ export const testBlockSpacing = () => {
 /**
  * HTML 검증 - 블록 태그 통계
  */
-export const verifyBlockSpacing = (html: string): Record<string, { total: number; processed: number }> => {
+export const verifyBlockSpacing = (
+  html: string,
+): Record<string, { total: number; processed: number }> => {
   const blockTags = ['p', 'h1', 'h2', 'h3']
   const stats: Record<string, { total: number; processed: number }> = {}
 
   blockTags.forEach((tag) => {
     const totalCount = (html.match(new RegExp(`<${tag}[^>]*>`, 'gi')) || []).length
-    const withSpacingCount =
-      (html.match(new RegExp(`<${tag}[^>]*style="[^"]*margin:\\s*0[^"]*padding:\\s*0`, 'gi')) || [])
-        .length
+    const withSpacingCount = (
+      html.match(new RegExp(`<${tag}[^>]*style="[^"]*margin:\\s*0[^"]*padding:\\s*0`, 'gi')) || []
+    ).length
 
     stats[tag] = { total: totalCount, processed: withSpacingCount }
-
 
     if (totalCount > 0 && withSpacingCount < totalCount) {
       console.warn(`⚠️ 일부 <${tag}> 태그에 margin/padding: 0이 누락되었습니다`)
