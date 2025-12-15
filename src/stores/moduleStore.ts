@@ -69,7 +69,6 @@ export const useModuleStore = defineStore('module', () => {
       const basePath = import.meta.env.BASE_URL || '/'
       const configPath = normalizePath(`${basePath}modules/modules-config.json`)
 
-
       const response = await fetch(configPath)
       if (!response.ok) {
         throw new Error(`Failed to load modules: ${response.status} ${response.statusText}`)
@@ -229,7 +228,6 @@ export const useModuleStore = defineStore('module', () => {
 
   // ============= Table Row Management =============
   const addTableRow = (moduleId: string, header: string = '', data: string = ''): void => {
-
     const moduleIndex = modules.value.findIndex((m) => m.id === moduleId)
     if (moduleIndex === -1) {
       console.error(`[addTableRow] Module not found: ${moduleId}`)
@@ -373,7 +371,6 @@ export const useModuleStore = defineStore('module', () => {
       const filename = type === 'title' ? 'ModuleContent_title.html' : 'ModuleContent_text.html'
       const templatePath = normalizePath(`${basePath}modules/${filename}`)
 
-
       const response = await fetch(templatePath)
       if (!response.ok) {
         console.error('[loadContentTemplate] ❌ Failed:', templatePath, response.status)
@@ -469,7 +466,7 @@ export const useModuleStore = defineStore('module', () => {
     if (index > 0) {
       ;[contents[index], contents[index - 1]] = [contents[index - 1], contents[index]]
       contents
-        .sort((a, b) => a.order - b.order) 
+        .sort((a, b) => a.order - b.order)
         .forEach((content, idx) => {
           content.order = idx + 1
         })
@@ -648,9 +645,9 @@ export const useModuleStore = defineStore('module', () => {
     <title>Auto Newsletter</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; ">
-    <div style="max-width: 680px; margin: 0 auto;">
+    <table align="center" cellpadding="0" cellspacing="0" style=" width:100%; max-width:680px; background-color:#f9f9f9;">
         ${fullHtml}
-    </div>
+    </table>
 </body>
 </html>`
   }
