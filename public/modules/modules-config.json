@@ -5,7 +5,7 @@
       "name": "기본 헤더",
       "description": "로고와 뉴스레터 타이틀이 포함된 기본 헤더",
       "category": "common",
-      "icon": "H",
+      "icon": "pi pi-home",
       "htmlFile": "ModuleBasicHeader.html",
       "editableProps": [
         {
@@ -36,7 +36,7 @@
       "name": "섹션 타이틀",
       "description": "제목과 부제목이 있는 헤더",
       "category": "common",
-      "icon": "T",
+      "icon": "pi pi-align-left",
       "htmlFile": "SectionTitle.html",
       "editableProps": [
         {
@@ -59,7 +59,7 @@
       "name": "설명 텍스트",
       "description": "단순 텍스트 콘텐츠 블록",
       "category": "text",
-      "icon": "T",
+      "icon": "pi pi-align-left",
       "htmlFile": "ModuleDescText.html",
       "editableProps": [
         {
@@ -71,12 +71,58 @@
         }
       ]
     },
+     {
+      "id": "ModuleTable",
+      "name": "커스텀 테이블",
+      "description": "행/열 추가/삭제, colspan/rowspan 편집이 가능한 테이블",
+      "category": "table",
+      "icon": "pi pi-table",
+      "htmlFile": "ModuleTable.html",
+      "editableProps": [
+        {
+          "key": "tableCells",
+          "label": "테이블 편집",
+          "type": "table-editor",
+          "default": []
+        },
+        {
+          "key": "borderTopWidth",
+          "label": "테이블 상단 테두리 두께",
+          "type": "text",
+          "default": "2px"
+        },
+        {
+          "key": "borderTopColor",
+          "label": "테이블 상단 테두리 색상",
+          "type": "text",
+          "default": "#333333"
+        },
+        {
+          "key": "cellBorderColor",
+          "label": "셀 테두리 색상",
+          "type": "text",
+          "default": "#a7a7a7"
+        },
+        {
+          "key": "headerBgColor",
+          "label": "헤더(th) 배경색",
+          "type": "text",
+          "default": "#f6f6f6"
+        },
+        {
+          "key": "cellBgColor",
+          "label": "데이터(td) 배경색",
+          "type": "text",
+          "default": "#ffffff"
+        }
+      ]
+    },
     {
       "id": "ModuleImg",
       "name": "이미지",
       "description": "단일 이미지 블록",
       "category": "image",
-      "icon": "IMG",
+      "icon": "pi pi-image",
       "htmlFile": "ModuleImg.html",
       "editableProps": [
         {
@@ -92,6 +138,27 @@
           "type": "text",
           "default": "이미지",
           "placeholder": "이미지 설명"
+        },
+        {
+          "key": "showImageLink",
+          "label": "이미지 링크 사용",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "imageLinkUrl",
+          "label": "이미지 링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showImageLink"
+        },
+        {
+          "key": "imageBorderRadius",
+          "label": "이미지 모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%"
         }
       ]
     },
@@ -100,7 +167,7 @@
       "name": "단일 버튼",
       "description": "하나의 버튼이 있는 블록",
       "category": "button",
-      "icon": "B",
+      "icon": "pi pi-stop",
       "htmlFile": "ModuleOneButton.html",
       "editableProps": [
         {
@@ -136,7 +203,7 @@
       "name": "2개 버튼",
       "description": "두 개의 버튼이 나란히 있는 블록",
       "category": "button",
-      "icon": "B",
+      "icon": "pi pi-stop",
       "htmlFile": "ModuleTwoButton.html",
       "editableProps": [
         {
@@ -198,7 +265,7 @@
       "name": "하단 푸터",
       "description": "푸터 - 회사정보, SNS 링크, 수신거부",
       "category": "common",
-      "icon": "F",
+      "icon": "pi pi-building",
       "htmlFile": "ModuleFooter.html",
       "editableProps": [
         {
@@ -337,11 +404,48 @@
       ]
     },
     {
+      "id": "Module01",
+      "name": "01",
+      "description": "강조 타이틀과 텍스트가 있는 박스",
+      "category": "text",
+      "icon": "pi pi-th-large",
+      "htmlFile": "Module01.html",
+      "editableProps": [
+        {
+          "key": "contentTitle",
+          "label": "콘텐츠 타이틀",
+          "type": "text",
+          "default": "콘텐츠 타이틀",
+          "placeholder": "타이틀을 입력하세요",
+          "required": true
+        },
+        {
+          "key": "titleColor",
+          "label": "타이틀 색상",
+          "type": "text",
+          "default": "#eb2a25"
+        },
+        {
+          "key": "contentText",
+          "label": "콘텐츠 텍스트",
+          "type": "textarea",
+          "default": "콘텐츠 텍스트",
+          "placeholder": "내용을 입력하세요"
+        },
+        {
+          "key": "bgColor",
+          "label": "배경색",
+          "type": "text",
+          "default": "#f5f5f5"
+        }
+      ]
+    },
+    {
       "id": "Module01-1",
       "name": "01-1",
       "description": "타이틀과 설명글이 있는 2컬럼 박스",
       "category": "text",
-      "icon": "모듈",
+      "icon": "pi pi-th-large",
       "htmlFile": "Module01-1.html",
       "editableProps": [
         {
@@ -377,7 +481,7 @@
       "name": "01-2",
       "description": "카테고리와 설명글 박스",
       "category": "text",
-      "icon": "모듈",
+      "icon": "pi pi-th-large",
       "htmlFile": "Module01-2.html",
       "editableProps": [
         {
@@ -410,9 +514,9 @@
     {
       "id": "Module02",
       "name": "02",
-      "description": "이미지와 텍스트, 테이블, 버튼이 포함된 모듈",
+      "description": "이미지와 텍스트, 버튼이 포함된 모듈",
       "category": "image",
-      "icon": "모듈",
+      "icon": "pi pi-th-large",
       "htmlFile": "Module02.html",
       "editableProps": [
         {
@@ -428,6 +532,27 @@
           "placeholder": "이미지"
         },
         {
+          "key": "showImageLink",
+          "label": "이미지 링크 사용",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "imageLinkUrl",
+          "label": "이미지 링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showImageLink"
+        },
+        {
+          "key": "imageBorderRadius",
+          "label": "이미지 모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%"
+        },
+        {
           "key": "title",
           "label": "콘텐츠 타이틀",
           "type": "text",
@@ -439,33 +564,6 @@
           "label": "콘텐츠 텍스트",
           "type": "textarea",
           "placeholder": "콘텐츠 텍스트"
-        },
-        {
-          "key": "showTable",
-          "label": "테이블 표시",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "key": "tableTitle",
-          "label": "테이블 타이틀",
-          "type": "text",
-          "placeholder": "테이블 타이틀",
-          "showWhen": "showTable"
-        },
-        {
-          "key": "tableContent",
-          "label": "테이블 콘텐츠",
-          "type": "textarea",
-          "placeholder": "테이블 콘텐츠 텍스트",
-          "showWhen": "showTable"
-        },
-        {
-          "key": "tableRows",
-          "label": "동적 테이블 행",
-          "type": "table-rows",
-          "defaultRows": [],
-          "showWhen": "showTable"
         },
         {
           "key": "showButton",
@@ -508,7 +606,7 @@
       "name": "04",
       "description": "이미지와 텍스트가 있는 2단 구성 모듈",
       "category": "image",
-      "icon": "모듈",
+      "icon": "pi pi-th-large",
       "htmlFile": "Module04.html",
       "editableProps": [
         {
@@ -516,6 +614,27 @@
           "label": "왼쪽 이미지 URL",
           "type": "url",
           "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png"
+        },
+        {
+          "key": "showLeftImageLink",
+          "label": "왼쪽 이미지 링크 사용",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "leftImageLinkUrl",
+          "label": "왼쪽 이미지 링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showLeftImageLink"
+        },
+        {
+          "key": "leftImageBorderRadius",
+          "label": "왼쪽 이미지 모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%"
         },
         {
           "key": "leftTitle",
@@ -531,38 +650,140 @@
           "placeholder": "콘텐츠 텍스트"
         },
         {
-          "key": "showLeftSmallBtn",
-          "label": "왼쪽 작은 버튼 표시",
+          "key": "showLeftSmallBtn1",
+          "label": "왼쪽 작은 버튼 1 표시",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "leftSmallBtnText",
-          "label": "왼쪽 작은 버튼",
+          "key": "leftSmallBtn1Text",
+          "label": "왼쪽 작은 버튼 1 텍스트",
           "type": "text",
-          "placeholder": "작은 버튼 →",
-          "showWhen": "showLeftSmallBtn"
+          "default": "버튼 1 →",
+          "showWhen": "showLeftSmallBtn1"
         },
         {
-          "key": "leftSmallBtnUrl",
-          "label": "왼쪽 작은 버튼 링크",
+          "key": "leftSmallBtn1Url",
+          "label": "왼쪽 작은 버튼 1 링크",
           "type": "url",
-          "placeholder": "#",
-          "showWhen": "showLeftSmallBtn"
+          "default": "#",
+          "showWhen": "showLeftSmallBtn1"
         },
         {
-          "key": "leftSmallBtnBgColor",
-          "label": "왼쪽 작은 버튼 배경색",
+          "key": "leftSmallBtn1BgColor",
+          "label": "왼쪽 작은 버튼 1 배경색",
           "type": "text",
           "default": "#e5e5e5",
-          "showWhen": "showLeftSmallBtn"
+          "showWhen": "showLeftSmallBtn1"
         },
         {
-          "key": "leftSmallBtnTextColor",
-          "label": "왼쪽 작은 버튼 글자색",
+          "key": "leftSmallBtn1TextColor",
+          "label": "왼쪽 작은 버튼 1 글자색",
           "type": "text",
           "default": "#333333",
-          "showWhen": "showLeftSmallBtn"
+          "showWhen": "showLeftSmallBtn1"
+        },
+        {
+          "key": "showLeftSmallBtn2",
+          "label": "왼쪽 작은 버튼 2 표시",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "leftSmallBtn2Text",
+          "label": "왼쪽 작은 버튼 2 텍스트",
+          "type": "text",
+          "default": "버튼 2 →",
+          "showWhen": "showLeftSmallBtn2"
+        },
+        {
+          "key": "leftSmallBtn2Url",
+          "label": "왼쪽 작은 버튼 2 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showLeftSmallBtn2"
+        },
+        {
+          "key": "leftSmallBtn2BgColor",
+          "label": "왼쪽 작은 버튼 2 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showLeftSmallBtn2"
+        },
+        {
+          "key": "leftSmallBtn2TextColor",
+          "label": "왼쪽 작은 버튼 2 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showLeftSmallBtn2"
+        },
+        {
+          "key": "showLeftSmallBtn3",
+          "label": "왼쪽 작은 버튼 3 표시",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "leftSmallBtn3Text",
+          "label": "왼쪽 작은 버튼 3 텍스트",
+          "type": "text",
+          "default": "버튼 3 →",
+          "showWhen": "showLeftSmallBtn3"
+        },
+        {
+          "key": "leftSmallBtn3Url",
+          "label": "왼쪽 작은 버튼 3 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showLeftSmallBtn3"
+        },
+        {
+          "key": "leftSmallBtn3BgColor",
+          "label": "왼쪽 작은 버튼 3 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showLeftSmallBtn3"
+        },
+        {
+          "key": "leftSmallBtn3TextColor",
+          "label": "왼쪽 작은 버튼 3 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showLeftSmallBtn3"
+        },
+        {
+          "key": "showLeftSmallBtn4",
+          "label": "왼쪽 작은 버튼 4 표시",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "leftSmallBtn4Text",
+          "label": "왼쪽 작은 버튼 4 텍스트",
+          "type": "text",
+          "default": "버튼 4 →",
+          "showWhen": "showLeftSmallBtn4"
+        },
+        {
+          "key": "leftSmallBtn4Url",
+          "label": "왼쪽 작은 버튼 4 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showLeftSmallBtn4"
+        },
+        {
+          "key": "leftSmallBtn4BgColor",
+          "label": "왼쪽 작은 버튼 4 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showLeftSmallBtn4"
+        },
+        {
+          "key": "leftSmallBtn4TextColor",
+          "label": "왼쪽 작은 버튼 4 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showLeftSmallBtn4"
         },
         {
           "key": "showLeftBigBtn",
@@ -572,16 +793,16 @@
         },
         {
           "key": "leftBigBtnText",
-          "label": "왼쪽 큰 버튼",
+          "label": "왼쪽 큰 버튼 텍스트",
           "type": "text",
-          "placeholder": "큰 버튼 →",
+          "default": "큰 버튼 →",
           "showWhen": "showLeftBigBtn"
         },
         {
           "key": "leftBigBtnUrl",
           "label": "왼쪽 큰 버튼 링크",
           "type": "url",
-          "placeholder": "#",
+          "default": "#",
           "showWhen": "showLeftBigBtn"
         },
         {
@@ -605,6 +826,27 @@
           "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png"
         },
         {
+          "key": "showRightImageLink",
+          "label": "오른쪽 이미지 링크 사용",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "rightImageLinkUrl",
+          "label": "오른쪽 이미지 링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showRightImageLink"
+        },
+        {
+          "key": "rightImageBorderRadius",
+          "label": "오른쪽 이미지 모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%"
+        },
+        {
           "key": "rightTitle",
           "label": "오른쪽 타이틀",
           "type": "text",
@@ -617,38 +859,140 @@
           "placeholder": "콘텐츠 텍스트"
         },
         {
-          "key": "showRightSmallBtn",
-          "label": "오른쪽 작은 버튼 표시",
+          "key": "showRightSmallBtn1",
+          "label": "오른쪽 작은 버튼 1 표시",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "rightSmallBtnText",
-          "label": "오른쪽 작은 버튼",
+          "key": "rightSmallBtn1Text",
+          "label": "오른쪽 작은 버튼 1 텍스트",
           "type": "text",
-          "placeholder": "작은 버튼 →",
-          "showWhen": "showRightSmallBtn"
+          "default": "버튼 1 →",
+          "showWhen": "showRightSmallBtn1"
         },
         {
-          "key": "rightSmallBtnUrl",
-          "label": "오른쪽 작은 버튼 링크",
+          "key": "rightSmallBtn1Url",
+          "label": "오른쪽 작은 버튼 1 링크",
           "type": "url",
-          "placeholder": "#",
-          "showWhen": "showRightSmallBtn"
+          "default": "#",
+          "showWhen": "showRightSmallBtn1"
         },
         {
-          "key": "rightSmallBtnBgColor",
-          "label": "오른쪽 작은 버튼 배경색",
+          "key": "rightSmallBtn1BgColor",
+          "label": "오른쪽 작은 버튼 1 배경색",
           "type": "text",
           "default": "#e5e5e5",
-          "showWhen": "showRightSmallBtn"
+          "showWhen": "showRightSmallBtn1"
         },
         {
-          "key": "rightSmallBtnTextColor",
-          "label": "오른쪽 작은 버튼 글자색",
+          "key": "rightSmallBtn1TextColor",
+          "label": "오른쪽 작은 버튼 1 글자색",
           "type": "text",
           "default": "#333333",
-          "showWhen": "showRightSmallBtn"
+          "showWhen": "showRightSmallBtn1"
+        },
+        {
+          "key": "showRightSmallBtn2",
+          "label": "오른쪽 작은 버튼 2 표시",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "rightSmallBtn2Text",
+          "label": "오른쪽 작은 버튼 2 텍스트",
+          "type": "text",
+          "default": "버튼 2 →",
+          "showWhen": "showRightSmallBtn2"
+        },
+        {
+          "key": "rightSmallBtn2Url",
+          "label": "오른쪽 작은 버튼 2 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showRightSmallBtn2"
+        },
+        {
+          "key": "rightSmallBtn2BgColor",
+          "label": "오른쪽 작은 버튼 2 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showRightSmallBtn2"
+        },
+        {
+          "key": "rightSmallBtn2TextColor",
+          "label": "오른쪽 작은 버튼 2 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showRightSmallBtn2"
+        },
+        {
+          "key": "showRightSmallBtn3",
+          "label": "오른쪽 작은 버튼 3 표시",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "rightSmallBtn3Text",
+          "label": "오른쪽 작은 버튼 3 텍스트",
+          "type": "text",
+          "default": "버튼 3 →",
+          "showWhen": "showRightSmallBtn3"
+        },
+        {
+          "key": "rightSmallBtn3Url",
+          "label": "오른쪽 작은 버튼 3 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showRightSmallBtn3"
+        },
+        {
+          "key": "rightSmallBtn3BgColor",
+          "label": "오른쪽 작은 버튼 3 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showRightSmallBtn3"
+        },
+        {
+          "key": "rightSmallBtn3TextColor",
+          "label": "오른쪽 작은 버튼 3 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showRightSmallBtn3"
+        },
+        {
+          "key": "showRightSmallBtn4",
+          "label": "오른쪽 작은 버튼 4 표시",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "rightSmallBtn4Text",
+          "label": "오른쪽 작은 버튼 4 텍스트",
+          "type": "text",
+          "default": "버튼 4 →",
+          "showWhen": "showRightSmallBtn4"
+        },
+        {
+          "key": "rightSmallBtn4Url",
+          "label": "오른쪽 작은 버튼 4 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showRightSmallBtn4"
+        },
+        {
+          "key": "rightSmallBtn4BgColor",
+          "label": "오른쪽 작은 버튼 4 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showRightSmallBtn4"
+        },
+        {
+          "key": "rightSmallBtn4TextColor",
+          "label": "오른쪽 작은 버튼 4 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showRightSmallBtn4"
         },
         {
           "key": "showRightBigBtn",
@@ -658,16 +1002,16 @@
         },
         {
           "key": "rightBigBtnText",
-          "label": "오른쪽 큰 버튼",
+          "label": "오른쪽 큰 버튼 텍스트",
           "type": "text",
-          "placeholder": "큰 버튼 →",
+          "default": "큰 버튼 →",
           "showWhen": "showRightBigBtn"
         },
         {
           "key": "rightBigBtnUrl",
           "label": "오른쪽 큰 버튼 링크",
           "type": "url",
-          "placeholder": "#",
+          "default": "#",
           "showWhen": "showRightBigBtn"
         },
         {
@@ -694,166 +1038,10 @@
     {
       "id": "Module05",
       "name": "05",
-      "description": "2컬럼 이미지와 텍스트, 버튼이 포함된 모듈",
-      "category": "image",
-      "icon": "모듈",
-      "htmlFile": "Module05.html",
-      "editableProps": [
-        {
-          "key": "topLeftImageUrl",
-          "label": "이미지 URL",
-          "type": "url",
-          "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png"
-        },
-        {
-          "key": "topLeftImageAlt",
-          "label": "이미지 설명 Alt",
-          "type": "text",
-          "placeholder": "이미지"
-        },
-        {
-          "key": "topRightTitle",
-          "label": "타이틀",
-          "type": "text",
-          "placeholder": "콘텐츠 타이틀"
-        },
-        {
-          "key": "topRightTableTitle",
-          "label": "텍스트",
-          "type": "textarea",
-          "placeholder": "콘텐츠 텍스트"
-        },
-        {
-          "key": "showTopSmallBtn",
-          "label": "작은 버튼 표시",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "key": "topRightSmallBtnText",
-          "label": "작은 버튼",
-          "type": "text",
-          "placeholder": "작은 버튼 →",
-          "showWhen": "showTopSmallBtn"
-        },
-        {
-          "key": "topRightSmallBtnUrl",
-          "label": "작은 버튼 링크",
-          "type": "url",
-          "placeholder": "#",
-          "showWhen": "showTopSmallBtn"
-        },
-        {
-          "key": "smallBtnBgColor",
-          "label": "작은 버튼 배경색",
-          "type": "text",
-          "default": "#e5e5e5",
-          "showWhen": "showTopSmallBtn"
-        },
-        {
-          "key": "smallBtnTextColor",
-          "label": "작은 버튼 글자색",
-          "type": "text",
-          "default": "#333333",
-          "showWhen": "showTopSmallBtn"
-        },
-        {
-          "key": "bigBtnBgColor",
-          "label": "큰 버튼 배경색",
-          "type": "text",
-          "default": "#111111",
-          "showWhen": "showBigBtn"
-        },
-        {
-          "key": "bigBtnTextColor",
-          "label": "큰 버튼 글자색",
-          "type": "text",
-          "default": "#ffffff",
-          "showWhen": "showBigBtn"
-        },
-        {
-          "key": "showBigBtn",
-          "label": "큰 버튼 표시",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "key": "bigButtonText",
-          "label": "큰 버튼 텍스트",
-          "type": "text",
-          "default": "큰 버튼 →",
-          "placeholder": "큰 버튼 텍스트",
-          "showWhen": "showBigBtn"
-        },
-        {
-          "key": "bigButtonUrl",
-          "label": "큰 버튼 링크",
-          "type": "url",
-          "default": "#",
-          "placeholder": "#",
-          "showWhen": "showBigBtn"
-        },
-        {
-          "key": "additionalContentsTop",
-          "label": "추가 콘텐츠",
-          "type": "additional-contents"
-        }
-      ]
-    },
-    {
-      "id": "Module05-1",
-      "name": "05-1",
-      "description": "2컬럼 이미지와 강조된 타이틀",
-      "category": "text",
-      "icon": "모듈",
-      "htmlFile": "Module05-1.html",
-      "editableProps": [
-        {
-          "key": "ImageUrl",
-          "label": "이미지 URL",
-          "type": "url",
-          "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png"
-        },
-        {
-          "key": "ImageAlt",
-          "label": "이미지 설명 (Alt)",
-          "type": "text",
-          "placeholder": "이미지"
-        },
-        {
-          "key": "boxTitle",
-          "label": "타이틀",
-          "type": "text",
-          "placeholder": "콘텐츠 텍스트"
-        },
-        {
-          "key": "boxBgColor",
-          "label": "텍스트 박스 배경색",
-          "type": "text",
-          "default": "#e5e5e5"
-        },
-        {
-          "key": "boxColor",
-          "label": "텍스트 박스 글자색",
-          "type": "text",
-          "default": "#111111"
-        },
-        {
-          "key": "contentText",
-          "label": "텍스트",
-          "type": "textarea",
-          "placeholder": "콘텐츠 텍스트",
-          "required": true
-        }
-      ]
-    },
-    {
-      "id": "Module05-2",
-      "name": "05-2",
       "description": "이미지 + 텍스트 + 4개의 독립적인 버튼",
       "category": "image",
-      "icon": "모듈",
-      "htmlFile": "Module05-2.html",
+      "icon": "pi pi-th-large",
+      "htmlFile": "Module05.html",
       "editableProps": [
         {
           "key": "imageUrl",
@@ -866,6 +1054,27 @@
           "label": "이미지 설명 (Alt)",
           "type": "text",
           "placeholder": "이미지"
+        },
+        {
+          "key": "showImageLink",
+          "label": "이미지 링크 사용",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "imageLinkUrl",
+          "label": "이미지 링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showImageLink"
+        },
+        {
+          "key": "imageBorderRadius",
+          "label": "이미지 모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%"
         },
         {
           "key": "contentText",
@@ -1020,11 +1229,215 @@
       ]
     },
     {
+      "id": "Module05-1",
+      "name": "05-1",
+      "description": "2컬럼 이미지와 강조된 타이틀 + 최대 4개 버튼",
+      "category": "text",
+      "icon": "pi pi-th-large",
+      "htmlFile": "Module05-1.html",
+      "editableProps": [
+        {
+          "key": "ImageUrl",
+          "label": "이미지 URL",
+          "type": "url",
+          "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png"
+        },
+        {
+          "key": "ImageAlt",
+          "label": "이미지 설명 (Alt)",
+          "type": "text",
+          "placeholder": "이미지"
+        },
+        {
+          "key": "showImageLink",
+          "label": "이미지 링크 사용",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "imageLinkUrl",
+          "label": "이미지 링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showImageLink"
+        },
+        {
+          "key": "imageBorderRadius",
+          "label": "이미지 모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%"
+        },
+        {
+          "key": "boxTitle",
+          "label": "타이틀",
+          "type": "text",
+          "placeholder": "콘텐츠 텍스트"
+        },
+        {
+          "key": "boxBgColor",
+          "label": "텍스트 박스 배경색",
+          "type": "text",
+          "default": "#e5e5e5"
+        },
+        {
+          "key": "boxColor",
+          "label": "텍스트 박스 글자색",
+          "type": "text",
+          "default": "#111111"
+        },
+        {
+          "key": "contentText",
+          "label": "텍스트",
+          "type": "textarea",
+          "placeholder": "콘텐츠 텍스트",
+          "required": true
+        },
+        {
+          "key": "showButton1",
+          "label": "버튼 1 표시",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "button1Text",
+          "label": "버튼 1 텍스트",
+          "type": "text",
+          "default": "버튼 1 →",
+          "showWhen": "showButton1"
+        },
+        {
+          "key": "button1Url",
+          "label": "버튼 1 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showButton1"
+        },
+        {
+          "key": "button1BgColor",
+          "label": "버튼 1 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showButton1"
+        },
+        {
+          "key": "button1TextColor",
+          "label": "버튼 1 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showButton1"
+        },
+        {
+          "key": "showButton2",
+          "label": "버튼 2 표시",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "button2Text",
+          "label": "버튼 2 텍스트",
+          "type": "text",
+          "default": "버튼 2 →",
+          "showWhen": "showButton2"
+        },
+        {
+          "key": "button2Url",
+          "label": "버튼 2 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showButton2"
+        },
+        {
+          "key": "button2BgColor",
+          "label": "버튼 2 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showButton2"
+        },
+        {
+          "key": "button2TextColor",
+          "label": "버튼 2 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showButton2"
+        },
+        {
+          "key": "showButton3",
+          "label": "버튼 3 표시",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "button3Text",
+          "label": "버튼 3 텍스트",
+          "type": "text",
+          "default": "버튼 3 →",
+          "showWhen": "showButton3"
+        },
+        {
+          "key": "button3Url",
+          "label": "버튼 3 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showButton3"
+        },
+        {
+          "key": "button3BgColor",
+          "label": "버튼 3 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showButton3"
+        },
+        {
+          "key": "button3TextColor",
+          "label": "버튼 3 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showButton3"
+        },
+        {
+          "key": "showButton4",
+          "label": "버튼 4 표시",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "button4Text",
+          "label": "버튼 4 텍스트",
+          "type": "text",
+          "default": "버튼 4 →",
+          "showWhen": "showButton4"
+        },
+        {
+          "key": "button4Url",
+          "label": "버튼 4 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showButton4"
+        },
+        {
+          "key": "button4BgColor",
+          "label": "버튼 4 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showButton4"
+        },
+        {
+          "key": "button4TextColor",
+          "label": "버튼 4 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showButton4"
+        }
+      ]
+    },
+    {
       "id": "Module05-3",
       "name": "05-3",
       "description": "2개 섹션, 각각 타이틀/텍스트/이미지/작은버튼, 하단 큰 버튼",
       "category": "image",
-      "icon": "모듈",
+      "icon": "pi pi-th-large",
       "htmlFile": "Module05-3.html",
       "editableProps": [
         {
@@ -1065,6 +1478,27 @@
           "placeholder": "이미지"
         },
         {
+          "key": "showImageLink",
+          "label": "이미지 링크 사용",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "imageLinkUrl",
+          "label": "이미지 링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showImageLink"
+        },
+        {
+          "key": "imageBorderRadius",
+          "label": "이미지 모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%"
+        },
+        {
           "key": "topRightTitle1",
           "label": "오른쪽 타이틀",
           "type": "text",
@@ -1077,38 +1511,140 @@
           "placeholder": "오른쪽 텍스트"
         },
         {
-          "key": "showTopSmallBtn",
-          "label": "작은 버튼 표시",
+          "key": "showSmallBtn1",
+          "label": "작은 버튼 1 표시",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "topSmallBtnText",
-          "label": "작은 버튼 텍스트",
+          "key": "smallBtn1Text",
+          "label": "작은 버튼 1 텍스트",
           "type": "text",
-          "placeholder": "작은 버튼 →",
-          "showWhen": "showTopSmallBtn"
+          "default": "버튼 1 →",
+          "showWhen": "showSmallBtn1"
         },
         {
-          "key": "topSmallBtnUrl",
-          "label": "작은 버튼 링크",
+          "key": "smallBtn1Url",
+          "label": "작은 버튼 1 링크",
           "type": "url",
-          "placeholder": "#",
-          "showWhen": "showTopSmallBtn"
+          "default": "#",
+          "showWhen": "showSmallBtn1"
         },
         {
-          "key": "topSmallBtnBgColor",
-          "label": "작은 버튼 배경색",
+          "key": "smallBtn1BgColor",
+          "label": "작은 버튼 1 배경색",
           "type": "text",
           "default": "#e5e5e5",
-          "showWhen": "showTopSmallBtn"
+          "showWhen": "showSmallBtn1"
         },
         {
-          "key": "topSmallBtnTextColor",
-          "label": "작은 버튼 글자색",
+          "key": "smallBtn1TextColor",
+          "label": "작은 버튼 1 글자색",
           "type": "text",
           "default": "#333333",
-          "showWhen": "showTopSmallBtn"
+          "showWhen": "showSmallBtn1"
+        },
+        {
+          "key": "showSmallBtn2",
+          "label": "작은 버튼 2 표시",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "smallBtn2Text",
+          "label": "작은 버튼 2 텍스트",
+          "type": "text",
+          "default": "버튼 2 →",
+          "showWhen": "showSmallBtn2"
+        },
+        {
+          "key": "smallBtn2Url",
+          "label": "작은 버튼 2 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showSmallBtn2"
+        },
+        {
+          "key": "smallBtn2BgColor",
+          "label": "작은 버튼 2 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showSmallBtn2"
+        },
+        {
+          "key": "smallBtn2TextColor",
+          "label": "작은 버튼 2 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showSmallBtn2"
+        },
+        {
+          "key": "showSmallBtn3",
+          "label": "작은 버튼 3 표시",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "smallBtn3Text",
+          "label": "작은 버튼 3 텍스트",
+          "type": "text",
+          "default": "버튼 3 →",
+          "showWhen": "showSmallBtn3"
+        },
+        {
+          "key": "smallBtn3Url",
+          "label": "작은 버튼 3 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showSmallBtn3"
+        },
+        {
+          "key": "smallBtn3BgColor",
+          "label": "작은 버튼 3 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showSmallBtn3"
+        },
+        {
+          "key": "smallBtn3TextColor",
+          "label": "작은 버튼 3 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showSmallBtn3"
+        },
+        {
+          "key": "showSmallBtn4",
+          "label": "작은 버튼 4 표시",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "smallBtn4Text",
+          "label": "작은 버튼 4 텍스트",
+          "type": "text",
+          "default": "버튼 4 →",
+          "showWhen": "showSmallBtn4"
+        },
+        {
+          "key": "smallBtn4Url",
+          "label": "작은 버튼 4 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showSmallBtn4"
+        },
+        {
+          "key": "smallBtn4BgColor",
+          "label": "작은 버튼 4 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showSmallBtn4"
+        },
+        {
+          "key": "smallBtn4TextColor",
+          "label": "작은 버튼 4 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showSmallBtn4"
         },
         {
           "key": "showBigBtn",
@@ -1120,14 +1656,14 @@
           "key": "bigBtnText",
           "label": "큰 버튼 텍스트",
           "type": "text",
-          "placeholder": "큰 버튼 →",
+          "default": "큰 버튼 →",
           "showWhen": "showBigBtn"
         },
         {
           "key": "bigBtnUrl",
           "label": "큰 버튼 링크",
           "type": "url",
-          "placeholder": "#",
+          "default": "#",
           "showWhen": "showBigBtn"
         },
         {
@@ -1151,7 +1687,7 @@
       "name": "06",
       "description": "2개 섹션, 각각 타이틀 + 이미지 + 텍스트 + 버튼",
       "category": "image",
-      "icon": "모듈",
+      "icon": "pi pi-th-large",
       "htmlFile": "Module06.html",
       "editableProps": [
         {
@@ -1185,46 +1721,167 @@
           "placeholder": "이미지"
         },
         {
+          "key": "showLeftImageLink",
+          "label": "왼쪽 이미지 링크 사용",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "leftImageLinkUrl",
+          "label": "왼쪽 이미지 링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showLeftImageLink"
+        },
+        {
+          "key": "leftImageBorderRadius",
+          "label": "왼쪽 이미지 모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%"
+        },
+        {
           "key": "leftContent",
           "label": "왼쪽 텍스트",
           "type": "textarea",
           "placeholder": "왼쪽 섹션 텍스트"
         },
         {
-          "key": "showLeftButton",
-          "label": "왼쪽 버튼 표시",
+          "key": "showLeftButton1",
+          "label": "왼쪽 버튼 1 표시",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "leftButtonText",
-          "label": "왼쪽 버튼 텍스트",
+          "key": "leftButton1Text",
+          "label": "왼쪽 버튼 1 텍스트",
           "type": "text",
-          "default": "작은 버튼 →",
-          "placeholder": "버튼 텍스트",
-          "showWhen": "showLeftButton"
+          "default": "버튼 1 →",
+          "showWhen": "showLeftButton1"
         },
         {
-          "key": "leftButtonUrl",
-          "label": "왼쪽 버튼 링크",
+          "key": "leftButton1Url",
+          "label": "왼쪽 버튼 1 링크",
           "type": "url",
           "default": "#",
-          "placeholder": "버튼 URL",
-          "showWhen": "showLeftButton"
+          "showWhen": "showLeftButton1"
         },
         {
-          "key": "leftButtonBgColor",
-          "label": "왼쪽 버튼 배경색",
+          "key": "leftButton1BgColor",
+          "label": "왼쪽 버튼 1 배경색",
           "type": "text",
           "default": "#e5e5e5",
-          "showWhen": "showLeftButton"
+          "showWhen": "showLeftButton1"
         },
         {
-          "key": "leftButtonTextColor",
-          "label": "왼쪽 버튼 글자색",
+          "key": "leftButton1TextColor",
+          "label": "왼쪽 버튼 1 글자색",
           "type": "text",
           "default": "#333333",
-          "showWhen": "showLeftButton"
+          "showWhen": "showLeftButton1"
+        },
+        {
+          "key": "showLeftButton2",
+          "label": "왼쪽 버튼 2 표시",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "leftButton2Text",
+          "label": "왼쪽 버튼 2 텍스트",
+          "type": "text",
+          "default": "버튼 2 →",
+          "showWhen": "showLeftButton2"
+        },
+        {
+          "key": "leftButton2Url",
+          "label": "왼쪽 버튼 2 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showLeftButton2"
+        },
+        {
+          "key": "leftButton2BgColor",
+          "label": "왼쪽 버튼 2 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showLeftButton2"
+        },
+        {
+          "key": "leftButton2TextColor",
+          "label": "왼쪽 버튼 2 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showLeftButton2"
+        },
+        {
+          "key": "showLeftButton3",
+          "label": "왼쪽 버튼 3 표시",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "leftButton3Text",
+          "label": "왼쪽 버튼 3 텍스트",
+          "type": "text",
+          "default": "버튼 3 →",
+          "showWhen": "showLeftButton3"
+        },
+        {
+          "key": "leftButton3Url",
+          "label": "왼쪽 버튼 3 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showLeftButton3"
+        },
+        {
+          "key": "leftButton3BgColor",
+          "label": "왼쪽 버튼 3 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showLeftButton3"
+        },
+        {
+          "key": "leftButton3TextColor",
+          "label": "왼쪽 버튼 3 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showLeftButton3"
+        },
+        {
+          "key": "showLeftButton4",
+          "label": "왼쪽 버튼 4 표시",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "leftButton4Text",
+          "label": "왼쪽 버튼 4 텍스트",
+          "type": "text",
+          "default": "버튼 4 →",
+          "showWhen": "showLeftButton4"
+        },
+        {
+          "key": "leftButton4Url",
+          "label": "왼쪽 버튼 4 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showLeftButton4"
+        },
+        {
+          "key": "leftButton4BgColor",
+          "label": "왼쪽 버튼 4 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showLeftButton4"
+        },
+        {
+          "key": "leftButton4TextColor",
+          "label": "왼쪽 버튼 4 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showLeftButton4"
         },
         {
           "key": "rightTitle",
@@ -1257,46 +1914,167 @@
           "placeholder": "이미지"
         },
         {
+          "key": "showRightImageLink",
+          "label": "오른쪽 이미지 링크 사용",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "rightImageLinkUrl",
+          "label": "오른쪽 이미지 링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showRightImageLink"
+        },
+        {
+          "key": "rightImageBorderRadius",
+          "label": "오른쪽 이미지 모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%"
+        },
+        {
           "key": "rightContent",
           "label": "오른쪽 텍스트",
           "type": "textarea",
           "placeholder": "오른쪽 섹션 텍스트"
         },
         {
-          "key": "showRightButton",
-          "label": "오른쪽 버튼 표시",
+          "key": "showRightButton1",
+          "label": "오른쪽 버튼 1 표시",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "rightButtonText",
-          "label": "오른쪽 버튼 텍스트",
+          "key": "rightButton1Text",
+          "label": "오른쪽 버튼 1 텍스트",
           "type": "text",
-          "default": "작은 버튼 →",
-          "placeholder": "버튼 텍스트",
-          "showWhen": "showRightButton"
+          "default": "버튼 1 →",
+          "showWhen": "showRightButton1"
         },
         {
-          "key": "rightButtonUrl",
-          "label": "오른쪽 버튼 링크",
+          "key": "rightButton1Url",
+          "label": "오른쪽 버튼 1 링크",
           "type": "url",
           "default": "#",
-          "placeholder": "버튼 URL",
-          "showWhen": "showRightButton"
+          "showWhen": "showRightButton1"
         },
         {
-          "key": "rightButtonBgColor",
-          "label": "오른쪽 버튼 배경색",
+          "key": "rightButton1BgColor",
+          "label": "오른쪽 버튼 1 배경색",
           "type": "text",
           "default": "#e5e5e5",
-          "showWhen": "showRightButton"
+          "showWhen": "showRightButton1"
         },
         {
-          "key": "rightButtonTextColor",
-          "label": "오른쪽 버튼 글자색",
+          "key": "rightButton1TextColor",
+          "label": "오른쪽 버튼 1 글자색",
           "type": "text",
           "default": "#333333",
-          "showWhen": "showRightButton"
+          "showWhen": "showRightButton1"
+        },
+        {
+          "key": "showRightButton2",
+          "label": "오른쪽 버튼 2 표시",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "rightButton2Text",
+          "label": "오른쪽 버튼 2 텍스트",
+          "type": "text",
+          "default": "버튼 2 →",
+          "showWhen": "showRightButton2"
+        },
+        {
+          "key": "rightButton2Url",
+          "label": "오른쪽 버튼 2 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showRightButton2"
+        },
+        {
+          "key": "rightButton2BgColor",
+          "label": "오른쪽 버튼 2 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showRightButton2"
+        },
+        {
+          "key": "rightButton2TextColor",
+          "label": "오른쪽 버튼 2 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showRightButton2"
+        },
+        {
+          "key": "showRightButton3",
+          "label": "오른쪽 버튼 3 표시",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "rightButton3Text",
+          "label": "오른쪽 버튼 3 텍스트",
+          "type": "text",
+          "default": "버튼 3 →",
+          "showWhen": "showRightButton3"
+        },
+        {
+          "key": "rightButton3Url",
+          "label": "오른쪽 버튼 3 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showRightButton3"
+        },
+        {
+          "key": "rightButton3BgColor",
+          "label": "오른쪽 버튼 3 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showRightButton3"
+        },
+        {
+          "key": "rightButton3TextColor",
+          "label": "오른쪽 버튼 3 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showRightButton3"
+        },
+        {
+          "key": "showRightButton4",
+          "label": "오른쪽 버튼 4 표시",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "rightButton4Text",
+          "label": "오른쪽 버튼 4 텍스트",
+          "type": "text",
+          "default": "버튼 4 →",
+          "showWhen": "showRightButton4"
+        },
+        {
+          "key": "rightButton4Url",
+          "label": "오른쪽 버튼 4 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showRightButton4"
+        },
+        {
+          "key": "rightButton4BgColor",
+          "label": "오른쪽 버튼 4 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showRightButton4"
+        },
+        {
+          "key": "rightButton4TextColor",
+          "label": "오른쪽 버튼 4 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showRightButton4"
         }
       ]
     },
@@ -1305,7 +2083,7 @@
       "name": "07",
       "description": "이미지 왼쪽 + 텍스트/버튼 오른쪽",
       "category": "image",
-      "icon": "모듈",
+      "icon": "pi pi-th-large",
       "htmlFile": "Module07.html",
       "editableProps": [
         {
@@ -1319,6 +2097,27 @@
           "label": "이미지 설명 (Alt)",
           "type": "text",
           "placeholder": "이미지"
+        },
+        {
+          "key": "showImageLink",
+          "label": "이미지 링크 사용",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "imageLinkUrl",
+          "label": "이미지 링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showImageLink"
+        },
+        {
+          "key": "imageBorderRadius",
+          "label": "이미지 모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%"
         },
         {
           "key": "title",
@@ -1375,7 +2174,7 @@
       "name": "07-reverse",
       "description": "텍스트/버튼 왼쪽 + 이미지 오른쪽",
       "category": "image",
-      "icon": "모듈",
+      "icon": "pi pi-th-large",
       "htmlFile": "Module07_reverse.html",
       "editableProps": [
         {
@@ -1389,6 +2188,27 @@
           "label": "이미지 설명 (Alt)",
           "type": "text",
           "placeholder": "이미지"
+        },
+        {
+          "key": "showImageLink",
+          "label": "이미지 링크 사용",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "imageLinkUrl",
+          "label": "이미지 링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showImageLink"
+        },
+        {
+          "key": "imageBorderRadius",
+          "label": "이미지 모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%"
         },
         {
           "key": "title",
@@ -1445,7 +2265,7 @@
       "name": "(모듈10번) 서브 타이틀",
       "description": "섹션 구분 서브타이틀",
       "category": "text",
-      "icon": "T",
+      "icon": "pi pi-align-left",
       "htmlFile": "ModuleSubTitle.html",
       "editableProps": [
         {
@@ -1462,7 +2282,7 @@
       "name": "10",
       "description": "이미지 + 라벨 + 타이틀 + 부제목 (1열)",
       "category": "image",
-      "icon": "모듈",
+      "icon": "pi pi-th-large",
       "htmlFile": "Module10.html",
       "editableProps": [
         {
@@ -1476,6 +2296,27 @@
           "label": "이미지 설명 (Alt)",
           "type": "text",
           "default": "이미지"
+        },
+        {
+          "key": "showImageLink",
+          "label": "이미지 링크 사용",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "imageLinkUrl",
+          "label": "이미지 링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showImageLink"
+        },
+        {
+          "key": "imageBorderRadius",
+          "label": "이미지 모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%"
         },
         {
           "key": "showLabel",
@@ -1518,7 +2359,7 @@
       "name": "10-1",
       "description": "이미지 + 라벨 + 타이틀 + 부제목 (2열)",
       "category": "image",
-      "icon": "모듈",
+      "icon": "pi pi-th-large",
       "htmlFile": "Module10-1.html",
       "editableProps": [
         {
@@ -1532,6 +2373,27 @@
           "label": "왼쪽 이미지 설명 (Alt)",
           "type": "text",
           "default": "이미지"
+        },
+        {
+          "key": "showLeftImageLink",
+          "label": "왼쪽 이미지 링크 사용",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "leftImageLinkUrl",
+          "label": "왼쪽 이미지 링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showLeftImageLink"
+        },
+        {
+          "key": "leftImageBorderRadius",
+          "label": "왼쪽 이미지 모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%"
         },
         {
           "key": "showLeftLabel",
@@ -1577,6 +2439,27 @@
           "label": "오른쪽 이미지 설명 (Alt)",
           "type": "text",
           "default": "이미지"
+        },
+        {
+          "key": "showRightImageLink",
+          "label": "오른쪽 이미지 링크 사용",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "rightImageLinkUrl",
+          "label": "오른쪽 이미지 링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showRightImageLink"
+        },
+        {
+          "key": "rightImageBorderRadius",
+          "label": "오른쪽 이미지 모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%"
         },
         {
           "key": "showRightLabel",

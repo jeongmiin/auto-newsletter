@@ -6,45 +6,58 @@
       isSelected ? 'border-blue-500 bg-blue-50/50' : 'border-transparent hover:border-gray-300',
     ]"
   >
+    <!-- 로딩 스피너 -->
+    <div v-if="isLoading" class="flex items-center justify-center py-12 bg-gray-50">
+      <div class="flex flex-col items-center gap-3">
+        <div class="w-8 h-8 border-3 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        <span class="text-sm text-gray-500">모듈 로딩 중...</span>
+      </div>
+    </div>
+
     <!-- 모듈 컨텐츠 - isolation 레이어로 CSS 리셋 방지 -->
-    <div class="module-content-wrapper">
+    <div v-else class="module-content-wrapper">
       <div v-html="renderedHtml" class="module-content"></div>
     </div>
 
-    <!-- 선택시 표시되는 컨트롤 버튼들 -->
+    <!-- 호버 또는 선택시 표시되는 컨트롤 버튼들 -->
     <div
-      v-if="isSelected"
-      class="absolute top-2 right-2 flex space-x-1 bg-white rounded shadow-md border"
+      :class="[
+        'absolute top-2 right-2 flex items-center gap-1 bg-white rounded-lg shadow-lg border p-1 transition-opacity opacity-0 group-hover:opacity-100'
+      ]"
     >
-      <button
+      <Button
         @click.stop="$emit('move-up', module.id)"
         :disabled="index === 0"
-        class="p-1 text-xs hover:bg-gray-100 disabled:text-gray-300"
-        title="위로 이동"
-      >
-        ↑
-      </button>
-      <button
+        icon="pi pi-arrow-up"
+        severity="secondary"
+        text
+        size="small"
+        v-tooltip.bottom="'이 모듈을 위로 이동합니다'"
+      />
+      <Button
         @click.stop="$emit('move-down', module.id)"
-        class="p-1 text-xs hover:bg-gray-100"
-        title="아래로 이동"
-      >
-        ↓
-      </button>
-      <button
+        icon="pi pi-arrow-down"
+        severity="secondary"
+        text
+        size="small"
+        v-tooltip.bottom="'이 모듈을 아래로 이동합니다'"
+      />
+      <Button
         @click.stop="$emit('duplicate', module.id)"
-        class="p-1 text-xs hover:bg-gray-100"
-        title="복사"
-      >
-        복사 📋
-      </button>
-      <button
+        icon="pi pi-copy"
+        severity="secondary"
+        text
+        size="small"
+        v-tooltip.bottom="'이 모듈을 복제합니다'"
+      />
+      <Button
         @click.stop="$emit('delete', module.id)"
-        class="p-1 text-xs hover:bg-gray-100 text-red-600"
-        title="삭제"
-      >
-        삭제 🗑️
-      </button>
+        icon="pi pi-trash"
+        severity="danger"
+        text
+        size="small"
+        v-tooltip.bottom="'이 모듈을 삭제합니다'"
+      />
     </div>
 
     <!-- 호버시 표시되는 레이블 -->
@@ -77,7 +90,7 @@ defineEmits<{
   delete: [moduleId: string]
 }>()
 
-const { renderedHtml, moduleMetadata } = useModuleRenderer(props.module.id)
+const { renderedHtml, moduleMetadata, isLoading } = useModuleRenderer(props.module.id)
 </script>
 
 <style scoped>

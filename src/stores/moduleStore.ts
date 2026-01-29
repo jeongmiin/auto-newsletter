@@ -7,6 +7,7 @@ import type {
   ContentTitle,
   ContentText,
   AdditionalContent,
+  TableCell,
 } from '@/types'
 import { formatTextWithBreaks } from '@/utils/textUtils'
 import { generateUniqueId, applyStylesToHtml } from '@/utils/htmlUtils'
@@ -19,7 +20,6 @@ import {
   replaceSectionTitleContent,
   replaceModule04Content,
   replaceModule02Content,
-  replaceModule05Content,
   replaceModule053Content,
   replaceModule051Content,
   replaceModule052Content,
@@ -32,6 +32,7 @@ import {
   replaceModule10Content,
   replaceModule101Content,
   replaceModuleSubTitleContent,
+  replaceModuleTableContent,
   replaceDefaultTemplate,
 } from '@/utils/moduleContentReplacer'
 
@@ -40,6 +41,7 @@ export const useModuleStore = defineStore('module', () => {
   const modules = ref<ModuleInstance[]>([])
   const selectedModuleId = ref<string | null>(null)
   const availableModules = ref<ModuleMetadata[]>([])
+  const isDirty = ref(false) // 변경사항 추적
 
   // ============= Computed =============
   const selectedModule = computed(
@@ -120,6 +122,7 @@ export const useModuleStore = defineStore('module', () => {
 
     modules.value.push(newModule)
     selectedModuleId.value = newModule.id
+    isDirty.value = true
   }
 
   /**
@@ -137,6 +140,7 @@ export const useModuleStore = defineStore('module', () => {
     selectedModule.value.properties[propertyKey] = value
     // 🐛 해결책: 속성 변경 후 modules ref 트리거
     triggerRef(modules)
+    isDirty.value = true
   }
 
   /**
@@ -159,6 +163,7 @@ export const useModuleStore = defineStore('module', () => {
       selectedModuleId.value = null
     }
     reorderModules()
+    isDirty.value = true
   }
 
   /**
@@ -181,6 +186,7 @@ export const useModuleStore = defineStore('module', () => {
       modules.value[index],
     ]
     reorderModules()
+    isDirty.value = true
   }
 
   /**
@@ -194,6 +200,7 @@ export const useModuleStore = defineStore('module', () => {
       modules.value[index],
     ]
     reorderModules()
+    isDirty.value = true
   }
 
   /**
@@ -216,6 +223,7 @@ export const useModuleStore = defineStore('module', () => {
     reorderModules()
 
     selectedModuleId.value = duplicatedModule.id
+    isDirty.value = true
   }
 
   /**
@@ -224,6 +232,14 @@ export const useModuleStore = defineStore('module', () => {
   const clearAll = (): void => {
     modules.value = []
     selectedModuleId.value = null
+    isDirty.value = false
+  }
+
+  /**
+   * 저장됨으로 표시 (내보내기 후 호출)
+   */
+  const markAsSaved = (): void => {
+    isDirty.value = false
   }
 
   // ============= Table Row Management =============
@@ -277,6 +293,322 @@ export const useModuleStore = defineStore('module', () => {
     if (index !== -1) {
       ;(module.properties.tableRows as TableRow[]).splice(index, 1)
     }
+  }
+
+  // ============= Custom Table Cell Management =============
+  /**
+   * 테이블 셀 초기화 (기본 2x2 테이블)
+   */
+  const initializeTableCells = (moduleId: string): void => {
+    const module = modules.value.find((m) => m.id === moduleId)
+    if (!module) return
+
+    const defaultCells: TableCell[][] = [
+      [
+        { id: generateUniqueId('cell'), type: 'th', content: '항목', colspan: 1, rowspan: 1, width: '30%', align: 'center' },
+        { id: generateUniqueId('cell'), type: 'td', content: '내용', colspan: 1, rowspan: 1, align: 'left' },
+      ],
+      [
+        { id: generateUniqueId('cell'), type: 'th', content: '항목', colspan: 1, rowspan: 1, width: '30%', align: 'center' },
+        { id: generateUniqueId('cell'), type: 'td', content: '내용', colspan: 1, rowspan: 1, align: 'left' },
+      ],
+    ]
+
+    module.properties.tableCells = defaultCells
+    triggerRef(modules)
+  }
+
+  /**
+   * 테이블 행 추가 (커스텀 테이블)
+   */
+  const addTableCellRow = (moduleId: string): void => {
+    const module = modules.value.find((m) => m.id === moduleId)
+    if (!module) return
+
+    const cells = (module.properties.tableCells as TableCell[][]) || []
+
+    // 첫 행이 없으면 초기화
+    if (cells.length === 0) {
+      initializeTableCells(moduleId)
+      return
+    }
+
+    // 기존 열 수에 맞춰 새 행 추가
+    const colCount = cells[0].length
+    const newRow: TableCell[] = Array.from({ length: colCount }, () => ({
+      id: generateUniqueId('cell'),
+      type: 'td' as const,
+      content: '',
+      colspan: 1,
+      rowspan: 1,
+      align: 'left' as const,
+    }))
+
+    cells.push(newRow)
+    module.properties.tableCells = [...cells]
+    triggerRef(modules)
+  }
+
+  /**
+   * 테이블 열 추가 (커스텀 테이블)
+   */
+  const addTableCellColumn = (moduleId: string): void => {
+    const module = modules.value.find((m) => m.id === moduleId)
+    if (!module) return
+
+    const cells = (module.properties.tableCells as TableCell[][]) || []
+
+    if (cells.length === 0) {
+      initializeTableCells(moduleId)
+      return
+    }
+
+    // 각 행에 새 열 추가
+    cells.forEach((row, rowIndex) => {
+      row.push({
+        id: generateUniqueId('cell'),
+        type: rowIndex === 0 ? 'th' : 'td',
+        content: '',
+        colspan: 1,
+        rowspan: 1,
+        align: 'left',
+      })
+    })
+
+    module.properties.tableCells = [...cells]
+    triggerRef(modules)
+  }
+
+  /**
+   * 테이블 행 삭제 (커스텀 테이블)
+   */
+  const removeTableCellRow = (moduleId: string, rowIndex: number): void => {
+    const module = modules.value.find((m) => m.id === moduleId)
+    if (!module) return
+
+    const cells = (module.properties.tableCells as TableCell[][]) || []
+    if (rowIndex < 0 || rowIndex >= cells.length || cells.length <= 1) return
+
+    cells.splice(rowIndex, 1)
+    module.properties.tableCells = [...cells]
+    triggerRef(modules)
+  }
+
+  /**
+   * 테이블 열 삭제 (커스텀 테이블)
+   */
+  const removeTableCellColumn = (moduleId: string, colIndex: number): void => {
+    const module = modules.value.find((m) => m.id === moduleId)
+    if (!module) return
+
+    const cells = (module.properties.tableCells as TableCell[][]) || []
+    if (cells.length === 0 || colIndex < 0 || colIndex >= cells[0].length || cells[0].length <= 1) return
+
+    cells.forEach((row) => {
+      row.splice(colIndex, 1)
+    })
+
+    module.properties.tableCells = [...cells]
+    triggerRef(modules)
+  }
+
+  /**
+   * 테이블 셀 업데이트 (colspan/rowspan 변경 시 hidden 셀 처리 포함)
+   */
+  const updateTableCell = (
+    moduleId: string,
+    rowIndex: number,
+    colIndex: number,
+    updates: Partial<TableCell>
+  ): void => {
+    const module = modules.value.find((m) => m.id === moduleId)
+    if (!module) return
+
+    const cells = (module.properties.tableCells as TableCell[][]) || []
+    if (rowIndex < 0 || rowIndex >= cells.length) return
+    if (colIndex < 0 || colIndex >= cells[rowIndex].length) return
+
+    const cell = cells[rowIndex][colIndex]
+    const prevColspan = cell.colspan || 1
+    const prevRowspan = cell.rowspan || 1
+
+    // colspan 또는 rowspan이 변경되는 경우 hidden 셀 처리
+    if (updates.colspan !== undefined || updates.rowspan !== undefined) {
+      const newColspan = updates.colspan ?? prevColspan
+      const newRowspan = updates.rowspan ?? prevRowspan
+
+      // 기존 병합 해제 (이전에 hidden이었던 셀들 복원)
+      for (let r = rowIndex; r < rowIndex + prevRowspan && r < cells.length; r++) {
+        for (let c = colIndex; c < colIndex + prevColspan && c < cells[r].length; c++) {
+          if (r !== rowIndex || c !== colIndex) {
+            cells[r][c].hidden = false
+          }
+        }
+      }
+
+      // 새로운 병합 적용
+      for (let r = rowIndex; r < rowIndex + newRowspan && r < cells.length; r++) {
+        for (let c = colIndex; c < colIndex + newColspan && c < cells[r].length; c++) {
+          if (r !== rowIndex || c !== colIndex) {
+            cells[r][c].hidden = true
+          }
+        }
+      }
+    }
+
+    Object.assign(cell, updates)
+
+    module.properties.tableCells = [...cells]
+    triggerRef(modules)
+  }
+
+  /**
+   * 셀 병합 (colspan/rowspan 설정)
+   */
+  const mergeCells = (
+    moduleId: string,
+    startRow: number,
+    startCol: number,
+    rowSpan: number,
+    colSpan: number
+  ): void => {
+    const module = modules.value.find((m) => m.id === moduleId)
+    if (!module) return
+
+    const cells = (module.properties.tableCells as TableCell[][]) || []
+    if (startRow < 0 || startRow >= cells.length) return
+    if (startCol < 0 || startCol >= cells[startRow].length) return
+
+    // 시작 셀에 colspan/rowspan 설정
+    cells[startRow][startCol].colspan = colSpan
+    cells[startRow][startCol].rowspan = rowSpan
+
+    // 병합되는 나머지 셀들을 hidden으로 표시
+    for (let r = startRow; r < startRow + rowSpan && r < cells.length; r++) {
+      for (let c = startCol; c < startCol + colSpan && c < cells[r].length; c++) {
+        if (r !== startRow || c !== startCol) {
+          cells[r][c].hidden = true
+        }
+      }
+    }
+
+    module.properties.tableCells = [...cells]
+    triggerRef(modules)
+  }
+
+  /**
+   * 셀 병합 해제
+   */
+  const unmergeCell = (moduleId: string, rowIndex: number, colIndex: number): void => {
+    const module = modules.value.find((m) => m.id === moduleId)
+    if (!module) return
+
+    const cells = (module.properties.tableCells as TableCell[][]) || []
+    if (rowIndex < 0 || rowIndex >= cells.length) return
+    if (colIndex < 0 || colIndex >= cells[rowIndex].length) return
+
+    const cell = cells[rowIndex][colIndex]
+    const prevColspan = cell.colspan
+    const prevRowspan = cell.rowspan
+
+    // 병합 해제
+    cell.colspan = 1
+    cell.rowspan = 1
+
+    // 병합되었던 셀들의 hidden 해제
+    for (let r = rowIndex; r < rowIndex + prevRowspan && r < cells.length; r++) {
+      for (let c = colIndex; c < colIndex + prevColspan && c < cells[r].length; c++) {
+        cells[r][c].hidden = false
+      }
+    }
+
+    module.properties.tableCells = [...cells]
+    triggerRef(modules)
+  }
+
+  /**
+   * 셀 타입 토글 (th <-> td)
+   */
+  const toggleCellType = (moduleId: string, rowIndex: number, colIndex: number): void => {
+    const module = modules.value.find((m) => m.id === moduleId)
+    if (!module) return
+
+    const cells = (module.properties.tableCells as TableCell[][]) || []
+    if (rowIndex < 0 || rowIndex >= cells.length) return
+    if (colIndex < 0 || colIndex >= cells[rowIndex].length) return
+
+    const cell = cells[rowIndex][colIndex]
+    cell.type = cell.type === 'th' ? 'td' : 'th'
+
+    module.properties.tableCells = [...cells]
+    triggerRef(modules)
+  }
+
+  /**
+   * 테이블 프리셋 적용
+   */
+  const applyTablePreset = (
+    moduleId: string,
+    presetId: string,
+    rows: number,
+    cols: number,
+    structure: ('th' | 'td')[][],
+    defaultLabels?: Record<string, string[]>
+  ): void => {
+    const module = modules.value.find((m) => m.id === moduleId)
+    if (!module) return
+
+    // 프리셋별 기본 라벨
+    const labels: Record<string, string[][]> = {
+      '2col-simple': [
+        ['항목', '내용'],
+        ['항목', '내용'],
+        ['항목', '내용'],
+      ],
+      '3col-simple': [
+        ['항목', '내용', '내용'],
+        ['항목', '내용', '내용'],
+        ['항목', '내용', '내용'],
+      ],
+      'schedule': [
+        ['시간', '내용', '비고'],
+        ['10:00', '', ''],
+        ['11:00', '', ''],
+        ['12:00', '', ''],
+      ],
+      'price': [
+        ['구분', '가격', '비고'],
+        ['항목1', '', ''],
+        ['항목2', '', ''],
+        ['항목3', '', ''],
+      ],
+    }
+
+    const presetLabels = labels[presetId] || []
+
+    // 새 테이블 셀 생성
+    const newCells: TableCell[][] = []
+    for (let r = 0; r < rows; r++) {
+      const row: TableCell[] = []
+      for (let c = 0; c < cols; c++) {
+        const cellType = structure[r]?.[c] || 'td'
+        const content = presetLabels[r]?.[c] || ''
+        row.push({
+          id: generateUniqueId('cell'),
+          type: cellType,
+          content,
+          colspan: 1,
+          rowspan: 1,
+          width: cellType === 'th' && c === 0 ? '25%' : undefined,
+          align: cellType === 'th' ? 'center' : 'left',
+        })
+      }
+      newCells.push(row)
+    }
+
+    module.properties.tableCells = newCells
+    module.properties.tablePresetId = presetId
+    triggerRef(modules)
   }
 
   // ============= Content Title Management =============
@@ -561,7 +893,7 @@ export const useModuleStore = defineStore('module', () => {
         return replaceModule02Content(html, properties, insertAdditionalContents)
 
       case 'Module05':
-        return replaceModule05Content(html, properties, insertAdditionalContents)
+        return replaceModule052Content(html, properties)
 
       case 'Module01-1':
         return replaceModule011Content(html, properties)
@@ -571,9 +903,6 @@ export const useModuleStore = defineStore('module', () => {
 
       case 'Module05-1':
         return replaceModule051Content(html, properties)
-
-      case 'Module05-2':
-        return replaceModule052Content(html, properties)
 
       case 'Module05-3':
         return replaceModule053Content(html, properties)
@@ -599,6 +928,9 @@ export const useModuleStore = defineStore('module', () => {
       case 'ModuleSubTitle':
         return replaceModuleSubTitleContent(html, properties)
 
+      case 'ModuleTable':
+        return replaceModuleTableContent(html, properties)
+
       default:
         return replaceDefaultTemplate(html, properties)
     }
@@ -606,8 +938,9 @@ export const useModuleStore = defineStore('module', () => {
 
   /**
    * 전체 HTML 생성
+   * @param wrapWithDocument - true면 완전한 HTML 문서로 감싸고, false면 콘텐츠만 반환
    */
-  const generateHtml = async (): Promise<string> => {
+  const generateHtml = async (wrapWithDocument: boolean = false): Promise<string> => {
     let fullHtml = ''
     const basePath = import.meta.env.BASE_URL || '/'
 
@@ -637,6 +970,14 @@ export const useModuleStore = defineStore('module', () => {
       }
     }
 
+    // wrapWithDocument가 false면 .wrap으로 감싼 콘텐츠만 반환
+    if (!wrapWithDocument) {
+      return `<div class="wrap" style="width:100%; max-width:680px; margin:0 auto; background-color:#f9f9f9;">
+        ${fullHtml}
+</div>`
+    }
+
+    // wrapWithDocument가 true면 완전한 HTML 문서로 감싸서 반환
     return `<!DOCTYPE html>
 <html>
 <head>
@@ -645,9 +986,9 @@ export const useModuleStore = defineStore('module', () => {
     <title>Auto Newsletter</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; ">
-    <table align="center" cellpadding="0" cellspacing="0" style=" width:100%; max-width:680px; background-color:#f9f9f9;">
+    <div class="wrap" style="width:100%; max-width:680px; margin:0 auto; background-color:#f9f9f9;">
         ${fullHtml}
-    </table>
+    </div>
 </body>
 </html>`
   }
@@ -676,6 +1017,19 @@ export const useModuleStore = defineStore('module', () => {
         case 'table-rows':
           props[prop.key] = prop.defaultRows || []
           break
+        case 'table-editor':
+          // 커스텀 테이블의 기본 2x2 셀 생성
+          props[prop.key] = [
+            [
+              { id: generateUniqueId('cell'), type: 'th', content: '항목', colspan: 1, rowspan: 1, width: '30%', align: 'center' },
+              { id: generateUniqueId('cell'), type: 'td', content: '내용', colspan: 1, rowspan: 1, align: 'left' },
+            ],
+            [
+              { id: generateUniqueId('cell'), type: 'th', content: '항목', colspan: 1, rowspan: 1, width: '30%', align: 'center' },
+              { id: generateUniqueId('cell'), type: 'td', content: '내용', colspan: 1, rowspan: 1, align: 'left' },
+            ],
+          ]
+          break
         case 'content-titles':
         case 'content-texts':
         case 'additional-contents':
@@ -694,6 +1048,7 @@ export const useModuleStore = defineStore('module', () => {
     selectedModule,
     selectedModuleMetadata,
     availableModules,
+    isDirty,
     loadAvailableModules,
     addModule,
     selectModule,
@@ -704,10 +1059,22 @@ export const useModuleStore = defineStore('module', () => {
     moveModuleDown,
     duplicateModule,
     clearAll,
+    markAsSaved,
     generateHtml,
     addTableRow,
     updateTableRow,
     removeTableRow,
+    // 커스텀 테이블 셀 관리
+    initializeTableCells,
+    addTableCellRow,
+    addTableCellColumn,
+    removeTableCellRow,
+    removeTableCellColumn,
+    updateTableCell,
+    mergeCells,
+    unmergeCell,
+    toggleCellType,
+    applyTablePreset,
     addContentTitle,
     updateContentTitle,
     removeContentTitle,

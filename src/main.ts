@@ -5,9 +5,7 @@ import router from './router'
 
 // CSS를 먼저 import
 import './assets/main.css'
-
-// Quill 에디터 스타일
-import 'quill/dist/quill.snow.css'
+import 'primeicons/primeicons.css'
 
 // ============= 전역 에러 핸들러 =============
 // Unhandled Promise Rejection 감지
@@ -66,6 +64,11 @@ import Textarea from 'primevue/textarea'
 import Checkbox from 'primevue/checkbox'
 import Toast from 'primevue/toast'
 import ConfirmDialog from 'primevue/confirmdialog'
+import Editor from 'primevue/editor'
+import ColorPicker from 'primevue/colorpicker'
+import Select from 'primevue/select'
+import ToggleSwitch from 'primevue/toggleswitch'
+import Tooltip from 'primevue/tooltip'
 
 const app = createApp(App)
 
@@ -101,6 +104,13 @@ app.component('Textarea', Textarea)
 app.component('Checkbox', Checkbox)
 app.component('Toast', Toast)
 app.component('ConfirmDialog', ConfirmDialog)
+app.component('Editor', Editor)
+app.component('ColorPicker', ColorPicker)
+app.component('Select', Select)
+app.component('ToggleSwitch', ToggleSwitch)
+
+// 전역 디렉티브 등록
+app.directive('tooltip', Tooltip)
 /* eslint-enable vue/no-reserved-component-names */
 /* eslint-enable vue/multi-word-component-names */
 

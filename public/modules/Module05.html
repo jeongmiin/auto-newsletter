@@ -1,62 +1,21 @@
 <table align="center" border="0" cellpadding="0" cellspacing="0"
   style="width:100%; max-width: 680px; border-collapse:collapse;" width="100%">
   <tbody>
-    <!-- 위쪽 섹션 -->
     <tr>
-      <td style="padding:0px 15px; box-sizing: border-box;" align="center">
-        <!-- 위쪽 이미지 -->
+      <td style="padding:0px 15px 20px; box-sizing: border-box;" align="center">
         <div
           style="display: inline-block; margin:0px; vertical-align:top; border-collapse:collapse; padding: 0 5px; box-sizing: border-box; min-width: 50%; max-width: 100%; width: calc((570px - 100%) * 570);">
-          <img src="{{topLeftImageUrl}}" alt="{{topLeftImageAlt}}" style="display: block; width: 100%;">
+          <!-- 이미지 링크 --><a href="{{imageLinkUrl}}" target="_blank" style="display: block; text-decoration: none;"><img src="{{imageUrl}}" alt="{{imageAlt}}" style="display: block; width: 100%; border-radius: {{imageBorderRadius}};"></a><!-- //이미지 링크 -->
         </div>
-
-        <!-- 위쪽 오른쪽 콘텐츠 -->
         <div
-          style="display: inline-block; margin:0px; vertical-align:top; border-collapse:collapse; font-size:15px; word-break:keep-all; text-align: left; box-sizing: border-box; padding: 0 5px; min-width: 49%; max-width: 100%; width: calc((570px - 100%) * 570);">
-          <!-- 위쪽 타이틀 -->
+          style="display: inline-block; margin:0px; vertical-align:top; border-collapse:collapse; word-break:keep-all; text-align: left; box-sizing: border-box; padding: 0 5px; min-width: 49%; max-width: 100%; width: calc((570px - 100%) * 570);">
           <div
-            style="color:#111111; font-size: 16px; font-weight:700; line-height:1.7em; letter-spacing:-0.03em; word-break:keep-all; text-align:left; padding-bottom: 10px; box-sizing: border-box; font-family: AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif;">
-            {{topRightTitle}}
+            style="color:#111111; font-size: 14px; line-height:1.7em; letter-spacing:-0.03em; word-break:keep-all; text-align:left; padding-bottom: 10px; box-sizing: border-box; font-family: AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif;">
+            {{contentText}}
           </div>
-          <!-- //위쪽 타이틀 -->
-
-          <!-- 위쪽 테이블 -->
-          <table cellpadding="0" cellspacing="0">
-            <tbody>
-              <tr>
-                <td style="font-size: 14px; line-height:1.7em;">{{topRightTableTitle}}</td>
-              </tr>
-            </tbody>
-          </table>
-          <!-- //위쪽 테이블 -->
-
-          <!-- 위쪽 작은 버튼 -->
-          <div style="display: block; padding:15px 0px; box-sizing: border-box; text-align: left;">
-            <a href="{{topRightSmallBtnUrl}}" target="_blank"
-              style="text-decoration:none; display: inline-block; background-color:{{smallBtnBgColor}}; border-radius:30px; padding:5px 20px; box-sizing: border-box; color:{{smallBtnTextColor}}; font-size: 13px; line-height: 1.5em; font-family: AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif;">{{topRightSmallBtnText}}</a>
-          </div>
-          <!-- //위쪽 작은 버튼 -->
-
-          <!-- 추가 콘텐츠 위치 (상단) -->
+          <div style="padding:10px 0px 0px; box-sizing: border-box; text-align: left;"><!-- 버튼 1 --><a href="{{button1Url}}" target="_blank" style="text-decoration:none; display: inline-block; background-color:{{button1BgColor}}; border-radius:30px; padding:5px 20px; margin: 3px 5px 3px 0; box-sizing: border-box; color:{{button1TextColor}}; font-size: 13px; line-height: 1.5em; font-family: AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif;">{{button1Text}}</a><!-- //버튼 1 --><!-- 버튼 2 --><a href="{{button2Url}}" target="_blank" style="text-decoration:none; display: inline-block; background-color:{{button2BgColor}}; border-radius:30px; padding:5px 20px; margin: 3px 5px 3px 0; box-sizing: border-box; color:{{button2TextColor}}; font-size: 13px; line-height: 1.5em; font-family: AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif;">{{button2Text}}</a><!-- //버튼 2 --><!-- 버튼 3 --><a href="{{button3Url}}" target="_blank" style="text-decoration:none; display: inline-block; background-color:{{button3BgColor}}; border-radius:30px; padding:5px 20px; margin: 3px 5px 3px 0; box-sizing: border-box; color:{{button3TextColor}}; font-size: 13px; line-height: 1.5em; font-family: AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif;">{{button3Text}}</a><!-- //버튼 3 --><!-- 버튼 4 --><a href="{{button4Url}}" target="_blank" style="text-decoration:none; display: inline-block; background-color:{{button4BgColor}}; border-radius:30px; padding:5px 20px; margin: 3px 5px 3px 0; box-sizing: border-box; color:{{button4TextColor}}; font-size: 13px; line-height: 1.5em; font-family: AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif;">{{button4Text}}</a><!-- //버튼 4 --></div>
         </div>
       </td>
-    </tr>
-    <!-- //위쪽 섹션 -->
-
-    <!-- 추가 tr 위치 -->
-
-    <!-- 큰 버튼 -->
-    <tr>
-      <td align="center" style="padding:20px; box-sizing: border-box;">
-        <a href="{{bigButtonUrl}}"
-          style="width:100%; text-decoration:none; display: block; padding:15px 0px; box-sizing: border-box; background-color:{{bigBtnBgColor}}; border-radius:5px; text-align:center; color:{{bigBtnTextColor}}; font-size:15px; font-weight:700; word-break:keep-all; font-family:AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif;"
-          target="_blank">{{bigButtonText}}</a>
-      </td>
-    </tr>
-    <!-- //큰 버튼 -->
-
-    <tr>
-      <td style="height:20px;"></td>
     </tr>
   </tbody>
 </table>

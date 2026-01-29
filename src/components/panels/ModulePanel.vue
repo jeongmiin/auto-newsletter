@@ -32,26 +32,29 @@
           class="p-3 border rounded-lg cursor-pointer hover:bg-gray-50 hover:border-blue-300 transition-colors"
         >
           <div class="flex items-center space-x-3">
-            <div class="w-8 h-8 bg-gray-200 rounded flex items-center justify-center">
-              <span class="text-xs">{{ module.icon }}</span>
+            <div class="w-8 h-8 bg-blue-50 text-blue-600 rounded flex items-center justify-center">
+              <i :class="module.icon"></i>
             </div>
-            <div class="flex-1">
-              <div class="font-medium text-sm">{{ module.name }}</div>
-              <div class="text-xs text-gray-500">{{ module.description }}</div>
+            <div class="flex-1 min-w-0">
+              <div class="font-medium text-sm truncate">{{ module.name }}</div>
+              <div class="text-xs text-gray-500 truncate">{{ module.description }}</div>
             </div>
           </div>
         </div>
       </div>
     </div>
+
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useModuleStore } from '@/stores/moduleStore'
+import { useToast } from 'primevue/usetoast'
 import type { ModuleMetadata } from '@/types'
 
 const moduleStore = useModuleStore()
+const toast = useToast()
 
 const selectedCategory = ref<string>('all')
 const modules = ref<ModuleMetadata[]>([])
@@ -72,9 +75,16 @@ const filteredModules = computed(() => {
 
 const addModule = (module: ModuleMetadata) => {
   moduleStore.addModule(module)
+  toast.add({
+    severity: 'success',
+    summary: '모듈 추가됨',
+    detail: `${module.name} 모듈이 추가되었습니다`,
+    life: 2000,
+  })
 }
 
 onMounted(async () => {
   modules.value = await moduleStore.loadAvailableModules()
 })
 </script>
+

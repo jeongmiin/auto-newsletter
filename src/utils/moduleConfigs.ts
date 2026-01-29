@@ -31,7 +31,10 @@ export const moduleImgConfig: ModuleConfig = {
   defaults: {
     imageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-1column.png',
     imageAlt: '이미지',
+    imageBorderRadius: '0px',
+    imageLinkUrl: '#',
   },
+  processors: [processors.imageLinkProcessor],
 }
 
 /**
@@ -73,11 +76,18 @@ export const sectionTitleConfig: ModuleConfig = {
  * Module04 설정
  */
 export const module04Config: ModuleConfig = {
+  quillFields: ['leftContent', 'rightContent'],
+  defaults: {
+    leftImageBorderRadius: '0px',
+    leftImageLinkUrl: '#',
+    rightImageBorderRadius: '0px',
+    rightImageLinkUrl: '#',
+  },
   processors: [
     processors.module04ImageProcessor,
-    processors.module04HrefProcessor,
-    processors.module04ButtonStyleProcessor,
+    processors.module04ButtonProcessor,
     processors.module04AdditionalContentProcessor,
+    processors.twoColumnImageLinkProcessor,
   ],
 }
 
@@ -85,28 +95,16 @@ export const module04Config: ModuleConfig = {
  * Module02 설정
  */
 export const module02Config: ModuleConfig = {
+  defaults: {
+    imageBorderRadius: '0px',
+    imageLinkUrl: '#',
+  },
   processors: [
     processors.module02ImageProcessor,
     processors.module02ButtonStyleProcessor,
     processors.module02AdditionalContentProcessor,
-    processors.removeTableProcessor,
     processors.removeButtonProcessor,
-  ],
-}
-
-/**
- * Module05 설정
- */
-export const module05Config: ModuleConfig = {
-  defaults: {
-    smallBtnBgColor: '#000000',
-    smallBtnTextColor: '#ffffff',
-    bigBtnBgColor: '#111111',
-    bigBtnTextColor: '#ffffff',
-  },
-  processors: [
-    processors.module05ConditionalProcessor,
-    processors.module05AdditionalContentProcessor,
+    processors.imageLinkProcessor,
   ],
 }
 
@@ -114,11 +112,27 @@ export const module05Config: ModuleConfig = {
  * Module05-3 설정
  */
 export const module053Config: ModuleConfig = {
+  defaults: {
+    imageBorderRadius: '0px',
+    imageLinkUrl: '#',
+  },
   processors: [
     processors.module053ImageProcessor,
-    processors.module053HrefProcessor,
-    processors.module053ButtonStyleProcessor,
+    processors.module053ButtonProcessor,
+    processors.imageLinkProcessor,
   ],
+}
+
+/**
+ * Module01 설정
+ */
+export const module01Config: ModuleConfig = {
+  defaults: {
+    contentTitle: '콘텐츠 타이틀',
+    titleColor: '#eb2a25',
+    contentText: '콘텐츠 텍스트',
+    bgColor: '#f5f5f5',
+  },
 }
 
 /**
@@ -149,13 +163,16 @@ export const module051Config: ModuleConfig = {
     ImageAlt: '이미지',
     boxBgColor: '#e5e5e5',
     boxColor: '#111111',
+    imageBorderRadius: '0px',
+    imageLinkUrl: '#',
   },
+  processors: [processors.module051ButtonProcessor, processors.imageLinkProcessor],
 }
 
 /**
- * Module05-2 설정
+ * Module05 설정 (4개 버튼 모듈)
  */
-export const module052Config: ModuleConfig = {
+export const module05Config: ModuleConfig = {
   quillFields: ['contentText'],
   defaults: {
     imageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-2column.png',
@@ -168,8 +185,10 @@ export const module052Config: ModuleConfig = {
     button3TextColor: '#ffffff',
     button4BgColor: '#FF5722',
     button4TextColor: '#ffffff',
+    imageBorderRadius: '0px',
+    imageLinkUrl: '#',
   },
-  processors: [processors.module052ButtonProcessor],
+  processors: [processors.module052ButtonProcessor, processors.imageLinkProcessor],
 }
 
 /**
@@ -182,16 +201,16 @@ export const module06Config: ModuleConfig = {
     leftTitleColor: '#333333',
     leftImageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-2column.png',
     leftImageAlt: '이미지',
-    leftButtonBgColor: '#e5e5e5',
-    leftButtonTextColor: '#333333',
+    leftImageBorderRadius: '0px',
+    leftImageLinkUrl: '#',
     rightTitleBgColor: '#e5e5e5',
     rightTitleColor: '#333333',
     rightImageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-2column.png',
     rightImageAlt: '이미지',
-    rightButtonBgColor: '#e5e5e5',
-    rightButtonTextColor: '#333333',
+    rightImageBorderRadius: '0px',
+    rightImageLinkUrl: '#',
   },
-  processors: [processors.module06ButtonProcessor],
+  processors: [processors.module06MultiButtonProcessor, processors.twoColumnImageLinkProcessor],
 }
 
 /**
@@ -204,8 +223,10 @@ export const module07Config: ModuleConfig = {
     imageAlt: '이미지',
     buttonBgColor: '#e5e5e5',
     buttonTextColor: '#333333',
+    imageBorderRadius: '0px',
+    imageLinkUrl: '#',
   },
-  processors: [processors.module07ButtonProcessor],
+  processors: [processors.module07ButtonProcessor, processors.imageLinkProcessor],
 }
 
 /**
@@ -233,8 +254,10 @@ export const module10Config: ModuleConfig = {
     imageAlt: '이미지',
     labelBgColor: '#333333',
     labelTextColor: '#ffffff',
+    imageBorderRadius: '0px',
+    imageLinkUrl: '#',
   },
-  processors: [processors.module10LabelProcessor],
+  processors: [processors.module10LabelProcessor, processors.imageLinkProcessor],
 }
 
 /**
@@ -246,12 +269,16 @@ export const module101Config: ModuleConfig = {
     leftImageAlt: '이미지',
     leftLabelBgColor: '#333333',
     leftLabelTextColor: '#ffffff',
+    leftImageBorderRadius: '0px',
+    leftImageLinkUrl: '#',
     rightImageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-speaker.png',
     rightImageAlt: '이미지',
     rightLabelBgColor: '#333333',
     rightLabelTextColor: '#ffffff',
+    rightImageBorderRadius: '0px',
+    rightImageLinkUrl: '#',
   },
-  processors: [processors.module101LabelProcessor],
+  processors: [processors.module101LabelProcessor, processors.twoColumnImageLinkProcessor],
 }
 
 /**
@@ -272,13 +299,13 @@ export const MODULE_CONFIG_REGISTRY: Record<string, ModuleConfig> = {
   ModuleOneButton: moduleOneButtonConfig,
   ModuleTwoButton: moduleTwoButtonConfig,
   SectionTitle: sectionTitleConfig,
+  Module01: module01Config,
   Module04: module04Config,
   Module02: module02Config,
   Module05: module05Config,
   'Module01-1': module011Config,
   'Module01-2': module012Config,
   'Module05-1': module051Config,
-  'Module05-2': module052Config,
   'Module05-3': module053Config,
   Module06: module06Config,
   Module07: module07Config,

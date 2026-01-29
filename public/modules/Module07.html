@@ -4,11 +4,11 @@
     <tr style="border-collapse: collapse;">
       <td align="center" style="padding:0 20px;margin:0; box-sizing: border-box;">
         <div style="float: left; min-width: 50%; max-width: 100%; width: calc((570px - 100%) * 570);">
-          <a target="_blank" href="{{imageUrl}}"
-            style="font-family: AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif; font-size:14px;text-decoration:none;color:#0C66FF">
+          <!-- 이미지 링크 --><a target="_blank" href="{{imageLinkUrl}}"
+            style="font-family: AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif; font-size:14px;text-decoration:none;color:#0C66FF; display: block;">
             <img src="{{imageUrl}}" alt="{{imageAlt}}"
-              style="display:block;border:0;outline:none;text-decoration:none; width: 100%;">
-          </a>
+              style="display:block;border:0;outline:none;text-decoration:none; width: 100%; border-radius: {{imageBorderRadius}};">
+          </a><!-- //이미지 링크 -->
         </div>
         <div style="float: left; min-width: 50%; max-width: 100%; width: calc((570px - 100%) * 570); padding: 25px 0;">
           <h2

@@ -5,14 +5,14 @@
       <td style="padding: 0 10px; box-sizing: border-box;">
         <div
           style=" padding: 10px; display: inline-block; min-width: 10em; max-width: 50%; width: calc((570px - 100%) * 570); box-sizing: border-box; box-sizing: border-box;">
-          <img src="{{imageUrl}}" alt="{{imageAlt}}" style="display: block; width: 100%;">
+          <!-- 이미지 링크 --><a href="{{imageLinkUrl}}" target="_blank" style="display: block; text-decoration: none;"><img src="{{imageUrl}}" alt="{{imageAlt}}" style="display: block; width: 100%; border-radius: {{imageBorderRadius}};"></a><!-- //이미지 링크 -->
         </div>
         <div
           style="display: inline-block; padding: 0 10px; min-width: calc(100% - 10.5em); max-width: 100%; width: calc((570px - 100%) * 570); box-sizing: border-box; min-height: 10em; vertical-align: top; box-sizing: border-box;">
           <!-- 라벨 -->
           <p style="margin:0; text-align: left;">
             <span align="left"
-              style="text-decoration:none; display: inline-block; background-color:{{labelBgColor}}; bgcolor: {{labelBgColor}}; border-radius:30px; padding:5px 20px; color:{{labelTextColor}}; font-size: 13px; line-height: 1.5em; font-weight:700; font-family: AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif; box-sizing: border-box;">{{labelText}}</span>
+              style="text-decoration:none; display: inline-block; background-color:{{labelBgColor}}; border-radius:30px; padding:5px 20px; color:{{labelTextColor}}; font-size: 13px; line-height: 1.5em; font-weight:700; font-family: AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif; box-sizing: border-box;">{{labelText}}</span>
           </p><!-- //라벨 -->
           <p
             style="margin:0; color:#111111; font-size: 16px; font-weight:700; line-height:1.7em; letter-spacing:-0.03em; word-break:keep-all; text-align:left; padding-top:10px; box-sizing: border-box; font-family: AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif;">

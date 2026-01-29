@@ -304,7 +304,138 @@ export const module052ButtonProcessor: ContentProcessor = (html, properties) => 
 }
 
 /**
- * Module06 버튼 조건부 제거 프로세서
+ * Module04 버튼 조건부 제거 프로세서 (왼쪽 작은버튼 4개 + 큰버튼 1개, 오른쪽 동일)
+ */
+export const module04ButtonProcessor: ContentProcessor = (html, properties) => {
+  let result = html
+
+  // 왼쪽 작은 버튼 1-4
+  if (properties.showLeftSmallBtn1 !== true) {
+    result = result.replace(/<!-- 왼쪽 작은 버튼 1 -->.*?<!-- \/\/왼쪽 작은 버튼 1 -->/gs, '')
+  }
+  if (properties.showLeftSmallBtn2 !== true) {
+    result = result.replace(/<!-- 왼쪽 작은 버튼 2 -->.*?<!-- \/\/왼쪽 작은 버튼 2 -->/gs, '')
+  }
+  if (properties.showLeftSmallBtn3 !== true) {
+    result = result.replace(/<!-- 왼쪽 작은 버튼 3 -->.*?<!-- \/\/왼쪽 작은 버튼 3 -->/gs, '')
+  }
+  if (properties.showLeftSmallBtn4 !== true) {
+    result = result.replace(/<!-- 왼쪽 작은 버튼 4 -->.*?<!-- \/\/왼쪽 작은 버튼 4 -->/gs, '')
+  }
+  // 왼쪽 큰 버튼
+  if (properties.showLeftBigBtn !== true) {
+    result = result.replace(/<!-- 왼쪽 큰 버튼 -->.*?<!-- \/\/왼쪽 큰 버튼 -->/gs, '')
+  }
+
+  // 오른쪽 작은 버튼 1-4
+  if (properties.showRightSmallBtn1 !== true) {
+    result = result.replace(/<!-- 오른쪽 작은 버튼 1 -->.*?<!-- \/\/오른쪽 작은 버튼 1 -->/gs, '')
+  }
+  if (properties.showRightSmallBtn2 !== true) {
+    result = result.replace(/<!-- 오른쪽 작은 버튼 2 -->.*?<!-- \/\/오른쪽 작은 버튼 2 -->/gs, '')
+  }
+  if (properties.showRightSmallBtn3 !== true) {
+    result = result.replace(/<!-- 오른쪽 작은 버튼 3 -->.*?<!-- \/\/오른쪽 작은 버튼 3 -->/gs, '')
+  }
+  if (properties.showRightSmallBtn4 !== true) {
+    result = result.replace(/<!-- 오른쪽 작은 버튼 4 -->.*?<!-- \/\/오른쪽 작은 버튼 4 -->/gs, '')
+  }
+  // 오른쪽 큰 버튼
+  if (properties.showRightBigBtn !== true) {
+    result = result.replace(/<!-- 오른쪽 큰 버튼 -->.*?<!-- \/\/오른쪽 큰 버튼 -->/gs, '')
+  }
+
+  return result
+}
+
+/**
+ * Module05-1 버튼 조건부 제거 프로세서 (버튼 4개)
+ */
+export const module051ButtonProcessor: ContentProcessor = (html, properties) => {
+  let result = html
+
+  if (properties.showButton1 !== true) {
+    result = result.replace(/<!-- 버튼 1 -->.*?<!-- \/\/버튼 1 -->/gs, '')
+  }
+  if (properties.showButton2 !== true) {
+    result = result.replace(/<!-- 버튼 2 -->.*?<!-- \/\/버튼 2 -->/gs, '')
+  }
+  if (properties.showButton3 !== true) {
+    result = result.replace(/<!-- 버튼 3 -->.*?<!-- \/\/버튼 3 -->/gs, '')
+  }
+  if (properties.showButton4 !== true) {
+    result = result.replace(/<!-- 버튼 4 -->.*?<!-- \/\/버튼 4 -->/gs, '')
+  }
+
+  return result
+}
+
+/**
+ * Module05-3 버튼 조건부 제거 프로세서 (작은버튼 4개 + 큰버튼 1개)
+ */
+export const module053ButtonProcessor: ContentProcessor = (html, properties) => {
+  let result = html
+
+  // 작은 버튼 1-4
+  if (properties.showSmallBtn1 !== true) {
+    result = result.replace(/<!-- 작은 버튼 1 -->.*?<!-- \/\/작은 버튼 1 -->/gs, '')
+  }
+  if (properties.showSmallBtn2 !== true) {
+    result = result.replace(/<!-- 작은 버튼 2 -->.*?<!-- \/\/작은 버튼 2 -->/gs, '')
+  }
+  if (properties.showSmallBtn3 !== true) {
+    result = result.replace(/<!-- 작은 버튼 3 -->.*?<!-- \/\/작은 버튼 3 -->/gs, '')
+  }
+  if (properties.showSmallBtn4 !== true) {
+    result = result.replace(/<!-- 작은 버튼 4 -->.*?<!-- \/\/작은 버튼 4 -->/gs, '')
+  }
+  // 큰 버튼
+  if (properties.showBigBtn !== true) {
+    result = result.replace(/<!-- 큰 버튼 -->.*?<!-- \/\/큰 버튼 -->/gs, '')
+  }
+
+  return result
+}
+
+/**
+ * Module06 다중 버튼 조건부 제거 프로세서 (왼쪽/오른쪽 각각 버튼 4개)
+ */
+export const module06MultiButtonProcessor: ContentProcessor = (html, properties) => {
+  let result = html
+
+  // 왼쪽 버튼 1-4
+  if (properties.showLeftButton1 !== true) {
+    result = result.replace(/<!-- 왼쪽 버튼 1 -->.*?<!-- \/\/왼쪽 버튼 1 -->/gs, '')
+  }
+  if (properties.showLeftButton2 !== true) {
+    result = result.replace(/<!-- 왼쪽 버튼 2 -->.*?<!-- \/\/왼쪽 버튼 2 -->/gs, '')
+  }
+  if (properties.showLeftButton3 !== true) {
+    result = result.replace(/<!-- 왼쪽 버튼 3 -->.*?<!-- \/\/왼쪽 버튼 3 -->/gs, '')
+  }
+  if (properties.showLeftButton4 !== true) {
+    result = result.replace(/<!-- 왼쪽 버튼 4 -->.*?<!-- \/\/왼쪽 버튼 4 -->/gs, '')
+  }
+
+  // 오른쪽 버튼 1-4
+  if (properties.showRightButton1 !== true) {
+    result = result.replace(/<!-- 오른쪽 버튼 1 -->.*?<!-- \/\/오른쪽 버튼 1 -->/gs, '')
+  }
+  if (properties.showRightButton2 !== true) {
+    result = result.replace(/<!-- 오른쪽 버튼 2 -->.*?<!-- \/\/오른쪽 버튼 2 -->/gs, '')
+  }
+  if (properties.showRightButton3 !== true) {
+    result = result.replace(/<!-- 오른쪽 버튼 3 -->.*?<!-- \/\/오른쪽 버튼 3 -->/gs, '')
+  }
+  if (properties.showRightButton4 !== true) {
+    result = result.replace(/<!-- 오른쪽 버튼 4 -->.*?<!-- \/\/오른쪽 버튼 4 -->/gs, '')
+  }
+
+  return result
+}
+
+/**
+ * Module06 버튼 조건부 제거 프로세서 (기존 단일 버튼용 - 호환성 유지)
  */
 export const module06ButtonProcessor: ContentProcessor = (html, properties) => {
   let result = html
@@ -378,6 +509,42 @@ export const module101LabelProcessor: ContentProcessor = (html, properties) => {
   }
   if (properties.showRightLabel !== true) {
     result = result.replace(/<!-- 오른쪽 라벨 -->.*?<!-- \/\/오른쪽 라벨 -->/gs, '')
+  }
+
+  return result
+}
+
+/**
+ * 이미지 링크 조건부 제거 프로세서 (단일 이미지용)
+ * showImageLink가 false이면 a 태그를 제거하고 img만 남김
+ */
+export const imageLinkProcessor: ContentProcessor = (html, properties) => {
+  if (properties.showImageLink !== true) {
+    return html.replace(
+      /<!-- 이미지 링크 --><a[^>]*>([\s\S]*?)<\/a><!-- \/\/이미지 링크 -->/g,
+      (_, imgContent) => imgContent,
+    )
+  }
+  return html
+}
+
+/**
+ * 왼쪽/오른쪽 이미지 링크 조건부 제거 프로세서 (2컬럼용)
+ */
+export const twoColumnImageLinkProcessor: ContentProcessor = (html, properties) => {
+  let result = html
+
+  if (properties.showLeftImageLink !== true) {
+    result = result.replace(
+      /<!-- 왼쪽 이미지 링크 --><a[^>]*>([\s\S]*?)<\/a><!-- \/\/왼쪽 이미지 링크 -->/g,
+      (_, imgContent) => imgContent,
+    )
+  }
+  if (properties.showRightImageLink !== true) {
+    result = result.replace(
+      /<!-- 오른쪽 이미지 링크 --><a[^>]*>([\s\S]*?)<\/a><!-- \/\/오른쪽 이미지 링크 -->/g,
+      (_, imgContent) => imgContent,
+    )
   }
 
   return result

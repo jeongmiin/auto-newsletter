@@ -1,4 +1,4 @@
-import { ref, watch, onMounted, computed } from 'vue'
+import { ref, watch, onMounted, onUnmounted, computed } from 'vue'
 import type { ModuleInstance, ModuleMetadata } from '@/types'
 import { useModuleStore } from '@/stores/moduleStore'
 import { applyStylesToHtml } from '@/utils/htmlUtils'
@@ -11,7 +11,6 @@ import {
   replaceSectionTitleContent,
   replaceModule04Content,
   replaceModule02Content,
-  replaceModule05Content,
   replaceModule053Content,
   replaceModule011Content,
   replaceModule012Content,
@@ -24,6 +23,7 @@ import {
   replaceModule10Content,
   replaceModule101Content,
   replaceModuleSubTitleContent,
+  replaceModuleTableContent,
   replaceDefaultTemplate,
 } from '@/utils/moduleContentReplacer'
 
@@ -34,6 +34,7 @@ export function useModuleRenderer(moduleId: string) {
   const moduleStore = useModuleStore()
   const renderedHtml = ref('')
   const moduleMetadata = ref<ModuleMetadata | null>(null)
+  const isLoading = ref(true)
 
   // 🐛 핵심 수정: store에서 직접 현재 모듈을 가져와 반응성 보장
   const currentModule = computed(() => {
@@ -79,7 +80,7 @@ export function useModuleRenderer(moduleId: string) {
         return replaceModule02Content(html, properties, moduleStore.insertAdditionalContents)
 
       case 'Module05':
-        return replaceModule05Content(html, properties, moduleStore.insertAdditionalContents)
+        return replaceModule052Content(html, properties)
 
       case 'Module01-1':
         return replaceModule011Content(html, properties)
@@ -89,9 +90,6 @@ export function useModuleRenderer(moduleId: string) {
 
       case 'Module05-1':
         return replaceModule051Content(html, properties)
-
-      case 'Module05-2':
-        return replaceModule052Content(html, properties)
 
       case 'Module05-3':
         return replaceModule053Content(html, properties)
@@ -117,6 +115,9 @@ export function useModuleRenderer(moduleId: string) {
       case 'ModuleSubTitle':
         return replaceModuleSubTitleContent(html, properties)
 
+      case 'ModuleTable':
+        return replaceModuleTableContent(html, properties)
+
       default:
         return replaceDefaultTemplate(html, properties)
     }
@@ -131,6 +132,8 @@ export function useModuleRenderer(moduleId: string) {
       console.warn('[useModuleRenderer] 모듈을 찾을 수 없음:', moduleId)
       return
     }
+
+    isLoading.value = true
 
     try {
       // 모듈 메타데이터 설정
@@ -167,7 +170,9 @@ export function useModuleRenderer(moduleId: string) {
       }
 
       renderedHtml.value = html
+      isLoading.value = false
     } catch (error) {
+      isLoading.value = false
       console.error('[useModuleRenderer] ❌ 모듈 로드 실패:', error)
       const basePath = import.meta.env.BASE_URL || '/'
       const expectedPath = `${basePath}modules/${module.moduleId}.html`.replace(/\/+/g, '/')
@@ -185,12 +190,29 @@ export function useModuleRenderer(moduleId: string) {
     }
   }
 
-  // 🐛 핵심 수정: computed를 watch하여 모듈 변경 즉시 감지
+  // 디바운스 타이머
+  let debounceTimer: ReturnType<typeof setTimeout> | null = null
+  const DEBOUNCE_DELAY = 300 // 300ms 후에 렌더링
+
+  /**
+   * 디바운스된 모듈 HTML 로드
+   * 연속적인 입력 시 마지막 입력 후 일정 시간이 지나면 렌더링
+   */
+  const debouncedLoadModuleHtml = () => {
+    if (debounceTimer) {
+      clearTimeout(debounceTimer)
+    }
+    debounceTimer = setTimeout(() => {
+      loadModuleHtml()
+    }, DEBOUNCE_DELAY)
+  }
+
+  // 🐛 핵심 수정: computed를 watch하여 모듈 변경 감지 (디바운스 적용)
   watch(
     currentModule,
     (newModule) => {
       if (newModule) {
-        loadModuleHtml()
+        debouncedLoadModuleHtml()
       }
     },
     { deep: true, immediate: false }  // deep: true로 properties 변경 감지
@@ -200,8 +222,16 @@ export function useModuleRenderer(moduleId: string) {
     loadModuleHtml()
   })
 
+  // 컴포넌트 언마운트 시 타이머 정리
+  onUnmounted(() => {
+    if (debounceTimer) {
+      clearTimeout(debounceTimer)
+    }
+  })
+
   return {
     renderedHtml,
     moduleMetadata,
+    isLoading,
   }
 }
