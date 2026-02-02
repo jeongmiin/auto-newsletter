@@ -550,5 +550,15 @@ export const twoColumnImageLinkProcessor: ContentProcessor = (html, properties) 
   return result
 }
 
+/**
+ * 복수 이미지 모바일 레이아웃 프로세서
+ * keepLayoutOnMobile이 true이면 49.5% (2컬럼 유지), false이면 100% (1컬럼)
+ */
+export const multiImageLayoutProcessor: ContentProcessor = (html, properties) => {
+  // keepLayoutOnMobile이 true면 49.5% (2컬럼 유지), false면 100% (1컬럼으로 떨어짐)
+  const minWidth = properties.keepLayoutOnMobile === true ? '49.5%' : '100%'
+  return html.replace(/{{mobileMinWidth}}/g, minWidth)
+}
+
 // SubTitle 프로세서
 export { subtitleDefaultProcessor } from './subtitleProcessor'

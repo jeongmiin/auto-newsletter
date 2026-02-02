@@ -117,6 +117,71 @@ export const addZeroSpacingToBlocks = (html: string): string => {
 }
 
 /**
+ * 빈 줄(엔터로 추가된 여백)을 이메일 호환 형태로 변환
+ * Quill에서 엔터를 누르면 <p><br></p> 형태가 생성됨
+ * 이를 높이가 있는 빈 줄로 변환하여 이메일에서도 여백이 표시되도록 함
+ */
+export const convertEmptyLinesToSpacing = (html: string): string => {
+  if (!html) return ''
+
+  // <p><br></p> 패턴을 높이가 있는 빈 줄로 변환
+  // 이메일 클라이언트에서 빈 <p> 태그는 무시될 수 있으므로 &nbsp;와 line-height로 높이 확보
+  html = html.replace(
+    /<p([^>]*)><br\s*\/?><\/p>/gi,
+    (match, attributes) => {
+      // 기존 style 속성 확인
+      const styleMatch = attributes.match(/style="([^"]*)"/)
+      let style = styleMatch ? styleMatch[1].trim() : ''
+
+      // 기본 스타일 추가
+      if (!style.includes('margin')) {
+        style = style ? `${style}; margin: 0` : 'margin: 0'
+      }
+      if (!style.includes('padding')) {
+        style += '; padding: 0'
+      }
+      if (!style.includes('line-height')) {
+        style += '; line-height: 1.5'
+      }
+      if (!style.includes('min-height')) {
+        style += '; min-height: 1.5em'
+      }
+
+      // 빈 줄에 &nbsp; 추가하여 높이 확보
+      const otherAttrs = attributes.replace(/style="[^"]*"/gi, '').trim()
+      return `<p${otherAttrs ? ' ' + otherAttrs : ''} style="${style};">&nbsp;</p>`
+    }
+  )
+
+  // 빈 <p></p> 패턴도 처리
+  html = html.replace(
+    /<p([^>]*)><\/p>/gi,
+    (match, attributes) => {
+      const styleMatch = attributes.match(/style="([^"]*)"/)
+      let style = styleMatch ? styleMatch[1].trim() : ''
+
+      if (!style.includes('margin')) {
+        style = style ? `${style}; margin: 0` : 'margin: 0'
+      }
+      if (!style.includes('padding')) {
+        style += '; padding: 0'
+      }
+      if (!style.includes('line-height')) {
+        style += '; line-height: 1.5'
+      }
+      if (!style.includes('min-height')) {
+        style += '; min-height: 1.5em'
+      }
+
+      const otherAttrs = attributes.replace(/style="[^"]*"/gi, '').trim()
+      return `<p${otherAttrs ? ' ' + otherAttrs : ''} style="${style};">&nbsp;</p>`
+    }
+  )
+
+  return html
+}
+
+/**
  * Quill 정렬 클래스를 인라인 스타일로 변환
  * - ql-align-center → text-align: center
  * - ql-align-right → text-align: right
@@ -175,8 +240,9 @@ export const convertQuillAlignToInline = (html: string): string => {
 /**
  * Quill HTML 통합 처리 함수
  * 1. RGB → HEX 변환
- * 2. 블록 요소에 margin: 0, padding: 0 추가
- * 3. Quill 정렬 클래스를 인라인 스타일로 변환
+ * 2. 빈 줄을 이메일 호환 형태로 변환
+ * 3. 블록 요소에 margin: 0, padding: 0 추가
+ * 4. Quill 정렬 클래스를 인라인 스타일로 변환
  */
 export const processQuillHtml = (html: string): string => {
   if (!html) return ''
@@ -184,10 +250,13 @@ export const processQuillHtml = (html: string): string => {
   // 1. RGB → HEX 변환
   html = convertRgbToHex(html)
 
-  // 2. 블록 요소에 margin: 0, padding: 0 추가
+  // 2. 빈 줄(엔터 여백)을 이메일 호환 형태로 변환
+  html = convertEmptyLinesToSpacing(html)
+
+  // 3. 블록 요소에 margin: 0, padding: 0 추가
   html = addZeroSpacingToBlocks(html)
 
-  // 3. ✅ Quill 정렬 클래스를 인라인 스타일로 변환
+  // 4. Quill 정렬 클래스를 인라인 스타일로 변환
   html = convertQuillAlignToInline(html)
 
   return html

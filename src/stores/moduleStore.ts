@@ -9,6 +9,7 @@ import type {
   AdditionalContent,
   TableCell,
 } from '@/types'
+import { useEditorStore } from './editorStore'
 import { formatTextWithBreaks } from '@/utils/textUtils'
 import { generateUniqueId, applyStylesToHtml } from '@/utils/htmlUtils'
 import {
@@ -941,6 +942,9 @@ export const useModuleStore = defineStore('module', () => {
    * @param wrapWithDocument - true면 완전한 HTML 문서로 감싸고, false면 콘텐츠만 반환
    */
   const generateHtml = async (wrapWithDocument: boolean = false): Promise<string> => {
+    const editorStore = useEditorStore()
+    const wrapSettings = editorStore.wrapSettings
+
     let fullHtml = ''
     const basePath = import.meta.env.BASE_URL || '/'
 
@@ -970,9 +974,12 @@ export const useModuleStore = defineStore('module', () => {
       }
     }
 
+    // wrap 스타일 생성
+    const wrapStyle = `width:100%; max-width:680px; margin:0 auto; background-color:${wrapSettings.backgroundColor}; border:${wrapSettings.borderWidth} ${wrapSettings.borderStyle} ${wrapSettings.borderColor};`
+
     // wrapWithDocument가 false면 .wrap으로 감싼 콘텐츠만 반환
     if (!wrapWithDocument) {
-      return `<div class="wrap" style="width:100%; max-width:680px; margin:0 auto; background-color:#f9f9f9;">
+      return `<div class="wrap" style="${wrapStyle}">
         ${fullHtml}
 </div>`
     }
@@ -986,7 +993,7 @@ export const useModuleStore = defineStore('module', () => {
     <title>Auto Newsletter</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; ">
-    <div class="wrap" style="width:100%; max-width:680px; margin:0 auto; background-color:#f9f9f9;">
+    <div class="wrap" style="${wrapStyle}">
         ${fullHtml}
     </div>
 </body>

@@ -1,15 +1,15 @@
 <!-- 기본 헤더 -->
 <table border="0" cellpadding="0" cellspacing="0"
-  style="padding:0 20px; text-align:center; box-sizing: border-box; border-top:3px solid #000000; max-width: 680px;"
-  width="100%">
+  style="padding:0 20px; text-align:center; box-sizing: border-box; border-top:{{topBorderWidth}} solid {{topBorderColor}}; max-width: 680px;"
+  width="100%" summary="{{tableSummary}}">
   <tbody>
     <tr>
-      <td style="text-align: center; margin: 0 auto;">
-        <img alt="{{logoAlt}}" src="{{logoImageUrl}}" style="max-width:100%; margin: 0 auto; padding-top: 30px;">
+      <td style="text-align: center; margin: 0 auto; border-bottom:{{logoBorderWidth}} solid {{logoBorderColor}};">
+        <img alt="{{logoAlt}}" src="{{logoImageUrl}}" style="max-width:100%; margin: 0 auto; padding-top: 30px; padding-bottom: 20px;">
       </td>
     </tr>
     <tr>
-      <td style="padding: 5px 0;">
+      <td style="padding: 15px 0; color: {{headerTextColor}};">
         {{headerText}}
       </td>
     </tr>

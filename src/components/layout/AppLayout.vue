@@ -1,31 +1,37 @@
 <template>
-  <div class="h-screen flex bg-gray-50">
-    <!-- 왼쪽 모듈 패널 -->
-    <ModulePanel class="w-72 xl:w-80 border-r bg-white flex-shrink-0" />
+  <div class="h-screen flex flex-col bg-gray-50">
+    <!-- 상단 헤더: 로고 + 파일 관리 버튼들 -->
+    <AppHeader />
 
-    <!-- 중앙 캔버스 -->
-    <div class="flex-1 flex flex-col min-w-0">
-      <!-- 상단 툴바 -->
-      <EditorToolbar class="border-b bg-white" />
+    <!-- 메인 영역: 모듈 패널 / 캔버스 / 속성 패널 -->
+    <div class="flex-1 flex min-h-0">
+      <!-- 왼쪽 모듈 패널 -->
+      <ModulePanel class="w-72 xl:w-80 border-r bg-white flex-shrink-0" />
 
-      <!-- 캔버스 영역 -->
-      <CanvasArea class="flex-1" />
-    </div>
+      <!-- 중앙 캔버스 -->
+      <div class="flex-1 flex flex-col min-w-0">
+        <!-- 캔버스 상단 툴바 (화면 크기 + 전체 삭제) -->
+        <EditorToolbar />
 
-    <!-- 오른쪽 속성 패널 (리사이즈 가능) -->
-    <div class="flex flex-shrink-0" :style="{ width: `${propertiesPanelWidth}px` }">
-      <!-- 리사이즈 핸들 -->
-      <div
-        class="w-1 hover:w-1.5 bg-transparent hover:bg-blue-400 cursor-col-resize transition-all flex-shrink-0 group"
-        @mousedown="startResize"
-      >
-        <div
-          class="w-full h-full opacity-0 group-hover:opacity-100 transition-opacity"
-          :class="{ 'opacity-100 bg-blue-500': isResizing }"
-        ></div>
+        <!-- 캔버스 영역 -->
+        <CanvasArea class="flex-1" />
       </div>
-      <!-- 속성 패널 -->
-      <PropertiesPanel class="flex-1 border-l bg-white" />
+
+      <!-- 오른쪽 속성 패널 (리사이즈 가능) -->
+      <div class="flex flex-shrink-0" :style="{ width: `${propertiesPanelWidth}px` }">
+        <!-- 리사이즈 핸들 -->
+        <div
+          class="w-1 hover:w-1.5 bg-transparent hover:bg-blue-400 cursor-col-resize transition-all flex-shrink-0 group"
+          @mousedown="startResize"
+        >
+          <div
+            class="w-full h-full opacity-0 group-hover:opacity-100 transition-opacity"
+            :class="{ 'opacity-100 bg-blue-500': isResizing }"
+          ></div>
+        </div>
+        <!-- 속성 패널 -->
+        <PropertiesPanel class="flex-1 border-l bg-white" />
+      </div>
     </div>
 
     <!-- 리사이즈 오버레이 (드래그 중일 때만 표시) -->
@@ -41,6 +47,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+import AppHeader from '@/components/layout/AppHeader.vue'
 import ModulePanel from '@/components/panels/ModulePanel.vue'
 import EditorToolbar from '@/components/editor/EditorToolbar.vue'
 import CanvasArea from '@/components/editor/CanvasArea.vue'

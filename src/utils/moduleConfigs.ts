@@ -7,6 +7,25 @@ import type { ModuleConfig } from './moduleContentProcessor'
 import * as processors from './processors'
 
 /**
+ * ModuleNewsHeader 설정
+ */
+export const moduleNewsHeaderConfig: ModuleConfig = {
+  defaults: {
+    logoImageUrl: 'https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/newsletter/images/logo-gray.png',
+    logoAlt: '로고',
+    logoBorderWidth: '5px',
+    logoBorderColor: '#000000',
+    headerTitle: 'NEWSLETTER VOL.1',
+    titleColor: '#333333',
+    webViewText: '웹으로 보기',
+    webViewIcon: '👀',
+    webViewUrl: '#',
+    webViewColor: '#333333',
+    tableSummary: '뉴스레터 입니다.',
+  },
+}
+
+/**
  * ModuleBasicHeader 설정
  */
 export const moduleBasicHeaderConfig: ModuleConfig = {
@@ -14,6 +33,12 @@ export const moduleBasicHeaderConfig: ModuleConfig = {
   defaults: {
     logoImageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/logo-gray.png',
     logoAlt: '로고',
+    tableSummary: '뉴스레터 입니다.',
+    topBorderWidth: '3px',
+    topBorderColor: '#000000',
+    logoBorderWidth: '1px',
+    logoBorderColor: '#dddddd',
+    headerTextColor: '#111111',
   },
 }
 
@@ -282,6 +307,30 @@ export const module101Config: ModuleConfig = {
 }
 
 /**
+ * Module11 설정
+ */
+export const module11Config: ModuleConfig = {
+  defaults: {
+    linkUrl: '#',
+    bgColor: '#eaeaea',
+    textColor: '#111111',
+    labelText: '중랑구',
+    labelColor: '#111111',
+    contentText: '2022년 국내전시회 참가기업 지원사업(~2/25)',
+    buttonText: 'GO →',
+    buttonBgColor: '#999999',
+    buttonTextColor: '#ffffff',
+  },
+}
+
+/**
+ * ModuleTable 설정
+ */
+export const moduleTableConfig: ModuleConfig = {
+  // ModuleTable은 replaceModuleTableContent에서 별도 처리
+}
+
+/**
  * ModuleSubTitle 설정
  */
 export const moduleSubTitleConfig: ModuleConfig = {
@@ -290,15 +339,34 @@ export const moduleSubTitleConfig: ModuleConfig = {
 }
 
 /**
+ * ModuleMultiImage 설정
+ */
+export const moduleMultiImageConfig: ModuleConfig = {
+  defaults: {
+    leftImageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-2column.png',
+    leftImageAlt: '이미지',
+    leftImageBorderRadius: '0px',
+    leftImageLinkUrl: '#',
+    rightImageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-2column.png',
+    rightImageAlt: '이미지',
+    rightImageBorderRadius: '0px',
+    rightImageLinkUrl: '#',
+  },
+  processors: [processors.twoColumnImageLinkProcessor],
+}
+
+/**
  * 모듈 ID를 설정으로 매핑하는 레지스트리
  */
 export const MODULE_CONFIG_REGISTRY: Record<string, ModuleConfig> = {
+  ModuleNewsHeader: moduleNewsHeaderConfig,
   ModuleBasicHeader: moduleBasicHeaderConfig,
   ModuleDescText: moduleDescTextConfig,
   ModuleImg: moduleImgConfig,
   ModuleOneButton: moduleOneButtonConfig,
   ModuleTwoButton: moduleTwoButtonConfig,
   SectionTitle: sectionTitleConfig,
+  ModuleTable: moduleTableConfig,
   Module01: module01Config,
   Module04: module04Config,
   Module02: module02Config,
@@ -313,5 +381,7 @@ export const MODULE_CONFIG_REGISTRY: Record<string, ModuleConfig> = {
   ModuleFooter: moduleFooterConfig,
   Module10: module10Config,
   'Module10-1': module101Config,
+  Module11: module11Config,
   ModuleSubTitle: moduleSubTitleConfig,
+  ModuleMultiImage: moduleMultiImageConfig,
 }

@@ -11,6 +11,13 @@ export interface CanvasSettings {
   zoom: number
 }
 
+export interface WrapSettings {
+  backgroundColor: string
+  borderWidth: string
+  borderColor: string
+  borderStyle: string
+}
+
 export interface ExportOptions {
   format: 'html' | 'png' | 'pdf'
   includeStyles: boolean

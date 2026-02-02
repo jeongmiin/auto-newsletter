@@ -5,34 +5,137 @@
       <h2 class="text-lg font-semibold text-gray-800">속성</h2>
     </div>
 
-    <!-- 선택된 모듈이 없을 때 -->
-    <div v-if="!selectedModule" class="flex-1 flex items-center justify-center text-gray-500 px-4">
-      <div class="text-center">
-        <div class="text-3xl mb-3"><i class="pi pi-pencil text-gray-400"></i></div>
-        <div class="font-medium text-gray-600 mb-1">모듈을 선택하세요</div>
-        <div class="text-xs text-gray-400">
-          중앙의 편집 영역에서 모듈을 클릭하면<br />
-          여기서 텍스트와 이미지를 편집할 수 있습니다
+    <!-- 스크롤 영역 -->
+    <div class="flex-1 overflow-y-auto">
+      <!-- 공통 속성 섹션 (항상 표시, 접을 수 있음) -->
+      <div class="border-b">
+        <!-- 공통 속성 헤더 (클릭하여 토글) -->
+        <button
+          @click="isGlobalSettingsOpen = !isGlobalSettingsOpen"
+          class="w-full p-3 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors"
+        >
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 bg-gray-200 text-gray-600 rounded flex items-center justify-center">
+              <i class="pi pi-cog text-sm"></i>
+            </div>
+            <div class="text-left">
+              <div class="text-sm font-medium text-gray-700">공통 속성</div>
+              <div class="text-xs text-gray-500">배경색, 테두리</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <!-- 현재 배경색 미리보기 -->
+            <div
+              class="w-5 h-5 rounded border border-gray-300"
+              :style="{ backgroundColor: wrapSettings.backgroundColor }"
+              v-tooltip.left="wrapSettings.backgroundColor"
+            ></div>
+            <i
+              class="pi text-gray-400 transition-transform duration-200"
+              :class="isGlobalSettingsOpen ? 'pi-chevron-up' : 'pi-chevron-down'"
+            ></i>
+          </div>
+        </button>
+
+        <!-- 공통 속성 내용 (접을 수 있음) -->
+        <div
+          v-show="isGlobalSettingsOpen"
+          class="p-3 space-y-3 bg-gray-50/50"
+        >
+          <!-- 배경색 -->
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1">배경색</label>
+            <div class="flex items-center gap-2">
+              <ColorPicker
+                :modelValue="getWrapColorValue('backgroundColor')"
+                @update:modelValue="handleWrapColorPickerUpdate('backgroundColor', $event)"
+                format="hex"
+              />
+              <InputText
+                :modelValue="wrapSettings.backgroundColor"
+                @update:modelValue="handleWrapColorInput('backgroundColor', $event ?? '')"
+                placeholder="#f9f9f9"
+                class="flex-1 font-mono text-xs"
+                size="small"
+                spellcheck="false"
+              />
+            </div>
+          </div>
+
+          <!-- 테두리 설정 (가로 배치) -->
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1">테두리</label>
+            <div class="flex items-center gap-2 border-settings">
+              <!-- 두께 -->
+              <InputText
+                :modelValue="wrapSettings.borderWidth"
+                @update:modelValue="updateWrapProperty('borderWidth', $event ?? '')"
+                placeholder="0px"
+                class="w-16 font-mono text-xs !h-8"
+                size="small"
+                v-tooltip.bottom="'두께'"
+              />
+              <!-- 스타일 -->
+              <Select
+                :modelValue="wrapSettings.borderStyle"
+                @update:modelValue="updateWrapProperty('borderStyle', $event ?? '')"
+                :options="borderStyleOptions"
+                optionLabel="label"
+                optionValue="value"
+                class="w-20 !h-8"
+                size="small"
+                v-tooltip.bottom="'스타일'"
+              />
+              <!-- 색상 -->
+              <div class="flex items-center gap-1 flex-1">
+                <ColorPicker
+                  :modelValue="getWrapColorValue('borderColor')"
+                  @update:modelValue="handleWrapColorPickerUpdate('borderColor', $event)"
+                  format="hex"
+                  class="border-color-picker"
+                />
+                <InputText
+                  :modelValue="wrapSettings.borderColor"
+                  @update:modelValue="handleWrapColorInput('borderColor', $event ?? '')"
+                  placeholder="#ddd"
+                  class="flex-1 font-mono text-xs !h-8"
+                  size="small"
+                  spellcheck="false"
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- 선택된 모듈이 있을 때 -->
-    <div v-else class="flex-1 overflow-y-auto">
-      <!-- 모듈 정보 -->
-      <div class="p-4 border-b bg-blue-50">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center">
-            <i :class="selectedModuleMetadata?.icon" class="text-lg"></i>
-          </div>
-          <div class="flex-1 min-w-0">
-            <div class="font-semibold text-gray-800 truncate">{{ selectedModuleMetadata?.name }}</div>
-            <div class="text-sm text-gray-600 truncate">{{ selectedModuleMetadata?.description }}</div>
+      <!-- 모듈이 선택되지 않았을 때 안내 -->
+      <div v-if="!selectedModule" class="flex-1 flex items-center justify-center text-gray-500 px-4 py-12">
+        <div class="text-center">
+          <div class="text-3xl mb-3"><i class="pi pi-pencil text-gray-400"></i></div>
+          <div class="font-medium text-gray-600 mb-1">모듈을 선택하세요</div>
+          <div class="text-xs text-gray-400">
+            중앙의 편집 영역에서 모듈을 클릭하면<br />
+            여기서 텍스트와 이미지를 편집할 수 있습니다
           </div>
         </div>
       </div>
 
-      <!-- 속성 편집 폼 -->
+      <!-- 선택된 모듈이 있을 때 -->
+      <div v-else>
+        <!-- 모듈 정보 -->
+        <div class="p-4 border-b bg-blue-50">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center">
+              <i :class="selectedModuleMetadata?.icon" class="text-lg"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-semibold text-gray-800 truncate">{{ selectedModuleMetadata?.name }}</div>
+              <div class="text-sm text-gray-600 truncate">{{ selectedModuleMetadata?.description }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 속성 편집 폼 -->
       <div class="p-4 space-y-5">
         <div
           v-for="(prop, index) in editableProps"
@@ -47,9 +150,9 @@
             {{ prop.label }}
           </label>
 
-          <!-- 텍스트 입력 (컬러 필드) -->
+          <!-- 텍스트 입력 (컬러 필드) 또는 color 타입 -->
           <div
-            v-if="prop.type === 'text' && isColorField(prop.key)"
+            v-if="prop.type === 'color' || (prop.type === 'text' && isColorField(prop.key))"
             class="space-y-2"
           >
             <div class="flex items-center gap-2">
@@ -611,33 +714,74 @@
         </div>
       </div>
 
-      <!-- 모듈 제거 버튼 -->
-      <div class="p-4 border-t">
-        <Button
-          @click="removeModule"
-          label="모듈 삭제"
-          icon="pi pi-trash"
-          severity="danger"
-          outlined
-          class="w-full"
-        />
+        <!-- 모듈 제거 버튼 -->
+        <div class="p-4 border-t">
+          <Button
+            @click="removeModule"
+            label="모듈 삭제"
+            icon="pi pi-trash"
+            severity="danger"
+            outlined
+            class="w-full"
+          />
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useModuleStore } from '@/stores/moduleStore'
-import type { TableRow, ContentTitle, ContentText, AdditionalContent, TableCell } from '@/types'
+import { useEditorStore } from '@/stores/editorStore'
+import type { TableRow, ContentTitle, ContentText, AdditionalContent, TableCell, WrapSettings } from '@/types'
 import { normalizeColorInput, isValidHexColor } from '@/utils/colorHelper'
 import { processQuillHtml } from '@/utils/quillHtmlProcessor'
 
 const moduleStore = useModuleStore()
+const editorStore = useEditorStore()
 
 const selectedModule = computed(() => moduleStore.selectedModule)
 const selectedModuleMetadata = computed(() => moduleStore.selectedModuleMetadata)
 const editableProps = computed(() => selectedModuleMetadata.value?.editableProps || [])
+
+// 공통 속성 패널 열림 상태
+const isGlobalSettingsOpen = ref(false)
+
+// 공통 속성 (wrap 설정)
+const wrapSettings = computed(() => editorStore.wrapSettings)
+
+// 테두리 스타일 옵션
+const borderStyleOptions = [
+  { label: '실선', value: 'solid' },
+  { label: '점선', value: 'dotted' },
+  { label: '파선', value: 'dashed' },
+  { label: '이중선', value: 'double' },
+  { label: '없음', value: 'none' },
+]
+
+// Wrap 속성 업데이트 함수
+const updateWrapProperty = (key: keyof WrapSettings, value: string) => {
+  editorStore.updateWrapSettings({ [key]: value })
+}
+
+// Wrap 컬러 입력 핸들러
+const handleWrapColorInput = (key: keyof WrapSettings, value: string) => {
+  const normalized = normalizeColorInput(value)
+  updateWrapProperty(key, normalized)
+}
+
+// Wrap ColorPicker 핸들러
+const handleWrapColorPickerUpdate = (key: keyof WrapSettings, value: string) => {
+  const hexValue = value.startsWith('#') ? value : `#${value}`
+  updateWrapProperty(key, hexValue)
+}
+
+// Wrap 컬러 값 가져오기
+const getWrapColorValue = (key: keyof WrapSettings) => {
+  const value = wrapSettings.value[key] as string
+  return isValidHexColor(value) ? value : '#cccccc'
+}
 
 // 동적 테이블 행 데이터
 const tableRows = computed(() => {
@@ -947,3 +1091,28 @@ const getColorValue = (key: string) => {
   return isValidHexColor(value) ? value : '#cccccc'
 }
 </script>
+
+<style scoped>
+/* 테두리 설정 input 높이 통일 */
+.border-settings :deep(.p-inputtext) {
+  height: 2rem !important;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.border-settings :deep(.p-select) {
+  height: 2rem !important;
+}
+
+.border-settings :deep(.p-select-label) {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  line-height: 1.5rem;
+}
+
+/* ColorPicker 크기 조정 */
+.border-color-picker :deep(.p-colorpicker-preview) {
+  width: 2rem;
+  height: 2rem;
+}
+</style>

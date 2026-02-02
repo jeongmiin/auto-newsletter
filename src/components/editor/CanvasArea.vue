@@ -4,10 +4,10 @@
       <!-- 캔버스 컨테이너 -->
       <div
         :class="[
-          'bg-white shadow-lg transition-all duration-300',
+          'shadow-lg transition-all duration-300',
           canvasWidth === 'mobile' ? 'w-80' : 'w-full max-w-[680px]',
         ]"
-        style="min-height: 600px"
+        :style="canvasContainerStyle"
       >
         <!-- 모듈이 없을 때 -->
         <div
@@ -94,6 +94,14 @@ const editorStore = useEditorStore()
 const modules = computed(() => moduleStore.modules)
 const selectedModuleId = computed(() => moduleStore.selectedModuleId)
 const canvasWidth = computed(() => editorStore.canvasWidth)
+const wrapSettings = computed(() => editorStore.wrapSettings)
+
+// 캔버스 컨테이너 스타일 (공통 속성 반영)
+const canvasContainerStyle = computed(() => ({
+  minHeight: '600px',
+  backgroundColor: wrapSettings.value.backgroundColor,
+  border: `${wrapSettings.value.borderWidth} ${wrapSettings.value.borderStyle} ${wrapSettings.value.borderColor}`,
+}))
 
 // 드래그 앤 드롭을 위한 양방향 바인딩
 const draggableModules = computed({

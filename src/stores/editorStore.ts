@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import type { CanvasSettings } from '@/types'
+import type { CanvasSettings, WrapSettings } from '@/types'
 import { EDITOR_CONFIG } from '@/constants/defaults'
 
 export const useEditorStore = defineStore('editor', () => {
@@ -11,6 +11,14 @@ export const useEditorStore = defineStore('editor', () => {
     backgroundColor: '#ffffff',
     fontFamily: 'Arial, sans-serif',
     zoom: 1
+  })
+
+  // 뉴스레터 wrap 설정 (공통 속성)
+  const wrapSettings = ref<WrapSettings>({
+    backgroundColor: '#f9f9f9',
+    borderWidth: '0px',
+    borderColor: '#dddddd',
+    borderStyle: 'solid'
   })
 
   /**
@@ -37,11 +45,20 @@ export const useEditorStore = defineStore('editor', () => {
     )
   }
 
+  /**
+   * Wrap 설정 업데이트 (공통 속성)
+   */
+  const updateWrapSettings = (settings: Partial<WrapSettings>): void => {
+    wrapSettings.value = { ...wrapSettings.value, ...settings }
+  }
+
   return {
     canvasWidth,
     canvasSettings,
+    wrapSettings,
     setCanvasWidth,
     updateCanvasSettings,
+    updateWrapSettings,
     setZoom
   }
 })

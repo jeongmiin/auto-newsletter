@@ -1,6 +1,86 @@
 {
   "modules": [
     {
+      "id": "ModuleNewsHeader",
+      "name": "뉴스 헤드라인 헤더",
+      "description": "로고 + 타이틀 + 웹으로 보기 링크가 있는 헤더",
+      "category": "common",
+      "icon": "pi pi-home",
+      "htmlFile": "ModuleNewsHeader.html",
+      "editableProps": [
+        {
+          "key": "logoImageUrl",
+          "label": "로고 이미지 URL",
+          "type": "url",
+          "default": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/newsletter/images/logo-gray.png",
+          "placeholder": "이미지 URL을 입력하세요"
+        },
+        {
+          "key": "logoAlt",
+          "label": "로고 대체 텍스트",
+          "type": "text",
+          "default": "로고"
+        },
+        {
+          "key": "logoBorderWidth",
+          "label": "로고 하단 테두리 두께",
+          "type": "text",
+          "default": "5px"
+        },
+        {
+          "key": "logoBorderColor",
+          "label": "로고 하단 테두리 색상",
+          "type": "text",
+          "default": "#000000"
+        },
+        {
+          "key": "headerTitle",
+          "label": "헤더 타이틀",
+          "type": "text",
+          "default": "NEWSLETTER VOL.1",
+          "placeholder": "뉴스레터 타이틀"
+        },
+        {
+          "key": "titleColor",
+          "label": "타이틀 색상",
+          "type": "text",
+          "default": "#333333"
+        },
+        {
+          "key": "webViewText",
+          "label": "웹으로 보기 텍스트",
+          "type": "text",
+          "default": "웹으로 보기"
+        },
+        {
+          "key": "webViewIcon",
+          "label": "웹으로 보기 아이콘",
+          "type": "text",
+          "default": "👀"
+        },
+        {
+          "key": "webViewUrl",
+          "label": "웹으로 보기 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "웹 버전 URL"
+        },
+        {
+          "key": "webViewColor",
+          "label": "웹으로 보기 링크 색상",
+          "type": "text",
+          "default": "#333333"
+        },
+        {
+          "key": "tableSummary",
+          "label": "테이블 요약 (접근성)",
+          "type": "text",
+          "default": "뉴스레터 입니다.",
+          "placeholder": "스크린 리더용 테이블 설명"
+        }
+      ]
+    },
+    {
       "id": "ModuleBasicHeader",
       "name": "기본 헤더",
       "description": "로고와 뉴스레터 타이틀이 포함된 기본 헤더",
@@ -23,11 +103,48 @@
           "placeholder": "로고"
         },
         {
+          "key": "topBorderWidth",
+          "label": "상단 테두리 두께",
+          "type": "text",
+          "default": "3px"
+        },
+        {
+          "key": "topBorderColor",
+          "label": "상단 테두리 색상",
+          "type": "color",
+          "default": "#000000"
+        },
+        {
+          "key": "logoBorderWidth",
+          "label": "로고 하단 테두리 두께",
+          "type": "text",
+          "default": "1px"
+        },
+        {
+          "key": "logoBorderColor",
+          "label": "로고 하단 테두리 색상",
+          "type": "color",
+          "default": "#dddddd"
+        },
+        {
           "key": "headerText",
           "label": "헤더 텍스트",
           "type": "textarea",
           "default": "<h1 style=\" font-size:20px; color:#111111; font-weight:400; line-height:1.5em; word-break:keep-all; font-family:AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif;\">NEWSLETTER <strong>VOL.1</strong></h1>",
           "placeholder": "헤더 텍스트를 입력하세요"
+        },
+        {
+          "key": "headerTextColor",
+          "label": "헤더 텍스트 색상",
+          "type": "color",
+          "default": "#111111"
+        },
+        {
+          "key": "tableSummary",
+          "label": "테이블 요약 (접근성)",
+          "type": "text",
+          "default": "뉴스레터 입니다.",
+          "placeholder": "스크린 리더용 테이블 설명"
         }
       ]
     },
@@ -156,6 +273,84 @@
         {
           "key": "imageBorderRadius",
           "label": "이미지 모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%"
+        }
+      ]
+    },
+    {
+      "id": "ModuleMultiImage",
+      "name": "복수 이미지",
+      "description": "2컬럼 이미지 레이아웃",
+      "category": "image",
+      "icon": "pi pi-images",
+      "htmlFile": "ModuleMultiImage.html",
+      "editableProps": [
+        {
+          "key": "leftImageUrl",
+          "label": "왼쪽 이미지 URL",
+          "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
+          "placeholder": "왼쪽 이미지 URL"
+        },
+        {
+          "key": "leftImageAlt",
+          "label": "왼쪽 이미지 설명 (Alt)",
+          "type": "text",
+          "default": "이미지"
+        },
+        {
+          "key": "showLeftImageLink",
+          "label": "왼쪽 이미지 링크 사용",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "leftImageLinkUrl",
+          "label": "왼쪽 이미지 링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showLeftImageLink"
+        },
+        {
+          "key": "leftImageBorderRadius",
+          "label": "왼쪽 이미지 모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%"
+        },
+        {
+          "key": "rightImageUrl",
+          "label": "오른쪽 이미지 URL",
+          "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
+          "placeholder": "오른쪽 이미지 URL"
+        },
+        {
+          "key": "rightImageAlt",
+          "label": "오른쪽 이미지 설명 (Alt)",
+          "type": "text",
+          "default": "이미지"
+        },
+        {
+          "key": "showRightImageLink",
+          "label": "오른쪽 이미지 링크 사용",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "rightImageLinkUrl",
+          "label": "오른쪽 이미지 링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showRightImageLink"
+        },
+        {
+          "key": "rightImageBorderRadius",
+          "label": "오른쪽 이미지 모서리 둥글기",
           "type": "text",
           "default": "0px",
           "placeholder": "예: 10px, 50%"
@@ -2493,6 +2688,73 @@
           "label": "오른쪽 타이틀",
           "type": "textarea",
           "placeholder": "오른쪽 타이틀"
+        }
+      ]
+    },
+    {
+      "id": "Module11",
+      "name": "11",
+      "description": "라벨 + 텍스트 + 버튼이 있는 링크 박스",
+      "category": "text",
+      "icon": "pi pi-th-large",
+      "htmlFile": "Module11.html",
+      "editableProps": [
+        {
+          "key": "linkUrl",
+          "label": "링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "클릭 시 이동할 URL"
+        },
+        {
+          "key": "bgColor",
+          "label": "배경색",
+          "type": "text",
+          "default": "#eaeaea"
+        },
+        {
+          "key": "textColor",
+          "label": "본문 글자색",
+          "type": "text",
+          "default": "#111111"
+        },
+        {
+          "key": "labelText",
+          "label": "라벨 텍스트",
+          "type": "text",
+          "default": "중랑구",
+          "placeholder": "라벨 텍스트"
+        },
+        {
+          "key": "labelColor",
+          "label": "라벨 색상",
+          "type": "text",
+          "default": "#111111"
+        },
+        {
+          "key": "contentText",
+          "label": "콘텐츠 텍스트",
+          "type": "text",
+          "default": "2022년 국내전시회 참가기업 지원사업(~2/25)",
+          "placeholder": "내용을 입력하세요"
+        },
+        {
+          "key": "buttonText",
+          "label": "버튼 텍스트",
+          "type": "text",
+          "default": "GO →"
+        },
+        {
+          "key": "buttonBgColor",
+          "label": "버튼 배경색",
+          "type": "text",
+          "default": "#999999"
+        },
+        {
+          "key": "buttonTextColor",
+          "label": "버튼 글자색",
+          "type": "text",
+          "default": "#ffffff"
         }
       ]
     }
