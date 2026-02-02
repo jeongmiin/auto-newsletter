@@ -464,11 +464,18 @@
       "htmlFile": "ModuleFooter.html",
       "editableProps": [
         {
-          "key": "topText",
-          "label": "상단 텍스트",
-          "type": "textarea",
-          "default": "<strong>코리아빌드 사무국</strong> (주)메쎄이상",
-          "placeholder": "회사명 등 상단 텍스트"
+          "key": "topTextTitle",
+          "label": "상단 제목",
+          "type": "text",
+          "default": "코리아빌드 사무국",
+          "placeholder": "예: 국제아웃도어캠핑&레포츠페스티벌 / 고카프 사무국"
+        },
+        {
+          "key": "topTextCompany",
+          "label": "회사명",
+          "type": "text",
+          "default": "(주)메쎄이상",
+          "placeholder": "예: 주식회사 메쎄이상"
         },
         {
           "key": "addressText",

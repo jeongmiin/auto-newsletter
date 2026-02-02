@@ -259,7 +259,8 @@ export const module07Config: ModuleConfig = {
  */
 export const moduleFooterConfig: ModuleConfig = {
   defaults: {
-    topText: '<strong>코리아빌드 사무국</strong> (주)메쎄이상',
+    topTextTitle: '코리아빌드 사무국',
+    topTextCompany: '(주)메쎄이상',
     addressText: '서울시 마포구 월드컵북로&nbsp;58길&nbsp;9 ES타워&nbsp;(03922)',
     websiteUrl: 'www.koreabuild.co.kr',
     phone: '02-6121-6362',
