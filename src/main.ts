@@ -56,6 +56,26 @@ import PrimeVue from 'primevue/config'
 import ToastService from 'primevue/toastservice'
 import ConfirmationService from 'primevue/confirmationservice'
 import Aura from '@primevue/themes/aura'
+import { definePreset } from '@primevue/themes'
+
+// 블루 계열 커스텀 테마
+const BluePreset = definePreset(Aura, {
+  semantic: {
+    primary: {
+      50: '{blue.50}',
+      100: '{blue.100}',
+      200: '{blue.200}',
+      300: '{blue.300}',
+      400: '{blue.400}',
+      500: '{blue.500}',
+      600: '{blue.600}',
+      700: '{blue.700}',
+      800: '{blue.800}',
+      900: '{blue.900}',
+      950: '{blue.950}',
+    },
+  },
+})
 
 // PrimeVue 컴포넌트
 import Button from 'primevue/button'
@@ -79,10 +99,10 @@ app.use(pinia)
 // Router 사용
 app.use(router)
 
-// PrimeVue 설정
+// PrimeVue 설정 (블루 테마)
 app.use(PrimeVue, {
   theme: {
-    preset: Aura,
+    preset: BluePreset,
     options: {
       prefix: 'p',
       darkModeSelector: 'system',

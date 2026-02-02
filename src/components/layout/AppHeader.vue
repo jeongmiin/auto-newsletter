@@ -38,7 +38,6 @@
         @click="downloadHtmlFile"
         label="내려받기"
         icon="pi pi-download"
-        severity="success"
         size="small"
         v-tooltip.bottom="'컴퓨터에 파일로 저장합니다'"
       />
