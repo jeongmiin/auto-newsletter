@@ -21,12 +21,20 @@
       <div class="flex flex-shrink-0" :style="{ width: `${propertiesPanelWidth}px` }">
         <!-- 리사이즈 핸들 -->
         <div
-          class="w-1 hover:w-1.5 bg-transparent hover:bg-blue-400 cursor-col-resize transition-all flex-shrink-0 group"
+          class="resize-handle w-2 cursor-col-resize flex-shrink-0 relative group"
+          :class="{ 'is-resizing': isResizing }"
           @mousedown="startResize"
         >
+          <!-- 핸들 배경 -->
+          <div class="absolute inset-0 bg-gray-100 group-hover:bg-blue-100 transition-colors"></div>
+          <!-- 핸들 그립 라인들 -->
+          <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center gap-1 opacity-40 group-hover:opacity-100 transition-opacity">
+            <div class="w-0.5 h-6 bg-gray-400 group-hover:bg-blue-500 rounded-full transition-colors"></div>
+          </div>
+          <!-- 호버/드래그 시 강조 라인 -->
           <div
-            class="w-full h-full opacity-0 group-hover:opacity-100 transition-opacity"
-            :class="{ 'opacity-100 bg-blue-500': isResizing }"
+            class="absolute left-0 top-0 bottom-0 w-0.5 bg-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"
+            :class="{ 'opacity-100': isResizing }"
           ></div>
         </div>
         <!-- 속성 패널 -->
@@ -55,7 +63,7 @@ import PropertiesPanel from '@/components/panels/PropertiesPanel.vue'
 
 // 속성 패널 너비 상태
 const MIN_WIDTH = 280
-const MAX_WIDTH = 600
+const MAX_WIDTH = 700
 const DEFAULT_WIDTH = 384 // 기본 w-96
 
 const propertiesPanelWidth = ref(DEFAULT_WIDTH)
@@ -114,3 +122,27 @@ onUnmounted(() => {
   window.removeEventListener('mouseup', handleGlobalMouseUp)
 })
 </script>
+
+<style scoped>
+/* 리사이즈 핸들 스타일 */
+.resize-handle {
+  touch-action: none;
+  user-select: none;
+}
+
+.resize-handle:hover {
+  cursor: col-resize;
+}
+
+.resize-handle.is-resizing {
+  cursor: col-resize;
+}
+
+.resize-handle.is-resizing > div:first-child {
+  background-color: #dbeafe; /* blue-100 */
+}
+
+.resize-handle.is-resizing .w-0\.5.h-6 {
+  background-color: #3b82f6; /* blue-500 */
+}
+</style>

@@ -356,6 +356,22 @@ export const moduleMultiImageConfig: ModuleConfig = {
 }
 
 /**
+ * ModuleDivider 설정 (구분선)
+ */
+export const moduleDividerConfig: ModuleConfig = {
+  defaults: {
+    borderColor: '#dddddd',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    dividerWidth: '100%',
+    paddingTop: '20px',
+    paddingRight: '20px',
+    paddingBottom: '20px',
+    paddingLeft: '20px',
+  },
+}
+
+/**
  * 모듈 ID를 설정으로 매핑하는 레지스트리
  */
 export const MODULE_CONFIG_REGISTRY: Record<string, ModuleConfig> = {
@@ -384,4 +400,5 @@ export const MODULE_CONFIG_REGISTRY: Record<string, ModuleConfig> = {
   Module11: module11Config,
   ModuleSubTitle: moduleSubTitleConfig,
   ModuleMultiImage: moduleMultiImageConfig,
+  ModuleDivider: moduleDividerConfig,
 }

@@ -74,24 +74,6 @@ const BluePreset = definePreset(Aura, {
       900: '{blue.900}',
       950: '{blue.950}',
     },
-    colorScheme: {
-      light: {
-        primary: {
-          color: '{blue.500}',
-          inverseColor: '#ffffff',
-          hoverColor: '{blue.600}',
-          activeColor: '{blue.700}',
-        },
-      },
-      dark: {
-        primary: {
-          color: '{blue.400}',
-          inverseColor: '{blue.950}',
-          hoverColor: '{blue.300}',
-          activeColor: '{blue.200}',
-        },
-      },
-    },
   },
 })
 

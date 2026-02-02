@@ -69,11 +69,16 @@ export const convertRgbToHex = (html: string): string => {
 }
 
 /**
- * 블록 요소에 margin: 0, padding: 0 추가
+ * 블록 요소에 margin: 0, padding: 0, word-wrap: break-word, word-break: break-all 추가
  * 처리 대상: p, h1, h2, h3
+ * word-wrap: break-word는 긴 텍스트가 컨테이너를 넘어갈 때 자동 줄바꿈
+ * word-break: break-all은 긴 텍스트(이모지, 특수문자 포함)가 컨테이너를 넘지 않도록 강제 줄바꿈
  */
 export const addZeroSpacingToBlocks = (html: string): string => {
   if (!html) return ''
+
+  // 기본 텍스트 스타일 (줄바꿈 관련)
+  const baseTextStyle = 'margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;'
 
   // p, h1, h2, h3 태그 일괄 처리
   const tagPattern = /<(p|h[1-3])(\s+([^>]*))?>/gi
@@ -81,7 +86,7 @@ export const addZeroSpacingToBlocks = (html: string): string => {
   html = html.replace(tagPattern, (match, tagName, attributes, attrContent) => {
     // 속성이 없는 경우
     if (!attributes) {
-      return `<${tagName} style="margin: 0; padding: 0; line-height: 1.5;">`
+      return `<${tagName} style="${baseTextStyle}">`
     }
 
     // style 속성 추출
@@ -101,6 +106,16 @@ export const addZeroSpacingToBlocks = (html: string): string => {
         existingStyle += '; padding: 0'
       }
 
+      // word-wrap이 없으면 추가 (자동 줄바꿈)
+      if (!existingStyle.includes('word-wrap')) {
+        existingStyle += '; word-wrap: break-word; overflow-wrap: break-word'
+      }
+
+      // word-break가 없으면 추가 (강제 줄바꿈 - 이모지, 특수문자 포함 긴 텍스트 처리)
+      if (!existingStyle.includes('word-break')) {
+        existingStyle += '; word-break: break-all'
+      }
+
       // 세미콜론 정리 (중복 제거, 앞뒤 공백 제거)
       existingStyle = existingStyle.replace(/;+/g, ';').replace(/^;\s*/, '').replace(/;\s*$/, '')
 
@@ -109,7 +124,7 @@ export const addZeroSpacingToBlocks = (html: string): string => {
       return `<${tagName} ${newAttributes}>`
     } else {
       // style이 없는 경우 추가
-      return `<${tagName} ${attrContent} style="margin: 0; padding: 0; line-height: 1.5;">`
+      return `<${tagName} ${attrContent} style="${baseTextStyle}">`
     }
   })
 
@@ -260,54 +275,4 @@ export const processQuillHtml = (html: string): string => {
   html = convertQuillAlignToInline(html)
 
   return html
-}
-
-/**
- * 테스트용 함수 - 블록 요소 spacing 테스트
- */
-export const testBlockSpacing = () => {
-  const testCases = [
-    '<p>일반 문단</p>',
-    '<h1>헤더 1</h1>',
-    '<h2>헤더 2</h2>',
-    '<h3>헤더 3</h3>',
-    '<p style="color: red;">빨간색 문단</p>',
-    '<h1 style="font-size: 32px;">큰 헤더</h1>',
-    '<p class="custom">클래스 있는 문단</p>',
-    '<h2 class="title" style="color: blue;">파란 헤더</h2>',
-    '<p>첫 번째</p><h1>중간 헤더</h1><p>마지막</p>',
-  ]
-
-  testCases.forEach((html, index) => {
-    const result = processQuillHtml(html)
-
-    // margin: 0과 padding: 0 포함 여부 확인
-    const hasMargin = result.includes('margin: 0')
-    const hasPadding = result.includes('padding: 0')
-  })
-}
-
-/**
- * HTML 검증 - 블록 태그 통계
- */
-export const verifyBlockSpacing = (
-  html: string,
-): Record<string, { total: number; processed: number }> => {
-  const blockTags = ['p', 'h1', 'h2', 'h3']
-  const stats: Record<string, { total: number; processed: number }> = {}
-
-  blockTags.forEach((tag) => {
-    const totalCount = (html.match(new RegExp(`<${tag}[^>]*>`, 'gi')) || []).length
-    const withSpacingCount = (
-      html.match(new RegExp(`<${tag}[^>]*style="[^"]*margin:\\s*0[^"]*padding:\\s*0`, 'gi')) || []
-    ).length
-
-    stats[tag] = { total: totalCount, processed: withSpacingCount }
-
-    if (totalCount > 0 && withSpacingCount < totalCount) {
-      console.warn(`⚠️ 일부 <${tag}> 태그에 margin/padding: 0이 누락되었습니다`)
-    }
-  })
-
-  return stats
 }

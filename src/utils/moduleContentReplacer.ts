@@ -187,6 +187,16 @@ export function replaceModuleSubTitleContent(
 }
 
 /**
+ * ModuleDivider 콘텐츠 교체 (구분선)
+ */
+export function replaceModuleDividerContent(
+  html: string,
+  properties: Record<string, unknown>,
+): string {
+  return replaceModuleContentSync(html, properties, MODULE_CONFIG_REGISTRY.ModuleDivider)
+}
+
+/**
  * 기본 템플릿 교체 (설정이 없는 모듈용 폴백)
  */
 export function replaceDefaultTemplate(html: string, properties: Record<string, unknown>): string {

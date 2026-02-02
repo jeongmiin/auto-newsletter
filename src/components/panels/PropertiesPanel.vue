@@ -20,7 +20,7 @@
             </div>
             <div class="text-left">
               <div class="text-sm font-medium text-gray-700">공통 속성</div>
-              <div class="text-xs text-gray-500">배경색, 테두리</div>
+              <div class="text-xs text-gray-500">전체 배경색, 테두리</div>
             </div>
           </div>
           <div class="flex items-center gap-2">
@@ -243,6 +243,8 @@
             :modelValue="String(selectedModule.properties[prop.key] || '')"
             @update:modelValue="updateProperty(prop.key, $event ?? '')"
             :options="prop.options"
+            optionLabel="label"
+            optionValue="value"
             class="w-full"
             placeholder="선택하세요"
           />
@@ -550,105 +552,153 @@
           </div>
 
           <!-- 커스텀 테이블 편집기 -->
-          <div v-else-if="prop.type === 'table-editor'" class="space-y-4">
+          <div v-else-if="prop.type === 'table-editor'" class="space-y-3">
             <!-- 테이블 내용 편집 -->
             <div v-if="tableCells.length > 0" class="space-y-3">
-              <!-- 행/열 추가 버튼 -->
-              <div class="flex items-center justify-between">
-                <span class="text-xs text-gray-500">
-                  {{ tableCells.length }}행 × {{ tableCells[0]?.length || 0 }}열
-                </span>
+              <!-- 상단 컨트롤 바 -->
+              <div class="flex items-center justify-between bg-gray-100 rounded-lg px-3 py-2">
+                <div class="flex items-center gap-2">
+                  <i class="pi pi-table text-gray-500"></i>
+                  <span class="text-sm font-medium text-gray-700">
+                    {{ tableCells.length }}행 × {{ tableCells[0]?.length || 0 }}열
+                  </span>
+                </div>
                 <div class="flex gap-1">
                   <Button
                     @click="addTableColumn"
-                    label="열 추가"
-                    icon="pi pi-plus"
+                    icon="pi pi-arrows-h"
                     severity="secondary"
                     text
                     size="small"
+                    v-tooltip.top="'열 추가'"
                   />
                   <Button
                     @click="addTableRow"
-                    label="행 추가"
-                    icon="pi pi-plus"
+                    icon="pi pi-arrows-v"
                     severity="secondary"
                     text
                     size="small"
+                    v-tooltip.top="'행 추가'"
                   />
                 </div>
               </div>
 
-              <!-- 열 삭제 버튼 (열이 2개 이상일 때만) -->
-              <div v-if="tableCells[0]?.length > 1" class="flex gap-2 px-1">
+              <!-- 테이블 그리드 형태 편집기 -->
+              <div class="table-editor-grid border border-gray-300 rounded-lg overflow-hidden">
+                <!-- 열 헤더 (삭제 버튼) -->
+                <div class="flex bg-gray-50 border-b border-gray-300">
+                  <!-- 왼쪽 상단 빈 셀 (행 컨트롤 공간) -->
+                  <div class="w-8 flex-shrink-0 border-r border-gray-200"></div>
+                  <!-- 열 헤더들 -->
+                  <div
+                    v-for="(_, colIndex) in tableCells[0]"
+                    :key="`col-header-${colIndex}`"
+                    class="flex-1 flex items-center justify-center py-1 border-r border-gray-200 last:border-r-0"
+                  >
+                    <span class="text-xs text-gray-500 mr-1">{{ colIndex + 1 }}열</span>
+                    <Button
+                      v-if="tableCells[0].length > 1"
+                      @click="removeTableColumn(colIndex)"
+                      icon="pi pi-times"
+                      severity="secondary"
+                      text
+                      size="small"
+                      class="!p-0 !w-5 !h-5"
+                      v-tooltip.top="'열 삭제'"
+                    />
+                  </div>
+                </div>
+
+                <!-- 테이블 본문 (행들) -->
                 <div
-                  v-for="(_, colIndex) in tableCells[0]"
-                  :key="`col-header-${colIndex}`"
-                  class="flex-1 text-center"
+                  v-for="(row, rowIndex) in tableCells"
+                  :key="`row-${rowIndex}`"
+                  class="flex border-b border-gray-200 last:border-b-0"
                 >
-                  <Button
-                    @click="removeTableColumn(colIndex)"
-                    :disabled="tableCells[0].length <= 1"
-                    icon="pi pi-times"
-                    severity="secondary"
-                    text
-                    size="small"
-                    class="!p-1"
-                    v-tooltip.top="`${colIndex + 1}열 삭제`"
-                  />
-                </div>
-              </div>
+                  <!-- 행 컨트롤 (행 번호 + 삭제) -->
+                  <div class="w-8 flex-shrink-0 flex flex-col items-center justify-center bg-gray-50 border-r border-gray-200 py-1">
+                    <span class="text-xs text-gray-500">{{ rowIndex + 1 }}</span>
+                    <Button
+                      v-if="tableCells.length > 1"
+                      @click="removeTableRow(rowIndex)"
+                      icon="pi pi-times"
+                      severity="secondary"
+                      text
+                      size="small"
+                      class="!p-0 !w-5 !h-5"
+                      v-tooltip.right="'행 삭제'"
+                    />
+                  </div>
 
-              <!-- 각 행 편집 -->
-              <div
-                v-for="(row, rowIndex) in tableCells"
-                :key="`row-${rowIndex}`"
-                class="p-3 border border-gray-200 rounded-lg bg-white"
-              >
-                <div class="flex items-center justify-between mb-2">
-                  <span class="text-xs font-medium text-gray-500">{{ rowIndex + 1 }}행</span>
-                  <Button
-                    @click="removeTableRow(rowIndex)"
-                    :disabled="tableCells.length <= 1"
-                    icon="pi pi-times"
-                    severity="secondary"
-                    text
-                    size="small"
-                    v-tooltip.top="'행 삭제'"
-                  />
-                </div>
-
-                <!-- 셀들을 가로로 나열 -->
-                <div class="flex gap-2">
+                  <!-- 셀들 -->
                   <div
                     v-for="(cell, colIndex) in row"
                     :key="cell.id"
                     v-show="!cell.hidden"
-                    class="flex-1 space-y-1"
+                    class="flex-1 p-2 border-r border-gray-200 last:border-r-0"
+                    :class="cell.type === 'th' ? 'bg-blue-50' : 'bg-white'"
                     :style="{ flex: cell.colspan > 1 ? cell.colspan : 1 }"
                   >
-                    <!-- 셀 컨트롤 (타입 토글 + 병합) -->
-                    <div class="flex items-center justify-between gap-1">
-                      <button
-                        @click="toggleCellType(rowIndex, colIndex)"
-                        class="text-xs px-2 py-0.5 rounded transition-colors"
-                        :class="cell.type === 'th'
-                          ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
-                        v-tooltip.top="'클릭하여 제목/내용 전환'"
-                      >
-                        {{ cell.type === 'th' ? '제목' : '내용' }}
-                      </button>
-
-                      <!-- 병합 컨트롤 -->
+                    <!-- 셀 컨트롤 (타입 + 정렬 + 병합) -->
+                    <div class="flex items-center justify-between mb-1.5 gap-1">
+                      <!-- 왼쪽: 타입 토글 + 정렬 -->
                       <div class="flex items-center gap-1">
-                        <!-- 열 병합 -->
-                        <div class="flex items-center text-xs text-gray-500">
-                          <span class="mr-1">열</span>
+                        <!-- 셀 타입 토글 -->
+                        <button
+                          @click="toggleCellType(rowIndex, colIndex)"
+                          class="text-xs px-2 py-0.5 rounded-full transition-colors font-medium"
+                          :class="cell.type === 'th'
+                            ? 'bg-blue-500 text-white hover:bg-blue-600'
+                            : 'bg-gray-200 text-gray-600 hover:bg-gray-300'"
+                          v-tooltip.top="'클릭하여 제목/내용 전환'"
+                        >
+                          {{ cell.type === 'th' ? 'TH' : 'TD' }}
+                        </button>
+
+                        <!-- 정렬 버튼 그룹 -->
+                        <div class="flex items-center border border-gray-200 rounded overflow-hidden">
+                          <button
+                            @click="updateCellAlign(rowIndex, colIndex, 'left')"
+                            class="p-1 transition-colors"
+                            :class="getCellAlign(cell) === 'left'
+                              ? 'bg-blue-500 text-white'
+                              : 'bg-white text-gray-500 hover:bg-gray-100'"
+                            v-tooltip.top="'왼쪽 정렬'"
+                          >
+                            <i class="pi pi-align-left text-xs"></i>
+                          </button>
+                          <button
+                            @click="updateCellAlign(rowIndex, colIndex, 'center')"
+                            class="p-1 border-x border-gray-200 transition-colors"
+                            :class="getCellAlign(cell) === 'center'
+                              ? 'bg-blue-500 text-white'
+                              : 'bg-white text-gray-500 hover:bg-gray-100'"
+                            v-tooltip.top="'가운데 정렬'"
+                          >
+                            <i class="pi pi-align-center text-xs"></i>
+                          </button>
+                          <button
+                            @click="updateCellAlign(rowIndex, colIndex, 'right')"
+                            class="p-1 transition-colors"
+                            :class="getCellAlign(cell) === 'right'
+                              ? 'bg-blue-500 text-white'
+                              : 'bg-white text-gray-500 hover:bg-gray-100'"
+                            v-tooltip.top="'오른쪽 정렬'"
+                          >
+                            <i class="pi pi-align-right text-xs"></i>
+                          </button>
+                        </div>
+                      </div>
+
+                      <!-- 오른쪽: 병합 컨트롤 -->
+                      <div class="flex items-center gap-0.5">
+                        <div class="flex items-center">
+                          <i class="pi pi-arrows-h text-xs text-gray-400 mr-0.5"></i>
                           <select
                             :value="cell.colspan"
                             @change="updateCellColspan(rowIndex, colIndex, ($event.target as HTMLSelectElement).value)"
-                            class="text-xs border border-gray-200 rounded px-1 py-0.5 bg-white"
-                            :disabled="colIndex + cell.colspan > row.length"
+                            class="text-xs border border-gray-200 rounded w-8 py-0.5 bg-white cursor-pointer"
+                            v-tooltip.top="'열 병합'"
                           >
                             <option
                               v-for="n in getMaxColspan(rowIndex, colIndex)"
@@ -657,13 +707,13 @@
                             >{{ n }}</option>
                           </select>
                         </div>
-                        <!-- 행 병합 -->
-                        <div class="flex items-center text-xs text-gray-500">
-                          <span class="mr-1">행</span>
+                        <div class="flex items-center">
+                          <i class="pi pi-arrows-v text-xs text-gray-400 mr-0.5"></i>
                           <select
                             :value="cell.rowspan"
                             @change="updateCellRowspan(rowIndex, colIndex, ($event.target as HTMLSelectElement).value)"
-                            class="text-xs border border-gray-200 rounded px-1 py-0.5 bg-white"
+                            class="text-xs border border-gray-200 rounded w-8 py-0.5 bg-white cursor-pointer"
+                            v-tooltip.top="'행 병합'"
                           >
                             <option
                               v-for="n in getMaxRowspan(rowIndex)"
@@ -681,27 +731,43 @@
                       @update:modelValue="updateCellContent(rowIndex, colIndex, $event ?? '')"
                       :placeholder="cell.type === 'th' ? '제목' : '내용'"
                       class="w-full text-sm"
+                      :class="cell.type === 'th' ? 'font-medium' : ''"
                       size="small"
                     />
 
-                    <!-- 병합 표시 -->
+                    <!-- 병합 표시 배지 -->
                     <div
                       v-if="cell.colspan > 1 || cell.rowspan > 1"
-                      class="text-xs text-orange-600 bg-orange-50 px-2 py-0.5 rounded"
+                      class="mt-1 flex gap-1"
                     >
-                      {{ cell.colspan > 1 ? `${cell.colspan}열 병합` : '' }}
-                      {{ cell.colspan > 1 && cell.rowspan > 1 ? ' + ' : '' }}
-                      {{ cell.rowspan > 1 ? `${cell.rowspan}행 병합` : '' }}
+                      <span
+                        v-if="cell.colspan > 1"
+                        class="text-xs text-blue-600 bg-blue-100 px-1.5 py-0.5 rounded-full"
+                      >
+                        ↔{{ cell.colspan }}
+                      </span>
+                      <span
+                        v-if="cell.rowspan > 1"
+                        class="text-xs text-purple-600 bg-purple-100 px-1.5 py-0.5 rounded-full"
+                      >
+                        ↕{{ cell.rowspan }}
+                      </span>
                     </div>
                   </div>
                 </div>
               </div>
+
+              <!-- 테이블 미리보기 힌트 -->
+              <div class="text-xs text-red-400 flex items-center gap-1 font-bold">
+                <i class="pi pi-info-circle mr-1"></i>
+                TH는 제목 셀, TD는 내용 셀입니다
+              </div>
             </div>
 
             <!-- 테이블이 비어있을 때 -->
-            <div v-else class="text-center py-6 text-gray-500 text-sm bg-gray-50 rounded-lg">
-              <i class="pi pi-table text-2xl text-gray-300 mb-2 block"></i>
-              <div class="mb-3">테이블이 비어있습니다</div>
+            <div v-else class="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
+              <i class="pi pi-table text-3xl text-gray-300 mb-3 block"></i>
+              <div class="text-gray-500 mb-4">테이블이 비어있습니다</div>
               <Button
                 @click="initializeDefaultTable"
                 label="기본 2열 표 생성"
@@ -1032,6 +1098,12 @@ const toggleCellType = (rowIndex: number, colIndex: number) => {
   }
 }
 
+// 셀의 현재 정렬 상태 가져오기 (TH 기본: center, TD 기본: left)
+const getCellAlign = (cell: TableCell): 'left' | 'center' | 'right' => {
+  if (cell.align) return cell.align
+  return cell.type === 'th' ? 'center' : 'left'
+}
+
 // 최대 열 병합 가능 수 계산
 const getMaxColspan = (rowIndex: number, colIndex: number): number => {
   if (!tableCells.value[rowIndex]) return 1
@@ -1114,5 +1186,35 @@ const getColorValue = (key: string) => {
 .border-color-picker :deep(.p-colorpicker-preview) {
   width: 2rem;
   height: 2rem;
+}
+
+/* 테이블 에디터 그리드 스타일 */
+.table-editor-grid {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.table-editor-grid :deep(.p-inputtext) {
+  font-size: 0.8125rem;
+}
+
+.table-editor-grid :deep(.p-inputtext::placeholder) {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+/* 셀 타입 토글 버튼 호버 효과 */
+.table-editor-grid button {
+  transition: all 0.15s ease;
+}
+
+/* 병합 셀렉트 스타일 */
+.table-editor-grid select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 2px center;
+  background-repeat: no-repeat;
+  background-size: 14px;
+  padding-right: 16px;
+  text-align: center;
 }
 </style>

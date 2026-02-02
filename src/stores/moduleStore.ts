@@ -34,6 +34,7 @@ import {
   replaceModule101Content,
   replaceModuleSubTitleContent,
   replaceModuleTableContent,
+  replaceModuleDividerContent,
   replaceDefaultTemplate,
 } from '@/utils/moduleContentReplacer'
 
@@ -364,15 +365,16 @@ export const useModuleStore = defineStore('module', () => {
       return
     }
 
-    // 각 행에 새 열 추가
+    // 각 행에 새 열 추가 (TH는 center, TD는 left 정렬)
     cells.forEach((row, rowIndex) => {
+      const cellType = rowIndex === 0 ? 'th' : 'td'
       row.push({
         id: generateUniqueId('cell'),
-        type: rowIndex === 0 ? 'th' : 'td',
+        type: cellType,
         content: '',
         colspan: 1,
         rowspan: 1,
-        align: 'left',
+        align: cellType === 'th' ? 'center' : 'left',
       })
     })
 
@@ -529,6 +531,7 @@ export const useModuleStore = defineStore('module', () => {
 
   /**
    * 셀 타입 토글 (th <-> td)
+   * 타입 변경 시 기본 정렬도 함께 변경 (TH: center, TD: left)
    */
   const toggleCellType = (moduleId: string, rowIndex: number, colIndex: number): void => {
     const module = modules.value.find((m) => m.id === moduleId)
@@ -539,7 +542,10 @@ export const useModuleStore = defineStore('module', () => {
     if (colIndex < 0 || colIndex >= cells[rowIndex].length) return
 
     const cell = cells[rowIndex][colIndex]
-    cell.type = cell.type === 'th' ? 'td' : 'th'
+    const newType = cell.type === 'th' ? 'td' : 'th'
+    cell.type = newType
+    // 타입 변경 시 기본 정렬 적용 (TH: center, TD: left)
+    cell.align = newType === 'th' ? 'center' : 'left'
 
     module.properties.tableCells = [...cells]
     triggerRef(modules)
@@ -931,6 +937,9 @@ export const useModuleStore = defineStore('module', () => {
 
       case 'ModuleTable':
         return replaceModuleTableContent(html, properties)
+
+      case 'ModuleDivider':
+        return replaceModuleDividerContent(html, properties)
 
       default:
         return replaceDefaultTemplate(html, properties)

@@ -3,7 +3,7 @@
     <!-- 왼쪽: 로고 + 타이틀 -->
     <div class="flex items-center gap-2">
       <img src="/src/assets/img/logo/logo.png" alt="Logo" class="w-7 h-7" />
-      <span class="font-semibold text-gray-800 tracking-tight">Auto Newsletter Builder</span>
+      <span class="font-semibold text-gray-800 tracking-tight">Newsletter Builder</span>
     </div>
 
     <!-- 오른쪽: 파일 관리 버튼들 -->

@@ -599,6 +599,72 @@
       ]
     },
     {
+      "id": "ModuleDivider",
+      "name": "구분선",
+      "description": "콘텐츠 사이에 구분선을 추가합니다",
+      "category": "common",
+      "icon": "pi pi-minus",
+      "htmlFile": "ModuleDivider.html",
+      "editableProps": [
+        {
+          "key": "borderColor",
+          "label": "선 색상",
+          "type": "color",
+          "default": "#dddddd"
+        },
+        {
+          "key": "borderWidth",
+          "label": "선 두께",
+          "type": "text",
+          "default": "1px",
+          "placeholder": "예: 1px, 2px"
+        },
+        {
+          "key": "borderStyle",
+          "label": "선 스타일",
+          "type": "select",
+          "default": "solid",
+          "options": [
+            { "label": "실선", "value": "solid" },
+            { "label": "점선", "value": "dotted" },
+            { "label": "파선", "value": "dashed" },
+            { "label": "이중선", "value": "double" }
+          ]
+        },
+        {
+          "key": "dividerWidth",
+          "label": "선 너비",
+          "type": "text",
+          "default": "100%",
+          "placeholder": "예: 100%, 50%, 300px"
+        },
+        {
+          "key": "paddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "20px"
+        },
+        {
+          "key": "paddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "20px"
+        },
+        {
+          "key": "paddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "20px"
+        },
+        {
+          "key": "paddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "20px"
+        }
+      ]
+    },
+    {
       "id": "Module01",
       "name": "01",
       "description": "강조 타이틀과 텍스트가 있는 박스",
