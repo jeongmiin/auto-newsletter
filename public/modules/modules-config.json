@@ -520,6 +520,20 @@
           "showWhen": "showHome"
         },
         {
+          "key": "showInstagram",
+          "label": "인스타그램 아이콘 표시",
+          "type": "boolean",
+          "default": true
+        },
+        {
+          "key": "instagramUrl",
+          "label": "인스타그램 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "인스타그램 URL",
+          "showWhen": "showInstagram"
+        },
+        {
           "key": "showFacebook",
           "label": "페이스북 아이콘 표시",
           "type": "boolean",
@@ -532,6 +546,20 @@
           "default": "#",
           "placeholder": "페이스북 URL",
           "showWhen": "showFacebook"
+        },
+        {
+          "key": "showX",
+          "label": "X(트위터) 아이콘 표시",
+          "type": "boolean",
+          "default": true
+        },
+        {
+          "key": "xUrl",
+          "label": "X(트위터) 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "X(트위터) URL",
+          "showWhen": "showX"
         },
         {
           "key": "showBlog",
@@ -560,20 +588,6 @@
           "default": "#",
           "placeholder": "유튜브 URL",
           "showWhen": "showYoutube"
-        },
-        {
-          "key": "showInstagram",
-          "label": "인스타그램 아이콘 표시",
-          "type": "boolean",
-          "default": true
-        },
-        {
-          "key": "instagramUrl",
-          "label": "인스타그램 링크",
-          "type": "url",
-          "default": "#",
-          "placeholder": "인스타그램 URL",
-          "showWhen": "showInstagram"
         },
         {
           "key": "showKakao",

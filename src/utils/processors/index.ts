@@ -484,6 +484,9 @@ export const footerSnsProcessor: ContentProcessor = (html, properties) => {
   if (properties.showKakao !== true) {
     result = result.replace(/<!-- 카카오톡 -->.*?<!-- \/\/카카오톡 -->/gs, '')
   }
+  if (properties.showX !== true) {
+    result = result.replace(/<!-- X\(트위터\) -->.*?<!-- \/\/X\(트위터\) -->/gs, '')
+  }
 
   return result
 }
