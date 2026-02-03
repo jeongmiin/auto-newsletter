@@ -20,29 +20,31 @@ window.addEventListener('error', (event) => {
   console.error('[Global] Message:', event.message)
 })
 
-// Fetch 요청 로깅 (디버깅용)
-const originalFetch = window.fetch
-window.fetch = async (...args: Parameters<typeof fetch>) => {
-  const firstArg = args[0]
-  const url =
-    typeof firstArg === 'string'
-      ? firstArg
-      : firstArg instanceof Request
-        ? firstArg.url
-        : String(firstArg)
-  console.log('[Fetch] Request:', url)
+// Fetch 요청 로깅 (개발 환경에서만 실행)
+if (import.meta.env.DEV) {
+  const originalFetch = window.fetch
+  window.fetch = async (...args: Parameters<typeof fetch>) => {
+    const firstArg = args[0]
+    const url =
+      typeof firstArg === 'string'
+        ? firstArg
+        : firstArg instanceof Request
+          ? firstArg.url
+          : String(firstArg)
+    console.log('[Fetch] Request:', url)
 
-  try {
-    const response = await originalFetch(...args)
-    if (!response.ok) {
-      console.error('[Fetch] Failed:', url, 'Status:', response.status, response.statusText)
-    } else {
-      console.log('[Fetch] Success:', url, 'Status:', response.status)
+    try {
+      const response = await originalFetch(...args)
+      if (!response.ok) {
+        console.error('[Fetch] Failed:', url, 'Status:', response.status, response.statusText)
+      } else {
+        console.log('[Fetch] Success:', url, 'Status:', response.status)
+      }
+      return response
+    } catch (error) {
+      console.error('[Fetch] Error:', url, error)
+      throw error
     }
-    return response
-  } catch (error) {
-    console.error('[Fetch] Error:', url, error)
-    throw error
   }
 }
 

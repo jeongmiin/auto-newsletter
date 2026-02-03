@@ -9,6 +9,13 @@
       "htmlFile": "ModuleNewsHeader.html",
       "editableProps": [
         {
+          "key": "tableSummary",
+          "label": "전체 테이블 요약 (접근성)",
+          "type": "text",
+          "default": "전시 뉴스레터 입니다.",
+          "placeholder": "스크린 리더용 테이블 설명"
+        },
+        {
           "key": "logoImageUrl",
           "label": "로고 이미지 URL",
           "type": "url",
@@ -50,13 +57,7 @@
           "key": "webViewText",
           "label": "웹으로 보기 텍스트",
           "type": "text",
-          "default": "웹으로 보기"
-        },
-        {
-          "key": "webViewIcon",
-          "label": "웹으로 보기 아이콘",
-          "type": "text",
-          "default": "👀"
+          "default": "👀 웹으로 보기"
         },
         {
           "key": "webViewUrl",
@@ -70,13 +71,6 @@
           "label": "웹으로 보기 링크 색상",
           "type": "text",
           "default": "#333333"
-        },
-        {
-          "key": "tableSummary",
-          "label": "테이블 요약 (접근성)",
-          "type": "text",
-          "default": "뉴스레터 입니다.",
-          "placeholder": "스크린 리더용 테이블 설명"
         }
       ]
     },
@@ -88,6 +82,13 @@
       "icon": "pi pi-home",
       "htmlFile": "ModuleBasicHeader.html",
       "editableProps": [
+        {
+          "key": "tableSummary",
+          "label": "전체 테이블 요약 (접근성)",
+          "type": "text",
+          "default": "전시 뉴스레터 입니다.",
+          "placeholder": "스크린 리더용 테이블 설명"
+        },
         {
           "key": "logoImageUrl",
           "label": "로고 이미지 URL",
@@ -138,13 +139,6 @@
           "label": "헤더 텍스트 색상",
           "type": "color",
           "default": "#111111"
-        },
-        {
-          "key": "tableSummary",
-          "label": "테이블 요약 (접근성)",
-          "type": "text",
-          "default": "뉴스레터 입니다.",
-          "placeholder": "스크린 리더용 테이블 설명"
         }
       ]
     },

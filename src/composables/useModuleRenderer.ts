@@ -2,6 +2,7 @@ import { ref, watch, onMounted, onUnmounted, computed } from 'vue'
 import type { ModuleInstance, ModuleMetadata } from '@/types'
 import { useModuleStore } from '@/stores/moduleStore'
 import { applyStylesToHtml } from '@/utils/htmlUtils'
+import { sanitizeHtml } from '@/utils/sanitize'
 import {
   replaceModuleBasicHeaderContent,
   replaceModuleDescTextContent,
@@ -169,7 +170,8 @@ export function useModuleRenderer(moduleId: string) {
         html = applyStylesToHtml(html, module.styles as Record<string, unknown>)
       }
 
-      renderedHtml.value = html
+      // XSS 방어: HTML 정제 후 렌더링
+      renderedHtml.value = sanitizeHtml(html)
       isLoading.value = false
     } catch (error) {
       isLoading.value = false

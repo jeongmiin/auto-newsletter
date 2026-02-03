@@ -18,7 +18,6 @@ export const moduleNewsHeaderConfig: ModuleConfig = {
     headerTitle: 'NEWSLETTER VOL.1',
     titleColor: '#333333',
     webViewText: '웹으로 보기',
-    webViewIcon: '👀',
     webViewUrl: '#',
     webViewColor: '#333333',
     tableSummary: '뉴스레터 입니다.',
