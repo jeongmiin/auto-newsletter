@@ -567,7 +567,7 @@
                   <Button
                     @click="addTableColumn"
                     icon="pi pi-arrows-h"
-                    severity="secondary"
+                    severity="contrast"
                     text
                     size="small"
                     v-tooltip.top="'열 추가'"
@@ -575,7 +575,7 @@
                   <Button
                     @click="addTableRow"
                     icon="pi pi-arrows-v"
-                    severity="secondary"
+                    severity="contrast"
                     text
                     size="small"
                     v-tooltip.top="'행 추가'"
@@ -781,7 +781,7 @@
       </div>
 
         <!-- 모듈 제거 버튼 -->
-        <div class="p-4 border-t">
+        <div class="p-4 border-t pb-10">
           <Button
             @click="removeModule"
             label="모듈 삭제"

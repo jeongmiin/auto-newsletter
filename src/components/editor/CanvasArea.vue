@@ -1,5 +1,5 @@
 <template>
-  <div class="flex-1 bg-gray-100 p-8 pb-30 overflow-auto">
+  <div class="flex-1 bg-gray-100 p-8 pb-32 overflow-auto">
     <div class="flex justify-center">
       <!-- 캔버스 컨테이너 -->
       <div

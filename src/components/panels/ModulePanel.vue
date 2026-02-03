@@ -23,7 +23,7 @@
     </div>
 
     <!-- 모듈 리스트 -->
-    <div class="flex-1 overflow-y-auto p-4">
+    <div class="flex-1 overflow-y-auto p-4 pb-10">
       <div class="space-y-2">
         <div
           v-for="module in filteredModules"

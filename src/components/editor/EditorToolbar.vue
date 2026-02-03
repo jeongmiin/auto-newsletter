@@ -4,16 +4,6 @@
     <div class="flex items-center gap-2">
       <span class="text-sm text-gray-600">화면 크기:</span>
       <Button
-        @click="setCanvasWidth('mobile')"
-        label="모바일"
-        icon="pi pi-mobile"
-        severity="contrast"
-        :outlined="canvasWidth !== 'mobile'"
-        :text="canvasWidth !== 'mobile'"
-        size="small"
-        v-tooltip.bottom="'모바일 화면에서 어떻게 보이는지 확인'"
-      />
-      <Button
         @click="setCanvasWidth('desktop')"
         label="PC"
         icon="pi pi-desktop"
@@ -23,6 +13,17 @@
         size="small"
         v-tooltip.bottom="'PC 화면에서 어떻게 보이는지 확인'"
       />
+      <Button
+        @click="setCanvasWidth('mobile')"
+        label="모바일"
+        icon="pi pi-mobile"
+        severity="contrast"
+        :outlined="canvasWidth !== 'mobile'"
+        :text="canvasWidth !== 'mobile'"
+        size="small"
+        v-tooltip.bottom="'모바일 화면에서 어떻게 보이는지 확인'"
+      />
+
     </div>
 
     <!-- 전체 삭제 -->
