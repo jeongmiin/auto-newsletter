@@ -218,7 +218,7 @@
           "key": "cellBorderColor",
           "label": "셀 테두리 색상",
           "type": "text",
-          "default": "#a7a7a7"
+          "default": "#dddddd"
         },
         {
           "key": "headerBgColor",
@@ -236,7 +236,7 @@
     },
     {
       "id": "ModuleImg",
-      "name": "이미지",
+      "name": "단일 이미지",
       "description": "단일 이미지 블록",
       "category": "image",
       "icon": "pi pi-image",
@@ -395,7 +395,7 @@
     },
     {
       "id": "ModuleTwoButton",
-      "name": "2개 버튼",
+      "name": "복수 버튼",
       "description": "두 개의 버튼이 나란히 있는 블록",
       "category": "button",
       "icon": "pi pi-stop",
@@ -621,8 +621,8 @@
     },
     {
       "id": "ModuleDivider",
-      "name": "구분선",
-      "description": "콘텐츠 사이에 구분선을 추가합니다",
+      "name": "구분선, 여백",
+      "description": "콘텐츠 사이에 구분선과 여백 추가",
       "category": "common",
       "icon": "pi pi-minus",
       "htmlFile": "ModuleDivider.html",
@@ -851,7 +851,7 @@
           "key": "showButton",
           "label": "버튼 표시",
           "type": "boolean",
-          "default": false
+          "default": true
         },
         {
           "key": "buttonText",
@@ -935,7 +935,7 @@
           "key": "showLeftSmallBtn1",
           "label": "왼쪽 작은 버튼 1 표시",
           "type": "boolean",
-          "default": false
+          "default": true
         },
         {
           "key": "leftSmallBtn1Text",
@@ -1144,7 +1144,7 @@
           "key": "showRightSmallBtn1",
           "label": "오른쪽 작은 버튼 1 표시",
           "type": "boolean",
-          "default": false
+          "default": true
         },
         {
           "key": "rightSmallBtn1Text",
@@ -1404,7 +1404,7 @@
           "key": "showButton2",
           "label": "버튼 2 표시",
           "type": "boolean",
-          "default": true
+          "default": false
         },
         {
           "key": "button2Text",
@@ -1580,7 +1580,7 @@
           "key": "showButton1",
           "label": "버튼 1 표시",
           "type": "boolean",
-          "default": false
+          "default": true
         },
         {
           "key": "button1Text",
@@ -1796,7 +1796,7 @@
           "key": "showSmallBtn1",
           "label": "작은 버튼 1 표시",
           "type": "boolean",
-          "default": false
+          "default": true
         },
         {
           "key": "smallBtn1Text",
@@ -2033,7 +2033,7 @@
           "key": "showLeftButton1",
           "label": "왼쪽 버튼 1 표시",
           "type": "boolean",
-          "default": false
+          "default": true
         },
         {
           "key": "leftButton1Text",
@@ -2226,7 +2226,7 @@
           "key": "showRightButton1",
           "label": "오른쪽 버튼 1 표시",
           "type": "boolean",
-          "default": false
+          "default": true
         },
         {
           "key": "rightButton1Text",
@@ -2453,7 +2453,7 @@
     },
     {
       "id": "Module07_reverse",
-      "name": "07-reverse",
+      "name": "07(반대 방향)",
       "description": "텍스트/버튼 왼쪽 + 이미지 오른쪽",
       "category": "image",
       "icon": "pi pi-th-large",
@@ -2544,7 +2544,7 @@
     },
     {
       "id": "ModuleSubTitle",
-      "name": "(모듈10번) 서브 타이틀",
+      "name": "모듈10번 타이틀",
       "description": "섹션 구분 서브타이틀",
       "category": "text",
       "icon": "pi pi-align-left",

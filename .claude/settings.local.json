@@ -4,7 +4,10 @@
       "Bash(npm run build:*)",
       "Bash(ls:*)",
       "Bash(curl:*)",
-      "Bash(pkill:*)"
+      "Bash(pkill:*)",
+      "Bash(npm run test:run:*)",
+      "Bash(xargs:*)",
+      "Bash(find:*)"
     ]
   }
 }

@@ -265,7 +265,7 @@ export function replaceModuleTableContent(
         const style = [
           `font-size:14px`,
           `font-weight:${fontWeight}`,
-          `border-bottom:1px ${cellBorderColor} solid`,
+          `border:1px ${cellBorderColor} solid`,
           `background:${bgColor}`,
           `bgcolor:${bgColor}`,
           `text-align:${textAlign}`,

@@ -217,22 +217,6 @@ const downloadHtmlFile = async (): Promise<void> => {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Newsletter</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      background-color: #f5f5f5;
-    }
-    p, h1, h2, h3 { margin: 0; padding: 0; }
-    h1 { font-size: 2em; font-weight: bold; }
-    h2 { font-size: 1.5em; font-weight: bold; }
-    h3 { font-size: 1.17em; font-weight: bold; }
-    strong { font-weight: 700; }
-    em { font-style: italic; }
-    a { color: #0066cc; text-decoration: underline; }
-  </style>
 </head>
 <body>
 ${finalHtml}

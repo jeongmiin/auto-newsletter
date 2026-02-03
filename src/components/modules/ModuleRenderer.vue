@@ -224,6 +224,7 @@ const { renderedHtml, moduleMetadata, isLoading } = useModuleRenderer(props.modu
   color: #0066cc;
   font-weight: 600;
   text-decoration: underline;
+  pointer-events: none; /* 캔버스에서 링크 클릭 방지 */
 }
 
 /* 헤더 크기 설정 (margin은 위의 통합 규칙에서 0으로 설정됨) */
