@@ -7,7 +7,12 @@
       "Bash(pkill:*)",
       "Bash(npm run test:run:*)",
       "Bash(xargs:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(npm run build-only:*)",
+      "Bash(npm run type-check:*)",
+      "Bash(npm install:*)",
+      "Bash(timeout /t 3 /nobreak)",
+      "Bash(npm run dev:*)"
     ]
   }
 }

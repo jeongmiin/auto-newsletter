@@ -49,13 +49,20 @@ export function removeSubTitleDiv(html: string): string {
 /**
  * 동적 테이블 행 HTML 생성
  */
+/**
+ * HTML 특수문자 이스케이프 (테이블 콘텐츠용)
+ */
+function escapeForHtml(text: string): string {
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+}
+
 export function generateTableRowsHtml(rows: TableRow[]): string {
   return rows
     .map(
       (row) => `
             <tr>
-              <th scope="row" style="font-size:14px; font-weight:400; border-bottom:1px #a7a7a7 solid; background:#f6f6f6; bgcolor: #f6f6f6; text-align:center; color:#333333; letter-spacing:-0.03em; line-height:2em; font-family:AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif; word-break:keep-all;" width="20%"><strong>${formatTextWithBreaks(row.header || '')}</strong></th>
-              <td style="font-size:14px; font-weight:400; border-bottom:1px #a7a7a7 solid; background:#ffffff; bgcolor: #ffffff; text-align:left; word-break:keep-all; color:#333333; padding-left:10px; letter-spacing:-0.03em; line-height:2em; font-family:AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif; box-sizing: border-box;" width="80%">${formatTextWithBreaks(row.data || '')}</td>
+              <th scope="row" style="font-size:14px; font-weight:400; border-bottom:1px #a7a7a7 solid; background:#f6f6f6; bgcolor: #f6f6f6; text-align:center; color:#333333; letter-spacing:-0.03em; line-height:2em; font-family:AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif; word-break:keep-all;" width="20%"><strong>${formatTextWithBreaks(escapeForHtml(row.header || ''))}</strong></th>
+              <td style="font-size:14px; font-weight:400; border-bottom:1px #a7a7a7 solid; background:#ffffff; bgcolor: #ffffff; text-align:left; word-break:keep-all; color:#333333; padding-left:10px; letter-spacing:-0.03em; line-height:2em; font-family:AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif; box-sizing: border-box;" width="80%">${formatTextWithBreaks(escapeForHtml(row.data || ''))}</td>
             </tr>`
     )
     .join('')
@@ -81,15 +88,23 @@ export function applyStylesToHtml(html: string, styles: Record<string, unknown>)
   const cssString = stylesToCssString(styles)
   if (!cssString) return html
 
-  // 첫 번째 table이나 div에 스타일 적용
-  return html.replace(/(<(?:table|div)[^>]*?)>/i, `$1 style="${cssString}">`)
+  // 첫 번째 table이나 div에 스타일 적용 (기존 style 속성이 있으면 병합)
+  return html.replace(/(<(?:table|div)[^>]*?)>/i, (match, tag: string) => {
+    const existingStyleMatch = tag.match(/style="([^"]*)"/)
+    if (existingStyleMatch) {
+      const merged = `${existingStyleMatch[1]}; ${cssString}`
+      return tag.replace(/style="[^"]*"/, `style="${merged}"`) + '>'
+    }
+    return `${tag} style="${cssString}">`
+  })
 }
 
 /**
  * HTML 마커 제거
  */
 export function removeMarker(html: string, marker: string): string {
-  return html.replace(new RegExp(marker, 'g'), '')
+  const escapedMarker = marker.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  return html.replace(new RegExp(escapedMarker, 'g'), '')
 }
 
 /**
@@ -112,5 +127,5 @@ export function replaceSequentially(
  * 고유 ID 생성
  */
 export function generateUniqueId(prefix: string = 'id'): string {
-  return `${prefix}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+  return `${prefix}-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`
 }

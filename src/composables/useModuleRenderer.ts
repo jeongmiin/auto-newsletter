@@ -2,7 +2,7 @@ import { ref, watch, onMounted, onUnmounted, computed } from 'vue'
 import type { ModuleInstance, ModuleMetadata } from '@/types'
 import { useModuleStore } from '@/stores/moduleStore'
 import { applyStylesToHtml } from '@/utils/htmlUtils'
-import { sanitizeHtml } from '@/utils/sanitize'
+import { sanitizeHtml, sanitizeErrorMessage } from '@/utils/sanitize'
 import {
   replaceModuleBasicHeaderContent,
   replaceModuleDescTextContent,
@@ -178,12 +178,15 @@ export function useModuleRenderer(moduleId: string) {
       console.error('[useModuleRenderer] ❌ 모듈 로드 실패:', error)
       const basePath = import.meta.env.BASE_URL || '/'
       const expectedPath = `${basePath}modules/${module.moduleId}.html`.replace(/\/+/g, '/')
+      const safeModuleId = sanitizeErrorMessage(module.moduleId)
+      const safePath = sanitizeErrorMessage(expectedPath)
+      const safeError = sanitizeErrorMessage(error instanceof Error ? error.message : String(error))
       renderedHtml.value = `
         <div class="p-6 text-center bg-red-50 border-2 border-red-300 rounded-lg">
           <div class="text-red-600 font-bold text-lg mb-2">❌ 모듈을 로드할 수 없습니다</div>
-          <div class="text-sm text-gray-600 mb-2">모듈 ID: ${module.moduleId}</div>
-          <div class="text-xs text-gray-500 mb-2">경로: ${expectedPath}</div>
-          <div class="text-xs text-red-500">${error instanceof Error ? error.message : String(error)}</div>
+          <div class="text-sm text-gray-600 mb-2">모듈 ID: ${safeModuleId}</div>
+          <div class="text-xs text-gray-500 mb-2">경로: ${safePath}</div>
+          <div class="text-xs text-red-500">${safeError}</div>
           <div class="mt-4 text-xs text-gray-400">
             💡 개발자 도구(F12) → Console/Network 탭에서 상세 정보를 확인하세요
           </div>

@@ -79,39 +79,40 @@ export const replaceOrRemove = (
   value: unknown,
   fallbackValue: string = ''
 ): string => {
+  const escapedPlaceholder = placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
   if (isEmptyValue(value)) {
     // 빈 값이면 전체 요소 제거 (여러 패턴 시도)
     if (fallbackValue === '') {
       // 1. <strong>{{placeholder}}</strong> 형태
       html = html.replace(
-        new RegExp(`<strong[^>]*>\\s*{{\\s*${placeholder}\\s*}}\\s*</strong>`, 'gi'),
+        new RegExp(`<strong[^>]*>\\s*{{\\s*${escapedPlaceholder}\\s*}}\\s*</strong>`, 'gi'),
         ''
       )
       // 2. <div>{{placeholder}}</div> 형태
       html = html.replace(
-        new RegExp(`<div[^>]*>\\s*{{\\s*${placeholder}\\s*}}\\s*</div>`, 'gi'),
+        new RegExp(`<div[^>]*>\\s*{{\\s*${escapedPlaceholder}\\s*}}\\s*</div>`, 'gi'),
         ''
       )
       // 3. <p>{{placeholder}}</p> 형태
       html = html.replace(
-        new RegExp(`<p[^>]*>\\s*{{\\s*${placeholder}\\s*}}\\s*</p>`, 'gi'),
+        new RegExp(`<p[^>]*>\\s*{{\\s*${escapedPlaceholder}\\s*}}\\s*</p>`, 'gi'),
         ''
       )
       // 4. <h1-6>{{placeholder}}</h1-6> 형태
       html = html.replace(
-        new RegExp(`<h[1-6][^>]*>\\s*{{\\s*${placeholder}\\s*}}\\s*</h[1-6]>`, 'gi'),
+        new RegExp(`<h[1-6][^>]*>\\s*{{\\s*${escapedPlaceholder}\\s*}}\\s*</h[1-6]>`, 'gi'),
         ''
       )
       // 5. 플레이스홀더만 제거
-      html = html.replace(new RegExp(`{{\\s*${placeholder}\\s*}}`, 'g'), '')
+      html = html.replace(new RegExp(`{{\\s*${escapedPlaceholder}\\s*}}`, 'g'), '')
     } else {
       // 기본값으로 치환
-      html = html.replace(new RegExp(`{{\\s*${placeholder}\\s*}}`, 'g'), fallbackValue)
+      html = html.replace(new RegExp(`{{\\s*${escapedPlaceholder}\\s*}}`, 'g'), fallbackValue)
     }
   } else {
     // 값으로 치환
     const formattedValue = typeof value === 'string' ? safeFormatText(value) : String(value)
-    html = html.replace(new RegExp(`{{\\s*${placeholder}\\s*}}`, 'g'), formattedValue)
+    html = html.replace(new RegExp(`{{\\s*${escapedPlaceholder}\\s*}}`, 'g'), formattedValue)
   }
   return html
 }

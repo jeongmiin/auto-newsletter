@@ -88,8 +88,26 @@ export function useKeyboardShortcuts() {
       return
     }
 
-    // 방향키 위/아래: 모듈 선택 이동 (입력 필드 외부에서만)
-    if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && !isInputField) {
+    // Ctrl+Shift+위/아래: 모듈 순서 이동 (입력 필드 외부에서만) — 반드시 일반 방향키보다 먼저 체크
+    if (
+      event.ctrlKey &&
+      event.shiftKey &&
+      (event.key === 'ArrowUp' || event.key === 'ArrowDown') &&
+      !isInputField
+    ) {
+      if (moduleStore.selectedModuleId) {
+        event.preventDefault()
+        if (event.key === 'ArrowUp') {
+          moduleStore.moveModuleUp(moduleStore.selectedModuleId)
+        } else {
+          moduleStore.moveModuleDown(moduleStore.selectedModuleId)
+        }
+      }
+      return
+    }
+
+    // 방향키 위/아래: 모듈 선택 이동 (입력 필드 외부에서만, Ctrl/Shift 없이)
+    if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && !isInputField && !event.ctrlKey && !event.shiftKey) {
       const modules = moduleStore.modules
       if (modules.length === 0) return
 
@@ -108,24 +126,6 @@ export function useKeyboardShortcuts() {
           moduleStore.selectModule(modules[currentIndex + 1].id)
         } else if (currentIndex === -1) {
           moduleStore.selectModule(modules[0].id)
-        }
-      }
-      return
-    }
-
-    // Ctrl+Shift+위/아래: 모듈 순서 이동 (입력 필드 외부에서만)
-    if (
-      event.ctrlKey &&
-      event.shiftKey &&
-      (event.key === 'ArrowUp' || event.key === 'ArrowDown') &&
-      !isInputField
-    ) {
-      if (moduleStore.selectedModuleId) {
-        event.preventDefault()
-        if (event.key === 'ArrowUp') {
-          moduleStore.moveModuleUp(moduleStore.selectedModuleId)
-        } else {
-          moduleStore.moveModuleDown(moduleStore.selectedModuleId)
         }
       }
       return

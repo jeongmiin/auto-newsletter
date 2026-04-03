@@ -992,7 +992,7 @@ const removeContentText = (textId: string) => {
 const getAdditionalContents = (propertyKey: string) => {
   if (!selectedModule.value?.properties[propertyKey]) return []
   const contents = selectedModule.value.properties[propertyKey] as AdditionalContent[]
-  return contents.sort((a, b) => a.order - b.order)
+  return [...contents].sort((a, b) => a.order - b.order)
 }
 
 const addNewAdditionalContent = async (type: 'title' | 'text', propertyKey: string) => {

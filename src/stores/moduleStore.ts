@@ -151,6 +151,8 @@ export const useModuleStore = defineStore('module', () => {
   const updateModuleStyle = (styleKey: string, value: unknown): void => {
     if (!selectedModule.value) return
     ;(selectedModule.value.styles as Record<string, unknown>)[styleKey] = value
+    triggerRef(modules)
+    isDirty.value = true
   }
 
   /**
@@ -282,6 +284,8 @@ export const useModuleStore = defineStore('module', () => {
     const row = (module.properties.tableRows as TableRow[]).find((r: TableRow) => r.id === rowId)
     if (row) {
       row[field] = value
+      triggerRef(modules)
+      isDirty.value = true
     }
   }
 
@@ -294,6 +298,8 @@ export const useModuleStore = defineStore('module', () => {
     )
     if (index !== -1) {
       ;(module.properties.tableRows as TableRow[]).splice(index, 1)
+      triggerRef(modules)
+      isDirty.value = true
     }
   }
 
@@ -633,6 +639,8 @@ export const useModuleStore = defineStore('module', () => {
     }
 
     ;(module.properties.contentTitles as ContentTitle[]).push(newTitle)
+    triggerRef(modules)
+    isDirty.value = true
   }
 
   const updateContentTitle = (moduleId: string, titleId: string, text: string): void => {
@@ -644,6 +652,8 @@ export const useModuleStore = defineStore('module', () => {
     )
     if (title) {
       title.text = text
+      triggerRef(modules)
+      isDirty.value = true
     }
   }
 
@@ -656,6 +666,8 @@ export const useModuleStore = defineStore('module', () => {
     )
     if (index !== -1) {
       ;(module.properties.contentTitles as ContentTitle[]).splice(index, 1)
+      triggerRef(modules)
+      isDirty.value = true
     }
   }
 
@@ -674,6 +686,8 @@ export const useModuleStore = defineStore('module', () => {
     }
 
     ;(module.properties.contentTexts as ContentText[]).push(newText)
+    triggerRef(modules)
+    isDirty.value = true
   }
 
   const updateContentText = (moduleId: string, textId: string, content: string): void => {
@@ -685,6 +699,8 @@ export const useModuleStore = defineStore('module', () => {
     )
     if (text) {
       text.content = content
+      triggerRef(modules)
+      isDirty.value = true
     }
   }
 
@@ -697,6 +713,8 @@ export const useModuleStore = defineStore('module', () => {
     )
     if (index !== -1) {
       ;(module.properties.contentTexts as ContentText[]).splice(index, 1)
+      triggerRef(modules)
+      isDirty.value = true
     }
   }
 
@@ -751,6 +769,8 @@ export const useModuleStore = defineStore('module', () => {
     }
 
     ;(module.properties[propertyKey] as AdditionalContent[]).push(newContent)
+    triggerRef(modules)
+    isDirty.value = true
   }
 
   const updateAdditionalContent = (
@@ -767,6 +787,8 @@ export const useModuleStore = defineStore('module', () => {
     )
     if (content) {
       content.data = { ...content.data, ...data }
+      triggerRef(modules)
+      isDirty.value = true
     }
   }
 
@@ -784,11 +806,12 @@ export const useModuleStore = defineStore('module', () => {
     if (index !== -1) {
       ;(module.properties[propertyKey] as AdditionalContent[]).splice(index, 1)
       const contents = module.properties[propertyKey] as AdditionalContent[]
-      contents
-        .sort((a, b) => a.order - b.order)
-        .forEach((content, idx) => {
-          content.order = idx + 1
-        })
+      contents.sort((a, b) => a.order - b.order)
+      contents.forEach((content, idx) => {
+        content.order = idx + 1
+      })
+      triggerRef(modules)
+      isDirty.value = true
     }
   }
 
@@ -803,12 +826,17 @@ export const useModuleStore = defineStore('module', () => {
     const contents = module.properties[propertyKey] as AdditionalContent[]
     const index = contents.findIndex((c: AdditionalContent) => c.id === contentId)
     if (index > 0) {
-      ;[contents[index], contents[index - 1]] = [contents[index - 1], contents[index]]
-      contents
-        .sort((a, b) => a.order - b.order)
-        .forEach((content, idx) => {
-          content.order = idx + 1
-        })
+      // swap order values
+      const tempOrder = contents[index].order
+      contents[index].order = contents[index - 1].order
+      contents[index - 1].order = tempOrder
+      // re-sort by order and re-assign sequential order
+      contents.sort((a, b) => a.order - b.order)
+      contents.forEach((content, idx) => {
+        content.order = idx + 1
+      })
+      triggerRef(modules)
+      isDirty.value = true
     }
   }
 
@@ -823,12 +851,17 @@ export const useModuleStore = defineStore('module', () => {
     const contents = module.properties[propertyKey] as AdditionalContent[]
     const index = contents.findIndex((c: AdditionalContent) => c.id === contentId)
     if (index < contents.length - 1) {
-      ;[contents[index], contents[index + 1]] = [contents[index + 1], contents[index]]
-      contents
-        .sort((a, b) => a.order - b.order)
-        .forEach((content, idx) => {
-          content.order = idx + 1
-        })
+      // swap order values
+      const tempOrder = contents[index].order
+      contents[index].order = contents[index + 1].order
+      contents[index + 1].order = tempOrder
+      // re-sort by order and re-assign sequential order
+      contents.sort((a, b) => a.order - b.order)
+      contents.forEach((content, idx) => {
+        content.order = idx + 1
+      })
+      triggerRef(modules)
+      isDirty.value = true
     }
   }
 
@@ -838,7 +871,8 @@ export const useModuleStore = defineStore('module', () => {
   const applyDataToTemplate = (htmlTemplate: string, data: Record<string, string>): string => {
     let result = htmlTemplate
     Object.entries(data).forEach(([key, value]) => {
-      const placeholder = new RegExp(`{{\s*${key}\s*}}`, 'g')
+      const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      const placeholder = new RegExp(`\\{\\{\\s*${escapedKey}\\s*\\}\\}`, 'g')
       result = result.replace(placeholder, formatTextWithBreaks(value))
     })
     return result
@@ -856,7 +890,7 @@ export const useModuleStore = defineStore('module', () => {
       return baseHtml.replace(insertMarker, '')
     }
 
-    const sortedContents = contents.sort((a, b) => a.order - b.order)
+    const sortedContents = [...contents].sort((a, b) => a.order - b.order)
     const insertHtmlPromises = sortedContents.map(async (content) => {
       const template = await loadContentTemplate(content.type)
       return applyDataToTemplate(template, content.data)
@@ -957,7 +991,7 @@ export const useModuleStore = defineStore('module', () => {
     let fullHtml = ''
     const basePath = import.meta.env.BASE_URL || '/'
 
-    for (const module of modules.value.sort((a, b) => a.order - b.order)) {
+    for (const module of [...modules.value].sort((a, b) => a.order - b.order)) {
       try {
         const modulePath = normalizePath(`${basePath}modules/${module.moduleId}.html`)
 
@@ -1052,7 +1086,7 @@ export const useModuleStore = defineStore('module', () => {
           props[prop.key] = []
           break
         default:
-          props[prop.key] = prop.placeholder || ''
+          props[prop.key] = ''
       }
     })
     return props

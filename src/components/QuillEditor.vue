@@ -143,6 +143,9 @@ watch(
 )
 
 onBeforeUnmount(() => {
+  if (quill) {
+    quill.off('text-change')
+  }
   quill = null
 })
 </script>

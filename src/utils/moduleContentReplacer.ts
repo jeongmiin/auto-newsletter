@@ -283,7 +283,8 @@ export function replaceModuleTableContent(
         const rowspanAttr = cell.rowspan > 1 ? ` rowspan="${cell.rowspan}"` : ''
         const widthAttr = cell.width ? ` width="${cell.width}"` : ''
 
-        return `<${tag}${colspanAttr}${rowspanAttr}${widthAttr} style="${style}">${cell.content || ''}</${tag}>`
+        const safeContent = (cell.content || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        return `<${tag}${colspanAttr}${rowspanAttr}${widthAttr} style="${style}">${safeContent}</${tag}>`
       })
       .join('\n              ')
 

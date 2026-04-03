@@ -79,8 +79,10 @@ export function normalizeColorInput(color: string): string {
     normalized = '#' + normalized
   }
 
-  // 유효한 문자만 허용 (0-9, A-F, a-f)
+  // 유효한 문자만 허용 (0-9, A-F, a-f), # 는 선두 하나만 유지
   normalized = normalized.replace(/[^#0-9A-Fa-f]/g, '')
+  const hexPart = normalized.replace(/#/g, '')
+  normalized = '#' + hexPart
 
   // 길이 제한 (# + 6자리)
   if (normalized.length > 7) {

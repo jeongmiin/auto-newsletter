@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue'
+import { ref, watch, computed, onScopeDispose } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useModuleStore } from '@/stores/moduleStore'
 import type { ModuleInstance } from '@/types'
@@ -42,10 +42,10 @@ export function useHistory() {
     modules.value.splice(0, modules.value.length, ...snapshot.modules)
     selectedModuleId.value = snapshot.selectedModuleId
 
-    // 다음 틱에서 플래그 해제
+    // debounce 시간(300ms)보다 길게 대기하여 watcher가 이 변경을 무시하도록 함
     setTimeout(() => {
       isApplyingHistory.value = false
-    }, 0)
+    }, 400)
   }
 
   /**
@@ -109,13 +109,13 @@ export function useHistory() {
   /**
    * 실행 취소/다시 실행 가능 여부
    */
-  const canUndo = () => undoStack.value.length > 0
-  const canRedo = () => redoStack.value.length > 0
+  const canUndo = computed(() => undoStack.value.length > 0)
+  const canRedo = computed(() => redoStack.value.length > 0)
 
   // 모듈 변경 감시 (자동 저장)
   let debounceTimer: ReturnType<typeof setTimeout> | null = null
 
-  watch(
+  const stopWatcher = watch(
     modules,
     () => {
       if (isApplyingHistory.value) return
@@ -128,6 +128,15 @@ export function useHistory() {
     },
     { deep: true }
   )
+
+  // 클린업: watcher와 타이머 정리
+  onScopeDispose(() => {
+    stopWatcher()
+    if (debounceTimer) {
+      clearTimeout(debounceTimer)
+      debounceTimer = null
+    }
+  })
 
   // 초기 상태 저장
   if (modules.value.length > 0) {
