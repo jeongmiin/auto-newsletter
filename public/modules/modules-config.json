@@ -153,15 +153,17 @@
         {
           "key": "mainTitle",
           "label": "메인 타이틀",
-          "type": "text",
-          "placeholder": "모듈 섹션 타이틀 영역",
+          "type": "textarea",
+          "default": "섹션 타이틀",
+          "placeholder": "메인 타이틀을 입력하세요",
           "required": true
         },
         {
           "key": "subTitle",
           "label": "서브 타이틀",
           "type": "textarea",
-          "placeholder": "서브 타이틀 영역\n여러 줄 입력 가능"
+          "default": "서브 타이틀 영역입니다",
+          "placeholder": "서브 타이틀을 입력하세요"
         }
       ]
     },

@@ -74,7 +74,6 @@ const confirmClearAll = (): void => {
   confirm.require({
     message: `현재 ${moduleStore.modules.length}개의 모듈이 있습니다. 모두 삭제하시겠습니까?`,
     header: '전체 삭제 확인',
-    icon: 'pi pi-exclamation-triangle',
     rejectLabel: '취소',
     acceptLabel: '삭제',
     rejectClass: 'p-button-secondary',

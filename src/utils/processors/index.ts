@@ -28,6 +28,34 @@ export const removeEmptySubTitleProcessor: ContentProcessor = (html, properties)
 }
 
 /**
+ * SectionTitle 정렬 프로세서
+ * 속성 패널의 titleAlign 셀렉트가 정렬의 단일 제어권을 가짐
+ * Quill의 text-align이 있더라도 셀렉트 값으로 덮어씀
+ */
+export const sectionTitleAlignProcessor: ContentProcessor = (html, properties) => {
+  const align = typeof properties.titleAlign === 'string' ? properties.titleAlign : 'center'
+
+  // 1. style 속성이 있는 태그: 기존 text-align 제거 후 셀렉트 값으로 교체
+  let result = html.replace(
+    /<(p|h[1-3])(\s[^>]*)style="([^"]*)"/g,
+    (_match, tag: string, before: string, style: string) => {
+      const cleaned = style.replace(/;\s*text-align:\s*[^;"]*/g, '').replace(/text-align:\s*[^;"]*/g, '')
+      return `<${tag}${before}style="${cleaned}; text-align: ${align}"`
+    }
+  )
+
+  // 2. style 속성이 없는 태그: style 추가
+  result = result.replace(
+    /<(p|h[1-3])(?![^>]*style=)([^>]*)>/g,
+    (_match, tag: string, attrs: string) => {
+      return `<${tag}${attrs} style="text-align: ${align}">`
+    }
+  )
+
+  return result
+}
+
+/**
  * 테이블 제거 프로세서 (showTable 플래그 확인)
  */
 export const removeTableProcessor: ContentProcessor = (html, properties) => {

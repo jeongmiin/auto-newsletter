@@ -93,6 +93,11 @@ export const moduleTwoButtonConfig: ModuleConfig = {
  * SectionTitle 설정
  */
 export const sectionTitleConfig: ModuleConfig = {
+  quillFields: ['mainTitle', 'subTitle'],
+  defaults: {
+    mainTitle: '섹션 타이틀',
+    subTitle: '서브 타이틀 영역입니다',
+  },
   processors: [processors.removeEmptySubTitleProcessor],
 }
 

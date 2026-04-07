@@ -5,7 +5,12 @@ export default {
     fontFamily: {
       sans: ['Pretendard Variable', 'Pretendard', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
     },
-    extend: {},
+    extend: {
+      fontSize: {
+        '2xs': '0.625rem',
+        '3xs': '0.5rem',
+      },
+    },
   },
   plugins: [],
 }
