@@ -140,7 +140,7 @@
         <div
           v-for="(prop, index) in editableProps"
           :key="prop.key"
-          v-show="!prop.showWhen || selectedModule.properties[prop.showWhen] === true"
+          v-show="evalShowWhen(prop.showWhen)"
           :class="{ 'pt-4 border-t border-gray-100': index > 0 && !prop.showWhen }"
         >
           <label
@@ -810,6 +810,24 @@ const editorStore = useEditorStore()
 const selectedModule = computed(() => moduleStore.selectedModule)
 const selectedModuleMetadata = computed(() => moduleStore.selectedModuleMetadata)
 const editableProps = computed(() => selectedModuleMetadata.value?.editableProps || [])
+
+// 조건부 표시 평가
+const evalShowWhen = (showWhen: unknown): boolean => {
+  if (!showWhen) return true
+  if (!selectedModule.value) return true
+  const props = selectedModule.value.properties
+  if (typeof showWhen === 'string') {
+    return props[showWhen] === true
+  }
+  if (typeof showWhen === 'object' && showWhen !== null && 'key' in showWhen) {
+    const cond = showWhen as { key: string; equals?: unknown; notEquals?: unknown }
+    const value = props[cond.key]
+    if ('equals' in cond) return value === cond.equals
+    if ('notEquals' in cond) return value !== cond.notEquals
+    return value === true
+  }
+  return true
+}
 
 // 공통 속성 패널 열림 상태
 const isGlobalSettingsOpen = ref(false)

@@ -18,7 +18,8 @@ export interface EditableProp {
   required?: boolean
   default?: string | number | boolean | TableCell[][]  // default 값 지원 (테이블 셀 포함)
   defaultRows?: TableRow[]
-  showWhen?: string  // 조건부 표시를 위한 필드
+  // 조건부 표시: 문자열은 boolean 필드 키 (=== true), 객체는 값 비교
+  showWhen?: string | { key: string; equals?: unknown; notEquals?: unknown }
 }
 
 export interface ModuleStyles {

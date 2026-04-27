@@ -195,8 +195,7 @@
         {
           "key": "tableCells",
           "label": "테이블 편집",
-          "type": "table-editor",
-          "default": []
+          "type": "table-editor"
         },
         {
           "key": "borderTopWidth",
@@ -386,6 +385,40 @@
           "label": "버튼 글자색",
           "type": "text",
           "default": "#ffffff"
+        },
+        {
+          "key": "buttonBorderStyle",
+          "label": "버튼 테두리 스타일",
+          "type": "select",
+          "default": "none",
+          "options": [
+            { "label": "없음", "value": "none" },
+            { "label": "실선", "value": "solid" },
+            { "label": "점선", "value": "dashed" },
+            { "label": "점", "value": "dotted" }
+          ]
+        },
+        {
+          "key": "buttonBorderWidth",
+          "label": "버튼 테두리 두께",
+          "type": "text",
+          "default": "1px",
+          "placeholder": "예: 1px",
+          "showWhen": { "key": "buttonBorderStyle", "notEquals": "none" }
+        },
+        {
+          "key": "buttonBorderColor",
+          "label": "버튼 테두리 색상",
+          "type": "text",
+          "default": "#000000",
+          "showWhen": { "key": "buttonBorderStyle", "notEquals": "none" }
+        },
+        {
+          "key": "buttonBorderRadius",
+          "label": "버튼 모서리 둥글기",
+          "type": "text",
+          "default": "5px",
+          "placeholder": "예: 5px, 50%"
         }
       ]
     },
@@ -424,6 +457,40 @@
           "default": "#ffffff"
         },
         {
+          "key": "button1BorderStyle",
+          "label": "첫 번째 버튼 테두리 스타일",
+          "type": "select",
+          "default": "none",
+          "options": [
+            { "label": "없음", "value": "none" },
+            { "label": "실선", "value": "solid" },
+            { "label": "점선", "value": "dashed" },
+            { "label": "점", "value": "dotted" }
+          ]
+        },
+        {
+          "key": "button1BorderWidth",
+          "label": "첫 번째 버튼 테두리 두께",
+          "type": "text",
+          "default": "1px",
+          "placeholder": "예: 1px",
+          "showWhen": { "key": "button1BorderStyle", "notEquals": "none" }
+        },
+        {
+          "key": "button1BorderColor",
+          "label": "첫 번째 버튼 테두리 색상",
+          "type": "text",
+          "default": "#000000",
+          "showWhen": { "key": "button1BorderStyle", "notEquals": "none" }
+        },
+        {
+          "key": "button1BorderRadius",
+          "label": "첫 번째 버튼 모서리 둥글기",
+          "type": "text",
+          "default": "5px",
+          "placeholder": "예: 5px, 50%"
+        },
+        {
           "key": "button2Text",
           "label": "두 번째 버튼 텍스트",
           "type": "text",
@@ -448,6 +515,40 @@
           "label": "두 번째 버튼 글자색",
           "type": "text",
           "default": "#ffffff"
+        },
+        {
+          "key": "button2BorderStyle",
+          "label": "두 번째 버튼 테두리 스타일",
+          "type": "select",
+          "default": "none",
+          "options": [
+            { "label": "없음", "value": "none" },
+            { "label": "실선", "value": "solid" },
+            { "label": "점선", "value": "dashed" },
+            { "label": "점", "value": "dotted" }
+          ]
+        },
+        {
+          "key": "button2BorderWidth",
+          "label": "두 번째 버튼 테두리 두께",
+          "type": "text",
+          "default": "1px",
+          "placeholder": "예: 1px",
+          "showWhen": { "key": "button2BorderStyle", "notEquals": "none" }
+        },
+        {
+          "key": "button2BorderColor",
+          "label": "두 번째 버튼 테두리 색상",
+          "type": "text",
+          "default": "#000000",
+          "showWhen": { "key": "button2BorderStyle", "notEquals": "none" }
+        },
+        {
+          "key": "button2BorderRadius",
+          "label": "두 번째 버튼 모서리 둥글기",
+          "type": "text",
+          "default": "5px",
+          "placeholder": "예: 5px, 50%"
         }
       ]
     },
@@ -730,6 +831,7 @@
           "key": "leftTitle",
           "label": "타이틀",
           "type": "text",
+          "default": "왼쪽 타이틀",
           "placeholder": "타이틀 영역",
           "required": true
         },
@@ -737,12 +839,14 @@
           "key": "leftContent",
           "label": "콘텐츠 텍스트",
           "type": "textarea",
+          "default": "왼쪽 콘텐츠 텍스트입니다",
           "placeholder": "콘텐츠 텍스트"
         },
         {
           "key": "rightTitle",
           "label": "타이틀",
           "type": "text",
+          "default": "오른쪽 타이틀",
           "placeholder": "타이틀 영역",
           "required": true
         },
@@ -750,6 +854,7 @@
           "key": "rightContent",
           "label": "콘텐츠 텍스트",
           "type": "textarea",
+          "default": "오른쪽 콘텐츠 텍스트입니다",
           "placeholder": "콘텐츠 텍스트"
         }
       ]
@@ -766,6 +871,7 @@
           "key": "categoryText",
           "label": "카테고리",
           "type": "text",
+          "default": "카테고리",
           "placeholder": "카테고리 영역",
           "required": true
         },
@@ -785,6 +891,7 @@
           "key": "contentText",
           "label": "콘텐츠 텍스트",
           "type": "textarea",
+          "default": "콘텐츠 텍스트를 입력하세요",
           "placeholder": "콘텐츠 텍스트"
         }
       ]
@@ -801,12 +908,14 @@
           "key": "imageUrl",
           "label": "이미지 URL",
           "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-1column.png",
           "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-1column.png"
         },
         {
           "key": "imageAlt",
           "label": "이미지 설명 Alt",
           "type": "text",
+          "default": "이미지",
           "placeholder": "이미지"
         },
         {
@@ -834,6 +943,7 @@
           "key": "title",
           "label": "콘텐츠 타이틀",
           "type": "text",
+          "default": "콘텐츠 타이틀",
           "required": true,
           "placeholder": "콘텐츠 타이틀"
         },
@@ -841,6 +951,7 @@
           "key": "description",
           "label": "콘텐츠 텍스트",
           "type": "textarea",
+          "default": "콘텐츠 텍스트를 입력하세요",
           "placeholder": "콘텐츠 텍스트"
         },
         {
@@ -853,6 +964,7 @@
           "key": "buttonText",
           "label": "버튼 텍스트",
           "type": "text",
+          "default": "큰 버튼 →",
           "placeholder": "큰 버튼 →",
           "showWhen": "showButton"
         },
@@ -860,6 +972,7 @@
           "key": "buttonUrl",
           "label": "버튼 링크",
           "type": "url",
+          "default": "#",
           "placeholder": "#",
           "showWhen": "showButton"
         },
@@ -876,6 +989,42 @@
           "type": "text",
           "default": "#ffffff",
           "showWhen": "showButton"
+        },
+        {
+          "key": "buttonBorderStyle",
+          "label": "버튼 테두리 스타일",
+          "type": "select",
+          "default": "none",
+          "options": [
+            { "label": "없음", "value": "none" },
+            { "label": "실선", "value": "solid" },
+            { "label": "점선", "value": "dashed" },
+            { "label": "점", "value": "dotted" }
+          ],
+          "showWhen": "showButton"
+        },
+        {
+          "key": "buttonBorderWidth",
+          "label": "버튼 테두리 두께",
+          "type": "text",
+          "default": "1px",
+          "placeholder": "예: 1px",
+          "showWhen": { "key": "buttonBorderStyle", "notEquals": "none" }
+        },
+        {
+          "key": "buttonBorderColor",
+          "label": "버튼 테두리 색상",
+          "type": "text",
+          "default": "#000000",
+          "showWhen": { "key": "buttonBorderStyle", "notEquals": "none" }
+        },
+        {
+          "key": "buttonBorderRadius",
+          "label": "버튼 모서리 둥글기",
+          "type": "text",
+          "default": "5px",
+          "placeholder": "예: 5px, 50%",
+          "showWhen": "showButton"
         }
       ]
     },
@@ -891,6 +1040,7 @@
           "key": "leftImageUrl",
           "label": "왼쪽 이미지 URL",
           "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
           "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png"
         },
         {
@@ -918,6 +1068,7 @@
           "key": "leftTitle",
           "label": "왼쪽 타이틀",
           "type": "text",
+          "default": "왼쪽 타이틀",
           "placeholder": "콘텐츠 타이틀",
           "required": true
         },
@@ -925,6 +1076,7 @@
           "key": "leftContent",
           "label": "왼쪽 텍스트",
           "type": "textarea",
+          "default": "왼쪽 콘텐츠 텍스트입니다",
           "placeholder": "콘텐츠 텍스트"
         },
         {
@@ -1098,9 +1250,46 @@
           "showWhen": "showLeftBigBtn"
         },
         {
+          "key": "leftBigBtnBorderStyle",
+          "label": "왼쪽 큰 버튼 테두리 스타일",
+          "type": "select",
+          "default": "none",
+          "options": [
+            { "label": "없음", "value": "none" },
+            { "label": "실선", "value": "solid" },
+            { "label": "점선", "value": "dashed" },
+            { "label": "점", "value": "dotted" }
+          ],
+          "showWhen": "showLeftBigBtn"
+        },
+        {
+          "key": "leftBigBtnBorderWidth",
+          "label": "왼쪽 큰 버튼 테두리 두께",
+          "type": "text",
+          "default": "1px",
+          "placeholder": "예: 1px",
+          "showWhen": { "key": "leftBigBtnBorderStyle", "notEquals": "none" }
+        },
+        {
+          "key": "leftBigBtnBorderColor",
+          "label": "왼쪽 큰 버튼 테두리 색상",
+          "type": "text",
+          "default": "#000000",
+          "showWhen": { "key": "leftBigBtnBorderStyle", "notEquals": "none" }
+        },
+        {
+          "key": "leftBigBtnBorderRadius",
+          "label": "왼쪽 큰 버튼 모서리 둥글기",
+          "type": "text",
+          "default": "5px",
+          "placeholder": "예: 5px, 50%",
+          "showWhen": "showLeftBigBtn"
+        },
+        {
           "key": "rightImageUrl",
           "label": "오른쪽 이미지 URL",
           "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
           "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png"
         },
         {
@@ -1128,12 +1317,14 @@
           "key": "rightTitle",
           "label": "오른쪽 타이틀",
           "type": "text",
+          "default": "오른쪽 타이틀",
           "placeholder": "콘텐츠 타이틀"
         },
         {
           "key": "rightContent",
           "label": "오른쪽 텍스트",
           "type": "textarea",
+          "default": "오른쪽 콘텐츠 텍스트입니다",
           "placeholder": "콘텐츠 텍스트"
         },
         {
@@ -1307,9 +1498,40 @@
           "showWhen": "showRightBigBtn"
         },
         {
-          "key": "additionalContents",
-          "label": "추가 콘텐츠 관리",
-          "type": "additional-contents"
+          "key": "rightBigBtnBorderStyle",
+          "label": "오른쪽 큰 버튼 테두리 스타일",
+          "type": "select",
+          "default": "none",
+          "options": [
+            { "label": "없음", "value": "none" },
+            { "label": "실선", "value": "solid" },
+            { "label": "점선", "value": "dashed" },
+            { "label": "점", "value": "dotted" }
+          ],
+          "showWhen": "showRightBigBtn"
+        },
+        {
+          "key": "rightBigBtnBorderWidth",
+          "label": "오른쪽 큰 버튼 테두리 두께",
+          "type": "text",
+          "default": "1px",
+          "placeholder": "예: 1px",
+          "showWhen": { "key": "rightBigBtnBorderStyle", "notEquals": "none" }
+        },
+        {
+          "key": "rightBigBtnBorderColor",
+          "label": "오른쪽 큰 버튼 테두리 색상",
+          "type": "text",
+          "default": "#000000",
+          "showWhen": { "key": "rightBigBtnBorderStyle", "notEquals": "none" }
+        },
+        {
+          "key": "rightBigBtnBorderRadius",
+          "label": "오른쪽 큰 버튼 모서리 둥글기",
+          "type": "text",
+          "default": "5px",
+          "placeholder": "예: 5px, 50%",
+          "showWhen": "showRightBigBtn"
         }
       ]
     },
@@ -1325,12 +1547,14 @@
           "key": "imageUrl",
           "label": "이미지 URL",
           "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
           "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png"
         },
         {
           "key": "imageAlt",
           "label": "이미지 설명 (Alt)",
           "type": "text",
+          "default": "이미지",
           "placeholder": "이미지"
         },
         {
@@ -1358,6 +1582,7 @@
           "key": "contentText",
           "label": "텍스트",
           "type": "textarea",
+          "default": "콘텐츠 텍스트를 입력하세요",
           "placeholder": "텍스트 내용을 입력하세요"
         },
         {
@@ -1518,12 +1743,14 @@
           "key": "ImageUrl",
           "label": "이미지 URL",
           "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
           "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png"
         },
         {
           "key": "ImageAlt",
           "label": "이미지 설명 (Alt)",
           "type": "text",
+          "default": "이미지",
           "placeholder": "이미지"
         },
         {
@@ -1551,6 +1778,7 @@
           "key": "boxTitle",
           "label": "타이틀",
           "type": "text",
+          "default": "강조 타이틀",
           "placeholder": "콘텐츠 텍스트"
         },
         {
@@ -1569,6 +1797,7 @@
           "key": "contentText",
           "label": "텍스트",
           "type": "textarea",
+          "default": "콘텐츠 텍스트를 입력하세요",
           "placeholder": "콘텐츠 텍스트",
           "required": true
         },
@@ -1722,6 +1951,7 @@
           "key": "topSectionTitle",
           "label": "회색 타이틀",
           "type": "text",
+          "default": "상단 섹션 타이틀",
           "placeholder": "상단 섹션 타이틀",
           "required": true
         },
@@ -1741,18 +1971,21 @@
           "key": "topSectionText",
           "label": "상단 섹션 텍스트",
           "type": "textarea",
+          "default": "상단 섹션 텍스트입니다",
           "placeholder": "상단 섹션 텍스트"
         },
         {
           "key": "topLeftImageUrl",
           "label": "이미지 URL",
           "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
           "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png"
         },
         {
           "key": "topLeftImageAlt",
           "label": "이미지 설명 (Alt)",
           "type": "text",
+          "default": "이미지",
           "placeholder": "이미지"
         },
         {
@@ -1780,12 +2013,14 @@
           "key": "topRightTitle1",
           "label": "오른쪽 타이틀",
           "type": "text",
+          "default": "오른쪽 타이틀",
           "placeholder": "오른쪽 타이틀"
         },
         {
           "key": "topRightText1",
           "label": "오른쪽 텍스트",
           "type": "textarea",
+          "default": "오른쪽 텍스트입니다",
           "placeholder": "오른쪽 텍스트"
         },
         {
@@ -1957,6 +2192,42 @@
           "type": "text",
           "default": "#ffffff",
           "showWhen": "showBigBtn"
+        },
+        {
+          "key": "bigBtnBorderStyle",
+          "label": "큰 버튼 테두리 스타일",
+          "type": "select",
+          "default": "none",
+          "options": [
+            { "label": "없음", "value": "none" },
+            { "label": "실선", "value": "solid" },
+            { "label": "점선", "value": "dashed" },
+            { "label": "점", "value": "dotted" }
+          ],
+          "showWhen": "showBigBtn"
+        },
+        {
+          "key": "bigBtnBorderWidth",
+          "label": "큰 버튼 테두리 두께",
+          "type": "text",
+          "default": "1px",
+          "placeholder": "예: 1px",
+          "showWhen": { "key": "bigBtnBorderStyle", "notEquals": "none" }
+        },
+        {
+          "key": "bigBtnBorderColor",
+          "label": "큰 버튼 테두리 색상",
+          "type": "text",
+          "default": "#000000",
+          "showWhen": { "key": "bigBtnBorderStyle", "notEquals": "none" }
+        },
+        {
+          "key": "bigBtnBorderRadius",
+          "label": "큰 버튼 모서리 둥글기",
+          "type": "text",
+          "default": "5px",
+          "placeholder": "예: 5px, 50%",
+          "showWhen": "showBigBtn"
         }
       ]
     },
@@ -1972,6 +2243,7 @@
           "key": "leftTitle",
           "label": "왼쪽 타이틀",
           "type": "text",
+          "default": "왼쪽 섹션 타이틀",
           "placeholder": "왼쪽 섹션 타이틀"
         },
         {
@@ -1990,12 +2262,14 @@
           "key": "leftImageUrl",
           "label": "왼쪽 이미지 URL",
           "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
           "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png"
         },
         {
           "key": "leftImageAlt",
           "label": "왼쪽 이미지 설명 (Alt)",
           "type": "text",
+          "default": "이미지",
           "placeholder": "이미지"
         },
         {
@@ -2023,6 +2297,7 @@
           "key": "leftContent",
           "label": "왼쪽 텍스트",
           "type": "textarea",
+          "default": "왼쪽 콘텐츠 텍스트입니다",
           "placeholder": "왼쪽 섹션 텍스트"
         },
         {
@@ -2165,6 +2440,7 @@
           "key": "rightTitle",
           "label": "오른쪽 타이틀",
           "type": "text",
+          "default": "오른쪽 섹션 타이틀",
           "placeholder": "오른쪽 섹션 타이틀"
         },
         {
@@ -2183,12 +2459,14 @@
           "key": "rightImageUrl",
           "label": "오른쪽 이미지 URL",
           "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
           "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png"
         },
         {
           "key": "rightImageAlt",
           "label": "오른쪽 이미지 설명 (Alt)",
           "type": "text",
+          "default": "이미지",
           "placeholder": "이미지"
         },
         {
@@ -2216,6 +2494,7 @@
           "key": "rightContent",
           "label": "오른쪽 텍스트",
           "type": "textarea",
+          "default": "오른쪽 콘텐츠 텍스트입니다",
           "placeholder": "오른쪽 섹션 텍스트"
         },
         {
@@ -2368,12 +2647,14 @@
           "key": "imageUrl",
           "label": "이미지 URL",
           "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
           "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png"
         },
         {
           "key": "imageAlt",
           "label": "이미지 설명 (Alt)",
           "type": "text",
+          "default": "이미지",
           "placeholder": "이미지"
         },
         {
@@ -2401,12 +2682,14 @@
           "key": "title",
           "label": "타이틀",
           "type": "text",
+          "default": "콘텐츠 타이틀",
           "placeholder": "타이틀을 입력하세요"
         },
         {
           "key": "contentText",
           "label": "텍스트",
           "type": "textarea",
+          "default": "콘텐츠 텍스트를 입력하세요",
           "placeholder": "텍스트 내용을 입력하세요"
         },
         {
@@ -2459,12 +2742,14 @@
           "key": "imageUrl",
           "label": "이미지 URL",
           "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
           "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png"
         },
         {
           "key": "imageAlt",
           "label": "이미지 설명 (Alt)",
           "type": "text",
+          "default": "이미지",
           "placeholder": "이미지"
         },
         {
@@ -2492,12 +2777,14 @@
           "key": "title",
           "label": "타이틀",
           "type": "text",
+          "default": "콘텐츠 타이틀",
           "placeholder": "타이틀을 입력하세요"
         },
         {
           "key": "contentText",
           "label": "텍스트",
           "type": "textarea",
+          "default": "콘텐츠 텍스트를 입력하세요",
           "placeholder": "텍스트 내용을 입력하세요"
         },
         {
@@ -2550,6 +2837,7 @@
           "key": "subtitleText",
           "label": "서브타이틀 텍스트",
           "type": "textarea",
+          "default": "서브타이틀 (14:20~14:40)",
           "placeholder": "기조연설 (14:20~14:40)",
           "required": true
         }
@@ -2627,6 +2915,7 @@
           "key": "title",
           "label": "타이틀",
           "type": "textarea",
+          "default": "발표자 타이틀",
           "placeholder": "타이틀 텍스트",
           "required": true
         }
@@ -2704,6 +2993,7 @@
           "key": "leftTitle",
           "label": "왼쪽 타이틀",
           "type": "textarea",
+          "default": "왼쪽 발표자 타이틀",
           "placeholder": "왼쪽 타이틀"
         },
         {
@@ -2770,6 +3060,7 @@
           "key": "rightTitle",
           "label": "오른쪽 타이틀",
           "type": "textarea",
+          "default": "오른쪽 발표자 타이틀",
           "placeholder": "오른쪽 타이틀"
         }
       ]
