@@ -131,8 +131,15 @@
           "key": "headerText",
           "label": "헤더 텍스트",
           "type": "textarea",
-          "default": "<h1 style=\" font-size:20px; color:#111111; font-weight:400; line-height:1.5em; word-break:keep-all; font-family:AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif;\">NEWSLETTER <strong>VOL.1</strong></h1>",
+          "default": "<p style=\"margin:0; padding:0;\">NEWSLETTER <strong>VOL.1</strong></p>",
           "placeholder": "헤더 텍스트를 입력하세요"
+        },
+        {
+          "key": "headerFontSize",
+          "label": "NEWSLETTER 폰트 크기",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 24px"
         },
         {
           "key": "headerTextColor",
@@ -181,6 +188,13 @@
           "type": "textarea",
           "default": "<p style=\"margin:0; padding:0;\">콘텐츠 텍스트를 입력하세요.</p>",
           "placeholder": "텍스트를 입력하세요"
+        },
+        {
+          "key": "fontSize",
+          "label": "폰트 크기",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px"
         }
       ]
     },
@@ -799,6 +813,13 @@
           "required": true
         },
         {
+          "key": "contentTitleFontSize",
+          "label": "타이틀 폰트 크기",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px"
+        },
+        {
           "key": "titleColor",
           "label": "타이틀 색상",
           "type": "text",
@@ -810,6 +831,13 @@
           "type": "textarea",
           "default": "콘텐츠 텍스트",
           "placeholder": "내용을 입력하세요"
+        },
+        {
+          "key": "contentTextFontSize",
+          "label": "텍스트 폰트 크기",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px"
         },
         {
           "key": "bgColor",
@@ -836,11 +864,25 @@
           "required": true
         },
         {
+          "key": "leftTitleFontSize",
+          "label": "왼쪽 타이틀 폰트 크기",
+          "type": "text",
+          "default": "16px",
+          "placeholder": "예: 16px, 18px"
+        },
+        {
           "key": "leftContent",
           "label": "콘텐츠 텍스트",
           "type": "textarea",
           "default": "왼쪽 콘텐츠 텍스트입니다",
           "placeholder": "콘텐츠 텍스트"
+        },
+        {
+          "key": "leftContentFontSize",
+          "label": "왼쪽 텍스트 폰트 크기",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px"
         },
         {
           "key": "rightTitle",
@@ -851,11 +893,25 @@
           "required": true
         },
         {
+          "key": "rightTitleFontSize",
+          "label": "오른쪽 타이틀 폰트 크기",
+          "type": "text",
+          "default": "16px",
+          "placeholder": "예: 16px, 18px"
+        },
+        {
           "key": "rightContent",
           "label": "콘텐츠 텍스트",
           "type": "textarea",
           "default": "오른쪽 콘텐츠 텍스트입니다",
           "placeholder": "콘텐츠 텍스트"
+        },
+        {
+          "key": "rightContentFontSize",
+          "label": "오른쪽 텍스트 폰트 크기",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px"
         }
       ]
     },
@@ -876,6 +932,13 @@
           "required": true
         },
         {
+          "key": "categoryTextFontSize",
+          "label": "카테고리 폰트 크기",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px"
+        },
+        {
           "key": "categoryBgColor",
           "label": "카테고리 배경색",
           "type": "text",
@@ -893,6 +956,13 @@
           "type": "textarea",
           "default": "콘텐츠 텍스트를 입력하세요",
           "placeholder": "콘텐츠 텍스트"
+        },
+        {
+          "key": "contentTextFontSize",
+          "label": "텍스트 폰트 크기",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px"
         }
       ]
     },
@@ -1782,6 +1852,13 @@
           "placeholder": "콘텐츠 텍스트"
         },
         {
+          "key": "boxTitleFontSize",
+          "label": "타이틀 폰트 크기",
+          "type": "text",
+          "default": "16px",
+          "placeholder": "예: 16px, 18px"
+        },
+        {
           "key": "boxBgColor",
           "label": "텍스트 박스 배경색",
           "type": "text",
@@ -1800,6 +1877,13 @@
           "default": "콘텐츠 텍스트를 입력하세요",
           "placeholder": "콘텐츠 텍스트",
           "required": true
+        },
+        {
+          "key": "contentTextFontSize",
+          "label": "텍스트 폰트 크기",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px"
         },
         {
           "key": "showButton1",
@@ -2840,6 +2924,13 @@
           "default": "서브타이틀 (14:20~14:40)",
           "placeholder": "기조연설 (14:20~14:40)",
           "required": true
+        },
+        {
+          "key": "subtitleTextFontSize",
+          "label": "서브타이틀 폰트 크기",
+          "type": "text",
+          "default": "16px",
+          "placeholder": "예: 16px, 18px"
         }
       ]
     },
@@ -3100,6 +3191,13 @@
           "placeholder": "라벨 텍스트"
         },
         {
+          "key": "labelTextFontSize",
+          "label": "라벨 폰트 크기",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px"
+        },
+        {
           "key": "labelColor",
           "label": "라벨 색상",
           "type": "text",
@@ -3111,6 +3209,13 @@
           "type": "text",
           "default": "2022년 국내전시회 참가기업 지원사업(~2/25)",
           "placeholder": "내용을 입력하세요"
+        },
+        {
+          "key": "contentTextFontSize",
+          "label": "텍스트 폰트 크기",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px"
         },
         {
           "key": "buttonText",
