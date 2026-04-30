@@ -113,7 +113,7 @@
         <div class="text-center">
           <div class="text-3xl mb-3"><i class="pi pi-pencil text-gray-400"></i></div>
           <div class="font-medium text-gray-600 mb-1">모듈을 선택하세요</div>
-          <div class="text-xs text-gray-400">
+          <div class="text-sm/5 text-gray-400">
             중앙의 편집 영역에서 모듈을 클릭하면<br />
             여기서 텍스트와 이미지를 편집할 수 있습니다
           </div>
@@ -136,16 +136,25 @@
         </div>
 
         <!-- 속성 편집 폼 -->
-      <div class="p-4 space-y-5">
+      <div class="p-4 space-y-3">
+        <component
+          v-for="(group, gIdx) in propGroups"
+          :key="`grp-${gIdx}-${group.name || 'flat'}`"
+          :is="group.name ? 'Panel' : 'div'"
+          :header="group.name || undefined"
+          :toggleable="!!group.name"
+          :collapsed="group.name ? gIdx > 0 : false"
+        >
+        <div class="space-y-5">
         <div
-          v-for="(prop, index) in editableProps"
+          v-for="(prop, index) in group.props"
           :key="prop.key"
           v-show="evalShowWhen(prop.showWhen)"
           :class="{ 'pt-4 border-t border-gray-100': index > 0 && !prop.showWhen }"
         >
           <label
             v-show="prop.type !== 'boolean'"
-            class="block text-sm font-medium text-gray-700 mb-2"
+            class="block text-sm font-medium text-gray-500 mb-2"
           >
             {{ prop.label }}
           </label>
@@ -778,6 +787,8 @@
             </div>
           </div>
         </div>
+        </div>
+        </component>
       </div>
 
         <!-- 모듈 제거 버튼 -->
@@ -810,6 +821,27 @@ const editorStore = useEditorStore()
 const selectedModule = computed(() => moduleStore.selectedModule)
 const selectedModuleMetadata = computed(() => moduleStore.selectedModuleMetadata)
 const editableProps = computed(() => selectedModuleMetadata.value?.editableProps || [])
+
+// 아코디언 그룹: 모든 prop에 group이 지정되면 그룹별 묶기, 그렇지 않으면 단일 평면 그룹
+const propGroups = computed(() => {
+  const props = editableProps.value
+  if (!props.length) return [{ name: null as string | null, props: [] as typeof props }]
+  const allGrouped = props.every((p) => !!p.group)
+  if (!allGrouped) {
+    return [{ name: null as string | null, props }]
+  }
+  const order: string[] = []
+  const map = new Map<string, typeof props>()
+  for (const p of props) {
+    const g = p.group as string
+    if (!map.has(g)) {
+      map.set(g, [])
+      order.push(g)
+    }
+    map.get(g)!.push(p)
+  }
+  return order.map((name) => ({ name: name as string | null, props: map.get(name)! }))
+})
 
 // 조건부 표시 평가
 const evalShowWhen = (showWhen: unknown): boolean => {

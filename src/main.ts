@@ -90,6 +90,7 @@ import Editor from 'primevue/editor'
 import ColorPicker from 'primevue/colorpicker'
 import Select from 'primevue/select'
 import ToggleSwitch from 'primevue/toggleswitch'
+import Panel from 'primevue/panel'
 import Tooltip from 'primevue/tooltip'
 
 const app = createApp(App)
@@ -130,6 +131,7 @@ app.component('Editor', Editor)
 app.component('ColorPicker', ColorPicker)
 app.component('Select', Select)
 app.component('ToggleSwitch', ToggleSwitch)
+app.component('Panel', Panel)
 
 // 전역 디렉티브 등록
 app.directive('tooltip', Tooltip)

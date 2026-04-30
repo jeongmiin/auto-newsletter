@@ -20,6 +20,8 @@ export interface EditableProp {
   defaultRows?: TableRow[]
   // 조건부 표시: 문자열은 boolean 필드 키 (=== true), 객체는 값 비교
   showWhen?: string | { key: string; equals?: unknown; notEquals?: unknown }
+  // 속성 패널 아코디언 그룹 라벨 (모든 prop에 group이 지정되면 아코디언 모드)
+  group?: string
 }
 
 export interface ModuleStyles {
