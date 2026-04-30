@@ -1237,6 +1237,7 @@ const getColorValue = (key: string) => {
   width: 2rem;
   height: 2rem;
 }
+.p-colorpicker{border-radius: 6px; border: 1px solid var(--p-surface-200);}
 
 /* 테이블 에디터 그리드 스타일 */
 .table-editor-grid {
