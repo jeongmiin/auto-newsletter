@@ -287,7 +287,7 @@ export const module10Config: ModuleConfig = {
     imageBorderRadius: '0px',
     imageLinkUrl: '#',
   },
-  processors: [processors.module10LabelProcessor, processors.imageLinkProcessor],
+  processors: [processors.module10LabelProcessor, processors.module10ImageProcessor, processors.module10TimeProcessor, processors.imageLinkProcessor],
 }
 
 /**

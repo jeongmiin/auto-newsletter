@@ -167,6 +167,7 @@ onBeforeUnmount(() => {
   min-height: 150px;
   font-size: 14px;
   line-height: 1.6;
+  font-family: AppleSDGothic, 'malgun gothic', 'nanum gothic', 'Noto Sans KR', sans-serif;
 }
 
 /* 모든 블록 요소 margin, padding 제거 */

@@ -1215,6 +1215,11 @@ const getColorValue = (key: string) => {
 </script>
 
 <style scoped>
+/* Quill 에디터를 이메일 기본 폰트로 통일 (입력 시 결과물과 동일하게 보이도록) */
+:deep(.ql-editor) {
+  font-family: AppleSDGothic, 'malgun gothic', 'nanum gothic', 'Noto Sans KR', sans-serif;
+}
+
 /* 테두리 설정 input 높이 통일 */
 .border-settings :deep(.p-inputtext) {
   height: 2rem !important;

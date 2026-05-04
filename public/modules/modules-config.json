@@ -25,6 +25,18 @@
           "group": "로고"
         },
         {
+          "key": "logoAlign",
+          "label": "정렬",
+          "type": "select",
+          "default": "center",
+          "options": [
+            { "label": "왼쪽", "value": "left" },
+            { "label": "가운데", "value": "center" },
+            { "label": "오른쪽", "value": "right" }
+          ],
+          "group": "로고"
+        },
+        {
           "key": "logoAlt",
           "label": "대체 텍스트",
           "type": "text",
@@ -139,6 +151,18 @@
           "group": "로고"
         },
         {
+          "key": "logoAlign",
+          "label": "정렬",
+          "type": "select",
+          "default": "center",
+          "options": [
+            { "label": "왼쪽", "value": "left" },
+            { "label": "가운데", "value": "center" },
+            { "label": "오른쪽", "value": "right" }
+          ],
+          "group": "로고"
+        },
+        {
           "key": "logoAlt",
           "label": "대체 텍스트",
           "type": "text",
@@ -225,6 +249,70 @@
           "default": "16px",
           "placeholder": "예: 14px, 16px",
           "group": "텍스트"
+        },
+        {
+          "key": "mainTitlePaddingTop",
+          "label": "상단",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 0",
+          "group": "메인 타이틀 여백"
+        },
+        {
+          "key": "mainTitlePaddingRight",
+          "label": "우측",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "group": "메인 타이틀 여백"
+        },
+        {
+          "key": "mainTitlePaddingBottom",
+          "label": "하단",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 0",
+          "group": "메인 타이틀 여백"
+        },
+        {
+          "key": "mainTitlePaddingLeft",
+          "label": "좌측",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "group": "메인 타이틀 여백"
+        },
+        {
+          "key": "subTitlePaddingTop",
+          "label": "상단",
+          "type": "text",
+          "default": "0",
+          "placeholder": "예: 0, 10px",
+          "group": "서브 타이틀 여백"
+        },
+        {
+          "key": "subTitlePaddingRight",
+          "label": "우측",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 0",
+          "group": "서브 타이틀 여백"
+        },
+        {
+          "key": "subTitlePaddingBottom",
+          "label": "하단",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "group": "서브 타이틀 여백"
+        },
+        {
+          "key": "subTitlePaddingLeft",
+          "label": "좌측",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 0",
+          "group": "서브 타이틀 여백"
         }
       ]
     },
@@ -232,7 +320,7 @@
       "id": "ModuleDescText",
       "name": "설명 텍스트",
       "description": "단순 텍스트 콘텐츠 블록",
-      "category": "text",
+      "category": "common",
       "icon": "pi pi-align-left",
       "htmlFile": "ModuleDescText.html",
       "editableProps": [
@@ -249,6 +337,34 @@
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px"
+        },
+        {
+          "key": "paddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 10px"
+        },
+        {
+          "key": "paddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0"
+        },
+        {
+          "key": "paddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 10px"
+        },
+        {
+          "key": "paddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0"
         }
       ]
     },
@@ -339,6 +455,34 @@
           "type": "text",
           "default": "0px",
           "placeholder": "예: 10px, 50%"
+        },
+        {
+          "key": "paddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 10px"
+        },
+        {
+          "key": "paddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0"
+        },
+        {
+          "key": "paddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0"
+        },
+        {
+          "key": "paddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0"
         }
       ]
     },
@@ -444,6 +588,34 @@
           "type": "text",
           "default": "큰 버튼 →",
           "placeholder": "버튼 텍스트를 입력하세요"
+        },
+        {
+          "key": "paddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 0"
+        },
+        {
+          "key": "paddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0"
+        },
+        {
+          "key": "paddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0"
+        },
+        {
+          "key": "paddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0"
         },
         {
           "key": "buttonFontSize",
@@ -1095,7 +1267,7 @@
         },
         {
           "key": "leftTitleFontSize",
-          "label": "왼쪽 타이틀 폰트 크기",
+          "label": "타이틀 폰트 크기",
           "type": "text",
           "default": "16px",
           "placeholder": "예: 16px, 18px",
@@ -1111,7 +1283,7 @@
         },
         {
           "key": "leftContentFontSize",
-          "label": "왼쪽 텍스트 폰트 크기",
+          "label": "텍스트 폰트 크기",
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
@@ -1128,7 +1300,7 @@
         },
         {
           "key": "rightTitleFontSize",
-          "label": "오른쪽 타이틀 폰트 크기",
+          "label": "타이틀 폰트 크기",
           "type": "text",
           "default": "16px",
           "placeholder": "예: 16px, 18px",
@@ -1144,7 +1316,7 @@
         },
         {
           "key": "rightContentFontSize",
-          "label": "오른쪽 텍스트 폰트 크기",
+          "label": "텍스트 폰트 크기",
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
@@ -3677,10 +3849,18 @@
       "htmlFile": "Module10.html",
       "editableProps": [
         {
+          "key": "showImage",
+          "label": "이미지 사용",
+          "type": "boolean",
+          "default": true,
+          "group": "이미지"
+        },
+        {
           "key": "imageUrl",
           "label": "URL",
           "type": "url",
           "default": "https://design.messeesang.com/e-dm/newsletter/images/img-speaker.png",
+          "showWhen": "showImage",
           "group": "이미지"
         },
         {
@@ -3688,6 +3868,7 @@
           "label": "설명 (Alt)",
           "type": "text",
           "default": "이미지",
+          "showWhen": "showImage",
           "group": "이미지"
         },
         {
@@ -3695,6 +3876,7 @@
           "label": "링크 사용",
           "type": "boolean",
           "default": false,
+          "showWhen": "showImage",
           "group": "이미지"
         },
         {
@@ -3712,6 +3894,7 @@
           "type": "text",
           "default": "0px",
           "placeholder": "예: 10px, 50%",
+          "showWhen": "showImage",
           "group": "이미지"
         },
         {
@@ -3719,7 +3902,7 @@
           "label": "표시",
           "type": "boolean",
           "default": true,
-          "group": "라벨"
+          "group": "카테고리"
         },
         {
           "key": "labelText",
@@ -3727,7 +3910,7 @@
           "type": "text",
           "default": "기조연설",
           "showWhen": "showLabel",
-          "group": "라벨"
+          "group": "카테고리"
         },
         {
           "key": "labelTextFontSize",
@@ -3736,7 +3919,7 @@
           "default": "13px",
           "placeholder": "예: 13px, 14px",
           "showWhen": "showLabel",
-          "group": "라벨"
+          "group": "카테고리"
         },
         {
           "key": "labelBgColor",
@@ -3744,7 +3927,7 @@
           "type": "text",
           "default": "#333333",
           "showWhen": "showLabel",
-          "group": "라벨"
+          "group": "카테고리"
         },
         {
           "key": "labelTextColor",
@@ -3752,7 +3935,39 @@
           "type": "text",
           "default": "#ffffff",
           "showWhen": "showLabel",
-          "group": "라벨"
+          "group": "카테고리"
+        },
+        {
+          "key": "showTime",
+          "label": "표시",
+          "type": "boolean",
+          "default": false,
+          "group": "시간"
+        },
+        {
+          "key": "timeText",
+          "label": "텍스트",
+          "type": "text",
+          "default": "09:00 ~ 10:00",
+          "showWhen": "showTime",
+          "group": "시간"
+        },
+        {
+          "key": "timeTextFontSize",
+          "label": "폰트 크기",
+          "type": "text",
+          "default": "13px",
+          "placeholder": "예: 13px, 14px",
+          "showWhen": "showTime",
+          "group": "시간"
+        },
+        {
+          "key": "timeTextColor",
+          "label": "글자색",
+          "type": "color",
+          "default": "#666666",
+          "showWhen": "showTime",
+          "group": "시간"
         },
         {
           "key": "title",
@@ -3821,14 +4036,14 @@
         },
         {
           "key": "showLeftLabel",
-          "label": "라벨 표시",
+          "label": "카테고리 표시",
           "type": "boolean",
           "default": true,
           "group": "왼쪽"
         },
         {
           "key": "leftLabelText",
-          "label": "라벨 텍스트",
+          "label": "카테고리 텍스트",
           "type": "text",
           "default": "10:10 ~ 10:15",
           "showWhen": "showLeftLabel",
@@ -3836,7 +4051,7 @@
         },
         {
           "key": "leftLabelTextFontSize",
-          "label": "라벨 폰트 크기",
+          "label": "카테고리 폰트 크기",
           "type": "text",
           "default": "13px",
           "placeholder": "예: 13px, 14px",
@@ -3845,7 +4060,7 @@
         },
         {
           "key": "leftLabelBgColor",
-          "label": "라벨 배경색",
+          "label": "카테고리 배경색",
           "type": "text",
           "default": "#333333",
           "showWhen": "showLeftLabel",
@@ -3853,7 +4068,7 @@
         },
         {
           "key": "leftLabelTextColor",
-          "label": "라벨 글자색",
+          "label": "카테고리 글자색",
           "type": "text",
           "default": "#ffffff",
           "showWhen": "showLeftLabel",
@@ -3915,14 +4130,14 @@
         },
         {
           "key": "showRightLabel",
-          "label": "라벨 표시",
+          "label": "카테고리 표시",
           "type": "boolean",
           "default": true,
           "group": "오른쪽"
         },
         {
           "key": "rightLabelText",
-          "label": "라벨 텍스트",
+          "label": "카테고리 텍스트",
           "type": "text",
           "default": "10:10 ~ 10:15",
           "showWhen": "showRightLabel",
@@ -3930,7 +4145,7 @@
         },
         {
           "key": "rightLabelTextFontSize",
-          "label": "라벨 폰트 크기",
+          "label": "카테고리 폰트 크기",
           "type": "text",
           "default": "13px",
           "placeholder": "예: 13px, 14px",
@@ -3939,7 +4154,7 @@
         },
         {
           "key": "rightLabelBgColor",
-          "label": "라벨 배경색",
+          "label": "카테고리 배경색",
           "type": "text",
           "default": "#333333",
           "showWhen": "showRightLabel",
@@ -3947,7 +4162,7 @@
         },
         {
           "key": "rightLabelTextColor",
-          "label": "라벨 글자색",
+          "label": "카테고리 글자색",
           "type": "text",
           "default": "#ffffff",
           "showWhen": "showRightLabel",

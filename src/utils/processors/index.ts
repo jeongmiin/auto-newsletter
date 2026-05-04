@@ -530,6 +530,32 @@ export const module10LabelProcessor: ContentProcessor = (html, properties) => {
 }
 
 /**
+ * Module10 이미지 조건부 제거 + 타이틀 영역 min-width 결정 프로세서
+ * showImage가 false이면 이미지 영역 제거, 타이틀 div의 min-width를 100%로 확장
+ */
+export const module10ImageProcessor: ContentProcessor = (html, properties) => {
+  let result = html
+  const showImage = properties.showImage !== false
+  if (!showImage) {
+    result = result.replace(/<!-- 이미지 -->[\s\S]*?<!-- \/\/이미지 -->/g, '')
+  }
+  const titleMinWidth = showImage ? 'calc(100% - 10.5em)' : '100%'
+  result = result.replace(/{{\s*titleWrapMinWidth\s*}}/g, titleMinWidth)
+  return result
+}
+
+/**
+ * Module10 시간 조건부 제거 프로세서
+ * showTime이 true가 아니면 라벨 옆 시간 span 제거
+ */
+export const module10TimeProcessor: ContentProcessor = (html, properties) => {
+  if (properties.showTime !== true) {
+    return html.replace(/<!-- 시간 -->[\s\S]*?<!-- \/\/시간 -->/g, '')
+  }
+  return html
+}
+
+/**
  * Module101 라벨 조건부 제거 프로세서
  */
 export const module101LabelProcessor: ContentProcessor = (html, properties) => {
