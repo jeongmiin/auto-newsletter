@@ -594,7 +594,7 @@
 
               <!-- 테이블 그리드 형태 편집기 -->
               <div class="table-editor-grid border border-gray-300 rounded-lg overflow-hidden">
-                <!-- 열 헤더 (삭제 버튼) -->
+                <!-- 열 헤더 (열 번호/삭제 + 열 너비 입력) -->
                 <div class="flex bg-gray-50 border-b border-gray-300">
                   <!-- 왼쪽 상단 빈 셀 (행 컨트롤 공간) -->
                   <div class="w-8 flex-shrink-0 border-r border-gray-200"></div>
@@ -602,19 +602,43 @@
                   <div
                     v-for="(_, colIndex) in tableCells[0]"
                     :key="`col-header-${colIndex}`"
-                    class="flex-1 flex items-center justify-center py-1 border-r border-gray-200 last:border-r-0"
+                    class="flex-1 flex flex-col px-2 border-r border-gray-200 last:border-r-0"
                   >
-                    <span class="text-xs text-gray-500 mr-1">{{ colIndex + 1 }}열</span>
-                    <Button
-                      v-if="tableCells[0].length > 1"
-                      @click="removeTableColumn(colIndex)"
-                      icon="pi pi-times"
-                      severity="secondary"
-                      text
-                      size="small"
-                      class="!p-0 !w-5 !h-5"
-                      v-tooltip.top="'열 삭제'"
-                    />
+                    <!-- 상단: 열 번호 + 삭제 -->
+                    <div class="flex items-center justify-center gap-1 py-1.5">
+                      <span class="text-xs font-semibold text-gray-700">{{ colIndex + 1 }}열</span>
+                      <Button
+                        v-if="tableCells[0].length > 1"
+                        @click="removeTableColumn(colIndex)"
+                        icon="pi pi-times"
+                        severity="secondary"
+                        text
+                        size="small"
+                        class="!p-0 !w-5 !h-5"
+                        v-tooltip.top="'열 삭제'"
+                      />
+                    </div>
+                    <!-- 구분선 -->
+                    <div class="border-t border-gray-200"></div>
+                    <!-- 하단: 너비 라벨 + 입력 -->
+                    <div class="flex items-center gap-1.5 py-1.5">
+                      <label
+                        :for="`col-width-${colIndex}`"
+                        class="text-[10px] font-medium text-gray-500 shrink-0"
+                      >넓이</label>
+                      <div
+                        class="col-width-field flex-1 min-w-0 flex items-center bg-white border border-gray-300 rounded focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-200 transition-colors"
+                        v-tooltip.top="'예: 30%, 120px — 비우면 자동'"
+                      >
+                        <InputText
+                          :id="`col-width-${colIndex}`"
+                          :modelValue="getColWidth(colIndex)"
+                          @update:modelValue="updateColWidth(colIndex, $event ?? '')"
+                          placeholder="자동"
+                          class="flex-1 min-w-0 !border-0 !shadow-none !bg-transparent !text-xs !py-1 !px-1.5"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -1142,6 +1166,18 @@ const updateCellWidth = (rowIndex: number, colIndex: number, width: string) => {
   }
 }
 
+// 커스텀 테이블 열 너비 (colgroup>col에 적용)
+const getColWidth = (colIndex: number): string => {
+  const widths = (selectedModule.value?.properties.tableColWidths as string[] | undefined) || []
+  return widths[colIndex] ?? ''
+}
+
+const updateColWidth = (colIndex: number, width: string) => {
+  if (selectedModule.value) {
+    moduleStore.updateTableColWidth(selectedModule.value.id, colIndex, width)
+  }
+}
+
 const toggleCellType = (rowIndex: number, colIndex: number) => {
   if (selectedModule.value) {
     moduleStore.toggleCellType(selectedModule.value.id, rowIndex, colIndex)
@@ -1256,6 +1292,19 @@ const getColorValue = (key: string) => {
 .table-editor-grid :deep(.p-inputtext::placeholder) {
   font-size: 0.75rem;
   color: #9ca3af;
+}
+
+/* 열 너비 입력 — 래퍼가 테두리/포커스 링을 담당하므로 내부 InputText는 평평하게 */
+.col-width-field :deep(.p-inputtext) {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  background: transparent !important;
+  height: 1.5rem;
+}
+.col-width-field :deep(.p-inputtext:focus) {
+  box-shadow: none !important;
+  outline: none !important;
 }
 
 /* 셀 타입 토글 버튼 호버 효과 */

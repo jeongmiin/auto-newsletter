@@ -228,6 +228,7 @@ export function replaceModuleTableContent(
   properties: Record<string, unknown>,
 ): string {
   const cells = (properties.tableCells as TableCellType[][] | undefined) || []
+  const colWidths = (properties.tableColWidths as string[] | undefined) || []
   const borderTopWidth = String(properties.borderTopWidth || '2px')
   const borderTopColor = String(properties.borderTopColor || '#333333')
   const cellBorderColor = String(properties.cellBorderColor || '#a7a7a7')
@@ -250,6 +251,24 @@ export function replaceModuleTableContent(
     'border-top:2px #333333 solid',
     `border-top:${borderTopWidth} ${borderTopColor} solid`
   )
+
+  // colgroup 생성 (열별 너비 지정; 비어있으면 기본 너비 사용)
+  const colCount = cells[0]?.length || 0
+  if (colCount > 0) {
+    const hasAnyWidth = colWidths.slice(0, colCount).some((w) => (w || '').trim() !== '')
+    if (hasAnyWidth) {
+      const colTags = Array.from({ length: colCount }, (_, i) => {
+        const w = (colWidths[i] || '').trim()
+        return w ? `<col style="width:${w};" width="${w}">` : '<col>'
+      }).join('\n            ')
+      const colgroupHtml = `<colgroup>\n            ${colTags}\n          </colgroup>`
+      // 동적 테이블의 <tbody> 바로 앞에 colgroup 삽입
+      result = result.replace(
+        /<tbody>(\s*\{\{tableContent\}\})/,
+        `${colgroupHtml}\n          <tbody>$1`
+      )
+    }
+  }
 
   // 테이블 셀들을 HTML로 변환
   const tableRowsHtml = cells.map((row) => {
@@ -278,13 +297,12 @@ export function replaceModuleTableContent(
           `box-sizing:border-box`,
         ].join('; ')
 
-        // colspan, rowspan, width 속성
+        // colspan, rowspan 속성 (열 너비는 colgroup>col로 일괄 관리)
         const colspanAttr = cell.colspan > 1 ? ` colspan="${cell.colspan}"` : ''
         const rowspanAttr = cell.rowspan > 1 ? ` rowspan="${cell.rowspan}"` : ''
-        const widthAttr = cell.width ? ` width="${cell.width}"` : ''
 
         const safeContent = (cell.content || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-        return `<${tag}${colspanAttr}${rowspanAttr}${widthAttr} style="${style}">${safeContent}</${tag}>`
+        return `<${tag}${colspanAttr}${rowspanAttr} style="${style}">${safeContent}</${tag}>`
       })
       .join('\n              ')
 

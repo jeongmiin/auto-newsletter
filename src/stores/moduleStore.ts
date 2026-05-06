@@ -313,11 +313,11 @@ export const useModuleStore = defineStore('module', () => {
 
     const defaultCells: TableCell[][] = [
       [
-        { id: generateUniqueId('cell'), type: 'th', content: '항목', colspan: 1, rowspan: 1, width: '30%', align: 'center' },
+        { id: generateUniqueId('cell'), type: 'th', content: '항목', colspan: 1, rowspan: 1, align: 'center' },
         { id: generateUniqueId('cell'), type: 'td', content: '내용', colspan: 1, rowspan: 1, align: 'left' },
       ],
       [
-        { id: generateUniqueId('cell'), type: 'th', content: '항목', colspan: 1, rowspan: 1, width: '30%', align: 'center' },
+        { id: generateUniqueId('cell'), type: 'th', content: '항목', colspan: 1, rowspan: 1, align: 'center' },
         { id: generateUniqueId('cell'), type: 'td', content: '내용', colspan: 1, rowspan: 1, align: 'left' },
       ],
     ]
@@ -384,6 +384,10 @@ export const useModuleStore = defineStore('module', () => {
       })
     })
 
+    // 열 너비 배열도 동기화 (새 열은 기본 너비)
+    const colWidths = (module.properties.tableColWidths as string[] | undefined) || []
+    module.properties.tableColWidths = [...colWidths, '']
+
     module.properties.tableCells = [...cells]
     triggerRef(modules)
   }
@@ -417,7 +421,34 @@ export const useModuleStore = defineStore('module', () => {
       row.splice(colIndex, 1)
     })
 
+    // 열 너비 배열도 동기화
+    const colWidths = (module.properties.tableColWidths as string[] | undefined) || []
+    if (colWidths.length > 0) {
+      const next = [...colWidths]
+      next.splice(colIndex, 1)
+      module.properties.tableColWidths = next
+    }
+
     module.properties.tableCells = [...cells]
+    triggerRef(modules)
+  }
+
+  /**
+   * 테이블 열 너비 업데이트 (커스텀 테이블)
+   */
+  const updateTableColWidth = (moduleId: string, colIndex: number, width: string): void => {
+    const module = modules.value.find((m) => m.id === moduleId)
+    if (!module) return
+
+    const cells = (module.properties.tableCells as TableCell[][]) || []
+    const colCount = cells[0]?.length || 0
+    if (colIndex < 0 || colIndex >= colCount) return
+
+    const current = (module.properties.tableColWidths as string[] | undefined) || []
+    const next = Array.from({ length: colCount }, (_, i) => current[i] ?? '')
+    next[colIndex] = (width || '').trim()
+
+    module.properties.tableColWidths = next
     triggerRef(modules)
   }
 
@@ -612,7 +643,6 @@ export const useModuleStore = defineStore('module', () => {
           content,
           colspan: 1,
           rowspan: 1,
-          width: cellType === 'th' && c === 0 ? '25%' : undefined,
           align: cellType === 'th' ? 'center' : 'left',
         })
       }
@@ -621,6 +651,7 @@ export const useModuleStore = defineStore('module', () => {
 
     module.properties.tableCells = newCells
     module.properties.tablePresetId = presetId
+    module.properties.tableColWidths = Array.from({ length: cols }, () => '')
     triggerRef(modules)
   }
 
@@ -1071,11 +1102,11 @@ export const useModuleStore = defineStore('module', () => {
           // 커스텀 테이블의 기본 2x2 셀 생성
           props[prop.key] = [
             [
-              { id: generateUniqueId('cell'), type: 'th', content: '항목', colspan: 1, rowspan: 1, width: '30%', align: 'center' },
+              { id: generateUniqueId('cell'), type: 'th', content: '항목', colspan: 1, rowspan: 1, align: 'center' },
               { id: generateUniqueId('cell'), type: 'td', content: '내용', colspan: 1, rowspan: 1, align: 'left' },
             ],
             [
-              { id: generateUniqueId('cell'), type: 'th', content: '항목', colspan: 1, rowspan: 1, width: '30%', align: 'center' },
+              { id: generateUniqueId('cell'), type: 'th', content: '항목', colspan: 1, rowspan: 1, align: 'center' },
               { id: generateUniqueId('cell'), type: 'td', content: '내용', colspan: 1, rowspan: 1, align: 'left' },
             ],
           ]
@@ -1121,6 +1152,7 @@ export const useModuleStore = defineStore('module', () => {
     removeTableCellRow,
     removeTableCellColumn,
     updateTableCell,
+    updateTableColWidth,
     mergeCells,
     unmergeCell,
     toggleCellType,
