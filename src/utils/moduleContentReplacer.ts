@@ -301,7 +301,10 @@ export function replaceModuleTableContent(
         const colspanAttr = cell.colspan > 1 ? ` colspan="${cell.colspan}"` : ''
         const rowspanAttr = cell.rowspan > 1 ? ` rowspan="${cell.rowspan}"` : ''
 
-        const safeContent = (cell.content || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        const safeContent = (cell.content || '')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/\r?\n/g, '<br>')
         return `<${tag}${colspanAttr}${rowspanAttr} style="${style}">${safeContent}</${tag}>`
       })
       .join('\n              ')

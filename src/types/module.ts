@@ -91,3 +91,27 @@ export interface EmailBuilderState {
   canvasWidth: 'mobile' | 'desktop'
   isDirty: boolean
 }
+
+/**
+ * 미리 만들어둔 뉴스레터 템플릿
+ * 모듈 인스턴스 배열 + wrap 설정의 스냅샷
+ */
+export interface NewsletterTemplate {
+  id: string
+  name: string
+  description: string
+  thumbnail?: string
+  wrapSettings: {
+    backgroundColor: string
+    borderWidth: string
+    borderColor: string
+    borderStyle: string
+  }
+  modules: Array<{
+    moduleId: string
+    /** 호환용 필드 — 무시됨. 실제 순서는 배열 순서를 따름. */
+    order?: number
+    properties: Record<string, unknown>
+    styles: Record<string, unknown>
+  }>
+}

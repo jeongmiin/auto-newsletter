@@ -575,19 +575,19 @@
                 <div class="flex gap-1">
                   <Button
                     @click="addTableColumn"
-                    icon="pi pi-arrows-h"
+                    icon="pi pi-plus"
+                    label="열 추가"
                     severity="contrast"
                     text
                     size="small"
-                    v-tooltip.top="'열 추가'"
                   />
                   <Button
                     @click="addTableRow"
-                    icon="pi pi-arrows-v"
+                    icon="pi pi-plus"
+                    label="행 추가"
                     severity="contrast"
                     text
                     size="small"
-                    v-tooltip.top="'행 추가'"
                   />
                 </div>
               </div>
@@ -624,7 +624,7 @@
                     <div class="flex items-center gap-1.5 py-1.5">
                       <label
                         :for="`col-width-${colIndex}`"
-                        class="text-[10px] font-medium text-gray-500 shrink-0"
+                        class="text-xs font-medium text-gray-500 shrink-0"
                       >넓이</label>
                       <div
                         class="col-width-field flex-1 min-w-0 flex items-center bg-white border border-gray-300 rounded focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-200 transition-colors"
@@ -685,7 +685,7 @@
                             : 'bg-gray-200 text-gray-600 hover:bg-gray-300'"
                           v-tooltip.top="'클릭하여 제목/내용 전환'"
                         >
-                          {{ cell.type === 'th' ? 'TH' : 'TD' }}
+                          {{ cell.type === 'th' ? '제목' : '내용' }}
                         </button>
 
                         <!-- 정렬 버튼 그룹 -->
@@ -758,14 +758,15 @@
                       </div>
                     </div>
 
-                    <!-- 셀 내용 입력 -->
-                    <InputText
+                    <!-- 셀 내용 입력 (Enter로 줄바꿈 가능) -->
+                    <Textarea
                       :modelValue="cell.content"
                       @update:modelValue="updateCellContent(rowIndex, colIndex, $event ?? '')"
                       :placeholder="cell.type === 'th' ? '제목' : '내용'"
                       class="w-full text-sm"
                       :class="cell.type === 'th' ? 'font-medium' : ''"
-                      size="small"
+                      rows="2"
+                      autoResize
                     />
 
                     <!-- 병합 표시 배지 -->
@@ -790,11 +791,6 @@
                 </div>
               </div>
 
-              <!-- 테이블 미리보기 힌트 -->
-              <div class="text-xs text-red-400 flex items-center gap-1 font-bold">
-                <i class="pi pi-info-circle mr-1"></i>
-                TH는 제목 셀, TD는 내용 셀입니다
-              </div>
             </div>
 
             <!-- 테이블이 비어있을 때 -->

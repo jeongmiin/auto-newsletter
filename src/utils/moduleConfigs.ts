@@ -21,6 +21,10 @@ export const moduleNewsHeaderConfig: ModuleConfig = {
     webViewUrl: '#',
     webViewColor: '#333333',
     tableSummary: '뉴스레터 입니다.',
+    headerTitlePaddingTop: '0px',
+    headerTitlePaddingRight: '10px',
+    headerTitlePaddingBottom: '10px',
+    headerTitlePaddingLeft: '10px',
   },
 }
 
@@ -38,6 +42,10 @@ export const moduleBasicHeaderConfig: ModuleConfig = {
     logoBorderWidth: '1px',
     logoBorderColor: '#dddddd',
     headerTextColor: '#111111',
+    headerTitlePaddingTop: '15px',
+    headerTitlePaddingRight: '0',
+    headerTitlePaddingBottom: '15px',
+    headerTitlePaddingLeft: '0',
   },
 }
 
@@ -46,6 +54,9 @@ export const moduleBasicHeaderConfig: ModuleConfig = {
  */
 export const moduleDescTextConfig: ModuleConfig = {
   quillFields: ['descriptionText'],
+  defaults: {
+    lineHeight: '1.65',
+  },
 }
 
 /**

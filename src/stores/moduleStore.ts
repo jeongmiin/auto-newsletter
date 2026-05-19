@@ -8,6 +8,7 @@ import type {
   ContentText,
   AdditionalContent,
   TableCell,
+  NewsletterTemplate,
 } from '@/types'
 import { useEditorStore } from './editorStore'
 import { formatTextWithBreaks } from '@/utils/textUtils'
@@ -43,6 +44,7 @@ export const useModuleStore = defineStore('module', () => {
   const modules = ref<ModuleInstance[]>([])
   const selectedModuleId = ref<string | null>(null)
   const availableModules = ref<ModuleMetadata[]>([])
+  const availableTemplates = ref<NewsletterTemplate[]>([])
   const isDirty = ref(false) // 변경사항 추적
 
   // ============= Computed =============
@@ -244,6 +246,110 @@ export const useModuleStore = defineStore('module', () => {
    */
   const markAsSaved = (): void => {
     isDirty.value = false
+  }
+
+  // ============= Newsletter Templates =============
+  /**
+   * 사용 가능한 뉴스레터 템플릿 카탈로그 로드
+   */
+  const loadAvailableTemplates = async (): Promise<NewsletterTemplate[]> => {
+    try {
+      const basePath = import.meta.env.BASE_URL || '/'
+      const configPath = normalizePath(`${basePath}templates/templates-config.json`)
+
+      const response = await fetch(configPath)
+      if (!response.ok) {
+        throw new Error(`Failed to load templates: ${response.status}`)
+      }
+
+      const data = await response.json()
+      if (!data || !Array.isArray(data.templates)) {
+        throw new Error('Invalid templates configuration format')
+      }
+
+      const validated = (data.templates as NewsletterTemplate[]).filter(
+        (t) => t && typeof t.id === 'string' && typeof t.name === 'string' && Array.isArray(t.modules),
+      )
+
+      availableTemplates.value = validated
+      return validated
+    } catch (error) {
+      console.error('[loadAvailableTemplates] Failed:', error)
+      availableTemplates.value = []
+      return []
+    }
+  }
+
+  /**
+   * 템플릿을 현재 작업 영역에 로드
+   * 모듈 ID는 충돌 방지를 위해 재생성됨
+   */
+  const loadTemplate = async (templateId: string): Promise<boolean> => {
+    const template = availableTemplates.value.find((t) => t.id === templateId)
+    if (!template) {
+      console.error(`[loadTemplate] Template not found: ${templateId}`)
+      return false
+    }
+
+    if (availableModules.value.length === 0) {
+      await loadAvailableModules()
+    }
+
+    const editorStore = useEditorStore()
+
+    clearAll()
+
+    if (template.wrapSettings) {
+      editorStore.updateWrapSettings(template.wrapSettings)
+    }
+
+    // 배열 순서를 그대로 적용 (JSON 작성 시 직관적으로 추가/삭제 가능)
+    for (const moduleData of template.modules) {
+      const moduleMetadata = availableModules.value.find((m) => m.id === moduleData.moduleId)
+      if (!moduleMetadata) {
+        console.warn(`[loadTemplate] Unknown moduleId skipped: ${moduleData.moduleId}`)
+        continue
+      }
+
+      addModule(moduleMetadata)
+      const added = modules.value[modules.value.length - 1]
+
+      Object.entries(moduleData.properties).forEach(([key, value]) => {
+        added.properties[key] = value
+      })
+      if (moduleData.styles) {
+        Object.entries(moduleData.styles).forEach(([key, value]) => {
+          ;(added.styles as Record<string, unknown>)[key] = value
+        })
+      }
+    }
+
+    if (modules.value.length > 0) {
+      selectedModuleId.value = modules.value[0].id
+    }
+    isDirty.value = false
+    return true
+  }
+
+  /**
+   * 현재 작업 상태를 템플릿 JSON 문자열로 직렬화
+   * 외부에서 이름/설명을 받아 그대로 사용
+   */
+  const exportCurrentAsTemplate = (name: string, description: string = ''): string => {
+    const editorStore = useEditorStore()
+    const template: NewsletterTemplate = {
+      id: `template-${Date.now()}`,
+      name,
+      description,
+      wrapSettings: { ...editorStore.wrapSettings },
+      modules: modules.value.map((m) => ({
+        moduleId: m.moduleId,
+        order: m.order,
+        properties: JSON.parse(JSON.stringify(m.properties)),
+        styles: JSON.parse(JSON.stringify(m.styles)),
+      })),
+    }
+    return JSON.stringify(template, null, 2)
   }
 
   // ============= Table Row Management =============
@@ -1129,8 +1235,12 @@ export const useModuleStore = defineStore('module', () => {
     selectedModule,
     selectedModuleMetadata,
     availableModules,
+    availableTemplates,
     isDirty,
     loadAvailableModules,
+    loadAvailableTemplates,
+    loadTemplate,
+    exportCurrentAsTemplate,
     addModule,
     selectModule,
     updateModuleProperty,

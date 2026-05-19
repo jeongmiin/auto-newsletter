@@ -109,6 +109,38 @@
           "type": "text",
           "default": "#333333",
           "group": "웹으로 보기"
+        },
+        {
+          "key": "headerTitlePaddingTop",
+          "label": "상단",
+          "type": "text",
+          "default": "5px",
+          "placeholder": "예: 0, 10px",
+          "group": "헤더 타이틀 여백"
+        },
+        {
+          "key": "headerTitlePaddingRight",
+          "label": "우측",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 10px, 0",
+          "group": "헤더 타이틀 여백"
+        },
+        {
+          "key": "headerTitlePaddingBottom",
+          "label": "하단",
+          "type": "text",
+          "default": "10px",
+          "placeholder": "예: 10px, 0",
+          "group": "헤더 타이틀 여백"
+        },
+        {
+          "key": "headerTitlePaddingLeft",
+          "label": "좌측",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 10px, 0",
+          "group": "헤더 타이틀 여백"
         }
       ]
     },
@@ -186,11 +218,11 @@
         },
         {
           "key": "headerText",
-          "label": "헤더 텍스트",
+          "label": "헤더 타이틀",
           "type": "textarea",
           "default": "<p style=\"margin:0; padding:0;\">NEWSLETTER <strong>VOL.1</strong></p>",
-          "placeholder": "헤더 텍스트를 입력하세요",
-          "group": "헤더 텍스트"
+          "placeholder": "헤더 타이틀를 입력하세요",
+          "group": "헤더 타이틀"
         },
         {
           "key": "headerFontSize",
@@ -198,14 +230,46 @@
           "type": "text",
           "default": "20px",
           "placeholder": "예: 20px, 24px",
-          "group": "헤더 텍스트"
+          "group": "헤더 타이틀"
         },
         {
           "key": "headerTextColor",
           "label": "색상",
           "type": "color",
           "default": "#111111",
-          "group": "헤더 텍스트"
+          "group": "헤더 타이틀"
+        },
+        {
+          "key": "headerTitlePaddingTop",
+          "label": "상단",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 0",
+          "group": "헤더 타이틀 여백"
+        },
+        {
+          "key": "headerTitlePaddingRight",
+          "label": "우측",
+          "type": "text",
+          "default": "0",
+          "placeholder": "예: 0, 10px",
+          "group": "헤더 타이틀 여백"
+        },
+        {
+          "key": "headerTitlePaddingBottom",
+          "label": "하단",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 0",
+          "group": "헤더 타이틀 여백"
+        },
+        {
+          "key": "headerTitlePaddingLeft",
+          "label": "좌측",
+          "type": "text",
+          "default": "0",
+          "placeholder": "예: 0, 10px",
+          "group": "헤더 타이틀 여백"
         }
       ]
     },
@@ -337,6 +401,13 @@
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px"
+        },
+        {
+          "key": "lineHeight",
+          "label": "줄 간격",
+          "type": "text",
+          "default": "1.65",
+          "placeholder": "예: 1.5, 1.65, 1.8"
         },
         {
           "key": "paddingTop",

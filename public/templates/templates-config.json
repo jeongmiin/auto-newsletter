@@ -1,0 +1,35 @@
+{
+  "templates": [
+    {
+      "id": "gocaf-template",
+      "name": "고카프 템플릿",
+      "description": "기본 헤더 + 본문 + 구분선 + 이미지 + 본문 + 구분선 + 이미지 + 푸터",
+      "wrapSettings": {
+        "backgroundColor": "#ffffff",
+        "borderWidth": "0px",
+        "borderColor": "#dddddd",
+        "borderStyle": "solid"
+      },
+      "modules": [
+        {
+          "moduleId": "ModuleBasicHeader",
+          "properties": {
+            "tableSummary": "고카프 전시 뉴스레터 입니다.",
+            "logoImageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/gocaf/vol56/logo2.png",
+            "logoBorderWidth": "0px",
+            "headerText": "",
+            "headerTitlePaddingTop": "0px",
+            "headerTitlePaddingRight": "0px",
+            "headerTitlePaddingBottom": "0px",
+            "headerTitlePaddingLeft": "0px"
+          },
+          "styles": {}
+        },
+        { "moduleId": "ModuleImg", "properties": { "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/gocaf/vol53/1.gif" }, "styles": {} },
+        { "moduleId": "ModuleDescText", "properties": { "descriptionText": "<p style=\"margin:0; padding:0; text-align:center; font-weight:bold;\">NEWSLETTER #60</p>", "fontSize": "17px" }, "styles": {} },
+        { "moduleId": "ModuleDescText", "properties": { "descriptionText": "<p style=\"margin:0; padding:0; text-align:center; font-weight:bold;\">대한민국 캠핑 산업의 중심, 고카프가 드디어 킨텍스로 돌아옵니다!</p>", "paddingTop": "10px" }, "styles": {} },
+         { "moduleId": "ModuleImg", "properties": { "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/gocaf/vol60/mainvisual1.gif", "imageBorderRadius": "10px",  "paddingTop": "20px" }, "styles": {} }
+      ]
+    }
+  ]
+}
