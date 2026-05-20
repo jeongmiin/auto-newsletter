@@ -57,6 +57,7 @@ export const moduleDescTextConfig: ModuleConfig = {
   defaults: {
     lineHeight: '1.65',
   },
+  processors: [processors.descTextLineHeightProcessor],
 }
 
 /**

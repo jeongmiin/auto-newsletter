@@ -67,7 +67,8 @@ describe('moduleContentReplacer', () => {
 
       const result = replaceModuleDescTextContent(html, properties)
 
-      expect(result).toBe('<p></p>')
+      // lineHeight 프로세서가 모든 <p>에 기본 line-height(1.65)를 적용함
+      expect(result).toBe('<p style="line-height: 1.65"></p>')
     })
   })
 

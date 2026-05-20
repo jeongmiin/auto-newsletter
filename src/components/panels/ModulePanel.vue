@@ -48,8 +48,8 @@
               </div>
             </div>
           </div>
-          <div class="text-xs text-gray-400 mt-3 px-1">
-            <i class="pi pi-info-circle mr-1"></i>
+          <div class="text-xs text-gray-400 mt-3 px-1 flex flex-wrap gap-2 items-center">
+            <i class="pi pi-info-circle"></i>
             템플릿을 적용하면 현재 작업이 대체됩니다
           </div>
         </div>
