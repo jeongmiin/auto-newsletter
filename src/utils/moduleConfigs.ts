@@ -98,6 +98,10 @@ export const moduleTwoButtonConfig: ModuleConfig = {
     button2Url: '#',
     button2BgColor: '#111111',
     button2TextColor: '#ffffff',
+    paddingTop: '10px',
+    paddingRight: '15px',
+    paddingBottom: '15px',
+    paddingLeft: '15px',
   },
 }
 
