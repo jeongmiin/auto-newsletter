@@ -6,6 +6,7 @@
 import type { AdditionalContent } from '@/types'
 import { processQuillHtml } from './quillHtmlProcessor'
 import { isEmptyValue, safeFormatText } from './textUtils'
+import { applyLineHeightToParagraphs } from './lineHeightUtils'
 
 /**
  * 프로세서 함수 타입 정의
@@ -35,6 +36,11 @@ export interface ModuleConfig {
   autoReplacePlaceholders?: boolean
   /** Quill HTML 처리가 필요한 필드 목록 */
   quillFields?: string[]
+  /**
+   * Quill 필드별 line-height 속성 키 매핑
+   * 예: { descriptionText: 'lineHeight' } — descriptionText의 내부 <p>들에 properties.lineHeight 값 적용
+   */
+  lineHeightMap?: Record<string, string>
   /** 기본값 설정 */
   defaults?: Record<string, unknown>
   /** 특수 처리가 필요한 프로세서들 */
@@ -68,7 +74,15 @@ export async function replaceModuleContent(
     for (const [key, value] of Object.entries(mergedProps)) {
       // Quill 필드는 HTML 처리 적용
       if (config.quillFields?.includes(key)) {
-        const processedValue = isEmptyValue(value) ? '' : processQuillHtml(String(value))
+        let processedValue = isEmptyValue(value) ? '' : processQuillHtml(String(value))
+        // 필드별 line-height 매핑이 있으면 <p> 태그들에 일괄 적용
+        const lhKey = config.lineHeightMap?.[key]
+        if (lhKey && processedValue) {
+          const lhVal = mergedProps[lhKey]
+          if (typeof lhVal === 'string' && lhVal.trim()) {
+            processedValue = applyLineHeightToParagraphs(processedValue, lhVal)
+          }
+        }
         result = replacePlaceholder(result, key, processedValue)
       }
       // 일반 필드는 안전한 텍스트 포맷 적용
@@ -107,7 +121,14 @@ export function replaceModuleContentSync(
   if (config.autoReplacePlaceholders !== false) {
     for (const [key, value] of Object.entries(mergedProps)) {
       if (config.quillFields?.includes(key)) {
-        const processedValue = isEmptyValue(value) ? '' : processQuillHtml(String(value))
+        let processedValue = isEmptyValue(value) ? '' : processQuillHtml(String(value))
+        const lhKey = config.lineHeightMap?.[key]
+        if (lhKey && processedValue) {
+          const lhVal = mergedProps[lhKey]
+          if (typeof lhVal === 'string' && lhVal.trim()) {
+            processedValue = applyLineHeightToParagraphs(processedValue, lhVal)
+          }
+        }
         result = replacePlaceholder(result, key, processedValue)
       } else if (typeof value === 'string') {
         const formattedValue = isEmptyValue(value) ? '' : safeFormatText(value)

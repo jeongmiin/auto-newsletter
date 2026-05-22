@@ -28,37 +28,6 @@ export const removeEmptySubTitleProcessor: ContentProcessor = (html, properties)
 }
 
 /**
- * 설명 텍스트의 모든 <p> 태그에 lineHeight 일괄 적용
- * Quill이 <p>에 자체 inline line-height를 박아도 속성 패널 값으로 덮어씀
- */
-export const descTextLineHeightProcessor: ContentProcessor = (html, properties) => {
-  const value =
-    typeof properties.lineHeight === 'string' && properties.lineHeight.trim()
-      ? properties.lineHeight.trim()
-      : null
-  if (!value) return html
-
-  // 1. style 속성이 있는 <p>: 기존 line-height 제거 후 새 값 추가
-  let result = html.replace(
-    /<p(\s[^>]*)style="([^"]*)"/g,
-    (_match, before: string, style: string) => {
-      const cleaned = style
-        .replace(/;\s*line-height\s*:\s*[^;"]*/g, '')
-        .replace(/line-height\s*:\s*[^;"]*;?\s*/g, '')
-      return `<p${before}style="${cleaned}; line-height: ${value}"`
-    },
-  )
-
-  // 2. style 속성이 없는 <p>: style 추가
-  result = result.replace(
-    /<p(?![^>]*style=)([^>]*)>/g,
-    (_match, attrs: string) => `<p${attrs} style="line-height: ${value}">`,
-  )
-
-  return result
-}
-
-/**
  * SectionTitle 정렬 프로세서
  * 속성 패널의 titleAlign 셀렉트가 정렬의 단일 제어권을 가짐
  * Quill의 text-align이 있더라도 셀렉트 값으로 덮어씀

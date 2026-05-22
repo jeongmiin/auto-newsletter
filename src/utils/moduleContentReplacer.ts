@@ -234,6 +234,8 @@ export function replaceModuleTableContent(
   const cellBorderColor = String(properties.cellBorderColor || '#a7a7a7')
   const headerBgColor = String(properties.headerBgColor || '#f6f6f6')
   const cellBgColor = String(properties.cellBgColor || '#ffffff')
+  const headerTextColor = String(properties.headerTextColor || '#333333')
+  const cellTextColor = String(properties.cellTextColor || '#333333')
 
   // 테이블 셀이 비어있으면 빈 테이블 반환
   if (cells.length === 0) {
@@ -277,6 +279,7 @@ export function replaceModuleTableContent(
       .map((cell) => {
         const tag = cell.type
         const bgColor = cell.type === 'th' ? headerBgColor : cellBgColor
+        const textColor = cell.type === 'th' ? headerTextColor : cellTextColor
         const fontWeight = cell.type === 'th' ? '700' : '400'
         const textAlign = cell.align || (cell.type === 'th' ? 'center' : 'left')
 
@@ -288,7 +291,7 @@ export function replaceModuleTableContent(
           `background:${bgColor}`,
           `bgcolor:${bgColor}`,
           `text-align:${textAlign}`,
-          `color:#333333`,
+          `color:${textColor}`,
           `padding:5px 10px`,
           `letter-spacing:-0.03em`,
           `line-height:1.8em`,
