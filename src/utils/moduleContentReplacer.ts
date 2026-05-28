@@ -216,6 +216,8 @@ interface TableCellType {
   rowspan: number
   width?: string
   align?: 'left' | 'center' | 'right'
+  bgColor?: string
+  textColor?: string
   hidden?: boolean
 }
 
@@ -278,8 +280,9 @@ export function replaceModuleTableContent(
       .filter(cell => !cell.hidden) // hidden 셀 제외
       .map((cell) => {
         const tag = cell.type
-        const bgColor = cell.type === 'th' ? headerBgColor : cellBgColor
-        const textColor = cell.type === 'th' ? headerTextColor : cellTextColor
+        // 셀별 지정 색상 우선, 없으면 타입별(th/td) 일괄 색상으로 폴백
+        const bgColor = cell.bgColor || (cell.type === 'th' ? headerBgColor : cellBgColor)
+        const textColor = cell.textColor || (cell.type === 'th' ? headerTextColor : cellTextColor)
         const fontWeight = cell.type === 'th' ? '700' : '400'
         const textAlign = cell.align || (cell.type === 'th' ? 'center' : 'left')
 

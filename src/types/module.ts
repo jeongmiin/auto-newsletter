@@ -55,6 +55,8 @@ export interface TableCell {
   rowspan: number          // 행 병합 (기본 1)
   width?: string           // 셀 너비 (예: '20%', '100px')
   align?: 'left' | 'center' | 'right'  // 텍스트 정렬
+  bgColor?: string         // 셀 배경색 (미지정 시 타입별 일괄 색상 사용)
+  textColor?: string       // 셀 글자색 (미지정 시 타입별 일괄 색상 사용)
   hidden?: boolean         // 병합으로 인해 숨겨진 셀 여부
 }
 

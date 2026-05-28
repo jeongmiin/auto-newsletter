@@ -730,6 +730,17 @@
                             <i class="pi pi-align-right text-xs"></i>
                           </button>
                         </div>
+
+                        <!-- 셀 색상 스와치 (클릭 시 색상 편집기 펼침) -->
+                        <button
+                          @click="toggleCellColorEditor(rowIndex, colIndex)"
+                          class="flex items-center justify-center w-6 h-6 rounded border text-xs font-bold leading-none transition-colors"
+                          :class="isCellColorOpen(rowIndex, colIndex)
+                            ? 'border-blue-500 ring-1 ring-blue-200'
+                            : 'border-gray-300 hover:border-gray-400'"
+                          :style="{ backgroundColor: getCellEffectiveBg(cell), color: getCellEffectiveText(cell) }"
+                          v-tooltip.top="'셀 배경색·글자색'"
+                        >가</button>
                       </div>
 
                       <!-- 오른쪽: 병합 컨트롤 -->
@@ -765,6 +776,52 @@
                           </select>
                         </div>
                       </div>
+                    </div>
+
+                    <!-- 셀 색상 편집기 (펼침) -->
+                    <div
+                      v-if="isCellColorOpen(rowIndex, colIndex)"
+                      class="cell-color-editor mb-1.5 p-2 bg-gray-50 border border-gray-200 rounded space-y-1.5"
+                    >
+                      <!-- 배경색 -->
+                      <div class="flex items-center gap-1.5">
+                        <label class="text-xs text-gray-500 w-7 shrink-0">배경</label>
+                        <ColorPicker
+                          :modelValue="getCellEffectiveBg(cell)"
+                          @update:modelValue="updateCellBgColor(rowIndex, colIndex, $event)"
+                          format="hex"
+                        />
+                        <InputText
+                          :modelValue="cell.bgColor || ''"
+                          @update:modelValue="updateCellBgColorInput(rowIndex, colIndex, $event ?? '')"
+                          :placeholder="getCellEffectiveBg(cell)"
+                          class="flex-1 min-w-0 font-mono !text-xs"
+                          size="small"
+                          spellcheck="false"
+                        />
+                      </div>
+                      <!-- 글자색 -->
+                      <div class="flex items-center gap-1.5">
+                        <label class="text-xs text-gray-500 w-7 shrink-0">글자</label>
+                        <ColorPicker
+                          :modelValue="getCellEffectiveText(cell)"
+                          @update:modelValue="updateCellTextColor(rowIndex, colIndex, $event)"
+                          format="hex"
+                        />
+                        <InputText
+                          :modelValue="cell.textColor || ''"
+                          @update:modelValue="updateCellTextColorInput(rowIndex, colIndex, $event ?? '')"
+                          :placeholder="getCellEffectiveText(cell)"
+                          class="flex-1 min-w-0 font-mono !text-xs"
+                          size="small"
+                          spellcheck="false"
+                        />
+                      </div>
+                      <!-- 기본값으로 초기화 -->
+                      <button
+                        @click="resetCellColors(rowIndex, colIndex)"
+                        class="text-xs text-gray-500 hover:text-blue-600 underline"
+                      >기본값으로</button>
                     </div>
 
                     <!-- 셀 내용 입력 (Enter로 줄바꿈 가능) -->
@@ -1169,6 +1226,74 @@ const updateCellWidth = (rowIndex: number, colIndex: number, width: string) => {
   if (selectedModule.value) {
     moduleStore.updateTableCell(selectedModule.value.id, rowIndex, colIndex, { width: width || undefined })
   }
+}
+
+// ===== 셀별 배경색/글자색 =====
+// 펼쳐진 색상 편집기의 대상 셀 (rowIndex-colIndex 키)
+const openColorCellKey = ref<string | null>(null)
+const isCellColorOpen = (rowIndex: number, colIndex: number) =>
+  openColorCellKey.value === `${rowIndex}-${colIndex}`
+const toggleCellColorEditor = (rowIndex: number, colIndex: number) => {
+  const key = `${rowIndex}-${colIndex}`
+  openColorCellKey.value = openColorCellKey.value === key ? null : key
+}
+
+// 타입별(th/td) 일괄 색상 기본값 (렌더러 폴백과 동일)
+const tableDefaultColors = computed(() => {
+  const p = selectedModule.value?.properties ?? {}
+  return {
+    headerBg: String(p.headerBgColor || '#f6f6f6'),
+    cellBg: String(p.cellBgColor || '#ffffff'),
+    headerText: String(p.headerTextColor || '#333333'),
+    cellText: String(p.cellTextColor || '#333333'),
+  }
+})
+
+// 셀에 실제 적용되는 색상 (셀 지정값 > 타입별 일괄 색상)
+const getCellEffectiveBg = (cell: TableCell): string => {
+  if (cell.bgColor) return cell.bgColor
+  return cell.type === 'th' ? tableDefaultColors.value.headerBg : tableDefaultColors.value.cellBg
+}
+const getCellEffectiveText = (cell: TableCell): string => {
+  if (cell.textColor) return cell.textColor
+  return cell.type === 'th' ? tableDefaultColors.value.headerText : tableDefaultColors.value.cellText
+}
+
+// ColorPicker(#없이 반환) 업데이트
+const updateCellBgColor = (rowIndex: number, colIndex: number, value: string) => {
+  if (!selectedModule.value) return
+  const hex = value.startsWith('#') ? value : `#${value}`
+  moduleStore.updateTableCell(selectedModule.value.id, rowIndex, colIndex, { bgColor: hex })
+}
+const updateCellTextColor = (rowIndex: number, colIndex: number, value: string) => {
+  if (!selectedModule.value) return
+  const hex = value.startsWith('#') ? value : `#${value}`
+  moduleStore.updateTableCell(selectedModule.value.id, rowIndex, colIndex, { textColor: hex })
+}
+
+// HEX 텍스트 입력 업데이트 (비우면 일괄 색상으로 복귀)
+const updateCellBgColorInput = (rowIndex: number, colIndex: number, value: string) => {
+  if (!selectedModule.value) return
+  const normalized = normalizeColorInput(value)
+  moduleStore.updateTableCell(selectedModule.value.id, rowIndex, colIndex, {
+    bgColor: normalized || undefined,
+  })
+}
+const updateCellTextColorInput = (rowIndex: number, colIndex: number, value: string) => {
+  if (!selectedModule.value) return
+  const normalized = normalizeColorInput(value)
+  moduleStore.updateTableCell(selectedModule.value.id, rowIndex, colIndex, {
+    textColor: normalized || undefined,
+  })
+}
+
+// 셀 색상을 일괄 색상(기본값)으로 초기화
+const resetCellColors = (rowIndex: number, colIndex: number) => {
+  if (!selectedModule.value) return
+  moduleStore.updateTableCell(selectedModule.value.id, rowIndex, colIndex, {
+    bgColor: undefined,
+    textColor: undefined,
+  })
 }
 
 // 커스텀 테이블 열 너비 (colgroup>col에 적용)
