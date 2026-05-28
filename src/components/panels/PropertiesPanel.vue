@@ -225,6 +225,15 @@
               <span class="ql-formats">
                 <select class="ql-color" title="글자 색상"></select>
                 <select class="ql-background" title="배경 색상"></select>
+                <select class="ql-highlightMarker" title="형광펜">
+                  <option selected></option>
+                  <option value="#fff555"></option>
+                  <option value="#ffd1d1"></option>
+                  <option value="#c7f0c7"></option>
+                  <option value="#cce4ff"></option>
+                  <option value="#ffd9b3"></option>
+                  <option value="#e0c7ff"></option>
+                </select>
               </span>
               <span class="ql-formats">
                 <button class="ql-link" title="링크"></button>
@@ -602,7 +611,7 @@
                   <div
                     v-for="(_, colIndex) in tableCells[0]"
                     :key="`col-header-${colIndex}`"
-                    class="flex-1 flex flex-col px-2 border-r border-gray-200 last:border-r-0"
+                    class="flex-1 min-w-0 flex flex-col px-2 border-r border-gray-200 last:border-r-0"
                   >
                     <!-- 상단: 열 번호 + 삭제 -->
                     <div class="flex items-center justify-center gap-1 py-1.5">
@@ -668,14 +677,14 @@
                     v-for="(cell, colIndex) in row"
                     :key="cell.id"
                     v-show="!cell.hidden"
-                    class="flex-1 p-2 border-r border-gray-200 last:border-r-0"
+                    class="flex-1 min-w-0 p-2 border-r border-gray-200 last:border-r-0"
                     :class="cell.type === 'th' ? 'bg-blue-50' : 'bg-white'"
                     :style="{ flex: cell.colspan > 1 ? cell.colspan : 1 }"
                   >
                     <!-- 셀 컨트롤 (타입 + 정렬 + 병합) -->
-                    <div class="flex items-center justify-between mb-1.5 gap-1">
+                    <div class="flex flex-wrap items-center justify-between mb-1.5 gap-1">
                       <!-- 왼쪽: 타입 토글 + 정렬 -->
-                      <div class="flex items-center gap-1">
+                      <div class="flex flex-wrap items-center gap-1">
                         <!-- 셀 타입 토글 -->
                         <button
                           @click="toggleCellType(rowIndex, colIndex)"
@@ -1250,6 +1259,73 @@ const getColorValue = (key: string) => {
 /* Quill 에디터를 이메일 기본 폰트로 통일 (입력 시 결과물과 동일하게 보이도록) */
 :deep(.ql-editor) {
   font-family: AppleSDGothic, 'malgun gothic', 'nanum gothic', 'Noto Sans KR', sans-serif;
+}
+
+/* 형광펜(반투명 마커) 드롭다운 픽커 */
+:deep(.ql-snow .ql-picker.ql-highlightMarker) {
+  width: 32px;
+}
+:deep(.ql-snow .ql-picker.ql-highlightMarker .ql-picker-label) {
+  padding-left: 2px;
+  padding-right: 12px;
+}
+/* 라벨(툴바 버튼)에 형광펜 식별 아이콘 표시 */
+:deep(.ql-snow .ql-picker.ql-highlightMarker .ql-picker-label::before) {
+  content: 'ab';
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  background: linear-gradient(transparent 50%, #fff555 50%);
+  padding: 0 2px;
+}
+:deep(.ql-snow .ql-picker.ql-highlightMarker .ql-picker-options) {
+  padding: 4px;
+  width: 130px;
+}
+/* 색상 스와치 */
+:deep(.ql-snow .ql-picker.ql-highlightMarker .ql-picker-item) {
+  width: 18px;
+  height: 18px;
+  float: left;
+  margin: 2px;
+  padding: 0;
+  border: 1px solid #ccc;
+}
+:deep(.ql-snow .ql-picker.ql-highlightMarker .ql-picker-item:hover),
+:deep(.ql-snow .ql-picker.ql-highlightMarker .ql-picker-item.ql-selected) {
+  border-color: #06c;
+}
+/* 첫 옵션(값 없음) = 형광펜 해제 */
+:deep(.ql-snow .ql-picker.ql-highlightMarker .ql-picker-item:not([data-value])) {
+  position: relative;
+  background: #fff;
+}
+:deep(.ql-snow .ql-picker.ql-highlightMarker .ql-picker-item:not([data-value])::after) {
+  content: '✕';
+  position: absolute;
+  inset: 0;
+  font-size: 11px;
+  line-height: 16px;
+  text-align: center;
+  color: #999;
+}
+:deep(.ql-snow .ql-picker.ql-highlightMarker .ql-picker-item[data-value='#fff555']) {
+  background: linear-gradient(transparent 50%, #fff555 50%);
+}
+:deep(.ql-snow .ql-picker.ql-highlightMarker .ql-picker-item[data-value='#ffd1d1']) {
+  background: linear-gradient(transparent 50%, #ffd1d1 50%);
+}
+:deep(.ql-snow .ql-picker.ql-highlightMarker .ql-picker-item[data-value='#c7f0c7']) {
+  background: linear-gradient(transparent 50%, #c7f0c7 50%);
+}
+:deep(.ql-snow .ql-picker.ql-highlightMarker .ql-picker-item[data-value='#cce4ff']) {
+  background: linear-gradient(transparent 50%, #cce4ff 50%);
+}
+:deep(.ql-snow .ql-picker.ql-highlightMarker .ql-picker-item[data-value='#ffd9b3']) {
+  background: linear-gradient(transparent 50%, #ffd9b3 50%);
+}
+:deep(.ql-snow .ql-picker.ql-highlightMarker .ql-picker-item[data-value='#e0c7ff']) {
+  background: linear-gradient(transparent 50%, #e0c7ff 50%);
 }
 
 /* 테두리 설정 input 높이 통일 */

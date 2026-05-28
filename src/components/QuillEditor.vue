@@ -8,6 +8,7 @@
 import { ref, onMounted, watch, onBeforeUnmount } from 'vue'
 import Quill from 'quill'
 import { processQuillHtml } from '@/utils/quillHtmlProcessor'
+import { registerHighlightMarker, HIGHLIGHT_COLORS } from '@/utils/quillHighlightMarker'
 
 interface Props {
   modelValue: string
@@ -68,8 +69,14 @@ const customColors = [
   '#3d1466',
 ]
 
+// 형광펜(반투명 마커) 색상 팔레트
+const highlightColors = HIGHLIGHT_COLORS
+
 onMounted(() => {
   if (!editorRef.value) return
+
+  // 형광펜 커스텀 Blot 등록 (new Quill 호출 전에 실행)
+  registerHighlightMarker()
 
   // Quill 초기화 (커스텀 HEX 색상 팔레트 사용)
   quill = new Quill(editorRef.value, {
@@ -77,17 +84,39 @@ onMounted(() => {
     placeholder: props.placeholder,
     readOnly: props.readonly,
     modules: {
-      toolbar: [
-        ['bold', 'italic', 'underline', 'strike'], // 텍스트 스타일
-        [{ header: [1, 2, 3, false] }], // 헤더
-        [{ list: 'ordered' }, { list: 'bullet' }], // 리스트
-        [{ align: [] }], // ✅ 정렬 버튼 추가 (left, center, right, justify)
-        [{ color: customColors }, { background: customColors }], // HEX 색상 팔레트
-        ['link'], // 링크
-        ['clean'], // 서식 제거
-      ],
+      toolbar: {
+        container: [
+          ['bold', 'italic', 'underline', 'strike'], // 텍스트 스타일
+          [{ header: [1, 2, 3, false] }], // 헤더
+          [{ list: 'ordered' }, { list: 'bullet' }], // 리스트
+          [{ align: [] }], // 정렬 버튼 (left, center, right, justify)
+          [{ color: customColors }, { background: customColors }], // HEX 색상 팔레트
+          [{ highlightMarker: highlightColors }], // 형광펜(반투명 마커)
+          ['link'], // 링크
+          ['clean'], // 서식 제거
+        ],
+        handlers: {
+          highlightMarker(this: { quill: Quill }, value: string) {
+            this.quill.format('highlightMarker', value || false)
+          },
+        },
+      },
     },
   })
+
+  // 형광펜 픽커 UI에 색상 스와치 적용
+  const toolbarEl = editorRef.value.previousElementSibling
+  if (toolbarEl) {
+    toolbarEl
+      .querySelectorAll<HTMLElement>('.ql-highlightMarker .ql-picker-item')
+      .forEach((item) => {
+        const color = item.dataset.value
+        if (color) {
+          item.style.background = `linear-gradient(transparent 50%, ${color} 50%)`
+          item.title = color
+        }
+      })
+  }
 
   // 한글 입력 최적화
   quill.root.setAttribute('spellcheck', 'false')
@@ -226,5 +255,54 @@ onBeforeUnmount(() => {
 
 :deep(.ql-container.ql-snow) {
   border: none;
+}
+
+/* 형광펜 드롭다운 픽커 */
+:deep(.ql-snow .ql-toolbar .ql-highlightMarker),
+:deep(.ql-snow.ql-toolbar .ql-highlightMarker) {
+  width: 36px;
+}
+
+:deep(.ql-snow .ql-highlightMarker .ql-picker-label) {
+  padding: 2px 4px;
+  position: relative;
+}
+
+:deep(.ql-snow .ql-highlightMarker .ql-picker-label::before) {
+  content: 'ABC';
+  font-size: 11px;
+  font-weight: bold;
+  background: linear-gradient(transparent 50%, #fff555 50%);
+  padding: 0 2px;
+  display: inline-block;
+  line-height: 1.4;
+}
+
+:deep(.ql-snow .ql-highlightMarker .ql-picker-label svg) {
+  right: 0;
+  position: relative;
+}
+
+:deep(.ql-snow .ql-highlightMarker .ql-picker-options) {
+  padding: 5px;
+  width: 152px;
+}
+
+:deep(.ql-snow .ql-highlightMarker .ql-picker-item) {
+  width: 16px;
+  height: 16px;
+  border: 1px solid transparent;
+  float: left;
+  margin: 2px;
+  padding: 0;
+}
+
+:deep(.ql-snow .ql-highlightMarker .ql-picker-item::before) {
+  content: '';
+}
+
+:deep(.ql-snow .ql-highlightMarker .ql-picker-item:hover),
+:deep(.ql-snow .ql-highlightMarker .ql-picker-item.ql-selected) {
+  border-color: #06c;
 }
 </style>

@@ -1368,6 +1368,7 @@
             "borderTopColor": "#333333",
             "cellBorderColor": "#dddddd",
             "headerBgColor": "#058bae",
+            "headerTextColor": "#ffffff",
             "cellBgColor": "#ffffff",
             "tableColWidths": [
               "25%",
@@ -1473,6 +1474,7 @@
             "borderTopColor": "#333333",
             "cellBorderColor": "#dddddd",
             "headerBgColor": "#058bae",
+            "headerTextColor": "#ffffff",
             "cellBgColor": "#ffffff",
             "tableColWidths": [
               "25%",
@@ -1605,6 +1607,7 @@
             "youtubeUrl": "#",
             "showKakao": false,
             "kakaoUrl": "#",
+            "showZuzuzu": true,
             "unsubscribeUrl": "#",
             "inquiryEmail": "pet.es@esgroup.net"
           },

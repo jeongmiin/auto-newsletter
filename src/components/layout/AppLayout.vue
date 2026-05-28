@@ -62,9 +62,10 @@ import CanvasArea from '@/components/editor/CanvasArea.vue'
 import PropertiesPanel from '@/components/panels/PropertiesPanel.vue'
 
 // 속성 패널 너비 상태
-const MIN_WIDTH = 280
-const MAX_WIDTH = 700
-const DEFAULT_WIDTH = 384 // 기본 w-96
+const MIN_WIDTH = 300
+const MAX_WIDTH = 900
+const DEFAULT_WIDTH = 640 // 넓게 펼쳐진 상태를 기본값으로 (이후 늘리거나 줄일 수 있음)
+const STORAGE_KEY = 'propertiesPanelWidth_v2'
 
 const propertiesPanelWidth = ref(DEFAULT_WIDTH)
 const isResizing = ref(false)
@@ -73,7 +74,7 @@ const startWidth = ref(0)
 
 // 로컬 스토리지에서 저장된 너비 불러오기
 onMounted(() => {
-  const savedWidth = localStorage.getItem('propertiesPanelWidth')
+  const savedWidth = localStorage.getItem(STORAGE_KEY)
   if (savedWidth) {
     const width = parseInt(savedWidth, 10)
     if (width >= MIN_WIDTH && width <= MAX_WIDTH) {
@@ -105,7 +106,7 @@ const stopResize = () => {
   if (isResizing.value) {
     isResizing.value = false
     // 로컬 스토리지에 저장
-    localStorage.setItem('propertiesPanelWidth', propertiesPanelWidth.value.toString())
+    localStorage.setItem(STORAGE_KEY, propertiesPanelWidth.value.toString())
   }
 }
 

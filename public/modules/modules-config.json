@@ -413,8 +413,8 @@
           "key": "lineHeight",
           "label": "행간(line-height)",
           "type": "text",
-          "default": "1.65",
-          "placeholder": "예: 1.5, 1.65, 1.8"
+          "default": "21px",
+          "placeholder": "예: 1.5, 1.5em, 20px"
         },
         {
           "key": "paddingTop",
@@ -1066,11 +1066,26 @@
           "group": "회사 정보"
         },
         {
+          "key": "showWebsite",
+          "label": "웹사이트(H) 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "회사 정보"
+        },
+        {
           "key": "websiteUrl",
           "label": "웹사이트 URL",
           "type": "text",
           "default": "www.koreabuild.co.kr",
           "placeholder": "웹사이트 주소",
+          "showWhen": "showWebsite",
+          "group": "회사 정보"
+        },
+        {
+          "key": "showPhone",
+          "label": "전화번호(T) 표시",
+          "type": "boolean",
+          "default": true,
           "group": "회사 정보"
         },
         {
@@ -1079,6 +1094,14 @@
           "type": "text",
           "default": "02-6121-6362",
           "placeholder": "팩스 또는 전화번호",
+          "showWhen": "showPhone",
+          "group": "회사 정보"
+        },
+        {
+          "key": "showEmail",
+          "label": "이메일(E) 표시",
+          "type": "boolean",
+          "default": true,
           "group": "회사 정보"
         },
         {
@@ -1087,6 +1110,7 @@
           "type": "text",
           "default": "hvackorea@esgroup.net",
           "placeholder": "회사 이메일",
+          "showWhen": "showEmail",
           "group": "회사 정보"
         },
         {
@@ -1207,6 +1231,13 @@
           "default": "#",
           "placeholder": "카카오톡 채널 URL",
           "showWhen": "showKakao",
+          "group": "SNS 링크"
+        },
+        {
+          "key": "showZuzuzu",
+          "label": "쭈쭈쭈 링크 아이콘 표시",
+          "type": "boolean",
+          "default": false,
           "group": "SNS 링크"
         },
         {
@@ -1365,8 +1396,8 @@
           "key": "contentTextLineHeight",
           "label": "행간(line-height)",
           "type": "text",
-          "default": "1.7em",
-          "placeholder": "예: 1.5, 1.7em",
+          "default": "21px",
+          "placeholder": "예: 1.5, 1.5em, 20px",
           "group": "텍스트"
         },
         {
@@ -1423,8 +1454,8 @@
           "key": "leftContentLineHeight",
           "label": "행간(line-height)",
           "type": "text",
-          "default": "1.7em",
-          "placeholder": "예: 1.5, 1.7em",
+          "default": "21px",
+          "placeholder": "예: 1.5, 1.5em, 20px",
           "group": "왼쪽 콘텐츠"
         },
         {
@@ -1464,8 +1495,8 @@
           "key": "rightContentLineHeight",
           "label": "행간(line-height)",
           "type": "text",
-          "default": "1.7em",
-          "placeholder": "예: 1.5, 1.7em",
+          "default": "21px",
+          "placeholder": "예: 1.5, 1.5em, 20px",
           "group": "오른쪽 콘텐츠"
         }
       ]
@@ -1529,8 +1560,8 @@
           "key": "contentTextLineHeight",
           "label": "행간(line-height)",
           "type": "text",
-          "default": "1.7em",
-          "placeholder": "예: 1.5, 1.7em",
+          "default": "21px",
+          "placeholder": "예: 1.5, 1.5em, 20px",
           "group": "텍스트"
         }
       ]
@@ -1620,8 +1651,8 @@
           "key": "descriptionLineHeight",
           "label": "행간(line-height)",
           "type": "text",
-          "default": "1.7em",
-          "placeholder": "예: 1.5, 1.7em",
+          "default": "21px",
+          "placeholder": "예: 1.5, 1.5em, 20px",
           "group": "타이틀·텍스트"
         },
         {
@@ -1802,8 +1833,8 @@
           "key": "leftContentLineHeight",
           "label": "행간(line-height)",
           "type": "text",
-          "default": "1.7em",
-          "placeholder": "예: 1.5, 1.7em",
+          "default": "21px",
+          "placeholder": "예: 1.5, 1.5em, 20px",
           "group": "왼쪽 콘텐츠"
         },
         {
@@ -2127,8 +2158,8 @@
           "key": "rightContentLineHeight",
           "label": "행간(line-height)",
           "type": "text",
-          "default": "1.7em",
-          "placeholder": "예: 1.5, 1.7em",
+          "default": "21px",
+          "placeholder": "예: 1.5, 1.5em, 20px",
           "group": "오른쪽 콘텐츠"
         },
         {
@@ -2454,8 +2485,8 @@
           "key": "contentTextLineHeight",
           "label": "행간(line-height)",
           "type": "text",
-          "default": "1.7em",
-          "placeholder": "예: 1.5, 1.7em",
+          "default": "21px",
+          "placeholder": "예: 1.5, 1.5em, 20px",
           "group": "텍스트"
         },
         {
@@ -2724,7 +2755,7 @@
           "label": "행간(line-height)",
           "type": "text",
           "default": "1.5em",
-          "placeholder": "예: 1.5, 1.7em",
+          "placeholder": "예: 1.5, 1.5em, 20px",
           "group": "타이틀·텍스트"
         },
         {
@@ -2945,7 +2976,7 @@
           "label": "행간(line-height)",
           "type": "text",
           "default": "1.5em",
-          "placeholder": "예: 1.5, 1.7em",
+          "placeholder": "예: 1.5, 1.5em, 20px",
           "group": "상단 섹션"
         },
         {
@@ -3373,8 +3404,8 @@
           "key": "leftContentLineHeight",
           "label": "행간(line-height)",
           "type": "text",
-          "default": "1.7em",
-          "placeholder": "예: 1.5, 1.7em",
+          "default": "21px",
+          "placeholder": "예: 1.5, 1.5em, 20px",
           "group": "왼쪽 텍스트"
         },
         {
@@ -3623,8 +3654,8 @@
           "key": "rightContentLineHeight",
           "label": "행간(line-height)",
           "type": "text",
-          "default": "1.7em",
-          "placeholder": "예: 1.5, 1.7em",
+          "default": "21px",
+          "placeholder": "예: 1.5, 1.5em, 20px",
           "group": "오른쪽 텍스트"
         },
         {
@@ -3870,7 +3901,7 @@
           "label": "행간(line-height)",
           "type": "text",
           "default": "21px",
-          "placeholder": "예: 1.5, 21px",
+          "placeholder": "예: 1.5, 1.5em, 20px",
           "group": "텍스트"
         },
         {
@@ -4001,7 +4032,7 @@
           "label": "행간(line-height)",
           "type": "text",
           "default": "21px",
-          "placeholder": "예: 1.5, 21px",
+          "placeholder": "예: 1.5, 1.5em, 20px",
           "group": "텍스트"
         },
         {

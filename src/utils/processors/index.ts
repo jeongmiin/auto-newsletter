@@ -492,31 +492,36 @@ export const module07ButtonProcessor: ContentProcessor = (html, properties) => {
  * ModuleFooter SNS 아이콘 조건부 제거 프로세서
  */
 export const footerSnsProcessor: ContentProcessor = (html, properties) => {
-  let result = html
+  // 회사 정보 H/T/E 조건부 표시 (미설정 시 표시 = 기존 동작 유지)
+  const showWebsite = properties.showWebsite !== false
+  const showPhone = properties.showPhone !== false
+  const showEmail = properties.showEmail !== false
 
-  if (properties.showHome !== true) {
-    result = result.replace(/<!-- 홈 -->.*?<!-- \/\/홈 -->/gs, '')
-  }
-  if (properties.showFacebook !== true) {
-    result = result.replace(/<!-- 페이스북 -->.*?<!-- \/\/페이스북 -->/gs, '')
-  }
-  if (properties.showBlog !== true) {
-    result = result.replace(/<!-- 블로그 -->.*?<!-- \/\/블로그 -->/gs, '')
-  }
-  if (properties.showYoutube !== true) {
-    result = result.replace(/<!-- 유튜브 -->.*?<!-- \/\/유튜브 -->/gs, '')
-  }
-  if (properties.showInstagram !== true) {
-    result = result.replace(/<!-- 인스타그램 -->.*?<!-- \/\/인스타그램 -->/gs, '')
-  }
-  if (properties.showKakao !== true) {
-    result = result.replace(/<!-- 카카오톡 -->.*?<!-- \/\/카카오톡 -->/gs, '')
-  }
-  if (properties.showX !== true) {
-    result = result.replace(/<!-- X\(트위터\) -->.*?<!-- \/\/X\(트위터\) -->/gs, '')
-  }
+  // [제거 조건, 마커 라벨] 목록 — 조건이 true이면 해당 마커 블록 제거
+  const removals: Array<[boolean, string]> = [
+    // 회사 정보
+    [!showWebsite, '홈페이지'],
+    [!showPhone, '전화'],
+    [!showEmail, '이메일'],
+    [!(showWebsite && showPhone), 'HT구분'], // H·T 모두 표시될 때만 구분 여백 유지
+    [!showWebsite && !showPhone, '행1여백'], // H/T 행 줄바꿈
+    [!showEmail, '행2여백'], // E 행 줄바꿈
+    // SNS 아이콘 (미설정 시 숨김)
+    [properties.showHome !== true, '홈'],
+    [properties.showFacebook !== true, '페이스북'],
+    [properties.showBlog !== true, '블로그'],
+    [properties.showYoutube !== true, '유튜브'],
+    [properties.showInstagram !== true, '인스타그램'],
+    [properties.showKakao !== true, '카카오톡'],
+    [properties.showX !== true, 'X(트위터)'],
+    [properties.showZuzuzu !== true, '쭈쭈쭈'],
+  ]
 
-  return result
+  return removals.reduce((acc, [shouldRemove, label]) => {
+    if (!shouldRemove) return acc
+    const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`)
+    return acc.replace(new RegExp(`<!-- ${escaped} -->.*?<!-- //${escaped} -->`, 'gs'), '')
+  }, html)
 }
 
 /**

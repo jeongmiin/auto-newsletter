@@ -88,6 +88,10 @@ import Toast from 'primevue/toast'
 import ConfirmDialog from 'primevue/confirmdialog'
 import Editor from 'primevue/editor'
 import ColorPicker from 'primevue/colorpicker'
+
+// Quill 형광펜 Blot 등록 (PrimeVue Editor가 Quill 인스턴스를 만들기 전에 실행)
+import { registerHighlightMarker } from './utils/quillHighlightMarker'
+registerHighlightMarker()
 import Select from 'primevue/select'
 import ToggleSwitch from 'primevue/toggleswitch'
 import Panel from 'primevue/panel'
