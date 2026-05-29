@@ -1,31 +1,52 @@
 <template>
   <div class="h-full flex flex-col">
-    <!-- 패널 헤더 -->
+    <!-- 모듈 / 템플릿 세그먼트 토글 -->
     <div class="p-3 border-b">
-      <h2 class="text-lg font-semibold text-gray-800">{{ selectedCategory === 'templates' ? '템플릿' : '모듈' }}</h2>
+      <div class="flex bg-gray-100 rounded-lg p-0.5">
+        <button
+          @click="mode = 'modules'"
+          :class="[
+            'flex-1 py-1.5 text-sm font-semibold rounded-md transition-colors',
+            mode === 'modules' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700',
+          ]"
+        >
+          모듈
+        </button>
+        <button
+          @click="mode = 'templates'"
+          :class="[
+            'flex-1 py-1.5 text-sm font-semibold rounded-md transition-colors',
+            mode === 'templates' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700',
+          ]"
+        >
+          템플릿
+        </button>
+      </div>
     </div>
 
-    <!-- 카테고리 탭 -->
-    <div class="flex border-b overflow-x-auto">
-      <button
-        v-for="category in categories"
-        :key="category.id"
-        @click="selectedCategory = category.id"
-        :class="[
-          'flex-1 min-w-fit whitespace-nowrap p-2 text-xs font-medium',
-          selectedCategory === category.id
-            ? 'bg-blue-50 text-blue-600 border-b-2 border-blue-600'
-            : 'text-gray-600 hover:text-gray-800',
-        ]"
-      >
-        {{ category.name }}
-      </button>
+    <!-- 카테고리 (모듈 모드에서만) — 세그먼트 트랙 3열 그리드 -->
+    <div v-if="mode === 'modules'" class="p-3 border-b">
+      <div class="grid grid-cols-3 gap-1 bg-gray-100 rounded-lg p-1">
+        <button
+          v-for="category in categories"
+          :key="category.id"
+          @click="selectedCategory = category.id"
+          :class="[
+            'px-2 py-1.5 text-sm font-medium text-center rounded-md transition-colors',
+            selectedCategory === category.id
+              ? 'bg-white text-blue-600 shadow-sm'
+              : 'text-gray-500 hover:text-gray-700',
+          ]"
+        >
+          {{ category.name }}
+        </button>
+      </div>
     </div>
 
     <!-- 콘텐츠 영역 -->
-    <div class="flex-1 overflow-y-auto p-4 pb-10">
+    <div class="flex-1 overflow-y-auto p-3 pb-10">
       <!-- 템플릿 리스트 -->
-      <div v-if="selectedCategory === 'templates'">
+      <div v-if="mode === 'templates'">
         <div v-if="templates.length === 0" class="text-center py-8 text-gray-500">
           <i class="pi pi-folder-open text-3xl text-gray-300 mb-3 block"></i>
           <div class="text-sm">사용 가능한 템플릿이 없습니다</div>
@@ -90,6 +111,7 @@ const moduleStore = useModuleStore()
 const toast = useToast()
 const confirm = useConfirm()
 
+const mode = ref<'modules' | 'templates'>('modules')
 const selectedCategory = ref<string>('all')
 const modules = ref<ModuleMetadata[]>([])
 const templates = ref<NewsletterTemplate[]>([])
@@ -101,7 +123,6 @@ const categories = [
   { id: 'image', name: '이미지' },
   { id: 'button', name: '버튼' },
   { id: 'table', name: '테이블' },
-  { id: 'templates', name: '템플릿' },
 ]
 
 const filteredModules = computed(() => {

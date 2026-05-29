@@ -277,7 +277,7 @@
       "id": "SectionTitle",
       "name": "섹션 타이틀",
       "description": "제목과 부제목이 있는 헤더",
-      "category": "common",
+      "category": "text",
       "icon": "pi pi-align-left",
       "htmlFile": "SectionTitle.html",
       "editableProps": [
@@ -391,7 +391,7 @@
       "id": "ModuleDescText",
       "name": "설명 텍스트",
       "description": "단순 텍스트 콘텐츠 블록",
-      "category": "common",
+      "category": "text",
       "icon": "pi pi-align-left",
       "htmlFile": "ModuleDescText.html",
       "editableProps": [
@@ -1339,7 +1339,7 @@
     },
     {
       "id": "Module01",
-      "name": "01",
+      "name": "모듈 01번",
       "description": "강조 타이틀과 텍스트가 있는 박스",
       "category": "text",
       "icon": "pi pi-th-large",
@@ -1404,7 +1404,7 @@
     },
     {
       "id": "Module01-1",
-      "name": "01-1",
+      "name": "모듈 01-1번",
       "description": "타이틀과 설명글이 있는 2컬럼 박스",
       "category": "text",
       "icon": "pi pi-th-large",
@@ -1496,7 +1496,7 @@
     },
     {
       "id": "Module01-2",
-      "name": "01-2",
+      "name": "모듈 01-2번",
       "description": "카테고리와 설명글 박스",
       "category": "text",
       "icon": "pi pi-th-large",
@@ -1553,7 +1553,7 @@
     },
     {
       "id": "Module02",
-      "name": "02",
+      "name": "모듈 02번",
       "description": "이미지와 텍스트, 버튼이 포함된 모듈",
       "category": "image",
       "icon": "pi pi-th-large",
@@ -1743,7 +1743,7 @@
     },
     {
       "id": "Module04",
-      "name": "04",
+      "name": "모듈 04번",
       "description": "이미지와 텍스트가 있는 2단 구성 모듈",
       "category": "image",
       "icon": "pi pi-th-large",
@@ -2404,7 +2404,7 @@
     },
     {
       "id": "Module05",
-      "name": "05",
+      "name": "모듈 05번",
       "description": "이미지 + 텍스트 + 4개의 독립적인 버튼",
       "category": "image",
       "icon": "pi pi-th-large",
@@ -2634,7 +2634,7 @@
     },
     {
       "id": "Module05-1",
-      "name": "05-1",
+      "name": "모듈 05-1번",
       "description": "2컬럼 이미지와 강조된 타이틀 + 최대 4개 버튼",
       "category": "image",
       "icon": "pi pi-th-large",
@@ -2895,7 +2895,7 @@
     },
     {
       "id": "Module05-3",
-      "name": "05-3",
+      "name": "모듈 05-3번",
       "description": "2개 섹션, 각각 타이틀/텍스트/이미지/작은버튼, 하단 큰 버튼",
       "category": "image",
       "icon": "pi pi-th-large",
@@ -3293,7 +3293,7 @@
     },
     {
       "id": "Module06",
-      "name": "06",
+      "name": "모듈 06번",
       "description": "2개 섹션, 각각 타이틀 + 이미지 + 텍스트 + 버튼",
       "category": "image",
       "icon": "pi pi-th-large",
@@ -3803,7 +3803,7 @@
     },
     {
       "id": "Module07",
-      "name": "07",
+      "name": "모듈 07번",
       "description": "이미지 왼쪽 + 텍스트/버튼 오른쪽",
       "category": "image",
       "icon": "pi pi-th-large",
@@ -3934,7 +3934,7 @@
     },
     {
       "id": "Module07_reverse",
-      "name": "07(반대 방향)",
+      "name": "모듈 07번 (반대 방향)",
       "description": "텍스트/버튼 왼쪽 + 이미지 오른쪽",
       "category": "image",
       "icon": "pi pi-th-large",
@@ -4065,7 +4065,7 @@
     },
     {
       "id": "ModuleSubTitle",
-      "name": "모듈10번 타이틀",
+      "name": "모듈 10번 타이틀",
       "description": "섹션 구분 서브타이틀",
       "category": "image",
       "icon": "pi pi-align-left",
@@ -4092,7 +4092,7 @@
     },
     {
       "id": "Module10",
-      "name": "10",
+      "name": "모듈 10번",
       "description": "이미지 + 라벨 + 타이틀 + 부제목 (1열)",
       "category": "image",
       "icon": "pi pi-th-large",
@@ -4240,7 +4240,7 @@
     },
     {
       "id": "Module10-1",
-      "name": "10-1",
+      "name": "모듈 10-1번",
       "description": "이미지 + 라벨 + 타이틀 + 부제목 (2열)",
       "category": "image",
       "icon": "pi pi-th-large",
@@ -4438,7 +4438,7 @@
     },
     {
       "id": "Module11",
-      "name": "11",
+      "name": "모듈 11번",
       "description": "라벨 + 텍스트 + 버튼이 있는 링크 박스",
       "category": "text",
       "icon": "pi pi-th-large",

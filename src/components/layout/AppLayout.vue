@@ -26,10 +26,10 @@
           @mousedown="startResize"
         >
           <!-- 핸들 배경 -->
-          <div class="absolute inset-0 bg-gray-100 group-hover:bg-blue-100 transition-colors"></div>
+          <div class="absolute inset-0 bg-gray-200 group-hover:bg-blue-100 transition-colors"></div>
           <!-- 핸들 그립 라인들 -->
           <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center gap-1 opacity-40 group-hover:opacity-100 transition-opacity">
-            <div class="w-0.5 h-6 bg-gray-400 group-hover:bg-blue-500 rounded-full transition-colors"></div>
+            <div class="w-0.5 h-6 bg-gray-600 group-hover:bg-blue-500 rounded-full transition-colors"></div>
           </div>
           <!-- 호버/드래그 시 강조 라인 -->
           <div

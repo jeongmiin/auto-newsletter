@@ -60,12 +60,11 @@
       />
     </div>
 
-    <!-- 호버시 표시되는 레이블 -->
+    <!-- 호버시 표시되는 레이블 (모든 모듈에 표시) -->
     <div
-      v-if="!isSelected"
-      class="absolute top-2 left-2 px-2 py-1 bg-black/70 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity"
+      class="absolute top-2 left-9 z-10 px-2 py-1 bg-black/80 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
     >
-      {{ moduleMetadata?.name }}
+      {{ moduleMetadata?.name || module.moduleId }}
     </div>
   </div>
 </template>

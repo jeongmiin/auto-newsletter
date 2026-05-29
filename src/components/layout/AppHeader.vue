@@ -3,7 +3,7 @@
     <!-- 왼쪽: 로고 + 타이틀 -->
     <div class="flex items-center gap-2">
       <img src="/src/assets/img/logo/logo.png" alt="Logo" class="w-7 h-7" />
-      <span class="font-semibold text-gray-800 tracking-tight">Newsletter Builder</span>
+      <h2 class="font-bold text-gray-800 text-lg">Newsletter Builder</h2>
     </div>
 
     <!-- 오른쪽: 파일 관리 버튼들 -->
@@ -20,7 +20,7 @@
         @click="previewEmail"
         label="미리보기"
         icon="pi pi-eye"
-        severity="info"
+        severity="secondary"
         outlined
         size="small"
         v-tooltip.bottom="'새 창에서 완성된 모습을 확인합니다'"

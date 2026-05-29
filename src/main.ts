@@ -88,6 +88,7 @@ import Toast from 'primevue/toast'
 import ConfirmDialog from 'primevue/confirmdialog'
 import Editor from 'primevue/editor'
 import ColorPicker from 'primevue/colorpicker'
+import Dialog from 'primevue/dialog'
 
 // Quill 커스텀 포맷 등록 (PrimeVue Editor가 Quill 인스턴스를 만들기 전에 실행)
 import { registerHighlightMarker } from './utils/quillHighlightMarker'
@@ -133,6 +134,7 @@ app.component('Textarea', Textarea)
 app.component('Checkbox', Checkbox)
 app.component('Toast', Toast)
 app.component('ConfirmDialog', ConfirmDialog)
+app.component('Dialog', Dialog)
 app.component('Editor', Editor)
 app.component('ColorPicker', ColorPicker)
 app.component('Select', Select)
