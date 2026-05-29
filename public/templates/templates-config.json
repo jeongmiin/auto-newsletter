@@ -3,7 +3,7 @@
     {
       "id": "gocaf-template",
       "name": "고카프 템플릿",
-      "description": "고카프 vol60 전체 구성 (헤더 ~ 푸터, 40개 모듈)",
+      "description": "2026 고카프 뉴스레터 구성",
       "wrapSettings": {
         "backgroundColor": "#ffffff",
         "borderWidth": "0px",
@@ -52,11 +52,11 @@
           "properties": {
             "descriptionText": "<p style=\"margin:0; padding:0; text-align:center; font-weight:bold;\">NEWSLETTER #60</p>",
             "fontSize": "17px",
-            "lineHeight": "1.65",
             "paddingTop": "0px",
             "paddingRight": "20px",
             "paddingBottom": "0px",
-            "paddingLeft": "20px"
+            "paddingLeft": "20px",
+            "lineHeight": "1.65"
           },
           "styles": {}
         },
@@ -65,11 +65,11 @@
           "properties": {
             "descriptionText": "<p style=\"margin:0; padding:0; text-align:center; font-weight:bold;\">대한민국 캠핑 산업의 중심, 고카프가 드디어 킨텍스로 돌아옵니다!</p>",
             "fontSize": "14px",
-            "lineHeight": "1.65",
             "paddingTop": "10px",
             "paddingRight": "20px",
             "paddingBottom": "0px",
-            "paddingLeft": "20px"
+            "paddingLeft": "20px",
+            "lineHeight": "1.65"
           },
           "styles": {}
         },
@@ -91,13 +91,13 @@
         {
           "moduleId": "ModuleDescText",
           "properties": {
-            "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>고카프&nbsp;킨텍스,&nbsp;드디어&nbsp;올해&nbsp;가장&nbsp;큰&nbsp;규모로&nbsp;이번&nbsp;주&nbsp;막을&nbsp;올립니다!</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>역대&nbsp;최대&nbsp;규모인&nbsp;1,450부스와&nbsp;함께&nbsp;국내외&nbsp;대표&nbsp;브랜드들이&nbsp;한자리에&nbsp;모이며,</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>그동안&nbsp;국내에서는&nbsp;쉽게&nbsp;접하기&nbsp;어려웠던&nbsp;해외&nbsp;프리미엄&nbsp;브랜드들도&nbsp;대거&nbsp;참여합니다.</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.5; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">2026&nbsp;시즌을&nbsp;이끌&nbsp;신제품과&nbsp;NEW&nbsp;라인업,&nbsp;그리고&nbsp;가장&nbsp;빠른&nbsp;캠핑&nbsp;트렌드까지.</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">올해&nbsp;캠핑&nbsp;시장의&nbsp;흐름을&nbsp;가장&nbsp;먼저&nbsp;확인할&nbsp;수&nbsp;있는&nbsp;자리,</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">이번&nbsp;고카프&nbsp;킨텍스에서&nbsp;직접&nbsp;경험해보세요💓</p><p style=\"margin: 0; padding: 0; line-height: 1.5; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>🚩&nbsp;키워드로&nbsp;보는&nbsp;라인업!</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>①&nbsp;일본&nbsp;프리미엄&nbsp;브랜드:&nbsp;</strong>RATEL&nbsp;WORKS,&nbsp;후지노하가네,&nbsp;LATH&nbsp;FACTORY,&nbsp;도쿄크래프트,&nbsp;5050WORKSHOP,&nbsp;SOTO&nbsp;등</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>②&nbsp;기다렸던&nbsp;브랜드의&nbsp;귀환:&nbsp;</strong>크레모아,&nbsp;고파미르,&nbsp;디얼스,&nbsp;부앤오프&nbsp;등</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>③&nbsp;여름&nbsp;시즌&nbsp;치트키&nbsp;브랜드:&nbsp;</strong>브리즐,&nbsp;쏘쿨,&nbsp;오터스,&nbsp;라이트형제,&nbsp;에코플로우&nbsp;등</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>④&nbsp;주목받는&nbsp;에어텐트&nbsp;브랜드:</strong>&nbsp;쿠디,&nbsp;어반사이드,&nbsp;포레니아,&nbsp;리컬렉터,&nbsp;캠빌,&nbsp;스위스알파인클럽,&nbsp;오투라이프캠핑,&nbsp;위켄트립&nbsp;등</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>⑤&nbsp;눈여겨봐야&nbsp;할&nbsp;브랜드:</strong>&nbsp;기아,&nbsp;KZM,&nbsp;몬테라,&nbsp;아버아웃도어,&nbsp;하이그라운즈,&nbsp;파이넬,&nbsp;꾸버스,&nbsp;캠핑칸&nbsp;등</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>⑥&nbsp;디자인&nbsp;감도&nbsp;높은&nbsp;브랜드:&nbsp;</strong>와일드와일드웨스트,&nbsp;헬로스,&nbsp;온유라이프,&nbsp;플랜포티,&nbsp;더아이언,&nbsp;범이목공소,&nbsp;오비텐&nbsp;등</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>⑦&nbsp;편한&nbsp;캠핑&nbsp;책임지는&nbsp;브랜드</strong>:&nbsp;삼토피아,&nbsp;루커스,&nbsp;캠프시즌,&nbsp;벨락,&nbsp;어반그레이&nbsp;등</p>",
+            "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>고카프&nbsp;킨텍스,&nbsp;드디어&nbsp;올해&nbsp;가장&nbsp;큰&nbsp;규모로&nbsp;이번&nbsp;주&nbsp;막을&nbsp;올립니다!</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>역대&nbsp;최대&nbsp;규모인&nbsp;1,450부스와&nbsp;함께&nbsp;국내외&nbsp;대표&nbsp;브랜드들이&nbsp;한자리에&nbsp;모이며,</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>그동안&nbsp;국내에서는&nbsp;쉽게&nbsp;접하기&nbsp;어려웠던&nbsp;해외&nbsp;프리미엄&nbsp;브랜드들도&nbsp;대거&nbsp;참여합니다.</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">2026&nbsp;시즌을&nbsp;이끌&nbsp;신제품과&nbsp;NEW&nbsp;라인업,&nbsp;그리고&nbsp;가장&nbsp;빠른&nbsp;캠핑&nbsp;트렌드까지.</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">올해&nbsp;캠핑&nbsp;시장의&nbsp;흐름을&nbsp;가장&nbsp;먼저&nbsp;확인할&nbsp;수&nbsp;있는&nbsp;자리,</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">이번&nbsp;고카프&nbsp;킨텍스에서&nbsp;직접&nbsp;경험해보세요💓</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>🚩&nbsp;키워드로&nbsp;보는&nbsp;라인업!</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>①&nbsp;일본&nbsp;프리미엄&nbsp;브랜드:&nbsp;</strong>RATEL&nbsp;WORKS,&nbsp;후지노하가네,&nbsp;LATH&nbsp;FACTORY,&nbsp;도쿄크래프트,&nbsp;5050WORKSHOP,&nbsp;SOTO&nbsp;등</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>②&nbsp;기다렸던&nbsp;브랜드의&nbsp;귀환:&nbsp;</strong>크레모아,&nbsp;고파미르,&nbsp;디얼스,&nbsp;부앤오프&nbsp;등</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>③&nbsp;여름&nbsp;시즌&nbsp;치트키&nbsp;브랜드:&nbsp;</strong>브리즐,&nbsp;쏘쿨,&nbsp;오터스,&nbsp;라이트형제,&nbsp;에코플로우&nbsp;등</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>④&nbsp;주목받는&nbsp;에어텐트&nbsp;브랜드:</strong>&nbsp;쿠디,&nbsp;어반사이드,&nbsp;포레니아,&nbsp;리컬렉터,&nbsp;캠빌,&nbsp;스위스알파인클럽,&nbsp;오투라이프캠핑,&nbsp;위켄트립&nbsp;등</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>⑤&nbsp;눈여겨봐야&nbsp;할&nbsp;브랜드:</strong>&nbsp;기아,&nbsp;KZM,&nbsp;몬테라,&nbsp;아버아웃도어,&nbsp;하이그라운즈,&nbsp;파이넬,&nbsp;꾸버스,&nbsp;캠핑칸&nbsp;등</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>⑥&nbsp;디자인&nbsp;감도&nbsp;높은&nbsp;브랜드:&nbsp;</strong>와일드와일드웨스트,&nbsp;헬로스,&nbsp;온유라이프,&nbsp;플랜포티,&nbsp;더아이언,&nbsp;범이목공소,&nbsp;오비텐&nbsp;등</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>⑦&nbsp;편한&nbsp;캠핑&nbsp;책임지는&nbsp;브랜드</strong>:&nbsp;삼토피아,&nbsp;루커스,&nbsp;캠프시즌,&nbsp;벨락,&nbsp;어반그레이&nbsp;등</p>",
             "fontSize": "14px",
-            "lineHeight": "1.8",
             "paddingTop": "0px",
             "paddingRight": "20px",
             "paddingBottom": "0px",
-            "paddingLeft": "20px"
+            "paddingLeft": "20px",
+            "lineHeight": "1.8"
           },
           "styles": {}
         },
@@ -118,13 +118,13 @@
         {
           "moduleId": "ModuleDescText",
           "properties": {
-            "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">📆<strong>기간&nbsp;</strong>:&nbsp;2026.&nbsp;5.&nbsp;23(토)&nbsp;-&nbsp;25(월),&nbsp;3일간</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">🚩<strong>장소&nbsp;</strong>:&nbsp;일산&nbsp;킨텍스&nbsp;2전시장</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">⏱&nbsp;<strong>시간&nbsp;</strong>:&nbsp;10:00&nbsp;~&nbsp;18:00</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>💡&nbsp;지금&nbsp;입장할인&nbsp;예약/선결제하면&nbsp;최대&nbsp;35%&nbsp;할인!</strong><strong style=\"color: #e60000;\">&nbsp;<s>15,000원</s>&nbsp;→&nbsp;10,000원!&nbsp;</strong><strong>(~5월&nbsp;22일까지)</strong></p>",
+            "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">📆<strong>기간&nbsp;</strong>:&nbsp;2026.&nbsp;5.&nbsp;23(토)&nbsp;-&nbsp;25(월),&nbsp;3일간</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">🚩<strong>장소&nbsp;</strong>:&nbsp;일산&nbsp;킨텍스&nbsp;2전시장</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">⏱&nbsp;<strong>시간&nbsp;</strong>:&nbsp;10:00&nbsp;~&nbsp;18:00</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>💡&nbsp;지금&nbsp;입장할인&nbsp;예약/선결제하면&nbsp;최대&nbsp;35%&nbsp;할인!</strong><strong style=\"color: #e60000;\">&nbsp;<s>15,000원</s>&nbsp;→&nbsp;10,000원!&nbsp;</strong><strong>(~5월&nbsp;22일까지)</strong></p>",
             "fontSize": "14px",
-            "lineHeight": "2",
             "paddingTop": "0px",
             "paddingRight": "20px",
             "paddingBottom": "10px",
-            "paddingLeft": "20px"
+            "paddingLeft": "20px",
+            "lineHeight": "2"
           },
           "styles": {}
         },
@@ -148,7 +148,11 @@
             "button2BorderStyle": "none",
             "button2BorderWidth": "1px",
             "button2BorderColor": "#000000",
-            "button2BorderRadius": "5px"
+            "button2BorderRadius": "5px",
+            "paddingTop": "10px",
+            "paddingRight": "15px",
+            "paddingBottom": "15px",
+            "paddingLeft": "15px"
           },
           "styles": {}
         },
@@ -191,7 +195,8 @@
             "imageBorderRadius": "10px",
             "title": "문의가 폭주했던 참가 브랜드 라인업을 공개합니다.",
             "titleFontSize": "18px",
-            "description": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">이번&nbsp;&lt;2026&nbsp;고카프&nbsp;킨텍스&gt;는&nbsp;무려&nbsp;역대&nbsp;최대&nbsp;규모&nbsp;1,450부스로&nbsp;돌아옵니다.</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">국내&nbsp;인기&nbsp;브랜드는&nbsp;물론,&nbsp;쉽게&nbsp;만나기&nbsp;어려운&nbsp;해외&nbsp;프리미엄&nbsp;브랜드들까지&nbsp;대거&nbsp;참가&nbsp;예정!</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">규모부터&nbsp;라인업까지,&nbsp;이번엔&nbsp;확실히&nbsp;다릅니다✨</p><p style=\"margin: 0; padding: 0; line-height: 1.5; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">기다렸던&nbsp;브랜드의&nbsp;귀환부터&nbsp;요즘&nbsp;가장&nbsp;주목받는&nbsp;에어텐트&nbsp;브랜드,</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">그리고&nbsp;감도&nbsp;높은&nbsp;캠핑&nbsp;브랜드들까지.</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>크레모아,&nbsp;쿠디,&nbsp;기아,&nbsp;RATEL&nbsp;WORKS,&nbsp;도쿄크래프트,&nbsp;고파미르,&nbsp;어반사이드,&nbsp;KZM,&nbsp;몬테라&nbsp;등</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>캠퍼들이&nbsp;기다려온&nbsp;브랜드들을&nbsp;한자리에서&nbsp;만나볼&nbsp;수&nbsp;있어요.</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.5; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">솔직히&nbsp;관심&nbsp;있는&nbsp;브랜드&nbsp;3개만&nbsp;있어도&nbsp;이미&nbsp;가야&nbsp;할&nbsp;이유는&nbsp;충분할지도&nbsp;모릅니다.</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">특히&nbsp;이번&nbsp;고카프&nbsp;킨텍스는&nbsp;2026&nbsp;캠핑&nbsp;시장의&nbsp;흐름을&nbsp;가장&nbsp;먼저&nbsp;확인하는&nbsp;현장이&nbsp;될&nbsp;예정입니다.</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">그리고&nbsp;이런&nbsp;규모의&nbsp;라인업을&nbsp;다시&nbsp;보게&nbsp;될지는…&nbsp;쉽게&nbsp;장담&nbsp;못&nbsp;해요🥲</p>",
+            "titleLineHeight": "1.7",
+            "description": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">이번&nbsp;&lt;2026&nbsp;고카프&nbsp;킨텍스&gt;는&nbsp;무려&nbsp;역대&nbsp;최대&nbsp;규모&nbsp;1,450부스로&nbsp;돌아옵니다.</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">국내&nbsp;인기&nbsp;브랜드는&nbsp;물론,&nbsp;쉽게&nbsp;만나기&nbsp;어려운&nbsp;해외&nbsp;프리미엄&nbsp;브랜드들까지&nbsp;대거&nbsp;참가&nbsp;예정!</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">규모부터&nbsp;라인업까지,&nbsp;이번엔&nbsp;확실히&nbsp;다릅니다✨</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">기다렸던&nbsp;브랜드의&nbsp;귀환부터&nbsp;요즘&nbsp;가장&nbsp;주목받는&nbsp;에어텐트&nbsp;브랜드,</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">그리고&nbsp;감도&nbsp;높은&nbsp;캠핑&nbsp;브랜드들까지.</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>크레모아,&nbsp;쿠디,&nbsp;기아,&nbsp;RATEL&nbsp;WORKS,&nbsp;도쿄크래프트,&nbsp;고파미르,&nbsp;어반사이드,&nbsp;KZM,&nbsp;몬테라&nbsp;등</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>캠퍼들이&nbsp;기다려온&nbsp;브랜드들을&nbsp;한자리에서&nbsp;만나볼&nbsp;수&nbsp;있어요.</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">솔직히&nbsp;관심&nbsp;있는&nbsp;브랜드&nbsp;3개만&nbsp;있어도&nbsp;이미&nbsp;가야&nbsp;할&nbsp;이유는&nbsp;충분할지도&nbsp;모릅니다.</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">특히&nbsp;이번&nbsp;고카프&nbsp;킨텍스는&nbsp;2026&nbsp;캠핑&nbsp;시장의&nbsp;흐름을&nbsp;가장&nbsp;먼저&nbsp;확인하는&nbsp;현장이&nbsp;될&nbsp;예정입니다.</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">그리고&nbsp;이런&nbsp;규모의&nbsp;라인업을&nbsp;다시&nbsp;보게&nbsp;될지는…&nbsp;쉽게&nbsp;장담&nbsp;못&nbsp;해요🥲</p>",
             "descriptionFontSize": "14px",
             "showButton": true,
             "buttonText": "브랜드 배치도 보러가기 →                                     ",
@@ -242,7 +247,7 @@
             "showImageLink": false,
             "imageLinkUrl": "#",
             "imageBorderRadius": "10px",
-            "contentText": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>일본&nbsp;필드스타일&nbsp;어땠냐구요?🎌</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">고카프가&nbsp;일본&nbsp;대표&nbsp;아웃도어&nbsp;페스티벌</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">FIELDSTYLE에&nbsp;참가한&nbsp;이유는?</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">바로,&nbsp;일본에&nbsp;한국&nbsp;캠핑의&nbsp;매력을</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">알리기&nbsp;위해서였습니다💪🏻</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">한국과&nbsp;일본을&nbsp;대표하는&nbsp;캠핑·아웃도어&nbsp;전시회가&nbsp;만나자&nbsp;현장은&nbsp;브랜드와&nbsp;캠퍼들의&nbsp;뜨거운&nbsp;관심으로&nbsp;가득했는데요!</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">고카프는&nbsp;URBANSIDE,&nbsp;HELLOS,&nbsp;ARBOR&nbsp;OUTDOOR&nbsp;등</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">국내&nbsp;대표&nbsp;브랜드들과&nbsp;함께&nbsp;초대형&nbsp;단체관으로&nbsp;참가해&nbsp;글로벌&nbsp;캠퍼들의&nbsp;시선을&nbsp;사로잡았습니다.</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>이제,&nbsp;FIELDSTYLE에&nbsp;참가한&nbsp;일본&nbsp;브랜드들이</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>직접&nbsp;고카프로&nbsp;찾아옵니다✨</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>이제는&nbsp;일본까지&nbsp;가지&nbsp;않아도&nbsp;됩니다.</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>GOCAF에서&nbsp;한국은&nbsp;물론&nbsp;전&nbsp;세계&nbsp;캠핑·아웃도어&nbsp;브랜드와</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>최신&nbsp;트렌드를&nbsp;직접&nbsp;경험해보세요!</strong></p>",
+            "contentText": "<p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>일본&nbsp;필드스타일&nbsp;어땠냐구요?🎌</strong></p><p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">고카프가&nbsp;일본&nbsp;대표&nbsp;아웃도어&nbsp;페스티벌</p><p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">FIELDSTYLE에&nbsp;참가한&nbsp;이유는?</p><p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">바로,&nbsp;일본에&nbsp;한국&nbsp;캠핑의&nbsp;매력을</p><p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">알리기&nbsp;위해서였습니다💪🏻</p><p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">한국과&nbsp;일본을&nbsp;대표하는&nbsp;캠핑·아웃도어&nbsp;전시회가&nbsp;만나자&nbsp;현장은&nbsp;브랜드와&nbsp;캠퍼들의&nbsp;뜨거운&nbsp;관심으로&nbsp;가득했는데요!</p><p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">고카프는&nbsp;URBANSIDE,&nbsp;HELLOS,&nbsp;ARBOR&nbsp;OUTDOOR&nbsp;등</p><p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">국내&nbsp;대표&nbsp;브랜드들과&nbsp;함께&nbsp;초대형&nbsp;단체관으로&nbsp;참가해&nbsp;글로벌&nbsp;캠퍼들의&nbsp;시선을&nbsp;사로잡았습니다.</p><p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>이제,&nbsp;FIELDSTYLE에&nbsp;참가한&nbsp;일본&nbsp;브랜드들이</strong></p><p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>직접&nbsp;고카프로&nbsp;찾아옵니다✨</strong></p><p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>이제는&nbsp;일본까지&nbsp;가지&nbsp;않아도&nbsp;됩니다.</strong></p><p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>GOCAF에서&nbsp;한국은&nbsp;물론&nbsp;전&nbsp;세계&nbsp;캠핑·아웃도어&nbsp;브랜드와</strong></p><p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>최신&nbsp;트렌드를&nbsp;직접&nbsp;경험해보세요!</strong></p>",
             "contentTextFontSize": "14px",
             "showButton1": true,
             "button1Text": "더보기 →",
@@ -275,7 +280,7 @@
             "showImageLink": false,
             "imageLinkUrl": "#",
             "imageBorderRadius": "10px",
-            "contentText": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>2026&nbsp;NEW&nbsp;PRODUCT&nbsp;LAUNCH&nbsp;SHOW</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.5; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">가장&nbsp;먼저&nbsp;만나는&nbsp;2026&nbsp;캠핑·아웃도어의&nbsp;미래👀</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">2026년을&nbsp;이끌&nbsp;캠핑·아웃도어&nbsp;신제품이&nbsp;공개됩니다.</p><p style=\"margin: 0; padding: 0; line-height: 1.5; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">브랜드의&nbsp;최신&nbsp;기술과&nbsp;감성을&nbsp;담은&nbsp;신제품부터</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">현장에서만&nbsp;직접&nbsp;보고&nbsp;체험할&nbsp;수&nbsp;있는&nbsp;런칭&nbsp;아이템까지.</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">아직&nbsp;공개되지&nbsp;않은&nbsp;NEW&nbsp;GEAR를&nbsp;가장&nbsp;빠르게&nbsp;만나보고,</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">다가올&nbsp;2026&nbsp;캠핑&nbsp;트렌드를&nbsp;누구보다&nbsp;먼저&nbsp;경험해보세요!</p><p style=\"margin: 0; padding: 0; line-height: 1.5; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">올해&nbsp;캠핑&nbsp;시장의&nbsp;흐름은&nbsp;바로&nbsp;이곳에서&nbsp;시작됩니다.</p>",
+            "contentText": "<p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>2026&nbsp;NEW&nbsp;PRODUCT&nbsp;LAUNCH&nbsp;SHOW</strong></p><p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">가장&nbsp;먼저&nbsp;만나는&nbsp;2026&nbsp;캠핑·아웃도어의&nbsp;미래👀</p><p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">2026년을&nbsp;이끌&nbsp;캠핑·아웃도어&nbsp;신제품이&nbsp;공개됩니다.</p><p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">브랜드의&nbsp;최신&nbsp;기술과&nbsp;감성을&nbsp;담은&nbsp;신제품부터</p><p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">현장에서만&nbsp;직접&nbsp;보고&nbsp;체험할&nbsp;수&nbsp;있는&nbsp;런칭&nbsp;아이템까지.</p><p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">아직&nbsp;공개되지&nbsp;않은&nbsp;NEW&nbsp;GEAR를&nbsp;가장&nbsp;빠르게&nbsp;만나보고,</p><p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">다가올&nbsp;2026&nbsp;캠핑&nbsp;트렌드를&nbsp;누구보다&nbsp;먼저&nbsp;경험해보세요!</p><p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">올해&nbsp;캠핑&nbsp;시장의&nbsp;흐름은&nbsp;바로&nbsp;이곳에서&nbsp;시작됩니다.</p>",
             "contentTextFontSize": "14px",
             "showButton1": true,
             "button1Text": "챕터 1 →",
@@ -339,7 +344,8 @@
             "imageBorderRadius": "10px",
             "title": "고카프 킨텍스 오시는 분들께 드리는 달달한 쿠폰 팁💚",
             "titleFontSize": "18px",
-            "description": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>오직&nbsp;고카프에서만&nbsp;받을&nbsp;수&nbsp;있는&nbsp;네이버&nbsp;지도&nbsp;쿠폰이&nbsp;열렸어요!</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>방법도&nbsp;아주&nbsp;간단합니다.</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>[네이버&nbsp;지도에서&nbsp;&#39;고카프&#39;&nbsp;검색&nbsp;→쿠폰&nbsp;탭에서&nbsp;바로&nbsp;다운로드]</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.5; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">현장&nbsp;가서&nbsp;&quot;이거&nbsp;받을걸…&quot;&nbsp;하는&nbsp;순간&nbsp;이미&nbsp;늦을&nbsp;수도&nbsp;있어요🥲</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">선착순이라&nbsp;조금만&nbsp;늦어도&nbsp;마감될&nbsp;가능성이&nbsp;높습니다.</p><p style=\"margin: 0; padding: 0; line-height: 1.5; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">그리고&nbsp;여기서&nbsp;끝이&nbsp;아니에요!</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">현장에서&nbsp;쿠폰을&nbsp;사용하고&nbsp;간단한&nbsp;미션까지&nbsp;완료하면&nbsp;추가&nbsp;선물까지&nbsp;받을&nbsp;수&nbsp;있다구요🎁</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">고카프&nbsp;가기&nbsp;전,&nbsp;일단&nbsp;쿠폰부터&nbsp;챙겨두는&nbsp;게&nbsp;이득이겠죠?</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">같이&nbsp;가는&nbsp;친구가&nbsp;있다면&nbsp;이거&nbsp;꼭&nbsp;공유해&nbsp;주세요~!</p>",
+            "titleLineHeight": "1.7",
+            "description": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>오직&nbsp;고카프에서만&nbsp;받을&nbsp;수&nbsp;있는&nbsp;네이버&nbsp;지도&nbsp;쿠폰이&nbsp;열렸어요!</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>방법도&nbsp;아주&nbsp;간단합니다.</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>[네이버&nbsp;지도에서&nbsp;&#39;고카프&#39;&nbsp;검색&nbsp;→쿠폰&nbsp;탭에서&nbsp;바로&nbsp;다운로드]</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">현장&nbsp;가서&nbsp;&quot;이거&nbsp;받을걸…&quot;&nbsp;하는&nbsp;순간&nbsp;이미&nbsp;늦을&nbsp;수도&nbsp;있어요🥲</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">선착순이라&nbsp;조금만&nbsp;늦어도&nbsp;마감될&nbsp;가능성이&nbsp;높습니다.</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">그리고&nbsp;여기서&nbsp;끝이&nbsp;아니에요!</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">현장에서&nbsp;쿠폰을&nbsp;사용하고&nbsp;간단한&nbsp;미션까지&nbsp;완료하면&nbsp;추가&nbsp;선물까지&nbsp;받을&nbsp;수&nbsp;있다구요🎁</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">고카프&nbsp;가기&nbsp;전,&nbsp;일단&nbsp;쿠폰부터&nbsp;챙겨두는&nbsp;게&nbsp;이득이겠죠?</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">같이&nbsp;가는&nbsp;친구가&nbsp;있다면&nbsp;이거&nbsp;꼭&nbsp;공유해&nbsp;주세요~!</p>",
             "descriptionFontSize": "14px",
             "showButton": true,
             "buttonText": "네이버 지도 쿠폰 받으러 가기 →                                     ",
@@ -391,7 +397,8 @@
             "leftImageBorderRadius": "10px",
             "leftTitle": "어반사이드 텐트가 119만원인데 가성비라고?",
             "leftTitleFontSize": "14px",
-            "leftContent": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>&quot;텐트야,&nbsp;동굴이야?&quot;라는&nbsp;반응이&nbsp;바로&nbsp;나왔던&nbsp;어반사이드의&nbsp;신제품&nbsp;대형&nbsp;에어텐트!</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>고카프에서&nbsp;첫&nbsp;공개되며</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>제대로&nbsp;시선을&nbsp;끌었습니다👀</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.5; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">공개&nbsp;전부터&nbsp;궁금해하는&nbsp;분들도&nbsp;많았고,</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">현장에서도&nbsp;문의가&nbsp;이어질&nbsp;만큼&nbsp;관심도가&nbsp;높았던&nbsp;제품이었는데요.</p><p style=\"margin: 0; padding: 0; line-height: 1.5; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">단순히&nbsp;크기만&nbsp;키운&nbsp;게&nbsp;아니라&nbsp;넉넉한&nbsp;공간감과&nbsp;간편한&nbsp;설치&nbsp;방식이&nbsp;더해지면서&nbsp;가족&nbsp;캠핑이나&nbsp;여럿이&nbsp;함께하는&nbsp;캠핑에서&nbsp;활용도가&nbsp;높아&nbsp;보였고,</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">팩&nbsp;몇&nbsp;개와&nbsp;공기&nbsp;주입만으로&nbsp;빠르게&nbsp;세팅할&nbsp;수&nbsp;있는&nbsp;구조&nbsp;덕분에&nbsp;&#39;편하게&nbsp;머무는&nbsp;캠핑&#39;에&nbsp;초점을&nbsp;맞춘&nbsp;제품이라는&nbsp;인상을&nbsp;줬습니다💡</p><p style=\"margin: 0; padding: 0; line-height: 1.5; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>그리고&nbsp;이&nbsp;텐트,&nbsp;이번&nbsp;5월&nbsp;고카프&nbsp;킨텍스&nbsp;현장에서&nbsp;직접&nbsp;확인할&nbsp;수&nbsp;있답니다😉</strong></p>",
+            "leftTitleLineHeight": "1.7",
+            "leftContent": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>&quot;텐트야,&nbsp;동굴이야?&quot;라는&nbsp;반응이&nbsp;바로&nbsp;나왔던&nbsp;어반사이드의&nbsp;신제품&nbsp;대형&nbsp;에어텐트!</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>고카프에서&nbsp;첫&nbsp;공개되며</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>제대로&nbsp;시선을&nbsp;끌었습니다👀</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">공개&nbsp;전부터&nbsp;궁금해하는&nbsp;분들도&nbsp;많았고,</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">현장에서도&nbsp;문의가&nbsp;이어질&nbsp;만큼&nbsp;관심도가&nbsp;높았던&nbsp;제품이었는데요.</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">단순히&nbsp;크기만&nbsp;키운&nbsp;게&nbsp;아니라&nbsp;넉넉한&nbsp;공간감과&nbsp;간편한&nbsp;설치&nbsp;방식이&nbsp;더해지면서&nbsp;가족&nbsp;캠핑이나&nbsp;여럿이&nbsp;함께하는&nbsp;캠핑에서&nbsp;활용도가&nbsp;높아&nbsp;보였고,</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">팩&nbsp;몇&nbsp;개와&nbsp;공기&nbsp;주입만으로&nbsp;빠르게&nbsp;세팅할&nbsp;수&nbsp;있는&nbsp;구조&nbsp;덕분에&nbsp;&#39;편하게&nbsp;머무는&nbsp;캠핑&#39;에&nbsp;초점을&nbsp;맞춘&nbsp;제품이라는&nbsp;인상을&nbsp;줬습니다💡</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>그리고&nbsp;이&nbsp;텐트,&nbsp;이번&nbsp;5월&nbsp;고카프&nbsp;킨텍스&nbsp;현장에서&nbsp;직접&nbsp;확인할&nbsp;수&nbsp;있답니다😉</strong></p>",
             "leftContentFontSize": "14px",
             "showLeftSmallBtn1": true,
             "leftSmallBtn1Text": "더보 →",
@@ -428,7 +435,8 @@
             "rightImageBorderRadius": "10px",
             "rightTitle": "이번 고카프, 몬테라 왜 이렇게 난리죠?😎",
             "rightTitleFontSize": "16px",
-            "rightContent": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">이번&nbsp;고카프에서&nbsp;몬테라가&nbsp;신제품&nbsp;라인업을&nbsp;공개했다는&nbsp;소식,&nbsp;현장에서&nbsp;꽤&nbsp;많은&nbsp;관심을&nbsp;끌었습니다👀</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">매번&nbsp;새로운&nbsp;방향성을&nbsp;보여주는&nbsp;브랜드답게,&nbsp;이번에도&nbsp;디자인부터&nbsp;구성까지&nbsp;이전과는&nbsp;또&nbsp;다른&nbsp;무드를&nbsp;보여줬는데요.</p><p style=\"margin: 0; padding: 0; line-height: 1.5; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>밝고&nbsp;키치한&nbsp;감성으로&nbsp;재해석된&nbsp;체어&nbsp;라인업부터,&nbsp;1~2인&nbsp;캠퍼를&nbsp;겨냥한&nbsp;컴팩트&nbsp;텐트,&nbsp;그리고&nbsp;더&nbsp;넓어진&nbsp;에어텐트까지!</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>기존&nbsp;제품을&nbsp;확장하면서도&nbsp;몬테라만의&nbsp;색깔을&nbsp;유지한&nbsp;점이&nbsp;인상적이었습니다💡</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.5; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">특히&nbsp;&quot;이&nbsp;가격&nbsp;맞아?&quot;라는&nbsp;반응이&nbsp;나올&nbsp;만큼&nbsp;가격&nbsp;포인트까지&nbsp;챙겼다는&nbsp;점도&nbsp;눈에&nbsp;띄었고요.&nbsp;어떤&nbsp;제품들이&nbsp;나왔는지&nbsp;영상에서,&nbsp;그리고&nbsp;고카프&nbsp;현장에서&nbsp;직접&nbsp;확인해보세요💓</p>",
+            "rightTitleLineHeight": "1.7",
+            "rightContent": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">이번&nbsp;고카프에서&nbsp;몬테라가&nbsp;신제품&nbsp;라인업을&nbsp;공개했다는&nbsp;소식,&nbsp;현장에서&nbsp;꽤&nbsp;많은&nbsp;관심을&nbsp;끌었습니다👀</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">매번&nbsp;새로운&nbsp;방향성을&nbsp;보여주는&nbsp;브랜드답게,&nbsp;이번에도&nbsp;디자인부터&nbsp;구성까지&nbsp;이전과는&nbsp;또&nbsp;다른&nbsp;무드를&nbsp;보여줬는데요.</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>밝고&nbsp;키치한&nbsp;감성으로&nbsp;재해석된&nbsp;체어&nbsp;라인업부터,&nbsp;1~2인&nbsp;캠퍼를&nbsp;겨냥한&nbsp;컴팩트&nbsp;텐트,&nbsp;그리고&nbsp;더&nbsp;넓어진&nbsp;에어텐트까지!</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>기존&nbsp;제품을&nbsp;확장하면서도&nbsp;몬테라만의&nbsp;색깔을&nbsp;유지한&nbsp;점이&nbsp;인상적이었습니다💡</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">특히&nbsp;&quot;이&nbsp;가격&nbsp;맞아?&quot;라는&nbsp;반응이&nbsp;나올&nbsp;만큼&nbsp;가격&nbsp;포인트까지&nbsp;챙겼다는&nbsp;점도&nbsp;눈에&nbsp;띄었고요.&nbsp;어떤&nbsp;제품들이&nbsp;나왔는지&nbsp;영상에서,&nbsp;그리고&nbsp;고카프&nbsp;현장에서&nbsp;직접&nbsp;확인해보세요💓</p>",
             "rightContentFontSize": "14px",
             "showRightSmallBtn1": true,
             "rightSmallBtn1Text": "더보기 →",
@@ -501,7 +509,8 @@
             "imageBorderRadius": "10px",
             "title": "50종 이상의 경품! 아낌없이 드릴 거니까 단단히 준비하시고…",
             "titleFontSize": "18px",
-            "description": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">놓치면&nbsp;후회🔥<strong>올해&nbsp;최대&nbsp;규모&nbsp;고카프&nbsp;킨텍스에서만&nbsp;받을&nbsp;수&nbsp;있는</strong>&nbsp;한정판&nbsp;굿즈부터&nbsp;텐트,&nbsp;타프,&nbsp;에어베드&nbsp;등&nbsp;고가의&nbsp;장비까지&nbsp;여러분을&nbsp;기다리고&nbsp;있답니다!</p><p style=\"margin: 0; padding: 0; line-height: 1.5; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>지금&nbsp;바로&nbsp;현장&nbsp;이벤트와&nbsp;경품을&nbsp;확인하러&nbsp;가볼까요?</strong></p>",
+            "titleLineHeight": "1.7",
+            "description": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">놓치면&nbsp;후회🔥<strong>올해&nbsp;최대&nbsp;규모&nbsp;고카프&nbsp;킨텍스에서만&nbsp;받을&nbsp;수&nbsp;있는</strong>&nbsp;한정판&nbsp;굿즈부터&nbsp;텐트,&nbsp;타프,&nbsp;에어베드&nbsp;등&nbsp;고가의&nbsp;장비까지&nbsp;여러분을&nbsp;기다리고&nbsp;있답니다!</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>지금&nbsp;바로&nbsp;현장&nbsp;이벤트와&nbsp;경품을&nbsp;확인하러&nbsp;가볼까요?</strong></p>",
             "descriptionFontSize": "14px",
             "showButton": false,
             "buttonText": "큰 버튼 →",
@@ -535,7 +544,11 @@
             "button2BorderStyle": "none",
             "button2BorderWidth": "1px",
             "button2BorderColor": "#000000",
-            "button2BorderRadius": "5px"
+            "button2BorderRadius": "5px",
+            "paddingTop": "10px",
+            "paddingRight": "15px",
+            "paddingBottom": "15px",
+            "paddingLeft": "15px"
           },
           "styles": {}
         },
@@ -578,7 +591,8 @@
             "imageBorderRadius": "10px",
             "title": "고카프 어플 출시한 것 아세요?📱",
             "titleFontSize": "18px",
-            "description": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>지금&nbsp;고카프&nbsp;어플&nbsp;들어가보시면&nbsp;쿠폰함에&nbsp;쿠폰이&nbsp;가득&nbsp;들어가&nbsp;있습니다💥</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>사은품&nbsp;증정&nbsp;쿠폰,&nbsp;장비&nbsp;할인&nbsp;쿠폰,&nbsp;럭키드로우&nbsp;쿠폰까지&nbsp;다양하게&nbsp;준비했어요💗</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>놓치기&nbsp;전에&nbsp;꼭&nbsp;챙겨가세요!</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.5; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">고카프&nbsp;어플에서는👀</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">캠린이도&nbsp;프로&nbsp;캠퍼로&nbsp;레벨업&nbsp;할&nbsp;수&nbsp;있는&nbsp;다양한&nbsp;소식과&nbsp;할인&nbsp;혜택,</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">그리고&nbsp;브랜드&nbsp;쿠폰까지&nbsp;한&nbsp;번에&nbsp;만나보실&nbsp;수&nbsp;있어요✨</p><p style=\"margin: 0; padding: 0; line-height: 1.5; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">뿐만&nbsp;아니라!</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">어플&nbsp;내에서&nbsp;미리&nbsp;입장권을&nbsp;결제해두면&nbsp;현장에서&nbsp;빠르게&nbsp;입장이&nbsp;가능한&nbsp;&#39;입장할인&nbsp;선결제&#39;도&nbsp;이용하실&nbsp;수&nbsp;있어요👏🏻</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">입장할인&nbsp;예약가보다&nbsp;1,000원&nbsp;더&nbsp;저렴하니&nbsp;안&nbsp;하면&nbsp;손해겠죠?</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">앞으로도&nbsp;고카프&nbsp;어플에서&nbsp;더&nbsp;다양한&nbsp;혜택과&nbsp;새로운&nbsp;기능으로&nbsp;찾아뵐&nbsp;예정이니&nbsp;많은&nbsp;기대&nbsp;부탁드려요✨</p><p style=\"margin: 0; padding: 0; line-height: 1.5; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">📢놓치기&nbsp;전에&nbsp;고카프&nbsp;어플에서&nbsp;입장할인&nbsp;선결제하세요📱</p>",
+            "titleLineHeight": "1.7",
+            "description": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>지금&nbsp;고카프&nbsp;어플&nbsp;들어가보시면&nbsp;쿠폰함에&nbsp;쿠폰이&nbsp;가득&nbsp;들어가&nbsp;있습니다💥</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>사은품&nbsp;증정&nbsp;쿠폰,&nbsp;장비&nbsp;할인&nbsp;쿠폰,&nbsp;럭키드로우&nbsp;쿠폰까지&nbsp;다양하게&nbsp;준비했어요💗</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>놓치기&nbsp;전에&nbsp;꼭&nbsp;챙겨가세요!</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">고카프&nbsp;어플에서는👀</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">캠린이도&nbsp;프로&nbsp;캠퍼로&nbsp;레벨업&nbsp;할&nbsp;수&nbsp;있는&nbsp;다양한&nbsp;소식과&nbsp;할인&nbsp;혜택,</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">그리고&nbsp;브랜드&nbsp;쿠폰까지&nbsp;한&nbsp;번에&nbsp;만나보실&nbsp;수&nbsp;있어요✨</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">뿐만&nbsp;아니라!</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">어플&nbsp;내에서&nbsp;미리&nbsp;입장권을&nbsp;결제해두면&nbsp;현장에서&nbsp;빠르게&nbsp;입장이&nbsp;가능한&nbsp;&#39;입장할인&nbsp;선결제&#39;도&nbsp;이용하실&nbsp;수&nbsp;있어요👏🏻</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">입장할인&nbsp;예약가보다&nbsp;1,000원&nbsp;더&nbsp;저렴하니&nbsp;안&nbsp;하면&nbsp;손해겠죠?</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">앞으로도&nbsp;고카프&nbsp;어플에서&nbsp;더&nbsp;다양한&nbsp;혜택과&nbsp;새로운&nbsp;기능으로&nbsp;찾아뵐&nbsp;예정이니&nbsp;많은&nbsp;기대&nbsp;부탁드려요✨</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">📢놓치기&nbsp;전에&nbsp;고카프&nbsp;어플에서&nbsp;입장할인&nbsp;선결제하세요📱</p>",
             "descriptionFontSize": "14px",
             "showButton": false,
             "buttonText": "큰 버튼 →",
@@ -612,7 +626,11 @@
             "button2BorderStyle": "none",
             "button2BorderWidth": "1px",
             "button2BorderColor": "#000000",
-            "button2BorderRadius": "5px"
+            "button2BorderRadius": "5px",
+            "paddingTop": "10px",
+            "paddingRight": "15px",
+            "paddingBottom": "15px",
+            "paddingLeft": "15px"
           },
           "styles": {}
         },
@@ -757,8 +775,11 @@
             "topTextCompany": "주식회사 메쎄이상",
             "topTextCompanyFontSize": "16px",
             "addressText": "서울시 마포구 월드컵북로 58길 9 (상암동 1589) ES타워 (03922)",
+            "showWebsite": true,
             "websiteUrl": " www.caf.co.kr",
+            "showPhone": true,
             "phone": " [대표번호] 02-6121-6388 [참가기업] 02-6121-6380~4",
+            "showEmail": true,
             "email": "caf@esgroup.net",
             "contactInfoFontSize": "13px",
             "showHome": true,
@@ -775,6 +796,7 @@
             "youtubeUrl": "#",
             "showKakao": true,
             "kakaoUrl": "#",
+            "showZuzuzu": false,
             "unsubscribeUrl": "#",
             "inquiryEmail": "caf@esgroup.net"
           },
@@ -785,7 +807,7 @@
     {
       "id": "kpet-template",
       "name": "케이펫 템플릿",
-      "description": "케이펫 뉴스레터 구성",
+      "description": "2026 케이펫 뉴스레터 구성",
       "wrapSettings": {
         "backgroundColor": "#f9f9f9",
         "borderWidth": "0px",
@@ -834,24 +856,24 @@
           "properties": {
             "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>&lt;케이펫페어&nbsp;청주&nbsp;시즌1&gt;&nbsp;무료&nbsp;사전등록&nbsp;오늘&nbsp;마감&nbsp;🚨</strong></p>",
             "fontSize": "22px",
-            "lineHeight": "1.65",
             "paddingTop": "0px",
             "paddingRight": "20px",
             "paddingBottom": "0px",
-            "paddingLeft": "20px"
+            "paddingLeft": "20px",
+            "lineHeight": "1.65"
           },
           "styles": {}
         },
         {
           "moduleId": "ModuleDescText",
           "properties": {
-            "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">충북&nbsp;반려인들이&nbsp;한걸음에&nbsp;달려오는&nbsp;곳,&nbsp;&lt;케이펫페어&nbsp;청주&gt;</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">무료&nbsp;사전등록이&nbsp;‘오늘’&nbsp;마감됩니다!</p><p style=\"margin: 0; padding: 0; line-height: 1.5; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">충북&nbsp;최대&nbsp;규모인&nbsp;만큼&nbsp;우리&nbsp;아이를&nbsp;위한&nbsp;브랜드&nbsp;라인업도&nbsp;역대급!</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">올해&nbsp;개린이날&nbsp;선물은&nbsp;고민&nbsp;없이&nbsp;여기서&nbsp;준비&nbsp;끝내봐요&nbsp;🎁</p><p style=\"margin: 0; padding: 0; line-height: 1.5; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">오늘이&nbsp;지나면&nbsp;입장료&nbsp;1만원,&nbsp;현장&nbsp;결제만&nbsp;가능해요!</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">전시기간&nbsp;3일&nbsp;내내&nbsp;&#39;0원&#39;으로&nbsp;입장할&nbsp;수&nbsp;있는&nbsp;마지막&nbsp;기회,</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">망설이지&nbsp;말고&nbsp;지금&nbsp;바로&nbsp;등록하세요&nbsp;💗</p><p style=\"margin: 0; padding: 0; line-height: 1.5; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">무료&nbsp;사전등록&nbsp;진행중!</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">👉<strong>&nbsp;</strong><strong style=\"background-color: #ffff00;\">~2026.4.30(목)&nbsp;23시&nbsp;59분까지</strong></p>",
+            "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">충북&nbsp;반려인들이&nbsp;한걸음에&nbsp;달려오는&nbsp;곳,&nbsp;&lt;케이펫페어&nbsp;청주&gt;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">무료&nbsp;사전등록이&nbsp;‘오늘’&nbsp;마감됩니다!</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">충북&nbsp;최대&nbsp;규모인&nbsp;만큼&nbsp;우리&nbsp;아이를&nbsp;위한&nbsp;브랜드&nbsp;라인업도&nbsp;역대급!</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">올해&nbsp;개린이날&nbsp;선물은&nbsp;고민&nbsp;없이&nbsp;여기서&nbsp;준비&nbsp;끝내봐요&nbsp;🎁</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">오늘이&nbsp;지나면&nbsp;입장료&nbsp;1만원,&nbsp;현장&nbsp;결제만&nbsp;가능해요!</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">전시기간&nbsp;3일&nbsp;내내&nbsp;&#39;0원&#39;으로&nbsp;입장할&nbsp;수&nbsp;있는&nbsp;마지막&nbsp;기회,</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">망설이지&nbsp;말고&nbsp;지금&nbsp;바로&nbsp;등록하세요&nbsp;💗</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">무료&nbsp;사전등록&nbsp;진행중!</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">👉<strong>&nbsp;</strong><strong style=\"background-color: #ffff00;\">~2026.4.30(목)&nbsp;23시&nbsp;59분까지</strong></p>",
             "fontSize": "14px",
-            "lineHeight": "1.7",
             "paddingTop": "20px",
             "paddingRight": "20px",
             "paddingBottom": "0px",
-            "paddingLeft": "20px"
+            "paddingLeft": "20px",
+            "lineHeight": "1.7"
           },
           "styles": {}
         },
@@ -872,13 +894,13 @@
         {
           "moduleId": "ModuleDescText",
           "properties": {
-            "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">📆&nbsp;<strong>일자&nbsp;</strong>:&nbsp;2026년&nbsp;5월&nbsp;1일(금)~3일(일)</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">⏱&nbsp;<strong>시간&nbsp;</strong>:&nbsp;10:00~18:00&nbsp;(입장마감&nbsp;17:30)</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">🚩&nbsp;<strong>장소&nbsp;</strong>:&nbsp;청주오스코&nbsp;(충북&nbsp;청주시&nbsp;오송생명로&nbsp;250)</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">🐶&nbsp;본&nbsp;전시회는&nbsp;반려동물&nbsp;입장이&nbsp;가능합니다.&nbsp;(목줄&nbsp;착용&nbsp;필수)</p>",
+            "descriptionText": "<p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">📆&nbsp;<strong>일자&nbsp;</strong>:&nbsp;2026년&nbsp;5월&nbsp;1일(금)~3일(일)</p><p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">⏱&nbsp;<strong>시간&nbsp;</strong>:&nbsp;10:00~18:00&nbsp;(입장마감&nbsp;17:30)</p><p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">🚩&nbsp;<strong>장소&nbsp;</strong>:&nbsp;청주오스코&nbsp;(충북&nbsp;청주시&nbsp;오송생명로&nbsp;250)</p><p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">🐶&nbsp;본&nbsp;전시회는&nbsp;반려동물&nbsp;입장이&nbsp;가능합니다.&nbsp;(목줄&nbsp;착용&nbsp;필수)</p>",
             "fontSize": "14px",
-            "lineHeight": "2em",
             "paddingTop": "0px",
             "paddingRight": "20px",
             "paddingBottom": "0px",
-            "paddingLeft": "20px"
+            "paddingLeft": "20px",
+            "lineHeight": "2em"
           },
           "styles": {}
         },
@@ -906,6 +928,7 @@
           "properties": {
             "mainTitle": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">[행운의&nbsp;뽑기&nbsp;이벤트]</p>",
             "mainTitleFontSize": "22px",
+            "mainTitleColor": "#111111",
             "subTitle": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">뽑기판에서&nbsp;느낌오는&nbsp;뽑기&nbsp;하나만&nbsp;골라도&nbsp;100%&nbsp;당첨!</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">멍집사,&nbsp;냥집사&nbsp;모두&nbsp;참여&nbsp;가능&nbsp;🤗</p>",
             "subTitleFontSize": "18px",
             "mainTitlePaddingTop": "15px",
@@ -928,7 +951,8 @@
             "leftImageBorderRadius": "0px",
             "leftTitle": "",
             "leftTitleFontSize": "16px",
-            "leftContent": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">📆일시&nbsp;:&nbsp;2026.05.01(금)~03(일),&nbsp;14시~</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">📍장소&nbsp;:&nbsp;전시장&nbsp;내&nbsp;&lt;쭈쭈쭈&nbsp;DOG&gt;</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">🐶인원&nbsp;:&nbsp;매일&nbsp;선착순&nbsp;100명&nbsp;(총&nbsp;300명)</p>",
+            "leftTitleLineHeight": "1.7",
+            "leftContent": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">📆일시&nbsp;:&nbsp;2026.05.01(금)~03(일),&nbsp;14시~</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">📍장소&nbsp;:&nbsp;전시장&nbsp;내&nbsp;&lt;쭈쭈쭈&nbsp;DOG&gt;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">🐶인원&nbsp;:&nbsp;매일&nbsp;선착순&nbsp;100명&nbsp;(총&nbsp;300명)</p>",
             "leftContentFontSize": "14px",
             "showLeftSmallBtn1": false,
             "leftSmallBtn1Text": "버튼 1 →",
@@ -965,7 +989,8 @@
             "rightImageBorderRadius": "0px",
             "rightTitle": "",
             "rightTitleFontSize": "16px",
-            "rightContent": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><span style=\"background-color: #f9f9f9; color: #333333;\">📆일시&nbsp;:&nbsp;2026.05.01(금)~03(일),&nbsp;14시~</span></p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><span style=\"background-color: #f9f9f9; color: #333333;\">📍장소&nbsp;:&nbsp;전시장&nbsp;내&nbsp;&lt;쭈쭈쭈&nbsp;CAT&gt;</span></p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><span style=\"background-color: #f9f9f9; color: #333333;\">😺인원&nbsp;:&nbsp;매일&nbsp;선착순&nbsp;100명&nbsp;(총&nbsp;300명)</span></p>",
+            "rightTitleLineHeight": "1.7",
+            "rightContent": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><span style=\"color: #333333; background-color: #f9f9f9;\">📆일시&nbsp;:&nbsp;2026.05.01(금)~03(일),&nbsp;14시~</span></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><span style=\"color: #333333; background-color: #f9f9f9;\">📍장소&nbsp;:&nbsp;전시장&nbsp;내&nbsp;&lt;쭈쭈쭈&nbsp;CAT&gt;</span></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><span style=\"color: #333333; background-color: #f9f9f9;\">😺인원&nbsp;:&nbsp;매일&nbsp;선착순&nbsp;100명&nbsp;(총&nbsp;300명)</span></p>",
             "rightContentFontSize": "14px",
             "showRightSmallBtn1": false,
             "rightSmallBtn1Text": "버튼 1 →",
@@ -1018,6 +1043,7 @@
           "properties": {
             "mainTitle": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">[체험클래스&nbsp;&amp;&nbsp;세미나]</p>",
             "mainTitleFontSize": "22px",
+            "mainTitleColor": "#111111",
             "subTitle": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">댕댕이와&nbsp;함께&nbsp;참여할&nbsp;수&nbsp;있어&nbsp;더&nbsp;즐거운&nbsp;시간&nbsp;✨</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">정성&nbsp;가득&nbsp;수제&nbsp;간식&nbsp;만들기부터&nbsp;독피트니스,&nbsp;산책&nbsp;교정까지&nbsp;배워봐요&nbsp;💗</p>",
             "subTitleFontSize": "18px",
             "mainTitlePaddingTop": "15px",
@@ -1103,6 +1129,7 @@
           "properties": {
             "mainTitle": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">[이벤트&nbsp;모음]</p>",
             "mainTitleFontSize": "22px",
+            "mainTitleColor": "#111111",
             "subTitle": "<p style=\"margin: 0; padding: 0; line-height: 1.5; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\">&nbsp;</p>",
             "subTitleFontSize": "18px",
             "mainTitlePaddingTop": "15px",
@@ -1126,9 +1153,10 @@
             "imageBorderRadius": "0px",
             "boxTitle": "네컷사진 이벤트",
             "boxTitleFontSize": "16px",
+            "boxTitleLineHeight": "1.7",
             "boxBgColor": "#e5e5e5",
             "boxColor": "#111111",
-            "contentText": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">무료로&nbsp;네컷사진&nbsp;찍고&nbsp;케이펫페어에서</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">댕댕이와&nbsp;행복한&nbsp;추억&nbsp;남기기&nbsp;💝</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">댕댕이와&nbsp;함께&nbsp;방문하지&nbsp;않아도&nbsp;참여&nbsp;가능&nbsp;👌</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">✅경품명&nbsp;:&nbsp;멍멍네컷&nbsp;1회&nbsp;무료&nbsp;촬영권&nbsp;+&nbsp;촬영본&nbsp;2매</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">📍참여장소&nbsp;:&nbsp;전시장&nbsp;내&nbsp;&lt;댕냥사진관&gt;</p>",
+            "contentText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">무료로&nbsp;네컷사진&nbsp;찍고&nbsp;케이펫페어에서</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">댕댕이와&nbsp;행복한&nbsp;추억&nbsp;남기기&nbsp;💝</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">댕댕이와&nbsp;함께&nbsp;방문하지&nbsp;않아도&nbsp;참여&nbsp;가능&nbsp;👌</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">✅경품명&nbsp;:&nbsp;멍멍네컷&nbsp;1회&nbsp;무료&nbsp;촬영권&nbsp;+&nbsp;촬영본&nbsp;2매</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">📍참여장소&nbsp;:&nbsp;전시장&nbsp;내&nbsp;&lt;댕냥사진관&gt;</p>",
             "contentTextFontSize": "14px",
             "showButton1": false,
             "button1Text": "버튼 1 →",
@@ -1163,9 +1191,10 @@
             "imageBorderRadius": "0px",
             "boxTitle": "구매영수증 이벤트",
             "boxTitleFontSize": "16px",
+            "boxTitleLineHeight": "1.7",
             "boxBgColor": "#e5e5e5",
             "boxColor": "#111111",
-            "contentText": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">우리집&nbsp;댕냥이를&nbsp;위해&nbsp;10만원&nbsp;이상&nbsp;구매했다면?</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">굿츕스&nbsp;댕댕이&nbsp;간식&nbsp;드려요&nbsp;🐶</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">✅경품명&nbsp;:&nbsp;굿츕스&nbsp;롱덴탈크린볼&nbsp;1개</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">📍참여장소&nbsp;:&nbsp;전시장&nbsp;내&nbsp;&lt;경품지급처&gt;</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">💛참여인원&nbsp;:&nbsp;매일&nbsp;선착순&nbsp;100명&nbsp;(총&nbsp;300명)</p>",
+            "contentText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">우리집&nbsp;댕냥이를&nbsp;위해&nbsp;10만원&nbsp;이상&nbsp;구매했다면?</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">굿츕스&nbsp;댕댕이&nbsp;간식&nbsp;드려요&nbsp;🐶</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">✅경품명&nbsp;:&nbsp;굿츕스&nbsp;롱덴탈크린볼&nbsp;1개</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">📍참여장소&nbsp;:&nbsp;전시장&nbsp;내&nbsp;&lt;경품지급처&gt;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">💛참여인원&nbsp;:&nbsp;매일&nbsp;선착순&nbsp;100명&nbsp;(총&nbsp;300명)</p>",
             "contentTextFontSize": "14px",
             "showButton1": false,
             "button1Text": "버튼 1 →",
@@ -1200,9 +1229,10 @@
             "imageBorderRadius": "0px",
             "boxTitle": "카카오톡 채널 추가 이벤트",
             "boxTitleFontSize": "16px",
+            "boxTitleLineHeight": "1.7",
             "boxBgColor": "#e5e5e5",
             "boxColor": "#111111",
-            "contentText": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">케이펫페어&nbsp;카톡&nbsp;채널&nbsp;추가하면&nbsp;전시회&nbsp;소식도</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">빠르게&nbsp;받아보고&nbsp;경품도&nbsp;받아가고!&nbsp;🎁</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">✅경품명&nbsp;:&nbsp;내추럴발란스&nbsp;헬스프로텍션&nbsp;4개</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">📍참여장소&nbsp;:&nbsp;전시장&nbsp;내&nbsp;&lt;경품지급처&gt;</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">💛참여인원&nbsp;:&nbsp;매일&nbsp;선착순&nbsp;800명&nbsp;(총&nbsp;2400명)</p>",
+            "contentText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">케이펫페어&nbsp;카톡&nbsp;채널&nbsp;추가하면&nbsp;전시회&nbsp;소식도</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">빠르게&nbsp;받아보고&nbsp;경품도&nbsp;받아가고!&nbsp;🎁</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">✅경품명&nbsp;:&nbsp;내추럴발란스&nbsp;헬스프로텍션&nbsp;4개</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">📍참여장소&nbsp;:&nbsp;전시장&nbsp;내&nbsp;&lt;경품지급처&gt;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">💛참여인원&nbsp;:&nbsp;매일&nbsp;선착순&nbsp;800명&nbsp;(총&nbsp;2400명)</p>",
             "contentTextFontSize": "14px",
             "showButton1": false,
             "button1Text": "버튼 1 →",
@@ -1246,6 +1276,7 @@
           "properties": {
             "mainTitle": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">[멍드컵]</p>",
             "mainTitleFontSize": "22px",
+            "mainTitleColor": "#111111",
             "subTitle": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">우리&nbsp;아이&nbsp;숨겨진&nbsp;운동&nbsp;신경&nbsp;폭발!</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">댕댕이랑&nbsp;호흡&nbsp;맞춰&nbsp;게임에&nbsp;참여하고&nbsp;경품도&nbsp;받아가기&nbsp;🎁</p>",
             "subTitleFontSize": "18px",
             "mainTitlePaddingTop": "15px",
@@ -1277,13 +1308,13 @@
         {
           "moduleId": "ModuleDescText",
           "properties": {
-            "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>📆일시&nbsp;:&nbsp;2026.05.01(금)~03(일)</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>📍장소&nbsp;:&nbsp;케이펫페어&nbsp;청주&nbsp;전시장&nbsp;내&nbsp;&lt;멍드컵존&gt;</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>🏅프로그램&nbsp;안내</strong></p>",
+            "descriptionText": "<p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>📆일시&nbsp;:&nbsp;2026.05.01(금)~03(일)</strong></p><p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>📍장소&nbsp;:&nbsp;케이펫페어&nbsp;청주&nbsp;전시장&nbsp;내&nbsp;&lt;멍드컵존&gt;</strong></p><p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>🏅프로그램&nbsp;안내</strong></p>",
             "fontSize": "14px",
-            "lineHeight": "1.7",
             "paddingTop": "0px",
             "paddingRight": "20px",
             "paddingBottom": "0px",
-            "paddingLeft": "20px"
+            "paddingLeft": "20px",
+            "lineHeight": "1.7"
           },
           "styles": {}
         },
@@ -1370,6 +1401,7 @@
             "headerBgColor": "#058bae",
             "headerTextColor": "#ffffff",
             "cellBgColor": "#ffffff",
+            "cellTextColor": "#333333",
             "tableColWidths": [
               "25%",
               ""
@@ -1401,6 +1433,7 @@
           "properties": {
             "mainTitle": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">[케이펫페어&nbsp;청주&nbsp;오시는길]</p>",
             "mainTitleFontSize": "22px",
+            "mainTitleColor": "#111111",
             "subTitle": "<p style=\"margin: 0; padding: 0; line-height: 1.5; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\">&nbsp;</p>",
             "subTitleFontSize": "18px",
             "mainTitlePaddingTop": "15px",
@@ -1476,6 +1509,7 @@
             "headerBgColor": "#058bae",
             "headerTextColor": "#ffffff",
             "cellBgColor": "#ffffff",
+            "cellTextColor": "#333333",
             "tableColWidths": [
               "25%",
               ""
@@ -1488,11 +1522,11 @@
           "properties": {
             "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><span style=\"color: #888888;\">※&nbsp;주차장은&nbsp;전시장(청주오스코)&nbsp;자체&nbsp;규정에&nbsp;따라&nbsp;운영되고&nbsp;있습니다.&nbsp;주차&nbsp;요금은&nbsp;전시장&nbsp;사정에&nbsp;따라&nbsp;변경될&nbsp;수&nbsp;있으니&nbsp;자세한&nbsp;내용은&nbsp;전시장&nbsp;홈페이지를&nbsp;참고해&nbsp;주시기&nbsp;바랍니다.</span></p>",
             "fontSize": "12px",
-            "lineHeight": "1.65",
             "paddingTop": "0px",
             "paddingRight": "20px",
             "paddingBottom": "0px",
-            "paddingLeft": "20px"
+            "paddingLeft": "20px",
+            "lineHeight": "1.65"
           },
           "styles": {}
         },
@@ -1520,6 +1554,7 @@
           "properties": {
             "mainTitle": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">[관람수칙&nbsp;&amp;&nbsp;입장절차]</p>",
             "mainTitleFontSize": "22px",
+            "mainTitleColor": "#111111",
             "subTitle": "<p style=\"margin: 0; padding: 0; line-height: 1.5; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\">&nbsp;</p>",
             "subTitleFontSize": "18px",
             "mainTitlePaddingTop": "15px",
@@ -1542,8 +1577,10 @@
             "labelText": "케이펫페어 청주 시즌1",
             "labelTextFontSize": "14px",
             "labelColor": "#111111",
+            "labelTextLineHeight": "1.7",
             "contentText": "관람수칙 확인하기",
             "contentTextFontSize": "14px",
+            "contentTextLineHeight": "1.7",
             "buttonText": "GO →",
             "buttonBgColor": "#058bae",
             "buttonTextColor": "#ffffff"
@@ -1559,8 +1596,10 @@
             "labelText": "케이펫페어 청주 시즌1",
             "labelTextFontSize": "14px",
             "labelColor": "#111111",
+            "labelTextLineHeight": "1.7",
             "contentText": "입장절차 확인하기 ",
             "contentTextFontSize": "14px",
+            "contentTextLineHeight": "1.7",
             "buttonText": "GO →",
             "buttonBgColor": "#058bae",
             "buttonTextColor": "#ffffff"
@@ -1589,8 +1628,11 @@
             "topTextCompany": "",
             "topTextCompanyFontSize": "16px",
             "addressText": "서울시 마포구 월드컵북로 58길 9 ES타워 (03922)",
+            "showWebsite": true,
             "websiteUrl": "https://k-pet.co.kr",
+            "showPhone": true,
             "phone": "02-6121-6247",
+            "showEmail": true,
             "email": "pet.es@esgroup.net",
             "contactInfoFontSize": "13px",
             "showHome": true,
