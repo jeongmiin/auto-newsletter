@@ -9,6 +9,14 @@
     <!-- 오른쪽: 파일 관리 버튼들 -->
     <div class="flex items-center gap-2">
       <Button
+        @click="downloadForSave"
+        label="저장용 내려받기"
+        icon="pi pi-save"
+        outlined
+        size="small"
+        v-tooltip.bottom="'재편집용 — 다시 불러와 편집 가능'"
+      />
+      <Button
         @click="importHtmlFile"
         label="파일 열기"
         icon="pi pi-folder-open"
@@ -34,12 +42,13 @@
         size="small"
         v-tooltip.bottom="'코드를 클립보드에 복사합니다'"
       />
+
       <Button
-        @click="downloadHtmlFile"
-        label="내려받기"
-        icon="pi pi-download"
+        @click="downloadForSend"
+        label="발송용 내려받기"
+        icon="pi pi-send"
         size="small"
-        v-tooltip.bottom="'컴퓨터에 파일로 저장합니다'"
+        v-tooltip.bottom="'메일 발송용 — 다시 불러와 편집 불가능'"
       />
     </div>
   </header>
@@ -185,9 +194,63 @@ const exportHtml = async (): Promise<void> => {
 }
 
 /**
- * HTML 파일 다운로드
+ * 최종 HTML 문서 생성
+ * @param finalHtml 렌더링된 본문 HTML
+ * @param includeMetadata true이면 재편집용 메타데이터(주석) 포함, false이면 제거(발송용)
  */
-const downloadHtmlFile = async (): Promise<void> => {
+const buildHtmlDocument = (finalHtml: string, includeMetadata: boolean): string => {
+  let metadataBlock = ''
+  if (includeMetadata) {
+    const projectState = {
+      modules: moduleStore.modules.map((m) => ({
+        moduleId: m.moduleId,
+        order: m.order,
+        properties: m.properties,
+        styles: m.styles,
+      })),
+      wrapSettings: editorStore.wrapSettings,
+    }
+    const moduleMetadataJson = JSON.stringify(projectState)
+    metadataBlock = `
+<!-- AUTO_NEWSLETTER_METADATA_START -->
+<!-- ${moduleMetadataJson} -->
+<!-- AUTO_NEWSLETTER_METADATA_END -->`
+  }
+
+  return `<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Newsletter</title>
+</head>
+<body>
+${finalHtml}${metadataBlock}
+</body>
+</html>`
+}
+
+/**
+ * 브라우저 다운로드 트리거
+ */
+const triggerDownload = (content: string, filename: string): void => {
+  const blob = new Blob([content], { type: 'text/html; charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+  URL.revokeObjectURL(url)
+}
+
+/**
+ * HTML 파일 다운로드
+ * @param includeMetadata true: 저장용(재편집 메타데이터 포함) / false: 발송용(메타데이터 제거)
+ */
+const downloadHtml = async (includeMetadata: boolean): Promise<void> => {
   try {
     const modules = moduleStore.modules
 
@@ -199,55 +262,34 @@ const downloadHtmlFile = async (): Promise<void> => {
     let finalHtml = await moduleStore.generateHtml()
     finalHtml = processQuillHtml(finalHtml)
 
-    const projectState = {
-      modules: modules.map((m) => ({
-        moduleId: m.moduleId,
-        order: m.order,
-        properties: m.properties,
-        styles: m.styles,
-      })),
-      wrapSettings: editorStore.wrapSettings,
-    }
-    const moduleMetadataJson = JSON.stringify(projectState)
-
-    const fullHtmlDocument = `<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Newsletter</title>
-</head>
-<body>
-${finalHtml}
-<!-- AUTO_NEWSLETTER_METADATA_START -->
-<!-- ${moduleMetadataJson} -->
-<!-- AUTO_NEWSLETTER_METADATA_END -->
-</body>
-</html>`
+    const fullHtmlDocument = buildHtmlDocument(finalHtml, includeMetadata)
 
     const now = new Date()
     const timestamp = now.toISOString().slice(0, 19).replace(/:/g, '-').replace('T', '_')
-    const filename = `newsletter_${timestamp}.html`
+    const prefix = includeMetadata ? '재편집용' : '발송용'
+    const filename = `${prefix}_newsletter_${timestamp}.html`
 
-    const blob = new Blob([fullHtmlDocument], { type: 'text/html; charset=utf-8' })
-    const url = URL.createObjectURL(blob)
+    triggerDownload(fullHtmlDocument, filename)
 
-    const link = document.createElement('a')
-    link.href = url
-    link.download = filename
-    document.body.appendChild(link)
-    link.click()
-
-    link.remove()
-    URL.revokeObjectURL(url)
-
-    moduleStore.markAsSaved()
-    showSuccess('다운로드 완료', `${filename} 파일이 저장되었습니다`)
+    // 저장용만 '저장됨'으로 표시 (발송용은 재편집 불가 → dirty 상태 유지)
+    if (includeMetadata) {
+      moduleStore.markAsSaved()
+    }
+    showSuccess(
+      '다운로드 완료',
+      includeMetadata
+        ? `${filename} (저장용 · 다시 불러와 편집 가능)`
+        : `${filename} (발송용 · 메타데이터 제거됨)`,
+    )
   } catch (error) {
     showError('다운로드 실패', error instanceof Error ? error.message : '알 수 없는 오류')
   }
 }
+
+// 저장용: 재편집 메타데이터 포함
+const downloadForSave = (): Promise<void> => downloadHtml(true)
+// 발송용: 메타데이터 제거 (메일 발송용)
+const downloadForSend = (): Promise<void> => downloadHtml(false)
 
 /**
  * 프로젝트 메타데이터 타입
