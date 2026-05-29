@@ -410,13 +410,6 @@
           "placeholder": "예: 14px, 16px"
         },
         {
-          "key": "lineHeight",
-          "label": "행간(line-height)",
-          "type": "text",
-          "default": "21px",
-          "placeholder": "예: 1.5, 1.5em, 20px"
-        },
-        {
           "key": "paddingTop",
           "label": "상단 여백",
           "type": "text",
@@ -1370,6 +1363,14 @@
           "group": "타이틀"
         },
         {
+          "key": "contentTitleLineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "group": "타이틀"
+        },
+        {
           "key": "titleColor",
           "label": "색상",
           "type": "text",
@@ -1390,14 +1391,6 @@
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
-          "group": "텍스트"
-        },
-        {
-          "key": "contentTextLineHeight",
-          "label": "행간(line-height)",
-          "type": "text",
-          "default": "21px",
-          "placeholder": "예: 1.5, 1.5em, 20px",
           "group": "텍스트"
         },
         {
@@ -1435,6 +1428,14 @@
           "group": "왼쪽 콘텐츠"
         },
         {
+          "key": "leftTitleLineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "group": "왼쪽 콘텐츠"
+        },
+        {
           "key": "leftContent",
           "label": "콘텐츠 텍스트",
           "type": "textarea",
@@ -1448,14 +1449,6 @@
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
-          "group": "왼쪽 콘텐츠"
-        },
-        {
-          "key": "leftContentLineHeight",
-          "label": "행간(line-height)",
-          "type": "text",
-          "default": "21px",
-          "placeholder": "예: 1.5, 1.5em, 20px",
           "group": "왼쪽 콘텐츠"
         },
         {
@@ -1476,6 +1469,14 @@
           "group": "오른쪽 콘텐츠"
         },
         {
+          "key": "rightTitleLineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "group": "오른쪽 콘텐츠"
+        },
+        {
           "key": "rightContent",
           "label": "콘텐츠 텍스트",
           "type": "textarea",
@@ -1489,14 +1490,6 @@
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
-          "group": "오른쪽 콘텐츠"
-        },
-        {
-          "key": "rightContentLineHeight",
-          "label": "행간(line-height)",
-          "type": "text",
-          "default": "21px",
-          "placeholder": "예: 1.5, 1.5em, 20px",
           "group": "오른쪽 콘텐츠"
         }
       ]
@@ -1554,14 +1547,6 @@
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
-          "group": "텍스트"
-        },
-        {
-          "key": "contentTextLineHeight",
-          "label": "행간(line-height)",
-          "type": "text",
-          "default": "21px",
-          "placeholder": "예: 1.5, 1.5em, 20px",
           "group": "텍스트"
         }
       ]
@@ -1632,6 +1617,14 @@
           "group": "타이틀·텍스트"
         },
         {
+          "key": "titleLineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "group": "타이틀·텍스트"
+        },
+        {
           "key": "description",
           "label": "콘텐츠 텍스트",
           "type": "textarea",
@@ -1645,14 +1638,6 @@
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
-          "group": "타이틀·텍스트"
-        },
-        {
-          "key": "descriptionLineHeight",
-          "label": "행간(line-height)",
-          "type": "text",
-          "default": "21px",
-          "placeholder": "예: 1.5, 1.5em, 20px",
           "group": "타이틀·텍스트"
         },
         {
@@ -1814,6 +1799,14 @@
           "group": "왼쪽 콘텐츠"
         },
         {
+          "key": "leftTitleLineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "group": "왼쪽 콘텐츠"
+        },
+        {
           "key": "leftContent",
           "label": "텍스트",
           "type": "textarea",
@@ -1827,14 +1820,6 @@
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
-          "group": "왼쪽 콘텐츠"
-        },
-        {
-          "key": "leftContentLineHeight",
-          "label": "행간(line-height)",
-          "type": "text",
-          "default": "21px",
-          "placeholder": "예: 1.5, 1.5em, 20px",
           "group": "왼쪽 콘텐츠"
         },
         {
@@ -2139,6 +2124,14 @@
           "group": "오른쪽 콘텐츠"
         },
         {
+          "key": "rightTitleLineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "group": "오른쪽 콘텐츠"
+        },
+        {
           "key": "rightContent",
           "label": "텍스트",
           "type": "textarea",
@@ -2152,14 +2145,6 @@
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
-          "group": "오른쪽 콘텐츠"
-        },
-        {
-          "key": "rightContentLineHeight",
-          "label": "행간(line-height)",
-          "type": "text",
-          "default": "21px",
-          "placeholder": "예: 1.5, 1.5em, 20px",
           "group": "오른쪽 콘텐츠"
         },
         {
@@ -2482,14 +2467,6 @@
           "group": "텍스트"
         },
         {
-          "key": "contentTextLineHeight",
-          "label": "행간(line-height)",
-          "type": "text",
-          "default": "21px",
-          "placeholder": "예: 1.5, 1.5em, 20px",
-          "group": "텍스트"
-        },
-        {
           "key": "showButton1",
           "label": "표시",
           "type": "boolean",
@@ -2720,6 +2697,14 @@
           "group": "타이틀·텍스트"
         },
         {
+          "key": "boxTitleLineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "group": "타이틀·텍스트"
+        },
+        {
           "key": "boxBgColor",
           "label": "텍스트 박스 배경색",
           "type": "text",
@@ -2748,14 +2733,6 @@
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
-          "group": "타이틀·텍스트"
-        },
-        {
-          "key": "contentTextLineHeight",
-          "label": "행간(line-height)",
-          "type": "text",
-          "default": "1.5em",
-          "placeholder": "예: 1.5, 1.5em, 20px",
           "group": "타이틀·텍스트"
         },
         {
@@ -2942,6 +2919,14 @@
           "group": "상단 섹션"
         },
         {
+          "key": "topSectionTitleLineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "group": "상단 섹션"
+        },
+        {
           "key": "topSectionTitleBgColor",
           "label": "타이틀 배경색",
           "type": "text",
@@ -2969,14 +2954,6 @@
           "type": "text",
           "default": "15px",
           "placeholder": "예: 15px, 16px",
-          "group": "상단 섹션"
-        },
-        {
-          "key": "topSectionTextLineHeight",
-          "label": "행간(line-height)",
-          "type": "text",
-          "default": "1.5em",
-          "placeholder": "예: 1.5, 1.5em, 20px",
           "group": "상단 섹션"
         },
         {
@@ -3033,6 +3010,14 @@
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
+          "group": "오른쪽 텍스트"
+        },
+        {
+          "key": "topRightTitle1LineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
           "group": "오른쪽 텍스트"
         },
         {
@@ -3331,6 +3316,14 @@
           "group": "왼쪽 타이틀"
         },
         {
+          "key": "leftTitleLineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "group": "왼쪽 타이틀"
+        },
+        {
           "key": "leftTitleBgColor",
           "label": "배경색",
           "type": "text",
@@ -3398,14 +3391,6 @@
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
-          "group": "왼쪽 텍스트"
-        },
-        {
-          "key": "leftContentLineHeight",
-          "label": "행간(line-height)",
-          "type": "text",
-          "default": "21px",
-          "placeholder": "예: 1.5, 1.5em, 20px",
           "group": "왼쪽 텍스트"
         },
         {
@@ -3581,6 +3566,14 @@
           "group": "오른쪽 타이틀"
         },
         {
+          "key": "rightTitleLineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "group": "오른쪽 타이틀"
+        },
+        {
           "key": "rightTitleBgColor",
           "label": "배경색",
           "type": "text",
@@ -3648,14 +3641,6 @@
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
-          "group": "오른쪽 텍스트"
-        },
-        {
-          "key": "rightContentLineHeight",
-          "label": "행간(line-height)",
-          "type": "text",
-          "default": "21px",
-          "placeholder": "예: 1.5, 1.5em, 20px",
           "group": "오른쪽 텍스트"
         },
         {
@@ -3881,6 +3866,14 @@
           "group": "텍스트"
         },
         {
+          "key": "titleLineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "group": "텍스트"
+        },
+        {
           "key": "contentText",
           "label": "텍스트",
           "type": "textarea",
@@ -3894,14 +3887,6 @@
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
-          "group": "텍스트"
-        },
-        {
-          "key": "contentTextLineHeight",
-          "label": "행간(line-height)",
-          "type": "text",
-          "default": "21px",
-          "placeholder": "예: 1.5, 1.5em, 20px",
           "group": "텍스트"
         },
         {
@@ -4012,6 +3997,14 @@
           "group": "텍스트"
         },
         {
+          "key": "titleLineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "group": "텍스트"
+        },
+        {
           "key": "contentText",
           "label": "텍스트",
           "type": "textarea",
@@ -4025,14 +4018,6 @@
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
-          "group": "텍스트"
-        },
-        {
-          "key": "contentTextLineHeight",
-          "label": "행간(line-height)",
-          "type": "text",
-          "default": "21px",
-          "placeholder": "예: 1.5, 1.5em, 20px",
           "group": "텍스트"
         },
         {
@@ -4505,6 +4490,14 @@
           "group": "라벨"
         },
         {
+          "key": "labelTextLineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "group": "라벨"
+        },
+        {
           "key": "contentText",
           "label": "콘텐츠",
           "type": "text",
@@ -4518,6 +4511,14 @@
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
+          "group": "텍스트"
+        },
+        {
+          "key": "contentTextLineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
           "group": "텍스트"
         },
         {

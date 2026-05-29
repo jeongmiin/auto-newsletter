@@ -54,9 +54,7 @@ export const moduleBasicHeaderConfig: ModuleConfig = {
  */
 export const moduleDescTextConfig: ModuleConfig = {
   quillFields: ['descriptionText'],
-  lineHeightMap: { descriptionText: 'lineHeight' },
   defaults: {
-    lineHeight: '1.65',
   },
 }
 
@@ -122,17 +120,13 @@ export const sectionTitleConfig: ModuleConfig = {
  */
 export const module04Config: ModuleConfig = {
   quillFields: ['leftContent', 'rightContent'],
-  lineHeightMap: {
-    leftContent: 'leftContentLineHeight',
-    rightContent: 'rightContentLineHeight',
-  },
   defaults: {
+    rightTitleLineHeight: '1.7',
+    leftTitleLineHeight: '1.7',
     leftImageBorderRadius: '0px',
     leftImageLinkUrl: '#',
     rightImageBorderRadius: '0px',
     rightImageLinkUrl: '#',
-    leftContentLineHeight: '1.7em',
-    rightContentLineHeight: '1.7em',
   },
   processors: [
     processors.module04ImageProcessor,
@@ -147,11 +141,10 @@ export const module04Config: ModuleConfig = {
  */
 export const module02Config: ModuleConfig = {
   quillFields: ['description'],
-  lineHeightMap: { description: 'descriptionLineHeight' },
   defaults: {
+    titleLineHeight: '1.7',
     imageBorderRadius: '0px',
     imageLinkUrl: '#',
-    descriptionLineHeight: '1.7em',
   },
   processors: [
     processors.module02ImageProcessor,
@@ -167,11 +160,11 @@ export const module02Config: ModuleConfig = {
  */
 export const module053Config: ModuleConfig = {
   quillFields: ['topSectionText'],
-  lineHeightMap: { topSectionText: 'topSectionTextLineHeight' },
   defaults: {
+    topRightTitle1LineHeight: '1.7',
+    topSectionTitleLineHeight: '1.7',
     imageBorderRadius: '0px',
     imageLinkUrl: '#',
-    topSectionTextLineHeight: '1.5em',
   },
   processors: [
     processors.module053ImageProcessor,
@@ -185,13 +178,12 @@ export const module053Config: ModuleConfig = {
  */
 export const module01Config: ModuleConfig = {
   quillFields: ['contentText'],
-  lineHeightMap: { contentText: 'contentTextLineHeight' },
   defaults: {
+    contentTitleLineHeight: '1.7',
     contentTitle: '콘텐츠 타이틀',
     titleColor: '#eb2a25',
     contentText: '콘텐츠 텍스트',
     bgColor: '#f5f5f5',
-    contentTextLineHeight: '1.7em',
   },
 }
 
@@ -200,13 +192,9 @@ export const module01Config: ModuleConfig = {
  */
 export const module011Config: ModuleConfig = {
   quillFields: ['leftContent', 'rightContent'],
-  lineHeightMap: {
-    leftContent: 'leftContentLineHeight',
-    rightContent: 'rightContentLineHeight',
-  },
   defaults: {
-    leftContentLineHeight: '1.7em',
-    rightContentLineHeight: '1.7em',
+    rightTitleLineHeight: '1.7',
+    leftTitleLineHeight: '1.7',
   },
 }
 
@@ -215,11 +203,9 @@ export const module011Config: ModuleConfig = {
  */
 export const module012Config: ModuleConfig = {
   quillFields: ['contentText'],
-  lineHeightMap: { contentText: 'contentTextLineHeight' },
   defaults: {
     categoryBgColor: '#666666',
     categoryTextColor: '#ffffff',
-    contentTextLineHeight: '1.7em',
   },
 }
 
@@ -228,15 +214,14 @@ export const module012Config: ModuleConfig = {
  */
 export const module051Config: ModuleConfig = {
   quillFields: ['contentText'],
-  lineHeightMap: { contentText: 'contentTextLineHeight' },
   defaults: {
+    boxTitleLineHeight: '1.7',
     ImageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-2column.png',
     ImageAlt: '이미지',
     boxBgColor: '#e5e5e5',
     boxColor: '#111111',
     imageBorderRadius: '0px',
     imageLinkUrl: '#',
-    contentTextLineHeight: '1.5em',
   },
   processors: [processors.module051ButtonProcessor, processors.imageLinkProcessor],
 }
@@ -246,11 +231,9 @@ export const module051Config: ModuleConfig = {
  */
 export const module05Config: ModuleConfig = {
   quillFields: ['contentText'],
-  lineHeightMap: { contentText: 'contentTextLineHeight' },
   defaults: {
     imageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-2column.png',
     imageAlt: '이미지',
-    contentTextLineHeight: '1.7em',
     button1BgColor: '#111111',
     button1TextColor: '#ffffff',
     button2BgColor: '#2196F3',
@@ -270,13 +253,9 @@ export const module05Config: ModuleConfig = {
  */
 export const module06Config: ModuleConfig = {
   quillFields: ['leftContent', 'rightContent'],
-  lineHeightMap: {
-    leftContent: 'leftContentLineHeight',
-    rightContent: 'rightContentLineHeight',
-  },
   defaults: {
-    leftContentLineHeight: '1.7em',
-    rightContentLineHeight: '1.7em',
+    rightTitleLineHeight: '1.7',
+    leftTitleLineHeight: '1.7',
     leftTitleBgColor: '#e5e5e5',
     leftTitleColor: '#333333',
     leftImageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-2column.png',
@@ -298,15 +277,14 @@ export const module06Config: ModuleConfig = {
  */
 export const module07Config: ModuleConfig = {
   quillFields: ['contentText'],
-  lineHeightMap: { contentText: 'contentTextLineHeight' },
   defaults: {
+    titleLineHeight: '1.7',
     imageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-2column.png',
     imageAlt: '이미지',
     buttonBgColor: '#e5e5e5',
     buttonTextColor: '#333333',
     imageBorderRadius: '0px',
     imageLinkUrl: '#',
-    contentTextLineHeight: '21px',
   },
   processors: [processors.module07ButtonProcessor, processors.imageLinkProcessor],
 }
@@ -374,7 +352,9 @@ export const module11Config: ModuleConfig = {
     textColor: '#111111',
     labelText: '중랑구',
     labelColor: '#111111',
+    labelTextLineHeight: '1.7',
     contentText: '2022년 국내전시회 참가기업 지원사업(~2/25)',
+    contentTextLineHeight: '1.7',
     buttonText: 'GO →',
     buttonBgColor: '#999999',
     buttonTextColor: '#ffffff',

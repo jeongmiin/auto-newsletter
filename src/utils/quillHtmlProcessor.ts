@@ -77,8 +77,8 @@ export const convertRgbToHex = (html: string): string => {
 export const addZeroSpacingToBlocks = (html: string): string => {
   if (!html) return ''
 
-  // 기본 텍스트 스타일 (줄바꿈 관련)
-  const baseTextStyle = 'margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;'
+  // 기본 텍스트 스타일 (줄바꿈 관련) — 행간 미지정 시 기본 1.7
+  const baseTextStyle = 'margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;'
 
   // p, h1, h2, h3 태그 일괄 처리
   const tagPattern = /<(p|h[1-3])(\s+([^>]*))?>/gi
@@ -114,6 +114,11 @@ export const addZeroSpacingToBlocks = (html: string): string => {
       // word-break가 없으면 추가 (강제 줄바꿈 - 이모지, 특수문자 포함 긴 텍스트 처리)
       if (!existingStyle.includes('word-break')) {
         existingStyle += '; word-break: break-all'
+      }
+
+      // line-height가 없으면 기본값 추가 (에디터에서 행간 미지정 시 1.7)
+      if (!existingStyle.includes('line-height')) {
+        existingStyle += '; line-height: 1.7'
       }
 
       // 세미콜론 정리 (중복 제거, 앞뒤 공백 제거)
@@ -156,7 +161,7 @@ export const convertEmptyLinesToSpacing = (html: string): string => {
         style += '; padding: 0'
       }
       if (!style.includes('line-height')) {
-        style += '; line-height: 1.5'
+        style += '; line-height: 1.7'
       }
       if (!style.includes('min-height')) {
         style += '; min-height: 1.5em'
@@ -182,7 +187,7 @@ export const convertEmptyLinesToSpacing = (html: string): string => {
         style += '; padding: 0'
       }
       if (!style.includes('line-height')) {
-        style += '; line-height: 1.5'
+        style += '; line-height: 1.7'
       }
       if (!style.includes('min-height')) {
         style += '; min-height: 1.5em'

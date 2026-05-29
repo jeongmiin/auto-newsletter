@@ -214,6 +214,14 @@
                   <option value="3">제목 3</option>
                   <option selected>본문</option>
                 </select>
+                <select class="ql-lineHeight" title="행간(줄 간격)">
+                  <option value="1.0">1.0</option>
+                  <option value="1.2">1.2</option>
+                  <option value="1.5">1.5</option>
+                  <option value="1.7">1.7</option>
+                  <option value="2.0">2.0</option>
+                  <option selected>행간</option>
+                </select>
               </span>
               <span class="ql-formats">
                 <button class="ql-list" value="ordered" title="번호 목록"></button>
@@ -1384,6 +1392,17 @@ const getColorValue = (key: string) => {
 /* Quill 에디터를 이메일 기본 폰트로 통일 (입력 시 결과물과 동일하게 보이도록) */
 :deep(.ql-editor) {
   font-family: AppleSDGothic, 'malgun gothic', 'nanum gothic', 'Noto Sans KR', sans-serif;
+}
+
+/* 행간(line-height) 드롭다운 픽커 */
+:deep(.ql-snow .ql-picker.ql-lineHeight) {
+  width: 58px;
+}
+/* snow 테마는 header/font/size 픽커에만 data-label 텍스트를 표시하므로,
+   커스텀 lineHeight 픽커에도 동일하게 항목/라벨 텍스트(1.0~2.0, 행간)를 노출 */
+:deep(.ql-snow .ql-picker.ql-lineHeight .ql-picker-label[data-label]:not([data-label=''])::before),
+:deep(.ql-snow .ql-picker.ql-lineHeight .ql-picker-item[data-label]:not([data-label=''])::before) {
+  content: attr(data-label);
 }
 
 /* 형광펜(반투명 마커) 드롭다운 픽커 */
