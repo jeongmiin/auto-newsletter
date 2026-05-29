@@ -6,6 +6,9 @@ import { EDITOR_CONFIG } from '@/constants/defaults'
 export const useEditorStore = defineStore('editor', () => {
   const canvasWidth = ref<'mobile' | 'desktop'>('desktop')
 
+  // 좌측 모듈 패널 탭 모드 (모듈 / 템플릿) — 캔버스 빈 화면 등에서 전환 가능하도록 공유
+  const modulePanelMode = ref<'modules' | 'templates'>('modules')
+
   const canvasSettings = ref<CanvasSettings>({
     width: EDITOR_CONFIG.canvasDefaultWidth,
     backgroundColor: '#ffffff',
@@ -26,6 +29,13 @@ export const useEditorStore = defineStore('editor', () => {
    */
   const setCanvasWidth = (width: 'mobile' | 'desktop'): void => {
     canvasWidth.value = width
+  }
+
+  /**
+   * 좌측 모듈 패널 탭 모드 설정 (모듈 / 템플릿)
+   */
+  const setModulePanelMode = (mode: 'modules' | 'templates'): void => {
+    modulePanelMode.value = mode
   }
 
   /**
@@ -56,7 +66,9 @@ export const useEditorStore = defineStore('editor', () => {
     canvasWidth,
     canvasSettings,
     wrapSettings,
+    modulePanelMode,
     setCanvasWidth,
+    setModulePanelMode,
     updateCanvasSettings,
     updateWrapSettings,
     setZoom

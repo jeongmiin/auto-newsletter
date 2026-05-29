@@ -102,16 +102,20 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useModuleStore } from '@/stores/moduleStore'
+import { useEditorStore } from '@/stores/editorStore'
 import { useToast } from 'primevue/usetoast'
 import { useConfirm } from 'primevue/useconfirm'
 import type { ModuleMetadata, NewsletterTemplate } from '@/types'
 
 const moduleStore = useModuleStore()
+const editorStore = useEditorStore()
 const toast = useToast()
 const confirm = useConfirm()
 
-const mode = ref<'modules' | 'templates'>('modules')
+// 모듈/템플릿 탭 모드는 editorStore에서 공유 (캔버스 빈 화면 버튼에서도 전환)
+const { modulePanelMode: mode } = storeToRefs(editorStore)
 const selectedCategory = ref<string>('all')
 const modules = ref<ModuleMetadata[]>([])
 const templates = ref<NewsletterTemplate[]>([])

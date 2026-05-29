@@ -12,16 +12,34 @@
         <!-- 모듈이 없을 때 -->
         <div
           v-if="modules.length === 0"
-          class="h-96 flex items-center justify-center text-gray-500"
+          class="flex items-center justify-center h-full"
         >
-          <div class="text-center max-w-sm px-4">
-            <div class="text-5xl mb-4"><i class="pi pi-envelope text-blue-500"></i></div>
+          <div class="text-center">
+            <div class="flex justify-center mb-2"><img src="/src/assets/img/logo/logo.png" alt="Logo" class="w-8" /></div>
             <div class="text-xl font-semibold text-gray-700 mb-2">뉴스레터 만들기</div>
             <div class="text-sm text-gray-500 mb-6">
               왼쪽 패널에서 원하는 모듈을 클릭하면<br />
               여기에 추가됩니다
             </div>
-            <div class="flex flex-col gap-2 text-left bg-gray-50 rounded-lg p-4 text-xs text-gray-600">
+
+            <!-- 빠른 시작 액션 -->
+            <div class="flex items-center justify-center gap-2 mb-6">
+              <Button
+                @click="startFromTemplate"
+                label="템플릿으로 시작"
+                icon="pi pi-file-edit"
+                size="small"
+              />
+              <Button
+                @click="openFile"
+                label="파일 열기"
+                icon="pi pi-folder-open"
+                outlined
+                size="small"
+              />
+            </div>
+
+            <div class="flex flex-col gap-2 text-left bg-white/70 border border-gray-100 rounded-lg p-4 text-sm text-gray-600">
               <div class="flex items-center gap-2">
                 <span class="w-5 h-5 bg-blue-100 text-blue-600 rounded flex items-center justify-center text-xs font-bold">1</span>
                 <span>왼쪽에서 모듈 선택하여 추가</span>
@@ -34,9 +52,6 @@
                 <span class="w-5 h-5 bg-blue-100 text-blue-600 rounded flex items-center justify-center text-xs font-bold">3</span>
                 <span>완성 후 상단에서 파일 저장</span>
               </div>
-            </div>
-            <div class="mt-4 text-xs text-gray-400">
-              또는 상단의 "파일 열기"로 이전 작업을 불러올 수 있습니다
             </div>
           </div>
         </div>
@@ -85,11 +100,20 @@
 import { computed, ref } from 'vue'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
+import { useNewsletterImport } from '@/composables/useNewsletterImport'
 import ModuleRenderer from '../modules/ModuleRenderer.vue'
 import draggable from 'vuedraggable'
 
 const moduleStore = useModuleStore()
 const editorStore = useEditorStore()
+const { importHtmlFile } = useNewsletterImport()
+
+// 빈 화면 빠른 시작: 좌측 패널을 템플릿 탭으로 전환
+const startFromTemplate = (): void => editorStore.setModulePanelMode('templates')
+// 빈 화면 빠른 시작: 재편집용 HTML 파일 열기
+const openFile = (): void => {
+  void importHtmlFile()
+}
 
 const modules = computed(() => moduleStore.modules)
 const selectedModuleId = computed(() => moduleStore.selectedModuleId)

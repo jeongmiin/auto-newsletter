@@ -58,11 +58,13 @@
 import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
 import { processQuillHtml } from '@/utils/quillHtmlProcessor'
+import { useNewsletterImport } from '@/composables/useNewsletterImport'
 import { useToast } from 'primevue/usetoast'
 
 const moduleStore = useModuleStore()
 const editorStore = useEditorStore()
 const toast = useToast()
+const { importHtmlFile } = useNewsletterImport()
 
 // Toast 헬퍼 함수
 const showSuccess = (summary: string, detail?: string) => {
@@ -290,133 +292,4 @@ const downloadHtml = async (includeMetadata: boolean): Promise<void> => {
 const downloadForSave = (): Promise<void> => downloadHtml(true)
 // 발송용: 메타데이터 제거 (메일 발송용)
 const downloadForSend = (): Promise<void> => downloadHtml(false)
-
-/**
- * 프로젝트 메타데이터 타입
- */
-interface ProjectMetadata {
-  modules: Array<{
-    moduleId: string
-    order: number
-    properties: Record<string, unknown>
-    styles: Record<string, unknown>
-  }>
-  wrapSettings?: {
-    backgroundColor: string
-    borderWidth: string
-    borderColor: string
-    borderStyle: string
-  }
-}
-
-/**
- * HTML 파일에서 모듈 메타데이터 추출
- */
-const extractModuleMetadata = (htmlContent: string): ProjectMetadata | null => {
-  const startMarker = '<!-- AUTO_NEWSLETTER_METADATA_START -->'
-  const endMarker = '<!-- AUTO_NEWSLETTER_METADATA_END -->'
-
-  const startIndex = htmlContent.indexOf(startMarker)
-  const endIndex = htmlContent.indexOf(endMarker)
-
-  if (startIndex === -1 || endIndex === -1) return null
-
-  const metadataSection = htmlContent.substring(startIndex + startMarker.length, endIndex).trim()
-  const jsonMatch = metadataSection.match(/<!--\s*([\s\S]*?)\s*-->/)
-  if (!jsonMatch) return null
-
-  try {
-    const jsonString = jsonMatch[1].trim()
-    const metadata = JSON.parse(jsonString)
-    if (Array.isArray(metadata)) return { modules: metadata }
-    return metadata as ProjectMetadata
-  } catch {
-    return null
-  }
-}
-
-/**
- * HTML 파일 가져오기
- */
-const importHtmlFile = async (): Promise<void> => {
-  try {
-    const fileInput = document.createElement('input')
-    fileInput.type = 'file'
-    fileInput.accept = '.html'
-
-    fileInput.onchange = async (event: Event) => {
-      const target = event.target as HTMLInputElement
-      const file = target.files?.[0]
-
-      if (!file) return
-
-      const reader = new FileReader()
-      reader.onload = async (e: ProgressEvent<FileReader>) => {
-        const htmlContent = e.target?.result as string
-
-        if (!htmlContent) {
-          showError('파일 읽기 실패', '파일 내용을 읽을 수 없습니다')
-          return
-        }
-
-        const projectData = extractModuleMetadata(htmlContent)
-
-        if (!projectData || projectData.modules.length === 0) {
-          showError('가져오기 실패', '이 에디터에서 내보낸 파일만 가져올 수 있습니다')
-          return
-        }
-
-        if (moduleStore.availableModules.length === 0) {
-          await moduleStore.loadAvailableModules()
-        }
-
-        moduleStore.clearAll()
-
-        if (projectData.wrapSettings) {
-          editorStore.updateWrapSettings(projectData.wrapSettings)
-        }
-
-        let restoredCount = 0
-        for (const moduleData of projectData.modules.sort((a, b) => a.order - b.order)) {
-          const moduleMetadata = moduleStore.availableModules.find(
-            (m) => m.id === moduleData.moduleId,
-          )
-
-          if (moduleMetadata) {
-            moduleStore.addModule(moduleMetadata)
-            const addedModule = moduleStore.modules[moduleStore.modules.length - 1]
-
-            Object.entries(moduleData.properties).forEach(([key, value]) => {
-              addedModule.properties[key] = value
-            })
-
-            if (moduleData.styles) {
-              Object.entries(moduleData.styles).forEach(([key, value]) => {
-                ;(addedModule.styles as Record<string, unknown>)[key] = value
-              })
-            }
-
-            restoredCount++
-          }
-        }
-
-        if (moduleStore.modules.length > 0) {
-          moduleStore.selectModule(moduleStore.modules[0].id)
-        }
-
-        showSuccess('가져오기 완료', `${restoredCount}개의 모듈이 복원되었습니다`)
-      }
-
-      reader.onerror = () => {
-        showError('파일 읽기 실패', '파일을 읽는 중 오류가 발생했습니다')
-      }
-
-      reader.readAsText(file, 'UTF-8')
-    }
-
-    fileInput.click()
-  } catch (error) {
-    showError('가져오기 실패', error instanceof Error ? error.message : '알 수 없는 오류')
-  }
-}
 </script>
