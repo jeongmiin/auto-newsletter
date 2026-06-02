@@ -184,6 +184,11 @@ export const module01Config: ModuleConfig = {
     titleColor: '#eb2a25',
     contentText: '콘텐츠 텍스트',
     bgColor: '#f5f5f5',
+    textAlign: 'left',
+    paddingTop: '0px',
+    paddingRight: '20px',
+    paddingBottom: '10px',
+    paddingLeft: '20px',
   },
 }
 
@@ -362,6 +367,30 @@ export const module11Config: ModuleConfig = {
 }
 
 /**
+ * Module12 설정
+ */
+export const module12Config: ModuleConfig = {
+  quillFields: ['contentText'],
+  lineHeightMap: { contentText: 'textLineHeight' },
+  defaults: {
+    titleText: '콘텐츠 타이틀',
+    titleFontSize: '16px',
+    titleColor: '#111111',
+    titleLineHeight: '1.7',
+    contentText: '콘텐츠 텍스트를 입력하세요',
+    textFontSize: '14px',
+    textColor: '#333333',
+    textLineHeight: '1.7',
+    boxBgColor: '#f5f5f5',
+    textAlign: 'center',
+    paddingTop: '0px',
+    paddingRight: '20px',
+    paddingBottom: '10px',
+    paddingLeft: '20px',
+  },
+}
+
+/**
  * ModuleTable 설정
  */
 export const moduleTableConfig: ModuleConfig = {
@@ -436,6 +465,7 @@ export const MODULE_CONFIG_REGISTRY: Record<string, ModuleConfig> = {
   Module10: module10Config,
   'Module10-1': module101Config,
   Module11: module11Config,
+  Module12: module12Config,
   ModuleSubTitle: moduleSubTitleConfig,
   ModuleMultiImage: moduleMultiImageConfig,
   ModuleDivider: moduleDividerConfig,

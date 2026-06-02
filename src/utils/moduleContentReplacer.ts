@@ -187,6 +187,20 @@ export function replaceModuleSubTitleContent(
 }
 
 /**
+ * Module01 콘텐츠 교체
+ */
+export function replaceModule01Content(html: string, properties: Record<string, unknown>): string {
+  return replaceModuleContentSync(html, properties, MODULE_CONFIG_REGISTRY.Module01)
+}
+
+/**
+ * Module12 콘텐츠 교체
+ */
+export function replaceModule12Content(html: string, properties: Record<string, unknown>): string {
+  return replaceModuleContentSync(html, properties, MODULE_CONFIG_REGISTRY.Module12)
+}
+
+/**
  * ModuleDivider 콘텐츠 교체 (구분선)
  */
 export function replaceModuleDividerContent(

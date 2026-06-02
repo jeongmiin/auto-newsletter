@@ -25,6 +25,8 @@ import {
   replaceModule101Content,
   replaceModuleSubTitleContent,
   replaceModuleTableContent,
+  replaceModule01Content,
+  replaceModule12Content,
   replaceDefaultTemplate,
 } from '@/utils/moduleContentReplacer'
 
@@ -118,6 +120,12 @@ export function useModuleRenderer(moduleId: string) {
 
       case 'ModuleTable':
         return replaceModuleTableContent(html, properties)
+
+      case 'Module01':
+        return replaceModule01Content(html, properties)
+
+      case 'Module12':
+        return replaceModule12Content(html, properties)
 
       default:
         return replaceDefaultTemplate(html, properties)

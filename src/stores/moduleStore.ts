@@ -36,6 +36,8 @@ import {
   replaceModuleSubTitleContent,
   replaceModuleTableContent,
   replaceModuleDividerContent,
+  replaceModule01Content,
+  replaceModule12Content,
   replaceDefaultTemplate,
 } from '@/utils/moduleContentReplacer'
 
@@ -1111,6 +1113,12 @@ export const useModuleStore = defineStore('module', () => {
 
       case 'ModuleDivider':
         return replaceModuleDividerContent(html, properties)
+
+      case 'Module01':
+        return replaceModule01Content(html, properties)
+
+      case 'Module12':
+        return replaceModule12Content(html, properties)
 
       default:
         return replaceDefaultTemplate(html, properties)
