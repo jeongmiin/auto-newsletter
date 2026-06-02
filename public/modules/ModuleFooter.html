@@ -6,10 +6,20 @@
     <!-- info 시작 -->
     <tr>
       <td align="center" style="padding: 0 25px; box-sizing: border-box;">
-        <p style="margin:0; font-size:16px; color:#333333; line-height:1.7em; text-align:center; font-weight:400; padding-bottom:10px; box-sizing: border-box; font-family:AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif; "><strong style="font-size:{{topTextTitleFontSize}};">{{topTextTitle}}</strong><br><span style="font-size:{{topTextCompanyFontSize}};">{{topTextCompany}}</span></p>
-        <span style="word-break:keep-all; word-wrap:break-word; overflow-wrap:break-word; font-family:AppleSDGothic, malgun gothic, nanum gothic,Noto Sans KR, sans-serif; line-height:1.7em; text-align:center; font-weight:400; font-size:{{contactInfoFontSize}}; color:#333333;">{{addressText}}<!-- 행1여백 --><br><!-- //행1여백 -->
-        <!-- 홈페이지 --><strong>H</strong> {{websiteUrl}}<!-- //홈페이지 --><!-- HT구분 --> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <!-- //HT구분 --><!-- 전화 --><strong>T</strong> {{phone}}<!-- //전화 --><!-- 행2여백 --><br><!-- //행2여백 -->
-        <!-- 이메일 --><strong>E</strong> {{email}}<!-- //이메일 --></span>
+        <div style="margin:0; font-size:16px; color:#333333; line-height:1.7em; text-align:center; font-weight:400; padding-bottom:10px; box-sizing: border-box; font-family:AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif; ">
+          <strong style="font-size:{{topTextTitleFontSize}};">{{topTextTitle}}</strong><br>
+          <span style="font-size:{{topTextCompanyFontSize}};">{{topTextCompany}}</span>
+        </div>
+        <div style="word-break:keep-all; word-wrap:break-word; overflow-wrap:break-word; font-family:AppleSDGothic, malgun gothic, nanum gothic,Noto Sans KR, sans-serif; line-height:1.7em; text-align:center; font-weight:400; font-size:{{contactInfoFontSize}}; color:#333333;">{{addressText}}
+          <!-- 행1여백 --><br><!-- //행1여백 -->
+          <!-- 홈페이지 --><div style="display: inline-block;"><strong>H</strong> {{websiteUrl}}</div><!-- //홈페이지 -->
+          <!-- HT구분 --> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <!-- //HT구분 -->
+          <!-- 전화 --><div style="display: inline-block;"><strong>T</strong> {{phone}}</div><!-- //전화 -->
+          <!-- 행2여백 --><br><!-- //행2여백 -->
+          <!-- 이메일 --><div style="display: inline-block;"><strong>E</strong> {{email}}</div><!-- //이메일 -->
+          <!-- EF구분 --> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <!-- //EF구분 -->
+          <!-- 팩스 --><div style="display: inline-block;"><strong>F</strong> {{fax}}</div><!-- //팩스 -->
+        </div>
       </td>
     </tr>
     <!-- //info 끝 -->
@@ -49,7 +59,7 @@
         본 메일은 회원님의 수신동의 여부를 확인한 결과 회원님께서 수신동의를 하셨기에 발송되었습니다.<br>
         메일 수신을 원치 않으시면 <a style="text-decoration:none; color:#333333; font-weight:700;" href="{{unsubscribeUrl}}" target="_blank">[수신거부]</a> 를 클릭하십시오.<br>
         If you don't want this type of information or e-mail, please click the <a style="text-decoration:none; color:#333333; font-weight:700;" href="{{unsubscribeUrl}}" target="_blank">[unsubscription]</a><br>
-        본 메일은 발신전용 메일이므로 문의사항은 <strong>{{inquiryEmail}}</strong>으로 문의 바랍니다
+        <!-- 문의 --><div>본 메일은 발신전용 메일이므로 문의사항은 <strong>{{inquiryEmail}}</strong>으로 문의 바랍니다</div><!-- //문의 -->
       </td>
     </tr>
   </tbody>

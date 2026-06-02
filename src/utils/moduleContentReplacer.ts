@@ -18,6 +18,16 @@ export function replaceModuleBasicHeaderContent(
 }
 
 /**
+ * ModuleImageHeader 콘텐츠 교체 (이미지형 헤더)
+ */
+export function replaceModuleImageHeaderContent(
+  html: string,
+  properties: Record<string, unknown>,
+): string {
+  return replaceModuleContentSync(html, properties, MODULE_CONFIG_REGISTRY.ModuleImageHeader)
+}
+
+/**
  * ModuleDescText 콘텐츠 교체
  */
 export function replaceModuleDescTextContent(

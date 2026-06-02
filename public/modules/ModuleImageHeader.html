@@ -1,0 +1,63 @@
+<table align="center" cellpadding="0" cellspacing="0"
+  style=" width:100%; max-width:680px; background:#ffffff; bgcolor:#ffffff; -webkit-text-size-adjust: 100%; max-width: 680px;">
+  <tbody>
+    <tr style="margin:0px; padding:0px;">
+      <td style="width:100%; max-width:680px; border-spacing:0;  padding:0px;">
+        <!-- 콘텐츠 시작 -->
+
+        <!-- 비주얼 이미지 -->
+        <table border="0" cellpadding="0" cellspacing="0" style=" text-align:center;" width="100%">
+          <tbody>
+            <tr>
+              <td style="text-align:center; padding:{{imagePaddingTop}} {{imagePaddingRight}} {{imagePaddingBottom}} {{imagePaddingLeft}};"><!-- 이미지 링크 --><a href="{{imageLinkUrl}}" target="_blank" style="text-decoration:none;"><img src="{{imageUrl}}" alt="{{imageAlt}}" style="max-width:100%; margin: 0 auto;"></a><!-- //이미지 링크 --></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table align="center" border="0" cellpadding="0" cellspacing="0" style="max-width:680px; width:100%;"
+          summary="{{tableSummary}}">
+          <tbody>
+            <tr>
+              <td style="text-align:center; padding:20px 0px;">
+                <!-- 상단라벨 --><div
+                  style="color:{{volColor}}; font-size:{{volFontSize}}; font-weight:400; line-height:{{volLineHeight}}; letter-spacing:-0.03em; word-break:keep-all; font-family: AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif;">
+                  {{volText}}</div><!-- //상단라벨 -->
+                <!-- 일정장소 --><div
+                  style="color:{{dateColor}}; font-size:{{dateFontSize}}; font-weight:600; line-height:{{dateLineHeight}}; letter-spacing:-0.03em; word-break:keep-all; font-family: AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif;">
+                  {{dateText}}</div><!-- //일정장소 -->
+                <!-- 홈링크 --><div
+                  style="color:{{homeColor}}; padding-top:10px; font-size:{{homeFontSize}}; font-weight:400; line-height:{{homeLineHeight}}; letter-spacing:-0.03em; word-break:keep-all; font-family: AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif;">
+                  <a href="{{homeLinkUrl}}" target="_blank" style="text-decoration: none; color:{{homeColor}};">{{homeLinkText}}</a></div><!-- //홈링크 -->
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:{{dividerPaddingTop}} {{dividerPaddingRight}} {{dividerPaddingBottom}} {{dividerPaddingLeft}};">
+                <div style="border-bottom:{{dividerWidth}} {{dividerStyle}} {{dividerColor}};"></div>
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="text-align:left; padding:0px 20px; word-break:keep-all; letter-spacing:-0.03em; font-family:AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif;">
+                <!-- 타이틀 --><div style="font-size:{{titleFontSize}}; font-weight:700; color:{{titleColor}}; line-height:1.5em;">
+                  {{titleText}}</div><!-- //타이틀 -->
+                <!-- 본문 --><div style="font-size:{{bodyFontSize}}; font-weight:400; color:{{bodyColor}}; padding:20px 0px; line-height:1.7em;">
+                  {{bodyText}}</div><!-- //본문 -->
+              </td>
+            </tr>
+            <!-- 버튼 -->
+            <tr>
+              <td align="center" style="padding:{{buttonPaddingTop}} {{buttonPaddingRight}} {{buttonPaddingBottom}} {{buttonPaddingLeft}};">
+                <a href="{{buttonUrl}}" style="width:100%; text-decoration:none; display: block; padding:15px 0px 15px 0px; background:{{buttonBgColor}}; bgcolor:{{buttonBgColor}}; border:{{buttonBorderWidth}} {{buttonBorderStyle}} {{buttonBorderColor}}; border-radius:{{buttonBorderRadius}}; text-align:center; color:{{buttonTextColor}}; font-size:15px; font-weight:700; word-break:keep-all; font-family:AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif;" target="_blank">
+                  {{buttonText}}
+                </a>
+              </td>
+            </tr>
+            <!-- //버튼 -->
+          </tbody>
+        </table>
+
+        <!-- //콘텐츠 END -->
+      </td>
+    </tr>
+  </tbody>
+</table>

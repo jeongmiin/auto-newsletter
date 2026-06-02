@@ -66,6 +66,10 @@ const editorStore = useEditorStore()
 const toast = useToast()
 const { importHtmlFile } = useNewsletterImport()
 
+// 미리보기 창 재사용용 — 이름 있는 타깃으로 열어 같은 창을 새로고침한다
+const PREVIEW_WINDOW_NAME = 'newsletter-preview'
+let previewObjectUrl: string | null = null
+
 // Toast 헬퍼 함수
 const showSuccess = (summary: string, detail?: string) => {
   toast.add({ severity: 'success', summary, detail, life: 3000 })
@@ -167,15 +171,26 @@ const previewEmail = async (): Promise<void> => {
 
     const blob = new Blob([fullHtmlDocument], { type: 'text/html; charset=utf-8' })
     const url = URL.createObjectURL(blob)
-    const previewWindow = window.open(url, '_blank', 'width=800,height=600,scrollbars=yes')
+
+    // 이전 미리보기 blob URL 정리 (이미 열린 창은 곧 새 URL로 이동하므로 안전)
+    if (previewObjectUrl) {
+      URL.revokeObjectURL(previewObjectUrl)
+    }
+    previewObjectUrl = url
+
+    // 이름 있는 타깃으로 열기 — 같은 이름의 창이 이미 있으면 새 창을 띄우지 않고
+    // 해당 창을 새 내용으로 이동(새로고침)시킨다
+    const previewWindow = window.open(url, PREVIEW_WINDOW_NAME, 'width=800,height=600,scrollbars=yes')
 
     if (!previewWindow) {
       showError('팝업 차단됨', '브라우저 설정에서 팝업 차단을 해제해주세요')
       URL.revokeObjectURL(url)
+      previewObjectUrl = null
       return
     }
 
-    previewWindow.addEventListener('unload', () => URL.revokeObjectURL(url))
+    // 재사용된 창을 앞으로 가져온다
+    previewWindow.focus()
   } catch (error) {
     showError('미리보기 실패', error instanceof Error ? error.message : '알 수 없는 오류')
   }

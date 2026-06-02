@@ -274,6 +274,471 @@
       ]
     },
     {
+      "id": "ModuleImageHeader",
+      "name": "이미지형 헤더",
+      "description": "비주얼 이미지 + 타이틀 + 텍스트 + 버튼이 있는 헤더",
+      "category": "common",
+      "icon": "pi pi-image",
+      "htmlFile": "ModuleImageHeader.html",
+      "editableProps": [
+        {
+          "key": "tableSummary",
+          "label": "전체 테이블 요약 (접근성)",
+          "type": "text",
+          "default": "전시 뉴스레터 입니다.",
+          "placeholder": "스크린 리더용 테이블 설명",
+          "group": "접근성"
+        },
+        {
+          "key": "imageUrl",
+          "label": "이미지 URL",
+          "type": "url",
+          "default": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/newsletter/images/img-visual.png",
+          "placeholder": "이미지 URL을 입력하세요",
+          "group": "이미지"
+        },
+        {
+          "key": "imageAlt",
+          "label": "대체 텍스트",
+          "type": "text",
+          "default": "전시소개글",
+          "group": "이미지"
+        },
+        {
+          "key": "showImageLink",
+          "label": "이미지 링크 사용",
+          "type": "boolean",
+          "default": false,
+          "group": "이미지"
+        },
+        {
+          "key": "imageLinkUrl",
+          "label": "이미지 링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showImageLink",
+          "group": "이미지"
+        },
+        {
+          "key": "imagePaddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "group": "이미지"
+        },
+        {
+          "key": "imagePaddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "group": "이미지"
+        },
+        {
+          "key": "imagePaddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "group": "이미지"
+        },
+        {
+          "key": "imagePaddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "group": "이미지"
+        },
+        {
+          "key": "showVol",
+          "label": "상단 라벨 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "상단 정보"
+        },
+        {
+          "key": "volText",
+          "label": "상단 라벨",
+          "type": "text",
+          "default": "NEWSLETTER VOL.1",
+          "placeholder": "예: NEWSLETTER VOL.1",
+          "showWhen": "showVol",
+          "group": "상단 정보"
+        },
+        {
+          "key": "volFontSize",
+          "label": "상단 라벨 폰트 크기",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 16px",
+          "showWhen": "showVol",
+          "group": "상단 정보"
+        },
+        {
+          "key": "volColor",
+          "label": "상단 라벨 색상",
+          "type": "color",
+          "default": "#333333",
+          "showWhen": "showVol",
+          "group": "상단 정보"
+        },
+        {
+          "key": "volLineHeight",
+          "label": "상단 라벨 행간",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "showWhen": "showVol",
+          "group": "상단 정보"
+        },
+        {
+          "key": "showDate",
+          "label": "일정/장소 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "상단 정보"
+        },
+        {
+          "key": "dateText",
+          "label": "일정/장소",
+          "type": "text",
+          "default": "2023. 8. 3 (목) - 8. 6 (일) COEX",
+          "placeholder": "예: 2023. 8. 3 (목) - 8. 6 (일) COEX",
+          "showWhen": "showDate",
+          "group": "상단 정보"
+        },
+        {
+          "key": "dateFontSize",
+          "label": "일정/장소 폰트 크기",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 18px, 20px",
+          "showWhen": "showDate",
+          "group": "상단 정보"
+        },
+        {
+          "key": "dateColor",
+          "label": "일정/장소 색상",
+          "type": "color",
+          "default": "#333333",
+          "showWhen": "showDate",
+          "group": "상단 정보"
+        },
+        {
+          "key": "dateLineHeight",
+          "label": "일정/장소 행간",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "showWhen": "showDate",
+          "group": "상단 정보"
+        },
+        {
+          "key": "showHome",
+          "label": "홈 링크 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "상단 정보"
+        },
+        {
+          "key": "homeLinkText",
+          "label": "링크 텍스트",
+          "type": "text",
+          "default": "🏠 홈페이지 바로가기",
+          "showWhen": "showHome",
+          "group": "상단 정보"
+        },
+        {
+          "key": "homeLinkUrl",
+          "label": "링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "홈페이지 URL",
+          "showWhen": "showHome",
+          "group": "상단 정보"
+        },
+        {
+          "key": "homeFontSize",
+          "label": "링크 폰트 크기",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px",
+          "showWhen": "showHome",
+          "group": "상단 정보"
+        },
+        {
+          "key": "homeColor",
+          "label": "링크 색상",
+          "type": "color",
+          "default": "#333333",
+          "showWhen": "showHome",
+          "group": "상단 정보"
+        },
+        {
+          "key": "homeLineHeight",
+          "label": "링크 행간",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "showWhen": "showHome",
+          "group": "상단 정보"
+        },
+        {
+          "key": "dividerStyle",
+          "label": "선 스타일",
+          "type": "select",
+          "default": "dotted",
+          "options": [
+            { "label": "실선", "value": "solid" },
+            { "label": "점선", "value": "dotted" },
+            { "label": "파선", "value": "dashed" },
+            { "label": "이중선", "value": "double" }
+          ],
+          "group": "구분선"
+        },
+        {
+          "key": "dividerWidth",
+          "label": "선 두께",
+          "type": "text",
+          "default": "1px",
+          "placeholder": "예: 1px, 2px",
+          "group": "구분선"
+        },
+        {
+          "key": "dividerColor",
+          "label": "선 색상",
+          "type": "color",
+          "default": "#999999",
+          "group": "구분선"
+        },
+        {
+          "key": "dividerPaddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 10px",
+          "group": "구분선"
+        },
+        {
+          "key": "dividerPaddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 25px, 0",
+          "group": "구분선"
+        },
+        {
+          "key": "dividerPaddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 0px, 10px",
+          "group": "구분선"
+        },
+        {
+          "key": "dividerPaddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 25px, 0",
+          "group": "구분선"
+        },
+        {
+          "key": "showTitle",
+          "label": "타이틀 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "타이틀"
+        },
+        {
+          "key": "titleText",
+          "label": "타이틀",
+          "type": "textarea",
+          "default": "국내 유일 기계설비 종합 전시회<br><span style=\"color:#eb2a25;\">『대한민국 기계설비전시회(HVAC KOREA)』</span>가 제 7회를 맞이하였습니다.",
+          "placeholder": "타이틀을 입력하세요",
+          "required": true,
+          "showWhen": "showTitle",
+          "group": "타이틀"
+        },
+        {
+          "key": "titleFontSize",
+          "label": "폰트 크기",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 22px",
+          "showWhen": "showTitle",
+          "group": "타이틀"
+        },
+        {
+          "key": "titleColor",
+          "label": "색상",
+          "type": "color",
+          "default": "#111111",
+          "showWhen": "showTitle",
+          "group": "타이틀"
+        },
+        {
+          "key": "showBody",
+          "label": "텍스트 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "텍스트"
+        },
+        {
+          "key": "bodyText",
+          "label": "텍스트",
+          "type": "textarea",
+          "default": "본 전시회는 1군건설사, 설계, 시공, 학계 등 각 부문별 바이어군을 대표하는 유관 협회들과 함께 준비하는 전시회로서 참가기업의 정확한 목표 바이어들이 방문하는 전시회입니다. 기계설비산업의 트렌드를 선도하는 대한민국 기계설비전시회에서 새로운 비즈니스 기회를 찾으세요!",
+          "placeholder": "내용을 입력하세요",
+          "showWhen": "showBody",
+          "group": "텍스트"
+        },
+        {
+          "key": "bodyFontSize",
+          "label": "폰트 크기",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px",
+          "showWhen": "showBody",
+          "group": "텍스트"
+        },
+        {
+          "key": "bodyColor",
+          "label": "색상",
+          "type": "color",
+          "default": "#333333",
+          "showWhen": "showBody",
+          "group": "텍스트"
+        },
+        {
+          "key": "showButton",
+          "label": "버튼 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "버튼"
+        },
+        {
+          "key": "buttonText",
+          "label": "텍스트",
+          "type": "text",
+          "default": "사전등록 →",
+          "placeholder": "버튼 텍스트",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonUrl",
+          "label": "링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 링크 URL",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonBgColor",
+          "label": "배경색",
+          "type": "color",
+          "default": "#111111",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonTextColor",
+          "label": "글자색",
+          "type": "color",
+          "default": "#ffffff",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonBorderStyle",
+          "label": "테두리 스타일",
+          "type": "select",
+          "default": "none",
+          "options": [
+            { "label": "없음", "value": "none" },
+            { "label": "실선", "value": "solid" },
+            { "label": "점선", "value": "dashed" },
+            { "label": "점", "value": "dotted" }
+          ],
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonBorderWidth",
+          "label": "테두리 두께",
+          "type": "text",
+          "default": "1px",
+          "placeholder": "예: 1px, 2px",
+          "showWhen": {
+            "key": "buttonBorderStyle",
+            "notEquals": "none"
+          },
+          "group": "버튼"
+        },
+        {
+          "key": "buttonBorderColor",
+          "label": "테두리 색상",
+          "type": "color",
+          "default": "#000000",
+          "showWhen": {
+            "key": "buttonBorderStyle",
+            "notEquals": "none"
+          },
+          "group": "버튼"
+        },
+        {
+          "key": "buttonBorderRadius",
+          "label": "모서리 둥글기",
+          "type": "text",
+          "default": "5px",
+          "placeholder": "예: 5px, 50%",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonPaddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonPaddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonPaddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonPaddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "showWhen": "showButton",
+          "group": "버튼"
+        }
+      ]
+    },
+    {
       "id": "SectionTitle",
       "name": "섹션 타이틀",
       "description": "제목과 부제목이 있는 헤더",
@@ -282,44 +747,43 @@
       "htmlFile": "SectionTitle.html",
       "editableProps": [
         {
+          "key": "topBorderWidth",
+          "label": "두께",
+          "type": "text",
+          "default": "2px",
+          "placeholder": "예: 2px, 3px",
+          "group": "상단 테두리"
+        },
+        {
+          "key": "topBorderColor",
+          "label": "색상",
+          "type": "color",
+          "default": "#333333",
+          "group": "상단 테두리"
+        },
+        {
           "key": "mainTitle",
           "label": "메인 타이틀",
           "type": "textarea",
           "default": "섹션 타이틀",
           "placeholder": "메인 타이틀을 입력하세요",
           "required": true,
-          "group": "텍스트"
+          "group": "메인 타이틀"
         },
         {
           "key": "mainTitleFontSize",
-          "label": "메인 타이틀 폰트 크기",
+          "label": "폰트 크기",
           "type": "text",
           "default": "22px",
           "placeholder": "예: 22px, 24px",
-          "group": "텍스트"
+          "group": "메인 타이틀"
         },
         {
           "key": "mainTitleColor",
-          "label": "메인 타이틀 색상",
+          "label": "색상",
           "type": "color",
           "default": "#111111",
-          "group": "텍스트"
-        },
-        {
-          "key": "subTitle",
-          "label": "서브 타이틀",
-          "type": "textarea",
-          "default": "서브 타이틀 영역입니다",
-          "placeholder": "서브 타이틀을 입력하세요",
-          "group": "텍스트"
-        },
-        {
-          "key": "subTitleFontSize",
-          "label": "서브 타이틀 폰트 크기",
-          "type": "text",
-          "default": "16px",
-          "placeholder": "예: 14px, 16px",
-          "group": "텍스트"
+          "group": "메인 타이틀"
         },
         {
           "key": "mainTitlePaddingTop",
@@ -327,7 +791,7 @@
           "type": "text",
           "default": "15px",
           "placeholder": "예: 15px, 0",
-          "group": "메인 타이틀 여백"
+          "group": "메인 타이틀"
         },
         {
           "key": "mainTitlePaddingRight",
@@ -335,7 +799,7 @@
           "type": "text",
           "default": "20px",
           "placeholder": "예: 20px, 0",
-          "group": "메인 타이틀 여백"
+          "group": "메인 타이틀"
         },
         {
           "key": "mainTitlePaddingBottom",
@@ -343,7 +807,7 @@
           "type": "text",
           "default": "15px",
           "placeholder": "예: 15px, 0",
-          "group": "메인 타이틀 여백"
+          "group": "메인 타이틀"
         },
         {
           "key": "mainTitlePaddingLeft",
@@ -351,7 +815,32 @@
           "type": "text",
           "default": "20px",
           "placeholder": "예: 20px, 0",
-          "group": "메인 타이틀 여백"
+          "group": "메인 타이틀"
+        },
+        {
+          "key": "showSubTitle",
+          "label": "서브 타이틀 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "서브 타이틀"
+        },
+        {
+          "key": "subTitle",
+          "label": "서브 타이틀",
+          "type": "textarea",
+          "default": "서브 타이틀 영역입니다",
+          "placeholder": "서브 타이틀을 입력하세요",
+          "showWhen": "showSubTitle",
+          "group": "서브 타이틀"
+        },
+        {
+          "key": "subTitleFontSize",
+          "label": "폰트 크기",
+          "type": "text",
+          "default": "16px",
+          "placeholder": "예: 14px, 16px",
+          "showWhen": "showSubTitle",
+          "group": "서브 타이틀"
         },
         {
           "key": "subTitlePaddingTop",
@@ -359,7 +848,8 @@
           "type": "text",
           "default": "0",
           "placeholder": "예: 0, 10px",
-          "group": "서브 타이틀 여백"
+          "showWhen": "showSubTitle",
+          "group": "서브 타이틀"
         },
         {
           "key": "subTitlePaddingRight",
@@ -367,7 +857,8 @@
           "type": "text",
           "default": "15px",
           "placeholder": "예: 15px, 0",
-          "group": "서브 타이틀 여백"
+          "showWhen": "showSubTitle",
+          "group": "서브 타이틀"
         },
         {
           "key": "subTitlePaddingBottom",
@@ -375,7 +866,8 @@
           "type": "text",
           "default": "20px",
           "placeholder": "예: 20px, 0",
-          "group": "서브 타이틀 여백"
+          "showWhen": "showSubTitle",
+          "group": "서브 타이틀"
         },
         {
           "key": "subTitlePaddingLeft",
@@ -383,7 +875,8 @@
           "type": "text",
           "default": "15px",
           "placeholder": "예: 15px, 0",
-          "group": "서브 타이틀 여백"
+          "showWhen": "showSubTitle",
+          "group": "서브 타이틀"
         }
       ]
     },
@@ -408,6 +901,13 @@
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px"
+        },
+        {
+          "key": "bgColor",
+          "label": "배경색",
+          "type": "color",
+          "default": "transparent",
+          "placeholder": "예: #f5f5f5 (비우면 투명)"
         },
         {
           "key": "paddingTop",
@@ -1107,6 +1607,22 @@
           "group": "회사 정보"
         },
         {
+          "key": "showFax",
+          "label": "팩스(F) 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "회사 정보"
+        },
+        {
+          "key": "fax",
+          "label": "팩스번호",
+          "type": "text",
+          "default": "02-6121-6363",
+          "placeholder": "팩스번호",
+          "showWhen": "showFax",
+          "group": "회사 정보"
+        },
+        {
           "key": "contactInfoFontSize",
           "label": "주소·연락처 폰트 크기",
           "type": "text",
@@ -1242,11 +1758,19 @@
           "group": "수신거부 / 문의"
         },
         {
+          "key": "showInquiry",
+          "label": "문의 이메일 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "수신거부 / 문의"
+        },
+        {
           "key": "inquiryEmail",
           "label": "문의 이메일",
           "type": "text",
           "default": "hvackorea@esgroup.net",
           "placeholder": "문의용 이메일 주소",
+          "showWhen": "showInquiry",
           "group": "수신거부 / 문의"
         }
       ]
@@ -4664,6 +5188,21 @@
           "label": "박스 배경색",
           "type": "color",
           "default": "#f5f5f5",
+          "group": "스타일"
+        },
+        {
+          "key": "boxBorderWidth",
+          "label": "테두리 두께",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 1px, 2px",
+          "group": "스타일"
+        },
+        {
+          "key": "boxBorderColor",
+          "label": "테두리 색상",
+          "type": "color",
+          "default": "#dddddd",
           "group": "스타일"
         },
         {

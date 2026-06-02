@@ -68,6 +68,59 @@ describe('footerSnsProcessor - 회사 정보 H/T/E 토글', () => {
     expect(result).not.toContain('<!-- 행2여백 -->')
   })
 
+  it('템플릿이 팩스(F) 마커를 포함해야 함 (사전 조건)', () => {
+    expect(footerHtml).toContain('<!-- 팩스 -->')
+    expect(footerHtml).toContain('<!-- EF구분 -->')
+    expect(footerHtml).toContain('<strong>F</strong>')
+  })
+
+  it('미설정 시 팩스(F)는 숨김 — E는 표시되고 EF구분도 제거됨', () => {
+    const result = run({})
+    expect(result).toContain('<strong>E</strong>')
+    expect(result).not.toContain('<strong>F</strong>')
+    expect(result).not.toContain('<!-- EF구분 -->')
+    // E가 남아있으므로 2행 줄바꿈은 유지
+    expect(result).toContain('<!-- 행2여백 -->')
+  })
+
+  it('showFax=true 이면 F가 표시되고, E와 함께면 EF구분 여백이 유지됨', () => {
+    const result = run({ showFax: true })
+    expect(result).toContain('<strong>E</strong>')
+    expect(result).toContain('<strong>F</strong>')
+    expect(result).toContain('<!-- EF구분 -->')
+  })
+
+  it('showEmail=false + showFax=true 이면 E만 제거되고 F와 2행 줄바꿈은 유지됨', () => {
+    const result = run({ showEmail: false, showFax: true })
+    expect(result).not.toContain('<strong>E</strong>')
+    expect(result).toContain('<strong>F</strong>')
+    // E·F 둘 다일 때만 유지되는 EF구분 제거
+    expect(result).not.toContain('<!-- EF구분 -->')
+    // F가 남아있으므로 2행 줄바꿈은 유지
+    expect(result).toContain('<!-- 행2여백 -->')
+  })
+
+  it('showEmail=false + showFax=false 이면 E/F와 2행 줄바꿈이 모두 제거됨', () => {
+    const result = run({ showEmail: false, showFax: false })
+    expect(result).not.toContain('<strong>E</strong>')
+    expect(result).not.toContain('<strong>F</strong>')
+    expect(result).not.toContain('<!-- 행2여백 -->')
+    expect(result).not.toContain('<!-- EF구분 -->')
+  })
+
+  it('문의 이메일 줄은 미설정 시 표시됨 (기본 노출)', () => {
+    const result = run({})
+    expect(result).toContain('문의 바랍니다')
+  })
+
+  it('showInquiry=false 이면 문의 이메일 줄이 제거됨', () => {
+    const result = run({ showInquiry: false })
+    expect(result).not.toContain('문의 바랍니다')
+    expect(result).not.toContain('<!-- 문의 -->')
+    // 수신거부 안내 문구는 유지
+    expect(result).toContain('[수신거부]')
+  })
+
   it('H/T 모두 표시될 때만 구분 여백이 유지됨', () => {
     const both = run({ showWebsite: true, showPhone: true })
     expect(both).toContain('<!-- HT구분 -->')

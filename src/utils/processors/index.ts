@@ -21,7 +21,8 @@ import { removeMarker } from '../htmlUtils'
  * 서브 타이틀 제거 프로세서 (SectionTitle 전용)
  */
 export const removeEmptySubTitleProcessor: ContentProcessor = (html, properties) => {
-  if (!shouldRenderElement(properties.subTitle)) {
+  // 토글이 꺼져 있거나(서브 타이틀 표시=false) 내용이 비어 있으면 서브 타이틀 블록 제거
+  if (properties.showSubTitle === false || !shouldRenderElement(properties.subTitle)) {
     return removeSubTitleDiv(html)
   }
   return html
@@ -496,6 +497,7 @@ export const footerSnsProcessor: ContentProcessor = (html, properties) => {
   const showWebsite = properties.showWebsite !== false
   const showPhone = properties.showPhone !== false
   const showEmail = properties.showEmail !== false
+  const showFax = properties.showFax === true // 신규 항목 — 미설정 시 숨김
 
   // [제거 조건, 마커 라벨] 목록 — 조건이 true이면 해당 마커 블록 제거
   const removals: Array<[boolean, string]> = [
@@ -503,9 +505,13 @@ export const footerSnsProcessor: ContentProcessor = (html, properties) => {
     [!showWebsite, '홈페이지'],
     [!showPhone, '전화'],
     [!showEmail, '이메일'],
+    [!showFax, '팩스'],
     [!(showWebsite && showPhone), 'HT구분'], // H·T 모두 표시될 때만 구분 여백 유지
+    [!(showEmail && showFax), 'EF구분'], // E·F 모두 표시될 때만 구분 여백 유지
     [!showWebsite && !showPhone, '행1여백'], // H/T 행 줄바꿈
-    [!showEmail, '행2여백'], // E 행 줄바꿈
+    [!showEmail && !showFax, '행2여백'], // E/F 행 줄바꿈
+    // 문의 이메일 안내 줄 (미설정 시 표시 = 기존 동작 유지)
+    [properties.showInquiry === false, '문의'],
     // SNS 아이콘 (미설정 시 숨김)
     [properties.showHome !== true, '홈'],
     [properties.showFacebook !== true, '페이스북'],
@@ -517,6 +523,25 @@ export const footerSnsProcessor: ContentProcessor = (html, properties) => {
     [properties.showZuzuzu !== true, '쭈쭈쭈'],
   ]
 
+  return removals.reduce((acc, [shouldRemove, label]) => {
+    if (!shouldRemove) return acc
+    const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`)
+    return acc.replace(new RegExp(`<!-- ${escaped} -->.*?<!-- //${escaped} -->`, 'gs'), '')
+  }, html)
+}
+
+/**
+ * ModuleImageHeader 상단 정보 조건부 제거 프로세서
+ * 상단 라벨 / 일정·장소 / 홈 링크 각각의 표시 토글 처리 (미설정 시 표시)
+ */
+export const moduleImageHeaderTopProcessor: ContentProcessor = (html, properties) => {
+  const removals: Array<[boolean, string]> = [
+    [properties.showVol === false, '상단라벨'],
+    [properties.showDate === false, '일정장소'],
+    [properties.showHome === false, '홈링크'],
+    [properties.showTitle === false, '타이틀'],
+    [properties.showBody === false, '본문'],
+  ]
   return removals.reduce((acc, [shouldRemove, label]) => {
     if (!shouldRemove) return acc
     const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`)

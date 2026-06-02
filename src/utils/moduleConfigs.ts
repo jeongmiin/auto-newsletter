@@ -50,11 +50,72 @@ export const moduleBasicHeaderConfig: ModuleConfig = {
 }
 
 /**
+ * ModuleImageHeader 설정 (이미지형 헤더)
+ */
+export const moduleImageHeaderConfig: ModuleConfig = {
+  quillFields: ['titleText', 'bodyText'],
+  defaults: {
+    tableSummary: '전시 뉴스레터 입니다.',
+    imageUrl: 'https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/newsletter/images/img-visual.png',
+    imageAlt: '전시소개글',
+    imageLinkUrl: '#',
+    imagePaddingTop: '20px',
+    imagePaddingRight: '20px',
+    imagePaddingBottom: '20px',
+    imagePaddingLeft: '20px',
+    volText: 'NEWSLETTER VOL.1',
+    dateText: '2023. 8. 3 (목) - 8. 6 (일) COEX',
+    homeLinkText: '🏠 홈페이지 바로가기',
+    homeLinkUrl: '#',
+    volFontSize: '15px',
+    volColor: '#333333',
+    volLineHeight: '1.7',
+    dateFontSize: '20px',
+    dateColor: '#333333',
+    dateLineHeight: '1.7',
+    homeFontSize: '14px',
+    homeColor: '#333333',
+    homeLineHeight: '1.7',
+    dividerWidth: '1px',
+    dividerStyle: 'dotted',
+    dividerColor: '#999999',
+    dividerPaddingTop: '0px',
+    dividerPaddingRight: '25px',
+    dividerPaddingBottom: '0px',
+    dividerPaddingLeft: '25px',
+    titleFontSize: '20px',
+    titleColor: '#111111',
+    bodyFontSize: '14px',
+    bodyColor: '#333333',
+    showTitle: true,
+    showBody: true,
+    buttonText: '사전등록 →',
+    buttonUrl: '#',
+    buttonBgColor: '#111111',
+    buttonTextColor: '#ffffff',
+    buttonPaddingTop: '20px',
+    buttonPaddingRight: '20px',
+    buttonPaddingBottom: '20px',
+    buttonPaddingLeft: '20px',
+    buttonBorderStyle: 'none',
+    buttonBorderWidth: '1px',
+    buttonBorderColor: '#000000',
+    buttonBorderRadius: '5px',
+  },
+  processors: [
+    processors.moduleImageHeaderTopProcessor,
+    processors.imageLinkProcessor,
+    processors.removeButtonProcessor,
+  ],
+}
+
+/**
  * ModuleDescText 설정
  */
 export const moduleDescTextConfig: ModuleConfig = {
   quillFields: ['descriptionText'],
   defaults: {
+    bgColor: 'transparent',
   },
 }
 
@@ -111,6 +172,8 @@ export const sectionTitleConfig: ModuleConfig = {
   defaults: {
     mainTitle: '섹션 타이틀',
     subTitle: '서브 타이틀 영역입니다',
+    topBorderWidth: '2px',
+    topBorderColor: '#333333',
   },
   processors: [processors.removeEmptySubTitleProcessor],
 }
@@ -305,6 +368,7 @@ export const moduleFooterConfig: ModuleConfig = {
     websiteUrl: 'www.koreabuild.co.kr',
     phone: '02-6121-6362',
     email: 'hvackorea@esgroup.net',
+    fax: '02-6121-6363',
     unsubscribeUrl: '#',
     inquiryEmail: 'hvackorea@esgroup.net',
   },
@@ -382,6 +446,8 @@ export const module12Config: ModuleConfig = {
     textColor: '#333333',
     textLineHeight: '1.7',
     boxBgColor: '#f5f5f5',
+    boxBorderWidth: '0px',
+    boxBorderColor: '#dddddd',
     textAlign: 'center',
     paddingTop: '0px',
     paddingRight: '20px',
@@ -444,6 +510,7 @@ export const moduleDividerConfig: ModuleConfig = {
 export const MODULE_CONFIG_REGISTRY: Record<string, ModuleConfig> = {
   ModuleNewsHeader: moduleNewsHeaderConfig,
   ModuleBasicHeader: moduleBasicHeaderConfig,
+  ModuleImageHeader: moduleImageHeaderConfig,
   ModuleDescText: moduleDescTextConfig,
   ModuleImg: moduleImgConfig,
   ModuleOneButton: moduleOneButtonConfig,

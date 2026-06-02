@@ -5,6 +5,7 @@ import { applyStylesToHtml } from '@/utils/htmlUtils'
 import { sanitizeHtml, sanitizeErrorMessage } from '@/utils/sanitize'
 import {
   replaceModuleBasicHeaderContent,
+  replaceModuleImageHeaderContent,
   replaceModuleDescTextContent,
   replaceModuleImgContent,
   replaceModuleOneButtonContent,
@@ -60,6 +61,9 @@ export function useModuleRenderer(moduleId: string) {
     switch (mId) {
       case 'ModuleBasicHeader':
         return replaceModuleBasicHeaderContent(html, properties)
+
+      case 'ModuleImageHeader':
+        return replaceModuleImageHeaderContent(html, properties)
 
       case 'ModuleDescText':
         return replaceModuleDescTextContent(html, properties)

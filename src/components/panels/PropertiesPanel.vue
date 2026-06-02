@@ -197,6 +197,7 @@
             v-else-if="prop.type === 'textarea'"
             :model-value="String(selectedModule.properties[prop.key] || '')"
             @update:model-value="handleEditorUpdate(prop.key, $event)"
+            @load="onEditorLoad"
             :placeholder="prop.placeholder"
             editorStyle="height: 150px"
           >
@@ -434,6 +435,7 @@
                   <Editor
                     :model-value="text.content"
                     @update:model-value="handleContentTextUpdate(text.id, $event)"
+                    @load="onEditorLoad"
                     placeholder="콘텐츠 내용을 입력하세요"
                     editorStyle="height: 120px"
                   >
@@ -548,6 +550,7 @@
                   <Editor
                     :model-value="content.data.text_content || ''"
                     @update:model-value="handleAdditionalContentUpdate(content.id, $event, prop.key)"
+                    @load="onEditorLoad"
                     placeholder="텍스트 내용을 입력하세요"
                     editorStyle="height: 120px"
                   >
@@ -908,6 +911,7 @@ import { useEditorStore } from '@/stores/editorStore'
 import type { TableRow, ContentTitle, ContentText, AdditionalContent, TableCell, WrapSettings } from '@/types'
 import { normalizeColorInput, isValidHexColor } from '@/utils/colorHelper'
 import { processQuillHtml } from '@/utils/quillHtmlProcessor'
+import type Quill from 'quill'
 
 const moduleStore = useModuleStore()
 const editorStore = useEditorStore()
@@ -1046,6 +1050,21 @@ const defaultTablePreset: TablePreset = {
 
 const updateProperty = (key: string, value: unknown) => {
   moduleStore.updateModuleProperty(key, value)
+}
+
+// 붙여넣기 시 모든 서식 제거 — 텍스트만 입력되도록 한다.
+// (복사 원본의 텍스트 색상/배경 등은 가져오지 않고, 스타일은 속성 패널에서 적용)
+// PrimeVue Editor가 내부 Quill 인스턴스를 @load로 전달한다.
+const onEditorLoad = (event: { instance: Quill }) => {
+  const quill = event.instance
+  if (!quill) return
+
+  quill.clipboard.addMatcher(Node.ELEMENT_NODE, (_node, delta) => {
+    delta.ops = delta.ops
+      .filter((op) => typeof op.insert === 'string') // 이미지 등 임베드 제외, 텍스트만
+      .map((op) => ({ insert: op.insert as string })) // 색상/배경/굵기 등 모든 속성 제거
+    return delta
+  })
 }
 
 // PrimeVue Editor 핸들러 함수들 (HTML 후처리 적용)

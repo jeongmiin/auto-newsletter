@@ -15,6 +15,7 @@ import { formatTextWithBreaks } from '@/utils/textUtils'
 import { generateUniqueId, applyStylesToHtml } from '@/utils/htmlUtils'
 import {
   replaceModuleBasicHeaderContent,
+  replaceModuleImageHeaderContent,
   replaceModuleDescTextContent,
   replaceModuleImgContent,
   replaceModuleOneButtonContent,
@@ -121,12 +122,23 @@ export const useModuleStore = defineStore('module', () => {
     const newModule: ModuleInstance = {
       id: generateUniqueId('module'),
       moduleId: moduleMetadata.id,
-      order: modules.value.length,
+      order: modules.value.length, // reorderModules에서 최종 보정
       properties: getDefaultProperties(moduleMetadata),
       styles: moduleMetadata.defaultStyles || {},
     }
 
-    modules.value.push(newModule)
+    // 선택된 모듈이 있으면 그 바로 아래에 삽입, 없으면 맨 끝에 추가
+    const selectedIndex = selectedModuleId.value
+      ? modules.value.findIndex((m) => m.id === selectedModuleId.value)
+      : -1
+
+    if (selectedIndex === -1) {
+      modules.value.push(newModule)
+    } else {
+      modules.value.splice(selectedIndex + 1, 0, newModule)
+    }
+
+    reorderModules()
     selectedModuleId.value = newModule.id
     isDirty.value = true
   }
@@ -1050,6 +1062,9 @@ export const useModuleStore = defineStore('module', () => {
     switch (moduleId) {
       case 'ModuleBasicHeader':
         return replaceModuleBasicHeaderContent(html, properties)
+
+      case 'ModuleImageHeader':
+        return replaceModuleImageHeaderContent(html, properties)
 
       case 'ModuleDescText':
         return replaceModuleDescTextContent(html, properties)
