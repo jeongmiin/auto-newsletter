@@ -64,7 +64,7 @@
     <div
       class="absolute top-2 left-9 z-10 px-2 py-1 bg-black/90 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
     >
-      <span class="inline-flex items-center justify-center w-5 h-5 mr-1 bg-blue-500 text-white rounded-full text-sm font-medium">{{ index + 1 }}</span>
+      <span class="inline-flex items-center justify-center w-6 h-6 mr-1 bg-blue-500 text-white rounded-full text-xs font-medium">{{ index + 1 }}</span>
       {{ moduleMetadata?.name || module.moduleId }}
     </div>
   </div>

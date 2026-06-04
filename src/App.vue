@@ -3,7 +3,7 @@ import { RouterView } from 'vue-router'
 </script>
 
 <template>
-  <Toast position="top-right" />
+  <Toast position="bottom-right" />
   <ConfirmDialog />
   <RouterView />
 </template>
