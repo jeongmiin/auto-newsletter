@@ -1,6 +1,8 @@
 import { ref, watch, onMounted, onUnmounted, computed } from 'vue'
 import type { ModuleInstance, ModuleMetadata } from '@/types'
 import { useModuleStore } from '@/stores/moduleStore'
+import { useEditorStore } from '@/stores/editorStore'
+import { resolvePointColors } from '@/utils/pointColor'
 import { applyStylesToHtml } from '@/utils/htmlUtils'
 import { sanitizeHtml, sanitizeErrorMessage } from '@/utils/sanitize'
 import {
@@ -37,6 +39,7 @@ import {
  */
 export function useModuleRenderer(moduleId: string) {
   const moduleStore = useModuleStore()
+  const editorStore = useEditorStore()
   const renderedHtml = ref('')
   const moduleMetadata = ref<ModuleMetadata | null>(null)
   const isLoading = ref(true)
@@ -56,8 +59,9 @@ export function useModuleRenderer(moduleId: string) {
     html: string,
     moduleInstance: ModuleInstance
   ): Promise<string> => {
-    const { moduleId: mId, properties } = moduleInstance
-
+    const { moduleId: mId } = moduleInstance
+    // '포인트 색상 사용'으로 체크된 색상 속성을 전역 포인트 색상으로 해소
+    const properties = resolvePointColors(moduleInstance.properties, editorStore.wrapSettings.pointColor)
 
     switch (mId) {
       case 'ModuleBasicHeader':
@@ -237,6 +241,16 @@ export function useModuleRenderer(moduleId: string) {
       }
     },
     { deep: true, immediate: false }  // deep: true로 properties 변경 감지
+  )
+
+  // 전역 포인트 색상 변경 시 — '포인트 색상 사용'으로 체크된 모듈들도 다시 렌더
+  watch(
+    () => editorStore.wrapSettings.pointColor,
+    () => {
+      if (currentModule.value) {
+        debouncedLoadModuleHtml()
+      }
+    }
   )
 
   onMounted(() => {

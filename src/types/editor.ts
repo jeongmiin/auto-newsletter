@@ -16,6 +16,8 @@ export interface WrapSettings {
   borderWidth: string
   borderColor: string
   borderStyle: string
+  // 뉴스레터 포인트(강조) 색상 — 각 색상 속성에서 '포인트 색상 사용' 체크 시 이 값을 따른다
+  pointColor: string
 }
 
 export interface ExportOptions {

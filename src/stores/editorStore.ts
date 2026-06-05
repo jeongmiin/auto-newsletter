@@ -21,7 +21,8 @@ export const useEditorStore = defineStore('editor', () => {
     backgroundColor: '#f9f9f9',
     borderWidth: '0px',
     borderColor: '#dddddd',
-    borderStyle: 'solid'
+    borderStyle: 'solid',
+    pointColor: '#2563eb'
   })
 
   /**

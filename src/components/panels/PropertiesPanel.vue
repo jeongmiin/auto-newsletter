@@ -14,13 +14,13 @@
           @click="isGlobalSettingsOpen = !isGlobalSettingsOpen"
           class="w-full p-3 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors"
         >
-          <div class="flex items-center gap-2">
-            <div class="w-7 h-7 bg-gray-200 text-gray-600 rounded flex items-center justify-center">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-gray-200 text-gray-600 rounded-lg flex items-center justify-center">
               <i class="pi pi-cog text-sm"></i>
             </div>
             <div class="text-left">
-              <div class="text-sm font-medium text-gray-700">공통 속성</div>
-              <div class="text-xs text-gray-500">전체 배경색, 테두리</div>
+              <div class="text-base font-semibold text-gray-700">공통 속성</div>
+              <div class="text-sm text-gray-500">전체 배경색, 포인트 색상, 테두리</div>
             </div>
           </div>
           <div class="flex items-center gap-2">
@@ -60,6 +60,27 @@
                 spellcheck="false"
               />
             </div>
+          </div>
+
+          <!-- 포인트 색상 -->
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1">포인트 색상</label>
+            <div class="flex items-center gap-2">
+              <ColorPicker
+                :modelValue="getWrapColorValue('pointColor')"
+                @update:modelValue="handleWrapColorPickerUpdate('pointColor', $event)"
+                format="hex"
+              />
+              <InputText
+                :modelValue="wrapSettings.pointColor"
+                @update:modelValue="handleWrapColorInput('pointColor', $event ?? '')"
+                placeholder="#2563eb"
+                class="flex-1 font-mono text-xs"
+                size="small"
+                spellcheck="false"
+              />
+            </div>
+            <p class="text-xs text-gray-400 mt-1">각 색상에서 '포인트 색상 사용'을 켜면 이 색을 따릅니다</p>
           </div>
 
           <!-- 테두리 설정 (가로 배치) -->
@@ -156,7 +177,7 @@
           :class="{ 'pt-4 border-t border-gray-100': index > 0 && !prop.showWhen }"
         >
           <label
-            v-show="prop.type !== 'boolean'"
+            v-show="prop.type !== 'boolean' && !isColorBlock(prop)"
             class="block text-sm font-medium text-gray-500 mb-2"
           >
             {{ prop.label }}
@@ -164,26 +185,50 @@
 
           <!-- 텍스트 입력 (컬러 필드) 또는 color 타입 -->
           <div
-            v-if="prop.type === 'color' || (prop.type === 'text' && isColorField(prop.key))"
+            v-if="isColorBlock(prop)"
             class="space-y-2"
           >
+            <!-- 라벨 줄: 좌측 라벨 + 우측 포인트 색상 사용 토글 -->
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-medium text-gray-500">{{ prop.label }}</span>
+              <label class="flex items-center gap-1.5 cursor-pointer select-none">
+                <Checkbox
+                  :modelValue="isUsingPoint(prop.key)"
+                  @update:modelValue="togglePointColor(prop.key, $event)"
+                  :binary="true"
+                />
+                <span class="text-sm text-gray-600">포인트 색상으로 사용</span>
+                <span
+                  class="w-3 h-3 rounded-sm border border-gray-300"
+                  :style="{ backgroundColor: pointColorValue }"
+                ></span>
+              </label>
+            </div>
+
             <div class="flex items-center gap-2">
               <!-- PrimeVue ColorPicker -->
               <ColorPicker
-                :modelValue="getColorValue(prop.key)"
+                :modelValue="isUsingPoint(prop.key) ? pointColorValue : getColorValue(prop.key)"
                 @update:modelValue="handleColorPickerUpdate(prop.key, $event)"
+                :disabled="isUsingPoint(prop.key)"
                 format="hex"
               />
               <!-- PrimeVue InputText -->
               <InputText
-                :modelValue="String(selectedModule.properties[prop.key] || '')"
+                :modelValue="isUsingPoint(prop.key) ? pointColorValue : String(selectedModule.properties[prop.key] || '')"
                 @update:modelValue="handleColorInput(prop.key, $event ?? '')"
+                :disabled="isUsingPoint(prop.key)"
                 :placeholder="prop.placeholder || '#000000'"
                 class="flex-1 font-mono text-sm"
                 spellcheck="false"
               />
             </div>
-            <p class="text-xs text-gray-400">색상 박스를 클릭하거나 #000000 형식으로 입력하세요</p>
+
+            <p class="text-xs text-gray-400">
+              {{ isUsingPoint(prop.key)
+                ? '공통 속성의 포인트 색상을 따릅니다 (체크 해제 시 수동 색상 복원)'
+                : '색상 박스를 클릭하거나 #000000 형식으로 입력하세요' }}
+            </p>
           </div>
 
           <!-- 텍스트 입력 (일반) -->
@@ -920,6 +965,7 @@ import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
 import type { TableRow, ContentTitle, ContentText, AdditionalContent, TableCell, WrapSettings } from '@/types'
 import { normalizeColorInput, isValidHexColor } from '@/utils/colorHelper'
+import { POINT_COLOR_SUFFIX } from '@/utils/pointColor'
 import { processQuillHtml } from '@/utils/quillHtmlProcessor'
 import type Quill from 'quill'
 
@@ -1390,6 +1436,11 @@ const isColorField = (key: string) => {
   return key.toLowerCase().includes('color') || key.toLowerCase().includes('colour')
 }
 
+// 컬러피커 입력 블록으로 렌더되는 속성인지 (color 타입 또는 컬러 텍스트 필드)
+const isColorBlock = (prop: { type: string; key: string }) => {
+  return prop.type === 'color' || (prop.type === 'text' && isColorField(prop.key))
+}
+
 // 컬러 입력 핸들러
 const handleColorInput = (key: string, value: string) => {
   const normalized = normalizeColorInput(value)
@@ -1414,6 +1465,23 @@ const getColorValue = (key: string) => {
   const value = String(selectedModule.value?.properties[key] || '')
   // 유효한 HEX 컬러면 그대로, 아니면 기본 회색
   return isValidHexColor(value) ? value : '#cccccc'
+}
+
+// ===== 포인트 색상 사용 =====
+// 전역 포인트 색상 (유효한 HEX면 그대로)
+const pointColorValue = computed(() => {
+  const value = wrapSettings.value.pointColor
+  return isValidHexColor(value) ? value : '#2563eb'
+})
+
+// 해당 색상 속성이 '포인트 색상 사용' 상태인지
+const isUsingPoint = (key: string): boolean => {
+  return selectedModule.value?.properties[`${key}${POINT_COLOR_SUFFIX}`] === true
+}
+
+// 포인트 색상 사용 토글 — 수동 색상값(properties[key])은 보존하므로 해제 시 자동 원복
+const togglePointColor = (key: string, value: boolean): void => {
+  updateProperty(`${key}${POINT_COLOR_SUFFIX}`, value === true)
 }
 </script>
 

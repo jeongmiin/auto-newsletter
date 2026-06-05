@@ -110,6 +110,8 @@ export interface NewsletterTemplate {
     borderWidth: string
     borderColor: string
     borderStyle: string
+    // 포인트 색상 — 기존 템플릿 호환을 위해 optional (없으면 기본값 유지)
+    pointColor?: string
   }
   modules: Array<{
     moduleId: string

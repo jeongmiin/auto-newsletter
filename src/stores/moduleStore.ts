@@ -43,6 +43,7 @@ import {
   replaceDefaultTemplate,
 } from '@/utils/moduleContentReplacer'
 import { convertQuillListsToEmailHtml } from '@/utils/quillHtmlProcessor'
+import { resolvePointColors } from '@/utils/pointColor'
 
 export const useModuleStore = defineStore('module', () => {
   // ============= State =============
@@ -1059,7 +1060,10 @@ export const useModuleStore = defineStore('module', () => {
    * 모듈별 콘텐츠 교체
    */
   const replaceModuleContent = async (html: string, module: ModuleInstance): Promise<string> => {
-    const { moduleId, properties } = module
+    const editorStore = useEditorStore()
+    const { moduleId } = module
+    // '포인트 색상 사용'으로 체크된 색상 속성을 전역 포인트 색상으로 해소
+    const properties = resolvePointColors(module.properties, editorStore.wrapSettings.pointColor)
 
     switch (moduleId) {
       case 'ModuleBasicHeader':
