@@ -419,6 +419,7 @@ export const module11Config: ModuleConfig = {
     linkUrl: '#',
     bgColor: '#eaeaea',
     textColor: '#111111',
+    showLabel: true,
     labelText: '중랑구',
     labelColor: '#111111',
     labelTextLineHeight: '1.7',
@@ -428,6 +429,7 @@ export const module11Config: ModuleConfig = {
     buttonBgColor: '#999999',
     buttonTextColor: '#ffffff',
   },
+  processors: [processors.module11LabelProcessor],
 }
 
 /**

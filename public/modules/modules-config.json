@@ -5035,11 +5035,19 @@
           "group": "스타일"
         },
         {
+          "key": "showLabel",
+          "label": "라벨 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "라벨"
+        },
+        {
           "key": "labelText",
           "label": "텍스트",
           "type": "text",
-          "default": "중랑구",
+          "default": "[중랑구]",
           "placeholder": "라벨 텍스트",
+          "showWhen": "showLabel",
           "group": "라벨"
         },
         {
@@ -5048,6 +5056,7 @@
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
+          "showWhen": "showLabel",
           "group": "라벨"
         },
         {
@@ -5055,6 +5064,7 @@
           "label": "색상",
           "type": "text",
           "default": "#111111",
+          "showWhen": "showLabel",
           "group": "라벨"
         },
         {
@@ -5063,6 +5073,7 @@
           "type": "text",
           "default": "1.7",
           "placeholder": "예: 1.5, 1.7em",
+          "showWhen": "showLabel",
           "group": "라벨"
         },
         {

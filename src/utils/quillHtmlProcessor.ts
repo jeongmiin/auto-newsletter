@@ -258,11 +258,65 @@ export const convertQuillAlignToInline = (html: string): string => {
 }
 
 /**
- * Quill HTML 통합 처리 함수
+ * Quill 2의 리스트 출력을 이메일 호환 시맨틱 리스트로 변환한다.
+ * - Quill 2는 글머리/번호 목록을 모두 <ol><li data-list="bullet|ordered">로 출력하고
+ *   마커(•, 1.)를 Quill 전용 CSS로만 그리므로, 에디터 밖(미리보기·이메일)에선 마커가 보이지 않는다.
+ * - data-list 타입에 따라 <ul>/<ol>로 재구성하고 인라인 list-style을 부여해 어디서나 마커가 보이도록 한다.
+ * - 에디터 전용 마커 요소(<span class="ql-ui">)는 제거한다.
+ */
+export const convertQuillListsToEmailHtml = (html: string): string => {
+  if (!html) return ''
+  // DOM이 없거나 변환 대상이 없으면 그대로 반환
+  if (typeof document === 'undefined') return html
+  if (!html.includes('data-list') && !html.includes('ql-ui')) return html
+
+  const container = document.createElement('div')
+  container.innerHTML = html
+
+  // 에디터 전용 마커 요소 제거
+  container.querySelectorAll('span.ql-ui').forEach((n) => n.remove())
+
+  // Quill 리스트 래퍼(주로 <ol>)를 항목 타입별 <ul>/<ol>로 재구성
+  container.querySelectorAll('ol, ul').forEach((listEl) => {
+    const items = Array.from(listEl.children).filter((c) => c.tagName === 'LI') as HTMLElement[]
+    if (!items.length) return
+
+    const frag = document.createDocumentFragment()
+    let curType: 'ordered' | 'bullet' | null = null
+    let curList: HTMLElement | null = null
+
+    items.forEach((li) => {
+      const type = li.dataset.list === 'ordered' ? 'ordered' : 'bullet'
+      if (type !== curType || !curList) {
+        curType = type
+        curList = document.createElement(type === 'ordered' ? 'ol' : 'ul')
+        curList.setAttribute(
+          'style',
+          `margin:0; padding-left:24px; list-style-type:${type === 'ordered' ? 'decimal' : 'disc'};`,
+        )
+        frag.appendChild(curList)
+      }
+      delete li.dataset.list
+      li.setAttribute('style', 'margin:0;')
+      curList.appendChild(li)
+    })
+
+    listEl.replaceWith(frag)
+  })
+
+  return container.innerHTML
+}
+
+/**
+ * Quill HTML 통합 처리 함수 (에디터 저장·미리보기 공용)
  * 1. RGB → HEX 변환
  * 2. 빈 줄을 이메일 호환 형태로 변환
  * 3. 블록 요소에 margin: 0, padding: 0 추가
  * 4. Quill 정렬 클래스를 인라인 스타일로 변환
+ *
+ * 참고: 리스트(<ol><li data-list>)는 Quill 네이티브 형식을 그대로 유지한다.
+ * 에디터와 미리보기(ModuleRenderer CSS)가 data-list 기준으로 마커를 렌더링하기 때문이다.
+ * 이메일용 <ul>/<ol> 변환은 최종 내보내기(generateHtml)에서 convertQuillListsToEmailHtml로만 수행한다.
  */
 export const processQuillHtml = (html: string): string => {
   if (!html) return ''

@@ -560,6 +560,17 @@ export const module10LabelProcessor: ContentProcessor = (html, properties) => {
 }
 
 /**
+ * Module11 라벨 조건부 제거 프로세서
+ * showLabel이 false이면 라벨(<strong>) 영역 제거 (미설정 시 표시)
+ */
+export const module11LabelProcessor: ContentProcessor = (html, properties) => {
+  if (properties.showLabel === false) {
+    return html.replace(/<!-- 라벨 -->.*?<!-- \/\/라벨 -->/gs, '')
+  }
+  return html
+}
+
+/**
  * Module10 이미지 조건부 제거 + 타이틀 영역 min-width 결정 프로세서
  * showImage가 false이면 이미지 영역 제거, 타이틀 div의 min-width를 100%로 확장
  */

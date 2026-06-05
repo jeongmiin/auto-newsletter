@@ -209,10 +209,10 @@
                 <button class="ql-strike" title="취소선"></button>
               </span>
               <span class="ql-formats">
-                <select class="ql-header" title="제목 크기">
-                  <option value="1">제목 1</option>
-                  <option value="2">제목 2</option>
-                  <option value="3">제목 3</option>
+                <select class="ql-fontSize" title="글자 크기">
+                  <option value="28px">제목 1</option>
+                  <option value="22px">제목 2</option>
+                  <option value="18px">제목 3</option>
                   <option selected>본문</option>
                 </select>
                 <select class="ql-lineHeight" title="행간(줄 간격)">
@@ -230,6 +230,11 @@
               </span>
               <span class="ql-formats">
                 <select class="ql-align" title="정렬"></select>
+                <select class="ql-wordBreak" title="줄바꿈 규칙(문단 단위)">
+                  <option value="keep-all">단어기준</option>
+                  <option value="break-all">글자기준</option>
+                  <option selected>줄바꿈</option>
+                </select>
               </span>
               <span class="ql-formats">
                 <select class="ql-color" title="글자 색상"></select>
@@ -1422,6 +1427,29 @@ const getColorValue = (key: string) => {
 :deep(.ql-snow .ql-picker.ql-lineHeight .ql-picker-label[data-label]:not([data-label=''])::before),
 :deep(.ql-snow .ql-picker.ql-lineHeight .ql-picker-item[data-label]:not([data-label=''])::before) {
   content: attr(data-label);
+}
+
+/* 글자 크기(font-size) 드롭다운 픽커 — 선택 영역에 부분 적용(인라인) */
+:deep(.ql-snow .ql-picker.ql-fontSize) {
+  width: 64px;
+}
+:deep(.ql-snow .ql-picker.ql-fontSize .ql-picker-label[data-label]:not([data-label=''])::before),
+:deep(.ql-snow .ql-picker.ql-fontSize .ql-picker-item[data-label]:not([data-label=''])::before) {
+  content: attr(data-label);
+}
+
+/* 줄바꿈 규칙(word-break) 드롭다운 픽커 — lineHeight와 동일하게 data-label 텍스트 노출 */
+:deep(.ql-snow .ql-picker.ql-wordBreak) {
+  width: 76px;
+}
+:deep(.ql-snow .ql-picker.ql-wordBreak .ql-picker-label[data-label]:not([data-label=''])::before),
+:deep(.ql-snow .ql-picker.ql-wordBreak .ql-picker-item[data-label]:not([data-label=''])::before) {
+  content: attr(data-label);
+}
+/* 옵션 라벨이 길어 줄바꿈/잘림되지 않도록 옵션 목록 폭 자동 확장 */
+:deep(.ql-snow .ql-picker.ql-wordBreak .ql-picker-options) {
+  width: max-content;
+  white-space: nowrap;
 }
 
 /* 형광펜(반투명 마커) 드롭다운 픽커 */

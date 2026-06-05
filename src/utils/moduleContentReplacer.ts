@@ -204,6 +204,13 @@ export function replaceModule01Content(html: string, properties: Record<string, 
 }
 
 /**
+ * Module11 콘텐츠 교체
+ */
+export function replaceModule11Content(html: string, properties: Record<string, unknown>): string {
+  return replaceModuleContentSync(html, properties, MODULE_CONFIG_REGISTRY.Module11)
+}
+
+/**
  * Module12 콘텐츠 교체
  */
 export function replaceModule12Content(html: string, properties: Record<string, unknown>): string {

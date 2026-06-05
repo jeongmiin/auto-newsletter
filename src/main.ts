@@ -93,8 +93,12 @@ import Dialog from 'primevue/dialog'
 // Quill 커스텀 포맷 등록 (PrimeVue Editor가 Quill 인스턴스를 만들기 전에 실행)
 import { registerHighlightMarker } from './utils/quillHighlightMarker'
 import { registerLineHeight } from './utils/quillLineHeight'
+import { registerWordBreak } from './utils/quillWordBreak'
+import { registerFontSize } from './utils/quillFontSize'
 registerHighlightMarker()
 registerLineHeight()
+registerWordBreak()
+registerFontSize()
 import Select from 'primevue/select'
 import ToggleSwitch from 'primevue/toggleswitch'
 import Panel from 'primevue/panel'

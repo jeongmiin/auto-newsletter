@@ -8,8 +8,15 @@ const goToEditor = () => {
 }
 
 const navLinks = [
-  { href: '#how-it-works', label: '사용 방법' },
-  { href: '#features', label: '주요 기능' },
+  { href: '#about', label: '자동화 뉴스레터란?' },
+  { href: '#how-it-works', label: '에디터 사용방법' },
+  { href: '#features', label: '기능 살펴보기' },
+]
+
+const concepts = [
+  { icon: 'pi pi-bolt', title: '코딩이 필요 없습니다', desc: '준비된 모듈을 끌어다 놓고 텍스트만 바꾸면 끝. HTML·CSS 지식 없이도 완성도 높은 뉴스레터를 만들 수 있습니다.' },
+  { icon: 'pi pi-envelope', title: '이메일 호환을 자동 보장합니다', desc: 'Gmail, Outlook 등 클라이언트마다 깨지던 레이아웃을 인라인 스타일로 자동 변환해 어디서나 동일하게 보입니다.' },
+  { icon: 'pi pi-history', title: '반복 작업을 줄여줍니다', desc: '한 번 만든 구성을 재사용하고 내용만 교체하면 다음 호 뉴스레터를 몇 분 만에 발행할 수 있습니다.' },
 ]
 
 const steps = [
@@ -39,7 +46,7 @@ const features = [
   { icon: 'pi pi-pencil', title: '실시간 편집', desc: '텍스트, 색상, 이미지, 링크를 속성 패널에서 바로 수정하고 캔버스에서 확인하세요.' },
   { icon: 'pi pi-file', title: '이메일 호환 HTML', desc: '생성된 HTML은 주요 이메일 클라이언트와 호환되는 인라인 스타일로 출력됩니다.' },
   { icon: 'pi pi-copy', title: '코드 복사 & 내보내기', desc: 'HTML 코드를 클립보드에 복사하거나 파일로 저장하여 어디서든 활용할 수 있습니다.' },
-  { icon: 'pi pi-history', title: '실행 취소 / 다시 실행', desc: 'Ctrl+Z / Ctrl+Y로 편집 히스토리를 자유롭게 오갈 수 있습니다.' },
+  { icon: 'pi pi-clone', title: '템플릿 제공', desc: '완성형 뉴스레터 템플릿을 제공하여 처음부터 만들 필요 없이 빠르게 시작할 수 있습니다.' },
 ]
 </script>
 
@@ -53,7 +60,7 @@ const features = [
           <img src="/src/assets/img/logo/logo.png" alt="Logo" class="w-8 h-8" />
           <span class="md:text-xl font-bold">Newsletter Builder</span>
         </div>
-        <!-- <div class="hidden md:flex gap-8 items-center">
+        <div class="hidden md:flex gap-8 items-center">
           <a
             v-for="link in navLinks"
             :key="link.href"
@@ -62,7 +69,7 @@ const features = [
           >
             {{ link.label }}
           </a>
-        </div> -->
+        </div>
         <Button
           label="에디터 시작하기"
           icon="pi pi-arrow-right"
@@ -131,6 +138,33 @@ const features = [
         </div>
       </section>
 
+      <!-- ===== About / 자동화 뉴스레터란? Section ===== -->
+      <section id="about" class="bg-blue-50/40 py-20 md:py-30 px-4 md:px-10 border-t border-gray-200">
+        <div class="max-w-screen-xl mx-auto">
+          <div class="text-center md:mb-16 mb-10">
+            <span class="inline-block px-4 py-1.5 rounded-full bg-blue-100 text-blue-700 text-base font-semibold mb-6">About</span>
+            <h2 class="text-4xl font-bold text-gray-900 mb-6">자동화 뉴스레터란?</h2>
+            <p class="text-lg md:text-xl text-gray-600 mx-auto !leading-relaxed break-keep">
+              디자이너나 개발자 없이도, 준비된 모듈을 조합하는 것만으로 이메일 클라이언트에 최적화된 뉴스레터를 완성하는 제작 방식입니다. <br />
+              매번 HTML을 직접 코딩하던 반복 작업을 표준 모듈과 자동 인라인 변환으로 대체합니다.
+            </p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 md:gap-8 gap-4">
+            <div
+              v-for="concept in concepts"
+              :key="concept.title"
+              class="bg-white md:p-8 p-6 rounded-xl border border-gray-200 flex flex-col gap-4"
+            >
+              <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+                <i :class="concept.icon" class="text-xl"></i>
+              </div>
+              <h3 class="text-xl font-bold text-gray-900">{{ concept.title }}</h3>
+              <p class="text-base text-gray-500 !leading-relaxed break-keep">{{ concept.desc }}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- ===== How to Use / 3 Steps Section ===== -->
       <section id="how-it-works" class="bg-white py-20 md:py-30 px-4 md:px-10 border-t border-gray-200">
         <div class="max-w-screen-xl mx-auto">
@@ -138,20 +172,21 @@ const features = [
             <h2 class="text-4xl font-bold text-gray-900 mb-4">에디터 사용 방법</h2>
             <p class="text-lg md:text-xl text-gray-500">직관적이고 단순한 3단계 프로세스</p>
           </div>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-10">
+          <div class="flex flex-col gap-4 md:gap-6 max-w-3xl mx-auto">
             <div
               v-for="step in steps"
               :key="step.no"
-              class="relative bg-white md:p-8 md:pt-10 p-4 rounded-xl border border-gray-200 hover:shadow-lg transition-shadow"
+              class="bg-white p-6 md:p-8 rounded-xl border border-gray-200 hover:shadow-lg transition-shadow"
             >
-              <div class="absolute -top-6 -left-6 w-8 h-8 md:w-12 md:h-12 bg-blue-500 text-white rounded-full items-center justify-center text-xl font-bold shadow-md md:flex hidden">
-                {{ step.no }}
+              <!-- 숫자 + 타이틀 (한 줄 정렬) -->
+              <div class="flex items-center gap-3 mb-3">
+                <div class="shrink-0 w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-xl font-bold">
+                  {{ step.no }}
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900">{{ step.title }}</h3>
               </div>
-              <div class="md:w-16 md:h-16 w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center md:mb-6 mb-4 text-blue-600">
-                <i :class="step.icon"></i>
-              </div>
-              <h3 class="text-2xl font-bold text-gray-900 mb-4">{{ step.title }}</h3>
-              <p class="text-base text-gray-500 leading-relaxed break-keep">{{ step.desc }}</p>
+              <!-- 설명 (아래) -->
+              <p class="text-base text-gray-500 !leading-relaxed break-keep">{{ step.desc }}</p>
             </div>
           </div>
         </div>
@@ -174,7 +209,7 @@ const features = [
                 <i :class="feature.icon" class="text-2xl"></i>
               </div>
               <h3 class="text-xl font-bold text-gray-900">{{ feature.title }}</h3>
-              <p class="text-base text-gray-500 leading-relaxed break-keep">{{ feature.desc }}</p>
+              <p class="text-base text-gray-500 !leading-relaxed break-keep">{{ feature.desc }}</p>
             </div>
           </div>
         </div>
@@ -186,7 +221,7 @@ const features = [
           <h2 class="text-4xl font-extrabold text-gray-900 mb-6">
             지금 바로 시작하세요
           </h2>
-          <p class="text-lg text-gray-600 mb-10 max-w-lg mx-auto break-keep">
+          <p class="text-lg md:text-xl text-gray-600 mb-10 max-w-lg mx-auto break-keep">
             별도의 설치나 회원가입 없이 바로 사용할 수 있습니다.
           </p>
           <div class="flex flex-col sm:flex-row gap-3 justify-center">
@@ -211,7 +246,7 @@ const features = [
             <img src="/src/assets/img/logo/logo.png" alt="Logo" class="w-7 h-7" />
             <span class="text-lg font-bold text-blue-600">Newsletter Builder</span>
           </div>
-          <p class="text-base text-gray-400 leading-relaxed break-keep">
+          <p class="text-base text-gray-400 !leading-relaxed break-keep">
             모듈 기반 HTML 뉴스레터 빌더. Vue 3, TypeScript, PrimeVue로 제작되었습니다.
           </p>
         </div>

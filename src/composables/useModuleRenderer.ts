@@ -23,6 +23,7 @@ import {
   replaceModule07ReverseContent,
   replaceModuleFooterContent,
   replaceModule10Content,
+  replaceModule11Content,
   replaceModule101Content,
   replaceModuleSubTitleContent,
   replaceModuleTableContent,
@@ -115,6 +116,9 @@ export function useModuleRenderer(moduleId: string) {
 
       case 'Module10':
         return replaceModule10Content(html, properties)
+
+      case 'Module11':
+        return replaceModule11Content(html, properties)
 
       case 'Module10-1':
         return replaceModule101Content(html, properties)

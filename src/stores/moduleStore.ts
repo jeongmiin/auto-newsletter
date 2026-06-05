@@ -33,6 +33,7 @@ import {
   replaceModule012Content,
   replaceModuleFooterContent,
   replaceModule10Content,
+  replaceModule11Content,
   replaceModule101Content,
   replaceModuleSubTitleContent,
   replaceModuleTableContent,
@@ -41,6 +42,7 @@ import {
   replaceModule12Content,
   replaceDefaultTemplate,
 } from '@/utils/moduleContentReplacer'
+import { convertQuillListsToEmailHtml } from '@/utils/quillHtmlProcessor'
 
 export const useModuleStore = defineStore('module', () => {
   // ============= State =============
@@ -1117,6 +1119,9 @@ export const useModuleStore = defineStore('module', () => {
       case 'Module10':
         return replaceModule10Content(html, properties)
 
+      case 'Module11':
+        return replaceModule11Content(html, properties)
+
       case 'Module10-1':
         return replaceModule101Content(html, properties)
 
@@ -1163,6 +1168,9 @@ export const useModuleStore = defineStore('module', () => {
         let html = await response.text()
 
         html = await replaceModuleContent(html, module)
+
+        // 이메일용: Quill 리스트(<ol><li data-list>)를 인라인 스타일 <ul>/<ol>로 변환
+        html = convertQuillListsToEmailHtml(html)
 
         if (module.styles && Object.keys(module.styles).length > 0) {
           html = applyStylesToHtml(html, module.styles as Record<string, unknown>)
