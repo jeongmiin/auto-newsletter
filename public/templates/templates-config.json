@@ -8,7 +8,8 @@
         "backgroundColor": "#ffffff",
         "borderWidth": "0px",
         "borderColor": "#dddddd",
-        "borderStyle": "solid"
+        "borderStyle": "solid",
+        "pointColor": "#e60013"
       },
       "modules": [
         {
@@ -52,6 +53,7 @@
           "properties": {
             "descriptionText": "<p style=\"margin:0; padding:0; text-align:center; font-weight:bold;\">NEWSLETTER #60</p>",
             "fontSize": "17px",
+            "bgColor": "transparent",
             "paddingTop": "0px",
             "paddingRight": "20px",
             "paddingBottom": "0px",
@@ -65,6 +67,7 @@
           "properties": {
             "descriptionText": "<p style=\"margin:0; padding:0; text-align:center; font-weight:bold;\">대한민국 캠핑 산업의 중심, 고카프가 드디어 킨텍스로 돌아옵니다!</p>",
             "fontSize": "14px",
+            "bgColor": "transparent",
             "paddingTop": "10px",
             "paddingRight": "20px",
             "paddingBottom": "0px",
@@ -93,6 +96,7 @@
           "properties": {
             "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>고카프&nbsp;킨텍스,&nbsp;드디어&nbsp;올해&nbsp;가장&nbsp;큰&nbsp;규모로&nbsp;이번&nbsp;주&nbsp;막을&nbsp;올립니다!</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>역대&nbsp;최대&nbsp;규모인&nbsp;1,450부스와&nbsp;함께&nbsp;국내외&nbsp;대표&nbsp;브랜드들이&nbsp;한자리에&nbsp;모이며,</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>그동안&nbsp;국내에서는&nbsp;쉽게&nbsp;접하기&nbsp;어려웠던&nbsp;해외&nbsp;프리미엄&nbsp;브랜드들도&nbsp;대거&nbsp;참여합니다.</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">2026&nbsp;시즌을&nbsp;이끌&nbsp;신제품과&nbsp;NEW&nbsp;라인업,&nbsp;그리고&nbsp;가장&nbsp;빠른&nbsp;캠핑&nbsp;트렌드까지.</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">올해&nbsp;캠핑&nbsp;시장의&nbsp;흐름을&nbsp;가장&nbsp;먼저&nbsp;확인할&nbsp;수&nbsp;있는&nbsp;자리,</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">이번&nbsp;고카프&nbsp;킨텍스에서&nbsp;직접&nbsp;경험해보세요💓</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>🚩&nbsp;키워드로&nbsp;보는&nbsp;라인업!</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>①&nbsp;일본&nbsp;프리미엄&nbsp;브랜드:&nbsp;</strong>RATEL&nbsp;WORKS,&nbsp;후지노하가네,&nbsp;LATH&nbsp;FACTORY,&nbsp;도쿄크래프트,&nbsp;5050WORKSHOP,&nbsp;SOTO&nbsp;등</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>②&nbsp;기다렸던&nbsp;브랜드의&nbsp;귀환:&nbsp;</strong>크레모아,&nbsp;고파미르,&nbsp;디얼스,&nbsp;부앤오프&nbsp;등</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>③&nbsp;여름&nbsp;시즌&nbsp;치트키&nbsp;브랜드:&nbsp;</strong>브리즐,&nbsp;쏘쿨,&nbsp;오터스,&nbsp;라이트형제,&nbsp;에코플로우&nbsp;등</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>④&nbsp;주목받는&nbsp;에어텐트&nbsp;브랜드:</strong>&nbsp;쿠디,&nbsp;어반사이드,&nbsp;포레니아,&nbsp;리컬렉터,&nbsp;캠빌,&nbsp;스위스알파인클럽,&nbsp;오투라이프캠핑,&nbsp;위켄트립&nbsp;등</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>⑤&nbsp;눈여겨봐야&nbsp;할&nbsp;브랜드:</strong>&nbsp;기아,&nbsp;KZM,&nbsp;몬테라,&nbsp;아버아웃도어,&nbsp;하이그라운즈,&nbsp;파이넬,&nbsp;꾸버스,&nbsp;캠핑칸&nbsp;등</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>⑥&nbsp;디자인&nbsp;감도&nbsp;높은&nbsp;브랜드:&nbsp;</strong>와일드와일드웨스트,&nbsp;헬로스,&nbsp;온유라이프,&nbsp;플랜포티,&nbsp;더아이언,&nbsp;범이목공소,&nbsp;오비텐&nbsp;등</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>⑦&nbsp;편한&nbsp;캠핑&nbsp;책임지는&nbsp;브랜드</strong>:&nbsp;삼토피아,&nbsp;루커스,&nbsp;캠프시즌,&nbsp;벨락,&nbsp;어반그레이&nbsp;등</p>",
             "fontSize": "14px",
+            "bgColor": "transparent",
             "paddingTop": "0px",
             "paddingRight": "20px",
             "paddingBottom": "0px",
@@ -120,6 +124,7 @@
           "properties": {
             "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">📆<strong>기간&nbsp;</strong>:&nbsp;2026.&nbsp;5.&nbsp;23(토)&nbsp;-&nbsp;25(월),&nbsp;3일간</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">🚩<strong>장소&nbsp;</strong>:&nbsp;일산&nbsp;킨텍스&nbsp;2전시장</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">⏱&nbsp;<strong>시간&nbsp;</strong>:&nbsp;10:00&nbsp;~&nbsp;18:00</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>💡&nbsp;지금&nbsp;입장할인&nbsp;예약/선결제하면&nbsp;최대&nbsp;35%&nbsp;할인!</strong><strong style=\"color: #e60000;\">&nbsp;<s>15,000원</s>&nbsp;→&nbsp;10,000원!&nbsp;</strong><strong>(~5월&nbsp;22일까지)</strong></p>",
             "fontSize": "14px",
+            "bgColor": "transparent",
             "paddingTop": "0px",
             "paddingRight": "20px",
             "paddingBottom": "10px",
@@ -152,7 +157,8 @@
             "paddingTop": "10px",
             "paddingRight": "15px",
             "paddingBottom": "15px",
-            "paddingLeft": "15px"
+            "paddingLeft": "15px",
+            "button1BgColor__usePoint": true
           },
           "styles": {}
         },
@@ -206,7 +212,8 @@
             "buttonBorderStyle": "none",
             "buttonBorderWidth": "1px",
             "buttonBorderColor": "#000000",
-            "buttonBorderRadius": "5px"
+            "buttonBorderRadius": "5px",
+            "buttonBgColor__usePoint": true
           },
           "styles": {}
         },
@@ -548,7 +555,8 @@
             "paddingTop": "10px",
             "paddingRight": "15px",
             "paddingBottom": "15px",
-            "paddingLeft": "15px"
+            "paddingLeft": "15px",
+            "button1BgColor__usePoint": true
           },
           "styles": {}
         },
@@ -781,6 +789,8 @@
             "phone": " [대표번호] 02-6121-6388 [참가기업] 02-6121-6380~4",
             "showEmail": true,
             "email": "caf@esgroup.net",
+            "showFax": false,
+            "fax": "02-6121-6363",
             "contactInfoFontSize": "13px",
             "showHome": true,
             "homeUrl": "#",
@@ -798,6 +808,7 @@
             "kakaoUrl": "#",
             "showZuzuzu": false,
             "unsubscribeUrl": "#",
+            "showInquiry": true,
             "inquiryEmail": "caf@esgroup.net"
           },
           "styles": {}
