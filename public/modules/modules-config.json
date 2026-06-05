@@ -697,6 +697,7 @@
           "type": "text",
           "default": "5px",
           "placeholder": "예: 5px, 50%",
+          "hint": "값이 클수록 모서리가 둥글어집니다. 100px이면 완전히 둥근(알약형) 버튼이 됩니다.",
           "showWhen": "showButton",
           "group": "버튼"
         },
@@ -1276,7 +1277,8 @@
           "label": "버튼 모서리 둥글기",
           "type": "text",
           "default": "5px",
-          "placeholder": "예: 5px, 50%"
+          "placeholder": "예: 5px, 50%",
+          "hint": "값이 클수록 모서리가 둥글어집니다. 100px이면 완전히 둥근(알약형) 버튼이 됩니다."
         }
       ]
     },
@@ -1380,6 +1382,7 @@
           "type": "text",
           "default": "5px",
           "placeholder": "예: 5px, 50%",
+          "hint": "값이 클수록 모서리가 둥글어집니다. 100px이면 완전히 둥근(알약형) 버튼이 됩니다.",
           "group": "첫 번째 버튼"
         },
         {
@@ -1474,6 +1477,7 @@
           "type": "text",
           "default": "5px",
           "placeholder": "예: 5px, 50%",
+          "hint": "값이 클수록 모서리가 둥글어집니다. 100px이면 완전히 둥근(알약형) 버튼이 됩니다.",
           "group": "두 번째 버튼"
         },
         {
@@ -2304,6 +2308,7 @@
           "type": "text",
           "default": "5px",
           "placeholder": "예: 5px, 50%",
+          "hint": "값이 클수록 모서리가 둥글어집니다. 100px이면 완전히 둥근(알약형) 버튼이 됩니다.",
           "showWhen": "showButton",
           "group": "버튼"
         }
@@ -2640,6 +2645,7 @@
           "type": "text",
           "default": "5px",
           "placeholder": "예: 5px, 50%",
+          "hint": "값이 클수록 모서리가 둥글어집니다. 100px이면 완전히 둥근(알약형) 버튼이 됩니다.",
           "showWhen": "showLeftBigBtn",
           "group": "왼쪽 버튼"
         },
@@ -2965,6 +2971,7 @@
           "type": "text",
           "default": "5px",
           "placeholder": "예: 5px, 50%",
+          "hint": "값이 클수록 모서리가 둥글어집니다. 100px이면 완전히 둥근(알약형) 버튼이 됩니다.",
           "showWhen": "showRightBigBtn",
           "group": "오른쪽 버튼"
         }
@@ -3854,6 +3861,7 @@
           "type": "text",
           "default": "5px",
           "placeholder": "예: 5px, 50%",
+          "hint": "값이 클수록 모서리가 둥글어집니다. 100px이면 완전히 둥근(알약형) 버튼이 됩니다.",
           "showWhen": "showBigBtn",
           "group": "큰 버튼"
         }

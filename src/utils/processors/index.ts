@@ -510,8 +510,6 @@ export const footerSnsProcessor: ContentProcessor = (html, properties) => {
     [!(showEmail && showFax), 'EF구분'], // E·F 모두 표시될 때만 구분 여백 유지
     [!showWebsite && !showPhone, '행1여백'], // H/T 행 줄바꿈
     [!showEmail && !showFax, '행2여백'], // E/F 행 줄바꿈
-    // 문의 이메일 안내 줄 (미설정 시 표시 = 기존 동작 유지)
-    [properties.showInquiry === false, '문의'],
     // SNS 아이콘 (미설정 시 숨김)
     [properties.showHome !== true, '홈'],
     [properties.showFacebook !== true, '페이스북'],
@@ -523,11 +521,20 @@ export const footerSnsProcessor: ContentProcessor = (html, properties) => {
     [properties.showZuzuzu !== true, '쭈쭈쭈'],
   ]
 
+  // 문의 이메일 안내 줄: 미설정 시 발신전용 안내 문구로 대체 (설정 시 기존 문구 유지)
+  let result = html
+  if (properties.showInquiry === false) {
+    result = result.replace(
+      /<!-- 문의 -->.*?<!-- \/\/문의 -->/gs,
+      '<!-- 문의 --><div>본 메일은 발신전용 메일입니다.</div><!-- //문의 -->'
+    )
+  }
+
   return removals.reduce((acc, [shouldRemove, label]) => {
     if (!shouldRemove) return acc
     const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`)
     return acc.replace(new RegExp(`<!-- ${escaped} -->.*?<!-- //${escaped} -->`, 'gs'), '')
-  }, html)
+  }, result)
 }
 
 /**

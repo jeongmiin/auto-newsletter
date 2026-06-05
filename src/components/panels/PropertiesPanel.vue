@@ -145,6 +145,9 @@
           :toggleable="!!group.name"
           :collapsed="group.name ? gIdx > 0 : false"
         >
+        <template v-if="group.name" #togglericon="{ collapsed }">
+          <i :class="collapsed ? 'pi pi-angle-down' : 'pi pi-angle-up'"></i>
+        </template>
         <div class="space-y-5">
         <div
           v-for="(prop, index) in group.props"
@@ -184,13 +187,15 @@
           </div>
 
           <!-- 텍스트 입력 (일반) -->
-          <InputText
-            v-else-if="prop.type === 'text'"
-            :modelValue="String(selectedModule.properties[prop.key] || '')"
-            @update:modelValue="updateProperty(prop.key, $event ?? '')"
-            :placeholder="prop.placeholder"
-            class="w-full"
-          />
+          <div v-else-if="prop.type === 'text'" class="space-y-1">
+            <InputText
+              :modelValue="String(selectedModule.properties[prop.key] || '')"
+              @update:modelValue="updateProperty(prop.key, $event ?? '')"
+              :placeholder="prop.placeholder"
+              class="w-full"
+            />
+            <p v-if="prop.hint" class="text-xs text-gray-400">{{ prop.hint }}</p>
+          </div>
 
           <!-- 리치 텍스트 에디터 -->
           <Editor

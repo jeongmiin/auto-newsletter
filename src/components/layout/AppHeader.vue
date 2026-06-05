@@ -8,6 +8,9 @@
 
     <!-- 오른쪽: 파일 관리 버튼들 -->
     <div class="flex items-center gap-2">
+      <span v-if="lastDownload" class="text-sm text-gray-500 whitespace-nowrap">
+        {{ lastDownloadDateLabel }}<span class="font-bold">{{ lastDownload.type }}</span> 내려받음
+      </span>
       <Button
         @click="downloadForSave"
         label="저장용 내려받기"
@@ -55,6 +58,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from 'vue'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
 import { processQuillHtml } from '@/utils/quillHtmlProcessor'
@@ -65,6 +69,19 @@ const moduleStore = useModuleStore()
 const editorStore = useEditorStore()
 const toast = useToast()
 const { importHtmlFile } = useNewsletterImport()
+
+// 최근 내려받음 표시 (메모리 상태 — 새로고침 시 초기화)
+const lastDownload = ref<{ time: Date; type: '저장용' | '발송용' } | null>(null)
+
+// 날짜 부분 ("… 초 ") — 타입은 템플릿에서 굵게 별도 렌더
+const lastDownloadDateLabel = computed(() => {
+  if (!lastDownload.value) return ''
+  const d = lastDownload.value.time
+  return (
+    `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일 ` +
+    `${d.getHours()}시 ${d.getMinutes()}분 ${d.getSeconds()}초 `
+  )
+})
 
 // 미리보기 창 재사용용 — 이름 있는 타깃으로 열어 같은 창을 새로고침한다
 const PREVIEW_WINDOW_NAME = 'newsletter-preview'
@@ -282,11 +299,17 @@ const downloadHtml = async (includeMetadata: boolean): Promise<void> => {
     const fullHtmlDocument = buildHtmlDocument(finalHtml, includeMetadata)
 
     const now = new Date()
-    const timestamp = now.toISOString().slice(0, 19).replace(/:/g, '-').replace('T', '_')
+    const pad = (n: number): string => String(n).padStart(2, '0')
+    const timestamp =
+      `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}` +
+      `_${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}`
     const prefix = includeMetadata ? '재편집용' : '발송용'
     const filename = `${prefix}_newsletter_${timestamp}.html`
 
     triggerDownload(fullHtmlDocument, filename)
+
+    // 최근 내려받음 기록 (메모리)
+    lastDownload.value = { time: now, type: includeMetadata ? '저장용' : '발송용' }
 
     // 저장용만 '저장됨'으로 표시 (발송용은 재편집 불가 → dirty 상태 유지)
     if (includeMetadata) {

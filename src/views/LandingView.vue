@@ -35,7 +35,7 @@ const steps = [
   {
     no: '3',
     icon: 'pi pi-code',
-    title: '내보내기',
+    title: '내려받기',
     desc: '완성된 뉴스레터를 HTML 코드로 복사하거나 파일로 내려받습니다. 모든 이메일 클라이언트와 호환됩니다.',
   },
 ]
@@ -45,7 +45,7 @@ const features = [
   { icon: 'pi pi-arrows-alt', title: '드래그 앤 드롭', desc: '모듈을 끌어다 놓기만 하면 순서를 자유롭게 변경할 수 있습니다.' },
   { icon: 'pi pi-pencil', title: '실시간 편집', desc: '텍스트, 색상, 이미지, 링크를 속성 패널에서 바로 수정하고 캔버스에서 확인하세요.' },
   { icon: 'pi pi-file', title: '이메일 호환 HTML', desc: '생성된 HTML은 주요 이메일 클라이언트와 호환되는 인라인 스타일로 출력됩니다.' },
-  { icon: 'pi pi-copy', title: '코드 복사 & 내보내기', desc: 'HTML 코드를 클립보드에 복사하거나 파일로 저장하여 어디서든 활용할 수 있습니다.' },
+  { icon: 'pi pi-copy', title: '코드 복사 & 내려받기', desc: 'HTML 코드를 클립보드에 복사하거나 파일로 저장하여 어디서든 활용할 수 있습니다.' },
   { icon: 'pi pi-clone', title: '템플릿 제공', desc: '완성형 뉴스레터 템플릿을 제공하여 처음부터 만들 필요 없이 빠르게 시작할 수 있습니다.' },
 ]
 </script>
@@ -99,6 +99,8 @@ const features = [
         <Button
           label="에디터 시작하기"
           @click="goToEditor"
+          icon="pi pi-arrow-right"
+          iconPos="right"
           class="!px-10 !py-3 !text-lg !font-bold"
         />
 
@@ -230,7 +232,7 @@ const features = [
               icon="pi pi-arrow-right"
               iconPos="right"
               @click="goToEditor"
-              class="!px-8 !py-4 !font-bold !text-lg !gap-3"
+              class="!px-10 !py-3 !text-lg !font-bold"
             />
           </div>
         </div>

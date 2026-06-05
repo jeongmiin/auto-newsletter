@@ -15,6 +15,8 @@ export interface EditableProp {
   type: 'text' | 'textarea' | 'color' | 'number' | 'url' | 'image' | 'select' | 'boolean' | 'checkbox' | 'table-rows' | 'content-titles' | 'content-texts' | 'additional-contents' | 'table-editor'
   options?: string[]
   placeholder?: string
+  // 입력 필드 아래 표시할 안내 문구 (text 타입 한정)
+  hint?: string
   required?: boolean
   default?: string | number | boolean | TableCell[][]  // default 값 지원 (테이블 셀 포함)
   defaultRows?: TableRow[]

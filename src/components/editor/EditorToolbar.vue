@@ -36,6 +36,17 @@
         size="small"
         v-tooltip.bottom="'추가한 모듈의 순서를 드래그로 변경합니다'"
       />
+
+      <!-- 실행 취소 (Ctrl+Z와 동일) -->
+      <Button
+        @click="undo"
+        label="이전으로"
+        icon="pi pi-undo"
+        outlined
+        size="small"
+        :disabled="!canUndo"
+        v-tooltip.bottom="'직전 작업을 취소합니다 (Ctrl+Z)'"
+      />
     </div>
 
     <!-- 전체 삭제 -->
@@ -97,14 +108,30 @@ import { computed, ref } from 'vue'
 import draggable from 'vuedraggable'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
+import { getHistoryInstance } from '@/composables/useHistory'
 import { useToast } from 'primevue/usetoast'
 import { useConfirm } from 'primevue/useconfirm'
 import type { ModuleInstance } from '@/types'
 
 const moduleStore = useModuleStore()
 const editorStore = useEditorStore()
+const history = getHistoryInstance()
 const toast = useToast()
 const confirm = useConfirm()
+
+// ===== 실행 취소 (Ctrl+Z와 동일 동작) =====
+const canUndo = history.canUndo
+
+const undo = (): void => {
+  if (history.undo()) {
+    toast.add({
+      severity: 'info',
+      summary: '실행 취소',
+      detail: '이전 상태로 복원되었습니다',
+      life: 2000,
+    })
+  }
+}
 
 // ===== 모듈 순서 변경 다이얼로그 =====
 const showReorder = ref(false)

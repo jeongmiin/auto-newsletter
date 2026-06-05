@@ -38,8 +38,9 @@ export function useHistory() {
   const applySnapshot = (snapshot: HistoryState) => {
     isApplyingHistory.value = true
 
-    // 모듈 상태 복원
-    modules.value.splice(0, modules.value.length, ...snapshot.modules)
+    // 모듈 상태 복원 — 스택에 남아있는 스냅샷이 이후 편집으로 오염되지 않도록 딥카피하여 적용
+    const restored: ModuleInstance[] = JSON.parse(JSON.stringify(snapshot.modules))
+    modules.value.splice(0, modules.value.length, ...restored)
     selectedModuleId.value = snapshot.selectedModuleId
 
     // debounce 시간(300ms)보다 길게 대기하여 watcher가 이 변경을 무시하도록 함
@@ -70,13 +71,15 @@ export function useHistory() {
    * 실행 취소 (Ctrl+Z)
    */
   const undo = () => {
-    if (undoStack.value.length === 0) return false
+    // 스택 맨 위는 '현재 상태'이므로, 그 아래(이전 상태)가 있어야 되돌릴 수 있음
+    if (undoStack.value.length <= 1) return false
 
-    // 현재 상태를 redo 스택에 저장
-    redoStack.value.push(createSnapshot())
+    // 현재 상태를 꺼내 redo 스택으로 이동
+    const current = undoStack.value.pop()!
+    redoStack.value.push(current)
 
-    // 이전 상태 복원
-    const previousState = undoStack.value.pop()!
+    // 새 맨 위(=이전 상태)를 현재로 적용 (스택에는 그대로 유지)
+    const previousState = undoStack.value[undoStack.value.length - 1]
     applySnapshot(previousState)
 
     return true
@@ -88,11 +91,9 @@ export function useHistory() {
   const redo = () => {
     if (redoStack.value.length === 0) return false
 
-    // 현재 상태를 undo 스택에 저장
-    undoStack.value.push(createSnapshot())
-
-    // 다음 상태 복원
+    // 다음 상태를 undo 스택으로 복귀시키고 현재로 적용 (맨 위 = 현재 상태 유지)
     const nextState = redoStack.value.pop()!
+    undoStack.value.push(nextState)
     applySnapshot(nextState)
 
     return true
@@ -109,7 +110,8 @@ export function useHistory() {
   /**
    * 실행 취소/다시 실행 가능 여부
    */
-  const canUndo = computed(() => undoStack.value.length > 0)
+  // 맨 위 항목은 현재 상태이므로, 되돌릴 이전 상태가 존재하려면 2개 이상이어야 함
+  const canUndo = computed(() => undoStack.value.length > 1)
   const canRedo = computed(() => redoStack.value.length > 0)
 
   // 모듈 변경 감시 (자동 저장)

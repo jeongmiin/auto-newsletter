@@ -113,10 +113,10 @@ describe('footerSnsProcessor - 회사 정보 H/T/E 토글', () => {
     expect(result).toContain('문의 바랍니다')
   })
 
-  it('showInquiry=false 이면 문의 이메일 줄이 제거됨', () => {
+  it('showInquiry=false 이면 발신전용 안내 문구로 대체됨', () => {
     const result = run({ showInquiry: false })
     expect(result).not.toContain('문의 바랍니다')
-    expect(result).not.toContain('<!-- 문의 -->')
+    expect(result).toContain('본 메일은 발신전용 메일입니다.')
     // 수신거부 안내 문구는 유지
     expect(result).toContain('[수신거부]')
   })
