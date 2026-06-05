@@ -145,7 +145,7 @@ const features = [
             <span class="inline-block px-4 py-1.5 rounded-full bg-blue-100 text-blue-700 text-base font-semibold mb-6">About</span>
             <h2 class="text-4xl font-bold text-gray-900 mb-6">자동화 뉴스레터란?</h2>
             <p class="text-lg md:text-xl text-gray-600 mx-auto !leading-relaxed break-keep">
-              디자이너나 개발자 없이도, 준비된 모듈을 조합하는 것만으로 이메일 클라이언트에 최적화된 뉴스레터를 완성하는 제작 방식입니다. <br />
+              여러 준비된 모듈을 조합하는 것만으로 이메일 클라이언트에 최적화된 뉴스레터를 완성하는 제작 방식입니다. <br />
               매번 HTML을 직접 코딩하던 반복 작업을 표준 모듈과 자동 인라인 변환으로 대체합니다.
             </p>
           </div>
