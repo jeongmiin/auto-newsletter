@@ -57,3 +57,26 @@ describe('replaceModuleTableContent - 셀별 색상', () => {
     expect(result).toContain('background:#ffffff') // td 기본
   })
 })
+
+describe('replaceModuleTableContent - 부분 굵게(**마커**)', () => {
+  it('**…** 로 감싼 구간만 <strong>으로 변환됨', () => {
+    const cells = [[makeCell({ content: '일반 **강조** 텍스트' })]]
+    const result = replaceModuleTableContent(TEMPLATE, { tableCells: cells })
+    expect(result).toContain('<strong style="font-weight:700;">강조</strong>')
+    expect(result).toContain('일반 ')
+    expect(result).toContain(' 텍스트')
+  })
+
+  it('마커가 없으면 변환되지 않음', () => {
+    const cells = [[makeCell({ content: '굵게 없음' })]]
+    const result = replaceModuleTableContent(TEMPLATE, { tableCells: cells })
+    expect(result).not.toContain('<strong')
+  })
+
+  it('HTML escape 이후에만 변환되어 태그 주입이 방지됨', () => {
+    const cells = [[makeCell({ content: '**<script>**' })]]
+    const result = replaceModuleTableContent(TEMPLATE, { tableCells: cells })
+    expect(result).toContain('<strong style="font-weight:700;">&lt;script&gt;</strong>')
+    expect(result).not.toContain('<script>')
+  })
+})

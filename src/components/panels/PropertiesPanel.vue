@@ -807,6 +807,13 @@
                           :style="{ backgroundColor: getCellEffectiveBg(cell), color: getCellEffectiveText(cell) }"
                           v-tooltip.top="'셀 배경색·글자색'"
                         >가</button>
+
+                        <!-- 굵게: 아래 내용 입력에서 드래그 선택한 부분만 굵게 처리 -->
+                        <button
+                          @mousedown.prevent="applyCellBold(rowIndex, colIndex, cell)"
+                          class="flex items-center justify-center w-6 h-6 rounded border border-gray-300 hover:border-gray-400 text-xs font-bold leading-none transition-colors bg-white text-gray-700"
+                          v-tooltip.top="'내용에서 드래그한 부분을 굵게 (다시 누르면 해제)'"
+                        >B</button>
                       </div>
 
                       <!-- 오른쪽: 병합 컨트롤 -->
@@ -892,6 +899,7 @@
 
                     <!-- 셀 내용 입력 (Enter로 줄바꿈 가능) -->
                     <Textarea
+                      :id="`tcell-${cell.id}`"
                       :modelValue="cell.content"
                       @update:modelValue="updateCellContent(rowIndex, colIndex, $event ?? '')"
                       :placeholder="cell.type === 'th' ? '제목' : '내용'"
@@ -960,7 +968,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, nextTick } from 'vue'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
 import type { TableRow, ContentTitle, ContentText, AdditionalContent, TableCell, WrapSettings } from '@/types'
@@ -1283,6 +1291,46 @@ const updateCellContent = (rowIndex: number, colIndex: number, content: string) 
   if (selectedModule.value) {
     moduleStore.updateTableCell(selectedModule.value.id, rowIndex, colIndex, { content })
   }
+}
+
+// 내용 입력에서 드래그 선택한 구간만 **로 감싸 굵게 처리 (다시 누르면 해제)
+// 렌더러가 escape 이후 **...** 마커를 <strong>으로 변환한다
+const applyCellBold = (rowIndex: number, colIndex: number, cell: TableCell) => {
+  const el = document.getElementById(`tcell-${cell.id}`) as HTMLTextAreaElement | null
+  if (!el) return
+  const start = el.selectionStart ?? 0
+  const end = el.selectionEnd ?? 0
+  if (start === end) return // 드래그로 텍스트를 선택해야 동작
+
+  const content = cell.content ?? ''
+  const selected = content.slice(start, end)
+  let newContent: string
+  let newStart = start
+  let newEnd = end
+
+  if (selected.startsWith('**') && selected.endsWith('**') && selected.length >= 4) {
+    // 선택 자체가 **…**를 포함 → 마커 제거
+    const inner = selected.slice(2, -2)
+    newContent = content.slice(0, start) + inner + content.slice(end)
+    newEnd = start + inner.length
+  } else if (content.slice(start - 2, start) === '**' && content.slice(end, end + 2) === '**') {
+    // 선택 바깥을 **가 감싼 경우 → 마커 제거
+    newContent = content.slice(0, start - 2) + selected + content.slice(end + 2)
+    newStart = start - 2
+    newEnd = end - 2
+  } else {
+    // 선택 구간을 **로 감싸 굵게
+    newContent = content.slice(0, start) + '**' + selected + '**' + content.slice(end)
+    newStart = start + 2
+    newEnd = end + 2
+  }
+
+  updateCellContent(rowIndex, colIndex, newContent)
+  // DOM 갱신 후 선택 영역 복원 (연속 편집 편의)
+  nextTick(() => {
+    el.focus()
+    el.setSelectionRange(newStart, newEnd)
+  })
 }
 
 const updateCellColspan = (rowIndex: number, colIndex: number, value: string) => {

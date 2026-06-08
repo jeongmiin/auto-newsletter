@@ -353,6 +353,8 @@ export function replaceModuleTableContent(
           .replace(/</g, '&lt;')
           .replace(/>/g, '&gt;')
           .replace(/\r?\n/g, '<br>')
+          // **드래그 선택 텍스트** → 굵게 (escape 이후 마커만 변환, 이메일 호환 inline style)
+          .replace(/\*\*([^*]+?)\*\*/g, '<strong style="font-weight:700;">$1</strong>')
         return `<${tag}${colspanAttr}${rowspanAttr} style="${style}">${safeContent}</${tag}>`
       })
       .join('\n              ')
