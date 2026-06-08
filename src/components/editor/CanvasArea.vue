@@ -123,10 +123,11 @@ const modules = computed(() => moduleStore.modules)
 const selectedModuleId = computed(() => moduleStore.selectedModuleId)
 const canvasWidth = computed(() => editorStore.canvasWidth)
 
-// 목차 패널에서 마우스 올린 모듈 — 캔버스에서 강조 + 자동 스크롤
+// 목차 패널에서 마우스 올린 모듈 — 캔버스에서 강조만 (스크롤은 하지 않음)
 const hoveredModuleId = computed(() => editorStore.hoveredModuleId)
 
-watch(hoveredModuleId, async (id) => {
+// 모듈 선택(목차 행 클릭 포함) 시에만 캔버스를 해당 모듈로 스크롤
+watch(selectedModuleId, async (id) => {
   if (!id) return
   await nextTick()
   const el = document.getElementById(`canvas-module-${id}`)

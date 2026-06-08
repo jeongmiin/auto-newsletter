@@ -118,6 +118,7 @@ export const moduleDescTextConfig: ModuleConfig = {
   quillFields: ['descriptionText'],
   defaults: {
     bgColor: 'transparent',
+    textColor: '#333333',
   },
 }
 

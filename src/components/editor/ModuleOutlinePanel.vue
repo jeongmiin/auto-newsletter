@@ -75,7 +75,7 @@
 
       <!-- 안내 문구 -->
       <p class="px-2 py-1.5 border-t text-[12px] leading-relaxed text-gray-500 flex-shrink-0 break-keep">
-        행에 마우스를 올리면 캔버스에서 위치가 강조됩니다. 아이콘을 끌어 순서를 바꾸세요.
+        행에 마우스를 올리면 캔버스에서 위치가 강조되고, 클릭하면 해당 위치로 이동합니다. 아이콘을 끌어 순서를 바꾸세요.
       </p>
     </div>
   </div>

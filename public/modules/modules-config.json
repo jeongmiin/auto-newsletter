@@ -929,6 +929,13 @@
           "placeholder": "예: #f5f5f5 (비우면 투명)"
         },
         {
+          "key": "textColor",
+          "label": "텍스트 색상",
+          "type": "color",
+          "default": "#333333",
+          "placeholder": "예: #333333"
+        },
+        {
           "key": "paddingTop",
           "label": "상단 여백",
           "type": "text",
