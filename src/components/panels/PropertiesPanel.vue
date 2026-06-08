@@ -805,15 +805,8 @@
                             ? 'border-blue-500 ring-1 ring-blue-200'
                             : 'border-gray-300 hover:border-gray-400'"
                           :style="{ backgroundColor: getCellEffectiveBg(cell), color: getCellEffectiveText(cell) }"
-                          v-tooltip.top="'셀 배경색·글자색'"
+                          v-tooltip.top="'셀 배경색·글자색·굵게'"
                         >가</button>
-
-                        <!-- 굵게: 아래 내용 입력에서 드래그 선택한 부분만 굵게 처리 -->
-                        <button
-                          @mousedown.prevent="applyCellBold(rowIndex, colIndex, cell)"
-                          class="flex items-center justify-center w-6 h-6 rounded border border-gray-300 hover:border-gray-400 text-xs font-bold leading-none transition-colors bg-white text-gray-700"
-                          v-tooltip.top="'내용에서 드래그한 부분을 굵게 (다시 누르면 해제)'"
-                        >B</button>
                       </div>
 
                       <!-- 오른쪽: 병합 컨트롤 -->
@@ -889,6 +882,16 @@
                           size="small"
                           spellcheck="false"
                         />
+                      </div>
+                      <!-- 굵게 (아래 내용에서 드래그 선택한 부분만) -->
+                      <div class="flex items-center gap-1.5 pt-1.5 border-t border-gray-200">
+                        <label class="text-xs text-gray-500 w-7 shrink-0">굵게</label>
+                        <button
+                          @mousedown.prevent="applyCellBold(rowIndex, colIndex, cell)"
+                          class="flex items-center justify-center w-6 h-6 rounded border border-gray-300 hover:border-gray-400 text-xs font-bold leading-none transition-colors bg-white text-gray-700"
+                          v-tooltip.top="'드래그한 부분을 굵게 (다시 누르면 해제)'"
+                        >B</button>
+                        <span class="text-xs text-gray-400">아래 내용에서 드래그 후 클릭</span>
                       </div>
                       <!-- 기본값으로 초기화 -->
                       <button
