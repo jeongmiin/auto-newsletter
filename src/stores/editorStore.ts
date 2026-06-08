@@ -9,6 +9,9 @@ export const useEditorStore = defineStore('editor', () => {
   // 좌측 모듈 패널 탭 모드 (모듈 / 템플릿) — 캔버스 빈 화면 등에서 전환 가능하도록 공유
   const modulePanelMode = ref<'modules' | 'templates'>('modules')
 
+  // 목차 패널 ↔ 캔버스 하이라이트 동기화용 (마우스 올린 모듈 id)
+  const hoveredModuleId = ref<string | null>(null)
+
   const canvasSettings = ref<CanvasSettings>({
     width: EDITOR_CONFIG.canvasDefaultWidth,
     backgroundColor: '#ffffff',
@@ -40,6 +43,13 @@ export const useEditorStore = defineStore('editor', () => {
   }
 
   /**
+   * 목차 패널에서 마우스 올린 모듈 설정 (캔버스 하이라이트 연동)
+   */
+  const setHoveredModuleId = (id: string | null): void => {
+    hoveredModuleId.value = id
+  }
+
+  /**
    * 캔버스 설정 업데이트
    */
   const updateCanvasSettings = (settings: Partial<CanvasSettings>): void => {
@@ -68,8 +78,10 @@ export const useEditorStore = defineStore('editor', () => {
     canvasSettings,
     wrapSettings,
     modulePanelMode,
+    hoveredModuleId,
     setCanvasWidth,
     setModulePanelMode,
+    setHoveredModuleId,
     updateCanvasSettings,
     updateWrapSettings,
     setZoom

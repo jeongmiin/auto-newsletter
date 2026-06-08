@@ -116,7 +116,50 @@ const previewEmail = async (): Promise<void> => {
     let finalHtml = await moduleStore.generateHtml()
     finalHtml = processQuillHtml(finalHtml)
 
-    // 완전한 HTML 문서 생성
+    // 편집 화면의 PC/모바일 선택을 미리보기 초기 모드로 연결
+    const initialMode = editorStore.canvasWidth === 'mobile' ? 'mobile' : 'pc'
+
+    // 이메일 본문 문서 (iframe 안에 들어갈 실제 메일) — 반응형 미디어쿼리가
+    // iframe 폭(선택한 기기 해상도) 기준으로 동작하도록 별도 문서로 분리한다
+    const emailDocument = `<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background-color: #f5f5f5;
+    }
+    .preview-container {
+      max-width: 680px;
+      margin: 0 auto;
+      background-color: white;
+    }
+    .email-content { padding: 0; }
+    @media (max-width: 768px) {
+      .preview-container { max-width: 100%; }
+    }
+    .email-content p, .email-content h1, .email-content h2, .email-content h3 { margin: 0; padding: 0; }
+    .email-content h1 { font-size: 2em; font-weight: bold; }
+    .email-content h2 { font-size: 1.5em; font-weight: bold; }
+    .email-content h3 { font-size: 1.17em; font-weight: bold; }
+    .email-content strong { font-weight: 700; }
+    .email-content em { font-style: italic; }
+    .email-content a { color: #0066cc; text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="preview-container">
+    <div class="email-content">${finalHtml}</div>
+  </div>
+</body>
+</html>`
+
+    // 미리보기 창(바깥 크롬) — 상단 PC/모바일 토글 + 가운데 기기 프레임(iframe)
     const fullHtmlDocument = `<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -129,12 +172,12 @@ const previewEmail = async (): Promise<void> => {
       margin: 0;
       padding: 0;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      background-color: #f5f5f5;
+      background-color: #e5e7eb;
     }
     .preview-header {
       background: #333;
       color: white;
-      padding: 15px 20px;
+      padding: 12px 20px;
       position: sticky;
       top: 0;
       z-index: 1000;
@@ -144,6 +187,20 @@ const previewEmail = async (): Promise<void> => {
       box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
     .preview-header h2 { margin: 0; font-size: 18px; font-weight: 600; }
+    .header-right { display: flex; align-items: center; gap: 16px; }
+    .mode-toggle { display: flex; background: rgba(255,255,255,0.12); border-radius: 6px; padding: 3px; }
+    .mode-btn {
+      background: transparent;
+      border: none;
+      color: rgba(255,255,255,0.7);
+      font-size: 14px;
+      cursor: pointer;
+      padding: 6px 16px;
+      border-radius: 4px;
+      transition: all 0.15s;
+    }
+    .mode-btn:hover { color: white; }
+    .mode-btn.active { background: white; color: #333; font-weight: 600; }
     .close-btn {
       background: rgba(255,255,255,0.1);
       border: none;
@@ -155,34 +212,90 @@ const previewEmail = async (): Promise<void> => {
       transition: background 0.2s;
     }
     .close-btn:hover { background: rgba(255,255,255,0.2); }
-    .preview-container {
-      max-width: 680px;
-      margin: 20px auto;
-      background-color: white;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    .stage {
+      display: flex;
+      justify-content: center;
+      padding: 24px 16px;
     }
-    .email-content { padding: 0; }
-    @media (max-width: 768px) {
-      .preview-container { margin: 10px; max-width: 100%; }
-      .preview-header h2 { font-size: 16px; }
+    .device-frame {
+      width: 100%;
+      max-width: 720px;
+      transition: max-width 0.25s ease;
     }
-    .email-content p, .email-content h1, .email-content h2, .email-content h3 { margin: 0; padding: 0; }
-    .email-content h1 { font-size: 2em; font-weight: bold; }
-    .email-content h2 { font-size: 1.5em; font-weight: bold; }
-    .email-content h3 { font-size: 1.17em; font-weight: bold; }
-    .email-content strong { font-weight: 700; }
-    .email-content em { font-style: italic; }
-    .email-content a { color: #0066cc; text-decoration: underline; }
+    .device-label {
+      text-align: center;
+      color: #6b7280;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+    .preview-frame {
+      width: 100%;
+      border: none;
+      background: white;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+      border-radius: 4px;
+      display: block;
+    }
+    body.mode-mobile .device-frame { max-width: 375px; }
   </style>
 </head>
-<body>
+<body class="mode-${initialMode}">
   <div class="preview-header">
     <h2>📧 이메일 미리보기</h2>
-    <button class="close-btn" onclick="window.close()">닫기</button>
+    <div class="header-right">
+      <div class="mode-toggle">
+        <button class="mode-btn${initialMode === 'pc' ? ' active' : ''}" id="btn-pc">🖥️ PC</button>
+        <button class="mode-btn${initialMode === 'mobile' ? ' active' : ''}" id="btn-mobile">📱 모바일</button>
+      </div>
+      <button class="close-btn" onclick="window.close()">닫기</button>
+    </div>
   </div>
-  <div class="preview-container">
-    <div class="email-content">${finalHtml}</div>
+  <div class="stage">
+    <div class="device-frame">
+      <div class="device-label" id="device-label">${initialMode === 'mobile' ? '모바일 · 너비 375px' : 'PC · 너비 720px'}</div>
+      <iframe class="preview-frame" id="preview-frame"></iframe>
+    </div>
   </div>
+  <script>
+    var emailDoc = ${JSON.stringify(emailDocument)};
+    var frame = document.getElementById('preview-frame');
+    var label = document.getElementById('device-label');
+    var btnPc = document.getElementById('btn-pc');
+    var btnMobile = document.getElementById('btn-mobile');
+    frame.srcdoc = emailDoc;
+
+    // 내부 콘텐츠 높이에 맞춰 iframe 높이 자동 조정 (스크롤 중첩 방지)
+    function syncHeight() {
+      try {
+        var doc = frame.contentDocument || frame.contentWindow.document;
+        if (doc && doc.body) {
+          frame.style.height = doc.body.scrollHeight + 'px';
+        }
+      } catch (e) {}
+    }
+    frame.addEventListener('load', function () {
+      syncHeight();
+      setTimeout(syncHeight, 150);
+    });
+
+    function setMode(mode) {
+      if (mode === 'mobile') {
+        document.body.className = 'mode-mobile';
+        btnMobile.classList.add('active');
+        btnPc.classList.remove('active');
+        label.textContent = '모바일 · 너비 375px';
+      } else {
+        document.body.className = 'mode-pc';
+        btnPc.classList.add('active');
+        btnMobile.classList.remove('active');
+        label.textContent = 'PC · 너비 720px';
+      }
+      // 폭 전환 애니메이션(0.25s) 이후 높이 재측정
+      setTimeout(syncHeight, 300);
+    }
+    btnPc.addEventListener('click', function () { setMode('pc'); });
+    btnMobile.addEventListener('click', function () { setMode('mobile'); });
+  <\/script>
 </body>
 </html>`
 

@@ -8,6 +8,9 @@
       <!-- 왼쪽 모듈 패널 -->
       <ModulePanel class="w-72 xl:w-80 border-r bg-white flex-shrink-0" />
 
+      <!-- 모듈 목차/순서 패널 (캔버스와 실시간 연동) -->
+      <ModuleOutlinePanel />
+
       <!-- 중앙 캔버스 -->
       <div class="flex-1 flex flex-col min-w-0">
         <!-- 캔버스 상단 툴바 (화면 크기 + 전체 삭제) -->
@@ -58,6 +61,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import ModulePanel from '@/components/panels/ModulePanel.vue'
 import EditorToolbar from '@/components/editor/EditorToolbar.vue'
+import ModuleOutlinePanel from '@/components/editor/ModuleOutlinePanel.vue'
 import CanvasArea from '@/components/editor/CanvasArea.vue'
 import PropertiesPanel from '@/components/panels/PropertiesPanel.vue'
 

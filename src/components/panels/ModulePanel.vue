@@ -1,7 +1,7 @@
 <template>
   <div class="h-full flex flex-col">
     <!-- 모듈 / 템플릿 세그먼트 토글 -->
-    <div class="p-3 border-b">
+    <div class="p-2 border-b">
       <div class="flex bg-gray-100 rounded-lg p-0.5">
         <button
           @click="mode = 'modules'"

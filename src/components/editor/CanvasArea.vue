@@ -70,7 +70,11 @@
           @end="onDragEnd"
         >
           <template #item="{ element: module, index }">
-            <div class="relative group">
+            <div
+              :id="`canvas-module-${module.id}`"
+              class="relative group transition-all"
+              :class="{ 'ring-2 ring-amber-400 ring-inset rounded-sm': hoveredModuleId === module.id }"
+            >
               <div
                 class="drag-handle absolute left-0 top-0 bottom-0 w-8 flex flex-col items-center justify-center cursor-grab opacity-0 group-hover:opacity-100 transition-opacity z-10 bg-blue-100/90 hover:bg-blue-200/90"
                 title="마우스로 끌어서 순서를 변경하세요"
@@ -97,7 +101,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch, nextTick } from 'vue'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
 import { useNewsletterImport } from '@/composables/useNewsletterImport'
@@ -118,6 +122,16 @@ const openFile = (): void => {
 const modules = computed(() => moduleStore.modules)
 const selectedModuleId = computed(() => moduleStore.selectedModuleId)
 const canvasWidth = computed(() => editorStore.canvasWidth)
+
+// 목차 패널에서 마우스 올린 모듈 — 캔버스에서 강조 + 자동 스크롤
+const hoveredModuleId = computed(() => editorStore.hoveredModuleId)
+
+watch(hoveredModuleId, async (id) => {
+  if (!id) return
+  await nextTick()
+  const el = document.getElementById(`canvas-module-${id}`)
+  el?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+})
 const wrapSettings = computed(() => editorStore.wrapSettings)
 
 // 캔버스 컨테이너 스타일 (공통 속성 반영)
