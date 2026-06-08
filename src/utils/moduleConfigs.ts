@@ -190,6 +190,15 @@ export const module04Config: ModuleConfig = {
     leftImageLinkUrl: '#',
     rightImageBorderRadius: '0px',
     rightImageLinkUrl: '#',
+    // 큰 버튼 여백 (기존 인스턴스 폴백 — 신규 인스턴스는 editableProps default 사용)
+    leftBigBtnMarginTop: '0px',
+    leftBigBtnMarginRight: '0px',
+    leftBigBtnMarginBottom: '10px',
+    leftBigBtnMarginLeft: '0px',
+    rightBigBtnMarginTop: '0px',
+    rightBigBtnMarginRight: '0px',
+    rightBigBtnMarginBottom: '10px',
+    rightBigBtnMarginLeft: '0px',
   },
   processors: [
     processors.module04ImageProcessor,

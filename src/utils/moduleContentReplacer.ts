@@ -270,6 +270,17 @@ export function replaceModuleTableContent(
   const headerTextColor = String(properties.headerTextColor || '#333333')
   const cellTextColor = String(properties.cellTextColor || '#333333')
 
+  // 바깥 td 상하좌우 여백 (미설정 시 기존 기본값 20px 유지)
+  const paddingTop = String(properties.paddingTop ?? '20px')
+  const paddingRight = String(properties.paddingRight ?? '20px')
+  const paddingBottom = String(properties.paddingBottom ?? '20px')
+  const paddingLeft = String(properties.paddingLeft ?? '20px')
+  html = html
+    .replace(/\{\{\s*paddingTop\s*\}\}/g, paddingTop)
+    .replace(/\{\{\s*paddingRight\s*\}\}/g, paddingRight)
+    .replace(/\{\{\s*paddingBottom\s*\}\}/g, paddingBottom)
+    .replace(/\{\{\s*paddingLeft\s*\}\}/g, paddingLeft)
+
   // 테이블 셀이 비어있으면 빈 테이블 반환
   if (cells.length === 0) {
     return html.replace('{{tableContent}}', `
