@@ -260,9 +260,13 @@
               </span>
               <span class="ql-formats">
                 <select class="ql-fontSize" title="글자 크기">
-                  <option value="28px">제목 1</option>
-                  <option value="22px">제목 2</option>
-                  <option value="18px">제목 3</option>
+                  <option value="28px">28px</option>
+                  <option value="26px">26px</option>
+                  <option value="24px">24px</option>
+                  <option value="22px">22px</option>
+                  <option value="20px">20px</option>
+                  <option value="18px">18px</option>
+                  <option value="16px">16px</option>
                   <option selected>본문</option>
                 </select>
                 <select class="ql-lineHeight" title="행간(줄 간격)">

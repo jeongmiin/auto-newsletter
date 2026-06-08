@@ -45,6 +45,7 @@ import {
 } from '@/utils/moduleContentReplacer'
 import { convertQuillListsToEmailHtml } from '@/utils/quillHtmlProcessor'
 import { resolvePointColors } from '@/utils/pointColor'
+import { migrateModuleProperties } from '@/utils/moduleMigrations'
 
 export const useModuleStore = defineStore('module', () => {
   // ============= State =============
@@ -332,7 +333,9 @@ export const useModuleStore = defineStore('module', () => {
       addModule(moduleMetadata)
       const added = modules.value[modules.value.length - 1]
 
-      Object.entries(moduleData.properties).forEach(([key, value]) => {
+      // 구버전 템플릿 속성을 현재 스키마로 변환 후 적용
+      const migratedProps = migrateModuleProperties(moduleData.moduleId, moduleData.properties)
+      Object.entries(migratedProps).forEach(([key, value]) => {
         added.properties[key] = value
       })
       if (moduleData.styles) {

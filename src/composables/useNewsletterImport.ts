@@ -1,5 +1,6 @@
 import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
+import { migrateModuleProperties } from '@/utils/moduleMigrations'
 import { useToast } from 'primevue/usetoast'
 
 /**
@@ -110,7 +111,12 @@ export function useNewsletterImport() {
               moduleStore.addModule(moduleMetadata)
               const addedModule = moduleStore.modules[moduleStore.modules.length - 1]
 
-              Object.entries(moduleData.properties).forEach(([key, value]) => {
+              // 구버전 저장 파일 속성을 현재 스키마로 변환 후 적용
+              const migratedProps = migrateModuleProperties(
+                moduleData.moduleId,
+                moduleData.properties,
+              )
+              Object.entries(migratedProps).forEach(([key, value]) => {
                 addedModule.properties[key] = value
               })
 

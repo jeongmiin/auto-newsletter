@@ -30,15 +30,11 @@ describe('footerSnsProcessor - 회사 정보 H/T/E 토글', () => {
     expect(result).toContain('<strong>E</strong>')
   })
 
-  it('showWebsite=false 이면 H만 제거되고 구분 여백도 사라짐', () => {
+  it('showWebsite=false 이면 H만 제거됨', () => {
     const result = run({ showWebsite: false })
     expect(result).not.toContain('<strong>H</strong>')
     expect(result).toContain('<strong>T</strong>')
     expect(result).toContain('<strong>E</strong>')
-    // H·T 둘 다일 때만 유지되는 구분 여백 제거
-    expect(result).not.toContain('<!-- HT구분 -->')
-    // T가 남아있으므로 1행 줄바꿈은 유지
-    expect(result).toContain('<!-- 행1여백 -->')
   })
 
   it('showPhone=false 이면 T만 제거됨', () => {
@@ -46,66 +42,49 @@ describe('footerSnsProcessor - 회사 정보 H/T/E 토글', () => {
     expect(result).toContain('<strong>H</strong>')
     expect(result).not.toContain('<strong>T</strong>')
     expect(result).toContain('<strong>E</strong>')
-    expect(result).not.toContain('<!-- HT구분 -->')
-    expect(result).toContain('<!-- 행1여백 -->')
   })
 
-  it('showWebsite=false + showPhone=false 이면 H/T와 1행 줄바꿈이 모두 제거됨', () => {
+  it('showWebsite=false + showPhone=false 이면 H/T가 모두 제거됨', () => {
     const result = run({ showWebsite: false, showPhone: false })
     expect(result).not.toContain('<strong>H</strong>')
     expect(result).not.toContain('<strong>T</strong>')
     expect(result).toContain('<strong>E</strong>')
-    expect(result).not.toContain('<!-- 행1여백 -->')
-    // E는 남아있으므로 2행 줄바꿈은 유지
-    expect(result).toContain('<!-- 행2여백 -->')
   })
 
-  it('showEmail=false 이면 E와 2행 줄바꿈이 제거됨', () => {
+  it('showEmail=false 이면 E가 제거됨', () => {
     const result = run({ showEmail: false })
     expect(result).toContain('<strong>H</strong>')
     expect(result).toContain('<strong>T</strong>')
     expect(result).not.toContain('<strong>E</strong>')
-    expect(result).not.toContain('<!-- 행2여백 -->')
   })
 
   it('템플릿이 팩스(F) 마커를 포함해야 함 (사전 조건)', () => {
     expect(footerHtml).toContain('<!-- 팩스 -->')
-    expect(footerHtml).toContain('<!-- EF구분 -->')
     expect(footerHtml).toContain('<strong>F</strong>')
   })
 
-  it('미설정 시 팩스(F)는 숨김 — E는 표시되고 EF구분도 제거됨', () => {
+  it('미설정 시 팩스(F)는 숨김 — E는 표시됨', () => {
     const result = run({})
     expect(result).toContain('<strong>E</strong>')
     expect(result).not.toContain('<strong>F</strong>')
-    expect(result).not.toContain('<!-- EF구분 -->')
-    // E가 남아있으므로 2행 줄바꿈은 유지
-    expect(result).toContain('<!-- 행2여백 -->')
   })
 
-  it('showFax=true 이면 F가 표시되고, E와 함께면 EF구분 여백이 유지됨', () => {
+  it('showFax=true 이면 F가 표시됨', () => {
     const result = run({ showFax: true })
     expect(result).toContain('<strong>E</strong>')
     expect(result).toContain('<strong>F</strong>')
-    expect(result).toContain('<!-- EF구분 -->')
   })
 
-  it('showEmail=false + showFax=true 이면 E만 제거되고 F와 2행 줄바꿈은 유지됨', () => {
+  it('showEmail=false + showFax=true 이면 E만 제거되고 F는 유지됨', () => {
     const result = run({ showEmail: false, showFax: true })
     expect(result).not.toContain('<strong>E</strong>')
     expect(result).toContain('<strong>F</strong>')
-    // E·F 둘 다일 때만 유지되는 EF구분 제거
-    expect(result).not.toContain('<!-- EF구분 -->')
-    // F가 남아있으므로 2행 줄바꿈은 유지
-    expect(result).toContain('<!-- 행2여백 -->')
   })
 
-  it('showEmail=false + showFax=false 이면 E/F와 2행 줄바꿈이 모두 제거됨', () => {
+  it('showEmail=false + showFax=false 이면 E/F가 모두 제거됨', () => {
     const result = run({ showEmail: false, showFax: false })
     expect(result).not.toContain('<strong>E</strong>')
     expect(result).not.toContain('<strong>F</strong>')
-    expect(result).not.toContain('<!-- 행2여백 -->')
-    expect(result).not.toContain('<!-- EF구분 -->')
   })
 
   it('문의 이메일 줄은 미설정 시 표시됨 (기본 노출)', () => {
@@ -121,19 +100,11 @@ describe('footerSnsProcessor - 회사 정보 H/T/E 토글', () => {
     expect(result).toContain('[수신거부]')
   })
 
-  it('H/T 모두 표시될 때만 구분 여백이 유지됨', () => {
-    const both = run({ showWebsite: true, showPhone: true })
-    expect(both).toContain('<!-- HT구분 -->')
-  })
-
-  it('모두 false 이면 회사 정보 줄과 여백이 전부 제거됨', () => {
+  it('모두 false 이면 회사 정보 줄이 전부 제거됨', () => {
     const result = run({ showWebsite: false, showPhone: false, showEmail: false })
     expect(result).not.toContain('<strong>H</strong>')
     expect(result).not.toContain('<strong>T</strong>')
     expect(result).not.toContain('<strong>E</strong>')
-    expect(result).not.toContain('<!-- 행1여백 -->')
-    expect(result).not.toContain('<!-- 행2여백 -->')
-    expect(result).not.toContain('<!-- HT구분 -->')
   })
 })
 

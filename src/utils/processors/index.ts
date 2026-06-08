@@ -29,6 +29,34 @@ export const removeEmptySubTitleProcessor: ContentProcessor = (html, properties)
 }
 
 /**
+ * 메인 타이틀 제거 프로세서 (SectionTitle 전용)
+ * showMainTitle이 false면(기본 노출) 메인 타이틀 블록을 제거한다.
+ */
+export const removeMainTitleProcessor: ContentProcessor = (html, properties) => {
+  if (properties.showMainTitle === false) {
+    return html.replace(
+      /<!-- 메인 타이틀 -->\s*<tr>[\s\S]*?<\/tr>\s*<!-- \/\/메인 타이틀 -->/g,
+      '',
+    )
+  }
+  return html
+}
+
+/**
+ * 이미지 타이틀 제거 프로세서 (SectionTitle 전용)
+ * showSectionImage가 true가 아니면(기본 비노출) 이미지 블록을 제거한다.
+ */
+export const removeSectionImageProcessor: ContentProcessor = (html, properties) => {
+  if (properties.showSectionImage !== true) {
+    return html.replace(
+      /<!-- 이미지 타이틀 -->\s*<tr>[\s\S]*?<\/tr>\s*<!-- \/\/이미지 타이틀 -->/g,
+      '',
+    )
+  }
+  return html
+}
+
+/**
  * SectionTitle 정렬 프로세서
  * 속성 패널의 titleAlign 셀렉트가 정렬의 단일 제어권을 가짐
  * Quill의 text-align이 있더라도 셀렉트 값으로 덮어씀
@@ -506,10 +534,6 @@ export const footerSnsProcessor: ContentProcessor = (html, properties) => {
     [!showPhone, '전화'],
     [!showEmail, '이메일'],
     [!showFax, '팩스'],
-    [!(showWebsite && showPhone), 'HT구분'], // H·T 모두 표시될 때만 구분 여백 유지
-    [!(showEmail && showFax), 'EF구분'], // E·F 모두 표시될 때만 구분 여백 유지
-    [!showWebsite && !showPhone, '행1여백'], // H/T 행 줄바꿈
-    [!showEmail && !showFax, '행2여백'], // E/F 행 줄바꿈
     // SNS 아이콘 (미설정 시 숨김)
     [properties.showHome !== true, '홈'],
     [properties.showFacebook !== true, '페이스북'],

@@ -177,8 +177,21 @@ export const sectionTitleConfig: ModuleConfig = {
     subTitle: '서브 타이틀 영역입니다',
     topBorderWidth: '2px',
     topBorderColor: '#333333',
+    sectionImageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-1column.png',
+    sectionImageLinkUrl: '#',
+    sectionImageAlt: '섹션 이미지',
+    sectionImageMaxWidth: '100%',
+    sectionImageAlign: 'center',
+    sectionImagePaddingTop: '15px',
+    sectionImagePaddingRight: '20px',
+    sectionImagePaddingBottom: '0',
+    sectionImagePaddingLeft: '20px',
   },
-  processors: [processors.removeEmptySubTitleProcessor],
+  processors: [
+    processors.removeMainTitleProcessor,
+    processors.removeEmptySubTitleProcessor,
+    processors.removeSectionImageProcessor,
+  ],
 }
 
 /**
@@ -373,10 +386,11 @@ export const module07Config: ModuleConfig = {
  * ModuleFooter 설정
  */
 export const moduleFooterConfig: ModuleConfig = {
+  quillFields: ['companyInfo'],
   defaults: {
-    topTextTitle: '코리아빌드 사무국',
-    topTextCompany: '(주)메쎄이상',
-    addressText: '서울시 마포구 월드컵북로&nbsp;58길&nbsp;9 ES타워&nbsp;(03922)',
+    companyInfo:
+      '<p style="margin:0; padding:0;"><strong>코리아빌드 사무국</strong></p><p style="margin:0; padding:0;">(주)메쎄이상</p><p style="margin:0; padding:0; font-size:13px;">서울시 마포구&nbsp;월드컵북로&nbsp;58길&nbsp;9 ES타워&nbsp;(03922)</p>',
+    companyInfoFontSize: '16px',
     websiteUrl: 'www.koreabuild.co.kr',
     phone: '02-6121-6362',
     email: 'hvackorea@esgroup.net',

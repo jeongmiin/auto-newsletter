@@ -5,6 +5,7 @@
 
 import { replaceModuleContent, replaceModuleContentSync } from './moduleContentProcessor'
 import { MODULE_CONFIG_REGISTRY } from './moduleConfigs'
+import { buildCompanyInfoFromLegacy } from './moduleMigrations'
 import type { ProcessorContext } from './moduleContentProcessor'
 
 /**
@@ -174,12 +175,21 @@ export function replaceModule07ReverseContent(
 
 /**
  * ModuleFooter 콘텐츠 교체
+ * 렌더 시점 안전망: companyInfo가 없고 구버전 필드만 있는 인스턴스도 올바로 출력한다.
+ * (정상 경로에서는 로드 시 migrateModuleProperties가 이미 변환한다)
  */
 export function replaceModuleFooterContent(
   html: string,
   properties: Record<string, unknown>,
 ): string {
-  return replaceModuleContentSync(html, properties, MODULE_CONFIG_REGISTRY.ModuleFooter)
+  const props = { ...properties }
+  if (
+    !props.companyInfo &&
+    (props.topTextTitle || props.topTextCompany || props.addressText)
+  ) {
+    props.companyInfo = buildCompanyInfoFromLegacy(props)
+  }
+  return replaceModuleContentSync(html, props, MODULE_CONFIG_REGISTRY.ModuleFooter)
 }
 
 /**
