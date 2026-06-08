@@ -13,6 +13,7 @@ export const moduleNewsHeaderConfig: ModuleConfig = {
   defaults: {
     logoImageUrl: 'https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/newsletter/images/logo-gray.png',
     logoAlt: '로고',
+    logoMaxWidth: '100%',
     logoBorderWidth: '5px',
     logoBorderColor: '#000000',
     headerTitle: 'NEWSLETTER VOL.1',
@@ -36,6 +37,7 @@ export const moduleBasicHeaderConfig: ModuleConfig = {
   defaults: {
     logoImageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/logo-gray.png',
     logoAlt: '로고',
+    logoMaxWidth: '100%',
     tableSummary: '뉴스레터 입니다.',
     topBorderWidth: '3px',
     topBorderColor: '#000000',

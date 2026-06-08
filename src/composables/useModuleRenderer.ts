@@ -6,6 +6,7 @@ import { resolvePointColors } from '@/utils/pointColor'
 import { applyStylesToHtml } from '@/utils/htmlUtils'
 import { sanitizeHtml, sanitizeErrorMessage } from '@/utils/sanitize'
 import {
+  replaceModuleNewsHeaderContent,
   replaceModuleBasicHeaderContent,
   replaceModuleImageHeaderContent,
   replaceModuleDescTextContent,
@@ -64,6 +65,9 @@ export function useModuleRenderer(moduleId: string) {
     const properties = resolvePointColors(moduleInstance.properties, editorStore.wrapSettings.pointColor)
 
     switch (mId) {
+      case 'ModuleNewsHeader':
+        return replaceModuleNewsHeaderContent(html, properties)
+
       case 'ModuleBasicHeader':
         return replaceModuleBasicHeaderContent(html, properties)
 

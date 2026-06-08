@@ -44,6 +44,15 @@
           "group": "로고"
         },
         {
+          "key": "logoMaxWidth",
+          "label": "최대 너비",
+          "type": "text",
+          "default": "100%",
+          "placeholder": "예: 100%, 200px",
+          "hint": "로고 이미지의 최대 너비입니다. 100%면 영역 너비에 맞춰지고, 200px처럼 고정값도 가능합니다.",
+          "group": "로고"
+        },
+        {
           "key": "logoBorderWidth",
           "label": "하단 테두리 두께",
           "type": "text",
@@ -200,6 +209,15 @@
           "type": "text",
           "default": "로고",
           "placeholder": "로고",
+          "group": "로고"
+        },
+        {
+          "key": "logoMaxWidth",
+          "label": "최대 너비",
+          "type": "text",
+          "default": "100%",
+          "placeholder": "예: 100%, 200px",
+          "hint": "로고 이미지의 최대 너비입니다. 100%면 영역 너비에 맞춰지고, 200px처럼 고정값도 가능합니다.",
           "group": "로고"
         },
         {

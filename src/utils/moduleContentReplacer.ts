@@ -8,6 +8,16 @@ import { MODULE_CONFIG_REGISTRY } from './moduleConfigs'
 import type { ProcessorContext } from './moduleContentProcessor'
 
 /**
+ * ModuleNewsHeader 콘텐츠 교체 (뉴스 헤드라인 헤더)
+ */
+export function replaceModuleNewsHeaderContent(
+  html: string,
+  properties: Record<string, unknown>,
+): string {
+  return replaceModuleContentSync(html, properties, MODULE_CONFIG_REGISTRY.ModuleNewsHeader)
+}
+
+/**
  * ModuleBasicHeader 콘텐츠 교체
  */
 export function replaceModuleBasicHeaderContent(

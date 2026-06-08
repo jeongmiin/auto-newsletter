@@ -887,7 +887,7 @@
                       <div class="flex items-center gap-1.5 pt-1.5 border-t border-gray-200">
                         <label class="text-xs text-gray-500 w-7 shrink-0">굵게</label>
                         <button
-                          @mousedown.prevent="applyCellBold(rowIndex, colIndex, cell)"
+                          @mousedown.prevent="applyCellBold(cell)"
                           class="flex items-center justify-center w-6 h-6 rounded border border-gray-300 hover:border-gray-400 text-xs font-bold leading-none transition-colors bg-white text-gray-700"
                           v-tooltip.top="'드래그한 부분을 굵게 (다시 누르면 해제)'"
                         >B</button>
@@ -900,16 +900,14 @@
                       >기본값으로</button>
                     </div>
 
-                    <!-- 셀 내용 입력 (Enter로 줄바꿈 가능) -->
-                    <Textarea
-                      :id="`tcell-${cell.id}`"
+                    <!-- 셀 내용 입력 (굵게는 화면에 실제 굵게로 표시, ** 마커는 숨김) -->
+                    <TableCellEditor
+                      :ref="(el) => setCellEditorRef(cell.id, el)"
+                      :el-id="`tcell-${cell.id}`"
                       :modelValue="cell.content"
                       @update:modelValue="updateCellContent(rowIndex, colIndex, $event ?? '')"
                       :placeholder="cell.type === 'th' ? '제목' : '내용'"
-                      class="w-full text-sm"
-                      :class="cell.type === 'th' ? 'font-medium' : ''"
-                      rows="2"
-                      autoResize
+                      :is-header="cell.type === 'th'"
                     />
 
                     <!-- 병합 표시 배지 -->
@@ -971,13 +969,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, nextTick } from 'vue'
+import { computed, ref } from 'vue'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
 import type { TableRow, ContentTitle, ContentText, AdditionalContent, TableCell, WrapSettings } from '@/types'
 import { normalizeColorInput, isValidHexColor } from '@/utils/colorHelper'
 import { POINT_COLOR_SUFFIX } from '@/utils/pointColor'
 import { processQuillHtml } from '@/utils/quillHtmlProcessor'
+import TableCellEditor from './TableCellEditor.vue'
 import type Quill from 'quill'
 
 const moduleStore = useModuleStore()
@@ -1296,44 +1295,16 @@ const updateCellContent = (rowIndex: number, colIndex: number, content: string) 
   }
 }
 
-// 내용 입력에서 드래그 선택한 구간만 **로 감싸 굵게 처리 (다시 누르면 해제)
-// 렌더러가 escape 이후 **...** 마커를 <strong>으로 변환한다
-const applyCellBold = (rowIndex: number, colIndex: number, cell: TableCell) => {
-  const el = document.getElementById(`tcell-${cell.id}`) as HTMLTextAreaElement | null
-  if (!el) return
-  const start = el.selectionStart ?? 0
-  const end = el.selectionEnd ?? 0
-  if (start === end) return // 드래그로 텍스트를 선택해야 동작
+// 셀별 내용 에디터 인스턴스 참조 (굵게 버튼이 해당 셀 에디터의 선택에 작용)
+const cellEditorRefs = new Map<string, { toggleBold: () => void }>()
+const setCellEditorRef = (id: string, el: unknown) => {
+  if (el) cellEditorRefs.set(id, el as { toggleBold: () => void })
+  else cellEditorRefs.delete(id)
+}
 
-  const content = cell.content ?? ''
-  const selected = content.slice(start, end)
-  let newContent: string
-  let newStart = start
-  let newEnd = end
-
-  if (selected.startsWith('**') && selected.endsWith('**') && selected.length >= 4) {
-    // 선택 자체가 **…**를 포함 → 마커 제거
-    const inner = selected.slice(2, -2)
-    newContent = content.slice(0, start) + inner + content.slice(end)
-    newEnd = start + inner.length
-  } else if (content.slice(start - 2, start) === '**' && content.slice(end, end + 2) === '**') {
-    // 선택 바깥을 **가 감싼 경우 → 마커 제거
-    newContent = content.slice(0, start - 2) + selected + content.slice(end + 2)
-    newStart = start - 2
-    newEnd = end - 2
-  } else {
-    // 선택 구간을 **로 감싸 굵게
-    newContent = content.slice(0, start) + '**' + selected + '**' + content.slice(end)
-    newStart = start + 2
-    newEnd = end + 2
-  }
-
-  updateCellContent(rowIndex, colIndex, newContent)
-  // DOM 갱신 후 선택 영역 복원 (연속 편집 편의)
-  nextTick(() => {
-    el.focus()
-    el.setSelectionRange(newStart, newEnd)
-  })
+// 내용에서 드래그 선택한 구간을 굵게 토글 (에디터가 ** 마커로 저장, 화면엔 굵게로 표시)
+const applyCellBold = (cell: TableCell) => {
+  cellEditorRefs.get(cell.id)?.toggleBold()
 }
 
 const updateCellColspan = (rowIndex: number, colIndex: number, value: string) => {

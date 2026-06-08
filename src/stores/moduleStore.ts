@@ -14,6 +14,7 @@ import { useEditorStore } from './editorStore'
 import { formatTextWithBreaks } from '@/utils/textUtils'
 import { generateUniqueId, applyStylesToHtml } from '@/utils/htmlUtils'
 import {
+  replaceModuleNewsHeaderContent,
   replaceModuleBasicHeaderContent,
   replaceModuleImageHeaderContent,
   replaceModuleDescTextContent,
@@ -1066,6 +1067,9 @@ export const useModuleStore = defineStore('module', () => {
     const properties = resolvePointColors(module.properties, editorStore.wrapSettings.pointColor)
 
     switch (moduleId) {
+      case 'ModuleNewsHeader':
+        return replaceModuleNewsHeaderContent(html, properties)
+
       case 'ModuleBasicHeader':
         return replaceModuleBasicHeaderContent(html, properties)
 
