@@ -544,12 +544,16 @@ export const footerSnsProcessor: ContentProcessor = (html, properties) => {
     // SNS 아이콘 (미설정 시 숨김)
     [properties.showHome !== true, '홈'],
     [properties.showFacebook !== true, '페이스북'],
+    [properties.showX !== true, 'X(트위터)'],
     [properties.showBlog !== true, '블로그'],
     [properties.showYoutube !== true, '유튜브'],
     [properties.showInstagram !== true, '인스타그램'],
     [properties.showKakao !== true, '카카오톡'],
-    [properties.showX !== true, 'X(트위터)'],
+    [properties.showLinkedin !== true, '링크드인'],
     [properties.showZuzuzu !== true, '쭈쭈쭈'],
+    [properties.showEn !== true, '영어'],
+    [properties.showJp !== true, '일본어'],
+    [properties.showTh !== true, '태국어'],
   ]
 
   // 문의 이메일 안내 줄: 미설정 시 발신전용 안내 문구로 대체 (설정 시 기존 문구 유지)
@@ -585,6 +589,17 @@ export const moduleImageHeaderTopProcessor: ContentProcessor = (html, properties
     const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`)
     return acc.replace(new RegExp(`<!-- ${escaped} -->.*?<!-- //${escaped} -->`, 'gs'), '')
   }, html)
+}
+
+/**
+ * Module12 타이틀 조건부 제거 프로세서
+ * showTitle이 false이면 타이틀 <p> 영역(감싸는 마커 블록)을 통째로 제거 (미설정 시 표시)
+ */
+export const module12TitleProcessor: ContentProcessor = (html, properties) => {
+  if (properties.showTitle === false) {
+    return html.replace(/<!-- 타이틀 -->[\s\S]*?<!-- \/\/타이틀 -->/g, '')
+  }
+  return html
 }
 
 /**

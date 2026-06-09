@@ -1771,6 +1771,14 @@
           "group": "회사 정보"
         },
         {
+          "key": "snsIconBgColor",
+          "label": "SNS 아이콘 배경색",
+          "type": "color",
+          "default": "#333333",
+          "hint": "모든 SNS 원형 아이콘의 배경색을 일괄 지정합니다.",
+          "group": "SNS 링크"
+        },
+        {
           "key": "showHome",
           "label": "홈 아이콘 표시",
           "type": "boolean",
@@ -1784,22 +1792,6 @@
           "default": "#",
           "placeholder": "홈페이지 URL",
           "showWhen": "showHome",
-          "group": "SNS 링크"
-        },
-        {
-          "key": "showInstagram",
-          "label": "인스타그램 아이콘 표시",
-          "type": "boolean",
-          "default": true,
-          "group": "SNS 링크"
-        },
-        {
-          "key": "instagramUrl",
-          "label": "인스타그램 링크",
-          "type": "url",
-          "default": "#",
-          "placeholder": "인스타그램 URL",
-          "showWhen": "showInstagram",
           "group": "SNS 링크"
         },
         {
@@ -1867,6 +1859,22 @@
           "group": "SNS 링크"
         },
         {
+          "key": "showInstagram",
+          "label": "인스타그램 아이콘 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "SNS 링크"
+        },
+        {
+          "key": "instagramUrl",
+          "label": "인스타그램 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "인스타그램 URL",
+          "showWhen": "showInstagram",
+          "group": "SNS 링크"
+        },
+        {
           "key": "showKakao",
           "label": "카카오톡 아이콘 표시",
           "type": "boolean",
@@ -1883,10 +1891,83 @@
           "group": "SNS 링크"
         },
         {
+          "key": "showLinkedin",
+          "label": "링크드인 아이콘 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "SNS 링크"
+        },
+        {
+          "key": "linkedinUrl",
+          "label": "링크드인 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "링크드인 URL",
+          "showWhen": "showLinkedin",
+          "group": "SNS 링크"
+        },
+        {
           "key": "showZuzuzu",
           "label": "쭈쭈쭈 링크 아이콘 표시",
           "type": "boolean",
           "default": false,
+          "group": "SNS 링크"
+        },
+        {
+          "key": "zuzuzuUrl",
+          "label": "쭈쭈쭈 링크",
+          "type": "url",
+          "default": "https://kcoupet.com/",
+          "placeholder": "쭈쭈쭈 URL",
+          "showWhen": "showZuzuzu",
+          "group": "SNS 링크"
+        },
+        {
+          "key": "showEn",
+          "label": "영어 뉴스레터 아이콘 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "SNS 링크"
+        },
+        {
+          "key": "enUrl",
+          "label": "영어 뉴스레터 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "영어 뉴스레터 URL",
+          "showWhen": "showEn",
+          "group": "SNS 링크"
+        },
+        {
+          "key": "showJp",
+          "label": "일본어 뉴스레터 아이콘 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "SNS 링크"
+        },
+        {
+          "key": "jpUrl",
+          "label": "일본어 뉴스레터 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "일본어 뉴스레터 URL",
+          "showWhen": "showJp",
+          "group": "SNS 링크"
+        },
+        {
+          "key": "showTh",
+          "label": "태국어 뉴스레터 아이콘 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "SNS 링크"
+        },
+        {
+          "key": "thUrl",
+          "label": "태국어 뉴스레터 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "태국어 뉴스레터 URL",
+          "showWhen": "showTh",
           "group": "SNS 링크"
         },
         {
@@ -5348,12 +5429,20 @@
       "htmlFile": "Module12.html",
       "editableProps": [
         {
+          "key": "showTitle",
+          "label": "타이틀 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "타이틀"
+        },
+        {
           "key": "titleText",
           "label": "타이틀",
           "type": "text",
           "default": "콘텐츠 타이틀",
           "placeholder": "타이틀을 입력하세요",
           "required": true,
+          "showWhen": "showTitle",
           "group": "타이틀"
         },
         {
@@ -5362,6 +5451,7 @@
           "type": "text",
           "default": "16px",
           "placeholder": "예: 16px, 18px",
+          "showWhen": "showTitle",
           "group": "타이틀"
         },
         {
@@ -5369,6 +5459,7 @@
           "label": "색상",
           "type": "color",
           "default": "#f20404",
+          "showWhen": "showTitle",
           "group": "타이틀"
         },
         {
@@ -5377,6 +5468,7 @@
           "type": "text",
           "default": "1.7",
           "placeholder": "예: 1.5, 1.7em",
+          "showWhen": "showTitle",
           "group": "타이틀"
         },
         {

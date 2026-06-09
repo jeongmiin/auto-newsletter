@@ -397,6 +397,21 @@ export const moduleFooterConfig: ModuleConfig = {
     fax: '02-6121-6363',
     unsubscribeUrl: '#',
     inquiryEmail: 'hvackorea@esgroup.net',
+    // SNS 아이콘 공통 배경색 (모든 원형 아이콘에 적용) — 기존 하드코딩 #333333을 속성화
+    snsIconBgColor: '#333333',
+    // SNS 링크 (미설정 시 #로 폴백, 미노출 아이콘은 프로세서가 블록 제거)
+    homeUrl: '#',
+    facebookUrl: '#',
+    xUrl: '#',
+    blogUrl: '#',
+    youtubeUrl: '#',
+    instagramUrl: '#',
+    kakaoUrl: '#',
+    linkedinUrl: '#',
+    zuzuzuUrl: 'https://kcoupet.com/',
+    enUrl: '#',
+    jpUrl: '#',
+    thUrl: '#',
   },
   processors: [processors.footerSnsProcessor],
 }
@@ -465,6 +480,7 @@ export const module12Config: ModuleConfig = {
   quillFields: ['contentText'],
   lineHeightMap: { contentText: 'textLineHeight' },
   defaults: {
+    showTitle: true,
     titleText: '콘텐츠 타이틀',
     titleFontSize: '16px',
     titleColor: '#111111',
@@ -482,6 +498,7 @@ export const module12Config: ModuleConfig = {
     paddingBottom: '10px',
     paddingLeft: '20px',
   },
+  processors: [processors.module12TitleProcessor],
 }
 
 /**

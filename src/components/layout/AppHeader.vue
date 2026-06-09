@@ -219,7 +219,7 @@ const previewEmail = async (): Promise<void> => {
     }
     .device-frame {
       width: 100%;
-      max-width: 720px;
+      max-width: 680px;
       transition: max-width 0.25s ease;
     }
     .device-label {
@@ -252,7 +252,7 @@ const previewEmail = async (): Promise<void> => {
   </div>
   <div class="stage">
     <div class="device-frame">
-      <div class="device-label" id="device-label">${initialMode === 'mobile' ? '모바일 · 너비 375px' : 'PC · 너비 720px'}</div>
+      <div class="device-label" id="device-label">${initialMode === 'mobile' ? '모바일 · 너비 375px' : 'PC · 너비 680px'}</div>
       <iframe class="preview-frame" id="preview-frame"></iframe>
     </div>
   </div>
@@ -288,7 +288,7 @@ const previewEmail = async (): Promise<void> => {
         document.body.className = 'mode-pc';
         btnPc.classList.add('active');
         btnMobile.classList.remove('active');
-        label.textContent = 'PC · 너비 720px';
+        label.textContent = 'PC · 너비 680px';
       }
       // 폭 전환 애니메이션(0.25s) 이후 높이 재측정
       setTimeout(syncHeight, 300);
