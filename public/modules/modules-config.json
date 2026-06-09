@@ -2789,7 +2789,7 @@
           "key": "leftBigBtnMarginTop",
           "label": "큰 버튼 상단 여백",
           "type": "text",
-          "default": "0px",
+          "default": "10px",
           "placeholder": "예: 0px, 10px",
           "showWhen": "showLeftBigBtn",
           "group": "왼쪽 버튼"
@@ -3151,7 +3151,7 @@
           "key": "rightBigBtnMarginTop",
           "label": "큰 버튼 상단 여백",
           "type": "text",
-          "default": "0px",
+          "default": "10px",
           "placeholder": "예: 0px, 10px",
           "showWhen": "showRightBigBtn",
           "group": "오른쪽 버튼"

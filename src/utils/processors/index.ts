@@ -402,6 +402,13 @@ export const module04ButtonProcessor: ContentProcessor = (html, properties) => {
     result = result.replace(/<!-- 오른쪽 큰 버튼 -->.*?<!-- \/\/오른쪽 큰 버튼 -->/gs, '')
   }
 
+  // 작은 버튼 4개가 모두 비노출이면 감싸는 div(빈 컨테이너)도 제거
+  // → 빈 div의 padding(10px 0)으로 인한 여백 + 메일 클라이언트의 &nbsp; 삽입 방지
+  result = result.replace(
+    /<div align="left" style="display: block; padding: 10px 0; box-sizing: border-box;">\s*<\/div>/g,
+    '',
+  )
+
   return result
 }
 
