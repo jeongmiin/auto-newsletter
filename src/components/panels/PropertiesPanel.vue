@@ -277,6 +277,13 @@
                   <option value="2.0">2.0</option>
                   <option selected>행간</option>
                 </select>
+                <select class="ql-letterSpacing" title="자간(글자 간격)">
+                  <option value="-1px">-1px</option>
+                  <option value="-0.7px">-0.7px</option>
+                  <option value="-0.5px">-0.5px</option>
+                  <option value="-0.3px">-0.3px</option>
+                  <option selected>자간</option>
+                </select>
               </span>
               <span class="ql-formats">
                 <button class="ql-list" value="ordered" title="번호 목록"></button>
@@ -1534,6 +1541,15 @@ const togglePointColor = (key: string, value: boolean): void => {
 }
 :deep(.ql-snow .ql-picker.ql-fontSize .ql-picker-label[data-label]:not([data-label=''])::before),
 :deep(.ql-snow .ql-picker.ql-fontSize .ql-picker-item[data-label]:not([data-label=''])::before) {
+  content: attr(data-label);
+}
+
+/* 자간(letter-spacing) 드롭다운 픽커 — 선택 영역에 부분 적용(인라인) */
+:deep(.ql-snow .ql-picker.ql-letterSpacing) {
+  width: 64px;
+}
+:deep(.ql-snow .ql-picker.ql-letterSpacing .ql-picker-label[data-label]:not([data-label=''])::before),
+:deep(.ql-snow .ql-picker.ql-letterSpacing .ql-picker-item[data-label]:not([data-label=''])::before) {
   content: attr(data-label);
 }
 

@@ -62,7 +62,7 @@
 
     <!-- 호버시 표시되는 레이블 (모든 모듈에 표시) -->
     <div
-      class="absolute top-2 left-9 z-10 px-2 py-1 bg-black/90 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+      class="absolute bottom-2 right-2 z-10 px-2 py-1 bg-black/90 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
     >
       <span class="inline-flex items-center justify-center w-6 h-6 mr-1 bg-blue-500 text-white rounded-full text-xs font-medium">{{ index + 1 }}</span>
       {{ moduleMetadata?.name || module.moduleId }}

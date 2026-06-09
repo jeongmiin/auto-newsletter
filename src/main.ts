@@ -95,10 +95,12 @@ import { registerHighlightMarker } from './utils/quillHighlightMarker'
 import { registerLineHeight } from './utils/quillLineHeight'
 import { registerWordBreak } from './utils/quillWordBreak'
 import { registerFontSize } from './utils/quillFontSize'
+import { registerLetterSpacing } from './utils/quillLetterSpacing'
 registerHighlightMarker()
 registerLineHeight()
 registerWordBreak()
 registerFontSize()
+registerLetterSpacing()
 import Select from 'primevue/select'
 import ToggleSwitch from 'primevue/toggleswitch'
 import Panel from 'primevue/panel'

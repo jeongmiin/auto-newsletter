@@ -6,6 +6,7 @@
 import { replaceModuleContent, replaceModuleContentSync } from './moduleContentProcessor'
 import { MODULE_CONFIG_REGISTRY } from './moduleConfigs'
 import { buildCompanyInfoFromLegacy } from './moduleMigrations'
+import { escapeForHtml } from './htmlUtils'
 import type { ProcessorContext } from './moduleContentProcessor'
 
 /**
@@ -369,9 +370,9 @@ export function replaceModuleTableContent(
         const colspanAttr = cell.colspan > 1 ? ` colspan="${cell.colspan}"` : ''
         const rowspanAttr = cell.rowspan > 1 ? ` rowspan="${cell.rowspan}"` : ''
 
-        const safeContent = (cell.content || '')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
+        // & < > " → HTML 엔티티로 변환(&부터 처리해 이중 이스케이프 방지) 후
+        // 줄바꿈/굵게 마커만 태그로 복원
+        const safeContent = escapeForHtml(cell.content || '')
           .replace(/\r?\n/g, '<br>')
           // **드래그 선택 텍스트** → 굵게 (escape 이후 마커만 변환, 이메일 호환 inline style)
           .replace(/\*\*([^*]+?)\*\*/g, '<strong style="font-weight:700;">$1</strong>')

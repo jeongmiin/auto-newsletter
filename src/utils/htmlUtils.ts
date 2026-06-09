@@ -52,7 +52,7 @@ export function removeSubTitleDiv(html: string): string {
 /**
  * HTML 특수문자 이스케이프 (테이블 콘텐츠용)
  */
-function escapeForHtml(text: string): string {
+export function escapeForHtml(text: string): string {
   return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 }
 
