@@ -10,15 +10,15 @@
               style="display:block;border:0;outline:none;text-decoration:none; width: 100%; border-radius: {{imageBorderRadius}};">
           </a><!-- //이미지 링크 -->
         </div>
-        <div style="float: left; width: calc((570px - 100%) * 570); max-width: 100%; min-width: 50%; padding: 25px 0;">
+        <div style="float: left; width: calc((570px - 100%) * 570); max-width: 100%; min-width: 50%; box-sizing: border-box; padding: {{textAreaPaddingTop}} {{textAreaPaddingRight}} {{textAreaPaddingBottom}} {{textAreaPaddingLeft}};">
           <h2
             style="margin:0; padding-bottom: 10px; line-height:{{titleLineHeight}};font-family: AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif;font-size:{{titleFontSize}};font-style:normal;font-weight:bold;color:#111111; word-break:keep-all; word-wrap:break-word; overflow-wrap:break-word;">
             {{title}}
           </h2>
-          <p
+          <div
             style="margin:0;font-size:{{contentTextFontSize}};font-family:AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif;color:#333333; padding: 0 10px; box-sizing: border-box; word-break:keep-all; word-wrap:break-word; overflow-wrap:break-word;">
             {{contentText}}
-          </p>
+          </div>
           <!-- 버튼 --><a target="_blank" href="{{buttonUrl}}"
             style="text-decoration:none; display: inline-block; background-color:{{buttonBgColor}}; border-radius:30px; padding:5px 20px; margin-top: 10px; color:{{buttonTextColor}}; font-size: 13px; line-height: 1.5em; font-family: AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif; box-sizing: border-box;"><strong>{{buttonText}}</strong></a><!-- //버튼 -->
         </div>

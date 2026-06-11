@@ -617,10 +617,16 @@ export const module10LabelProcessor: ContentProcessor = (html, properties) => {
  * showLabel이 false이면 라벨(<strong>) 영역 제거 (미설정 시 표시)
  */
 export const module11LabelProcessor: ContentProcessor = (html, properties) => {
+  let result = html
+  // 라벨 비노출 (미설정 시 표시)
   if (properties.showLabel === false) {
-    return html.replace(/<!-- 라벨 -->.*?<!-- \/\/라벨 -->/gs, '')
+    result = result.replace(/<!-- 라벨 -->.*?<!-- \/\/라벨 -->/gs, '')
   }
-  return html
+  // 버튼 비노출 — 버튼이 담긴 우측 <td>까지 제거(빈 셀 잔여 방지, 미설정 시 표시)
+  if (properties.showButton === false) {
+    result = result.replace(/<!-- 버튼 -->[\s\S]*?<!-- \/\/버튼 -->/g, '')
+  }
+  return result
 }
 
 /**

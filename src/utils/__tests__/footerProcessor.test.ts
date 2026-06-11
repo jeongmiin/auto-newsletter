@@ -111,36 +111,36 @@ describe('footerSnsProcessor - 회사 정보 H/T/E 토글', () => {
 describe('footerSnsProcessor - SNS 아이콘 토글 (쭈쭈쭈 포함)', () => {
   it('미설정 시 모든 SNS 아이콘이 제거됨 (기본 숨김)', () => {
     const result = run({})
-    expect(result).not.toContain('sns_01.png') // 홈
-    expect(result).not.toContain('sns_zuzuzu.png') // 쭈쭈쭈
-    expect(result).not.toContain('kcoupet.com')
+    expect(result).not.toContain('icon_home.png') // 홈
+    expect(result).not.toContain('icon_zuzuzu.png') // 쭈쭈쭈
+    expect(result).not.toContain('{{zuzuzuUrl}}')
   })
 
   it('showZuzuzu=true 이면 쭈쭈쭈 링크가 표시됨', () => {
     const result = run({ showZuzuzu: true })
-    expect(result).toContain('sns_zuzuzu.png')
-    expect(result).toContain('kcoupet.com')
+    expect(result).toContain('icon_zuzuzu.png')
+    expect(result).toContain('{{zuzuzuUrl}}') // 링크는 placeholder로 유지(치환은 콘텐츠 교체 단계)
   })
 
   it('showZuzuzu=false 이면 쭈쭈쭈 블록이 제거됨', () => {
     const result = run({ showZuzuzu: false })
-    expect(result).not.toContain('sns_zuzuzu.png')
+    expect(result).not.toContain('icon_zuzuzu.png')
     expect(result).not.toContain('<!-- 쭈쭈쭈 -->')
   })
 
   it('개별 SNS 토글이 독립적으로 동작함', () => {
     const result = run({ showHome: true, showInstagram: true })
-    expect(result).toContain('sns_01.png') // 홈 표시
-    expect(result).toContain('sns_05.png') // 인스타그램 표시
-    expect(result).not.toContain('sns_02.png') // 페이스북 미표시
-    expect(result).not.toContain('sns_zuzuzu.png') // 쭈쭈쭈 미표시
+    expect(result).toContain('icon_home.png') // 홈 표시
+    expect(result).toContain('icon_instagram.png') // 인스타그램 표시
+    expect(result).not.toContain('icon_facebook.png') // 페이스북 미표시
+    expect(result).not.toContain('icon_zuzuzu.png') // 쭈쭈쭈 미표시
   })
 
   it('X(트위터) 마커처럼 정규식 특수문자가 포함된 라벨도 안전하게 처리됨', () => {
     const shown = run({ showX: true })
-    expect(shown).toContain('sns_08.png') // X 아이콘 표시
+    expect(shown).toContain('icon_X.png') // X 아이콘 표시
     const hidden = run({ showX: false })
-    expect(hidden).not.toContain('sns_08.png')
+    expect(hidden).not.toContain('icon_X.png')
     // 마커가 깨끗하게 제거되어 잔여 주석이 없어야 함
     expect(hidden).not.toContain('<!-- X(트위터) -->')
   })
@@ -161,7 +161,7 @@ describe('footerSnsProcessor - SNS 아이콘 토글 (쭈쭈쭈 포함)', () => {
     })
     // 모두 표시이므로 어떤 마커 블록도 제거되지 않지만, 콘텐츠는 모두 존재해야 함
     expect(result).toContain('<strong>H</strong>')
-    expect(result).toContain('sns_zuzuzu.png')
-    expect(result).toContain('sns_01.png')
+    expect(result).toContain('icon_zuzuzu.png')
+    expect(result).toContain('icon_home.png')
   })
 })

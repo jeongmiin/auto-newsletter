@@ -378,6 +378,10 @@ export const module07Config: ModuleConfig = {
     buttonTextColor: '#333333',
     imageBorderRadius: '0px',
     imageLinkUrl: '#',
+    textAreaPaddingTop: '25px',
+    textAreaPaddingRight: '0px',
+    textAreaPaddingBottom: '25px',
+    textAreaPaddingLeft: '0px',
   },
   processors: [processors.module07ButtonProcessor, processors.imageLinkProcessor],
 }
@@ -466,6 +470,7 @@ export const module11Config: ModuleConfig = {
     labelTextLineHeight: '1.7',
     contentText: '2022년 국내전시회 참가기업 지원사업(~2/25)',
     contentTextLineHeight: '1.7',
+    showButton: true,
     buttonText: 'GO →',
     buttonBgColor: '#999999',
     buttonTextColor: '#ffffff',

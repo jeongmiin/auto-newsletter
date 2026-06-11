@@ -46,6 +46,7 @@ import {
 import { convertQuillListsToEmailHtml } from '@/utils/quillHtmlProcessor'
 import { resolvePointColors } from '@/utils/pointColor'
 import { migrateModuleProperties } from '@/utils/moduleMigrations'
+import { sanitizeHtml } from '@/utils/sanitize'
 
 export const useModuleStore = defineStore('module', () => {
   // ============= State =============
@@ -1222,6 +1223,36 @@ export const useModuleStore = defineStore('module', () => {
 </html>`
   }
 
+  /**
+   * 모듈 미리보기용 콘텐츠 HTML 생성 (기본 속성으로 단발 렌더)
+   * - store에 추가하지 않고 모듈 템플릿을 기본값으로 렌더한 콘텐츠만 반환
+   * - ModulePanel 호버 미리보기(iframe srcdoc)에서 사용. 기존 replaceModuleContent 스위치 재사용
+   */
+  const renderModulePreview = async (moduleId: string): Promise<string> => {
+    if (availableModules.value.length === 0) {
+      await loadAvailableModules()
+    }
+    const meta = availableModules.value.find((m) => m.id === moduleId)
+    if (!meta) throw new Error(`Unknown module: ${moduleId}`)
+
+    const basePath = import.meta.env.BASE_URL || '/'
+    const modulePath = normalizePath(`${basePath}modules/${moduleId}.html`)
+    const response = await fetch(modulePath)
+    if (!response.ok) throw new Error(`Failed to load module HTML: ${response.status}`)
+    let html = await response.text()
+
+    const tempModule: ModuleInstance = {
+      id: 'preview',
+      moduleId,
+      order: 0,
+      properties: getDefaultProperties(meta),
+      styles: {},
+    }
+    html = await replaceModuleContent(html, tempModule)
+    html = convertQuillListsToEmailHtml(html)
+    return sanitizeHtml(html)
+  }
+
   // ============= Helper Functions =============
   const getDefaultProperties = (moduleMetadata: ModuleMetadata): Record<string, unknown> => {
     const props: Record<string, unknown> = {}
@@ -1294,6 +1325,7 @@ export const useModuleStore = defineStore('module', () => {
     clearAll,
     markAsSaved,
     generateHtml,
+    renderModulePreview,
     addTableRow,
     updateTableRow,
     removeTableRow,

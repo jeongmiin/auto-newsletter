@@ -4755,6 +4755,38 @@
           "group": "텍스트"
         },
         {
+          "key": "textAreaPaddingTop",
+          "label": "텍스트 영역 상단 여백",
+          "type": "text",
+          "default": "25px",
+          "placeholder": "예: 25px, 0px",
+          "group": "텍스트"
+        },
+        {
+          "key": "textAreaPaddingRight",
+          "label": "텍스트 영역 우측 여백",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 10px",
+          "group": "텍스트"
+        },
+        {
+          "key": "textAreaPaddingBottom",
+          "label": "텍스트 영역 하단 여백",
+          "type": "text",
+          "default": "25px",
+          "placeholder": "예: 25px, 0px",
+          "group": "텍스트"
+        },
+        {
+          "key": "textAreaPaddingLeft",
+          "label": "텍스트 영역 좌측 여백",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 10px",
+          "group": "텍스트"
+        },
+        {
           "key": "showButton",
           "label": "표시",
           "type": "boolean",
@@ -4883,6 +4915,38 @@
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
+          "group": "텍스트"
+        },
+        {
+          "key": "textAreaPaddingTop",
+          "label": "텍스트 영역 상단 여백",
+          "type": "text",
+          "default": "25px",
+          "placeholder": "예: 25px, 0px",
+          "group": "텍스트"
+        },
+        {
+          "key": "textAreaPaddingRight",
+          "label": "텍스트 영역 우측 여백",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 10px",
+          "group": "텍스트"
+        },
+        {
+          "key": "textAreaPaddingBottom",
+          "label": "텍스트 영역 하단 여백",
+          "type": "text",
+          "default": "25px",
+          "placeholder": "예: 25px, 0px",
+          "group": "텍스트"
+        },
+        {
+          "key": "textAreaPaddingLeft",
+          "label": "텍스트 영역 좌측 여백",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 10px",
           "group": "텍스트"
         },
         {
@@ -5398,10 +5462,18 @@
           "group": "텍스트"
         },
         {
+          "key": "showButton",
+          "label": "버튼 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "버튼"
+        },
+        {
           "key": "buttonText",
           "label": "텍스트",
           "type": "text",
           "default": "GO →",
+          "showWhen": "showButton",
           "group": "버튼"
         },
         {
@@ -5409,6 +5481,7 @@
           "label": "배경색",
           "type": "text",
           "default": "#999999",
+          "showWhen": "showButton",
           "group": "버튼"
         },
         {
@@ -5416,6 +5489,7 @@
           "label": "글자색",
           "type": "text",
           "default": "#ffffff",
+          "showWhen": "showButton",
           "group": "버튼"
         }
       ]

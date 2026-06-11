@@ -357,7 +357,12 @@ const buildHtmlDocument = (finalHtml: string, includeMetadata: boolean): string 
       })),
       wrapSettings: editorStore.wrapSettings,
     }
+    // 콘텐츠의 '-->' 등으로 HTML 주석이 조기 종료되어 파일이 깨지는 것을 방지.
+    // <, > 를 < / > 로 치환 → JSON 문자열 값 안에서만 등장하므로 JSON.parse가 복원(import 변경 불필요).
+    const BACKSLASH = String.fromCharCode(92)
     const moduleMetadataJson = JSON.stringify(projectState)
+      .replace(/</g, BACKSLASH + 'u003c')
+      .replace(/>/g, BACKSLASH + 'u003e')
     metadataBlock = `
 <!-- AUTO_NEWSLETTER_METADATA_START -->
 <!-- ${moduleMetadataJson} -->
@@ -378,11 +383,53 @@ ${finalHtml}${metadataBlock}
 </html>`
 }
 
+type DownloadResult =
+  | 'saved' // File System Access API로 디스크 저장 확인됨
+  | 'triggered' // 폴백(anchor) — 브라우저에 다운로드 위임, 실제 쓰기 결과는 앱이 확정 불가
+  | 'cancelled' // 사용자가 저장 대화상자를 취소
+
+/** showSaveFilePicker 최소 타입 (lib.dom 버전 차이 대응) */
+interface SaveFilePickerWindow {
+  showSaveFilePicker?: (opts?: {
+    suggestedName?: string
+    types?: Array<{ description?: string; accept: Record<string, string[]> }>
+  }) => Promise<{
+    createWritable: () => Promise<{
+      write: (data: Blob) => Promise<void>
+      close: () => Promise<void>
+    }>
+  }>
+}
+
 /**
- * 브라우저 다운로드 트리거
+ * 파일 저장 트리거
+ * - File System Access API 지원 시: 실제 디스크 쓰기 성공/실패(디스크 풀·권한·취소)를 감지
+ * - 미지원 시: 기존 anchor 다운로드로 폴백 (URL 해제는 지연시켜 조기 취소로 인한 저장 실패 방지)
  */
-const triggerDownload = (content: string, filename: string): void => {
+const triggerDownload = async (content: string, filename: string): Promise<DownloadResult> => {
   const blob = new Blob([content], { type: 'text/html; charset=utf-8' })
+
+  const showSaveFilePicker = (window as unknown as SaveFilePickerWindow).showSaveFilePicker
+  if (typeof showSaveFilePicker === 'function') {
+    let handle
+    try {
+      handle = await showSaveFilePicker({
+        suggestedName: filename,
+        types: [{ description: 'HTML 파일', accept: { 'text/html': ['.html'] } }],
+      })
+    } catch (err) {
+      // 사용자가 대화상자를 취소한 경우는 실패가 아님
+      if (err instanceof DOMException && err.name === 'AbortError') return 'cancelled'
+      throw err
+    }
+    // 쓰기 단계의 실패(디스크 공간 부족 등)는 상위 catch로 전파되어 정확히 안내됨
+    const writable = await handle.createWritable()
+    await writable.write(blob)
+    await writable.close()
+    return 'saved'
+  }
+
+  // 폴백: anchor 다운로드 (쓰기 결과 감지 불가) — revoke를 지연시켜 큰 파일 조기 취소 방지
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.href = url
@@ -390,7 +437,8 @@ const triggerDownload = (content: string, filename: string): void => {
   document.body.appendChild(link)
   link.click()
   link.remove()
-  URL.revokeObjectURL(url)
+  setTimeout(() => URL.revokeObjectURL(url), 1000)
+  return 'triggered'
 }
 
 /**
@@ -419,7 +467,10 @@ const downloadHtml = async (includeMetadata: boolean): Promise<void> => {
     const prefix = includeMetadata ? '재편집용' : '발송용'
     const filename = `${prefix}_newsletter_${timestamp}.html`
 
-    triggerDownload(fullHtmlDocument, filename)
+    const result = await triggerDownload(fullHtmlDocument, filename)
+
+    // 사용자가 저장 대화상자를 취소 → 기록·저장표시·토스트 없이 종료(작업 상태 유지)
+    if (result === 'cancelled') return
 
     // 최근 내려받음 기록 (메모리)
     lastDownload.value = { time: now, type: includeMetadata ? '저장용' : '발송용' }
@@ -428,14 +479,22 @@ const downloadHtml = async (includeMetadata: boolean): Promise<void> => {
     if (includeMetadata) {
       moduleStore.markAsSaved()
     }
-    showSuccess(
-      '다운로드 완료',
-      includeMetadata
-        ? `${filename} (저장용 · 다시 불러와 편집 가능)`
-        : `${filename} (발송용 · 메타데이터 제거됨)`,
-    )
+
+    const kindLabel = includeMetadata
+      ? `${filename} (저장용 · 다시 불러와 편집 가능)`
+      : `${filename} (발송용 · 메타데이터 제거됨)`
+    if (result === 'saved') {
+      // 실제 디스크 저장 확인됨
+      showSuccess('저장 완료', kindLabel)
+    } else {
+      // 폴백 경로 — 앱이 저장 완료를 확정할 수 없으므로 정직하게 안내
+      showSuccess('다운로드 시작됨', `${kindLabel} · 브라우저 다운로드 표시줄을 확인하세요`)
+    }
   } catch (error) {
-    showError('다운로드 실패', error instanceof Error ? error.message : '알 수 없는 오류')
+    showError(
+      '저장 실패',
+      error instanceof Error ? error.message : '디스크 공간 부족·권한 등으로 저장하지 못했습니다',
+    )
   }
 }
 
