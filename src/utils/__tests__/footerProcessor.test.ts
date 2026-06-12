@@ -144,7 +144,38 @@ describe('footerSnsProcessor - SNS 아이콘 토글 (쭈쭈쭈 포함)', () => {
     // 마커가 깨끗하게 제거되어 잔여 주석이 없어야 함
     expect(hidden).not.toContain('<!-- X(트위터) -->')
   })
+})
 
+describe('footerSnsProcessor - 안내문구 다국어(영문) 토글', () => {
+  it('템플릿이 국문/영문 안내문구 마커를 포함해야 함 (사전 조건)', () => {
+    expect(footerHtml).toContain('<!-- 안내문구-국문 -->')
+    expect(footerHtml).toContain('<!-- 안내문구-영문 -->')
+  })
+
+  it('미설정 시 국문 안내문구만 노출됨 (영문 블록 제거)', () => {
+    const result = run({})
+    expect(result).toContain('메일 수신을 원치 않으시면')
+    expect(result).toContain('[수신거부]')
+    expect(result).not.toContain('Please note that this is a no-reply email')
+    expect(result).not.toContain('<!-- 안내문구-영문 -->')
+  })
+
+  it('showEnglishFooter=true 이면 영문 안내문구만 노출됨 (국문 블록 제거)', () => {
+    const result = run({ showEnglishFooter: true })
+    expect(result).toContain('Please note that this is a no-reply email')
+    expect(result).toContain('[unsubscription]')
+    expect(result).not.toContain('메일 수신을 원치 않으시면')
+    expect(result).not.toContain('<!-- 안내문구-국문 -->')
+  })
+
+  it('영문 안내문구의 unsubscription 링크가 수신거부 URL 속성과 연결됨', () => {
+    const result = run({ showEnglishFooter: true })
+    // 링크는 placeholder로 유지(치환은 콘텐츠 교체 단계)
+    expect(result).toContain('href="{{unsubscribeUrl}}"')
+  })
+})
+
+describe('footerSnsProcessor - 마커 잔여 검증', () => {
   it('처리 후 회사 정보/SNS 마커 주석이 남지 않아야 함 (전체 토글 ON 기준)', () => {
     const result = run({
       showWebsite: true,

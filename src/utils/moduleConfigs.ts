@@ -403,6 +403,8 @@ export const moduleFooterConfig: ModuleConfig = {
     fax: '02-6121-6363',
     unsubscribeUrl: '#',
     inquiryEmail: 'hvackorea@esgroup.net',
+    // 안내문구 다국어(영문) 표시 — 미설정 시 국문 안내문구 노출
+    showEnglishFooter: false,
     // SNS 아이콘 공통 배경색 (모든 원형 아이콘에 적용) — 기존 하드코딩 #333333을 속성화
     snsIconBgColor: '#333333',
     // SNS 링크 (미설정 시 #로 폴백, 미노출 아이콘은 프로세서가 블록 제거)

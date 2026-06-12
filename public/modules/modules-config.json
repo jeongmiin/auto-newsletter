@@ -1993,6 +1993,13 @@
           "placeholder": "문의용 이메일 주소",
           "showWhen": "showInquiry",
           "group": "수신거부 / 문의"
+        },
+        {
+          "key": "showEnglishFooter",
+          "label": "다국어(영문) 안내문구 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "수신거부 / 문의"
         }
       ]
     },
