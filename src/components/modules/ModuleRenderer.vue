@@ -185,10 +185,21 @@ const { renderedHtml, moduleMetadata, isLoading } = useModuleRenderer(props.modu
   text-decoration: line-through;
 }
 
+/*
+  Quill getSemanticHTML는 글머리=<ul>, 번호=<ol>로 시맨틱 태그를 출력한다(data-list 없음).
+  Tailwind preflight가 ul/ol의 마커를 list-style:none으로 제거하므로,
+  태그 기준으로 글머리(<ul>)는 블릿(•), 번호(<ol>)는 숫자(1.)가 보이도록 복원한다.
+  → 상단 미리보기 버튼/이메일 출력과 동일하게 표시된다.
+*/
+
+/* 글머리 기호(<ul>): 네이티브 블릿(•) 표시 */
 .module-content :deep(ul) {
-  padding: 0;
   margin: 0;
+  padding-left: 1.5em;
+  list-style: disc outside;
 }
+
+/* 번호 목록(<ol>): 카운터(::before)로 1. 2. 3. 표시 */
 .module-content :deep(ol) {
   padding: 0;
   margin: 0;
@@ -205,20 +216,6 @@ const { renderedHtml, moduleMetadata, isLoading } = useModuleRenderer(props.modu
 .module-content :deep(ol li::before) {
   content: counter(item) '. ';
   font-weight: bold;
-}
-
-/* data-list="bullet"일 때 · 표시 */
-.module-content :deep(ol:has(li[data-list='bullet'])) {
-  counter-reset: none;
-}
-
-.module-content :deep(ol li[data-list='bullet']) {
-  counter-increment: none;
-}
-
-.module-content :deep(ol li[data-list='bullet']::before) {
-  content: '· ';
-  font-weight: 700;
 }
 .module-content :deep(a) {
   color: #0066cc;

@@ -44,6 +44,7 @@ import {
   replaceDefaultTemplate,
 } from '@/utils/moduleContentReplacer'
 import { convertQuillListsToEmailHtml } from '@/utils/quillHtmlProcessor'
+import { flattenAlphaColorsInHtml } from '@/utils/colorFlatten'
 import { resolvePointColors } from '@/utils/pointColor'
 import { migrateModuleProperties } from '@/utils/moduleMigrations'
 import { sanitizeHtml } from '@/utils/sanitize'
@@ -1188,6 +1189,9 @@ export const useModuleStore = defineStore('module', () => {
           html = applyStylesToHtml(html, module.styles as Record<string, unknown>)
         }
 
+        // 반투명 색상을 전역 배경색과 합성해 불투명으로 평탄화 (이메일 호환)
+        html = flattenAlphaColorsInHtml(html, wrapSettings.backgroundColor)
+
         fullHtml += html + '\n'
       } catch (error) {
         console.error(
@@ -1197,8 +1201,11 @@ export const useModuleStore = defineStore('module', () => {
       }
     }
 
-    // wrap 스타일 생성
-    const wrapStyle = `width:100%; max-width:680px; margin:0 auto; background-color:${wrapSettings.backgroundColor}; border:${wrapSettings.borderWidth} ${wrapSettings.borderStyle} ${wrapSettings.borderColor};`
+    // wrap 스타일 생성 (래퍼 자체의 배경/테두리 알파는 이메일 본문(흰색) 기준으로 평탄화)
+    const wrapStyle = flattenAlphaColorsInHtml(
+      `width:100%; max-width:680px; margin:0 auto; background-color:${wrapSettings.backgroundColor}; border:${wrapSettings.borderWidth} ${wrapSettings.borderStyle} ${wrapSettings.borderColor};`,
+      '#ffffff',
+    )
 
     // wrapWithDocument가 false면 .wrap으로 감싼 콘텐츠만 반환
     if (!wrapWithDocument) {
@@ -1250,6 +1257,7 @@ export const useModuleStore = defineStore('module', () => {
     }
     html = await replaceModuleContent(html, tempModule)
     html = convertQuillListsToEmailHtml(html)
+    html = flattenAlphaColorsInHtml(html, useEditorStore().wrapSettings.backgroundColor)
     return sanitizeHtml(html)
   }
 

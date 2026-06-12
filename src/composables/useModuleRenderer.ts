@@ -5,6 +5,7 @@ import { useEditorStore } from '@/stores/editorStore'
 import { resolvePointColors } from '@/utils/pointColor'
 import { applyStylesToHtml } from '@/utils/htmlUtils'
 import { sanitizeHtml, sanitizeErrorMessage } from '@/utils/sanitize'
+import { flattenAlphaColorsInHtml } from '@/utils/colorFlatten'
 import {
   replaceModuleNewsHeaderContent,
   replaceModuleBasicHeaderContent,
@@ -193,6 +194,10 @@ export function useModuleRenderer(moduleId: string) {
       if (module.styles && Object.keys(module.styles).length > 0) {
         html = applyStylesToHtml(html, module.styles as Record<string, unknown>)
       }
+
+      // 반투명 색상(#RRGGBBAA·rgba)을 전역 배경색과 합성해 불투명 색으로 평탄화
+      // (이메일 클라이언트 호환을 위해 미리보기·내보내기 동일하게 처리)
+      html = flattenAlphaColorsInHtml(html, editorStore.wrapSettings.backgroundColor)
 
       // XSS 방어: HTML 정제 후 렌더링
       renderedHtml.value = sanitizeHtml(html)

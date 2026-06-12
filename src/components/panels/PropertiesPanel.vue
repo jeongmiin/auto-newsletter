@@ -46,17 +46,15 @@
           <div>
             <label class="block text-xs font-medium text-gray-600 mb-1">배경색</label>
             <div class="flex items-center gap-2">
-              <ColorPicker
+              <ColorAlphaPicker
                 :modelValue="getWrapColorValue('backgroundColor')"
                 @update:modelValue="handleWrapColorPickerUpdate('backgroundColor', $event)"
-                format="hex"
               />
               <InputText
                 :modelValue="wrapSettings.backgroundColor"
                 @update:modelValue="handleWrapColorInput('backgroundColor', $event ?? '')"
                 placeholder="#f9f9f9"
                 class="flex-1 font-mono text-xs"
-                size="small"
                 spellcheck="false"
               />
             </div>
@@ -66,17 +64,15 @@
           <div>
             <label class="block text-xs font-medium text-gray-600 mb-1">포인트 색상</label>
             <div class="flex items-center gap-2">
-              <ColorPicker
+              <ColorAlphaPicker
                 :modelValue="getWrapColorValue('pointColor')"
                 @update:modelValue="handleWrapColorPickerUpdate('pointColor', $event)"
-                format="hex"
               />
               <InputText
                 :modelValue="wrapSettings.pointColor"
                 @update:modelValue="handleWrapColorInput('pointColor', $event ?? '')"
                 placeholder="#2563eb"
                 class="flex-1 font-mono text-xs"
-                size="small"
                 spellcheck="false"
               />
             </div>
@@ -91,9 +87,10 @@
               <InputText
                 :modelValue="wrapSettings.borderWidth"
                 @update:modelValue="updateWrapProperty('borderWidth', $event ?? '')"
+                @focus="normalizeWrapBorderWidth"
+                @blur="normalizeWrapBorderWidth"
                 placeholder="0px"
-                class="w-16 font-mono text-xs !h-8"
-                size="small"
+                class="w-16 font-mono text-xs"
                 v-tooltip.bottom="'두께'"
               />
               <!-- 스타일 -->
@@ -103,24 +100,21 @@
                 :options="borderStyleOptions"
                 optionLabel="label"
                 optionValue="value"
-                class="w-20 !h-8"
-                size="small"
+                class="w-30 text-sm"
                 v-tooltip.bottom="'스타일'"
               />
               <!-- 색상 -->
               <div class="flex items-center gap-1 flex-1">
-                <ColorPicker
+                <ColorAlphaPicker
                   :modelValue="getWrapColorValue('borderColor')"
                   @update:modelValue="handleWrapColorPickerUpdate('borderColor', $event)"
-                  format="hex"
                   class="border-color-picker"
                 />
                 <InputText
                   :modelValue="wrapSettings.borderColor"
                   @update:modelValue="handleWrapColorInput('borderColor', $event ?? '')"
                   placeholder="#ddd"
-                  class="flex-1 font-mono text-xs !h-8"
-                  size="small"
+                  class="flex-1 font-mono text-xs"
                   spellcheck="false"
                 />
               </div>
@@ -206,12 +200,11 @@
             </div>
 
             <div class="flex items-center gap-2">
-              <!-- PrimeVue ColorPicker -->
-              <ColorPicker
+              <!-- 색상 + 투명도 -->
+              <ColorAlphaPicker
                 :modelValue="isUsingPoint(prop.key) ? pointColorValue : getColorValue(prop.key)"
                 @update:modelValue="handleColorPickerUpdate(prop.key, $event)"
                 :disabled="isUsingPoint(prop.key)"
-                format="hex"
               />
               <!-- PrimeVue InputText -->
               <InputText
@@ -236,6 +229,8 @@
             <InputText
               :modelValue="String(selectedModule.properties[prop.key] || '')"
               @update:modelValue="updateProperty(prop.key, $event ?? '')"
+              @focus="normalizePxField(prop)"
+              @blur="normalizePxField(prop)"
               :placeholder="prop.placeholder"
               class="w-full"
             />
@@ -863,10 +858,9 @@
                       <!-- 배경색 -->
                       <div class="flex items-center gap-1.5">
                         <label class="text-xs text-gray-500 w-7 shrink-0">배경</label>
-                        <ColorPicker
+                        <ColorAlphaPicker
                           :modelValue="getCellEffectiveBg(cell)"
                           @update:modelValue="updateCellBgColor(rowIndex, colIndex, $event)"
-                          format="hex"
                         />
                         <InputText
                           :modelValue="cell.bgColor || ''"
@@ -880,10 +874,9 @@
                       <!-- 글자색 -->
                       <div class="flex items-center gap-1.5">
                         <label class="text-xs text-gray-500 w-7 shrink-0">글자</label>
-                        <ColorPicker
+                        <ColorAlphaPicker
                           :modelValue="getCellEffectiveText(cell)"
                           @update:modelValue="updateCellTextColor(rowIndex, colIndex, $event)"
-                          format="hex"
                         />
                         <InputText
                           :modelValue="cell.textColor || ''"
@@ -983,11 +976,13 @@
 import { computed, ref } from 'vue'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
-import type { TableRow, ContentTitle, ContentText, AdditionalContent, TableCell, WrapSettings } from '@/types'
+import type { TableRow, ContentTitle, ContentText, AdditionalContent, TableCell, WrapSettings, EditableProp } from '@/types'
 import { normalizeColorInput, isValidHexColor } from '@/utils/colorHelper'
+import { normalizePxLength } from '@/utils/cssUnit'
 import { POINT_COLOR_SUFFIX } from '@/utils/pointColor'
 import { processQuillHtml } from '@/utils/quillHtmlProcessor'
 import TableCellEditor from './TableCellEditor.vue'
+import ColorAlphaPicker from '@/components/ColorAlphaPicker.vue'
 import type Quill from 'quill'
 
 const moduleStore = useModuleStore()
@@ -1127,6 +1122,29 @@ const defaultTablePreset: TablePreset = {
 
 const updateProperty = (key: string, value: unknown) => {
   moduleStore.updateModuleProperty(key, value)
+}
+
+// px 전용 길이 필드 판별: placeholder가 px 예시를 담고 %를 포함하지 않을 때.
+// (%·px 혼용 필드 — 커스텀 테이블 열 너비, 이미지 너비 등 — 은 자동 보정 제외)
+const isPxAutoField = (prop: EditableProp): boolean =>
+  prop.type === 'text' &&
+  !!prop.placeholder &&
+  /px/i.test(prop.placeholder) &&
+  !prop.placeholder.includes('%')
+
+// px 전용 필드의 단위 보정 (포커스·블러 시 모두 호출).
+// 단위 없는 숫자엔 'px'를 붙이고, 빈 값은 '0px' 기본값으로 채운다.
+const normalizePxField = (prop: EditableProp) => {
+  if (!isPxAutoField(prop) || !selectedModule.value) return
+  const raw = String(selectedModule.value.properties[prop.key] ?? '')
+  const fixed = normalizePxLength(raw)
+  if (fixed !== raw) updateProperty(prop.key, fixed)
+}
+
+// 공통 속성 테두리 두께(px)도 동일하게 단위 보정
+const normalizeWrapBorderWidth = () => {
+  const fixed = normalizePxLength(wrapSettings.value.borderWidth)
+  if (fixed !== wrapSettings.value.borderWidth) updateWrapProperty('borderWidth', fixed)
 }
 
 // 붙여넣기 시 모든 서식 제거 — 텍스트만 입력되도록 한다.
@@ -1524,6 +1542,43 @@ const togglePointColor = (key: string, value: boolean): void => {
   font-family: AppleSDGothic, 'malgun gothic', 'nanum gothic', 'Noto Sans KR', sans-serif;
 }
 
+/*
+  리스트 마커 단일화 — 글머리(bullet)=•, 번호(ordered)=1.
+  네이티브 <ol> 숫자 등 다른 마커를 모두 끄고, Quill이 각 항목에 넣는
+  <span class="ql-ui">의 ::before로만 마커를 그려 이중 표기를 방지한다.
+*/
+:deep(.ql-editor ol),
+:deep(.ql-editor ul) {
+  margin: 0;
+  padding-left: 1.5em;
+  list-style: none !important;
+  counter-reset: ql-list-0;
+}
+:deep(.ql-editor li[data-list]) {
+  list-style: none !important;
+}
+/* 혹시 남아있는 네이티브 ::marker(숫자)도 강제로 숨김 */
+:deep(.ql-editor li[data-list]::marker) {
+  content: '' !important;
+}
+:deep(.ql-editor li[data-list] > .ql-ui) {
+  display: inline-block;
+  margin-left: -1.5em;
+  margin-right: 0.3em;
+  text-align: right;
+  white-space: nowrap;
+  width: 1.2em;
+}
+:deep(.ql-editor li[data-list='bullet'] > .ql-ui::before) {
+  content: '\2022'; /* • */
+}
+:deep(.ql-editor li[data-list='ordered']) {
+  counter-increment: ql-list-0;
+}
+:deep(.ql-editor li[data-list='ordered'] > .ql-ui::before) {
+  content: counter(ql-list-0, decimal) '. ';
+}
+
 /* 행간(line-height) 드롭다운 픽커 */
 :deep(.ql-snow .ql-picker.ql-lineHeight) {
   width: 58px;
@@ -1633,30 +1688,6 @@ const togglePointColor = (key: string, value: boolean): void => {
 :deep(.ql-snow .ql-picker.ql-highlightMarker .ql-picker-item[data-value='#e0c7ff']) {
   background: linear-gradient(transparent 50%, #e0c7ff 50%);
 }
-
-/* 테두리 설정 input 높이 통일 */
-.border-settings :deep(.p-inputtext) {
-  height: 2rem !important;
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
-}
-
-.border-settings :deep(.p-select) {
-  height: 2rem !important;
-}
-
-.border-settings :deep(.p-select-label) {
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
-  line-height: 1.5rem;
-}
-
-/* ColorPicker 크기 조정 */
-.border-color-picker :deep(.p-colorpicker-preview) {
-  width: 2rem;
-  height: 2rem;
-}
-.p-colorpicker{border-radius: 6px; border: 1px solid var(--p-surface-200);}
 
 /* 테이블 에디터 그리드 스타일 */
 .table-editor-grid {

@@ -10,7 +10,8 @@
  */
 export function isValidHexColor(color: string): boolean {
   if (!color) return false
-  const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/
+  // 3/4/6/8자리 허용 (4·8자리는 알파 채널 포함)
+  const hexRegex = /^#([A-Fa-f0-9]{8}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{4}|[A-Fa-f0-9]{3})$/
   return hexRegex.test(color)
 }
 
@@ -84,9 +85,9 @@ export function normalizeColorInput(color: string): string {
   const hexPart = normalized.replace(/#/g, '')
   normalized = '#' + hexPart
 
-  // 길이 제한 (# + 6자리)
-  if (normalized.length > 7) {
-    normalized = normalized.substring(0, 7)
+  // 길이 제한 (# + 8자리, 알파 포함)
+  if (normalized.length > 9) {
+    normalized = normalized.substring(0, 9)
   }
 
   return normalized

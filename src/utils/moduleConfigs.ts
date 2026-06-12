@@ -267,6 +267,7 @@ export const module053Config: ModuleConfig = {
 export const module01Config: ModuleConfig = {
   quillFields: ['contentText'],
   defaults: {
+    showTitle: true,
     contentTitleLineHeight: '1.7',
     contentTitle: '콘텐츠 타이틀',
     titleColor: '#eb2a25',
@@ -278,6 +279,7 @@ export const module01Config: ModuleConfig = {
     paddingBottom: '10px',
     paddingLeft: '20px',
   },
+  processors: [processors.module12TitleProcessor],
 }
 
 /**
@@ -424,6 +426,7 @@ export const moduleFooterConfig: ModuleConfig = {
  * Module10 설정
  */
 export const module10Config: ModuleConfig = {
+  quillFields: ['title'],
   defaults: {
     imageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-speaker.png',
     imageAlt: '이미지',

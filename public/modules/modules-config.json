@@ -2091,12 +2091,20 @@
       "htmlFile": "Module01.html",
       "editableProps": [
         {
+          "key": "showTitle",
+          "label": "타이틀 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "타이틀"
+        },
+        {
           "key": "contentTitle",
           "label": "타이틀",
           "type": "text",
           "default": "콘텐츠 타이틀",
           "placeholder": "타이틀을 입력하세요",
           "required": true,
+          "showWhen": "showTitle",
           "group": "타이틀"
         },
         {
@@ -2105,6 +2113,7 @@
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
+          "showWhen": "showTitle",
           "group": "타이틀"
         },
         {
@@ -2113,6 +2122,7 @@
           "type": "text",
           "default": "1.7",
           "placeholder": "예: 1.5, 1.7em",
+          "showWhen": "showTitle",
           "group": "타이틀"
         },
         {
@@ -2120,6 +2130,7 @@
           "label": "색상",
           "type": "text",
           "default": "#eb2a25",
+          "showWhen": "showTitle",
           "group": "타이틀"
         },
         {

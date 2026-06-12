@@ -592,8 +592,8 @@ export const moduleImageHeaderTopProcessor: ContentProcessor = (html, properties
 }
 
 /**
- * Module12 타이틀 조건부 제거 프로세서
- * showTitle이 false이면 타이틀 <p> 영역(감싸는 마커 블록)을 통째로 제거 (미설정 시 표시)
+ * 타이틀 조건부 제거 프로세서 (Module01·Module12 공용)
+ * showTitle이 false이면 타이틀 영역(감싸는 마커 블록)을 통째로 제거 (미설정 시 표시)
  */
 export const module12TitleProcessor: ContentProcessor = (html, properties) => {
   if (properties.showTitle === false) {
