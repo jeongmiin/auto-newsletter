@@ -4939,7 +4939,7 @@
           "key": "leftWidthPercent",
           "label": "왼쪽(이미지) 영역 너비(%)",
           "type": "text",
-          "default": "50",
+          "default": "51",
           "placeholder": "예: 50 (숫자만 입력, 좌+우=100)",
           "hint": "PC에서 좌우로 나란히 표시될 때의 왼쪽(이미지) 칸 비율입니다. 모바일에서는 위아래로 쌓입니다.",
           "group": "영역 비율"
@@ -5129,7 +5129,7 @@
           "key": "rightWidthPercent",
           "label": "오른쪽(이미지) 영역 너비(%)",
           "type": "text",
-          "default": "50",
+          "default": "51",
           "placeholder": "예: 50 (숫자만 입력, 좌+우=100)",
           "hint": "PC에서 좌우로 나란히 표시될 때의 오른쪽(이미지) 칸 비율입니다. 모바일에서는 위아래로 쌓입니다.",
           "group": "영역 비율"
