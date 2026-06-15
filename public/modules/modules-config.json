@@ -3281,6 +3281,24 @@
           "placeholder": "예: 0px, 10px",
           "showWhen": "showRightBigBtn",
           "group": "오른쪽 버튼"
+        },
+        {
+          "key": "leftWidthPercent",
+          "label": "왼쪽 영역 너비(%)",
+          "type": "text",
+          "default": "50",
+          "placeholder": "예: 50 (숫자만 입력, 좌+우=100)",
+          "hint": "PC에서 좌우로 나란히 표시될 때의 왼쪽 칸 비율입니다. 모바일에서는 위아래로 쌓입니다.",
+          "group": "영역 비율"
+        },
+        {
+          "key": "rightWidthPercent",
+          "label": "오른쪽 영역 너비(%)",
+          "type": "text",
+          "default": "50",
+          "placeholder": "예: 50 (숫자만 입력, 좌+우=100)",
+          "hint": "PC에서 좌우로 나란히 표시될 때의 오른쪽 칸 비율입니다. 모바일에서는 위아래로 쌓입니다.",
+          "group": "영역 비율"
         }
       ]
     },
@@ -3511,6 +3529,24 @@
           "default": "#333333",
           "showWhen": "showButton4",
           "group": "버튼 4"
+        },
+        {
+          "key": "leftWidthPercent",
+          "label": "왼쪽(이미지) 영역 너비(%)",
+          "type": "text",
+          "default": "50",
+          "placeholder": "예: 50 (숫자만 입력, 좌+우=100)",
+          "hint": "PC에서 좌우로 나란히 표시될 때의 왼쪽 칸 비율입니다. 모바일에서는 위아래로 쌓입니다.",
+          "group": "영역 비율"
+        },
+        {
+          "key": "rightWidthPercent",
+          "label": "오른쪽(텍스트) 영역 너비(%)",
+          "type": "text",
+          "default": "50",
+          "placeholder": "예: 50 (숫자만 입력, 좌+우=100)",
+          "hint": "PC에서 좌우로 나란히 표시될 때의 오른쪽 칸 비율입니다. 모바일에서는 위아래로 쌓입니다.",
+          "group": "영역 비율"
         }
       ]
     },
@@ -3772,6 +3808,24 @@
           "default": "#333333",
           "showWhen": "showButton4",
           "group": "버튼 4"
+        },
+        {
+          "key": "leftWidthPercent",
+          "label": "왼쪽(이미지) 영역 너비(%)",
+          "type": "text",
+          "default": "50",
+          "placeholder": "예: 50 (숫자만 입력, 좌+우=100)",
+          "hint": "PC에서 좌우로 나란히 표시될 때의 왼쪽 칸 비율입니다. 모바일에서는 위아래로 쌓입니다.",
+          "group": "영역 비율"
+        },
+        {
+          "key": "rightWidthPercent",
+          "label": "오른쪽(텍스트) 영역 너비(%)",
+          "type": "text",
+          "default": "50",
+          "placeholder": "예: 50 (숫자만 입력, 좌+우=100)",
+          "hint": "PC에서 좌우로 나란히 표시될 때의 오른쪽 칸 비율입니다. 모바일에서는 위아래로 쌓입니다.",
+          "group": "영역 비율"
         }
       ]
     },
@@ -4171,6 +4225,24 @@
           "hint": "값이 클수록 모서리가 둥글어집니다. 100px이면 완전히 둥근(알약형) 버튼이 됩니다.",
           "showWhen": "showBigBtn",
           "group": "큰 버튼"
+        },
+        {
+          "key": "leftWidthPercent",
+          "label": "왼쪽(이미지) 영역 너비(%)",
+          "type": "text",
+          "default": "50",
+          "placeholder": "예: 50 (숫자만 입력, 좌+우=100)",
+          "hint": "PC에서 좌우로 나란히 표시될 때의 왼쪽 칸 비율입니다. 모바일에서는 위아래로 쌓입니다.",
+          "group": "영역 비율"
+        },
+        {
+          "key": "rightWidthPercent",
+          "label": "오른쪽(텍스트) 영역 너비(%)",
+          "type": "text",
+          "default": "50",
+          "placeholder": "예: 50 (숫자만 입력, 좌+우=100)",
+          "hint": "PC에서 좌우로 나란히 표시될 때의 오른쪽 칸 비율입니다. 모바일에서는 위아래로 쌓입니다.",
+          "group": "영역 비율"
         }
       ]
     },
@@ -4681,6 +4753,24 @@
           "default": "#333333",
           "showWhen": "showRightButton4",
           "group": "오른쪽 버튼"
+        },
+        {
+          "key": "leftWidthPercent",
+          "label": "왼쪽 영역 너비(%)",
+          "type": "text",
+          "default": "50",
+          "placeholder": "예: 50 (숫자만 입력, 좌+우=100)",
+          "hint": "PC에서 좌우로 나란히 표시될 때의 왼쪽 칸 비율입니다. 모바일에서는 위아래로 쌓입니다.",
+          "group": "영역 비율"
+        },
+        {
+          "key": "rightWidthPercent",
+          "label": "오른쪽 영역 너비(%)",
+          "type": "text",
+          "default": "50",
+          "placeholder": "예: 50 (숫자만 입력, 좌+우=100)",
+          "hint": "PC에서 좌우로 나란히 표시될 때의 오른쪽 칸 비율입니다. 모바일에서는 위아래로 쌓입니다.",
+          "group": "영역 비율"
         }
       ]
     },
@@ -4844,6 +4934,24 @@
           "default": "#333333",
           "showWhen": "showButton",
           "group": "버튼"
+        },
+        {
+          "key": "leftWidthPercent",
+          "label": "왼쪽(이미지) 영역 너비(%)",
+          "type": "text",
+          "default": "50",
+          "placeholder": "예: 50 (숫자만 입력, 좌+우=100)",
+          "hint": "PC에서 좌우로 나란히 표시될 때의 왼쪽(이미지) 칸 비율입니다. 모바일에서는 위아래로 쌓입니다.",
+          "group": "영역 비율"
+        },
+        {
+          "key": "rightWidthPercent",
+          "label": "오른쪽(텍스트) 영역 너비(%)",
+          "type": "text",
+          "default": "50",
+          "placeholder": "예: 50 (숫자만 입력, 좌+우=100)",
+          "hint": "PC에서 좌우로 나란히 표시될 때의 오른쪽(텍스트) 칸 비율입니다. 모바일에서는 위아래로 쌓입니다.",
+          "group": "영역 비율"
         }
       ]
     },
@@ -5007,6 +5115,24 @@
           "default": "#333333",
           "showWhen": "showButton",
           "group": "버튼"
+        },
+        {
+          "key": "leftWidthPercent",
+          "label": "왼쪽(텍스트) 영역 너비(%)",
+          "type": "text",
+          "default": "50",
+          "placeholder": "예: 50 (숫자만 입력, 좌+우=100)",
+          "hint": "PC에서 좌우로 나란히 표시될 때의 왼쪽(텍스트) 칸 비율입니다. 모바일에서는 위아래로 쌓입니다.",
+          "group": "영역 비율"
+        },
+        {
+          "key": "rightWidthPercent",
+          "label": "오른쪽(이미지) 영역 너비(%)",
+          "type": "text",
+          "default": "50",
+          "placeholder": "예: 50 (숫자만 입력, 좌+우=100)",
+          "hint": "PC에서 좌우로 나란히 표시될 때의 오른쪽(이미지) 칸 비율입니다. 모바일에서는 위아래로 쌓입니다.",
+          "group": "영역 비율"
         }
       ]
     },

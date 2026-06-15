@@ -18,6 +18,43 @@ import { REGEX_PATTERNS, DEFAULT_TWO_COLUMN_IMAGE_URL, HTML_MARKERS } from '@/co
 import { removeMarker } from '../htmlUtils'
 
 /**
+ * 2단(좌/우) 컬럼 사이 공백·패딩 흡수용 차감값(px)
+ * 인라인 블록 사이의 공백/거터를 흡수해 PC에서 두 컬럼이 항상 한 줄에 나란히 배치되게 한다.
+ */
+const COLUMN_GUTTER_PX = 5
+
+/**
+ * 좌/우 영역 퍼센트 값 파싱 — 숫자 또는 "50%" 형태를 받아 5~95% 범위의 숫자로 정규화한다.
+ * (한쪽이 0%이거나 100%이면 나란히 배치가 불가능하므로 범위를 제한)
+ */
+const parseColumnPercent = (value: unknown, fallback: number): number => {
+  const raw = typeof value === 'number' || typeof value === 'string' ? value : ''
+  const n = Number.parseFloat(String(raw).replace('%', '').trim())
+  if (!Number.isFinite(n)) return fallback
+  return Math.min(95, Math.max(5, n))
+}
+
+/** 좌/우 컬럼 min-width(=PC에서의 컬럼 폭) 계산 — calc(퍼센트 - 거터) */
+const columnMinWidth = (percent: number): string => `calc(${percent}% - ${COLUMN_GUTTER_PX}px)`
+
+/**
+ * 2단(좌/우) 모듈 컬럼 비율 프로세서 (Module04·05·05-1·05-3·06·07·07_reverse 공용)
+ * leftWidthPercent / rightWidthPercent(숫자 %)로 좌·우 컬럼의 min-width를 계산해
+ * {{leftColMinWidth}} / {{rightColMinWidth}} 플레이스홀더를 치환한다.
+ *
+ * 반응형 스택 트릭(width: calc((570px - 100%) * 570); max-width: 100%)은 HTML에 그대로 유지되며,
+ * 이 프로세서는 min-width(PC에서의 컬럼 폭)만 결정한다 → PC: 좌우 나란히 / 모바일: 세로 적층.
+ * 미설정 시 50:50.
+ */
+export const twoColumnRatioProcessor: ContentProcessor = (html, properties) => {
+  const left = parseColumnPercent(properties.leftWidthPercent, 50)
+  const right = parseColumnPercent(properties.rightWidthPercent, 50)
+  return html
+    .replace(/\{\{\s*leftColMinWidth\s*\}\}/g, columnMinWidth(left))
+    .replace(/\{\{\s*rightColMinWidth\s*\}\}/g, columnMinWidth(right))
+}
+
+/**
  * 서브 타이틀 제거 프로세서 (SectionTitle 전용)
  */
 export const removeEmptySubTitleProcessor: ContentProcessor = (html, properties) => {

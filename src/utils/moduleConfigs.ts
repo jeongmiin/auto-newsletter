@@ -215,12 +215,16 @@ export const module04Config: ModuleConfig = {
     rightBigBtnMarginRight: '0px',
     rightBigBtnMarginBottom: '10px',
     rightBigBtnMarginLeft: '0px',
+    // 좌/우 영역 비율(숫자 %) — 미설정 시 50:50
+    leftWidthPercent: '50',
+    rightWidthPercent: '50',
   },
   processors: [
     processors.module04ImageProcessor,
     processors.module04ButtonProcessor,
     processors.module04AdditionalContentProcessor,
     processors.twoColumnImageLinkProcessor,
+    processors.twoColumnRatioProcessor,
   ],
 }
 
@@ -253,11 +257,15 @@ export const module053Config: ModuleConfig = {
     topSectionTitleLineHeight: '1.7',
     imageBorderRadius: '0px',
     imageLinkUrl: '#',
+    // 좌/우 영역 비율(숫자 %) — 미설정 시 50:50
+    leftWidthPercent: '50',
+    rightWidthPercent: '50',
   },
   processors: [
     processors.module053ImageProcessor,
     processors.module053ButtonProcessor,
     processors.imageLinkProcessor,
+    processors.twoColumnRatioProcessor,
   ],
 }
 
@@ -317,8 +325,15 @@ export const module051Config: ModuleConfig = {
     boxColor: '#111111',
     imageBorderRadius: '0px',
     imageLinkUrl: '#',
+    // 좌/우 영역 비율(숫자 %) — 미설정 시 50:50
+    leftWidthPercent: '50',
+    rightWidthPercent: '50',
   },
-  processors: [processors.module051ButtonProcessor, processors.imageLinkProcessor],
+  processors: [
+    processors.module051ButtonProcessor,
+    processors.imageLinkProcessor,
+    processors.twoColumnRatioProcessor,
+  ],
 }
 
 /**
@@ -339,8 +354,15 @@ export const module05Config: ModuleConfig = {
     button4TextColor: '#ffffff',
     imageBorderRadius: '0px',
     imageLinkUrl: '#',
+    // 좌/우 영역 비율(숫자 %) — 미설정 시 50:50
+    leftWidthPercent: '50',
+    rightWidthPercent: '50',
   },
-  processors: [processors.module052ButtonProcessor, processors.imageLinkProcessor],
+  processors: [
+    processors.module052ButtonProcessor,
+    processors.imageLinkProcessor,
+    processors.twoColumnRatioProcessor,
+  ],
 }
 
 /**
@@ -363,8 +385,15 @@ export const module06Config: ModuleConfig = {
     rightImageAlt: '이미지',
     rightImageBorderRadius: '0px',
     rightImageLinkUrl: '#',
+    // 좌/우 영역 비율(숫자 %) — 미설정 시 50:50
+    leftWidthPercent: '50',
+    rightWidthPercent: '50',
   },
-  processors: [processors.module06MultiButtonProcessor, processors.twoColumnImageLinkProcessor],
+  processors: [
+    processors.module06MultiButtonProcessor,
+    processors.twoColumnImageLinkProcessor,
+    processors.twoColumnRatioProcessor,
+  ],
 }
 
 /**
@@ -384,8 +413,15 @@ export const module07Config: ModuleConfig = {
     textAreaPaddingRight: '0px',
     textAreaPaddingBottom: '25px',
     textAreaPaddingLeft: '0px',
+    // 좌/우 영역 비율(숫자 %) — 미설정 시 50:50
+    leftWidthPercent: '50',
+    rightWidthPercent: '50',
   },
-  processors: [processors.module07ButtonProcessor, processors.imageLinkProcessor],
+  processors: [
+    processors.module07ButtonProcessor,
+    processors.imageLinkProcessor,
+    processors.twoColumnRatioProcessor,
+  ],
 }
 
 /**
