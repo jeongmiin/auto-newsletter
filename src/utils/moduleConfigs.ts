@@ -175,6 +175,7 @@ export const sectionTitleConfig: ModuleConfig = {
   defaults: {
     mainTitle: '섹션 타이틀',
     subTitle: '서브 타이틀 영역입니다',
+    sectionBgColor: 'transparent',
     topBorderWidth: '2px',
     topBorderColor: '#333333',
     sectionImageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-1column.png',

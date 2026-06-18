@@ -50,7 +50,7 @@
                 :modelValue="getWrapColorValue('backgroundColor')"
                 @update:modelValue="handleWrapColorPickerUpdate('backgroundColor', $event)"
               />
-              <InputText
+              <HexColorInput
                 :modelValue="wrapSettings.backgroundColor"
                 @update:modelValue="handleWrapColorInput('backgroundColor', $event ?? '')"
                 placeholder="#f9f9f9"
@@ -68,7 +68,7 @@
                 :modelValue="getWrapColorValue('pointColor')"
                 @update:modelValue="handleWrapColorPickerUpdate('pointColor', $event)"
               />
-              <InputText
+              <HexColorInput
                 :modelValue="wrapSettings.pointColor"
                 @update:modelValue="handleWrapColorInput('pointColor', $event ?? '')"
                 placeholder="#2563eb"
@@ -110,7 +110,7 @@
                   @update:modelValue="handleWrapColorPickerUpdate('borderColor', $event)"
                   class="border-color-picker"
                 />
-                <InputText
+                <HexColorInput
                   :modelValue="wrapSettings.borderColor"
                   @update:modelValue="handleWrapColorInput('borderColor', $event ?? '')"
                   placeholder="#ddd"
@@ -206,8 +206,8 @@
                 @update:modelValue="handleColorPickerUpdate(prop.key, $event)"
                 :disabled="isUsingPoint(prop.key)"
               />
-              <!-- PrimeVue InputText -->
-              <InputText
+              <!-- HEX 입력 (알파 숨김) -->
+              <HexColorInput
                 :modelValue="isUsingPoint(prop.key) ? pointColorValue : String(selectedModule.properties[prop.key] || '')"
                 @update:modelValue="handleColorInput(prop.key, $event ?? '')"
                 :disabled="isUsingPoint(prop.key)"
@@ -983,6 +983,7 @@ import { POINT_COLOR_SUFFIX } from '@/utils/pointColor'
 import { processQuillHtml } from '@/utils/quillHtmlProcessor'
 import TableCellEditor from './TableCellEditor.vue'
 import ColorAlphaPicker from '@/components/ColorAlphaPicker.vue'
+import HexColorInput from '@/components/HexColorInput.vue'
 import type Quill from 'quill'
 
 const moduleStore = useModuleStore()

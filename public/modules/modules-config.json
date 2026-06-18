@@ -766,113 +766,6 @@
       "htmlFile": "SectionTitle.html",
       "editableProps": [
         {
-          "key": "topBorderWidth",
-          "label": "두께",
-          "type": "text",
-          "default": "2px",
-          "placeholder": "예: 2px, 3px",
-          "group": "상단 테두리"
-        },
-        {
-          "key": "topBorderColor",
-          "label": "색상",
-          "type": "color",
-          "default": "#333333",
-          "group": "상단 테두리"
-        },
-        {
-          "key": "showSectionImage",
-          "label": "이미지 타이틀 표시",
-          "type": "boolean",
-          "default": false,
-          "group": "이미지 타이틀"
-        },
-        {
-          "key": "sectionImageUrl",
-          "label": "이미지 URL",
-          "type": "url",
-          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-1column.png",
-          "placeholder": "이미지 URL을 입력하세요",
-          "showWhen": "showSectionImage",
-          "group": "이미지 타이틀"
-        },
-        {
-          "key": "sectionImageLinkUrl",
-          "label": "이미지 링크 URL",
-          "type": "url",
-          "default": "#",
-          "placeholder": "이미지 클릭 시 이동할 URL",
-          "showWhen": "showSectionImage",
-          "group": "이미지 타이틀"
-        },
-        {
-          "key": "sectionImageAlt",
-          "label": "대체 텍스트",
-          "type": "text",
-          "default": "섹션 이미지 타이틀",
-          "placeholder": "이미지 설명",
-          "showWhen": "showSectionImage",
-          "group": "이미지 타이틀"
-        },
-        {
-          "key": "sectionImageMaxWidth",
-          "label": "최대 너비",
-          "type": "text",
-          "default": "100%",
-          "placeholder": "예: 100%, 300px",
-          "showWhen": "showSectionImage",
-          "group": "이미지 타이틀"
-        },
-        {
-          "key": "sectionImageAlign",
-          "label": "정렬",
-          "type": "select",
-          "default": "center",
-          "options": [
-            { "label": "왼쪽", "value": "left" },
-            { "label": "가운데", "value": "center" },
-            { "label": "오른쪽", "value": "right" }
-          ],
-          "showWhen": "showSectionImage",
-          "group": "이미지 타이틀"
-        },
-        {
-          "key": "sectionImagePaddingTop",
-          "label": "상단 여백",
-          "type": "text",
-          "default": "15px",
-          "placeholder": "예: 15px, 0",
-          "showWhen": "showSectionImage",
-          "group": "이미지 타이틀"
-        },
-        {
-          "key": "sectionImagePaddingRight",
-          "label": "우측 여백",
-          "type": "text",
-          "default": "20px",
-          "placeholder": "예: 20px, 0",
-          "showWhen": "showSectionImage",
-          "group": "이미지 타이틀"
-        },
-        {
-          "key": "sectionImagePaddingBottom",
-          "label": "하단 여백",
-          "type": "text",
-          "default": "0",
-          "placeholder": "예: 0, 10px",
-          "showWhen": "showSectionImage",
-          "group": "이미지 타이틀"
-        },
-        {
-          "key": "sectionImagePaddingLeft",
-          "label": "좌측 여백",
-          "type": "text",
-          "default": "20px",
-          "placeholder": "예: 20px, 0",
-          "showWhen": "showSectionImage",
-          "group": "이미지 타이틀"
-        },
-        {
           "key": "showMainTitle",
           "label": "메인 타이틀 표시",
           "type": "boolean",
@@ -1001,6 +894,121 @@
           "placeholder": "예: 15px, 0",
           "showWhen": "showSubTitle",
           "group": "서브 타이틀"
+        },
+        {
+          "key": "showSectionImage",
+          "label": "이미지 타이틀 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "이미지 타이틀"
+        },
+        {
+          "key": "sectionImageUrl",
+          "label": "이미지 URL",
+          "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-1column.png",
+          "placeholder": "이미지 URL을 입력하세요",
+          "showWhen": "showSectionImage",
+          "group": "이미지 타이틀"
+        },
+        {
+          "key": "sectionImageLinkUrl",
+          "label": "이미지 링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showSectionImage",
+          "group": "이미지 타이틀"
+        },
+        {
+          "key": "sectionImageAlt",
+          "label": "대체 텍스트",
+          "type": "text",
+          "default": "섹션 이미지 타이틀",
+          "placeholder": "이미지 설명",
+          "showWhen": "showSectionImage",
+          "group": "이미지 타이틀"
+        },
+        {
+          "key": "sectionImageMaxWidth",
+          "label": "최대 너비",
+          "type": "text",
+          "default": "100%",
+          "placeholder": "예: 100%, 300px",
+          "showWhen": "showSectionImage",
+          "group": "이미지 타이틀"
+        },
+        {
+          "key": "sectionImageAlign",
+          "label": "정렬",
+          "type": "select",
+          "default": "center",
+          "options": [
+            { "label": "왼쪽", "value": "left" },
+            { "label": "가운데", "value": "center" },
+            { "label": "오른쪽", "value": "right" }
+          ],
+          "showWhen": "showSectionImage",
+          "group": "이미지 타이틀"
+        },
+        {
+          "key": "sectionImagePaddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 0",
+          "showWhen": "showSectionImage",
+          "group": "이미지 타이틀"
+        },
+        {
+          "key": "sectionImagePaddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "showWhen": "showSectionImage",
+          "group": "이미지 타이틀"
+        },
+        {
+          "key": "sectionImagePaddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "0",
+          "placeholder": "예: 0, 10px",
+          "showWhen": "showSectionImage",
+          "group": "이미지 타이틀"
+        },
+        {
+          "key": "sectionImagePaddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "showWhen": "showSectionImage",
+          "group": "이미지 타이틀"
+        },
+        {
+          "key": "sectionBgColor",
+          "label": "전체 배경색",
+          "type": "color",
+          "default": "transparent",
+          "placeholder": "예: #f5f5f5 (비우면 투명)",
+          "group": "스타일"
+        },
+        {
+          "key": "topBorderWidth",
+          "label": "상단 테두리 두께",
+          "type": "text",
+          "default": "2px",
+          "placeholder": "예: 2px, 3px",
+          "group": "스타일"
+        },
+        {
+          "key": "topBorderColor",
+          "label": "상단 테두리 색상",
+          "type": "color",
+          "default": "#333333",
+          "group": "스타일"
         }
       ]
     },
