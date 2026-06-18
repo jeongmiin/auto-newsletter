@@ -221,6 +221,38 @@
           "group": "로고"
         },
         {
+          "key": "logoPaddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "30px",
+          "placeholder": "예: 30px, 0",
+          "group": "로고"
+        },
+        {
+          "key": "logoPaddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "0",
+          "placeholder": "예: 0, 20px",
+          "group": "로고"
+        },
+        {
+          "key": "logoPaddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "group": "로고"
+        },
+        {
+          "key": "logoPaddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "0",
+          "placeholder": "예: 0, 20px",
+          "group": "로고"
+        },
+        {
           "key": "logoBorderWidth",
           "label": "하단 테두리 두께",
           "type": "text",
@@ -2415,12 +2447,20 @@
           "group": "이미지"
         },
         {
+          "key": "showTitle",
+          "label": "콘텐츠 타이틀 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "타이틀·텍스트"
+        },
+        {
           "key": "title",
           "label": "콘텐츠 타이틀",
           "type": "text",
           "default": "콘텐츠 타이틀",
           "required": true,
           "placeholder": "콘텐츠 타이틀",
+          "showWhen": "showTitle",
           "group": "타이틀·텍스트"
         },
         {
@@ -2429,6 +2469,7 @@
           "type": "text",
           "default": "18px",
           "placeholder": "예: 18px, 20px",
+          "showWhen": "showTitle",
           "group": "타이틀·텍스트"
         },
         {
@@ -2437,6 +2478,7 @@
           "type": "text",
           "default": "1.7",
           "placeholder": "예: 1.5, 1.7em",
+          "showWhen": "showTitle",
           "group": "타이틀·텍스트"
         },
         {
@@ -2552,6 +2594,42 @@
           "default": "5px",
           "placeholder": "예: 5px, 50%",
           "hint": "값이 클수록 모서리가 둥글어집니다. 100px이면 완전히 둥근(알약형) 버튼이 됩니다.",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonPaddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonPaddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonPaddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 0, 20px",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonPaddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
           "showWhen": "showButton",
           "group": "버튼"
         }
@@ -5792,6 +5870,205 @@
           "type": "text",
           "default": "20px",
           "placeholder": "예: 20px, 0",
+          "group": "여백"
+        }
+      ]
+    },
+    {
+      "id": "TopLanguageButton",
+      "name": "언어 선택 버튼",
+      "description": "상단 다국어(EN/JP/TH) 선택 버튼",
+      "category": "common",
+      "icon": "pi pi-globe",
+      "htmlFile": "TopLanguageButton.html",
+      "editableProps": [
+        {
+          "key": "button1Show",
+          "label": "버튼 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "버튼 1"
+        },
+        {
+          "key": "button1Text",
+          "label": "텍스트",
+          "type": "text",
+          "default": "EN",
+          "placeholder": "비우면 표시 안 됨",
+          "showWhen": "button1Show",
+          "group": "버튼 1"
+        },
+        {
+          "key": "button1Link",
+          "label": "링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 링크 URL을 입력하세요",
+          "showWhen": "button1Show",
+          "group": "버튼 1"
+        },
+        {
+          "key": "button1Active",
+          "label": "활성(액티브) 버튼",
+          "type": "boolean",
+          "default": true,
+          "showWhen": "button1Show",
+          "group": "버튼 1"
+        },
+        {
+          "key": "button2Show",
+          "label": "버튼 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "버튼 2"
+        },
+        {
+          "key": "button2Text",
+          "label": "텍스트",
+          "type": "text",
+          "default": "JP",
+          "placeholder": "비우면 표시 안 됨",
+          "showWhen": "button2Show",
+          "group": "버튼 2"
+        },
+        {
+          "key": "button2Link",
+          "label": "링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 링크 URL을 입력하세요",
+          "showWhen": "button2Show",
+          "group": "버튼 2"
+        },
+        {
+          "key": "button2Active",
+          "label": "활성(액티브) 버튼",
+          "type": "boolean",
+          "default": false,
+          "showWhen": "button2Show",
+          "group": "버튼 2"
+        },
+        {
+          "key": "button3Show",
+          "label": "버튼 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "버튼 3"
+        },
+        {
+          "key": "button3Text",
+          "label": "텍스트",
+          "type": "text",
+          "default": "TH",
+          "placeholder": "비우면 표시 안 됨",
+          "showWhen": "button3Show",
+          "group": "버튼 3"
+        },
+        {
+          "key": "button3Link",
+          "label": "링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 링크 URL을 입력하세요",
+          "showWhen": "button3Show",
+          "group": "버튼 3"
+        },
+        {
+          "key": "button3Active",
+          "label": "활성(액티브) 버튼",
+          "type": "boolean",
+          "default": false,
+          "showWhen": "button3Show",
+          "group": "버튼 3"
+        },
+        {
+          "key": "defaultBgColor",
+          "label": "배경색",
+          "type": "color",
+          "default": "#ffffff",
+          "group": "기본 버튼 색상"
+        },
+        {
+          "key": "defaultTextColor",
+          "label": "텍스트 색상",
+          "type": "color",
+          "default": "#fe5f0d",
+          "group": "기본 버튼 색상"
+        },
+        {
+          "key": "defaultBorderColor",
+          "label": "테두리 색상",
+          "type": "color",
+          "default": "#fe5f0d",
+          "group": "기본 버튼 색상"
+        },
+        {
+          "key": "activeBgColor",
+          "label": "배경색",
+          "type": "color",
+          "default": "#fe5f0d",
+          "group": "액티브 버튼 색상"
+        },
+        {
+          "key": "activeTextColor",
+          "label": "텍스트 색상",
+          "type": "color",
+          "default": "#ffffff",
+          "group": "액티브 버튼 색상"
+        },
+        {
+          "key": "activeBorderColor",
+          "label": "테두리 색상",
+          "type": "color",
+          "default": "#fe5f0d",
+          "group": "액티브 버튼 색상"
+        },
+        {
+          "key": "buttonFontSize",
+          "label": "폰트 크기",
+          "type": "text",
+          "default": "16px",
+          "placeholder": "예: 16px",
+          "group": "버튼 공통"
+        },
+        {
+          "key": "buttonWidth",
+          "label": "버튼 너비",
+          "type": "text",
+          "default": "70px",
+          "placeholder": "예: 70px",
+          "group": "버튼 공통"
+        },
+        {
+          "key": "paddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "group": "여백"
+        },
+        {
+          "key": "paddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "25px",
+          "placeholder": "예: 25px, 0",
+          "group": "여백"
+        },
+        {
+          "key": "paddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "group": "여백"
+        },
+        {
+          "key": "paddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "25px",
+          "placeholder": "예: 25px, 0",
           "group": "여백"
         }
       ]

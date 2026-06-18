@@ -82,7 +82,7 @@
           <!-- 테두리 설정 (가로 배치) -->
           <div>
             <label class="block text-xs font-medium text-gray-600 mb-1">테두리</label>
-            <div class="flex items-center gap-2 border-settings">
+            <div class="flex flex-wrap items-center gap-2 border-settings">
               <!-- 두께 -->
               <InputText
                 :modelValue="wrapSettings.borderWidth"
@@ -110,7 +110,7 @@
                   @update:modelValue="handleWrapColorPickerUpdate('borderColor', $event)"
                   class="border-color-picker"
                 />
-                <HexColorInput
+                <InputText
                   :modelValue="wrapSettings.borderColor"
                   @update:modelValue="handleWrapColorInput('borderColor', $event ?? '')"
                   placeholder="#ddd"
@@ -206,8 +206,8 @@
                 @update:modelValue="handleColorPickerUpdate(prop.key, $event)"
                 :disabled="isUsingPoint(prop.key)"
               />
-              <!-- HEX 입력 (알파 숨김) -->
-              <HexColorInput
+              <!-- PrimeVue InputText -->
+              <InputText
                 :modelValue="isUsingPoint(prop.key) ? pointColorValue : String(selectedModule.properties[prop.key] || '')"
                 @update:modelValue="handleColorInput(prop.key, $event ?? '')"
                 :disabled="isUsingPoint(prop.key)"

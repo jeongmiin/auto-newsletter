@@ -4,7 +4,13 @@
  */
 
 import type { ContentProcessor } from '../moduleContentProcessor'
-import { removeSubTitleDiv, removeTableFromHtml, removeButtonFromHtml } from '../htmlUtils'
+import {
+  removeSubTitleDiv,
+  removeTableFromHtml,
+  removeButtonFromHtml,
+  escapeForHtml,
+  removeMarker,
+} from '../htmlUtils'
 import { shouldRenderElement } from '../textUtils'
 import {
   applyModule04SmallButtonStyles,
@@ -15,7 +21,6 @@ import {
   handleModule053ButtonVisibility,
 } from '../buttonUtils'
 import { REGEX_PATTERNS, DEFAULT_TWO_COLUMN_IMAGE_URL, HTML_MARKERS } from '@/constants/defaults'
-import { removeMarker } from '../htmlUtils'
 
 /**
  * 2단(좌/우) 컬럼 사이 공백·패딩 흡수용 차감값(px)
@@ -757,6 +762,57 @@ export const multiImageLayoutProcessor: ContentProcessor = (html, properties) =>
   // keepLayoutOnMobile이 true면 49.5% (2컬럼 유지), false면 100% (1컬럼으로 떨어짐)
   const minWidth = properties.keepLayoutOnMobile === true ? '49.5%' : '100%'
   return html.replace(/{{mobileMinWidth}}/g, minWidth)
+}
+
+/**
+ * TopLanguageButton(상단 언어 선택 버튼) 프로세서
+ *
+ * 버튼 1~3을 생성한다. 각 버튼은 텍스트·링크·활성화 여부를 가지며,
+ * 색상은 '기본/액티브' 두 세트를 버튼 전체에 공통 적용한다.
+ * (활성화된 버튼은 액티브 색상, 나머지는 기본 색상)
+ * 텍스트가 비어 있는 버튼은 렌더하지 않으므로 2개 언어 구성도 가능하다.
+ */
+export const topLanguageButtonProcessor: ContentProcessor = (html, properties) => {
+  const str = (value: unknown, fallback: string): string => {
+    const s = typeof value === 'string' ? value.trim() : ''
+    return s === '' ? fallback : s
+  }
+
+  const defaultColors = {
+    bg: str(properties.defaultBgColor, '#ffffff'),
+    text: str(properties.defaultTextColor, '#fe5f0d'),
+    border: str(properties.defaultBorderColor, '#fe5f0d'),
+  }
+  const activeColors = {
+    bg: str(properties.activeBgColor, '#fe5f0d'),
+    text: str(properties.activeTextColor, '#ffffff'),
+    border: str(properties.activeBorderColor, '#fe5f0d'),
+  }
+  const fontSize = str(properties.buttonFontSize, '16px')
+  const buttonWidth = str(properties.buttonWidth, '70px')
+
+  const buttons = [1, 2, 3]
+    .map((i) => ({
+      // 표시 토글: 미설정(undefined)·true면 표시, false면 숨김 (기존 인스턴스 호환)
+      show: properties[`button${i}Show`] !== false,
+      text: typeof properties[`button${i}Text`] === 'string' ? String(properties[`button${i}Text`]) : '',
+      link: str(properties[`button${i}Link`], '#'),
+      active: properties[`button${i}Active`] === true,
+    }))
+    .filter((b) => b.show && b.text.trim() !== '')
+
+  const buttonsHtml = buttons
+    .map((b, idx) => {
+      const c = b.active ? activeColors : defaultColors
+      // 첫 버튼만 좌측 테두리 유지, 이후 버튼은 좌측 테두리를 없애 연결된 모양으로
+      const borderLeft = idx === 0 ? '' : 'border-left:0;'
+      const safeText = escapeForHtml(b.text)
+      const safeLink = escapeForHtml(b.link)
+      return `<p style="margin:0;padding:0;width:${buttonWidth};background:${c.bg};border:1px solid ${c.border};${borderLeft}box-sizing:border-box;display:inline-block;"><a href="${safeLink}" target="_blank" style="line-height:28px;height:28px;box-sizing:border-box;display:block;text-align:center;text-decoration:none;color:${c.text};font-weight:700;font-size:${fontSize};padding:0 10px">${safeText}</a></p>`
+    })
+    .join('')
+
+  return html.replace(/\{\{\s*languageButtons\s*\}\}/g, buttonsHtml)
 }
 
 // SubTitle 프로세서

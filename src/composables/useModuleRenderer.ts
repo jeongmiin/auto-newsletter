@@ -14,6 +14,7 @@ import {
   replaceModuleImgContent,
   replaceModuleOneButtonContent,
   replaceModuleTwoButtonContent,
+  replaceTopLanguageButtonContent,
   replaceSectionTitleContent,
   replaceModule04Content,
   replaceModule02Content,
@@ -86,6 +87,9 @@ export function useModuleRenderer(moduleId: string) {
 
       case 'ModuleTwoButton':
         return replaceModuleTwoButtonContent(html, properties)
+
+      case 'TopLanguageButton':
+        return replaceTopLanguageButtonContent(html, properties)
 
       case 'SectionTitle':
         return replaceSectionTitleContent(html, properties)

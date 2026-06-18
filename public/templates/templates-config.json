@@ -2562,6 +2562,543 @@
           "styles": {}
         }
       ]
+    },
+    {
+      "id": "megazoo-template",
+      "name": "메가주 템플릿",
+      "description": "2026 메가주 뉴스레터 구성",
+      "wrapSettings": {
+        "backgroundColor": "#f9f9f9",
+        "borderWidth": "0px",
+        "borderColor": "#dddddd",
+        "borderStyle": "solid",
+        "pointColor": "#0f0cb0"
+      },
+      "modules": [
+        {
+          "moduleId": "TopLanguageButton",
+          "properties": {
+            "button1Show": true,
+            "button1Text": "EN",
+            "button1Link": "#",
+            "button1Active": true,
+            "button2Show": true,
+            "button2Text": "JP",
+            "button2Link": "#",
+            "button2Active": false,
+            "button3Show": true,
+            "button3Text": "TH",
+            "button3Link": "#",
+            "button3Active": false,
+            "defaultBgColor": "#ffffff",
+            "defaultTextColor": "#fe5f0d",
+            "defaultBorderColor": "#fe5f0d",
+            "activeBgColor": "#fe5f0d",
+            "activeTextColor": "#ffffff",
+            "activeBorderColor": "#fe5f0d",
+            "buttonFontSize": "16px",
+            "buttonWidth": "70px",
+            "paddingTop": "20px",
+            "paddingRight": "25px",
+            "paddingBottom": "20px",
+            "paddingLeft": "25px"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleBasicHeader",
+          "properties": {
+            "tableSummary": "메가주 전시 뉴스레터 입니다.",
+            "topBorderWidth": "0",
+            "topBorderColor": "#000000",
+            "logoImageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/megazoo/eng/vol01/logo.png",
+            "logoAlign": "center",
+            "logoAlt": "로고",
+            "logoMaxWidth": "35%",
+            "logoPaddingTop": "0px",
+            "logoPaddingRight": "0",
+            "logoPaddingBottom": "0px",
+            "logoPaddingLeft": "0",
+            "logoBorderWidth": "0",
+            "logoBorderColor": "#dddddd",
+            "headerText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">NEWSLETTER&nbsp;<strong>VOL.5</strong></p>",
+            "headerFontSize": "15px",
+            "headerTextColor": "#111111",
+            "headerTitlePaddingTop": "0px",
+            "headerTitlePaddingRight": "0",
+            "headerTitlePaddingBottom": "15px",
+            "headerTitlePaddingLeft": "0"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleImg",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/megazoo/eng/vol05/main.png",
+            "imageAlt": "이미지",
+            "showImageLink": true,
+            "imageLinkUrl": "#",
+            "imageBorderRadius": "10px",
+            "paddingTop": "0px",
+            "paddingRight": "20px",
+            "paddingBottom": "20px",
+            "paddingLeft": "20px"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong>Only&nbsp;3&nbsp;Days&nbsp;Left&nbsp;to&nbsp;Apply&nbsp;for&nbsp;Biz-Matching!</strong></p>",
+            "fontSize": "21px",
+            "bgColor": "transparent",
+            "textColor": "#fe5f0d",
+            "paddingTop": "0px",
+            "paddingRight": "20px",
+            "paddingBottom": "0px",
+            "paddingLeft": "20px"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\"><strong>Applications&nbsp;for&nbsp;MEGAZOO&nbsp;Business&nbsp;Matching&nbsp;are&nbsp;entering&nbsp;the&nbsp;final&nbsp;stage.</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.7; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">Only&nbsp;3&nbsp;days&nbsp;remain&nbsp;to&nbsp;request&nbsp;meetings&nbsp;with&nbsp;Korea’s&nbsp;leading&nbsp;pet&nbsp;companies&nbsp;and&nbsp;industry&nbsp;professionals,&nbsp;carefully&nbsp;selected&nbsp;by&nbsp;MEGAZOO.</p><p style=\"margin: 0; padding: 0; line-height: 1.7; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">Business&nbsp;matching&nbsp;is&nbsp;actively&nbsp;taking&nbsp;place,&nbsp;with&nbsp;numerous&nbsp;successful&nbsp;connections&nbsp;being&nbsp;made&nbsp;between&nbsp;exhibitors&nbsp;and&nbsp;buyers&nbsp;seeking&nbsp;new&nbsp;opportunities&nbsp;in&nbsp;the&nbsp;global&nbsp;pet&nbsp;market.</p><p style=\"margin: 0; padding: 0; line-height: 1.7; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">Biz-Matching&nbsp;Deadline&nbsp;is&nbsp;May&nbsp;15.&nbsp;Don’t&nbsp;miss&nbsp;your&nbsp;chance&nbsp;to&nbsp;be&nbsp;part&nbsp;of&nbsp;it.</p>",
+            "fontSize": "15px",
+            "bgColor": "transparent",
+            "textColor": "#333333",
+            "paddingTop": "0px",
+            "paddingRight": "20px",
+            "paddingBottom": "0px",
+            "paddingLeft": "20px"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleTable",
+          "properties": {
+            "tableCells": [
+              [
+                {
+                  "id": "cell-1781757462818-gwla474pl",
+                  "type": "th",
+                  "content": "Title",
+                  "colspan": 1,
+                  "rowspan": 1,
+                  "align": "center"
+                },
+                {
+                  "id": "cell-1781757462818-8b9gcu17c",
+                  "type": "td",
+                  "content": "MEGAZOO 1:1 Biz Matching",
+                  "colspan": 1,
+                  "rowspan": 1,
+                  "align": "left"
+                }
+              ],
+              [
+                {
+                  "id": "cell-1781757462818-ieo6lgkom",
+                  "type": "th",
+                  "content": "Date",
+                  "colspan": 1,
+                  "rowspan": 1,
+                  "align": "center"
+                },
+                {
+                  "id": "cell-1781757462818-1g7j64eb7",
+                  "type": "td",
+                  "content": "2026.05.29(Fri)~30(Sat), 2 days",
+                  "colspan": 1,
+                  "rowspan": 1,
+                  "align": "left"
+                }
+              ],
+              [
+                {
+                  "id": "cell-1781757497688-q0bt7yk98",
+                  "type": "th",
+                  "content": "Time",
+                  "colspan": 1,
+                  "rowspan": 1,
+                  "align": "center"
+                },
+                {
+                  "id": "cell-1781757497688-aws2pmbzx",
+                  "type": "td",
+                  "content": "10:30-17:00 (Last meeting begin at 16:30)",
+                  "colspan": 1,
+                  "rowspan": 1,
+                  "align": "left"
+                }
+              ],
+              [
+                {
+                  "id": "cell-1781757498777-l2udtmx05",
+                  "type": "th",
+                  "content": "Venue",
+                  "colspan": 1,
+                  "rowspan": 1,
+                  "align": "center"
+                },
+                {
+                  "id": "cell-1781757498777-ww8gctubf",
+                  "type": "td",
+                  "content": "KINTEX 2, Conference Room 303",
+                  "colspan": 1,
+                  "rowspan": 1,
+                  "align": "left"
+                }
+              ]
+            ],
+            "borderTopWidth": "2px",
+            "borderTopColor": "#333333",
+            "cellBorderColor": "#dddddd",
+            "headerBgColor": "#f6f6f6",
+            "headerTextColor": "#333333",
+            "cellBgColor": "#ffffff",
+            "cellTextColor": "#333333",
+            "paddingTop": "20px",
+            "paddingRight": "20px",
+            "paddingBottom": "0px",
+            "paddingLeft": "20px",
+            "tableColWidths": [
+              "20%",
+              ""
+            ]
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleOneButton",
+          "properties": {
+            "buttonText": "Apply Biz-Matching →",
+            "paddingTop": "15px",
+            "paddingRight": "20px",
+            "paddingBottom": "40px",
+            "paddingLeft": "20px",
+            "buttonFontSize": "15px",
+            "buttonUrl": "#",
+            "buttonBgColor": "#111111",
+            "buttonTextColor": "#ffffff",
+            "buttonBorderStyle": "none",
+            "buttonBorderWidth": "1px",
+            "buttonBorderColor": "#000000",
+            "buttonBorderRadius": "5px",
+            "buttonBgColor__usePoint": true
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "SectionTitle",
+          "properties": {
+            "showMainTitle": true,
+            "mainTitle": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">Complete&nbsp;Your&nbsp;Business&nbsp;Matching</p>",
+            "mainTitleFontSize": "22px",
+            "mainTitleColor": "#fe5f0d",
+            "mainTitlePaddingTop": "15px",
+            "mainTitlePaddingRight": "20px",
+            "mainTitlePaddingBottom": "15px",
+            "mainTitlePaddingLeft": "20px",
+            "showSubTitle": false,
+            "subTitle": "서브 타이틀 영역입니다",
+            "subTitleFontSize": "16px",
+            "subTitlePaddingTop": "0",
+            "subTitlePaddingRight": "15px",
+            "subTitlePaddingBottom": "20px",
+            "subTitlePaddingLeft": "15px",
+            "showSectionImage": false,
+            "sectionImageUrl": "https://design.messeesang.com/e-dm/newsletter/images/img-1column.png",
+            "sectionImageLinkUrl": "#",
+            "sectionImageAlt": "섹션 이미지 타이틀",
+            "sectionImageMaxWidth": "100%",
+            "sectionImageAlign": "center",
+            "sectionImagePaddingTop": "15px",
+            "sectionImagePaddingRight": "20px",
+            "sectionImagePaddingBottom": "0",
+            "sectionImagePaddingLeft": "20px",
+            "sectionBgColor": "transparent",
+            "topBorderWidth": "2px",
+            "topBorderColor": "#333333"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "Module02",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/megazoo/eng/vol05/img01.png",
+            "imageAlt": "이미지",
+            "showImageLink": true,
+            "imageLinkUrl": "#",
+            "imageBorderRadius": "10px",
+            "showTitle": false,
+            "title": "콘텐츠 타이틀",
+            "titleFontSize": "18px",
+            "titleLineHeight": "1.7",
+            "description": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">🌍&nbsp;Buyers&nbsp;and&nbsp;sellers&nbsp;who&nbsp;wish&nbsp;to&nbsp;join&nbsp;the&nbsp;<strong>exclusive&nbsp;1:1&nbsp;Biz-Matching&nbsp;Program</strong>&nbsp;with&nbsp;both&nbsp;domestic&nbsp;and&nbsp;international&nbsp;exhibitors&nbsp;must&nbsp;complete&nbsp;their&nbsp;registration&nbsp;by&nbsp;<strong>MAY&nbsp;15&nbsp;(Fri)</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">As&nbsp;business&nbsp;matching&nbsp;is&nbsp;currently&nbsp;taking&nbsp;place&nbsp;actively,&nbsp;it&nbsp;is&nbsp;important&nbsp;to&nbsp;review&nbsp;and&nbsp;respond&nbsp;to&nbsp;your&nbsp;meeting&nbsp;requests&nbsp;promptly.</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">Carefully&nbsp;review&nbsp;the&nbsp;companies&nbsp;that&nbsp;have&nbsp;requested&nbsp;meetings&nbsp;with&nbsp;you,&nbsp;and&nbsp;secure&nbsp;valuable&nbsp;upcoming&nbsp;business&nbsp;opportunities&nbsp;through&nbsp;MEGAZOO&nbsp;Biz-Matching.</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">Please&nbsp;note:&nbsp;<strong style=\"color: #0047b2;\">a&nbsp;meeting&nbsp;is&nbsp;only&nbsp;confirmed&nbsp;once&nbsp;the&nbsp;other&nbsp;party&nbsp;accepts&nbsp;your&nbsp;request.</strong></p>",
+            "descriptionFontSize": "14px",
+            "showButton": true,
+            "buttonText": "Go to  Biz-Matching Page (BMS) →",
+            "buttonUrl": "#",
+            "buttonBgColor": "#111111",
+            "buttonTextColor": "#ffffff",
+            "buttonBorderStyle": "none",
+            "buttonBorderWidth": "1px",
+            "buttonBorderColor": "#000000",
+            "buttonBorderRadius": "5px",
+            "buttonPaddingTop": "20px",
+            "buttonPaddingRight": "20px",
+            "buttonPaddingBottom": "40px",
+            "buttonPaddingLeft": "20px",
+            "buttonBgColor__usePoint": true
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "SectionTitle",
+          "properties": {
+            "showMainTitle": true,
+            "mainTitle": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\">Discover&nbsp;the&nbsp;Brands&nbsp;Joining&nbsp;MEGAZOO!</p>",
+            "mainTitleFontSize": "22px",
+            "mainTitleColor": "#fe5f0d",
+            "mainTitlePaddingTop": "15px",
+            "mainTitlePaddingRight": "20px",
+            "mainTitlePaddingBottom": "15px",
+            "mainTitlePaddingLeft": "20px",
+            "showSubTitle": false,
+            "subTitle": "서브 타이틀 영역입니다",
+            "subTitleFontSize": "16px",
+            "subTitlePaddingTop": "0",
+            "subTitlePaddingRight": "15px",
+            "subTitlePaddingBottom": "20px",
+            "subTitlePaddingLeft": "15px",
+            "showSectionImage": false,
+            "sectionImageUrl": "https://design.messeesang.com/e-dm/newsletter/images/img-1column.png",
+            "sectionImageLinkUrl": "#",
+            "sectionImageAlt": "섹션 이미지 타이틀",
+            "sectionImageMaxWidth": "100%",
+            "sectionImageAlign": "center",
+            "sectionImagePaddingTop": "15px",
+            "sectionImagePaddingRight": "20px",
+            "sectionImagePaddingBottom": "0",
+            "sectionImagePaddingLeft": "20px",
+            "sectionBgColor": "transparent",
+            "topBorderWidth": "2px",
+            "topBorderColor": "#333333"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "Module02",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/megazoo/eng/vol05/img02.jpg",
+            "imageAlt": "이미지",
+            "showImageLink": true,
+            "imageLinkUrl": "#",
+            "imageBorderRadius": "10px",
+            "showTitle": false,
+            "title": "콘텐츠 타이틀",
+            "titleFontSize": "18px",
+            "titleLineHeight": "1.7",
+            "description": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\"><strong>&nbsp;The&nbsp;official&nbsp;exhibitor&nbsp;brand&nbsp;list&nbsp;for&nbsp;MEGAZOO&nbsp;has&nbsp;now&nbsp;been&nbsp;released.</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.7; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">Explore&nbsp;Korea’s&nbsp;leading&nbsp;pet&nbsp;brands&nbsp;carefully&nbsp;selected&nbsp;by&nbsp;MEGAZOO,&nbsp;alongside&nbsp;global&nbsp;exhibitors&nbsp;strongly&nbsp;committed&nbsp;to&nbsp;entering&nbsp;and&nbsp;expanding&nbsp;within&nbsp;the&nbsp;Korean&nbsp;market.</p><p style=\"margin: 0; padding: 0; line-height: 1.7; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">Review&nbsp;the&nbsp;exhibitor&nbsp;list&nbsp;in&nbsp;advance&nbsp;and&nbsp;shortlist&nbsp;the&nbsp;companies&nbsp;that&nbsp;match&nbsp;your&nbsp;business&nbsp;interests&nbsp;to&nbsp;prepare&nbsp;a&nbsp;more&nbsp;efficient&nbsp;and&nbsp;strategic&nbsp;meeting&nbsp;schedule&nbsp;onsite.</p><p style=\"margin: 0; padding: 0; line-height: 1.7; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">At&nbsp;Korea’s&nbsp;largest&nbsp;pet&nbsp;industry&nbsp;exhibition,&nbsp;discover&nbsp;the&nbsp;latest&nbsp;pet&nbsp;industry&nbsp;trends&nbsp;and&nbsp;create&nbsp;new&nbsp;business&nbsp;opportunities&nbsp;by&nbsp;connecting&nbsp;with&nbsp;key&nbsp;industry&nbsp;professionals&nbsp;from&nbsp;around&nbsp;the&nbsp;world.</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">Explore&nbsp;Brands&nbsp;Participating&nbsp;in&nbsp;MEGAZOO&nbsp;→</p>",
+            "descriptionFontSize": "14px",
+            "showButton": true,
+            "buttonText": "Explore Brands Participating in MEGAZOO →",
+            "buttonUrl": "#",
+            "buttonBgColor": "#111111",
+            "buttonTextColor": "#ffffff",
+            "buttonBorderStyle": "none",
+            "buttonBorderWidth": "1px",
+            "buttonBorderColor": "#000000",
+            "buttonBorderRadius": "5px",
+            "buttonPaddingTop": "20px",
+            "buttonPaddingRight": "20px",
+            "buttonPaddingBottom": "40px",
+            "buttonPaddingLeft": "20px",
+            "buttonBgColor__usePoint": true
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "SectionTitle",
+          "properties": {
+            "showMainTitle": true,
+            "mainTitle": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\">Discover&nbsp;MEGAZOO&nbsp;Before&nbsp;You&nbsp;Arrive</p>",
+            "mainTitleFontSize": "22px",
+            "mainTitleColor": "#fe5f0d",
+            "mainTitlePaddingTop": "15px",
+            "mainTitlePaddingRight": "20px",
+            "mainTitlePaddingBottom": "15px",
+            "mainTitlePaddingLeft": "20px",
+            "showSubTitle": false,
+            "subTitle": "서브 타이틀 영역입니다",
+            "subTitleFontSize": "16px",
+            "subTitlePaddingTop": "0",
+            "subTitlePaddingRight": "15px",
+            "subTitlePaddingBottom": "20px",
+            "subTitlePaddingLeft": "15px",
+            "showSectionImage": false,
+            "sectionImageUrl": "https://design.messeesang.com/e-dm/newsletter/images/img-1column.png",
+            "sectionImageLinkUrl": "#",
+            "sectionImageAlt": "섹션 이미지 타이틀",
+            "sectionImageMaxWidth": "100%",
+            "sectionImageAlign": "center",
+            "sectionImagePaddingTop": "15px",
+            "sectionImagePaddingRight": "20px",
+            "sectionImagePaddingBottom": "0",
+            "sectionImagePaddingLeft": "20px",
+            "sectionBgColor": "transparent",
+            "topBorderWidth": "2px",
+            "topBorderColor": "#333333"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "Module02",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/megazoo/eng/vol05/img03.jpg",
+            "imageAlt": "이미지",
+            "showImageLink": true,
+            "imageLinkUrl": "#",
+            "imageBorderRadius": "10px",
+            "showTitle": false,
+            "title": "콘텐츠 타이틀",
+            "titleFontSize": "18px",
+            "titleLineHeight": "1.7",
+            "description": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">Last&nbsp;year’s&nbsp;MEGAZOO&nbsp;brought&nbsp;together&nbsp;a&nbsp;remarkable&nbsp;number&nbsp;of&nbsp;exhibitors&nbsp;and&nbsp;visitors,&nbsp;reaffirming&nbsp;its&nbsp;position&nbsp;as&nbsp;Korea’s&nbsp;largest&nbsp;pet&nbsp;industry&nbsp;exhibition.</p><p style=\"margin: 0; padding: 0; line-height: 1.7; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">Through&nbsp;our&nbsp;highlight&nbsp;video,&nbsp;experience&nbsp;the&nbsp;vibrant&nbsp;atmosphere&nbsp;and&nbsp;energy&nbsp;of&nbsp;the&nbsp;show&nbsp;in&nbsp;advance,&nbsp;and&nbsp;start&nbsp;envisioning&nbsp;the&nbsp;business&nbsp;opportunities&nbsp;and&nbsp;networking&nbsp;experiences&nbsp;that&nbsp;await&nbsp;you&nbsp;at&nbsp;this&nbsp;year’s&nbsp;MEGAZOO.</p><p style=\"margin: 0; padding: 0; line-height: 1.7; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word;\">&nbsp;</p>",
+            "descriptionFontSize": "14px",
+            "showButton": false,
+            "buttonText": "Explore Brands Participating in MEGAZOO →",
+            "buttonUrl": "#",
+            "buttonBgColor": "#111111",
+            "buttonTextColor": "#ffffff",
+            "buttonBorderStyle": "none",
+            "buttonBorderWidth": "1px",
+            "buttonBorderColor": "#000000",
+            "buttonBorderRadius": "5px",
+            "buttonPaddingTop": "20px",
+            "buttonPaddingRight": "20px",
+            "buttonPaddingBottom": "40px",
+            "buttonPaddingLeft": "20px",
+            "buttonBgColor__usePoint": true
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "SectionTitle",
+          "properties": {
+            "showMainTitle": true,
+            "mainTitle": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">📝&nbsp;Don’t&nbsp;miss&nbsp;MEGAZOO&nbsp;this&nbsp;May!</p>",
+            "mainTitleFontSize": "22px",
+            "mainTitleColor": "#333333",
+            "mainTitlePaddingTop": "15px",
+            "mainTitlePaddingRight": "20px",
+            "mainTitlePaddingBottom": "15px",
+            "mainTitlePaddingLeft": "20px",
+            "showSubTitle": false,
+            "subTitle": "서브 타이틀 영역입니다",
+            "subTitleFontSize": "16px",
+            "subTitlePaddingTop": "0",
+            "subTitlePaddingRight": "15px",
+            "subTitlePaddingBottom": "20px",
+            "subTitlePaddingLeft": "15px",
+            "showSectionImage": false,
+            "sectionImageUrl": "https://design.messeesang.com/e-dm/newsletter/images/img-1column.png",
+            "sectionImageLinkUrl": "#",
+            "sectionImageAlt": "섹션 이미지 타이틀",
+            "sectionImageMaxWidth": "100%",
+            "sectionImageAlign": "center",
+            "sectionImagePaddingTop": "15px",
+            "sectionImagePaddingRight": "20px",
+            "sectionImagePaddingBottom": "0",
+            "sectionImagePaddingLeft": "20px",
+            "sectionBgColor": "transparent",
+            "topBorderWidth": "2px",
+            "topBorderColor": "#333333"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\">If&nbsp;you&nbsp;have&nbsp;any&nbsp;questions,</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\">you&nbsp;are&nbsp;more&nbsp;than&nbsp;welcome&nbsp;to&nbsp;reach&nbsp;out&nbsp;to&nbsp;our&nbsp;team&nbsp;😊</p>",
+            "fontSize": "15px",
+            "bgColor": "transparent",
+            "textColor": "#333333",
+            "paddingTop": "0px",
+            "paddingRight": "20px",
+            "paddingBottom": "0px",
+            "paddingLeft": "20px"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleOneButton",
+          "properties": {
+            "buttonText": "CONTACT US FOR ASSISTANCE  →",
+            "paddingTop": "15px",
+            "paddingRight": "20px",
+            "paddingBottom": "40px",
+            "paddingLeft": "20px",
+            "buttonFontSize": "15px",
+            "buttonUrl": "#",
+            "buttonBgColor": "#111111",
+            "buttonTextColor": "#ffffff",
+            "buttonBorderStyle": "none",
+            "buttonBorderWidth": "1px",
+            "buttonBorderColor": "#000000",
+            "buttonBorderRadius": "5px",
+            "buttonBgColor__usePoint": true
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleFooter",
+          "properties": {
+            "companyInfo": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"font-size: 18px;\">MEGAZOO&nbsp;organizer&nbsp;MEESE&nbsp;ESANG&nbsp;CO.,&nbsp;LTD.</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">ES&nbsp;Tower,&nbsp;9,&nbsp;Worldcup&nbsp;buk-ro&nbsp;58gil,&nbsp;Mapo-gu,&nbsp;Seoul,&nbsp;Republic&nbsp;of&nbsp;Korea</p>",
+            "companyInfoFontSize": "16px",
+            "showWebsite": false,
+            "websiteUrl": "www.koreabuild.co.kr",
+            "showPhone": true,
+            "phone": "+82-2-6121-6462",
+            "showEmail": true,
+            "email": " megazoo.es@esgroup.net",
+            "showFax": false,
+            "fax": "02-6121-6363",
+            "contactInfoFontSize": "13px",
+            "snsIconBgColor": "#76797e",
+            "showHome": true,
+            "homeUrl": "https://megazoo.co.kr/eng/",
+            "showFacebook": false,
+            "facebookUrl": "#",
+            "showX": false,
+            "xUrl": "#",
+            "showBlog": false,
+            "blogUrl": "#",
+            "showYoutube": false,
+            "youtubeUrl": "#",
+            "showInstagram": true,
+            "instagramUrl": "https://www.instagram.com/megazoo_global/",
+            "showKakao": false,
+            "kakaoUrl": "#",
+            "showLinkedin": true,
+            "linkedinUrl": "https://www.linkedin.com/company/megazoo-global",
+            "showZuzuzu": false,
+            "zuzuzuUrl": "https://kcoupet.com/",
+            "showEn": true,
+            "enUrl": "#",
+            "showJp": true,
+            "jpUrl": "#",
+            "showTh": true,
+            "thUrl": "#",
+            "unsubscribeUrl": "https://edm.esfair.kr/RejectMail.aspx?code=KPET",
+            "showInquiry": true,
+            "inquiryEmail": "megazoo.es@esgroup.net",
+            "showEnglishFooter": true
+          },
+          "styles": {}
+        }
+      ]
     }
   ]
 }

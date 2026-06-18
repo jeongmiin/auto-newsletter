@@ -87,6 +87,16 @@ export function replaceSectionTitleContent(
 }
 
 /**
+ * TopLanguageButton 콘텐츠 교체 (상단 언어 선택 버튼)
+ */
+export function replaceTopLanguageButtonContent(
+  html: string,
+  properties: Record<string, unknown>,
+): string {
+  return replaceModuleContentSync(html, properties, MODULE_CONFIG_REGISTRY.TopLanguageButton)
+}
+
+/**
  * Module04 콘텐츠 교체
  */
 export async function replaceModule04Content(

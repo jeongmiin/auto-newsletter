@@ -21,6 +21,7 @@ import {
   replaceModuleImgContent,
   replaceModuleOneButtonContent,
   replaceModuleTwoButtonContent,
+  replaceTopLanguageButtonContent,
   replaceSectionTitleContent,
   replaceModule04Content,
   replaceModule02Content,
@@ -1092,6 +1093,9 @@ export const useModuleStore = defineStore('module', () => {
 
       case 'ModuleTwoButton':
         return replaceModuleTwoButtonContent(html, properties)
+
+      case 'TopLanguageButton':
+        return replaceTopLanguageButtonContent(html, properties)
 
       case 'SectionTitle':
         return replaceSectionTitleContent(html, properties)

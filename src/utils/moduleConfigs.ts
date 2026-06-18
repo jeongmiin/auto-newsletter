@@ -43,6 +43,10 @@ export const moduleBasicHeaderConfig: ModuleConfig = {
     topBorderColor: '#000000',
     logoBorderWidth: '1px',
     logoBorderColor: '#dddddd',
+    logoPaddingTop: '30px',
+    logoPaddingRight: '0',
+    logoPaddingBottom: '20px',
+    logoPaddingLeft: '0',
     headerTextColor: '#111111',
     headerTitlePaddingTop: '15px',
     headerTitlePaddingRight: '0',
@@ -238,6 +242,11 @@ export const module02Config: ModuleConfig = {
     titleLineHeight: '1.7',
     imageBorderRadius: '0px',
     imageLinkUrl: '#',
+    showTitle: true,
+    buttonPaddingTop: '20px',
+    buttonPaddingRight: '20px',
+    buttonPaddingBottom: '20px',
+    buttonPaddingLeft: '20px',
   },
   processors: [
     processors.module02ImageProcessor,
@@ -245,6 +254,7 @@ export const module02Config: ModuleConfig = {
     processors.module02AdditionalContentProcessor,
     processors.removeButtonProcessor,
     processors.imageLinkProcessor,
+    processors.module12TitleProcessor,
   ],
 }
 
@@ -597,6 +607,40 @@ export const moduleDividerConfig: ModuleConfig = {
 }
 
 /**
+ * TopLanguageButton 설정 (상단 언어 선택 버튼)
+ * 버튼별 텍스트·링크·활성화 여부 + '기본/액티브' 색상 세트를 처리하는 커스텀 프로세서 사용.
+ */
+export const topLanguageButtonConfig: ModuleConfig = {
+  defaults: {
+    button1Show: true,
+    button1Text: 'EN',
+    button1Link: '#',
+    button1Active: true,
+    button2Show: true,
+    button2Text: 'JP',
+    button2Link: '#',
+    button2Active: false,
+    button3Show: true,
+    button3Text: 'TH',
+    button3Link: '#',
+    button3Active: false,
+    defaultBgColor: '#ffffff',
+    defaultTextColor: '#fe5f0d',
+    defaultBorderColor: '#fe5f0d',
+    activeBgColor: '#fe5f0d',
+    activeTextColor: '#ffffff',
+    activeBorderColor: '#fe5f0d',
+    buttonFontSize: '16px',
+    buttonWidth: '70px',
+    paddingTop: '20px',
+    paddingRight: '25px',
+    paddingBottom: '20px',
+    paddingLeft: '25px',
+  },
+  processors: [processors.topLanguageButtonProcessor],
+}
+
+/**
  * 모듈 ID를 설정으로 매핑하는 레지스트리
  */
 export const MODULE_CONFIG_REGISTRY: Record<string, ModuleConfig> = {
@@ -628,4 +672,5 @@ export const MODULE_CONFIG_REGISTRY: Record<string, ModuleConfig> = {
   ModuleSubTitle: moduleSubTitleConfig,
   ModuleMultiImage: moduleMultiImageConfig,
   ModuleDivider: moduleDividerConfig,
+  TopLanguageButton: topLanguageButtonConfig,
 }
