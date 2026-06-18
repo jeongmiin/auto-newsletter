@@ -47,6 +47,7 @@ import {
 import { convertQuillListsToEmailHtml } from '@/utils/quillHtmlProcessor'
 import { flattenAlphaColorsInHtml } from '@/utils/colorFlatten'
 import { resolvePointColors } from '@/utils/pointColor'
+import { applyFontFamily } from '@/utils/fontFamily'
 import { migrateModuleProperties } from '@/utils/moduleMigrations'
 import { sanitizeHtml } from '@/utils/sanitize'
 
@@ -1196,6 +1197,9 @@ export const useModuleStore = defineStore('module', () => {
         // 반투명 색상을 전역 배경색과 합성해 불투명으로 평탄화 (이메일 호환)
         html = flattenAlphaColorsInHtml(html, wrapSettings.backgroundColor)
 
+        // 다국어 폰트: 선택 언어에 따라 기본 폰트 스택을 일괄 치환
+        html = applyFontFamily(html, wrapSettings.fontLanguage)
+
         fullHtml += html + '\n'
       } catch (error) {
         console.error(
@@ -1262,6 +1266,7 @@ export const useModuleStore = defineStore('module', () => {
     html = await replaceModuleContent(html, tempModule)
     html = convertQuillListsToEmailHtml(html)
     html = flattenAlphaColorsInHtml(html, useEditorStore().wrapSettings.backgroundColor)
+    html = applyFontFamily(html, useEditorStore().wrapSettings.fontLanguage)
     return sanitizeHtml(html)
   }
 

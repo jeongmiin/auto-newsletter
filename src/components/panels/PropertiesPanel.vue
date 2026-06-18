@@ -79,6 +79,20 @@
             <p class="text-xs text-gray-400 mt-1">각 색상에서 '포인트 색상 사용'을 켜면 이 색을 따릅니다</p>
           </div>
 
+          <!-- 다국어 폰트 -->
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1">폰트 (언어)</label>
+            <Select
+              :modelValue="wrapSettings.fontLanguage ?? 'default'"
+              @update:modelValue="updateWrapProperty('fontLanguage', $event ?? 'default')"
+              :options="fontLanguageOptions"
+              optionLabel="label"
+              optionValue="value"
+              class="w-full text-sm"
+            />
+            <p class="text-xs text-gray-400 mt-1">선택한 언어에 맞는 폰트로 모든 모듈을 일괄 적용합니다</p>
+          </div>
+
           <!-- 테두리 설정 (가로 배치) -->
           <div>
             <label class="block text-xs font-medium text-gray-600 mb-1">테두리</label>
@@ -980,6 +994,7 @@ import type { TableRow, ContentTitle, ContentText, AdditionalContent, TableCell,
 import { normalizeColorInput, isValidHexColor } from '@/utils/colorHelper'
 import { normalizePxLength } from '@/utils/cssUnit'
 import { POINT_COLOR_SUFFIX } from '@/utils/pointColor'
+import { FONT_LANGUAGE_OPTIONS } from '@/utils/fontFamily'
 import { processQuillHtml } from '@/utils/quillHtmlProcessor'
 import TableCellEditor from './TableCellEditor.vue'
 import ColorAlphaPicker from '@/components/ColorAlphaPicker.vue'
@@ -1046,6 +1061,9 @@ const borderStyleOptions = [
   { label: '이중선', value: 'double' },
   { label: '없음', value: 'none' },
 ]
+
+// 다국어 폰트 옵션 (공통 속성)
+const fontLanguageOptions = FONT_LANGUAGE_OPTIONS
 
 // Wrap 속성 업데이트 함수
 const updateWrapProperty = (key: keyof WrapSettings, value: string) => {

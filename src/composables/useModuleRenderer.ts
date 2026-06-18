@@ -6,6 +6,7 @@ import { resolvePointColors } from '@/utils/pointColor'
 import { applyStylesToHtml } from '@/utils/htmlUtils'
 import { sanitizeHtml, sanitizeErrorMessage } from '@/utils/sanitize'
 import { flattenAlphaColorsInHtml } from '@/utils/colorFlatten'
+import { applyFontFamily } from '@/utils/fontFamily'
 import {
   replaceModuleNewsHeaderContent,
   replaceModuleBasicHeaderContent,
@@ -203,6 +204,9 @@ export function useModuleRenderer(moduleId: string) {
       // (이메일 클라이언트 호환을 위해 미리보기·내보내기 동일하게 처리)
       html = flattenAlphaColorsInHtml(html, editorStore.wrapSettings.backgroundColor)
 
+      // 다국어 폰트: 선택 언어에 따라 기본 폰트 스택을 일괄 치환
+      html = applyFontFamily(html, editorStore.wrapSettings.fontLanguage)
+
       // XSS 방어: HTML 정제 후 렌더링
       renderedHtml.value = sanitizeHtml(html)
       isLoading.value = false
@@ -259,6 +263,16 @@ export function useModuleRenderer(moduleId: string) {
   // 전역 포인트 색상 변경 시 — '포인트 색상 사용'으로 체크된 모듈들도 다시 렌더
   watch(
     () => editorStore.wrapSettings.pointColor,
+    () => {
+      if (currentModule.value) {
+        debouncedLoadModuleHtml()
+      }
+    }
+  )
+
+  // 다국어 폰트 변경 시 — 모든 모듈을 선택 언어 폰트로 다시 렌더
+  watch(
+    () => editorStore.wrapSettings.fontLanguage,
     () => {
       if (currentModule.value) {
         debouncedLoadModuleHtml()
