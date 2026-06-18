@@ -1,12 +1,13 @@
 <template>
-  <div class="h-full flex flex-col">
+  <!-- min-w-0: 고정폭 래퍼(flex-1 자식) 안에서 내용이 패널을 밀어내지 못하도록 (기본 min-width:auto 무력화) -->
+  <div class="h-full flex flex-col min-w-0">
     <!-- 패널 헤더 -->
     <div class="p-3 border-b">
       <h2 class="text-lg font-semibold text-gray-800">속성</h2>
     </div>
 
-    <!-- 스크롤 영역 -->
-    <div class="flex-1 overflow-y-auto">
+    <!-- 스크롤 영역 (가로는 패널 폭으로 클리핑 — 넘치는 편집기는 자체 가로 스크롤을 가진다) -->
+    <div class="flex-1 overflow-y-auto overflow-x-hidden">
       <!-- 공통 속성 섹션 (항상 표시, 접을 수 있음) -->
       <div class="border-b">
         <!-- 공통 속성 헤더 (클릭하여 토글) -->
@@ -173,6 +174,7 @@
           :header="group.name || undefined"
           :toggleable="!!group.name"
           :collapsed="group.name ? gIdx > 0 : false"
+          :pt="group.name ? panelHeaderPt : undefined"
         >
         <template v-if="group.name" #togglericon="{ collapsed }">
           <i :class="collapsed ? 'pi pi-angle-down' : 'pi pi-angle-up'"></i>
@@ -687,17 +689,18 @@
                 </div>
               </div>
 
-              <!-- 테이블 그리드 형태 편집기 -->
-              <div class="table-editor-grid border border-gray-300 rounded-lg overflow-hidden">
+              <!-- 테이블 그리드 형태 편집기 (열이 많아지면 페이지가 아니라 이 영역 안에서 가로 스크롤) -->
+              <div class="table-editor-grid border border-gray-300 rounded-lg overflow-x-auto">
                 <!-- 열 헤더 (열 번호/삭제 + 열 너비 입력) -->
-                <div class="flex bg-gray-50 border-b border-gray-300">
+                <div class="flex min-w-full bg-gray-50 border-b border-gray-300">
                   <!-- 왼쪽 상단 빈 셀 (행 컨트롤 공간) -->
-                  <div class="w-8 flex-shrink-0 border-r border-gray-200"></div>
-                  <!-- 열 헤더들 -->
+                  <div class="w-8 flex-shrink-0 bg-gray-50 border-r border-gray-200"></div>
+                  <!-- 열 헤더들 (열이 적으면 grow로 채우고, 많으면 기준 너비로 고정되어 스크롤) -->
                   <div
                     v-for="(_, colIndex) in tableCells[0]"
                     :key="`col-header-${colIndex}`"
-                    class="flex-1 min-w-0 flex flex-col px-2 border-r border-gray-200 last:border-r-0"
+                    class="flex flex-col px-2 bg-gray-50 border-r border-r-gray-200 border-b border-b-gray-300 last:border-r-0"
+                    :style="{ flexGrow: 1, flexShrink: 0, flexBasis: tableColWidth + 'px' }"
                   >
                     <!-- 상단: 열 번호 + 삭제 -->
                     <div class="flex items-center justify-center gap-1 py-1.5">
@@ -741,7 +744,7 @@
                 <div
                   v-for="(row, rowIndex) in tableCells"
                   :key="`row-${rowIndex}`"
-                  class="flex border-b border-gray-200 last:border-b-0"
+                  class="flex min-w-full border-b border-gray-200 last:border-b-0"
                 >
                   <!-- 행 컨트롤 (행 번호 + 삭제) -->
                   <div class="w-8 flex-shrink-0 flex flex-col items-center justify-center bg-gray-50 border-r border-gray-200 py-1">
@@ -763,9 +766,13 @@
                     v-for="(cell, colIndex) in row"
                     :key="cell.id"
                     v-show="!cell.hidden"
-                    class="flex-1 min-w-0 p-2 border-r border-gray-200 last:border-r-0"
+                    class="p-2 border-r border-gray-200 last:border-r-0"
                     :class="cell.type === 'th' ? 'bg-blue-50' : 'bg-white'"
-                    :style="{ flex: cell.colspan > 1 ? cell.colspan : 1 }"
+                    :style="{
+                      flexGrow: cell.colspan,
+                      flexShrink: 0,
+                      flexBasis: (cell.colspan > 1 ? cell.colspan * tableColWidth : tableColWidth) + 'px',
+                    }"
                   >
                     <!-- 셀 컨트롤 (타입 + 정렬 + 병합) -->
                     <div class="flex flex-wrap items-center justify-between mb-1.5 gap-1">
@@ -1064,6 +1071,30 @@ const borderStyleOptions = [
 
 // 다국어 폰트 옵션 (공통 속성)
 const fontLanguageOptions = FONT_LANGUAGE_OPTIONS
+
+// 커스텀 테이블 편집기 열 기준 너비(px) — flex-basis로 사용.
+// 열이 적으면 grow로 늘어나 패널을 꽉 채우고, 많아지면 이 너비로 고정되어 가로 스크롤된다.
+// 헤더·본문이 동일 컨테이너 폭에서 같은 flex 설정을 쓰므로 두 상태 모두 정렬이 맞는다.
+// 병합(colspan) 셀은 이 값의 배수로 grow/basis를 잡아 헤더 열들과 정렬된다.
+const tableColWidth = 220
+
+// 속성 그룹 패널: 헤더 전체를 클릭 영역으로 만든다.
+// 토글 버튼(아이콘) 외 영역을 클릭하면 헤더 안의 토글 버튼을 대신 클릭해 아코디언을 연다.
+// (PrimeVue 기본은 아이콘 버튼만 클릭 가능 — 클래스명에 의존하지 않도록 <button>을 직접 찾는다)
+const onPanelHeaderClick = (event: MouseEvent) => {
+  const target = event.target as HTMLElement
+  // 토글 버튼 자체 클릭은 PrimeVue 기본 동작에 맡겨 더블 토글을 방지
+  if (target.closest('button')) return
+  const header = event.currentTarget as HTMLElement
+  header.querySelector('button')?.click()
+}
+
+const panelHeaderPt = {
+  header: {
+    onClick: onPanelHeaderClick,
+    style: 'cursor: pointer',
+  },
+}
 
 // Wrap 속성 업데이트 함수
 const updateWrapProperty = (key: keyof WrapSettings, value: string) => {
