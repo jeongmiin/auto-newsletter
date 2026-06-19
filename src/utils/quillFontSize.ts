@@ -8,7 +8,7 @@
 import Quill from 'quill'
 
 /** 선택 가능한 글자 크기 값 (툴바 드롭다운과 동일 순서) */
-export const FONT_SIZE_OPTIONS = ['28px', '26px', '24px', '22px', '20px', '18px', '16px'] as const
+export const FONT_SIZE_OPTIONS = ['28px', '26px', '24px', '22px', '20px', '18px', '16px', '14px', '12px'] as const
 
 type ParchmentLike = {
   StyleAttributor: new (

@@ -442,18 +442,22 @@ export const useModuleStore = defineStore('module', () => {
     const module = modules.value.find((m) => m.id === moduleId)
     if (!module) return
 
+    // 정렬은 셀별로 지정하지 않고 열 공통값(tableColAligns)을 기본으로 사용한다.
+    // 셀별 align은 사용자가 '가' 편집기에서 직접 지정했을 때만 채워지며, 그때 더 우선한다.
     const defaultCells: TableCell[][] = [
       [
-        { id: generateUniqueId('cell'), type: 'th', content: '항목', colspan: 1, rowspan: 1, align: 'center' },
-        { id: generateUniqueId('cell'), type: 'td', content: '내용', colspan: 1, rowspan: 1, align: 'left' },
+        { id: generateUniqueId('cell'), type: 'th', content: '항목', colspan: 1, rowspan: 1 },
+        { id: generateUniqueId('cell'), type: 'td', content: '내용', colspan: 1, rowspan: 1 },
       ],
       [
-        { id: generateUniqueId('cell'), type: 'th', content: '항목', colspan: 1, rowspan: 1, align: 'center' },
-        { id: generateUniqueId('cell'), type: 'td', content: '내용', colspan: 1, rowspan: 1, align: 'left' },
+        { id: generateUniqueId('cell'), type: 'th', content: '항목', colspan: 1, rowspan: 1 },
+        { id: generateUniqueId('cell'), type: 'td', content: '내용', colspan: 1, rowspan: 1 },
       ],
     ]
 
     module.properties.tableCells = defaultCells
+    // 열 공통 정렬: 1열 가운데, 2열 왼쪽
+    module.properties.tableColAligns = ['center', 'left']
     triggerRef(modules)
   }
 
@@ -480,7 +484,6 @@ export const useModuleStore = defineStore('module', () => {
       content: '',
       colspan: 1,
       rowspan: 1,
-      align: 'left' as const,
     }))
 
     cells.push(newRow)
@@ -502,7 +505,7 @@ export const useModuleStore = defineStore('module', () => {
       return
     }
 
-    // 각 행에 새 열 추가 (TH는 center, TD는 left 정렬)
+    // 각 행에 새 열 추가 (정렬은 열 공통값으로 관리)
     cells.forEach((row, rowIndex) => {
       const cellType = rowIndex === 0 ? 'th' : 'td'
       row.push({
@@ -511,13 +514,16 @@ export const useModuleStore = defineStore('module', () => {
         content: '',
         colspan: 1,
         rowspan: 1,
-        align: cellType === 'th' ? 'center' : 'left',
       })
     })
 
     // 열 너비 배열도 동기화 (새 열은 기본 너비)
     const colWidths = (module.properties.tableColWidths as string[] | undefined) || []
     module.properties.tableColWidths = [...colWidths, '']
+
+    // 열 공통 정렬 배열도 동기화 (새 열은 왼쪽 기본)
+    const colAligns = (module.properties.tableColAligns as string[] | undefined) || []
+    module.properties.tableColAligns = [...colAligns, 'left']
 
     module.properties.tableCells = [...cells]
     triggerRef(modules)
@@ -560,6 +566,14 @@ export const useModuleStore = defineStore('module', () => {
       module.properties.tableColWidths = next
     }
 
+    // 열 공통 정렬 배열도 동기화
+    const colAligns = (module.properties.tableColAligns as string[] | undefined) || []
+    if (colAligns.length > 0) {
+      const next = [...colAligns]
+      next.splice(colIndex, 1)
+      module.properties.tableColAligns = next
+    }
+
     module.properties.tableCells = [...cells]
     triggerRef(modules)
   }
@@ -580,6 +594,30 @@ export const useModuleStore = defineStore('module', () => {
     next[colIndex] = (width || '').trim()
 
     module.properties.tableColWidths = next
+    triggerRef(modules)
+  }
+
+  /**
+   * 테이블 열 공통 정렬 업데이트 (커스텀 테이블)
+   * 셀별 align이 지정되지 않은 셀에 적용되는 열 단위 기본 정렬.
+   */
+  const updateTableColAlign = (
+    moduleId: string,
+    colIndex: number,
+    align: 'left' | 'center' | 'right',
+  ): void => {
+    const module = modules.value.find((m) => m.id === moduleId)
+    if (!module) return
+
+    const cells = (module.properties.tableCells as TableCell[][]) || []
+    const colCount = cells[0]?.length || 0
+    if (colIndex < 0 || colIndex >= colCount) return
+
+    const current = (module.properties.tableColAligns as string[] | undefined) || []
+    const next = Array.from({ length: colCount }, (_, i) => current[i] || (i === 0 ? 'center' : 'left'))
+    next[colIndex] = align
+
+    module.properties.tableColAligns = next
     triggerRef(modules)
   }
 
@@ -774,7 +812,6 @@ export const useModuleStore = defineStore('module', () => {
           content,
           colspan: 1,
           rowspan: 1,
-          align: cellType === 'th' ? 'center' : 'left',
         })
       }
       newCells.push(row)
@@ -783,6 +820,8 @@ export const useModuleStore = defineStore('module', () => {
     module.properties.tableCells = newCells
     module.properties.tablePresetId = presetId
     module.properties.tableColWidths = Array.from({ length: cols }, () => '')
+    // 열 공통 정렬: 1열 가운데, 나머지 왼쪽
+    module.properties.tableColAligns = Array.from({ length: cols }, (_, i) => (i === 0 ? 'center' : 'left'))
     triggerRef(modules)
   }
 
@@ -1295,17 +1334,19 @@ export const useModuleStore = defineStore('module', () => {
           props[prop.key] = prop.defaultRows || []
           break
         case 'table-editor':
-          // 커스텀 테이블의 기본 2x2 셀 생성
+          // 커스텀 테이블의 기본 2x2 셀 생성 (정렬은 열 공통값 tableColAligns로 관리)
           props[prop.key] = [
             [
-              { id: generateUniqueId('cell'), type: 'th', content: '항목', colspan: 1, rowspan: 1, align: 'center' },
-              { id: generateUniqueId('cell'), type: 'td', content: '내용', colspan: 1, rowspan: 1, align: 'left' },
+              { id: generateUniqueId('cell'), type: 'th', content: '항목', colspan: 1, rowspan: 1 },
+              { id: generateUniqueId('cell'), type: 'td', content: '내용', colspan: 1, rowspan: 1 },
             ],
             [
-              { id: generateUniqueId('cell'), type: 'th', content: '항목', colspan: 1, rowspan: 1, align: 'center' },
-              { id: generateUniqueId('cell'), type: 'td', content: '내용', colspan: 1, rowspan: 1, align: 'left' },
+              { id: generateUniqueId('cell'), type: 'th', content: '항목', colspan: 1, rowspan: 1 },
+              { id: generateUniqueId('cell'), type: 'td', content: '내용', colspan: 1, rowspan: 1 },
             ],
           ]
+          // 열 공통 정렬 기본값: 1열 가운데, 2열 왼쪽
+          props.tableColAligns = ['center', 'left']
           break
         case 'content-titles':
         case 'content-texts':
@@ -1354,6 +1395,7 @@ export const useModuleStore = defineStore('module', () => {
     removeTableCellColumn,
     updateTableCell,
     updateTableColWidth,
+    updateTableColAlign,
     mergeCells,
     unmergeCell,
     toggleCellType,

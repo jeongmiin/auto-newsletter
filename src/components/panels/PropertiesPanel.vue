@@ -125,7 +125,7 @@
                   @update:modelValue="handleWrapColorPickerUpdate('borderColor', $event)"
                   class="border-color-picker"
                 />
-                <InputText
+                <HexColorInput
                   :modelValue="wrapSettings.borderColor"
                   @update:modelValue="handleWrapColorInput('borderColor', $event ?? '')"
                   placeholder="#ddd"
@@ -222,8 +222,8 @@
                 @update:modelValue="handleColorPickerUpdate(prop.key, $event)"
                 :disabled="isUsingPoint(prop.key)"
               />
-              <!-- PrimeVue InputText -->
-              <InputText
+              <!-- HEX 입력 (알파 숨김: 투명도 적용 시에도 6자리만 노출) -->
+              <HexColorInput
                 :modelValue="isUsingPoint(prop.key) ? pointColorValue : String(selectedModule.properties[prop.key] || '')"
                 @update:modelValue="handleColorInput(prop.key, $event ?? '')"
                 :disabled="isUsingPoint(prop.key)"
@@ -250,7 +250,8 @@
               :placeholder="prop.placeholder"
               class="w-full"
             />
-            <p v-if="prop.hint" class="text-xs text-gray-400">{{ prop.hint }}</p>
+            <!-- 힌트: 정적 설정(modules-config) 문자열이라 <br> 등 간단한 줄바꿈 허용 -->
+            <p v-if="prop.hint" class="text-xs text-gray-400" v-html="prop.hint"></p>
           </div>
 
           <!-- 리치 텍스트 에디터 -->
@@ -260,7 +261,7 @@
             @update:model-value="handleEditorUpdate(prop.key, $event)"
             @load="onEditorLoad"
             :placeholder="prop.placeholder"
-            editorStyle="height: 150px"
+            editorStyle="height: 200px"
           >
             <template #toolbar>
               <span class="ql-formats">
@@ -278,6 +279,8 @@
                   <option value="20px">20px</option>
                   <option value="18px">18px</option>
                   <option value="16px">16px</option>
+                  <option value="14px">14px</option>
+                  <option value="12px">12px</option>
                   <option selected>본문</option>
                 </select>
                 <select class="ql-lineHeight" title="행간(줄 간격)">
@@ -718,11 +721,11 @@
                     </div>
                     <!-- 구분선 -->
                     <div class="border-t border-gray-200"></div>
-                    <!-- 하단: 너비 라벨 + 입력 -->
-                    <div class="flex items-center gap-1.5 py-1.5">
+                    <!-- 중단: 너비 라벨 + 입력 -->
+                    <div class="flex items-center gap-1.5 pt-1.5">
                       <label
                         :for="`col-width-${colIndex}`"
-                        class="text-xs font-medium text-gray-500 shrink-0"
+                        class="text-xs font-medium text-gray-500 shrink-0 w-7"
                       >넓이</label>
                       <div
                         class="col-width-field flex-1 min-w-0 flex items-center bg-white border border-gray-300 rounded focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-200 transition-colors"
@@ -736,6 +739,23 @@
                           class="flex-1 min-w-0 !border-0 !shadow-none !bg-transparent !text-xs !py-1 !px-1.5"
                         />
                       </div>
+                    </div>
+                    <!-- 하단: 열 공통 정렬 (셀별 정렬이 없으면 이 값 사용) -->
+                    <div class="flex items-center gap-1.5 py-1.5">
+                      <label
+                        :for="`col-align-${colIndex}`"
+                        class="text-xs font-medium text-gray-500 shrink-0 w-7"
+                      >정렬</label>
+                      <Select
+                        :inputId="`col-align-${colIndex}`"
+                        :modelValue="getColAlign(colIndex)"
+                        @update:modelValue="updateColAlign(colIndex, $event ?? 'left')"
+                        :options="colAlignOptions"
+                        optionLabel="label"
+                        optionValue="value"
+                        class="flex-1 min-w-0 col-align-select"
+                        v-tooltip.top="'열 공통 정렬 — 셀별 정렬이 더 우선합니다'"
+                      />
                     </div>
                   </div>
                 </div>
@@ -766,7 +786,7 @@
                     v-for="(cell, colIndex) in row"
                     :key="cell.id"
                     v-show="!cell.hidden"
-                    class="p-2 border-r border-gray-200 last:border-r-0"
+                    class="p-2 border-r border-gray-200 last:border-r-0 min-w-0 overflow-hidden"
                     :class="cell.type === 'th' ? 'bg-blue-50' : 'bg-white'"
                     :style="{
                       flexGrow: cell.colspan,
@@ -790,40 +810,6 @@
                           {{ cell.type === 'th' ? '제목' : '내용' }}
                         </button>
 
-                        <!-- 정렬 버튼 그룹 -->
-                        <div class="flex items-center border border-gray-200 rounded overflow-hidden">
-                          <button
-                            @click="updateCellAlign(rowIndex, colIndex, 'left')"
-                            class="p-1 transition-colors"
-                            :class="getCellAlign(cell) === 'left'
-                              ? 'bg-blue-500 text-white'
-                              : 'bg-white text-gray-500 hover:bg-gray-100'"
-                            v-tooltip.top="'왼쪽 정렬'"
-                          >
-                            <i class="pi pi-align-left text-xs"></i>
-                          </button>
-                          <button
-                            @click="updateCellAlign(rowIndex, colIndex, 'center')"
-                            class="p-1 border-x border-gray-200 transition-colors"
-                            :class="getCellAlign(cell) === 'center'
-                              ? 'bg-blue-500 text-white'
-                              : 'bg-white text-gray-500 hover:bg-gray-100'"
-                            v-tooltip.top="'가운데 정렬'"
-                          >
-                            <i class="pi pi-align-center text-xs"></i>
-                          </button>
-                          <button
-                            @click="updateCellAlign(rowIndex, colIndex, 'right')"
-                            class="p-1 transition-colors"
-                            :class="getCellAlign(cell) === 'right'
-                              ? 'bg-blue-500 text-white'
-                              : 'bg-white text-gray-500 hover:bg-gray-100'"
-                            v-tooltip.top="'오른쪽 정렬'"
-                          >
-                            <i class="pi pi-align-right text-xs"></i>
-                          </button>
-                        </div>
-
                         <!-- 셀 색상 스와치 (클릭 시 색상 편집기 펼침) -->
                         <button
                           @click="toggleCellColorEditor(rowIndex, colIndex)"
@@ -832,7 +818,7 @@
                             ? 'border-blue-500 ring-1 ring-blue-200'
                             : 'border-gray-300 hover:border-gray-400'"
                           :style="{ backgroundColor: getCellEffectiveBg(cell), color: getCellEffectiveText(cell) }"
-                          v-tooltip.top="'셀 배경색·글자색·굵게'"
+                          v-tooltip.top="'셀 정렬·배경색·글자색·굵게'"
                         >가</button>
                       </div>
 
@@ -876,34 +862,77 @@
                       v-if="isCellColorOpen(rowIndex, colIndex)"
                       class="cell-color-editor mb-1.5 p-2 bg-gray-50 border border-gray-200 rounded space-y-1.5"
                     >
+                      <!-- 셀 정렬 (지정 시 열 공통 정렬보다 우선) -->
+                      <div class="flex flex-wrap items-center gap-1.5">
+                        <label class="text-xs text-gray-500 w-7 shrink-0">정렬</label>
+                        <div class="flex items-center border border-gray-300 rounded overflow-hidden">
+                          <button
+                            @click="updateCellAlign(rowIndex, colIndex, 'left')"
+                            class="p-1 transition-colors"
+                            :class="getCellAlign(cell, colIndex) === 'left'
+                              ? 'bg-blue-500 text-white'
+                              : 'bg-white text-gray-500 hover:bg-gray-100'"
+                            v-tooltip.top="'왼쪽 정렬'"
+                          >
+                            <i class="pi pi-align-left text-xs"></i>
+                          </button>
+                          <button
+                            @click="updateCellAlign(rowIndex, colIndex, 'center')"
+                            class="p-1 border-x border-gray-300 transition-colors"
+                            :class="getCellAlign(cell, colIndex) === 'center'
+                              ? 'bg-blue-500 text-white'
+                              : 'bg-white text-gray-500 hover:bg-gray-100'"
+                            v-tooltip.top="'가운데 정렬'"
+                          >
+                            <i class="pi pi-align-center text-xs"></i>
+                          </button>
+                          <button
+                            @click="updateCellAlign(rowIndex, colIndex, 'right')"
+                            class="p-1 transition-colors"
+                            :class="getCellAlign(cell, colIndex) === 'right'
+                              ? 'bg-blue-500 text-white'
+                              : 'bg-white text-gray-500 hover:bg-gray-100'"
+                            v-tooltip.top="'오른쪽 정렬'"
+                          >
+                            <i class="pi pi-align-right text-xs"></i>
+                          </button>
+                        </div>
+                        <button
+                          v-if="cell.align"
+                          @click="resetCellAlign(rowIndex, colIndex)"
+                          class="text-xs text-gray-500 hover:text-blue-600 underline shrink-0"
+                          v-tooltip.top="'이 셀의 정렬을 지우고 열 공통 정렬을 사용'"
+                        >공통 정렬 적용하기</button>
+                        <span v-else class="text-xs text-gray-400 shrink-0">공통 정렬 적용 중</span>
+                      </div>
                       <!-- 배경색 -->
-                      <div class="flex items-center gap-1.5">
+                      <div class="flex flex-wrap items-center gap-1.5">
                         <label class="text-xs text-gray-500 w-7 shrink-0">배경</label>
                         <ColorAlphaPicker
                           :modelValue="getCellEffectiveBg(cell)"
                           @update:modelValue="updateCellBgColor(rowIndex, colIndex, $event)"
                         />
-                        <InputText
+                        <HexColorInput
                           :modelValue="cell.bgColor || ''"
                           @update:modelValue="updateCellBgColorInput(rowIndex, colIndex, $event ?? '')"
                           :placeholder="getCellEffectiveBg(cell)"
-                          class="flex-1 min-w-0 font-mono !text-xs"
+                          class="flex-1 min-w-[5rem] font-mono !text-xs"
                           size="small"
                           spellcheck="false"
                         />
                       </div>
                       <!-- 글자색 -->
-                      <div class="flex items-center gap-1.5">
+                      <div class="flex flex-wrap items-center gap-1.5">
                         <label class="text-xs text-gray-500 w-7 shrink-0">글자</label>
                         <ColorAlphaPicker
                           :modelValue="getCellEffectiveText(cell)"
                           @update:modelValue="updateCellTextColor(rowIndex, colIndex, $event)"
                         />
-                        <InputText
+                        <HexColorInput
                           :modelValue="cell.textColor || ''"
                           @update:modelValue="updateCellTextColorInput(rowIndex, colIndex, $event ?? '')"
                           :placeholder="getCellEffectiveText(cell)"
-                          class="flex-1 min-w-0 font-mono !text-xs"
+                          class="flex-1 min-w-[5rem] font-mono !text-xs"
                           size="small"
                           spellcheck="false"
                         />
@@ -1072,11 +1101,18 @@ const borderStyleOptions = [
 // 다국어 폰트 옵션 (공통 속성)
 const fontLanguageOptions = FONT_LANGUAGE_OPTIONS
 
+// 커스텀 테이블 열 공통 정렬 옵션
+const colAlignOptions = [
+  { label: '왼쪽', value: 'left' },
+  { label: '가운데', value: 'center' },
+  { label: '오른쪽', value: 'right' },
+]
+
 // 커스텀 테이블 편집기 열 기준 너비(px) — flex-basis로 사용.
 // 열이 적으면 grow로 늘어나 패널을 꽉 채우고, 많아지면 이 너비로 고정되어 가로 스크롤된다.
 // 헤더·본문이 동일 컨테이너 폭에서 같은 flex 설정을 쓰므로 두 상태 모두 정렬이 맞는다.
 // 병합(colspan) 셀은 이 값의 배수로 grow/basis를 잡아 헤더 열들과 정렬된다.
-const tableColWidth = 220
+const tableColWidth = 250
 
 // 속성 그룹 패널: 헤더 전체를 클릭 영역으로 만든다.
 // 토글 버튼(아이콘) 외 영역을 클릭하면 헤더 안의 토글 버튼을 대신 클릭해 아코디언을 연다.
@@ -1406,6 +1442,13 @@ const updateCellAlign = (rowIndex: number, colIndex: number, align: 'left' | 'ce
   }
 }
 
+// 셀별 정렬을 지우고 열 공통 정렬을 사용하도록 복귀
+const resetCellAlign = (rowIndex: number, colIndex: number) => {
+  if (selectedModule.value) {
+    moduleStore.updateTableCell(selectedModule.value.id, rowIndex, colIndex, { align: undefined })
+  }
+}
+
 const updateCellWidth = (rowIndex: number, colIndex: number, width: string) => {
   if (selectedModule.value) {
     moduleStore.updateTableCell(selectedModule.value.id, rowIndex, colIndex, { width: width || undefined })
@@ -1492,16 +1535,30 @@ const updateColWidth = (colIndex: number, width: string) => {
   }
 }
 
+// 커스텀 테이블 열 공통 정렬 (셀별 정렬이 없는 셀에 적용; 기본: 1열 가운데, 나머지 왼쪽)
+const getColAlign = (colIndex: number): 'left' | 'center' | 'right' => {
+  const aligns = (selectedModule.value?.properties.tableColAligns as string[] | undefined) || []
+  const v = aligns[colIndex]
+  if (v === 'left' || v === 'center' || v === 'right') return v
+  return colIndex === 0 ? 'center' : 'left'
+}
+
+const updateColAlign = (colIndex: number, align: string) => {
+  if (selectedModule.value && (align === 'left' || align === 'center' || align === 'right')) {
+    moduleStore.updateTableColAlign(selectedModule.value.id, colIndex, align)
+  }
+}
+
 const toggleCellType = (rowIndex: number, colIndex: number) => {
   if (selectedModule.value) {
     moduleStore.toggleCellType(selectedModule.value.id, rowIndex, colIndex)
   }
 }
 
-// 셀의 현재 정렬 상태 가져오기 (TH 기본: center, TD 기본: left)
-const getCellAlign = (cell: TableCell): 'left' | 'center' | 'right' => {
+// 셀에 실제 적용되는 정렬 (셀별 지정 > 열 공통 > 타입 기본)
+const getCellAlign = (cell: TableCell, colIndex: number): 'left' | 'center' | 'right' => {
   if (cell.align) return cell.align
-  return cell.type === 'th' ? 'center' : 'left'
+  return getColAlign(colIndex)
 }
 
 // 최대 열 병합 가능 수 계산
@@ -1764,6 +1821,15 @@ const togglePointColor = (key: string, value: boolean): void => {
 .col-width-field :deep(.p-inputtext:focus) {
   box-shadow: none !important;
   outline: none !important;
+}
+
+/* 열 공통 정렬 Select — 좁은 열 헤더에 맞춰 작게 */
+.col-align-select :deep(.p-select-label) {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+}
+.col-align-select :deep(.p-select-dropdown) {
+  width: 1.5rem;
 }
 
 /* 셀 타입 토글 버튼 호버 효과 */

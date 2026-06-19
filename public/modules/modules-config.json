@@ -276,11 +276,12 @@
         },
         {
           "key": "headerFontSize",
-          "label": "NEWSLETTER 폰트 크기",
+          "label": "NEWSLETTER 기본 글자 크기",
           "type": "text",
           "default": "20px",
           "placeholder": "예: 20px, 24px",
-          "group": "헤더 타이틀"
+          "group": "헤더 타이틀",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
         },
         {
           "key": "headerTextColor",
@@ -615,12 +616,13 @@
         },
         {
           "key": "titleFontSize",
-          "label": "폰트 크기",
+          "label": "기본 글자 크기 (본문)",
           "type": "text",
           "default": "20px",
           "placeholder": "예: 20px, 22px",
           "showWhen": "showTitle",
-          "group": "타이틀"
+          "group": "타이틀",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
         },
         {
           "key": "titleColor",
@@ -648,12 +650,13 @@
         },
         {
           "key": "bodyFontSize",
-          "label": "폰트 크기",
+          "label": "기본 글자 크기 (본문)",
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
           "showWhen": "showBody",
-          "group": "텍스트"
+          "group": "텍스트",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
         },
         {
           "key": "bodyColor",
@@ -815,12 +818,13 @@
         },
         {
           "key": "mainTitleFontSize",
-          "label": "폰트 크기",
+          "label": "기본 글자 크기 (본문)",
           "type": "text",
           "default": "22px",
           "placeholder": "예: 22px, 24px",
           "showWhen": "showMainTitle",
-          "group": "메인 타이틀"
+          "group": "메인 타이틀",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
         },
         {
           "key": "mainTitleColor",
@@ -884,12 +888,13 @@
         },
         {
           "key": "subTitleFontSize",
-          "label": "폰트 크기",
+          "label": "기본 글자 크기 (본문)",
           "type": "text",
           "default": "16px",
           "placeholder": "예: 14px, 16px",
           "showWhen": "showSubTitle",
-          "group": "서브 타이틀"
+          "group": "서브 타이틀",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
         },
         {
           "key": "subTitlePaddingTop",
@@ -1061,10 +1066,11 @@
         },
         {
           "key": "fontSize",
-          "label": "폰트 크기",
+          "label": "기본 글자 크기 (본문)",
           "type": "text",
           "default": "14px",
-          "placeholder": "예: 14px, 16px"
+          "placeholder": "예: 14px, 16px",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
         },
         {
           "key": "bgColor",
@@ -2190,11 +2196,12 @@
         },
         {
           "key": "contentTextFontSize",
-          "label": "폰트 크기",
+          "label": "기본 글자 크기 (본문)",
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
-          "group": "텍스트"
+          "group": "텍스트",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
         },
         {
           "key": "bgColor",
@@ -2292,11 +2299,12 @@
         },
         {
           "key": "leftContentFontSize",
-          "label": "텍스트 폰트 크기",
+          "label": "텍스트 기본 글자 크기",
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
-          "group": "왼쪽 콘텐츠"
+          "group": "왼쪽 콘텐츠",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
         },
         {
           "key": "rightTitle",
@@ -2333,11 +2341,42 @@
         },
         {
           "key": "rightContentFontSize",
-          "label": "텍스트 폰트 크기",
+          "label": "텍스트 기본 글자 크기",
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
-          "group": "오른쪽 콘텐츠"
+          "group": "오른쪽 콘텐츠",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
+        },
+        {
+          "key": "titleBgColor",
+          "label": "타이틀 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "group": "스타일",
+          "hint": "좌·우 타이틀 박스에 공통 적용됩니다."
+        },
+        {
+          "key": "titleTextColor",
+          "label": "타이틀 글자색",
+          "type": "text",
+          "default": "#111111",
+          "group": "스타일"
+        },
+        {
+          "key": "contentBgColor",
+          "label": "텍스트 배경색",
+          "type": "text",
+          "default": "#f3f3f3",
+          "group": "스타일",
+          "hint": "좌·우 텍스트 박스에 공통 적용됩니다."
+        },
+        {
+          "key": "contentTextColor",
+          "label": "텍스트 글자색",
+          "type": "text",
+          "default": "#333333",
+          "group": "스타일"
         }
       ]
     },
@@ -2390,11 +2429,12 @@
         },
         {
           "key": "contentTextFontSize",
-          "label": "폰트 크기",
+          "label": "기본 글자 크기 (본문)",
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
-          "group": "텍스트"
+          "group": "텍스트",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
         }
       ]
     },
@@ -2491,11 +2531,12 @@
         },
         {
           "key": "descriptionFontSize",
-          "label": "텍스트 폰트 크기",
+          "label": "텍스트 기본 글자 크기",
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
-          "group": "타이틀·텍스트"
+          "group": "타이틀·텍스트",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
         },
         {
           "key": "showButton",
@@ -2710,11 +2751,12 @@
         },
         {
           "key": "leftContentFontSize",
-          "label": "텍스트 폰트 크기",
+          "label": "텍스트 기본 글자 크기",
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
-          "group": "왼쪽 콘텐츠"
+          "group": "왼쪽 콘텐츠",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
         },
         {
           "key": "showLeftSmallBtn1",
@@ -3072,11 +3114,12 @@
         },
         {
           "key": "rightContentFontSize",
-          "label": "텍스트 폰트 크기",
+          "label": "텍스트 기본 글자 크기",
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
-          "group": "오른쪽 콘텐츠"
+          "group": "오른쪽 콘텐츠",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
         },
         {
           "key": "showRightSmallBtn1",
@@ -3446,11 +3489,12 @@
         },
         {
           "key": "contentTextFontSize",
-          "label": "폰트 크기",
+          "label": "기본 글자 크기 (본문)",
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
-          "group": "텍스트"
+          "group": "텍스트",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
         },
         {
           "key": "showButton1",
@@ -3733,11 +3777,12 @@
         },
         {
           "key": "contentTextFontSize",
-          "label": "텍스트 폰트 크기",
+          "label": "텍스트 기본 글자 크기",
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
-          "group": "타이틀·텍스트"
+          "group": "타이틀·텍스트",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
         },
         {
           "key": "showButton1",
@@ -3972,11 +4017,12 @@
         },
         {
           "key": "topSectionTextFontSize",
-          "label": "텍스트 폰트 크기",
+          "label": "텍스트 기본 글자 크기",
           "type": "text",
           "default": "15px",
           "placeholder": "예: 15px, 16px",
-          "group": "상단 섹션"
+          "group": "상단 섹션",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
         },
         {
           "key": "topLeftImageUrl",
@@ -4052,11 +4098,12 @@
         },
         {
           "key": "topRightText1FontSize",
-          "label": "폰트 크기",
+          "label": "기본 글자 크기 (본문)",
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
-          "group": "오른쪽 텍스트"
+          "group": "오른쪽 텍스트",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
         },
         {
           "key": "showSmallBtn1",
@@ -4428,11 +4475,12 @@
         },
         {
           "key": "leftContentFontSize",
-          "label": "폰트 크기",
+          "label": "기본 글자 크기 (본문)",
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
-          "group": "왼쪽 텍스트"
+          "group": "왼쪽 텍스트",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
         },
         {
           "key": "showLeftButton1",
@@ -4678,11 +4726,12 @@
         },
         {
           "key": "rightContentFontSize",
-          "label": "폰트 크기",
+          "label": "기본 글자 크기 (본문)",
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
-          "group": "오른쪽 텍스트"
+          "group": "오른쪽 텍스트",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
         },
         {
           "key": "showRightButton1",
@@ -4942,11 +4991,12 @@
         },
         {
           "key": "contentTextFontSize",
-          "label": "폰트 크기",
+          "label": "기본 글자 크기 (본문)",
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
-          "group": "텍스트"
+          "group": "텍스트",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
         },
         {
           "key": "textAreaPaddingTop",
@@ -5123,11 +5173,12 @@
         },
         {
           "key": "contentTextFontSize",
-          "label": "폰트 크기",
+          "label": "기본 글자 크기 (본문)",
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
-          "group": "텍스트"
+          "group": "텍스트",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
         },
         {
           "key": "textAreaPaddingTop",
@@ -5241,11 +5292,12 @@
         },
         {
           "key": "subtitleTextFontSize",
-          "label": "서브타이틀 폰트 크기",
+          "label": "서브타이틀 기본 글자 크기",
           "type": "text",
           "default": "16px",
           "placeholder": "예: 16px, 18px",
-          "group": "텍스트"
+          "group": "텍스트",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
         }
       ]
     },
@@ -5389,11 +5441,12 @@
         },
         {
           "key": "titleFontSize",
-          "label": "폰트 크기",
+          "label": "기본 글자 크기 (본문)",
           "type": "text",
           "default": "16px",
           "placeholder": "예: 16px, 18px",
-          "group": "타이틀"
+          "group": "타이틀",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
         }
       ]
     },
@@ -5493,11 +5546,12 @@
         },
         {
           "key": "leftTitleFontSize",
-          "label": "타이틀 폰트 크기",
+          "label": "타이틀 기본 글자 크기",
           "type": "text",
           "default": "16px",
           "placeholder": "예: 16px, 18px",
-          "group": "왼쪽"
+          "group": "왼쪽",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
         },
         {
           "key": "rightImageUrl",
@@ -5587,11 +5641,12 @@
         },
         {
           "key": "rightTitleFontSize",
-          "label": "타이틀 폰트 크기",
+          "label": "타이틀 기본 글자 크기",
           "type": "text",
           "default": "16px",
           "placeholder": "예: 16px, 18px",
-          "group": "오른쪽"
+          "group": "오른쪽",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
         }
       ]
     },
@@ -5785,11 +5840,12 @@
         },
         {
           "key": "textFontSize",
-          "label": "폰트 크기",
+          "label": "기본 글자 크기 (본문)",
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
-          "group": "텍스트"
+          "group": "텍스트",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
         },
         {
           "key": "textColor",

@@ -331,8 +331,10 @@ const previewEmail = async (): Promise<void> => {
  */
 const exportHtml = async (): Promise<void> => {
   try {
-    let html = await moduleStore.generateHtml()
-    html = processQuillHtml(html)
+    let finalHtml = await moduleStore.generateHtml()
+    finalHtml = processQuillHtml(finalHtml)
+    // 다운로드(발송용)와 동일하게 완전한 HTML 문서로 감싸 복사 (메타데이터 제외)
+    const html = buildHtmlDocument(finalHtml, false)
     await navigator.clipboard.writeText(html)
     showSuccess('복사 완료', 'HTML이 클립보드에 복사되었습니다')
   } catch (error) {

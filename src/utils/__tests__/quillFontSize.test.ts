@@ -20,7 +20,7 @@ beforeAll(() => {
 
 describe('quillFontSize', () => {
   it('글자 크기 옵션 목록을 제공해야 함', () => {
-    expect(FONT_SIZE_OPTIONS).toEqual(['28px', '26px', '24px', '22px', '20px', '18px', '16px'])
+    expect(FONT_SIZE_OPTIONS).toEqual(['28px', '26px', '24px', '22px', '20px', '18px', '16px', '14px', '12px'])
   })
 
   it('fontSize 포맷이 Quill 레지스트리에 등록되어야 함', () => {

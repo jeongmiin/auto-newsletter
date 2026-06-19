@@ -309,6 +309,11 @@ export const module011Config: ModuleConfig = {
   defaults: {
     rightTitleLineHeight: '1.7',
     leftTitleLineHeight: '1.7',
+    // 좌·우 공통 박스 색상 (기존 인스턴스 폴백 = 기존 하드코딩 값)
+    titleBgColor: '#e5e5e5',
+    titleTextColor: '#111111',
+    contentBgColor: '#f3f3f3',
+    contentTextColor: '#333333',
   },
 }
 

@@ -293,6 +293,7 @@ export function replaceModuleTableContent(
 ): string {
   const cells = (properties.tableCells as TableCellType[][] | undefined) || []
   const colWidths = (properties.tableColWidths as string[] | undefined) || []
+  const colAligns = (properties.tableColAligns as string[] | undefined) || []
   const borderTopWidth = String(properties.borderTopWidth || '2px')
   const borderTopColor = String(properties.borderTopColor || '#333333')
   const cellBorderColor = String(properties.cellBorderColor || '#a7a7a7')
@@ -350,14 +351,17 @@ export function replaceModuleTableContent(
   // 테이블 셀들을 HTML로 변환
   const tableRowsHtml = cells.map((row) => {
     const cellsHtml = row
-      .filter(cell => !cell.hidden) // hidden 셀 제외
-      .map((cell) => {
+      .map((cell, colIndex) => ({ cell, colIndex })) // 원래 열 인덱스 보존 (열 공통 정렬용)
+      .filter(({ cell }) => !cell.hidden) // hidden 셀 제외
+      .map(({ cell, colIndex }) => {
         const tag = cell.type
         // 셀별 지정 색상 우선, 없으면 타입별(th/td) 일괄 색상으로 폴백
         const bgColor = cell.bgColor || (cell.type === 'th' ? headerBgColor : cellBgColor)
         const textColor = cell.textColor || (cell.type === 'th' ? headerTextColor : cellTextColor)
         const fontWeight = cell.type === 'th' ? '700' : '400'
-        const textAlign = cell.align || (cell.type === 'th' ? 'center' : 'left')
+        // 정렬 우선순위: 셀별 지정 > 열 공통(tableColAligns) > 타입 기본
+        const textAlign =
+          cell.align || colAligns[colIndex] || (cell.type === 'th' ? 'center' : 'left')
 
         // 인라인 스타일 (이메일 호환성)
         const style = [
