@@ -87,7 +87,50 @@ export interface ModuleInstance {
   properties: Record<string, unknown>
   styles: ModuleStyles
   htmlContent?: string
+  /** 소속 그룹 id. 같은 groupId를 가진 '연속된' 모듈이 하나의 그룹으로 묶인다. */
+  groupId?: string
 }
+
+/**
+ * 모듈 그룹의 스타일 (배경/테두리/안쪽 여백/바깥 여백)
+ * 내보내기 시 그룹은 단일 셀 <table>로 감싸지고, 이 값들이 적용된다.
+ */
+export type BorderSide = 'top' | 'right' | 'bottom' | 'left'
+
+export interface ModuleGroupStyles {
+  backgroundColor?: string
+  /** 배경색에 전역 포인트 색상 사용 */
+  backgroundColorUsePoint?: boolean
+  borderWidth?: string
+  borderStyle?: string
+  borderColor?: string
+  /** 테두리 색상에 전역 포인트 색상 사용 */
+  borderColorUsePoint?: boolean
+  /**
+   * 테두리를 적용할 변. 미지정(undefined)이면 4면 전체(구버전 호환),
+   * 빈 배열([])이면 테두리 없음.
+   */
+  borderSides?: BorderSide[]
+  padding?: string
+  margin?: string
+}
+
+/**
+ * 모듈 그룹 — id와 그룹 단위 스타일을 가진다.
+ * 어떤 모듈이 이 그룹에 속하는지는 ModuleInstance.groupId로 표현된다.
+ */
+export interface ModuleGroup {
+  id: string
+  styles: ModuleGroupStyles
+}
+
+/**
+ * 캔버스/목차에서 사용하는 표시 단위.
+ * 연속된 같은 그룹 모듈은 하나의 'group' 항목으로 묶여 통째로 드래그된다.
+ */
+export type DisplayItem =
+  | { type: 'module'; id: string; module: ModuleInstance }
+  | { type: 'group'; id: string; group: ModuleGroup; modules: ModuleInstance[] }
 
 export interface EmailBuilderState {
   modules: ModuleInstance[]
@@ -119,5 +162,9 @@ export interface NewsletterTemplate {
     order?: number
     properties: Record<string, unknown>
     styles: Record<string, unknown>
+    /** 소속 그룹 id (없으면 그룹에 속하지 않음) */
+    groupId?: string
   }>
+  /** 모듈 그룹 정의 (그룹 단위 스타일). 없으면 그룹 없음. */
+  groups?: ModuleGroup[]
 }

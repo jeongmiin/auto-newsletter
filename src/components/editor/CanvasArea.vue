@@ -56,12 +56,14 @@
           </div>
         </div>
 
-        <!-- 모듈 리스트 (드래그 앤 드롭 지원) -->
+        <!-- 모듈 리스트 (드래그 앤 드롭 지원) — 그룹은 한 덩어리로 이동 -->
         <draggable
           v-else
-          v-model="draggableModules"
+          v-model="displayList"
           item-key="id"
-          handle=".drag-handle"
+          handle=".dh-top"
+          filter=".no-drag"
+          :prevent-on-filter="false"
           ghost-class="dragging-ghost"
           chosen-class="dragging-chosen"
           animation="200"
@@ -69,23 +71,86 @@
           @start="onDragStart"
           @end="onDragEnd"
         >
-          <template #item="{ element: module, index }">
+          <template #item="{ element: item }">
+           <div>
+            <!-- 그룹 래퍼: 박스(좌) + 세로 컨트롤 레일(우) -->
             <div
-              :id="`canvas-module-${module.id}`"
+              v-if="item.type === 'group'"
+              class="group-wrap"
+              :class="{ 'group-wrap--selected': selectedGroupId === item.id }"
+            >
+              <!-- 실제 스타일 박스 (배경/테두리/여백은 내보내기와 동일) -->
+              <div
+                class="group-box"
+                :class="{ 'group-box--selected': selectedGroupId === item.id }"
+                :style="groupWrapperStyle(item.group)"
+                @click.self="selectGroupBox(item.id)"
+              >
+                <!-- 그룹 멤버 모듈들 (그룹 내 순서는 각 모듈의 ↑↓ 버튼으로 조정) -->
+                <div
+                  v-for="member in item.modules"
+                  :key="member.id"
+                  :id="`canvas-module-${member.id}`"
+                  class="relative transition-all"
+                  :class="{ 'ring-2 ring-amber-400 ring-inset rounded-sm': hoveredModuleId === member.id }"
+                >
+                  <ModuleRenderer
+                    :module="member"
+                    :index="member.order"
+                    :is-selected="selectedModuleId === member.id"
+                    @select="selectModule"
+                    @move-up="moveModuleUp"
+                    @move-down="moveModuleDown"
+                    @duplicate="duplicateModule"
+                    @delete="deleteModule"
+                  />
+                </div>
+              </div>
+
+              <!-- 편집 전용 세로 레일 (내보내기에는 포함되지 않음) -->
+              <!-- 레일 전체가 드래그 핸들(.dh-top), 버튼만 .no-drag로 드래그 제외 -->
+              <div class="dh-top group-rail" title="그룹 전체를 끌어서 이동">
+                <span class="group-rail__handle">
+                  <i class="pi pi-bars"></i>
+                  <span class="group-rail__label">그룹</span>
+                </span>
+                <button
+                  type="button"
+                  class="no-drag group-rail__btn group-rail__btn--danger"
+                  v-tooltip.left="'그룹 해제'"
+                  @click.stop="moduleStore.ungroup(item.id)"
+                >
+                  <i class="pi pi-link"></i>
+                </button>
+                <button
+                  type="button"
+                  class="no-drag group-rail__btn"
+                  v-tooltip.left="'그룹 스타일 편집'"
+                  @click.stop="selectGroupBox(item.id)"
+                >
+                  <i class="pi pi-sliders-h"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- 단독 모듈 -->
+            <div
+              v-else
+              :id="`canvas-module-${item.module.id}`"
               class="relative group transition-all"
-              :class="{ 'ring-2 ring-amber-400 ring-inset rounded-sm': hoveredModuleId === module.id }"
+              :class="{ 'ring-2 ring-amber-400 ring-inset rounded-sm': hoveredModuleId === item.module.id }"
             >
               <div
-                class="drag-handle absolute left-0 top-0 bottom-0 w-8 flex flex-col items-center justify-center cursor-grab opacity-0 group-hover:opacity-100 transition-opacity z-10 bg-blue-100/90 hover:bg-blue-200/90"
+                class="dh-top absolute left-0 top-0 bottom-0 w-8 flex flex-col items-center justify-center cursor-grab opacity-0 group-hover:opacity-100 transition-opacity z-10 bg-blue-100/90 hover:bg-blue-200/90"
                 title="마우스로 끌어서 순서를 변경하세요"
               >
                 <i class="pi pi-bars text-blue-600 text-lg"></i>
                 <span class="text-blue-600 text-[8px] mt-0.5">이동</span>
               </div>
               <ModuleRenderer
-                :module="module"
-                :index="index"
-                :is-selected="selectedModuleId === module.id"
+                :module="item.module"
+                :index="item.module.order"
+                :is-selected="selectedModuleId === item.module.id"
                 @select="selectModule"
                 @move-up="moveModuleUp"
                 @move-down="moveModuleDown"
@@ -93,6 +158,7 @@
                 @delete="deleteModule"
               />
             </div>
+           </div>
           </template>
         </draggable>
       </div>
@@ -107,6 +173,8 @@ import { useEditorStore } from '@/stores/editorStore'
 import { useNewsletterImport } from '@/composables/useNewsletterImport'
 import ModuleRenderer from '../modules/ModuleRenderer.vue'
 import draggable from 'vuedraggable'
+import type { DisplayItem, ModuleGroup } from '@/types'
+import { groupDivStyle, resolveGroupStyles } from '@/utils/groupStyle'
 
 const moduleStore = useModuleStore()
 const editorStore = useEditorStore()
@@ -121,7 +189,23 @@ const openFile = (): void => {
 
 const modules = computed(() => moduleStore.modules)
 const selectedModuleId = computed(() => moduleStore.selectedModuleId)
+const selectedGroupId = computed(() => moduleStore.selectedGroupId)
 const canvasWidth = computed(() => editorStore.canvasWidth)
+
+// 그룹은 한 덩어리(displayItem)로 드래그 — 펼치면 store가 평평한 배열로 재구성
+const displayList = computed<DisplayItem[]>({
+  get: () => moduleStore.displayItems,
+  set: (value) => moduleStore.setDisplayOrder(value),
+})
+
+// 그룹 래퍼 미리보기 스타일 (편집 화면용 — 내보내기 table과 동일한 시각 효과)
+// '포인트 색상 사용' 켜진 색상은 전역 포인트 색상으로 해소해 미리 보여준다
+const groupWrapperStyle = (group: ModuleGroup): Record<string, string> =>
+  groupDivStyle(resolveGroupStyles(group.styles, editorStore.wrapSettings.pointColor))
+
+const selectGroupBox = (groupId: string): void => {
+  moduleStore.selectGroup(groupId)
+}
 
 // 목차 패널에서 마우스 올린 모듈 — 캔버스에서 강조만 (스크롤은 하지 않음)
 const hoveredModuleId = computed(() => editorStore.hoveredModuleId)
@@ -141,21 +225,6 @@ const canvasContainerStyle = computed(() => ({
   backgroundColor: wrapSettings.value.backgroundColor,
   border: `${wrapSettings.value.borderWidth} ${wrapSettings.value.borderStyle} ${wrapSettings.value.borderColor}`,
 }))
-
-// 드래그 앤 드롭을 위한 양방향 바인딩
-const draggableModules = computed({
-  get: () => moduleStore.modules,
-  set: (value) => {
-    // 순서 업데이트
-    moduleStore.modules.splice(0, moduleStore.modules.length, ...value)
-    // order 값 재정렬
-    moduleStore.modules.forEach((m, idx) => {
-      m.order = idx
-    })
-    // 변경사항 표시
-    moduleStore.isDirty = true
-  },
-})
 
 const isDragging = ref(false)
 
@@ -201,7 +270,103 @@ const deleteModule = (moduleId: string) => {
 }
 
 /* 드래그 핸들 호버 효과 */
-.drag-handle:active {
+.dh-top:active {
   cursor: grabbing;
+}
+
+/*
+  그룹 박스: 실제 스타일(배경/보더/여백)은 인라인으로 적용된다.
+  편집 화면에서 그룹 경계를 항상 인지할 수 있도록 옅은 점선 outline을 덧댄다.
+  outline은 레이아웃에 영향을 주지 않으므로 내보내기 결과와 간격이 어긋나지 않는다.
+*/
+.group-box {
+  position: relative;
+  outline: 1px dashed rgba(147, 51, 234, 0.45);
+  outline-offset: -1px;
+}
+
+.group-box--selected {
+  outline: 2px solid #9333ea;
+  /* outline-offset: 2px; */
+}
+
+/*
+  그룹 편집 레일 — 박스 오른쪽 바깥에 붙는 세로 컨트롤 거터(편집 화면 전용).
+  박스와 겹치지 않아 각 모듈의 우상단 컨트롤과 충돌하지 않는다.
+  내보내기 HTML(generateHtml)에는 포함되지 않으므로 메일에는 나타나지 않는다.
+*/
+.group-wrap {
+  position: relative;
+}
+
+/* 우측 상단에 떠 있는 세로 컨트롤 레일 (absolute) — 박스 폭을 줄이지 않는다 */
+.group-rail {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: -30px;
+  z-index: 30;
+  height: 99%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 2px;
+  background: #f5f3ffe6; /* purple-50, 약간 투명 */
+  border: 1px solid #e9d5ff; /* purple-200 */
+  border-radius: 0 8px 8px 0;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.18);
+  user-select: none;
+  cursor: grab; /* 레일 전체가 드래그 영역 */
+}
+.group-rail:active {
+  cursor: grabbing;
+}
+
+.group-wrap--selected .group-rail {
+  right: -31px;
+  background: #ede9fe; /* purple-100 */
+  border-color: #c4b5fd; /* purple-300 */
+}
+
+.group-rail__handle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  width: 100%;
+  padding: 4px 0;
+  cursor: grab;
+  position: absolute; top: 50%; left: 50%;transform: translate(-50%,-50%);
+  color: #7c3aed; /* purple-600 */
+}
+.group-rail__handle:active {
+  cursor: grabbing;
+}
+.group-rail__label {
+  font-size: 8px;
+  line-height: 1;
+}
+
+.group-rail__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: #9333ea; /* purple-600 */
+  background: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.group-rail__btn:hover {
+  background: #ddd6fe; /* purple-200 */
+}
+.group-rail__btn--danger {
+  color: #ef4444;
+}
+.group-rail__btn--danger:hover {
+  background: #fee2e2;
 }
 </style>

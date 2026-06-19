@@ -356,7 +356,9 @@ const buildHtmlDocument = (finalHtml: string, includeMetadata: boolean): string 
         order: m.order,
         properties: m.properties,
         styles: m.styles,
+        ...(m.groupId ? { groupId: m.groupId } : {}),
       })),
+      groups: moduleStore.groups,
       wrapSettings: editorStore.wrapSettings,
     }
     // 콘텐츠의 '-->' 등으로 HTML 주석이 조기 종료되어 파일이 깨지는 것을 방지.
@@ -372,14 +374,24 @@ const buildHtmlDocument = (finalHtml: string, includeMetadata: boolean): string 
   }
 
   return `<!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:o="urn:schemas-microsoft-com:office:office">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="format-detection" content="telephone=no">
+  <!--[if mso]>
+  <noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
+  <![endif]-->
   <title>Newsletter</title>
+  <style>
+    /* 아웃룩(Word 엔진) 보정: 테이블 간격 제거, 이미지 보간/테두리 정리 */
+    table { border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+    img { -ms-interpolation-mode: bicubic; border: 0; outline: none; text-decoration: none; }
+    body { margin: 0; padding: 0; }
+  </style>
 </head>
-<body>
+<body style="margin:0; padding:0;">
 ${finalHtml}${metadataBlock}
 </body>
 </html>`

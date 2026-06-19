@@ -9,6 +9,9 @@ import type {
   AdditionalContent,
   TableCell,
   NewsletterTemplate,
+  ModuleGroup,
+  ModuleGroupStyles,
+  DisplayItem,
 } from '@/types'
 import { useEditorStore } from './editorStore'
 import { formatTextWithBreaks } from '@/utils/textUtils'
@@ -50,6 +53,7 @@ import { resolvePointColors } from '@/utils/pointColor'
 import { applyFontFamily } from '@/utils/fontFamily'
 import { migrateModuleProperties } from '@/utils/moduleMigrations'
 import { sanitizeHtml } from '@/utils/sanitize'
+import { DEFAULT_GROUP_STYLES, wrapGroupHtmlForEmail, resolveGroupStyles } from '@/utils/groupStyle'
 
 export const useModuleStore = defineStore('module', () => {
   // ============= State =============
@@ -59,10 +63,47 @@ export const useModuleStore = defineStore('module', () => {
   const availableTemplates = ref<NewsletterTemplate[]>([])
   const isDirty = ref(false) // 변경사항 추적
 
+  // 모듈 그룹 (그룹 단위 스타일). 멤버십은 ModuleInstance.groupId로 표현된다.
+  const groups = ref<ModuleGroup[]>([])
+  // 현재 선택된 그룹 (속성 패널에서 그룹 스타일 편집 대상)
+  const selectedGroupId = ref<string | null>(null)
+
   // ============= Computed =============
   const selectedModule = computed(
     () => modules.value.find((m) => m.id === selectedModuleId.value) || null,
   )
+
+  const selectedGroup = computed(
+    () => groups.value.find((g) => g.id === selectedGroupId.value) || null,
+  )
+
+  /**
+   * 캔버스/목차 표시용 리스트.
+   * order 정렬된 모듈을 훑으며 '연속된 같은 groupId'를 하나의 group 항목으로 묶는다.
+   * (그룹 멤버는 항상 연속이도록 createGroup/이동 시 보장됨)
+   */
+  const displayItems = computed<DisplayItem[]>(() => {
+    const sorted = [...modules.value].sort((a, b) => a.order - b.order)
+    const items: DisplayItem[] = []
+    let i = 0
+    while (i < sorted.length) {
+      const m = sorted[i]
+      const gid = m.groupId
+      const group = gid ? groups.value.find((g) => g.id === gid) : undefined
+      if (gid && group) {
+        const members: ModuleInstance[] = []
+        while (i < sorted.length && sorted[i].groupId === gid) {
+          members.push(sorted[i])
+          i++
+        }
+        items.push({ type: 'group', id: gid, group, modules: members })
+      } else {
+        items.push({ type: 'module', id: m.id, module: m })
+        i++
+      }
+    }
+    return items
+  })
 
   const selectedModuleMetadata = computed(() => {
     if (!selectedModule.value) return null
@@ -137,9 +178,23 @@ export const useModuleStore = defineStore('module', () => {
     }
 
     // 선택된 모듈이 있으면 그 바로 아래에 삽입, 없으면 맨 끝에 추가
-    const selectedIndex = selectedModuleId.value
+    let selectedIndex = selectedModuleId.value
       ? modules.value.findIndex((m) => m.id === selectedModuleId.value)
       : -1
+
+    // 선택 모듈이 그룹에 속하면, 그룹 연속성이 깨지지 않도록 그룹 마지막 멤버 뒤에 삽입
+    // (새 모듈은 그룹에 포함되지 않음)
+    if (selectedIndex !== -1) {
+      const selGroupId = modules.value[selectedIndex].groupId
+      if (selGroupId) {
+        while (
+          selectedIndex + 1 < modules.value.length &&
+          modules.value[selectedIndex + 1].groupId === selGroupId
+        ) {
+          selectedIndex++
+        }
+      }
+    }
 
     if (selectedIndex === -1) {
       modules.value.push(newModule)
@@ -149,6 +204,7 @@ export const useModuleStore = defineStore('module', () => {
 
     reorderModules()
     selectedModuleId.value = newModule.id
+    selectedGroupId.value = null
     isDirty.value = true
   }
 
@@ -157,6 +213,7 @@ export const useModuleStore = defineStore('module', () => {
    */
   const selectModule = (moduleId: string): void => {
     selectedModuleId.value = moduleId
+    selectedGroupId.value = null
   }
 
   /**
@@ -187,12 +244,31 @@ export const useModuleStore = defineStore('module', () => {
     const index = modules.value.findIndex((m) => m.id === moduleId)
     if (index === -1) return
 
+    const removedGroupId = modules.value[index].groupId
     modules.value.splice(index, 1)
     if (selectedModuleId.value === moduleId) {
       selectedModuleId.value = null
     }
+    // 멤버가 0개가 된(빈) 그룹은 자동 해제 (1개짜리 그룹은 허용)
+    if (removedGroupId) cleanupGroup(removedGroupId)
     reorderModules()
     isDirty.value = true
+  }
+
+  /**
+   * 그룹에 멤버가 하나도 없으면(빈 그룹) 그룹 정의를 삭제한다.
+   * (1개짜리 그룹도 그룹 스타일 적용을 위해 허용한다)
+   */
+  const cleanupGroup = (groupId: string): void => {
+    const members = modules.value.filter((m) => m.groupId === groupId)
+    if (members.length < 1) {
+      members.forEach((m) => {
+        delete m.groupId
+      })
+      const gi = groups.value.findIndex((g) => g.id === groupId)
+      if (gi !== -1) groups.value.splice(gi, 1)
+      if (selectedGroupId.value === groupId) selectedGroupId.value = null
+    }
   }
 
   /**
@@ -210,6 +286,11 @@ export const useModuleStore = defineStore('module', () => {
   const moveModuleUp = (moduleId: string): void => {
     const index = modules.value.findIndex((m) => m.id === moduleId)
     if (index <= 0) return
+    // 그룹 연속성 보호: 위 이웃과 그룹 소속이 같을 때만 교환
+    // (그룹 경계에서는 동작하지 않음 — 그룹 통째 이동은 드래그/그룹 이동 사용)
+    if ((modules.value[index].groupId ?? null) !== (modules.value[index - 1].groupId ?? null)) {
+      return
+    }
     ;[modules.value[index], modules.value[index - 1]] = [
       modules.value[index - 1],
       modules.value[index],
@@ -224,6 +305,10 @@ export const useModuleStore = defineStore('module', () => {
   const moveModuleDown = (moduleId: string): void => {
     const index = modules.value.findIndex((m) => m.id === moduleId)
     if (index < 0 || index >= modules.value.length - 1) return
+    // 그룹 연속성 보호: 아래 이웃과 그룹 소속이 같을 때만 교환
+    if ((modules.value[index].groupId ?? null) !== (modules.value[index + 1].groupId ?? null)) {
+      return
+    }
     ;[modules.value[index], modules.value[index + 1]] = [
       modules.value[index + 1],
       modules.value[index],
@@ -260,8 +345,134 @@ export const useModuleStore = defineStore('module', () => {
    */
   const clearAll = (): void => {
     modules.value = []
+    groups.value = []
     selectedModuleId.value = null
+    selectedGroupId.value = null
     isDirty.value = false
+  }
+
+  // ============= Group Management =============
+  /**
+   * 선택된 모듈들을 하나의 그룹으로 묶는다.
+   * - 1개 이상이면 가능하며(단일 모듈 그룹 허용), 묶인 결과는 항상 '연속'되도록 순서를 재배치한다.
+   * - 이미 다른 그룹에 속한 모듈이 하나라도 포함되면 그룹을 만들지 않고 null을 반환한다.
+   *   (기존 그룹을 먼저 해제한 뒤 다시 묶어야 한다)
+   * @returns 생성된 그룹 id (실패 시 null)
+   */
+  const createGroup = (moduleIds: string[]): string | null => {
+    const ids = Array.from(new Set(moduleIds))
+    if (ids.length < 1) return null
+
+    const targets = ids
+      .map((id) => modules.value.find((m) => m.id === id))
+      .filter((m): m is ModuleInstance => !!m)
+    if (targets.length < 1) return null
+
+    // 이미 그룹에 속한 모듈이 포함되면 묶지 않고 그대로 반환
+    if (targets.some((m) => m.groupId)) return null
+
+    const newGroupId = generateUniqueId('group')
+
+    // 묶을 모듈들을 현재 order 순으로 정렬
+    const sortedTargets = [...targets].sort((a, b) => a.order - b.order)
+    // 새 위치: 첫 멤버가 있던 자리에 모두 연속 배치
+    const firstIndex = modules.value
+      .map((m) => m.id)
+      .indexOf(sortedTargets[0].id)
+
+    const targetIdSet = new Set(sortedTargets.map((m) => m.id))
+    const remaining = modules.value.filter((m) => !targetIdSet.has(m.id))
+
+    // firstIndex 기준으로 remaining 위치를 계산해 그 자리에 그룹 멤버 삽입
+    // (firstIndex 앞에 있던 비대상 모듈 수 = 삽입 위치)
+    const insertAt = modules.value
+      .slice(0, firstIndex)
+      .filter((m) => !targetIdSet.has(m.id)).length
+
+    sortedTargets.forEach((m) => {
+      m.groupId = newGroupId
+    })
+
+    const next = [...remaining]
+    next.splice(insertAt, 0, ...sortedTargets)
+    modules.value.splice(0, modules.value.length, ...next)
+
+    groups.value.push({ id: newGroupId, styles: { ...DEFAULT_GROUP_STYLES } })
+
+    reorderModules()
+    selectedGroupId.value = newGroupId
+    selectedModuleId.value = null
+    isDirty.value = true
+    return newGroupId
+  }
+
+  /**
+   * 그룹 해제 — 멤버들의 groupId 제거, 그룹 정의 삭제 (모듈 자체는 유지)
+   */
+  const ungroup = (groupId: string): void => {
+    modules.value.forEach((m) => {
+      if (m.groupId === groupId) delete m.groupId
+    })
+    const gi = groups.value.findIndex((g) => g.id === groupId)
+    if (gi !== -1) groups.value.splice(gi, 1)
+    if (selectedGroupId.value === groupId) selectedGroupId.value = null
+    isDirty.value = true
+  }
+
+  /**
+   * 그룹 선택 (속성 패널에서 그룹 스타일 편집)
+   */
+  const selectGroup = (groupId: string): void => {
+    selectedGroupId.value = groupId
+    selectedModuleId.value = null
+  }
+
+  /**
+   * 그룹 스타일 업데이트
+   */
+  const updateGroupStyle = (
+    groupId: string,
+    styleKey: keyof ModuleGroupStyles,
+    value: ModuleGroupStyles[keyof ModuleGroupStyles],
+  ): void => {
+    const group = groups.value.find((g) => g.id === groupId)
+    if (!group) return
+    ;(group.styles as Record<string, unknown>)[styleKey] = value
+    triggerRef(groups)
+    isDirty.value = true
+  }
+
+  /**
+   * 표시 항목(displayItems) 순서를 새 배열로 적용 — 평평한 modules 배열로 펼쳐 재구성.
+   * 그룹 항목은 내부 모듈을 통째로 유지하므로 그룹 연속성이 보존된다.
+   * (캔버스/목차 상위 레벨 드래그에서 호출)
+   */
+  const setDisplayOrder = (items: DisplayItem[]): void => {
+    const flat: ModuleInstance[] = []
+    for (const item of items) {
+      if (item.type === 'group') {
+        flat.push(...item.modules)
+      } else {
+        flat.push(item.module)
+      }
+    }
+    modules.value.splice(0, modules.value.length, ...flat)
+    reorderModules()
+    isDirty.value = true
+  }
+
+  /**
+   * 그룹을 표시 단위로 위/아래 한 칸 이동 (그룹 통째 이동)
+   */
+  const moveGroup = (groupId: string, direction: 'up' | 'down'): void => {
+    const items = displayItems.value
+    const idx = items.findIndex((it) => it.type === 'group' && it.id === groupId)
+    if (idx === -1) return
+    const swapWith = direction === 'up' ? idx - 1 : idx + 1
+    if (swapWith < 0 || swapWith >= items.length) return
+    const next = [...items]
+    ;[next[idx], next[swapWith]] = [next[swapWith], next[idx]]
+    setDisplayOrder(next)
   }
 
   /**
@@ -347,6 +558,16 @@ export const useModuleStore = defineStore('module', () => {
           ;(added.styles as Record<string, unknown>)[key] = value
         })
       }
+      // 그룹 소속 복원 (그룹 정의는 아래에서 일괄 복원)
+      if (moduleData.groupId) {
+        added.groupId = moduleData.groupId
+      }
+    }
+
+    // 그룹 정의 복원 후 연속성 정리
+    if (template.groups && template.groups.length > 0) {
+      groups.value = JSON.parse(JSON.stringify(template.groups))
+      normalizeGroupContiguity()
     }
 
     if (modules.value.length > 0) {
@@ -354,6 +575,40 @@ export const useModuleStore = defineStore('module', () => {
     }
     isDirty.value = false
     return true
+  }
+
+  /**
+   * 그룹 멤버가 항상 '연속'이 되도록 modules 순서를 안정적으로 재배치한다.
+   * (가져오기/템플릿 로드처럼 외부에서 순서가 들어올 때 방어적으로 호출)
+   * 또한 정의가 없는 groupId나 멤버 2개 미만 그룹은 정리한다.
+   */
+  const normalizeGroupContiguity = (): void => {
+    const sorted = [...modules.value].sort((a, b) => a.order - b.order)
+    const validGroupIds = new Set(groups.value.map((g) => g.id))
+
+    // 정의 없는 groupId 제거
+    sorted.forEach((m) => {
+      if (m.groupId && !validGroupIds.has(m.groupId)) delete m.groupId
+    })
+
+    const emitted = new Set<string>()
+    const result: ModuleInstance[] = []
+    for (const m of sorted) {
+      const gid = m.groupId
+      if (gid && !emitted.has(gid)) {
+        // 이 그룹의 모든 멤버를 현재 상대 순서대로 연속 배치
+        result.push(...sorted.filter((x) => x.groupId === gid))
+        emitted.add(gid)
+      } else if (!gid) {
+        result.push(m)
+      }
+      // 이미 emit된 그룹 멤버는 건너뜀
+    }
+    modules.value.splice(0, modules.value.length, ...result)
+    reorderModules()
+
+    // 멤버 2개 미만 그룹 정리
+    ;[...groups.value].forEach((g) => cleanupGroup(g.id))
   }
 
   /**
@@ -372,7 +627,9 @@ export const useModuleStore = defineStore('module', () => {
         order: m.order,
         properties: JSON.parse(JSON.stringify(m.properties)),
         styles: JSON.parse(JSON.stringify(m.styles)),
+        ...(m.groupId ? { groupId: m.groupId } : {}),
       })),
+      groups: JSON.parse(JSON.stringify(groups.value)),
     }
     return JSON.stringify(template, null, 2)
   }
@@ -1210,9 +1467,10 @@ export const useModuleStore = defineStore('module', () => {
     const editorStore = useEditorStore()
     const wrapSettings = editorStore.wrapSettings
 
-    let fullHtml = ''
     const basePath = import.meta.env.BASE_URL || '/'
 
+    // 1) 모듈별 HTML을 순서대로 생성 (그룹 정보와 함께 보관)
+    const rendered: Array<{ html: string; groupId?: string }> = []
     for (const module of [...modules.value].sort((a, b) => a.order - b.order)) {
       try {
         const modulePath = normalizePath(`${basePath}modules/${module.moduleId}.html`)
@@ -1239,7 +1497,7 @@ export const useModuleStore = defineStore('module', () => {
         // 다국어 폰트: 선택 언어에 따라 기본 폰트 스택을 일괄 치환
         html = applyFontFamily(html, wrapSettings.fontLanguage)
 
-        fullHtml += html + '\n'
+        rendered.push({ html, groupId: module.groupId })
       } catch (error) {
         console.error(
           `[generateHtml] Failed to generate HTML for module ${module.moduleId}:`,
@@ -1248,31 +1506,68 @@ export const useModuleStore = defineStore('module', () => {
       }
     }
 
+    // 2) 연속된 같은 그룹 모듈을 단일 셀 <table>로 감싸 결합 (이메일 호환)
+    let fullHtml = ''
+    let i = 0
+    while (i < rendered.length) {
+      const gid = rendered[i].groupId
+      const group = gid ? groups.value.find((g) => g.id === gid) : undefined
+      if (gid && group) {
+        let inner = ''
+        while (i < rendered.length && rendered[i].groupId === gid) {
+          inner += rendered[i].html + '\n'
+          i++
+        }
+        const resolvedGroupStyles = resolveGroupStyles(group.styles, wrapSettings.pointColor)
+        fullHtml +=
+          wrapGroupHtmlForEmail(inner, resolvedGroupStyles, wrapSettings.backgroundColor) + '\n'
+      } else {
+        fullHtml += rendered[i].html + '\n'
+        i++
+      }
+    }
+
     // wrap 스타일 생성 (래퍼 자체의 배경/테두리 알파는 이메일 본문(흰색) 기준으로 평탄화)
     const wrapStyle = flattenAlphaColorsInHtml(
       `width:100%; max-width:680px; margin:0 auto; background-color:${wrapSettings.backgroundColor}; border:${wrapSettings.borderWidth} ${wrapSettings.borderStyle} ${wrapSettings.borderColor};`,
       '#ffffff',
     )
+    // 아웃룩(Word 엔진)은 max-width/margin:auto를 무시하므로, 고정폭(680) + align=center +
+    // bgcolor 속성을 가진 테이블로 감싸 680px 중앙 정렬을 강제한다. 최신 클라이언트는
+    // style의 width:100%/max-width로 반응형 동작한다. (div 래퍼 → 테이블 래퍼)
+    const wrapBgHex = /background-color:\s*(#[0-9a-fA-F]{6})/.exec(wrapStyle)?.[1] || '#ffffff'
 
-    // wrapWithDocument가 false면 .wrap으로 감싼 콘텐츠만 반환
+    const wrapOpen = `<table role="presentation" class="wrap" align="center" width="680" cellpadding="0" cellspacing="0" border="0" bgcolor="${wrapBgHex}" style="${wrapStyle}">
+<tr><td style="padding:0;">`
+    const wrapClose = `</td></tr></table>`
+
+    // wrapWithDocument가 false면 wrap 테이블로 감싼 콘텐츠만 반환
     if (!wrapWithDocument) {
-      return `<div class="wrap" style="${wrapStyle}">
-        ${fullHtml}
-</div>`
+      return `${wrapOpen}
+${fullHtml}
+${wrapClose}`
     }
 
     // wrapWithDocument가 true면 완전한 HTML 문서로 감싸서 반환
     return `<!DOCTYPE html>
-<html>
+<html xmlns:o="urn:schemas-microsoft-com:office:office">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--[if mso]>
+    <noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
+    <![endif]-->
     <title>Auto Newsletter</title>
+    <style>
+      table { border-collapse: collapse; }
+      img { -ms-interpolation-mode: bicubic; border: 0; outline: none; }
+    </style>
 </head>
 <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; ">
-    <div class="wrap" style="${wrapStyle}">
-        ${fullHtml}
-    </div>
+    ${wrapOpen}
+${fullHtml}
+    ${wrapClose}
 </body>
 </html>`
   }
@@ -1368,6 +1663,18 @@ export const useModuleStore = defineStore('module', () => {
     availableModules,
     availableTemplates,
     isDirty,
+    // 그룹
+    groups,
+    selectedGroupId,
+    selectedGroup,
+    displayItems,
+    createGroup,
+    ungroup,
+    selectGroup,
+    updateGroupStyle,
+    setDisplayOrder,
+    moveGroup,
+    normalizeGroupContiguity,
     loadAvailableModules,
     loadAvailableTemplates,
     loadTemplate,

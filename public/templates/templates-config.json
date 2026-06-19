@@ -2572,7 +2572,8 @@
         "borderWidth": "0px",
         "borderColor": "#dddddd",
         "borderStyle": "solid",
-        "pointColor": "#0f0cb0"
+        "pointColor": "#0f0cb0",
+        "fontLanguage": "default"
       },
       "modules": [
         {
@@ -2603,7 +2604,8 @@
             "paddingBottom": "20px",
             "paddingLeft": "25px"
           },
-          "styles": {}
+          "styles": {},
+          "groupId": "group-1781852324224-p0275ampy"
         },
         {
           "moduleId": "ModuleBasicHeader",
@@ -2629,7 +2631,8 @@
             "headerTitlePaddingBottom": "15px",
             "headerTitlePaddingLeft": "0"
           },
-          "styles": {}
+          "styles": {},
+          "groupId": "group-1781852324224-p0275ampy"
         },
         {
           "moduleId": "ModuleImg",
@@ -2644,7 +2647,8 @@
             "paddingBottom": "20px",
             "paddingLeft": "20px"
           },
-          "styles": {}
+          "styles": {},
+          "groupId": "group-1781852324224-p0275ampy"
         },
         {
           "moduleId": "ModuleDescText",
@@ -2658,7 +2662,8 @@
             "paddingBottom": "0px",
             "paddingLeft": "20px"
           },
-          "styles": {}
+          "styles": {},
+          "groupId": "group-1781852324224-p0275ampy"
         },
         {
           "moduleId": "ModuleDescText",
@@ -2672,7 +2677,8 @@
             "paddingBottom": "0px",
             "paddingLeft": "20px"
           },
-          "styles": {}
+          "styles": {},
+          "groupId": "group-1781852324224-p0275ampy"
         },
         {
           "moduleId": "ModuleTable",
@@ -2684,16 +2690,14 @@
                   "type": "th",
                   "content": "Title",
                   "colspan": 1,
-                  "rowspan": 1,
-                  "align": "center"
+                  "rowspan": 1
                 },
                 {
                   "id": "cell-1781757462818-8b9gcu17c",
                   "type": "td",
                   "content": "MEGAZOO 1:1 Biz Matching",
                   "colspan": 1,
-                  "rowspan": 1,
-                  "align": "left"
+                  "rowspan": 1
                 }
               ],
               [
@@ -2702,16 +2706,14 @@
                   "type": "th",
                   "content": "Date",
                   "colspan": 1,
-                  "rowspan": 1,
-                  "align": "center"
+                  "rowspan": 1
                 },
                 {
                   "id": "cell-1781757462818-1g7j64eb7",
                   "type": "td",
                   "content": "2026.05.29(Fri)~30(Sat), 2 days",
                   "colspan": 1,
-                  "rowspan": 1,
-                  "align": "left"
+                  "rowspan": 1
                 }
               ],
               [
@@ -2720,16 +2722,14 @@
                   "type": "th",
                   "content": "Time",
                   "colspan": 1,
-                  "rowspan": 1,
-                  "align": "center"
+                  "rowspan": 1
                 },
                 {
                   "id": "cell-1781757497688-aws2pmbzx",
                   "type": "td",
                   "content": "10:30-17:00 (Last meeting begin at 16:30)",
                   "colspan": 1,
-                  "rowspan": 1,
-                  "align": "left"
+                  "rowspan": 1
                 }
               ],
               [
@@ -2738,18 +2738,20 @@
                   "type": "th",
                   "content": "Venue",
                   "colspan": 1,
-                  "rowspan": 1,
-                  "align": "center"
+                  "rowspan": 1
                 },
                 {
                   "id": "cell-1781757498777-ww8gctubf",
                   "type": "td",
                   "content": "KINTEX 2, Conference Room 303",
                   "colspan": 1,
-                  "rowspan": 1,
-                  "align": "left"
+                  "rowspan": 1
                 }
               ]
+            ],
+            "tableColAligns": [
+              "center",
+              "left"
             ],
             "borderTopWidth": "2px",
             "borderTopColor": "#333333",
@@ -2767,7 +2769,8 @@
               ""
             ]
           },
-          "styles": {}
+          "styles": {},
+          "groupId": "group-1781852324224-p0275ampy"
         },
         {
           "moduleId": "ModuleOneButton",
@@ -2787,7 +2790,8 @@
             "buttonBorderRadius": "5px",
             "buttonBgColor__usePoint": true
           },
-          "styles": {}
+          "styles": {},
+          "groupId": "group-1781852324224-p0275ampy"
         },
         {
           "moduleId": "SectionTitle",
@@ -2821,7 +2825,8 @@
             "topBorderWidth": "2px",
             "topBorderColor": "#333333"
           },
-          "styles": {}
+          "styles": {},
+          "groupId": "group-1781852404583-4eqlvfi65"
         },
         {
           "moduleId": "Module02",
@@ -2852,7 +2857,8 @@
             "buttonPaddingLeft": "20px",
             "buttonBgColor__usePoint": true
           },
-          "styles": {}
+          "styles": {},
+          "groupId": "group-1781852404583-4eqlvfi65"
         },
         {
           "moduleId": "SectionTitle",
@@ -2886,7 +2892,8 @@
             "topBorderWidth": "2px",
             "topBorderColor": "#333333"
           },
-          "styles": {}
+          "styles": {},
+          "groupId": "group-1781852410283-y6bdah7yo"
         },
         {
           "moduleId": "Module02",
@@ -2917,7 +2924,8 @@
             "buttonPaddingLeft": "20px",
             "buttonBgColor__usePoint": true
           },
-          "styles": {}
+          "styles": {},
+          "groupId": "group-1781852410283-y6bdah7yo"
         },
         {
           "moduleId": "SectionTitle",
@@ -2951,7 +2959,8 @@
             "topBorderWidth": "2px",
             "topBorderColor": "#333333"
           },
-          "styles": {}
+          "styles": {},
+          "groupId": "group-1781852419689-133ei6h01"
         },
         {
           "moduleId": "Module02",
@@ -2982,7 +2991,8 @@
             "buttonPaddingLeft": "20px",
             "buttonBgColor__usePoint": true
           },
-          "styles": {}
+          "styles": {},
+          "groupId": "group-1781852419689-133ei6h01"
         },
         {
           "moduleId": "SectionTitle",
@@ -3016,7 +3026,8 @@
             "topBorderWidth": "2px",
             "topBorderColor": "#333333"
           },
-          "styles": {}
+          "styles": {},
+          "groupId": "group-1781852423791-ziyph9zv3"
         },
         {
           "moduleId": "ModuleDescText",
@@ -3030,7 +3041,8 @@
             "paddingBottom": "0px",
             "paddingLeft": "20px"
           },
-          "styles": {}
+          "styles": {},
+          "groupId": "group-1781852423791-ziyph9zv3"
         },
         {
           "moduleId": "ModuleOneButton",
@@ -3050,7 +3062,8 @@
             "buttonBorderRadius": "5px",
             "buttonBgColor__usePoint": true
           },
-          "styles": {}
+          "styles": {},
+          "groupId": "group-1781852423791-ziyph9zv3"
         },
         {
           "moduleId": "ModuleFooter",
@@ -3097,6 +3110,93 @@
             "showEnglishFooter": true
           },
           "styles": {}
+        }
+      ],
+      "groups": [
+        {
+          "id": "group-1781852324224-p0275ampy",
+          "styles": {
+            "backgroundColor": "",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "0px",
+            "margin": "0px"
+          }
+        },
+        {
+          "id": "group-1781852404583-4eqlvfi65",
+          "styles": {
+            "backgroundColor": "",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "0px",
+            "margin": "0px"
+          }
+        },
+        {
+          "id": "group-1781852410283-y6bdah7yo",
+          "styles": {
+            "backgroundColor": "",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "0px",
+            "margin": "0px"
+          }
+        },
+        {
+          "id": "group-1781852419689-133ei6h01",
+          "styles": {
+            "backgroundColor": "",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "0px",
+            "margin": "0px"
+          }
+        },
+        {
+          "id": "group-1781852423791-ziyph9zv3",
+          "styles": {
+            "backgroundColor": "",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "0px",
+            "margin": "0px"
+          }
         }
       ]
     }

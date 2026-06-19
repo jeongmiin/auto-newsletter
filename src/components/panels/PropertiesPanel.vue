@@ -13,7 +13,7 @@
         <!-- 공통 속성 헤더 (클릭하여 토글) -->
         <button
           @click="isGlobalSettingsOpen = !isGlobalSettingsOpen"
-          class="w-full p-3 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors"
+          class="w-full p-4 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors"
         >
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-gray-200 text-gray-600 rounded-lg flex items-center justify-center">
@@ -138,8 +138,11 @@
         </div>
       </div>
 
+      <!-- 그룹이 선택되었을 때: 그룹 스타일 편집 -->
+      <GroupPropertiesPanel v-if="selectedGroup" />
+
       <!-- 모듈이 선택되지 않았을 때 안내 -->
-      <div v-if="!selectedModule" class="flex-1 flex items-center justify-center text-gray-500 px-4 py-12">
+      <div v-else-if="!selectedModule" class="flex-1 flex items-center justify-center text-gray-500 px-4 py-12">
         <div class="text-center">
           <div class="text-3xl mb-3"><i class="pi pi-pencil text-gray-400"></i></div>
           <div class="font-medium text-gray-600 mb-1">모듈을 선택하세요</div>
@@ -1035,12 +1038,14 @@ import { processQuillHtml } from '@/utils/quillHtmlProcessor'
 import TableCellEditor from './TableCellEditor.vue'
 import ColorAlphaPicker from '@/components/ColorAlphaPicker.vue'
 import HexColorInput from '@/components/HexColorInput.vue'
+import GroupPropertiesPanel from './GroupPropertiesPanel.vue'
 import type Quill from 'quill'
 
 const moduleStore = useModuleStore()
 const editorStore = useEditorStore()
 
 const selectedModule = computed(() => moduleStore.selectedModule)
+const selectedGroup = computed(() => moduleStore.selectedGroup)
 const selectedModuleMetadata = computed(() => moduleStore.selectedModuleMetadata)
 const editableProps = computed(() => selectedModuleMetadata.value?.editableProps || [])
 

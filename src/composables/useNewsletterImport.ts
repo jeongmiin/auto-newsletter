@@ -2,6 +2,7 @@ import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
 import { migrateModuleProperties } from '@/utils/moduleMigrations'
 import { useToast } from 'primevue/usetoast'
+import type { ModuleGroup } from '@/types'
 
 /**
  * 재편집용 HTML 파일(메타데이터 포함)을 열어 현재 작업 영역에 모듈을 복원한다.
@@ -13,7 +14,9 @@ interface ProjectMetadata {
     order: number
     properties: Record<string, unknown>
     styles: Record<string, unknown>
+    groupId?: string
   }>
+  groups?: ModuleGroup[]
   wrapSettings?: {
     backgroundColor: string
     borderWidth: string
@@ -125,9 +128,19 @@ export function useNewsletterImport() {
                   ;(addedModule.styles as Record<string, unknown>)[key] = value
                 })
               }
+              // 그룹 소속 복원 (그룹 정의는 아래에서 일괄 복원)
+              if (moduleData.groupId) {
+                addedModule.groupId = moduleData.groupId
+              }
 
               restoredCount++
             }
+          }
+
+          // 그룹 정의 복원 후 연속성 정리
+          if (projectData.groups && projectData.groups.length > 0) {
+            moduleStore.groups = JSON.parse(JSON.stringify(projectData.groups))
+            moduleStore.normalizeGroupContiguity()
           }
 
           if (moduleStore.modules.length > 0) {

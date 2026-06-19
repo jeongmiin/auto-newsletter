@@ -1,10 +1,11 @@
 import { ref, watch, computed, onScopeDispose } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useModuleStore } from '@/stores/moduleStore'
-import type { ModuleInstance } from '@/types'
+import type { ModuleInstance, ModuleGroup } from '@/types'
 
 interface HistoryState {
   modules: ModuleInstance[]
+  groups: ModuleGroup[]
   selectedModuleId: string | null
 }
 
@@ -15,7 +16,7 @@ const MAX_HISTORY_SIZE = 50
  */
 export function useHistory() {
   const moduleStore = useModuleStore()
-  const { modules, selectedModuleId } = storeToRefs(moduleStore)
+  const { modules, groups, selectedModuleId } = storeToRefs(moduleStore)
 
   // 히스토리 스택
   const undoStack = ref<HistoryState[]>([])
@@ -28,6 +29,7 @@ export function useHistory() {
   const createSnapshot = (): HistoryState => {
     return {
       modules: JSON.parse(JSON.stringify(modules.value)),
+      groups: JSON.parse(JSON.stringify(groups.value)),
       selectedModuleId: selectedModuleId.value,
     }
   }
@@ -41,6 +43,8 @@ export function useHistory() {
     // 모듈 상태 복원 — 스택에 남아있는 스냅샷이 이후 편집으로 오염되지 않도록 딥카피하여 적용
     const restored: ModuleInstance[] = JSON.parse(JSON.stringify(snapshot.modules))
     modules.value.splice(0, modules.value.length, ...restored)
+    const restoredGroups: ModuleGroup[] = JSON.parse(JSON.stringify(snapshot.groups || []))
+    groups.value.splice(0, groups.value.length, ...restoredGroups)
     selectedModuleId.value = snapshot.selectedModuleId
 
     // debounce 시간(300ms)보다 길게 대기하여 watcher가 이 변경을 무시하도록 함
@@ -118,7 +122,7 @@ export function useHistory() {
   let debounceTimer: ReturnType<typeof setTimeout> | null = null
 
   const stopWatcher = watch(
-    modules,
+    [modules, groups],
     () => {
       if (isApplyingHistory.value) return
 
