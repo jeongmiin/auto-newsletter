@@ -116,6 +116,14 @@
                 </span>
                 <button
                   type="button"
+                  class="no-drag group-rail__btn"
+                  v-tooltip.left="'그룹 복제'"
+                  @click.stop="moduleStore.duplicateGroup(item.id)"
+                >
+                  <i class="pi pi-copy"></i>
+                </button>
+                <button
+                  type="button"
                   class="no-drag group-rail__btn group-rail__btn--danger"
                   v-tooltip.left="'그룹 해제'"
                   @click.stop="moduleStore.ungroup(item.id)"
@@ -129,6 +137,14 @@
                   @click.stop="selectGroupBox(item.id)"
                 >
                   <i class="pi pi-sliders-h"></i>
+                </button>
+                <button
+                  type="button"
+                  class="no-drag group-rail__btn group-rail__btn--danger"
+                  v-tooltip.left="'그룹 전체 삭제'"
+                  @click.stop="confirmDeleteGroup(item)"
+                >
+                  <i class="pi pi-trash"></i>
                 </button>
               </div>
             </div>
@@ -168,6 +184,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch, nextTick } from 'vue'
+import { useConfirm } from 'primevue/useconfirm'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
 import { useNewsletterImport } from '@/composables/useNewsletterImport'
@@ -178,7 +195,23 @@ import { groupDivStyle, resolveGroupStyles } from '@/utils/groupStyle'
 
 const moduleStore = useModuleStore()
 const editorStore = useEditorStore()
+const confirm = useConfirm()
 const { importHtmlFile } = useNewsletterImport()
+
+// 그룹 전체 삭제 — 멤버 모듈까지 함께 지우므로 확인 후 진행
+const confirmDeleteGroup = (item: DisplayItem): void => {
+  if (item.type !== 'group') return
+  const count = item.modules.length
+  confirm.require({
+    message: `이 그룹과 포함된 ${count}개 모듈이 모두 삭제됩니다. 계속하시겠습니까?`,
+    header: '그룹 삭제 확인',
+    rejectLabel: '취소',
+    acceptLabel: '삭제',
+    rejectClass: 'p-button-secondary',
+    acceptClass: 'p-button-danger',
+    accept: () => moduleStore.deleteGroup(item.id),
+  })
+}
 
 // 빈 화면 빠른 시작: 좌측 패널을 템플릿 탭으로 전환
 const startFromTemplate = (): void => editorStore.setModulePanelMode('templates')
@@ -335,9 +368,8 @@ const deleteModule = (moduleId: string) => {
   align-items: center;
   gap: 1px;
   width: 100%;
-  padding: 4px 0;
+  padding: 4px 0.4rem 1rem;
   cursor: grab;
-  position: absolute; top: 50%; left: 50%;transform: translate(-50%,-50%);
   color: #7c3aed; /* purple-600 */
 }
 .group-rail__handle:active {

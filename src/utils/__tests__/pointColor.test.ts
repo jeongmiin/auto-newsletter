@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { resolvePointColors, POINT_COLOR_SUFFIX } from '../pointColor'
+import { resolvePointColors, resolvePointColorVar, POINT_COLOR_SUFFIX } from '../pointColor'
 
 describe('resolvePointColors', () => {
   const POINT = '#2563eb'
@@ -52,5 +52,46 @@ describe('resolvePointColors', () => {
     expect(result.textColor).toBe(POINT)
     expect(result.borderColor).toBe(POINT)
     expect(result.bgColor).toBe('#ffffff') // 플래그 없음 → 유지
+  })
+})
+
+describe('resolvePointColorVar', () => {
+  const POINT = '#2563eb'
+
+  it('var(--point-color, #fallback) 토큰을 실제 포인트 색상으로 치환한다', () => {
+    const html = '<span style="color: var(--point-color, #999999)">강조</span>'
+    expect(resolvePointColorVar(html, POINT)).toBe(
+      '<span style="color: #2563eb">강조</span>',
+    )
+  })
+
+  it('fallback 없는 var(--point-color) 도 치환한다', () => {
+    const html = '<span style="background-color: var(--point-color)">A</span>'
+    expect(resolvePointColorVar(html, POINT)).toBe(
+      '<span style="background-color: #2563eb">A</span>',
+    )
+  })
+
+  it('한 문서 안의 여러 토큰을 모두 치환한다', () => {
+    const html =
+      '<b style="color:var(--point-color)">x</b><i style="color: var(--point-color, #111)">y</i>'
+    expect(resolvePointColorVar(html, POINT)).toBe(
+      '<b style="color:#2563eb">x</b><i style="color: #2563eb">y</i>',
+    )
+  })
+
+  it('pointColor가 비어 있으면 기본 포인트 색상(#2563eb)으로 치환한다', () => {
+    const html = '<span style="color: var(--point-color)">z</span>'
+    expect(resolvePointColorVar(html, '')).toBe('<span style="color: #2563eb">z</span>')
+    expect(resolvePointColorVar(html, null)).toBe('<span style="color: #2563eb">z</span>')
+  })
+
+  it('포인트 변수가 없는 HTML은 그대로 둔다', () => {
+    const html = '<span style="color: #abcdef">no point</span>'
+    expect(resolvePointColorVar(html, POINT)).toBe(html)
+  })
+
+  it('빈 입력은 빈 문자열을 반환한다', () => {
+    expect(resolvePointColorVar('', POINT)).toBe('')
   })
 })

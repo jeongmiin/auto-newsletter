@@ -75,6 +75,80 @@ describe('moduleStore - 그룹', () => {
     expect(store.groups.length).toBe(0)
   })
 
+  it('그룹을 통째로 복제하면 멤버·스타일이 새 ID로 복제되어 원본 바로 뒤에 배치된다', () => {
+    const store = useModuleStore()
+    const ids = addModules(store, 3) // 0,1,2
+    const gid = store.createGroup([ids[0], ids[1]])!
+    // 원본 그룹 스타일을 수정해 복제본이 깊은 복사인지 확인
+    store.updateGroupStyle(gid, 'backgroundColor', '#abcdef')
+    // 원본 멤버 속성도 수정
+    const origFirst = store.modules.find((m) => m.id === ids[0])!
+    origFirst.properties.title = '원본'
+
+    const newGid = store.duplicateGroup(gid)
+
+    expect(newGid).not.toBeNull()
+    expect(newGid).not.toBe(gid)
+    // 그룹 2개, 각 멤버 2개
+    expect(store.groups.length).toBe(2)
+    const origMembers = store.modules.filter((m) => m.groupId === gid)
+    const newMembers = store.modules.filter((m) => m.groupId === newGid)
+    expect(origMembers.length).toBe(2)
+    expect(newMembers.length).toBe(2)
+    // 새 멤버는 새 ID (원본 ID와 겹치지 않음)
+    const origIds = new Set(origMembers.map((m) => m.id))
+    expect(newMembers.every((m) => !origIds.has(m.id))).toBe(true)
+    // 스타일 깊은 복사 (값은 같되 객체는 분리)
+    const newGroup = store.groups.find((g) => g.id === newGid)!
+    expect(newGroup.styles.backgroundColor).toBe('#abcdef')
+    store.updateGroupStyle(newGid, 'backgroundColor', '#000000')
+    expect(store.groups.find((g) => g.id === gid)!.styles.backgroundColor).toBe('#abcdef')
+    // 멤버 속성 깊은 복사
+    expect(newMembers[0].properties.title).toBe('원본')
+    newMembers[0].properties.title = '복제본'
+    expect(store.modules.find((m) => m.id === ids[0])!.properties.title).toBe('원본')
+    // 복제 그룹이 원본 그룹 바로 뒤에 연속 배치 (멤버 4개가 연속)
+    const order = store.modules.map((m) => m.groupId)
+    const firstGroupIdx = order.indexOf(gid)
+    expect(order.slice(firstGroupIdx, firstGroupIdx + 4)).toEqual([gid, gid, newGid, newGid])
+    // 복제 후 새 그룹이 선택됨
+    expect(store.selectedGroupId).toBe(newGid)
+  })
+
+  it('정의 없는 그룹/빈 그룹은 복제할 수 없다', () => {
+    const store = useModuleStore()
+    addModules(store, 2)
+    expect(store.duplicateGroup('group-nonexistent')).toBeNull()
+  })
+
+  it('그룹 전체 삭제는 멤버 모듈과 그룹 정의를 함께 제거한다', () => {
+    const store = useModuleStore()
+    const ids = addModules(store, 3) // 0,1,2
+    const gid = store.createGroup([ids[0], ids[1]])!
+    store.selectGroup(gid)
+
+    store.deleteGroup(gid)
+
+    // 그룹 멤버(0,1)는 사라지고 비멤버(2)만 남음
+    expect(store.modules.map((m) => m.id)).toEqual([ids[2]])
+    expect(store.groups.length).toBe(0)
+    expect(store.selectedGroupId).toBeNull()
+    // 남은 모듈 order 재정렬
+    expect(store.modules[0].order).toBe(0)
+  })
+
+  it('그룹 삭제 시 선택된 멤버 모듈이면 선택 해제된다', () => {
+    const store = useModuleStore()
+    const ids = addModules(store, 2)
+    const gid = store.createGroup([ids[0], ids[1]])!
+    store.selectModule(ids[0])
+
+    store.deleteGroup(gid)
+
+    expect(store.selectedModuleId).toBeNull()
+    expect(store.modules.length).toBe(0)
+  })
+
   it('비연속 모듈을 묶으면 연속되도록 재배치된다', () => {
     const store = useModuleStore()
     const ids = addModules(store, 4) // 0,1,2,3

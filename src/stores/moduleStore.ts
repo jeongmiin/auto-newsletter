@@ -49,7 +49,7 @@ import {
 } from '@/utils/moduleContentReplacer'
 import { convertQuillListsToEmailHtml } from '@/utils/quillHtmlProcessor'
 import { flattenAlphaColorsInHtml } from '@/utils/colorFlatten'
-import { resolvePointColors } from '@/utils/pointColor'
+import { resolvePointColors, resolvePointColorVar } from '@/utils/pointColor'
 import { applyFontFamily } from '@/utils/fontFamily'
 import { migrateModuleProperties } from '@/utils/moduleMigrations'
 import { sanitizeHtml } from '@/utils/sanitize'
@@ -407,6 +407,47 @@ export const useModuleStore = defineStore('module', () => {
   }
 
   /**
+   * 그룹 통째 복제 — 그룹의 모든 멤버 모듈 + 그룹 스타일을 새 ID로 복제해
+   * 원본 그룹 바로 아래에 연속 배치한다. (그룹 연속성 유지)
+   * @returns 생성된 새 그룹 id (실패 시 null)
+   */
+  const duplicateGroup = (groupId: string): string | null => {
+    const group = groups.value.find((g) => g.id === groupId)
+    if (!group) return null
+
+    // 원본 그룹 멤버를 현재 order 순으로
+    const members = modules.value
+      .filter((m) => m.groupId === groupId)
+      .sort((a, b) => a.order - b.order)
+    if (members.length === 0) return null
+
+    const newGroupId = generateUniqueId('group')
+
+    // 멤버 복제 (새 모듈 ID + 새 groupId, 속성·스타일 깊은 복사)
+    const clones: ModuleInstance[] = members.map((m) => ({
+      ...m,
+      id: generateUniqueId('module'),
+      groupId: newGroupId,
+      properties: JSON.parse(JSON.stringify(m.properties)),
+      styles: JSON.parse(JSON.stringify(m.styles)),
+    }))
+
+    // 원본 그룹의 마지막 멤버 바로 뒤에 연속 삽입
+    const lastMemberId = members[members.length - 1].id
+    const insertIndex = modules.value.findIndex((m) => m.id === lastMemberId) + 1
+    modules.value.splice(insertIndex, 0, ...clones)
+
+    // 그룹 정의 복제 (스타일 깊은 복사)
+    groups.value.push({ id: newGroupId, styles: JSON.parse(JSON.stringify(group.styles)) })
+
+    reorderModules()
+    selectedGroupId.value = newGroupId
+    selectedModuleId.value = null
+    isDirty.value = true
+    return newGroupId
+  }
+
+  /**
    * 그룹 해제 — 멤버들의 groupId 제거, 그룹 정의 삭제 (모듈 자체는 유지)
    */
   const ungroup = (groupId: string): void => {
@@ -417,6 +458,31 @@ export const useModuleStore = defineStore('module', () => {
     if (gi !== -1) groups.value.splice(gi, 1)
     if (selectedGroupId.value === groupId) selectedGroupId.value = null
     isDirty.value = true
+  }
+
+  /**
+   * 그룹 전체 삭제 — 그룹의 모든 멤버 모듈과 그룹 정의를 함께 제거한다.
+   * (그룹 해제(ungroup)는 모듈을 유지하지만, 이 함수는 모듈까지 삭제한다)
+   */
+  const deleteGroup = (groupId: string): void => {
+    const hadMembers = modules.value.some((m) => m.groupId === groupId)
+    // 멤버 모듈 제거
+    modules.value = modules.value.filter((m) => m.groupId !== groupId)
+    // 그룹 정의 제거
+    const gi = groups.value.findIndex((g) => g.id === groupId)
+    if (gi !== -1) groups.value.splice(gi, 1)
+    // 선택 상태 정리
+    if (selectedGroupId.value === groupId) selectedGroupId.value = null
+    if (
+      selectedModuleId.value &&
+      !modules.value.some((m) => m.id === selectedModuleId.value)
+    ) {
+      selectedModuleId.value = null
+    }
+    if (hadMembers || gi !== -1) {
+      reorderModules()
+      isDirty.value = true
+    }
   }
 
   /**
@@ -1484,6 +1550,9 @@ export const useModuleStore = defineStore('module', () => {
 
         html = await replaceModuleContent(html, module)
 
+        // 본문 인라인 '포인트 색상'(var(--point-color)) → 실제 색상값 (이메일은 CSS 변수 미지원)
+        html = resolvePointColorVar(html, wrapSettings.pointColor)
+
         // 이메일용: Quill 리스트(<ol><li data-list>)를 인라인 스타일 <ul>/<ol>로 변환
         html = convertQuillListsToEmailHtml(html)
 
@@ -1598,6 +1667,7 @@ ${fullHtml}
       styles: {},
     }
     html = await replaceModuleContent(html, tempModule)
+    html = resolvePointColorVar(html, useEditorStore().wrapSettings.pointColor)
     html = convertQuillListsToEmailHtml(html)
     html = flattenAlphaColorsInHtml(html, useEditorStore().wrapSettings.backgroundColor)
     html = applyFontFamily(html, useEditorStore().wrapSettings.fontLanguage)
@@ -1669,7 +1739,9 @@ ${fullHtml}
     selectedGroup,
     displayItems,
     createGroup,
+    duplicateGroup,
     ungroup,
+    deleteGroup,
     selectGroup,
     updateGroupStyle,
     setDisplayOrder,

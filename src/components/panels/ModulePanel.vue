@@ -153,8 +153,10 @@ const categories = [
 ]
 
 const filteredModules = computed(() => {
-  if (selectedCategory.value === 'all') return modules.value
-  return modules.value.filter((module) => module.category === selectedCategory.value)
+  // hidden 모듈은 팔레트에서 제외 (통합/폐기된 모듈 — 기존 데이터 렌더링은 계속 지원)
+  const visible = modules.value.filter((module) => !module.hidden)
+  if (selectedCategory.value === 'all') return visible
+  return visible.filter((module) => module.category === selectedCategory.value)
 })
 
 const addModule = (module: ModuleMetadata) => {

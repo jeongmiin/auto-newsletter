@@ -6,20 +6,12 @@
 import type { ContentProcessor } from '../moduleContentProcessor'
 import {
   removeSubTitleDiv,
-  removeTableFromHtml,
   removeButtonFromHtml,
   escapeForHtml,
   removeMarker,
 } from '../htmlUtils'
 import { shouldRenderElement } from '../textUtils'
-import {
-  applyModule04SmallButtonStyles,
-  applyModule04BigButtonStyles,
-  handleModule04ButtonVisibility,
-  applyModule02ButtonStyles,
-  applyModule053ButtonStyles,
-  handleModule053ButtonVisibility,
-} from '../buttonUtils'
+import { applyModule02ButtonStyles } from '../buttonUtils'
 import { REGEX_PATTERNS, DEFAULT_TWO_COLUMN_IMAGE_URL, HTML_MARKERS } from '@/constants/defaults'
 
 /**
@@ -99,44 +91,6 @@ export const removeSectionImageProcessor: ContentProcessor = (html, properties) 
 }
 
 /**
- * SectionTitle 정렬 프로세서
- * 속성 패널의 titleAlign 셀렉트가 정렬의 단일 제어권을 가짐
- * Quill의 text-align이 있더라도 셀렉트 값으로 덮어씀
- */
-export const sectionTitleAlignProcessor: ContentProcessor = (html, properties) => {
-  const align = typeof properties.titleAlign === 'string' ? properties.titleAlign : 'center'
-
-  // 1. style 속성이 있는 태그: 기존 text-align 제거 후 셀렉트 값으로 교체
-  let result = html.replace(
-    /<(p|h[1-3])(\s[^>]*)style="([^"]*)"/g,
-    (_match, tag: string, before: string, style: string) => {
-      const cleaned = style.replace(/;\s*text-align:\s*[^;"]*/g, '').replace(/text-align:\s*[^;"]*/g, '')
-      return `<${tag}${before}style="${cleaned}; text-align: ${align}"`
-    }
-  )
-
-  // 2. style 속성이 없는 태그: style 추가
-  result = result.replace(
-    /<(p|h[1-3])(?![^>]*style=)([^>]*)>/g,
-    (_match, tag: string, attrs: string) => {
-      return `<${tag}${attrs} style="text-align: ${align}">`
-    }
-  )
-
-  return result
-}
-
-/**
- * 테이블 제거 프로세서 (showTable 플래그 확인)
- */
-export const removeTableProcessor: ContentProcessor = (html, properties) => {
-  if (properties.showTable !== true) {
-    return removeTableFromHtml(html)
-  }
-  return html
-}
-
-/**
  * 버튼 제거 프로세서 (showButton 플래그 확인)
  */
 export const removeButtonProcessor: ContentProcessor = (html, properties) => {
@@ -164,31 +118,17 @@ export const module04ImageProcessor: ContentProcessor = (html, properties) => {
 }
 
 /**
- * Module04 href 교체 프로세서
+ * Module04 좌/우 타이틀 조건부 제거 프로세서 (미설정 시 표시)
+ * showLeftTitle / showRightTitle이 false이면 해당 타이틀 블록을 제거한다.
  */
-export const module04HrefProcessor: ContentProcessor = (html, properties) => {
-  const hrefReplacements = [
-    properties.leftSmallBtnUrl || '#',
-    properties.leftBigBtnUrl || '#',
-    properties.rightSmallBtnUrl || '#',
-    properties.rightBigBtnUrl || '#',
-  ]
-  let hrefIndex = 0
-  return html.replace(REGEX_PATTERNS.href, () => {
-    const url = hrefReplacements[hrefIndex] || '#'
-    hrefIndex++
-    return `href="${url}"`
-  })
-}
-
-/**
- * Module04 버튼 스타일 프로세서
- */
-export const module04ButtonStyleProcessor: ContentProcessor = (html, properties) => {
+export const module04TitleProcessor: ContentProcessor = (html, properties) => {
   let result = html
-  result = applyModule04SmallButtonStyles(result, properties)
-  result = applyModule04BigButtonStyles(result, properties)
-  result = handleModule04ButtonVisibility(result, properties)
+  if (properties.showLeftTitle === false) {
+    result = result.replace(/<!-- 왼쪽 타이틀 -->[\s\S]*?<!-- \/\/왼쪽 타이틀 -->/g, '')
+  }
+  if (properties.showRightTitle === false) {
+    result = result.replace(/<!-- 오른쪽 타이틀 -->[\s\S]*?<!-- \/\/오른쪽 타이틀 -->/g, '')
+  }
   return result
 }
 
@@ -296,91 +236,6 @@ export const module053ImageProcessor: ContentProcessor = (html, properties) => {
 }
 
 /**
- * Module053 href 교체 프로세서
- */
-export const module053HrefProcessor: ContentProcessor = (html, properties) => {
-  const hrefReplacements = [
-    properties.topSmallBtnUrl || '#',
-    properties.bottomSmallBtnUrl || '#',
-    properties.bigBtnUrl || '#',
-  ]
-  let hrefIndex = 0
-  return html.replace(REGEX_PATTERNS.href, () => {
-    const url = hrefReplacements[hrefIndex] || '#'
-    hrefIndex++
-    return `href="${url}"`
-  })
-}
-
-/**
- * Module053 버튼 스타일 프로세서
- */
-export const module053ButtonStyleProcessor: ContentProcessor = (html, properties) => {
-  let result = html
-  result = applyModule053ButtonStyles(result, properties)
-  result = handleModule053ButtonVisibility(result, properties)
-  return result
-}
-
-/**
- * Module05 조건부 요소 제거 프로세서
- */
-export const module05ConditionalProcessor: ContentProcessor = (html, properties) => {
-  let result = html
-
-  // 타이틀 제거
-  if (!properties.topRightTitle || String(properties.topRightTitle).trim() === '') {
-    result = result.replace(/<!-- 위쪽 타이틀 -->[\s\S]*?<!-- \/\/위쪽 타이틀 -->/g, '')
-    result = result.replace(/<div[^>]*>[\s\S]*?{{topRightTitle}}[\s\S]*?<\/div>/g, '')
-    result = result.replace(/{{topRightTitle}}/g, '')
-  }
-
-  // 테이블 타이틀 제거
-  if (!properties.topRightTableTitle || String(properties.topRightTableTitle).trim() === '') {
-    result = result.replace(/<!-- 위쪽 테이블 -->[\s\S]*?<!-- \/\/위쪽 테이블 -->/g, '')
-    result = result.replace(/<table[^>]*>[\s\S]*?{{topRightTableTitle}}[\s\S]*?<\/table>/g, '')
-    result = result.replace(/{{topRightTableTitle}}/g, '')
-  }
-
-  // 작은 버튼 제거
-  if (properties.showTopSmallBtn !== true) {
-    result = result.replace(/<!-- 위쪽 작은 버튼 -->[\s\S]*?<!-- \/\/위쪽 작은 버튼 -->/g, '')
-  }
-
-  // 큰 버튼 제거
-  if (properties.showBigBtn !== true) {
-    result = result.replace(/<!-- 큰 버튼 -->[\s\S]*?<!-- \/\/큰 버튼 -->/g, '')
-  }
-
-  return result
-}
-
-/**
- * Module05 추가 콘텐츠 프로세서
- */
-export const module05AdditionalContentProcessor: ContentProcessor = async (
-  html,
-  properties,
-  context,
-) => {
-  if (!context?.insertAdditionalContents) return html
-
-  if (
-    properties.additionalContentsTop &&
-    Array.isArray(properties.additionalContentsTop) &&
-    properties.additionalContentsTop.length > 0
-  ) {
-    return await context.insertAdditionalContents(
-      html,
-      properties.additionalContentsTop as any[],
-      HTML_MARKERS.additionalContentTop,
-    )
-  } else {
-    return removeMarker(html, HTML_MARKERS.additionalContentTop)
-  }
-}
-
-/**
  * Module052 버튼 조건부 제거 프로세서
  */
 export const module052ButtonProcessor: ContentProcessor = (html, properties) => {
@@ -398,6 +253,12 @@ export const module052ButtonProcessor: ContentProcessor = (html, properties) => 
   if (properties.showButton4 !== true) {
     result = result.replace(/<!-- 버튼 4 -->.*?<!-- \/\/버튼 4 -->/gs, '')
   }
+
+  // 버튼 4개가 모두 비노출이면 감싸는 빈 div(상단 padding 여백) 제거
+  result = result.replace(
+    /<div style="padding:10px 0px 0px; box-sizing: border-box; text-align: left;">\s*<\/div>/g,
+    '',
+  )
 
   return result
 }
@@ -473,6 +334,56 @@ export const module051ButtonProcessor: ContentProcessor = (html, properties) => 
     result = result.replace(/<!-- 버튼 4 -->.*?<!-- \/\/버튼 4 -->/gs, '')
   }
 
+  // 버튼 4개가 모두 비노출이면 감싸는 빈 div(상단 padding 여백) 제거
+  result = result.replace(
+    /<div style="padding:10px 0px 0px; box-sizing: border-box; text-align: left;">\s*<\/div>/g,
+    '',
+  )
+
+  return result
+}
+
+/**
+ * Module05-3(통합 05) 섹션·오른쪽 타이틀 토글 프로세서
+ * - showTopSectionTitle / showTopSectionText로 상단 섹션 타이틀·텍스트 개별 표시 (둘 다 숨김 시 배너 행 제거)
+ * - showRightTitle이 false면 오른쪽 타이틀 제거 → 모듈 05 형태(텍스트+버튼) 재현
+ * - rightTitleEmphasis가 true면 오른쪽 타이틀에 배경색 강조 박스(전체 너비) 적용 → 모듈 05-1 형태 재현
+ * (미설정 시 모두 표시 = 기존 05-3 형태)
+ */
+export const module053UnifyProcessor: ContentProcessor = (html, properties) => {
+  let result = html
+
+  // 상단 섹션: 타이틀/텍스트 개별 표시 토글 (미설정 시 각각 표시)
+  const showTopTitle = properties.showTopSectionTitle !== false
+  const showTopText = properties.showTopSectionText !== false
+  if (!showTopTitle && !showTopText) {
+    // 둘 다 숨김 → 상단 섹션 배너(행) 자체 제거 (빈 행/여백 방지)
+    result = result.replace(/<!-- 상단 섹션 -->[\s\S]*?<!-- \/\/상단 섹션 -->/g, '')
+  } else {
+    if (!showTopTitle) {
+      result = result.replace(/<!-- 상단 섹션 타이틀 -->[\s\S]*?<!-- \/\/상단 섹션 타이틀 -->/g, '')
+    }
+    if (!showTopText) {
+      result = result.replace(/<!-- 상단 섹션 텍스트 -->[\s\S]*?<!-- \/\/상단 섹션 텍스트 -->/g, '')
+    }
+  }
+
+  // 오른쪽 타이틀 (미설정 시 표시)
+  if (properties.showRightTitle === false) {
+    result = result.replace(/<!-- 오른쪽 타이틀 -->[\s\S]*?<!-- \/\/오른쪽 타이틀 -->/g, '')
+    result = result.replace(/\{\{\s*rightTitleStyle\s*\}\}/g, '')
+  } else {
+    const str = (v: unknown, fb: string) => (typeof v === 'string' && v.trim() !== '' ? v : fb)
+    let style = ''
+    // 강조(배경 박스) 스타일 — 모듈 05-1의 색상 타이틀 재현 (전체 너비)
+    if (properties.rightTitleEmphasis === true) {
+      const bg = str(properties.rightTitleBgColor, '#e5e5e5')
+      const color = str(properties.rightTitleTextColor, '#111111')
+      style = `display:block; width:100%; background-color:${bg}; color:${color}; padding:6px 12px; margin-bottom:6px; box-sizing:border-box; `
+    }
+    result = result.replace(/\{\{\s*rightTitleStyle\s*\}\}/g, style)
+  }
+
   return result
 }
 
@@ -537,21 +448,9 @@ export const module06MultiButtonProcessor: ContentProcessor = (html, properties)
     result = result.replace(/<!-- 오른쪽 버튼 4 -->.*?<!-- \/\/오른쪽 버튼 4 -->/gs, '')
   }
 
-  return result
-}
-
-/**
- * Module06 버튼 조건부 제거 프로세서 (기존 단일 버튼용 - 호환성 유지)
- */
-export const module06ButtonProcessor: ContentProcessor = (html, properties) => {
-  let result = html
-
-  if (properties.showLeftButton !== true) {
-    result = result.replace(/<!-- 왼쪽 버튼 -->.*?<!-- \/\/왼쪽 버튼 -->/gs, '')
-  }
-  if (properties.showRightButton !== true) {
-    result = result.replace(/<!-- 오른쪽 버튼 -->.*?<!-- \/\/오른쪽 버튼 -->/gs, '')
-  }
+  // 좌/우 버튼이 모두 비노출이면 감싸는 빈 버튼 영역(상단 padding 여백) 제거
+  result = result.replace(/<!-- 왼쪽 버튼 영역 --><div[^>]*>\s*<\/div><!-- \/\/왼쪽 버튼 영역 -->/g, '')
+  result = result.replace(/<!-- 오른쪽 버튼 영역 --><div[^>]*>\s*<\/div><!-- \/\/오른쪽 버튼 영역 -->/g, '')
 
   return result
 }
@@ -612,11 +511,19 @@ export const footerSnsProcessor: ContentProcessor = (html, properties) => {
     )
   }
 
-  return removals.reduce((acc, [shouldRemove, label]) => {
+  result = removals.reduce((acc, [shouldRemove, label]) => {
     if (!shouldRemove) return acc
     const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`)
     return acc.replace(new RegExp(`<!-- ${escaped} -->.*?<!-- //${escaped} -->`, 'gs'), '')
   }, result)
+
+  // SNS 아이콘이 모두 비노출이면 감싸는 빈 행(상하 padding 여백) 제거
+  result = result.replace(
+    /<tr>\s*<td style="padding:15px 5px; text-align: center; box-sizing: border-box;">\s*<\/td>\s*<\/tr>/g,
+    '',
+  )
+
+  return result
 }
 
 /**
@@ -631,11 +538,19 @@ export const moduleImageHeaderTopProcessor: ContentProcessor = (html, properties
     [properties.showTitle === false, '타이틀'],
     [properties.showBody === false, '본문'],
   ]
-  return removals.reduce((acc, [shouldRemove, label]) => {
+  let result = removals.reduce((acc, [shouldRemove, label]) => {
     if (!shouldRemove) return acc
     const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`)
     return acc.replace(new RegExp(`<!-- ${escaped} -->.*?<!-- //${escaped} -->`, 'gs'), '')
   }, html)
+
+  // 상단 라벨/일정·장소/홈 링크가 모두 비노출이면 감싸는 빈 행(상하 padding 여백) 제거
+  result = result.replace(
+    /<tr>\s*<td style="text-align:center; padding:20px 0px;">\s*<\/td>\s*<\/tr>/g,
+    '',
+  )
+
+  return result
 }
 
 /**
@@ -752,16 +667,6 @@ export const twoColumnImageLinkProcessor: ContentProcessor = (html, properties) 
   }
 
   return result
-}
-
-/**
- * 복수 이미지 모바일 레이아웃 프로세서
- * keepLayoutOnMobile이 true이면 49.5% (2컬럼 유지), false이면 100% (1컬럼)
- */
-export const multiImageLayoutProcessor: ContentProcessor = (html, properties) => {
-  // keepLayoutOnMobile이 true면 49.5% (2컬럼 유지), false면 100% (1컬럼으로 떨어짐)
-  const minWidth = properties.keepLayoutOnMobile === true ? '49.5%' : '100%'
-  return html.replace(/{{mobileMinWidth}}/g, minWidth)
 }
 
 /**

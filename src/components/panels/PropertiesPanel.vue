@@ -169,7 +169,7 @@
         </div>
 
         <!-- 속성 편집 폼 -->
-      <div class="p-4 space-y-3">
+      <div class="p-4 space-y-3 bg-gray-50">
         <component
           v-for="(group, gIdx) in propGroups"
           :key="`grp-${gIdx}-${group.name || 'flat'}`"
@@ -1022,17 +1022,85 @@
         </div>
       </div>
     </div>
+
+    <!-- Quill 색상 "직접 선택" 팝오버 (팔레트 · 헥사코드 · 포인트 색상) -->
+    <Teleport to="body">
+    <div
+      v-if="colorPopover.visible"
+      ref="colorPopoverEl"
+      class="quill-color-popover"
+      :style="{ top: `${colorPopover.top}px`, left: `${colorPopover.left}px` }"
+    >
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-sm font-medium text-gray-700">
+          {{ colorPopover.format === 'background' ? '배경 색상' : '글자 색상' }}
+        </span>
+        <button
+          type="button"
+          class="text-gray-400 hover:text-gray-600"
+          title="닫기"
+          @click="closeColorPopover"
+        >
+          <i class="pi pi-times text-xs"></i>
+        </button>
+      </div>
+
+      <!-- 포인트 색상으로 사용 -->
+      <label class="flex items-center gap-1.5 cursor-pointer select-none mb-2">
+        <Checkbox :modelValue="popoverUsePoint" @update:modelValue="popoverUsePoint = $event" :binary="true" />
+        <span class="text-sm text-gray-600">포인트 색상으로 사용</span>
+        <span
+          class="w-3 h-3 rounded-sm border border-gray-300"
+          :style="{ backgroundColor: pointColorValue }"
+        ></span>
+      </label>
+
+      <!-- 색상 + 투명도 / HEX 입력 -->
+      <div class="flex items-center gap-2">
+        <ColorAlphaPicker
+          :modelValue="displayPopoverColor"
+          @update:modelValue="popoverColor = $event"
+          :disabled="popoverUsePoint"
+        />
+        <HexColorInput
+          :modelValue="displayPopoverColor"
+          @update:modelValue="popoverColor = $event ?? ''"
+          :disabled="popoverUsePoint"
+          placeholder="#111111"
+          class="flex-1 font-mono text-xs"
+          spellcheck="false"
+        />
+      </div>
+
+      <div class="flex items-center justify-between mt-3">
+        <button
+          type="button"
+          class="text-xs text-gray-500 hover:text-gray-700"
+          @click="removeQuillColor"
+        >
+          색 제거
+        </button>
+        <button
+          type="button"
+          class="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
+          @click="closeColorPopover"
+        >
+          확인
+        </button>
+      </div>
+    </div>
+  </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch, nextTick, onMounted, onBeforeUnmount } from 'vue'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
 import type { TableRow, ContentTitle, ContentText, AdditionalContent, TableCell, WrapSettings, EditableProp } from '@/types'
 import { normalizeColorInput, isValidHexColor } from '@/utils/colorHelper'
 import { normalizePxLength } from '@/utils/cssUnit'
-import { POINT_COLOR_SUFFIX } from '@/utils/pointColor'
+import { POINT_COLOR_SUFFIX, POINT_COLOR_CSS_VAR } from '@/utils/pointColor'
 import { FONT_LANGUAGE_OPTIONS } from '@/utils/fontFamily'
 import { processQuillHtml } from '@/utils/quillHtmlProcessor'
 import TableCellEditor from './TableCellEditor.vue'
@@ -1240,17 +1308,210 @@ const normalizeWrapBorderWidth = () => {
 
 // 붙여넣기 시 모든 서식 제거 — 텍스트만 입력되도록 한다.
 // (복사 원본의 텍스트 색상/배경 등은 가져오지 않고, 스타일은 속성 패널에서 적용)
+// ===== Quill 색상 "직접 선택(기타)" — 커스텀 색상 필드(팔레트 + 헥사 + 포인트 색상) =====
+// 마지막으로 포커스됐던 에디터와 선택 영역을 추적한다.
+// (드롭다운을 열면 에디터가 blur 되어 getSelection()이 null 이 되므로, 직전 range 를 보관)
+let activeQuill: Quill | null = null
+let activeRange: { index: number; length: number } | null = null
+
+// 팝오버 상태
+const colorPopover = ref<{
+  visible: boolean
+  format: 'color' | 'background'
+  top: number
+  left: number
+}>({ visible: false, format: 'color', top: 0, left: 0 })
+const colorPopoverEl = ref<HTMLElement | null>(null)
+const popoverColor = ref('#111111')
+const popoverUsePoint = ref(false)
+
+// 팝오버 대상 에디터/선택 영역 (반응형 불필요 → 일반 변수)
+let popoverQuill: Quill | null = null
+let popoverRange: { index: number; length: number } | null = null
+let popoverEditorEl: HTMLElement | null = null // 위치 기준이 되는 에디터 컨테이너
+
+// 표시용 색상 (입력 필드) — 포인트 색상 사용 시 전역 포인트 색상을 보여줌
+const displayPopoverColor = computed(() =>
+  popoverUsePoint.value ? pointColorValue.value : popoverColor.value,
+)
+
+// 선택 영역에 실제 적용할 값
+// - 포인트 색상 사용: var(--point-color, <현재값>) → 에디터/미리보기는 :root 변수로 실시간 추종,
+//   이메일 내보내기 시 실제 색상으로 치환된다.
+// - 일반: 입력한 색상값 그대로
+const appliedPopoverValue = computed(() =>
+  popoverUsePoint.value
+    ? `var(${POINT_COLOR_CSS_VAR}, ${pointColorValue.value})`
+    : popoverColor.value,
+)
+
+// 선택 영역에 색상 적용 (포커스를 뺏지 않도록 formatText 사용)
+const applyQuillColor = (value: string | false) => {
+  const q = popoverQuill
+  const r = popoverRange
+  if (!q || !r) return
+  const fmt = colorPopover.value.format
+  if (r.length > 0) {
+    q.formatText(r.index, r.length, fmt, value, 'user')
+  } else {
+    // 선택 영역이 없으면 커서 위치의 다음 입력 서식으로 지정
+    q.setSelection(r.index, 0, 'silent')
+    q.format(fmt, value, 'user')
+  }
+}
+
+// 팝오버를 여는 동안의 초기 색상 세팅이 선택 영역에 잘못 적용되지 않도록 억제
+let suppressColorApply = false
+
+// 팝오버가 열려 있는 동안 사용자가 바꾼 색상만 실시간 반영
+watch(appliedPopoverValue, (val) => {
+  if (colorPopover.value.visible && !suppressColorApply) applyQuillColor(val || false)
+})
+
+// ----- 팝오버 위치: 에디터 왼쪽에 배치 (공간 부족 시 오른쪽) -----
+const POPOVER_WIDTH = 400 // .quill-color-popover 의 width 와 일치
+const computePopoverPosition = () => {
+  const el = popoverEditorEl
+  if (!el) return
+  const rect = el.getBoundingClientRect()
+  const margin = 8
+  // 에디터 왼쪽 바깥에 두되, 왼쪽 공간이 부족하면 오른쪽으로
+  let left = rect.left - POPOVER_WIDTH - margin
+  if (left < margin) left = rect.right + margin
+  left = Math.max(margin, Math.min(left, window.innerWidth - POPOVER_WIDTH - margin))
+  const top = Math.max(margin, Math.min(rect.top, window.innerHeight - 240))
+  // 문서 스크롤 보정 (position: absolute 기준)
+  colorPopover.value.left = left + window.scrollX
+  colorPopover.value.top = top + window.scrollY
+}
+// 스크롤/리사이즈 시 에디터에 붙어 따라다니도록 재계산
+const onPopoverReposition = () => {
+  if (colorPopover.value.visible) computePopoverPosition()
+}
+
+const closeColorPopover = () => {
+  colorPopover.value.visible = false
+  popoverQuill = null
+  popoverRange = null
+  popoverEditorEl = null
+  window.removeEventListener('scroll', onPopoverReposition, true)
+  window.removeEventListener('resize', onPopoverReposition)
+}
+
+const removeQuillColor = () => {
+  popoverUsePoint.value = false
+  applyQuillColor(false)
+  closeColorPopover()
+}
+
+const openQuillColorPopover = (quill: Quill, format: 'color' | 'background') => {
+  popoverQuill = quill
+  popoverRange = activeQuill === quill ? activeRange : quill.getSelection()
+  // 위치 기준 = 에디터 전체 컨테이너 (PrimeVue Editor 루트)
+  popoverEditorEl = quill.container.closest<HTMLElement>('.p-editor') ?? quill.container
+
+  // 현재 선택 영역에 적용된 색/포인트 사용 여부를 초기값으로 (열 때의 세팅은 적용 억제)
+  suppressColorApply = true
+  const range = popoverRange
+  const current = range ? quill.getFormat(range.index, Math.max(range.length, 1))[format] : null
+  const usingPoint = typeof current === 'string' && current.includes(POINT_COLOR_CSS_VAR)
+  popoverUsePoint.value = usingPoint
+  popoverColor.value =
+    typeof current === 'string' && current && !usingPoint ? current : '#111111'
+  nextTick(() => {
+    suppressColorApply = false
+  })
+
+  colorPopover.value = { visible: true, format, top: 0, left: 0 }
+  nextTick(computePopoverPosition)
+  window.addEventListener('scroll', onPopoverReposition, true)
+  window.addEventListener('resize', onPopoverReposition)
+}
+
+const addCustomColorItem = (quill: Quill, format: 'color' | 'background') => {
+  const toolbar = quill.getModule('toolbar') as { container?: HTMLElement } | null
+  const container = toolbar?.container
+  if (!container) return
+
+  const picker = container.querySelector<HTMLElement>(`.ql-picker.ql-${format}`)
+  const options = picker?.querySelector<HTMLElement>('.ql-picker-options')
+  if (!picker || !options) return
+  if (options.querySelector('.ql-custom-color')) return // 중복 추가 방지
+
+  const item = document.createElement('span')
+  item.className = 'ql-picker-item ql-custom-color'
+  item.setAttribute('role', 'button')
+  item.tabIndex = 0
+  item.title = '직접 선택 (팔레트 · 헥사코드 · 포인트 색상)'
+  item.addEventListener('click', (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    picker.classList.remove('ql-expanded') // 드롭다운 닫기
+    openQuillColorPopover(quill, format)
+  })
+  options.appendChild(item)
+}
+
+// 팝오버 바깥 클릭 / Esc 시 닫기 (PrimeVue ColorPicker 오버레이 클릭은 예외)
+const onDocPointerDown = (e: MouseEvent) => {
+  if (!colorPopover.value.visible) return
+  const target = e.target as HTMLElement
+  if (colorPopoverEl.value?.contains(target)) return
+  if (target.closest('.p-colorpicker-panel')) return // 컬러피커 그라데이션 패널
+  if (target.closest('.ql-custom-color')) return // 다시 여는 토글 항목
+  closeColorPopover()
+}
+const onDocKeydown = (e: KeyboardEvent) => {
+  if (e.key === 'Escape' && colorPopover.value.visible) closeColorPopover()
+}
+onMounted(() => {
+  document.addEventListener('mousedown', onDocPointerDown, true)
+  document.addEventListener('keydown', onDocKeydown)
+})
+onBeforeUnmount(() => {
+  document.removeEventListener('mousedown', onDocPointerDown, true)
+  document.removeEventListener('keydown', onDocKeydown)
+})
+
 // PrimeVue Editor가 내부 Quill 인스턴스를 @load로 전달한다.
 const onEditorLoad = (event: { instance: Quill }) => {
   const quill = event.instance
   if (!quill) return
 
+  // 붙여넣기(paste) 시에만 모든 서식을 제거한다.
+  // clipboard.convert 는 renderValue(모델→에디터 동기화)에서도 호출되므로, 실제 paste 중에만
+  // 매처가 동작하도록 플래그로 가드한다. (가드가 없으면 — 예: 팝오버로 색상을 적용해
+  // 모델이 갱신되고 에디터가 blur 된 상태에서 동기화될 때 — 본문 서식이 통째로 사라진다)
+  let isPasting = false
+  quill.root.addEventListener(
+    'paste',
+    () => {
+      isPasting = true
+      setTimeout(() => {
+        isPasting = false
+      }, 0)
+    },
+    true,
+  )
   quill.clipboard.addMatcher(Node.ELEMENT_NODE, (_node, delta) => {
+    if (!isPasting) return delta // 프로그램적 변환(renderValue 등)은 서식 유지
     delta.ops = delta.ops
       .filter((op) => typeof op.insert === 'string') // 이미지 등 임베드 제외, 텍스트만
       .map((op) => ({ insert: op.insert as string })) // 색상/배경/굵기 등 모든 속성 제거
     return delta
   })
+
+  // 직전 선택 영역 추적 (드롭다운 열림 시 blur 되어도 range 보존)
+  quill.on('selection-change', (range) => {
+    if (range) {
+      activeQuill = quill
+      activeRange = range
+    }
+  })
+
+  // 글자 색상 · 배경 색상 피커에 직접 선택 항목 추가
+  addCustomColorItem(quill, 'color')
+  addCustomColorItem(quill, 'background')
 }
 
 // PrimeVue Editor 핸들러 함수들 (HTML 후처리 적용)
@@ -1655,6 +1916,22 @@ const togglePointColor = (key: string, value: boolean): void => {
 }
 
 /*
+  흰색(#ffffff) 글자 표시 보정 — 에디터 전용.
+  에디터 배경이 흰색이라 흰 글자가 보이지 않으므로, 편집 화면에서만 회색으로 보여준다.
+  실제 저장값·가운데 미리보기·미리보기 버튼 화면·내려받은 HTML 에는 #ffffff 가 그대로 유지된다.
+  (브라우저는 인라인 color 를 rgb(255, 255, 255) 로 직렬화하므로 그 형태를 우선 매칭하고,
+   '; color:' / 시작 위치로 한정해 background-color 의 흰색은 건드리지 않는다.)
+*/
+:deep(.ql-editor [style^='color: rgb(255, 255, 255)']),
+:deep(.ql-editor [style*='; color: rgb(255, 255, 255)']),
+:deep(.ql-editor [style^='color: rgba(255, 255, 255']),
+:deep(.ql-editor [style*='; color: rgba(255, 255, 255']),
+:deep(.ql-editor [style^='color: #ffffff']),
+:deep(.ql-editor [style*='; color: #ffffff']) {
+  color: #b0b0b0 !important;
+}
+
+/*
   리스트 마커 단일화 — 글머리(bullet)=•, 번호(ordered)=1.
   네이티브 <ol> 숫자 등 다른 마커를 모두 끄고, Quill이 각 항목에 넣는
   <span class="ql-ui">의 ::before로만 마커를 그려 이중 표기를 방지한다.
@@ -1799,6 +2076,55 @@ const togglePointColor = (key: string, value: boolean): void => {
 }
 :deep(.ql-snow .ql-picker.ql-highlightMarker .ql-picker-item[data-value='#e0c7ff']) {
   background: linear-gradient(transparent 50%, #e0c7ff 50%);
+}
+
+/* 색상/배경 피커의 "직접 선택(기타)" 항목 — 무지개 스와치 + 스포이드 아이콘 */
+:deep(.ql-snow .ql-picker.ql-color .ql-custom-color),
+:deep(.ql-snow .ql-picker.ql-background .ql-custom-color) {
+  position: relative;
+  background: conic-gradient(
+    #ff0000,
+    #ff7f00,
+    #ffff00,
+    #00ff00,
+    #00ffff,
+    #0000ff,
+    #ff00ff,
+    #ff0000
+  );
+  border: 1px solid #ccc;
+}
+:deep(.ql-snow .ql-picker.ql-color .ql-custom-color:hover),
+:deep(.ql-snow .ql-picker.ql-background .ql-custom-color:hover) {
+  border-color: #06c;
+}
+:deep(.ql-snow .ql-picker.ql-color .ql-custom-color::after),
+:deep(.ql-snow .ql-picker.ql-background .ql-custom-color::after) {
+  content: '+';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.7);
+}
+
+/* 색상 직접 선택 팝오버 (body로 Teleport, 에디터 왼쪽에 부착) */
+.quill-color-popover {
+  position: absolute;
+  /* PrimeVue ColorPicker 오버레이(overlay 티어 ≈1000+)보다 낮게 두어
+     팝오버 위로 그라데이션 패널이 정상적으로 뜨도록 한다. */
+  z-index: 900;
+  width: 400px;
+  padding: 12px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
 /* 테이블 에디터 그리드 스타일 */

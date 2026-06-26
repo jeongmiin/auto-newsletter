@@ -74,6 +74,16 @@ export const convertRgbToHex = (html: string): string => {
  * word-wrap: break-word는 긴 텍스트가 컨테이너를 넘어갈 때 자동 줄바꿈
  * word-break: break-all은 긴 텍스트(이모지, 특수문자 포함)가 컨테이너를 넘지 않도록 강제 줄바꿈
  */
+/**
+ * 문단의 overflow-wrap 값 결정.
+ * '단어기준(word-break: keep-all)' 문단은 공백 없는 긴 토큰(긴 한글/영문/URL)을 끊지 못해
+ * 컬럼의 min-content 너비가 커진다. 2단 모듈(04·05·06 등)의 inline-block 컬럼이 50%를 넘치며
+ * 레이아웃이 깨지므로, keep-all일 때는 break-word 대신 anywhere를 쓴다.
+ * (anywhere는 break-word와 달리 min-content 폭도 줄여 긴 토큰만 강제 분할 → 단어 단위 줄바꿈은 유지)
+ */
+const overflowWrapFor = (style: string): string =>
+  /word-break:\s*keep-all/.test(style) ? 'anywhere' : 'break-word'
+
 export const addZeroSpacingToBlocks = (html: string): string => {
   if (!html) return ''
 
@@ -108,7 +118,7 @@ export const addZeroSpacingToBlocks = (html: string): string => {
 
       // word-wrap이 없으면 추가 (자동 줄바꿈)
       if (!existingStyle.includes('word-wrap')) {
-        existingStyle += '; word-wrap: break-word; overflow-wrap: break-word'
+        existingStyle += `; word-wrap: break-word; overflow-wrap: ${overflowWrapFor(existingStyle)}`
       }
 
       // word-break가 없으면 추가 (강제 줄바꿈 - 이모지, 특수문자 포함 긴 텍스트 처리)

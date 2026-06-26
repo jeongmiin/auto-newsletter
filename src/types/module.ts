@@ -7,6 +7,8 @@ export interface ModuleMetadata {
   htmlFile: string
   editableProps: EditableProp[]
   defaultStyles?: ModuleStyles
+  // true이면 모듈 추가 목록(팔레트)에서 숨김 (기존 인스턴스/템플릿 렌더링은 계속 지원)
+  hidden?: boolean
 }
 
 export interface EditableProp {

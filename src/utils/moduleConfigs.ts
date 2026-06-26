@@ -220,12 +220,20 @@ export const module04Config: ModuleConfig = {
     rightBigBtnMarginRight: '0px',
     rightBigBtnMarginBottom: '10px',
     rightBigBtnMarginLeft: '0px',
+    // 작은 버튼 공통 너비·모서리 둥글기 (기존 인스턴스 폴백 = 기존 하드코딩 값)
+    leftSmallBtnWidth: 'auto',
+    leftSmallBtnBorderRadius: '30px',
+    leftSmallBtnAlign: 'center',
+    rightSmallBtnWidth: 'auto',
+    rightSmallBtnBorderRadius: '30px',
+    rightSmallBtnAlign: 'center',
     // 좌/우 영역 비율(숫자 %) — 미설정 시 50:50
     leftWidthPercent: '50',
     rightWidthPercent: '50',
   },
   processors: [
     processors.module04ImageProcessor,
+    processors.module04TitleProcessor,
     processors.module04ButtonProcessor,
     processors.module04AdditionalContentProcessor,
     processors.twoColumnImageLinkProcessor,
@@ -268,12 +276,24 @@ export const module053Config: ModuleConfig = {
     topSectionTitleLineHeight: '1.7',
     imageBorderRadius: '0px',
     imageLinkUrl: '#',
+    // 작은 버튼 공통 너비·모서리 둥글기·텍스트 정렬 (기존 인스턴스 폴백 = 기존 하드코딩 값)
+    smallBtnWidth: 'auto',
+    smallBtnBorderRadius: '30px',
+    smallBtnAlign: 'center',
+    // 통합 05: 상단 섹션 타이틀·텍스트, 오른쪽 타이틀 표시 (미설정 시 표시 = 기존 05-3 형태)
+    showTopSectionTitle: true,
+    showTopSectionText: true,
+    showRightTitle: true,
+    rightTitleEmphasis: false,
+    rightTitleBgColor: '#e5e5e5',
+    rightTitleTextColor: '#111111',
     // 좌/우 영역 비율(숫자 %) — 미설정 시 50:50
     leftWidthPercent: '50',
     rightWidthPercent: '50',
   },
   processors: [
     processors.module053ImageProcessor,
+    processors.module053UnifyProcessor,
     processors.module053ButtonProcessor,
     processors.imageLinkProcessor,
     processors.twoColumnRatioProcessor,
@@ -341,6 +361,10 @@ export const module051Config: ModuleConfig = {
     boxColor: '#111111',
     imageBorderRadius: '0px',
     imageLinkUrl: '#',
+    // 버튼 공통 너비·모서리 둥글기·텍스트 정렬 (기존 인스턴스 폴백 = 기존 하드코딩 값)
+    smallBtnWidth: 'auto',
+    smallBtnBorderRadius: '30px',
+    smallBtnAlign: 'center',
     // 좌/우 영역 비율(숫자 %) — 미설정 시 50:50
     leftWidthPercent: '50',
     rightWidthPercent: '50',
@@ -370,6 +394,10 @@ export const module05Config: ModuleConfig = {
     button4TextColor: '#ffffff',
     imageBorderRadius: '0px',
     imageLinkUrl: '#',
+    // 버튼 공통 너비·모서리 둥글기·텍스트 정렬 (기존 인스턴스 폴백 = 기존 하드코딩 값)
+    smallBtnWidth: 'auto',
+    smallBtnBorderRadius: '30px',
+    smallBtnAlign: 'center',
     // 좌/우 영역 비율(숫자 %) — 미설정 시 50:50
     leftWidthPercent: '50',
     rightWidthPercent: '50',
@@ -401,6 +429,13 @@ export const module06Config: ModuleConfig = {
     rightImageAlt: '이미지',
     rightImageBorderRadius: '0px',
     rightImageLinkUrl: '#',
+    // 버튼 공통 너비·모서리 둥글기·텍스트 정렬 (기존 인스턴스 폴백 = 기존 하드코딩 값)
+    leftSmallBtnWidth: 'auto',
+    leftSmallBtnBorderRadius: '30px',
+    leftSmallBtnAlign: 'center',
+    rightSmallBtnWidth: 'auto',
+    rightSmallBtnBorderRadius: '30px',
+    rightSmallBtnAlign: 'center',
     // 좌/우 영역 비율(숫자 %) — 미설정 시 50:50
     leftWidthPercent: '50',
     rightWidthPercent: '50',
@@ -423,6 +458,10 @@ export const module07Config: ModuleConfig = {
     imageAlt: '이미지',
     buttonBgColor: '#e5e5e5',
     buttonTextColor: '#333333',
+    // 버튼 너비·모서리 둥글기·텍스트 정렬 (기존 인스턴스 폴백 = 기존 하드코딩 값)
+    buttonWidth: 'auto',
+    buttonBorderRadius: '30px',
+    buttonAlign: 'center',
     imageBorderRadius: '0px',
     imageLinkUrl: '#',
     textAreaPaddingTop: '25px',
@@ -446,6 +485,9 @@ export const module07Config: ModuleConfig = {
 export const moduleFooterConfig: ModuleConfig = {
   quillFields: ['companyInfo'],
   defaults: {
+    // 푸터 공통 배경색·텍스트 색상 (기존 인스턴스 폴백 = 기존 하드코딩 값)
+    footerBgColor: '#e9e9e9',
+    footerTextColor: '#333333',
     companyInfo:
       '<p style="margin:0; padding:0;"><strong>코리아빌드 사무국</strong></p><p style="margin:0; padding:0;">(주)메쎄이상</p><p style="margin:0; padding:0; font-size:13px;">서울시 마포구&nbsp;월드컵북로&nbsp;58길&nbsp;9 ES타워&nbsp;(03922)</p>',
     companyInfoFontSize: '16px',
