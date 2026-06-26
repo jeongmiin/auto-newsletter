@@ -8,7 +8,10 @@
       "PowerShell(npx vitest run src/utils/__tests__/groupStyle.test.ts src/stores/__tests__/moduleGroups.test.ts 2>&1)",
       "Bash(ls -la temp/)",
       "Bash(wc -c temp/megazoo_temp_newletter.html)",
-      "Bash(grep -c \"AUTO_NEWSLETTER_METADATA\" temp/megazoo_temp_newletter.html)"
+      "Bash(grep -c \"AUTO_NEWSLETTER_METADATA\" temp/megazoo_temp_newletter.html)",
+      "Bash(echo \"TS EXIT: $?\")",
+      "Bash(echo \"tsc exit: $?\")",
+      "Bash(echo \"tsc: $?\")"
     ]
   }
 }
