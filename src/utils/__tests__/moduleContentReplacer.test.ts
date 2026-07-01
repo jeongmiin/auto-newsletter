@@ -93,6 +93,44 @@ describe('moduleContentReplacer', () => {
 
       expect(result).toContain('design.messeesang.com')
     })
+
+    it('테두리 미설정 시 기본값(none)으로 채워 테두리가 보이지 않아야 함', () => {
+      const html =
+        '<img style="border: {{imageBorderWidth}} {{imageBorderStyle}} {{imageBorderColor}};">'
+      const result = replaceModuleImgContent(html, {})
+      expect(result).toContain('border: 1px none #000000;')
+    })
+
+    it('테두리를 지정하면 해당 값으로 교체해야 함', () => {
+      const html =
+        '<img style="border: {{imageBorderWidth}} {{imageBorderStyle}} {{imageBorderColor}};">'
+      const result = replaceModuleImgContent(html, {
+        imageBorderStyle: 'solid',
+        imageBorderWidth: '2px',
+        imageBorderColor: '#ff0000',
+      })
+      expect(result).toContain('border: 2px solid #ff0000;')
+    })
+  })
+
+  describe('복수 이미지(ModuleMultiImage) 테두리 — default 템플릿 경로', () => {
+    // ModuleMultiImage는 default 템플릿으로 렌더되며, 인스턴스 생성 시
+    // editableProps 기본값(none/1px/#000000)이 properties에 시드되어 치환된다.
+    it('좌/우 테두리 플레이스홀더를 각각의 값으로 치환해야 함', () => {
+      const html =
+        '<img style="border: {{leftImageBorderWidth}} {{leftImageBorderStyle}} {{leftImageBorderColor}};">' +
+        '<img style="border: {{rightImageBorderWidth}} {{rightImageBorderStyle}} {{rightImageBorderColor}};">'
+      const result = replaceDefaultTemplate(html, {
+        leftImageBorderStyle: 'none',
+        leftImageBorderWidth: '1px',
+        leftImageBorderColor: '#000000',
+        rightImageBorderStyle: 'solid',
+        rightImageBorderWidth: '3px',
+        rightImageBorderColor: '#123456',
+      })
+      expect(result).toContain('border: 1px none #000000;')
+      expect(result).toContain('border: 3px solid #123456;')
+    })
   })
 
   describe('replaceModuleOneButtonContent', () => {
@@ -200,6 +238,22 @@ describe('moduleContentReplacer', () => {
 
       expect(result).toContain('메인')
       expect(result).toContain('서브')
+    })
+
+    it('메인 타이틀 font-weight 미설정 시 기본값(700)으로 채워야 함', () => {
+      const html = '<td style="font-weight:{{mainTitleFontWeight}};">{{mainTitle}}</td>'
+      const result = replaceSectionTitleContent(html, { mainTitle: '메인' })
+      expect(result).toContain('font-weight:700;')
+    })
+
+    it('font-weight를 지정하면 해당 값으로 교체해야 함', () => {
+      const html = '<td style="font-weight:{{mainTitleFontWeight}};">{{mainTitle}}</td>'
+      const result = replaceSectionTitleContent(html, {
+        mainTitle: '메인',
+        mainTitleFontWeight: '400',
+      })
+      expect(result).toContain('font-weight:400;')
+      expect(result).not.toContain('font-weight:700;')
     })
 
     it('서브 타이틀이 빈 값이면 요소가 제거되어야 함', () => {

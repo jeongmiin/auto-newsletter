@@ -91,6 +91,17 @@ export const removeSectionImageProcessor: ContentProcessor = (html, properties) 
 }
 
 /**
+ * 로고 제거 프로세서 (ModuleNewsHeader 전용)
+ * showLogo가 false이면 로고 <tr>(감싸는 마커 블록)을 통째로 제거한다. (미설정 시 표시)
+ */
+export const removeNewsHeaderLogoProcessor: ContentProcessor = (html, properties) => {
+  if (properties.showLogo === false) {
+    return html.replace(/<!-- 로고 -->\s*<tr>[\s\S]*?<\/tr>\s*<!-- \/\/로고 -->/g, '')
+  }
+  return html
+}
+
+/**
  * 버튼 제거 프로세서 (showButton 플래그 확인)
  */
 export const removeButtonProcessor: ContentProcessor = (html, properties) => {

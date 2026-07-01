@@ -17,11 +17,19 @@
           "group": "접근성"
         },
         {
+          "key": "showLogo",
+          "label": "로고 노출",
+          "type": "boolean",
+          "default": true,
+          "group": "로고"
+        },
+        {
           "key": "logoImageUrl",
           "label": "이미지 URL",
           "type": "url",
           "default": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/newsletter/images/logo-gray.png",
           "placeholder": "이미지 URL을 입력하세요",
+          "showWhen": "showLogo",
           "group": "로고"
         },
         {
@@ -43,6 +51,7 @@
               "value": "right"
             }
           ],
+          "showWhen": "showLogo",
           "group": "로고"
         },
         {
@@ -50,6 +59,7 @@
           "label": "대체 텍스트",
           "type": "text",
           "default": "로고",
+          "showWhen": "showLogo",
           "group": "로고"
         },
         {
@@ -59,6 +69,7 @@
           "default": "100%",
           "placeholder": "예: 100%, 200px",
           "hint": "로고 이미지의 최대 너비입니다. 100%면 영역 너비에 맞춰지고, 200px처럼 고정값도 가능합니다.",
+          "showWhen": "showLogo",
           "group": "로고"
         },
         {
@@ -66,6 +77,7 @@
           "label": "하단 테두리 두께",
           "type": "text",
           "default": "5px",
+          "showWhen": "showLogo",
           "group": "로고"
         },
         {
@@ -73,6 +85,7 @@
           "label": "하단 테두리 색상",
           "type": "text",
           "default": "#000000",
+          "showWhen": "showLogo",
           "group": "로고"
         },
         {
@@ -869,6 +882,22 @@
           "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
         },
         {
+          "key": "mainTitleFontWeight",
+          "label": "기본 굵기",
+          "type": "select",
+          "default": "700",
+          "options": [
+            { "label": "보통 (400)", "value": "400" },
+            { "label": "중간 (500)", "value": "500" },
+            { "label": "약간 굵게 (600)", "value": "600" },
+            { "label": "굵게 (700)", "value": "700" },
+            { "label": "매우 굵게 (800)", "value": "800" }
+          ],
+          "showWhen": "showMainTitle",
+          "group": "메인 타이틀",
+          "hint": "굵기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '굵게(B)'를 쓰세요."
+        },
+        {
           "key": "mainTitleColor",
           "label": "색상",
           "type": "color",
@@ -1296,6 +1325,33 @@
           "placeholder": "예: 10px, 50%"
         },
         {
+          "key": "imageBorderStyle",
+          "label": "테두리 스타일",
+          "type": "select",
+          "default": "none",
+          "options": [
+            { "label": "없음", "value": "none" },
+            { "label": "실선", "value": "solid" },
+            { "label": "점선", "value": "dashed" },
+            { "label": "점", "value": "dotted" }
+          ]
+        },
+        {
+          "key": "imageBorderWidth",
+          "label": "테두리 두께",
+          "type": "text",
+          "default": "1px",
+          "placeholder": "예: 1px, 2px",
+          "showWhen": { "key": "imageBorderStyle", "notEquals": "none" }
+        },
+        {
+          "key": "imageBorderColor",
+          "label": "테두리 색상",
+          "type": "color",
+          "default": "#000000",
+          "showWhen": { "key": "imageBorderStyle", "notEquals": "none" }
+        },
+        {
           "key": "paddingTop",
           "label": "상단 여백",
           "type": "text",
@@ -1373,6 +1429,36 @@
           "group": "왼쪽 이미지"
         },
         {
+          "key": "leftImageBorderStyle",
+          "label": "테두리 스타일",
+          "type": "select",
+          "default": "none",
+          "options": [
+            { "label": "없음", "value": "none" },
+            { "label": "실선", "value": "solid" },
+            { "label": "점선", "value": "dashed" },
+            { "label": "점", "value": "dotted" }
+          ],
+          "group": "왼쪽 이미지"
+        },
+        {
+          "key": "leftImageBorderWidth",
+          "label": "테두리 두께",
+          "type": "text",
+          "default": "1px",
+          "placeholder": "예: 1px, 2px",
+          "showWhen": { "key": "leftImageBorderStyle", "notEquals": "none" },
+          "group": "왼쪽 이미지"
+        },
+        {
+          "key": "leftImageBorderColor",
+          "label": "테두리 색상",
+          "type": "color",
+          "default": "#000000",
+          "showWhen": { "key": "leftImageBorderStyle", "notEquals": "none" },
+          "group": "왼쪽 이미지"
+        },
+        {
           "key": "rightImageUrl",
           "label": "URL",
           "type": "url",
@@ -1410,6 +1496,36 @@
           "default": "0px",
           "placeholder": "예: 10px, 50%",
           "group": "오른쪽 이미지"
+        },
+        {
+          "key": "rightImageBorderStyle",
+          "label": "테두리 스타일",
+          "type": "select",
+          "default": "none",
+          "options": [
+            { "label": "없음", "value": "none" },
+            { "label": "실선", "value": "solid" },
+            { "label": "점선", "value": "dashed" },
+            { "label": "점", "value": "dotted" }
+          ],
+          "group": "오른쪽 이미지"
+        },
+        {
+          "key": "rightImageBorderWidth",
+          "label": "테두리 두께",
+          "type": "text",
+          "default": "1px",
+          "placeholder": "예: 1px, 2px",
+          "showWhen": { "key": "rightImageBorderStyle", "notEquals": "none" },
+          "group": "오른쪽 이미지"
+        },
+        {
+          "key": "rightImageBorderColor",
+          "label": "테두리 색상",
+          "type": "color",
+          "default": "#000000",
+          "showWhen": { "key": "rightImageBorderStyle", "notEquals": "none" },
+          "group": "오른쪽 이미지"
         }
       ]
     },
@@ -1426,61 +1542,47 @@
           "label": "버튼 텍스트",
           "type": "text",
           "default": "큰 버튼 →",
-          "placeholder": "버튼 텍스트를 입력하세요"
-        },
-        {
-          "key": "paddingTop",
-          "label": "상단 여백",
-          "type": "text",
-          "default": "15px",
-          "placeholder": "예: 15px, 0"
-        },
-        {
-          "key": "paddingRight",
-          "label": "우측 여백",
-          "type": "text",
-          "default": "20px",
-          "placeholder": "예: 20px, 0"
-        },
-        {
-          "key": "paddingBottom",
-          "label": "하단 여백",
-          "type": "text",
-          "default": "20px",
-          "placeholder": "예: 20px, 0"
-        },
-        {
-          "key": "paddingLeft",
-          "label": "좌측 여백",
-          "type": "text",
-          "default": "20px",
-          "placeholder": "예: 20px, 0"
+          "placeholder": "버튼 텍스트를 입력하세요",
+          "group": "버튼"
         },
         {
           "key": "buttonFontSize",
           "label": "버튼 폰트 크기",
           "type": "text",
           "default": "15px",
-          "placeholder": "예: 15px, 16px"
+          "placeholder": "예: 15px, 16px",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonPaddingV",
+          "label": "버튼 안쪽 상하 여백",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 20px",
+          "hint": "버튼 안쪽 위·아래 여백입니다. 값이 클수록 버튼 높이가 커집니다.",
+          "group": "버튼"
         },
         {
           "key": "buttonUrl",
           "label": "버튼 링크",
           "type": "url",
           "default": "#",
-          "placeholder": "버튼 링크 URL을 입력하세요"
+          "placeholder": "버튼 링크 URL을 입력하세요",
+          "group": "버튼"
         },
         {
           "key": "buttonBgColor",
           "label": "버튼 배경색",
           "type": "text",
-          "default": "#111111"
+          "default": "#111111",
+          "group": "버튼"
         },
         {
           "key": "buttonTextColor",
           "label": "버튼 글자색",
           "type": "text",
-          "default": "#ffffff"
+          "default": "#ffffff",
+          "group": "버튼"
         },
         {
           "key": "buttonBorderStyle",
@@ -1504,7 +1606,8 @@
               "label": "점",
               "value": "dotted"
             }
-          ]
+          ],
+          "group": "버튼"
         },
         {
           "key": "buttonBorderWidth",
@@ -1515,7 +1618,8 @@
           "showWhen": {
             "key": "buttonBorderStyle",
             "notEquals": "none"
-          }
+          },
+          "group": "버튼"
         },
         {
           "key": "buttonBorderColor",
@@ -1525,7 +1629,8 @@
           "showWhen": {
             "key": "buttonBorderStyle",
             "notEquals": "none"
-          }
+          },
+          "group": "버튼"
         },
         {
           "key": "buttonBorderRadius",
@@ -1533,7 +1638,40 @@
           "type": "text",
           "default": "5px",
           "placeholder": "예: 5px, 50%",
-          "hint": "값이 클수록 모서리가 둥글어집니다. 100px이면 완전히 둥근(알약형) 버튼이 됩니다."
+          "hint": "값이 클수록 모서리가 둥글어집니다. 100px이면 완전히 둥근(알약형) 버튼이 됩니다.",
+          "group": "버튼"
+        },
+        {
+          "key": "paddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 0",
+          "group": "여백"
+        },
+        {
+          "key": "paddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "group": "여백"
+        },
+        {
+          "key": "paddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "group": "여백"
+        },
+        {
+          "key": "paddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "group": "여백"
         }
       ]
     },
@@ -1559,6 +1697,15 @@
           "type": "text",
           "default": "15px",
           "placeholder": "예: 15px, 16px",
+          "group": "첫 번째 버튼"
+        },
+        {
+          "key": "button1PaddingV",
+          "label": "안쪽 상하 여백",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 20px",
+          "hint": "버튼 안쪽 위·아래 여백입니다. 값이 클수록 버튼 높이가 커집니다.",
           "group": "첫 번째 버튼"
         },
         {
@@ -1654,6 +1801,15 @@
           "type": "text",
           "default": "15px",
           "placeholder": "예: 15px, 16px",
+          "group": "두 번째 버튼"
+        },
+        {
+          "key": "button2PaddingV",
+          "label": "안쪽 상하 여백",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 20px",
+          "hint": "버튼 안쪽 위·아래 여백입니다. 값이 클수록 버튼 높이가 커집니다.",
           "group": "두 번째 버튼"
         },
         {

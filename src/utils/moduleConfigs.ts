@@ -11,6 +11,8 @@ import * as processors from './processors'
  */
 export const moduleNewsHeaderConfig: ModuleConfig = {
   defaults: {
+    // 로고 노출 여부 (미설정 시 표시 = 기존 인스턴스 폴백)
+    showLogo: true,
     logoImageUrl: 'https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/newsletter/images/logo-gray.png',
     logoAlt: '로고',
     logoMaxWidth: '100%',
@@ -27,6 +29,7 @@ export const moduleNewsHeaderConfig: ModuleConfig = {
     headerTitlePaddingBottom: '10px',
     headerTitlePaddingLeft: '10px',
   },
+  processors: [processors.removeNewsHeaderLogoProcessor],
 }
 
 /**
@@ -135,6 +138,10 @@ export const moduleImgConfig: ModuleConfig = {
     imageAlt: '이미지',
     imageBorderRadius: '0px',
     imageLinkUrl: '#',
+    // 이미지 테두리 (기본 none = 기존 인스턴스 폴백 = 테두리 없음)
+    imageBorderStyle: 'none',
+    imageBorderWidth: '1px',
+    imageBorderColor: '#000000',
   },
   processors: [processors.imageLinkProcessor],
 }
@@ -148,6 +155,8 @@ export const moduleOneButtonConfig: ModuleConfig = {
     buttonUrl: '#',
     buttonBgColor: '#111111',
     buttonTextColor: '#ffffff',
+    // 버튼 <a> 안쪽 상하 여백 (기존 인스턴스 폴백 = 기존 하드코딩 값)
+    buttonPaddingV: '15px',
   },
 }
 
@@ -164,6 +173,9 @@ export const moduleTwoButtonConfig: ModuleConfig = {
     button2Url: '#',
     button2BgColor: '#111111',
     button2TextColor: '#ffffff',
+    // 각 버튼 <a> 안쪽 상하 여백 (기존 인스턴스 폴백 = 기존 하드코딩 값)
+    button1PaddingV: '15px',
+    button2PaddingV: '15px',
     paddingTop: '10px',
     paddingRight: '15px',
     paddingBottom: '15px',
@@ -179,6 +191,9 @@ export const sectionTitleConfig: ModuleConfig = {
   defaults: {
     mainTitle: '섹션 타이틀',
     subTitle: '서브 타이틀 영역입니다',
+    // 메인 타이틀 기본 굵기 (기존 인스턴스 폴백 = 기존 하드코딩 값)
+    // 서브 타이틀은 기본 normal, 굵게는 에디터 툴바(B)로 부분 적용
+    mainTitleFontWeight: '700',
     sectionBgColor: 'transparent',
     topBorderWidth: '2px',
     topBorderColor: '#333333',
@@ -633,6 +648,13 @@ export const moduleMultiImageConfig: ModuleConfig = {
     rightImageAlt: '이미지',
     rightImageBorderRadius: '0px',
     rightImageLinkUrl: '#',
+    // 좌/우 이미지 테두리 (기본 none = 기존 인스턴스 폴백 = 테두리 없음)
+    leftImageBorderStyle: 'none',
+    leftImageBorderWidth: '1px',
+    leftImageBorderColor: '#000000',
+    rightImageBorderStyle: 'none',
+    rightImageBorderWidth: '1px',
+    rightImageBorderColor: '#000000',
   },
   processors: [processors.twoColumnImageLinkProcessor],
 }
