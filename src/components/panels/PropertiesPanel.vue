@@ -325,6 +325,7 @@
                   <option value="#cce4ff"></option>
                   <option value="#ffd9b3"></option>
                   <option value="#e0c7ff"></option>
+                  <option value="#13ecff"></option>
                 </select>
               </span>
               <span class="ql-formats">
@@ -2076,6 +2077,9 @@ const togglePointColor = (key: string, value: boolean): void => {
 }
 :deep(.ql-snow .ql-picker.ql-highlightMarker .ql-picker-item[data-value='#e0c7ff']) {
   background: linear-gradient(transparent 50%, #e0c7ff 50%);
+}
+:deep(.ql-snow .ql-picker.ql-highlightMarker .ql-picker-item[data-value='#13ecff']) {
+  background: linear-gradient(transparent 50%, #13ecff 50%);
 }
 
 /* 색상/배경 피커의 "직접 선택(기타)" 항목 — 무지개 스와치 + 스포이드 아이콘 */

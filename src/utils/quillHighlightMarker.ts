@@ -15,6 +15,7 @@ export const HIGHLIGHT_COLORS = [
   '#cce4ff',
   '#ffd9b3',
   '#e0c7ff',
+  '#13ecff',
 ]
 
 type InlineBlotConstructor = {

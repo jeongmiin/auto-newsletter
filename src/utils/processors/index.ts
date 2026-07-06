@@ -485,7 +485,11 @@ export const footerSnsProcessor: ContentProcessor = (html, properties) => {
   const showPhone = properties.showPhone !== false
   const showEmail = properties.showEmail !== false
   const showFax = properties.showFax === true // 신규 항목 — 미설정 시 숨김
-  // 안내문구 다국어 버전: true이면 영문 블록 표시·국문 블록 제거 (미설정 시 국문 표시)
+  // 안내문구 국문/영문 — 각각 독립 토글.
+  //  · 국문: 미설정 시 표시(기본 노출). 숨기려면 showKoreanFooter=false.
+  //  · 영문: 미설정 시 숨김(옵트인). 표시하려면 showEnglishFooter=true.
+  //  둘 다 켜면 국문+영문 모두 노출, 둘 다 끄면 안내문구 없음.
+  const showKoreanFooter = properties.showKoreanFooter !== false
   const showEnglishFooter = properties.showEnglishFooter === true
 
   // [제거 조건, 마커 라벨] 목록 — 조건이 true이면 해당 마커 블록 제거
@@ -508,9 +512,11 @@ export const footerSnsProcessor: ContentProcessor = (html, properties) => {
     [properties.showEn !== true, '영어'],
     [properties.showJp !== true, '일본어'],
     [properties.showTh !== true, '태국어'],
-    // 안내문구 국문/영문 — 토글에 따라 한쪽만 노출
-    [showEnglishFooter, '안내문구-국문'],
+    // 안내문구 국문/영문 — 각각 독립 토글 (둘 다/한쪽만/둘 다 없음 가능)
+    [!showKoreanFooter, '안내문구-국문'],
     [!showEnglishFooter, '안내문구-영문'],
+    // 둘 다 꺼지면 빈 셀이 남지 않도록 감싸는 행째 제거
+    [!showKoreanFooter && !showEnglishFooter, '안내문구'],
   ]
 
   // 문의 이메일 안내 줄: 미설정 시 발신전용 안내 문구로 대체 (설정 시 기존 문구 유지)

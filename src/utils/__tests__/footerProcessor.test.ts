@@ -146,13 +146,13 @@ describe('footerSnsProcessor - SNS 아이콘 토글 (쭈쭈쭈 포함)', () => {
   })
 })
 
-describe('footerSnsProcessor - 안내문구 다국어(영문) 토글', () => {
+describe('footerSnsProcessor - 안내문구 국문/영문 독립 토글', () => {
   it('템플릿이 국문/영문 안내문구 마커를 포함해야 함 (사전 조건)', () => {
     expect(footerHtml).toContain('<!-- 안내문구-국문 -->')
     expect(footerHtml).toContain('<!-- 안내문구-영문 -->')
   })
 
-  it('미설정 시 국문 안내문구만 노출됨 (영문 블록 제거)', () => {
+  it('미설정 시 국문만 노출 (국문 기본 표시 · 영문 기본 숨김)', () => {
     const result = run({})
     expect(result).toContain('메일 수신을 원치 않으시면')
     expect(result).toContain('[수신거부]')
@@ -160,8 +160,22 @@ describe('footerSnsProcessor - 안내문구 다국어(영문) 토글', () => {
     expect(result).not.toContain('<!-- 안내문구-영문 -->')
   })
 
-  it('showEnglishFooter=true 이면 영문 안내문구만 노출됨 (국문 블록 제거)', () => {
+  it('showEnglishFooter=true 만 켜면 국문+영문 모두 노출 (독립 토글 — 국문 유지)', () => {
     const result = run({ showEnglishFooter: true })
+    expect(result).toContain('메일 수신을 원치 않으시면') // 국문 유지
+    expect(result).toContain('Please note that this is a no-reply email') // 영문 노출
+    expect(result).toContain('[unsubscription]')
+  })
+
+  it('showKoreanFooter=false 이면 국문 블록 제거 (영문 미설정 시 둘 다 없음)', () => {
+    const result = run({ showKoreanFooter: false })
+    expect(result).not.toContain('메일 수신을 원치 않으시면')
+    expect(result).not.toContain('<!-- 안내문구-국문 -->')
+    expect(result).not.toContain('Please note that this is a no-reply email')
+  })
+
+  it('showKoreanFooter=false + showEnglishFooter=true 이면 영문만 노출 (기존 영문 전용과 동일)', () => {
+    const result = run({ showKoreanFooter: false, showEnglishFooter: true })
     expect(result).toContain('Please note that this is a no-reply email')
     expect(result).toContain('[unsubscription]')
     expect(result).not.toContain('메일 수신을 원치 않으시면')

@@ -23,9 +23,10 @@ beforeAll(() => {
 })
 
 describe('quillHighlightMarker', () => {
-  it('형광펜 색상 팔레트가 6색을 제공해야 함', () => {
-    expect(HIGHLIGHT_COLORS.length).toBe(6)
+  it('형광펜 색상 팔레트가 7색을 제공해야 함', () => {
+    expect(HIGHLIGHT_COLORS.length).toBe(7)
     expect(HIGHLIGHT_COLORS[0]).toBe('#fff555')
+    expect(HIGHLIGHT_COLORS).toContain('#13ecff')
   })
 
   it('highlightMarker 포맷이 Quill 레지스트리에 등록되어야 함', () => {

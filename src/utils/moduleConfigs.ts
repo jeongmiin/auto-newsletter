@@ -226,6 +226,13 @@ export const module04Config: ModuleConfig = {
     leftImageLinkUrl: '#',
     rightImageBorderRadius: '0px',
     rightImageLinkUrl: '#',
+    // 좌/우 이미지 테두리 (기본 none = 기존 인스턴스 폴백 = 테두리 없음)
+    leftImageBorderStyle: 'none',
+    leftImageBorderWidth: '1px',
+    leftImageBorderColor: '#000000',
+    rightImageBorderStyle: 'none',
+    rightImageBorderWidth: '1px',
+    rightImageBorderColor: '#000000',
     // 큰 버튼 여백 (기존 인스턴스 폴백 — 신규 인스턴스는 editableProps default 사용)
     leftBigBtnMarginTop: '0px',
     leftBigBtnMarginRight: '0px',
@@ -468,6 +475,19 @@ export const module06Config: ModuleConfig = {
 export const module07Config: ModuleConfig = {
   quillFields: ['contentText'],
   defaults: {
+    // 타이틀 정렬 (기존 인스턴스 폴백 = 왼쪽). 본문은 에디터 정렬 사용.
+    titleAlign: 'left',
+    // 타이틀 배경색/글자색 (기존 인스턴스 폴백 = 배경 없음 · 기존 글자색)
+    titleBgColor: 'transparent',
+    titleTextColor: '#111111',
+    // 타이틀 폰트 웨이트/모서리 둥글기 (기존 폴백 = 볼드 · 각짐)
+    titleFontWeight: '700',
+    titleBorderRadius: '0px',
+    // 텍스트(본문) 박스 — 폰트 웨이트/배경/글자색/모서리 둥글기 (기존 폴백 = 400 · 투명 · 기존 색 · 각짐)
+    contentFontWeight: '400',
+    contentBgColor: 'transparent',
+    contentTextColor: '#333333',
+    contentBorderRadius: '0px',
     titleLineHeight: '1.7',
     imageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-2column.png',
     imageAlt: '이미지',
