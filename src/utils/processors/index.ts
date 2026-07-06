@@ -91,6 +91,24 @@ export const removeSectionImageProcessor: ContentProcessor = (html, properties) 
 }
 
 /**
+ * 작은 버튼 모듈 프로세서 (ModuleSmallButton 전용)
+ * 버튼 1은 항상 노출, 2~4는 showBtn2/3/4 토글로 조건부 제거.
+ */
+export const removeSmallButtonsProcessor: ContentProcessor = (html, properties) => {
+  let result = html
+  if (properties.showBtn2 !== true) {
+    result = result.replace(/<!-- 작은 버튼 2 -->.*?<!-- \/\/작은 버튼 2 -->/gs, '')
+  }
+  if (properties.showBtn3 !== true) {
+    result = result.replace(/<!-- 작은 버튼 3 -->.*?<!-- \/\/작은 버튼 3 -->/gs, '')
+  }
+  if (properties.showBtn4 !== true) {
+    result = result.replace(/<!-- 작은 버튼 4 -->.*?<!-- \/\/작은 버튼 4 -->/gs, '')
+  }
+  return result
+}
+
+/**
  * 로고 제거 프로세서 (ModuleNewsHeader 전용)
  * showLogo가 false이면 로고 <tr>(감싸는 마커 블록)을 통째로 제거한다. (미설정 시 표시)
  */

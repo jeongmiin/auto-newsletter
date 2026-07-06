@@ -6,8 +6,9 @@ import { EDITOR_CONFIG } from '@/constants/defaults'
 export const useEditorStore = defineStore('editor', () => {
   const canvasWidth = ref<'mobile' | 'desktop'>('desktop')
 
-  // 좌측 모듈 패널 탭 모드 (모듈 / 템플릿) — 캔버스 빈 화면 등에서 전환 가능하도록 공유
-  const modulePanelMode = ref<'modules' | 'templates'>('modules')
+  // 좌측 모듈 패널 탭 모드 (모듈 / 템플릿 / 모듈 v2[임시]) — 캔버스 빈 화면 등에서 전환 가능하도록 공유
+  // 'modules-v2': 원소 모듈을 그룹으로 조립하는 실험용 임시 탭 (POC)
+  const modulePanelMode = ref<'modules' | 'templates' | 'modules-v2'>('modules')
 
   // 목차 패널 ↔ 캔버스 하이라이트 동기화용 (마우스 올린 모듈 id)
   const hoveredModuleId = ref<string | null>(null)
@@ -39,7 +40,7 @@ export const useEditorStore = defineStore('editor', () => {
   /**
    * 좌측 모듈 패널 탭 모드 설정 (모듈 / 템플릿)
    */
-  const setModulePanelMode = (mode: 'modules' | 'templates'): void => {
+  const setModulePanelMode = (mode: 'modules' | 'templates' | 'modules-v2'): void => {
     modulePanelMode.value = mode
   }
 

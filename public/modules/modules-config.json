@@ -1142,7 +1142,8 @@
           "label": "텍스트",
           "type": "textarea",
           "default": "<p style=\"margin:0; padding:0;\">콘텐츠 텍스트를 입력하세요.</p>",
-          "placeholder": "텍스트를 입력하세요"
+          "placeholder": "텍스트를 입력하세요",
+          "group": "내용"
         },
         {
           "key": "fontSize",
@@ -1150,49 +1151,99 @@
           "type": "text",
           "default": "14px",
           "placeholder": "예: 14px, 16px",
-          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
-        },
-        {
-          "key": "bgColor",
-          "label": "배경색",
-          "type": "color",
-          "default": "transparent",
-          "placeholder": "예: #f5f5f5 (비우면 투명)"
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요.",
+          "group": "내용"
         },
         {
           "key": "textColor",
           "label": "텍스트 색상",
           "type": "color",
           "default": "#333333",
-          "placeholder": "예: #333333"
+          "placeholder": "예: #333333",
+          "group": "내용"
+        },
+        {
+          "key": "bgColor",
+          "label": "배경색",
+          "type": "color",
+          "default": "transparent",
+          "placeholder": "예: #f5f5f5 (비우면 투명)",
+          "hint": "배경은 안쪽 여백까지 채워지는 '박스'에 적용됩니다. 바깥 여백은 투명하게 남습니다.",
+          "group": "배경 박스"
+        },
+        {
+          "key": "borderRadius",
+          "label": "모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 8px, 0",
+          "group": "배경 박스"
         },
         {
           "key": "paddingTop",
-          "label": "상단 여백",
+          "label": "안쪽 상단 여백",
           "type": "text",
           "default": "0px",
-          "placeholder": "예: 0px, 10px"
+          "placeholder": "예: 0px, 10px",
+          "hint": "배경 박스와 텍스트 사이 간격입니다.",
+          "group": "배경 박스"
         },
         {
           "key": "paddingRight",
-          "label": "우측 여백",
+          "label": "안쪽 우측 여백",
           "type": "text",
           "default": "20px",
-          "placeholder": "예: 20px, 0"
+          "placeholder": "예: 20px, 0",
+          "group": "배경 박스"
         },
         {
           "key": "paddingBottom",
-          "label": "하단 여백",
+          "label": "안쪽 하단 여백",
           "type": "text",
           "default": "0px",
-          "placeholder": "예: 0px, 10px"
+          "placeholder": "예: 0px, 10px",
+          "group": "배경 박스"
         },
         {
           "key": "paddingLeft",
-          "label": "좌측 여백",
+          "label": "안쪽 좌측 여백",
           "type": "text",
           "default": "20px",
-          "placeholder": "예: 20px, 0"
+          "placeholder": "예: 20px, 0",
+          "group": "배경 박스"
+        },
+        {
+          "key": "marginTop",
+          "label": "바깥 상단 여백",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 10px",
+          "hint": "배경 박스 바깥의 투명한 간격입니다. 카드처럼 띄우거나 컬럼 간격을 줄 때 사용합니다.",
+          "group": "바깥 여백"
+        },
+        {
+          "key": "marginRight",
+          "label": "바깥 우측 여백",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 10px",
+          "group": "바깥 여백"
+        },
+        {
+          "key": "marginBottom",
+          "label": "바깥 하단 여백",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 10px",
+          "group": "바깥 여백"
+        },
+        {
+          "key": "marginLeft",
+          "label": "바깥 좌측 여백",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 10px",
+          "group": "바깥 여백"
         }
       ]
     },
@@ -1922,6 +1973,238 @@
           "default": "15px",
           "placeholder": "예: 15px, 0",
           "group": "여백"
+        }
+      ]
+    },
+    {
+      "id": "ModuleSmallButton",
+      "name": "작은 버튼",
+      "description": "옆으로 나열되는 작은 버튼 (최대 4개)",
+      "category": "button",
+      "icon": "pi pi-tags",
+      "htmlFile": "ModuleSmallButton.html",
+      "editableProps": [
+        {
+          "key": "align",
+          "label": "정렬",
+          "type": "select",
+          "default": "left",
+          "options": [
+            { "label": "왼쪽", "value": "left" },
+            { "label": "가운데", "value": "center" },
+            { "label": "오른쪽", "value": "right" }
+          ],
+          "group": "공통"
+        },
+        {
+          "key": "btnWidth",
+          "label": "버튼 너비",
+          "type": "text",
+          "default": "auto",
+          "placeholder": "예: auto, 120px",
+          "group": "공통"
+        },
+        {
+          "key": "btnBorderRadius",
+          "label": "모서리 둥글기",
+          "type": "text",
+          "default": "30px",
+          "placeholder": "예: 30px, 5px",
+          "hint": "값이 클수록 둥글어집니다. 30px이면 알약형입니다.",
+          "group": "공통"
+        },
+        {
+          "key": "btnFontSize",
+          "label": "글자 크기",
+          "type": "text",
+          "default": "13px",
+          "placeholder": "예: 13px, 14px",
+          "group": "공통"
+        },
+        {
+          "key": "paddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "10px",
+          "placeholder": "예: 10px, 0",
+          "group": "공통"
+        },
+        {
+          "key": "paddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "group": "공통"
+        },
+        {
+          "key": "paddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "10px",
+          "placeholder": "예: 10px, 0",
+          "group": "공통"
+        },
+        {
+          "key": "paddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "group": "공통"
+        },
+        {
+          "key": "btn1Text",
+          "label": "텍스트",
+          "type": "text",
+          "default": "버튼 1 →",
+          "placeholder": "버튼 텍스트",
+          "group": "버튼 1"
+        },
+        {
+          "key": "btn1Url",
+          "label": "링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 링크 URL",
+          "group": "버튼 1"
+        },
+        {
+          "key": "btn1BgColor",
+          "label": "배경색",
+          "type": "color",
+          "default": "#e5e5e5",
+          "group": "버튼 1"
+        },
+        {
+          "key": "btn1TextColor",
+          "label": "글자색",
+          "type": "color",
+          "default": "#333333",
+          "group": "버튼 1"
+        },
+        {
+          "key": "showBtn2",
+          "label": "버튼 2 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "버튼 2"
+        },
+        {
+          "key": "btn2Text",
+          "label": "텍스트",
+          "type": "text",
+          "default": "버튼 2 →",
+          "placeholder": "버튼 텍스트",
+          "showWhen": "showBtn2",
+          "group": "버튼 2"
+        },
+        {
+          "key": "btn2Url",
+          "label": "링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 링크 URL",
+          "showWhen": "showBtn2",
+          "group": "버튼 2"
+        },
+        {
+          "key": "btn2BgColor",
+          "label": "배경색",
+          "type": "color",
+          "default": "#e5e5e5",
+          "showWhen": "showBtn2",
+          "group": "버튼 2"
+        },
+        {
+          "key": "btn2TextColor",
+          "label": "글자색",
+          "type": "color",
+          "default": "#333333",
+          "showWhen": "showBtn2",
+          "group": "버튼 2"
+        },
+        {
+          "key": "showBtn3",
+          "label": "버튼 3 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "버튼 3"
+        },
+        {
+          "key": "btn3Text",
+          "label": "텍스트",
+          "type": "text",
+          "default": "버튼 3 →",
+          "placeholder": "버튼 텍스트",
+          "showWhen": "showBtn3",
+          "group": "버튼 3"
+        },
+        {
+          "key": "btn3Url",
+          "label": "링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 링크 URL",
+          "showWhen": "showBtn3",
+          "group": "버튼 3"
+        },
+        {
+          "key": "btn3BgColor",
+          "label": "배경색",
+          "type": "color",
+          "default": "#e5e5e5",
+          "showWhen": "showBtn3",
+          "group": "버튼 3"
+        },
+        {
+          "key": "btn3TextColor",
+          "label": "글자색",
+          "type": "color",
+          "default": "#333333",
+          "showWhen": "showBtn3",
+          "group": "버튼 3"
+        },
+        {
+          "key": "showBtn4",
+          "label": "버튼 4 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "버튼 4"
+        },
+        {
+          "key": "btn4Text",
+          "label": "텍스트",
+          "type": "text",
+          "default": "버튼 4 →",
+          "placeholder": "버튼 텍스트",
+          "showWhen": "showBtn4",
+          "group": "버튼 4"
+        },
+        {
+          "key": "btn4Url",
+          "label": "링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 링크 URL",
+          "showWhen": "showBtn4",
+          "group": "버튼 4"
+        },
+        {
+          "key": "btn4BgColor",
+          "label": "배경색",
+          "type": "color",
+          "default": "#e5e5e5",
+          "showWhen": "showBtn4",
+          "group": "버튼 4"
+        },
+        {
+          "key": "btn4TextColor",
+          "label": "글자색",
+          "type": "color",
+          "default": "#333333",
+          "showWhen": "showBtn4",
+          "group": "버튼 4"
         }
       ]
     },

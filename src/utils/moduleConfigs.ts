@@ -126,6 +126,18 @@ export const moduleDescTextConfig: ModuleConfig = {
   defaults: {
     bgColor: 'transparent',
     textColor: '#333333',
+    // 안쪽 여백(배경 박스) 폴백 — 기존 하드코딩 값과 동일
+    paddingTop: '0px',
+    paddingRight: '20px',
+    paddingBottom: '0px',
+    paddingLeft: '20px',
+    // 바깥 여백(td, 투명) — 기존 인스턴스 폴백 = 0 (겉모습 변화 없음)
+    marginTop: '0px',
+    marginRight: '0px',
+    marginBottom: '0px',
+    marginLeft: '0px',
+    // 배경 박스 모서리 둥글기 (기존 인스턴스 폴백 = 0)
+    borderRadius: '0px',
   },
 }
 
@@ -181,6 +193,44 @@ export const moduleTwoButtonConfig: ModuleConfig = {
     paddingBottom: '15px',
     paddingLeft: '15px',
   },
+}
+
+/**
+ * ModuleSmallButton 설정 (작은 버튼 — 옆으로 최대 4개, 처음엔 1개만)
+ * 스타일은 모듈 04번의 작은 버튼을 참고(알약형 30px, 13px, 회색 배경).
+ */
+export const moduleSmallButtonConfig: ModuleConfig = {
+  defaults: {
+    align: 'left',
+    btnWidth: 'auto',
+    btnBorderRadius: '30px',
+    btnFontSize: '13px',
+    paddingTop: '10px',
+    paddingRight: '20px',
+    paddingBottom: '10px',
+    paddingLeft: '20px',
+    // 버튼 2~4는 기본 비노출 → 처음엔 1개만 보인다
+    showBtn2: false,
+    showBtn3: false,
+    showBtn4: false,
+    btn1Text: '버튼 1 →',
+    btn1Url: '#',
+    btn1BgColor: '#e5e5e5',
+    btn1TextColor: '#333333',
+    btn2Text: '버튼 2 →',
+    btn2Url: '#',
+    btn2BgColor: '#e5e5e5',
+    btn2TextColor: '#333333',
+    btn3Text: '버튼 3 →',
+    btn3Url: '#',
+    btn3BgColor: '#e5e5e5',
+    btn3TextColor: '#333333',
+    btn4Text: '버튼 4 →',
+    btn4Url: '#',
+    btn4BgColor: '#e5e5e5',
+    btn4TextColor: '#333333',
+  },
+  processors: [processors.removeSmallButtonsProcessor],
 }
 
 /**
@@ -720,6 +770,7 @@ export const MODULE_CONFIG_REGISTRY: Record<string, ModuleConfig> = {
   ModuleImg: moduleImgConfig,
   ModuleOneButton: moduleOneButtonConfig,
   ModuleTwoButton: moduleTwoButtonConfig,
+  ModuleSmallButton: moduleSmallButtonConfig,
   SectionTitle: sectionTitleConfig,
   ModuleTable: moduleTableConfig,
   Module01: module01Config,

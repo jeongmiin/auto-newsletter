@@ -129,28 +129,38 @@
         <p class="text-xs text-gray-400">테두리를 적용할 변을 고르세요. '전체'는 위·아래·좌·우 모두 적용합니다.</p>
       </div>
 
-      <!-- 안쪽 여백 (padding) -->
+      <!-- 안쪽 여백 (padding) — 상·우·하·좌 -->
       <div class="space-y-1 pt-3 border-t border-gray-100">
         <label class="text-sm font-medium text-gray-600">안쪽 여백 (padding)</label>
-        <InputText
-          :modelValue="group.styles.padding ?? ''"
-          @update:modelValue="setStyle('padding', $event ?? '')"
-          placeholder="예: 16px 또는 16px 20px"
-          class="w-full font-mono text-xs"
-        />
-        <p class="text-xs text-gray-400">그룹 테두리와 내부 모듈 사이 간격입니다</p>
+        <div class="grid grid-cols-4 gap-1">
+          <div v-for="side in boxSides" :key="`pad-${side.key}`">
+            <label class="block text-[10px] text-gray-400 text-center mb-0.5">{{ side.label }}</label>
+            <InputText
+              :modelValue="boxSide('padding', side.key)"
+              @update:modelValue="setBoxSide('padding', side.key, $event ?? '')"
+              placeholder="0"
+              class="w-full font-mono text-xs text-center"
+            />
+          </div>
+        </div>
+        <p class="text-xs text-gray-400">그룹 테두리와 내부 모듈 사이 간격입니다 (상·우·하·좌)</p>
       </div>
 
-      <!-- 바깥 여백 (margin) -->
+      <!-- 바깥 여백 (margin) — 상·우·하·좌 -->
       <div class="space-y-1 pt-3 border-t border-gray-100">
         <label class="text-sm font-medium text-gray-600">바깥 여백 (margin)</label>
-        <InputText
-          :modelValue="group.styles.margin ?? ''"
-          @update:modelValue="setStyle('margin', $event ?? '')"
-          placeholder="예: 12px 0"
-          class="w-full font-mono text-xs"
-        />
-        <p class="text-xs text-gray-400">그룹과 위/아래 다른 모듈 사이 간격입니다</p>
+        <div class="grid grid-cols-4 gap-1">
+          <div v-for="side in boxSides" :key="`mgn-${side.key}`">
+            <label class="block text-[10px] text-gray-400 text-center mb-0.5">{{ side.label }}</label>
+            <InputText
+              :modelValue="boxSide('margin', side.key)"
+              @update:modelValue="setBoxSide('margin', side.key, $event ?? '')"
+              placeholder="0"
+              class="w-full font-mono text-xs text-center"
+            />
+          </div>
+        </div>
+        <p class="text-xs text-gray-400">그룹과 위/아래 다른 모듈 사이 간격입니다 (상·우·하·좌)</p>
       </div>
     </div>
   </div>
@@ -161,7 +171,7 @@ import { computed } from 'vue'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
 import type { ModuleGroupStyles, BorderSide } from '@/types'
-import { ALL_BORDER_SIDES, groupBorderSides } from '@/utils/groupStyle'
+import { ALL_BORDER_SIDES, groupBorderSides, groupBoxSide } from '@/utils/groupStyle'
 import { isValidHexColor } from '@/utils/colorHelper'
 import ColorAlphaPicker from '@/components/ColorAlphaPicker.vue'
 import HexColorInput from '@/components/HexColorInput.vue'
@@ -204,6 +214,22 @@ const bgValue = computed(() => group.value?.styles.backgroundColor || '#ffffff')
 const setStyle = (key: keyof ModuleGroupStyles, value: string): void => {
   if (!group.value) return
   moduleStore.updateGroupStyle(group.value.id, key, value)
+}
+
+// ===== 안/밖 여백 4방향(상·우·하·좌) =====
+const boxSides: { key: BorderSide; label: string }[] = [
+  { key: 'top', label: '상' },
+  { key: 'right', label: '우' },
+  { key: 'bottom', label: '하' },
+  { key: 'left', label: '좌' },
+]
+const cap = (side: BorderSide): string => side.charAt(0).toUpperCase() + side.slice(1)
+// 현재 값(명시 4방향 우선, 없으면 기존 shorthand 파싱값)
+const boxSide = (kind: 'padding' | 'margin', side: BorderSide): string =>
+  group.value ? groupBoxSide(group.value.styles, kind, side) : ''
+// 편집 시 해당 4방향 필드에 기록 → 렌더가 4방향 조합을 사용
+const setBoxSide = (kind: 'padding' | 'margin', side: BorderSide, value: string): void => {
+  setStyle(`${kind}${cap(side)}` as keyof ModuleGroupStyles, value)
 }
 
 // ===== 테두리 적용 변 (다중 선택) =====

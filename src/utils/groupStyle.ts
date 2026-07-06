@@ -60,6 +60,54 @@ export function groupBorderShorthand(s: ModuleGroupStyles): string {
   return `${w} ${s.borderStyle || 'solid'} ${s.borderColor || '#000000'}`
 }
 
+/** CSS 1~4값 box shorthand(padding/margin)를 상/우/하/좌로 파싱 */
+function parseBoxShorthand(v?: string): Record<BorderSide, string> {
+  const t = (v || '').trim()
+  if (!t) return { top: '', right: '', bottom: '', left: '' }
+  const p = t.split(/\s+/)
+  if (p.length === 1) return { top: p[0], right: p[0], bottom: p[0], left: p[0] }
+  if (p.length === 2) return { top: p[0], right: p[1], bottom: p[0], left: p[1] }
+  if (p.length === 3) return { top: p[0], right: p[1], bottom: p[2], left: p[1] }
+  return { top: p[0], right: p[1], bottom: p[2], left: p[3] }
+}
+
+const capSide = (side: BorderSide): string => side.charAt(0).toUpperCase() + side.slice(1)
+
+/**
+ * 그룹 여백(안/밖)의 특정 변 현재값.
+ * 명시된 4방향 필드(paddingTop 등)가 있으면 우선, 없으면 shorthand 파싱값으로 폴백.
+ * (편집 UI가 기존 shorthand 값을 4칸에 그대로 보여주도록)
+ */
+export function groupBoxSide(
+  s: ModuleGroupStyles,
+  kind: 'padding' | 'margin',
+  side: BorderSide,
+): string {
+  const explicit = s[`${kind}${capSide(side)}` as keyof ModuleGroupStyles] as string | undefined
+  if (explicit != null && explicit !== '') return explicit
+  return parseBoxShorthand(kind === 'padding' ? s.padding : s.margin)[side] || ''
+}
+
+/**
+ * 그룹 여백(안/밖)의 최종 shorthand 문자열.
+ * - 4방향 필드가 하나도 없으면 기존 shorthand 그대로 사용(출력 불변 = 하위 호환).
+ * - 하나라도 있으면 '상 우 하 좌' 4값으로 조합(미설정 변은 shorthand 파싱값 폴백).
+ * - 모두 0/빈값이면 '' (여백 없음).
+ */
+export function groupBoxShorthand(s: ModuleGroupStyles, kind: 'padding' | 'margin'): string {
+  const hasExplicit = ALL_BORDER_SIDES.some((side) => {
+    const v = s[`${kind}${capSide(side)}` as keyof ModuleGroupStyles] as string | undefined
+    return v != null && v !== ''
+  })
+  if (!hasExplicit) {
+    const v = (kind === 'padding' ? s.padding : s.margin) || ''
+    return isZeroOrEmpty(v) ? '' : v.trim()
+  }
+  const sides = ALL_BORDER_SIDES.map((side) => groupBoxSide(s, kind, side) || '0')
+  if (sides.every((v) => isZeroOrEmpty(v))) return ''
+  return sides.join(' ')
+}
+
 /**
  * 캔버스 미리보기용 그룹 래퍼 div 스타일 객체
  */
@@ -84,9 +132,56 @@ export function groupDivStyle(s: ModuleGroupStyles): Record<string, string> {
       })
     }
   }
-  if (s.padding && !isZeroOrEmpty(s.padding)) style.padding = s.padding
-  if (s.margin && !isZeroOrEmpty(s.margin)) style.margin = s.margin
+  const pad = groupBoxShorthand(s, 'padding')
+  if (pad) style.padding = pad
+  const mgn = groupBoxShorthand(s, 'margin')
+  if (mgn) style.margin = mgn
   return style
+}
+
+/**
+ * 컬럼 분할 레이아웃 (fluid-hybrid)
+ * - 컨테이너가 BREAKPOINT(px) 이상이면 컬럼들이 가로로 나란히,
+ *   미만(모바일)이면 각 컬럼이 100%로 세로 스택된다.
+ * - 캔버스 미리보기와 이메일 내보내기가 동일한 CSS를 쓰도록 공용 헬퍼로 둔다.
+ *   (ModuleMultiImage·Module04 등에서 검증된 기법과 동일)
+ */
+export const COLUMN_BREAKPOINT_PX = 570
+export const COLUMN_GAP_PX = 5
+
+/**
+ * 컬럼 셀(각 컬럼 래퍼)의 인라인 스타일 문자열.
+ * box-sizing:border-box + min-width를 정확히 100/n % 로 잡아, 컬럼들이 폭을 정확히 균등 분할한다.
+ * (좌우 여백 없이 딱 맞으려면 셀 사이 공백이 없어야 하므로, 부모에 font-size:0 을 적용한다 —
+ *  buildColumnLayoutHtml / 캔버스 .col-row 가 이를 처리)
+ * 컬럼 간 간격은 각 셀 안쪽 padding(box-sizing:border-box라 폭에 포함)으로 준다.
+ */
+export function columnCellStyle(columns: number): string {
+  const n = Math.min(Math.max(columns, 1), 4)
+  const pct = (100 / n).toFixed(4)
+  return [
+    'display:inline-block',
+    'vertical-align:top',
+    'box-sizing:border-box',
+    `padding:${COLUMN_GAP_PX}px`,
+    `min-width:${pct}%`,
+    'max-width:100%',
+    `width:calc((${COLUMN_BREAKPOINT_PX}px - 100%) * ${COLUMN_BREAKPOINT_PX})`,
+  ].join('; ')
+}
+
+/**
+ * 컬럼별 내부 HTML 배열을 fluid-hybrid 컬럼 레이아웃으로 감싼다.
+ * @param columnHtml columnHtml[i] = i번 컬럼에 들어갈 결합 HTML(빈 문자열 허용)
+ */
+export function buildColumnLayoutHtml(columnHtml: string[]): string {
+  const n = Math.min(Math.max(columnHtml.length, 1), 4)
+  const cells = columnHtml
+    .slice(0, n)
+    .map((inner) => `<div style="${columnCellStyle(n)}">${inner || '&nbsp;'}</div>`)
+    .join('')
+  // font-size:0 로 inline-block 사이 공백(gap) 제거, letter-spacing:0 보정
+  return `<div style="font-size:0; letter-spacing:0;">${cells}</div>`
 }
 
 /**
@@ -116,7 +211,8 @@ export function wrapGroupHtmlForEmail(
       sides.forEach((side) => cellParts.push(`border-${side}:${border}`))
     }
   }
-  if (s.padding && !isZeroOrEmpty(s.padding)) cellParts.push(`padding:${s.padding}`)
+  const pad = groupBoxShorthand(s, 'padding')
+  if (pad) cellParts.push(`padding:${pad}`)
   const cellStyle = flattenAlphaColorsInHtml(cellParts.join(';'), flattenBg)
 
   const cellAttr = cellStyle ? ` style="${cellStyle}"` : ''
@@ -129,13 +225,14 @@ ${innerHtml}
 </table>`
 
   // 바깥 여백(margin)이 없으면 안쪽 테이블만 반환
-  if (!s.margin || isZeroOrEmpty(s.margin)) return innerTable
+  const mgn = groupBoxShorthand(s, 'margin')
+  if (!mgn) return innerTable
 
   // 바깥 여백은 '바깥쪽 빈 td의 padding'으로 처리한다.
   // width:100% 테이블에 margin을 주면 너비에 더해져 컨테이너 밖으로 삐져나가므로,
   // 바깥 td의 padding으로 동일한 간격을 주면 안쪽 테이블이 줄어든 폭의 100%가 되어 항상 안에 머문다.
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border-collapse:collapse">
-<tr><td style="padding:${s.margin}">
+<tr><td style="padding:${mgn}">
 ${innerTable}
 </td></tr>
 </table>`

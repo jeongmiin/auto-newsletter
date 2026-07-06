@@ -5,6 +5,7 @@ import {
   replaceModuleImgContent,
   replaceModuleOneButtonContent,
   replaceModuleTwoButtonContent,
+  replaceModuleSmallButtonContent,
   replaceSectionTitleContent,
   replaceModuleSubTitleContent,
   replaceDefaultTemplate,
@@ -68,6 +69,41 @@ describe('moduleContentReplacer', () => {
       const result = replaceModuleDescTextContent(html, properties)
 
       expect(result).toBe('<p></p>')
+    })
+
+    it('바깥 여백(td)·배경 박스(안쪽 div) 분리 — 기본값은 기존과 동일(바깥 0, 배경 투명)', () => {
+      const html =
+        '<td style="padding:{{marginTop}} {{marginRight}} {{marginBottom}} {{marginLeft}};">' +
+        '<div style="background-color:{{bgColor}}; padding:{{paddingTop}} {{paddingRight}} {{paddingBottom}} {{paddingLeft}}; border-radius:{{borderRadius}};">{{descriptionText}}</div></td>'
+      const result = replaceModuleDescTextContent(html, { descriptionText: '<p>본문</p>' })
+      // 바깥 여백(td) = 0px, 안쪽 여백(div) = 0px 20px 0px 20px, 배경 투명, 모서리 0
+      expect(result).toContain('<td style="padding:0px 0px 0px 0px;">')
+      expect(result).toContain('background-color:transparent')
+      expect(result).toContain('padding:0px 20px 0px 20px')
+      expect(result).toContain('border-radius:0px')
+    })
+
+    it('바깥 여백·배경·안쪽 여백·모서리를 각각 적용한다 (Module01-1형 카드)', () => {
+      const html =
+        '<td style="padding:{{marginTop}} {{marginRight}} {{marginBottom}} {{marginLeft}};">' +
+        '<div style="background-color:{{bgColor}}; padding:{{paddingTop}} {{paddingRight}} {{paddingBottom}} {{paddingLeft}}; border-radius:{{borderRadius}};">{{descriptionText}}</div></td>'
+      const result = replaceModuleDescTextContent(html, {
+        descriptionText: '<p>본문</p>',
+        marginTop: '5px',
+        marginRight: '5px',
+        marginBottom: '5px',
+        marginLeft: '5px',
+        bgColor: '#f5f5f5',
+        paddingTop: '10px',
+        paddingRight: '10px',
+        paddingBottom: '10px',
+        paddingLeft: '10px',
+        borderRadius: '8px',
+      })
+      expect(result).toContain('<td style="padding:5px 5px 5px 5px;">')
+      expect(result).toContain('background-color:#f5f5f5')
+      expect(result).toContain('padding:10px 10px 10px 10px')
+      expect(result).toContain('border-radius:8px')
     })
   })
 
@@ -209,6 +245,38 @@ describe('moduleContentReplacer', () => {
 
       expect(result).toContain('#ff0000')
       expect(result).toContain('#00ff00')
+    })
+  })
+
+  describe('replaceModuleSmallButtonContent', () => {
+    const HTML =
+      '<td style="text-align:{{align}};">' +
+      '<!-- 작은 버튼 1 --><a href="{{btn1Url}}">{{btn1Text}}</a><!-- //작은 버튼 1 -->' +
+      '<!-- 작은 버튼 2 --><a href="{{btn2Url}}">{{btn2Text}}</a><!-- //작은 버튼 2 -->' +
+      '<!-- 작은 버튼 3 --><a href="{{btn3Url}}">{{btn3Text}}</a><!-- //작은 버튼 3 -->' +
+      '<!-- 작은 버튼 4 --><a href="{{btn4Url}}">{{btn4Text}}</a><!-- //작은 버튼 4 -->' +
+      '</td>'
+
+    it('기본값에서는 버튼 1개만 노출하고 2~4는 제거한다', () => {
+      const result = replaceModuleSmallButtonContent(HTML, {})
+      expect(result).toContain('버튼 1 →')
+      expect(result).not.toContain('버튼 2 →')
+      expect(result).not.toContain('버튼 3 →')
+      expect(result).not.toContain('버튼 4 →')
+    })
+
+    it('showBtn2/3가 true면 해당 버튼이 노출된다', () => {
+      const result = replaceModuleSmallButtonContent(HTML, { showBtn2: true, showBtn3: true })
+      expect(result).toContain('버튼 1 →')
+      expect(result).toContain('버튼 2 →')
+      expect(result).toContain('버튼 3 →')
+      expect(result).not.toContain('버튼 4 →')
+    })
+
+    it('버튼 텍스트·정렬을 교체한다', () => {
+      const result = replaceModuleSmallButtonContent(HTML, { btn1Text: '자세히', align: 'center' })
+      expect(result).toContain('자세히')
+      expect(result).toContain('text-align:center;')
     })
   })
 
