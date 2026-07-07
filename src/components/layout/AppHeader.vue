@@ -391,7 +391,7 @@ const buildHtmlDocument = (finalHtml: string, includeMetadata: boolean): string 
     body { margin: 0; padding: 0; }
   </style>
 </head>
-<body style="margin:0; padding:0;">
+<body style="margin:0; padding:0; background-color: #f2f2f2;">
 ${finalHtml}${metadataBlock}
 </body>
 </html>`

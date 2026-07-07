@@ -318,11 +318,31 @@ export const convertQuillListsToEmailHtml = (html: string): string => {
 }
 
 /**
+ * 타이핑된 공백이 &nbsp;(U+00A0, 줄바꿈 불가 공백)로 저장되면
+ * word-break(단어기준 keep-all / 글자기준 break-all)가 끊을 지점을 찾지 못한다.
+ * → 단어 사이 띄어쓰기를 '일반 공백'으로 되돌려 줄바꿈 규칙이 실제로 동작하게 한다.
+ *
+ * 단, 빈 줄 높이 확보용 스페이서(요소 내용이 &nbsp; 하나뿐인 <p>&nbsp;</p> = ">&nbsp;<")는
+ * 그대로 보존한다. (convertEmptyLinesToSpacing이 만드는 여백이 사라지지 않도록)
+ */
+export const normalizeNbspForWordBreak = (html: string): string => {
+  if (!html) return ''
+  // 리터럴 U+00A0(타이핑된 공백)은 항상 일반 공백으로
+  let out = html.replace(/ /g, ' ')
+  // &nbsp; 엔티티: '요소 내용이 nbsp 하나뿐인' 스페이서(>&nbsp;<)만 보존, 나머지는 공백으로
+  out = out.replace(/&nbsp;/g, (m, offset: number, s: string) =>
+    s[offset - 1] === '>' && s[offset + m.length] === '<' ? m : ' ',
+  )
+  return out
+}
+
+/**
  * Quill HTML 통합 처리 함수 (에디터 저장·미리보기 공용)
  * 1. RGB → HEX 변환
- * 2. 빈 줄을 이메일 호환 형태로 변환
- * 3. 블록 요소에 margin: 0, padding: 0 추가
- * 4. Quill 정렬 클래스를 인라인 스타일로 변환
+ * 2. 띄어쓰기(&nbsp;) → 일반 공백 정규화 (word-break 정상 동작)
+ * 3. 빈 줄을 이메일 호환 형태로 변환
+ * 4. 블록 요소에 margin: 0, padding: 0 추가
+ * 5. Quill 정렬 클래스를 인라인 스타일로 변환
  *
  * 참고: 리스트(<ol><li data-list>)는 Quill 네이티브 형식을 그대로 유지한다.
  * 에디터와 미리보기(ModuleRenderer CSS)가 data-list 기준으로 마커를 렌더링하기 때문이다.
@@ -334,7 +354,10 @@ export const processQuillHtml = (html: string): string => {
   // 1. RGB → HEX 변환
   html = convertRgbToHex(html)
 
-  // 2. 빈 줄(엔터 여백)을 이메일 호환 형태로 변환
+  // 2. 띄어쓰기(&nbsp;) → 일반 공백 (빈 줄 스페이서 추가 '전'에 실행)
+  html = normalizeNbspForWordBreak(html)
+
+  // 3. 빈 줄(엔터 여백)을 이메일 호환 형태로 변환
   html = convertEmptyLinesToSpacing(html)
 
   // 3. 블록 요소에 margin: 0, padding: 0 추가

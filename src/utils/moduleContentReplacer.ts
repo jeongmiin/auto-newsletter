@@ -376,7 +376,8 @@ export function replaceModuleTableContent(
           `letter-spacing:-0.03em`,
           `line-height:1.8em`,
           `font-family:AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif`,
-          `word-break:keep-all`,
+          // 테이블 셀은 글자 기준 줄바꿈 (좁은 열에서도 넘치지 않도록)
+          `word-break:break-all`,
           `box-sizing:border-box`,
         ].join('; ')
 
