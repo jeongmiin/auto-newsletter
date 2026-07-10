@@ -159,6 +159,9 @@ defineExpose({ toggleBold })
 <style scoped>
 .tcell-editor {
   min-height: 3.2em;
+  /* textarea처럼 우하단 핸들을 드래그해 높이 조절 (resize는 overflow가 visible이 아니어야 동작) */
+  resize: vertical;
+  overflow: auto;
   white-space: pre-wrap;
   word-break: break-word;
 }
