@@ -785,9 +785,42 @@ export const useModuleStore = defineStore('module', () => {
   }
 
   /**
-   * 테이블 행 추가 (커스텀 테이블)
+   * 각 셀 위치(r,c)를 실제로 소유(병합의 앵커)하는 셀 정보를 매핑한다.
+   * 병합 앵커는 colspan/rowspan 범위의 모든 칸을 소유하며, 삽입 위치가 병합 영역
+   * '내부'인지(=양옆/위아래 칸의 소유주가 같은지) 판정하는 데 사용한다.
    */
-  const addTableCellRow = (moduleId: string): void => {
+  const buildCellOwners = (
+    cells: TableCell[][]
+  ): { cell: TableCell; row: number; col: number }[][] => {
+    const rowCount = cells.length
+    const colCount = cells[0]?.length ?? 0
+    const owners: ({ cell: TableCell; row: number; col: number } | null)[][] = Array.from(
+      { length: rowCount },
+      () => new Array(colCount).fill(null)
+    )
+    for (let r = 0; r < rowCount; r++) {
+      for (let c = 0; c < colCount; c++) {
+        const cell = cells[r][c]
+        if (cell.hidden) continue
+        const info = { cell, row: r, col: c }
+        const rs = cell.rowspan || 1
+        const cs = cell.colspan || 1
+        for (let dr = 0; dr < rs && r + dr < rowCount; dr++) {
+          for (let dc = 0; dc < cs && c + dc < colCount; dc++) {
+            owners[r + dr][c + dc] = info
+          }
+        }
+      }
+    }
+    return owners as { cell: TableCell; row: number; col: number }[][]
+  }
+
+  /**
+   * 테이블 행 삽입 (커스텀 테이블)
+   * @param atIndex 새 행이 들어갈 위치(0 = 맨 위, cells.length = 맨 아래).
+   *   병합(rowspan) 영역을 가로지르는 위치면 해당 병합을 한 칸 늘려 유지한다.
+   */
+  const insertTableCellRow = (moduleId: string, atIndex: number): void => {
     const module = modules.value.find((m) => m.id === moduleId)
     if (!module) return
 
@@ -799,25 +832,50 @@ export const useModuleStore = defineStore('module', () => {
       return
     }
 
-    // 기존 열 수에 맞춰 새 행 추가
+    const rowCount = cells.length
     const colCount = cells[0].length
-    const newRow: TableCell[] = Array.from({ length: colCount }, () => ({
-      id: generateUniqueId('cell'),
-      type: 'td' as const,
-      content: '',
-      colspan: 1,
-      rowspan: 1,
-    }))
+    const idx = Math.max(0, Math.min(atIndex, rowCount))
+    const owners = buildCellOwners(cells)
 
-    cells.push(newRow)
+    const newRow: TableCell[] = []
+    for (let c = 0; c < colCount; c++) {
+      // 삽입 경계(idx-1 행과 idx 행 사이)가 세로 병합 내부인지 판정
+      const insideMerge =
+        idx > 0 && idx < rowCount && !!owners[idx - 1][c] && owners[idx - 1][c] === owners[idx][c]
+      if (insideMerge) {
+        const anchor = owners[idx - 1][c]
+        // 병합의 왼쪽 위(앵커) 칸에서 한 번만 rowspan을 늘린다
+        if (anchor.col === c) anchor.cell.rowspan = (anchor.cell.rowspan || 1) + 1
+        newRow.push({
+          id: generateUniqueId('cell'),
+          type: anchor.cell.type,
+          content: '',
+          colspan: 1,
+          rowspan: 1,
+          hidden: true,
+        })
+      } else {
+        newRow.push({
+          id: generateUniqueId('cell'),
+          type: 'td',
+          content: '',
+          colspan: 1,
+          rowspan: 1,
+        })
+      }
+    }
+
+    cells.splice(idx, 0, newRow)
     module.properties.tableCells = [...cells]
     triggerRef(modules)
   }
 
   /**
-   * 테이블 열 추가 (커스텀 테이블)
+   * 테이블 열 삽입 (커스텀 테이블)
+   * @param atIndex 새 열이 들어갈 위치(0 = 맨 왼쪽, 열 개수 = 맨 오른쪽).
+   *   병합(colspan) 영역을 가로지르는 위치면 해당 병합을 한 칸 늘려 유지한다.
    */
-  const addTableCellColumn = (moduleId: string): void => {
+  const insertTableCellColumn = (moduleId: string, atIndex: number): void => {
     const module = modules.value.find((m) => m.id === moduleId)
     if (!module) return
 
@@ -828,28 +886,75 @@ export const useModuleStore = defineStore('module', () => {
       return
     }
 
-    // 각 행에 새 열 추가 (정렬은 열 공통값으로 관리)
-    cells.forEach((row, rowIndex) => {
-      const cellType = rowIndex === 0 ? 'th' : 'td'
-      row.push({
-        id: generateUniqueId('cell'),
-        type: cellType,
-        content: '',
-        colspan: 1,
-        rowspan: 1,
-      })
+    const colCount = cells[0].length
+    const idx = Math.max(0, Math.min(atIndex, colCount))
+    const owners = buildCellOwners(cells)
+
+    cells.forEach((row, r) => {
+      // 삽입 경계(idx-1 열과 idx 열 사이)가 가로 병합 내부인지 판정
+      const insideMerge =
+        idx > 0 && idx < colCount && !!owners[r][idx - 1] && owners[r][idx - 1] === owners[r][idx]
+      if (insideMerge) {
+        const anchor = owners[r][idx - 1]
+        // 병합의 왼쪽 위(앵커) 칸에서 한 번만 colspan을 늘린다
+        if (anchor.row === r) anchor.cell.colspan = (anchor.cell.colspan || 1) + 1
+        row.splice(idx, 0, {
+          id: generateUniqueId('cell'),
+          type: anchor.cell.type,
+          content: '',
+          colspan: 1,
+          rowspan: 1,
+          hidden: true,
+        })
+      } else {
+        row.splice(idx, 0, {
+          id: generateUniqueId('cell'),
+          type: r === 0 ? 'th' : 'td',
+          content: '',
+          colspan: 1,
+          rowspan: 1,
+        })
+      }
     })
 
     // 열 너비 배열도 동기화 (새 열은 기본 너비)
     const colWidths = (module.properties.tableColWidths as string[] | undefined) || []
-    module.properties.tableColWidths = [...colWidths, '']
+    {
+      const next = [...colWidths]
+      while (next.length < colCount) next.push('')
+      next.splice(idx, 0, '')
+      module.properties.tableColWidths = next
+    }
 
-    // 열 공통 정렬 배열도 동기화 (새 열은 왼쪽 기본)
+    // 열 공통 정렬 배열도 동기화 (첫 열은 가운데, 나머지는 왼쪽 기본)
     const colAligns = (module.properties.tableColAligns as string[] | undefined) || []
-    module.properties.tableColAligns = [...colAligns, 'left']
+    {
+      const next = [...colAligns]
+      while (next.length < colCount) next.push('left')
+      next.splice(idx, 0, idx === 0 ? 'center' : 'left')
+      module.properties.tableColAligns = next
+    }
 
     module.properties.tableCells = [...cells]
     triggerRef(modules)
+  }
+
+  /**
+   * 테이블 행 추가 (커스텀 테이블) — 맨 아래에 삽입
+   */
+  const addTableCellRow = (moduleId: string): void => {
+    const cells = (modules.value.find((m) => m.id === moduleId)?.properties.tableCells ??
+      []) as TableCell[][]
+    insertTableCellRow(moduleId, cells.length)
+  }
+
+  /**
+   * 테이블 열 추가 (커스텀 테이블) — 맨 오른쪽에 삽입
+   */
+  const addTableCellColumn = (moduleId: string): void => {
+    const cells = (modules.value.find((m) => m.id === moduleId)?.properties.tableCells ??
+      []) as TableCell[][]
+    insertTableCellColumn(moduleId, cells[0]?.length ?? 0)
   }
 
   /**
@@ -1770,6 +1875,8 @@ ${fullHtml}
     initializeTableCells,
     addTableCellRow,
     addTableCellColumn,
+    insertTableCellRow,
+    insertTableCellColumn,
     removeTableCellRow,
     removeTableCellColumn,
     updateTableCell,

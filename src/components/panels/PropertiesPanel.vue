@@ -709,8 +709,15 @@
                     class="flex flex-col px-2 bg-gray-50 border-r border-r-gray-200 border-b border-b-gray-300 last:border-r-0"
                     :style="{ flexGrow: 1, flexShrink: 0, flexBasis: tableColWidth + 'px' }"
                   >
-                    <!-- 상단: 열 번호 + 삭제 -->
+                    <!-- 상단: 열 삽입 + 열 번호 + 삭제 -->
                     <div class="flex items-center justify-center gap-1 py-1.5">
+                      <button
+                        @click="insertTableColumn(colIndex)"
+                        class="tbl-insert-btn"
+                        v-tooltip.top="'이 열 왼쪽에 열 삽입'"
+                      >
+                        <i class="pi pi-plus" style="font-size: 0.6rem"></i>
+                      </button>
                       <span class="text-xs font-semibold text-gray-700">{{ colIndex + 1 }}열</span>
                       <Button
                         v-if="tableCells[0].length > 1"
@@ -770,8 +777,15 @@
                   :key="`row-${rowIndex}`"
                   class="flex min-w-full border-b border-gray-200 last:border-b-0"
                 >
-                  <!-- 행 컨트롤 (행 번호 + 삭제) -->
-                  <div class="w-8 flex-shrink-0 flex flex-col items-center justify-center bg-gray-50 border-r border-gray-200 py-1">
+                  <!-- 행 컨트롤 (행 삽입 + 행 번호 + 삭제) -->
+                  <div class="w-8 flex-shrink-0 flex flex-col items-center justify-center gap-0.5 bg-gray-50 border-r border-gray-200 py-1">
+                    <button
+                      @click="insertTableRow(rowIndex)"
+                      class="tbl-insert-btn"
+                      v-tooltip.right="'이 행 위에 행 삽입'"
+                    >
+                      <i class="pi pi-plus" style="font-size: 0.6rem"></i>
+                    </button>
                     <span class="text-xs text-gray-500">{{ rowIndex + 1 }}</span>
                     <Button
                       v-if="tableCells.length > 1"
@@ -1659,6 +1673,19 @@ const addTableColumn = () => {
   }
 }
 
+// 지정한 위치(사이)에 행/열 삽입 — atIndex 앞에 새 행/열이 들어간다
+const insertTableRow = (atIndex: number) => {
+  if (selectedModule.value) {
+    moduleStore.insertTableCellRow(selectedModule.value.id, atIndex)
+  }
+}
+
+const insertTableColumn = (atIndex: number) => {
+  if (selectedModule.value) {
+    moduleStore.insertTableCellColumn(selectedModule.value.id, atIndex)
+  }
+}
+
 const removeTableRow = (rowIndex: number) => {
   if (selectedModule.value) {
     moduleStore.removeTableCellRow(selectedModule.value.id, rowIndex)
@@ -2170,6 +2197,27 @@ const togglePointColor = (key: string, value: boolean): void => {
 /* 셀 타입 토글 버튼 호버 효과 */
 .table-editor-grid button {
   transition: all 0.15s ease;
+}
+
+/* 행/열 사이 삽입 버튼 (행 컨트롤·열 헤더에 표시) */
+.tbl-insert-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 9999px;
+  border: 1px solid #93c5fd;
+  color: #3b82f6;
+  background: #fff;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.tbl-insert-btn:hover {
+  background: #3b82f6;
+  border-style: solid;
+  border-color: #3b82f6;
+  color: #fff;
 }
 
 /* 병합 셀렉트 스타일 */
