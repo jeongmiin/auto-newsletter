@@ -96,6 +96,12 @@ export interface ModuleInstance {
    * 그룹이 columns>1일 때만 의미가 있으며, 미지정이면 0번 컬럼으로 간주한다.
    */
   columnIndex?: number
+  /**
+   * 컬럼 그룹 안에서 이 모듈이 '전체폭'으로 모든 컬럼을 가로지르는지 여부.
+   * true면 columns>1 그룹이라도 이 멤버는 컬럼에 배치되지 않고 단독 행(밴드)으로 전체폭 렌더된다.
+   * → 한 그룹에서 "전체폭 상단 + 2단 하단"처럼 1단/다단을 혼합할 수 있다.
+   */
+  fullWidth?: boolean
 }
 
 /**

@@ -15,6 +15,8 @@ interface ProjectMetadata {
     properties: Record<string, unknown>
     styles: Record<string, unknown>
     groupId?: string
+    columnIndex?: number
+    fullWidth?: boolean
   }>
   groups?: ModuleGroup[]
   wrapSettings?: {
@@ -128,9 +130,15 @@ export function useNewsletterImport() {
                   ;(addedModule.styles as Record<string, unknown>)[key] = value
                 })
               }
-              // 그룹 소속 복원 (그룹 정의는 아래에서 일괄 복원)
+              // 그룹 소속·컬럼 레이아웃 복원 (그룹 정의는 아래에서 일괄 복원)
               if (moduleData.groupId) {
                 addedModule.groupId = moduleData.groupId
+              }
+              if (moduleData.columnIndex != null) {
+                addedModule.columnIndex = moduleData.columnIndex
+              }
+              if (moduleData.fullWidth) {
+                addedModule.fullWidth = true
               }
 
               restoredCount++

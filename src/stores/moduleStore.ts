@@ -452,6 +452,151 @@ export const useModuleStore = defineStore('module', () => {
   }
 
   /**
+   * [POC/실험] 모듈 05번(05-3형)을 조립형으로 추가한다.
+   * 원본 = ①상단 섹션(전체폭): 회색 타이틀 박스 + 섹션 텍스트 / ②하단 2단: 좌 이미지 · 우 타이틀·텍스트·작은버튼.
+   * '전체폭 + 2단'을 하나의 그룹으로 조립한다 — 상단 두 멤버는 fullWidth로 모든 컬럼을 가로지르고,
+   * 하단 멤버는 columnIndex(0/1)로 2단 배치된다. (fullWidth 밴드 렌더는 캔버스/내보내기 공용)
+   * @returns 생성된 그룹 id (실패 시 null)
+   */
+  const addComposedModule05 = (): string | null => {
+    // fullWidth: true = 전체폭(상단 섹션), false = 2단 배치(하단) / col: 하단에서의 컬럼 인덱스
+    const specs: Array<{
+      id: string
+      fullWidth: boolean
+      col: number
+      overrides: Record<string, unknown>
+    }> = [
+      // ── 상단 섹션 (전체폭) ──
+      {
+        // 상단 섹션 타이틀 (회색 배경 박스, 좌측 정렬, 굵게)
+        id: 'ModuleDescText',
+        fullWidth: true,
+        col: 0,
+        overrides: {
+          descriptionText:
+            '<p style="margin:0; padding:0; line-height:1.7;"><strong style="font-size:16px;">상단 섹션 타이틀</strong></p>',
+          bgColor: '#e5e5e5',
+          textColor: '#111111',
+          fontSize: '16px',
+          paddingTop: '6px',
+          paddingRight: '0px',
+          paddingBottom: '6px',
+          paddingLeft: '20px',
+        },
+      },
+      {
+        // 상단 섹션 텍스트
+        id: 'ModuleDescText',
+        fullWidth: true,
+        col: 0,
+        overrides: {
+          descriptionText:
+            '<p style="margin:0; padding:0; line-height:1.7;">상단 섹션 텍스트입니다.</p>',
+          textColor: '#111111',
+          fontSize: '15px',
+          paddingTop: '16px',
+          paddingRight: '0px',
+          paddingBottom: '16px',
+          paddingLeft: '0px',
+        },
+      },
+      // ── 하단 2단 (좌 이미지 · 우 타이틀+텍스트+버튼) ──
+      {
+        id: 'ModuleImg',
+        fullWidth: false,
+        col: 0,
+        overrides: {
+          imageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-2column.png',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '8px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        // 오른쪽 타이틀 (굵게)
+        id: 'ModuleDescText',
+        fullWidth: false,
+        col: 1,
+        overrides: {
+          descriptionText:
+            '<p style="margin:0; padding:0; line-height:1.7;"><strong style="font-size:14px;">오른쪽 타이틀</strong></p>',
+          textColor: '#111111',
+          fontSize: '14px',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '4px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        // 오른쪽 텍스트
+        id: 'ModuleDescText',
+        fullWidth: false,
+        col: 1,
+        overrides: {
+          descriptionText:
+            '<p style="margin:0; padding:0; line-height:1.7;">오른쪽 텍스트입니다.</p>',
+          textColor: '#111111',
+          fontSize: '14px',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '10px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        id: 'ModuleSmallButton',
+        fullWidth: false,
+        col: 1,
+        overrides: {
+          align: 'left',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '0px',
+          paddingLeft: '0px',
+        },
+      },
+    ]
+
+    const created: ModuleInstance[] = []
+    for (const spec of specs) {
+      const meta = availableModules.value.find((m) => m.id === spec.id)
+      if (!meta) {
+        console.warn(`[addComposedModule05] 원소 모듈을 찾을 수 없음: ${spec.id}`)
+        continue
+      }
+      created.push({
+        id: generateUniqueId('module'),
+        moduleId: meta.id,
+        order: 0,
+        properties: { ...getDefaultProperties(meta), ...spec.overrides },
+        styles: meta.defaultStyles || {},
+        columnIndex: spec.col,
+        ...(spec.fullWidth ? { fullWidth: true } : {}),
+      })
+    }
+    if (created.length === 0) return null
+
+    modules.value.push(...created)
+    reorderModules()
+
+    // 단일 그룹으로 조립 (columns=2). 상단 섹션 멤버만 fullWidth라 전체폭 밴드로 렌더된다.
+    const groupId = createGroup(created.map((m) => m.id))
+    if (groupId) {
+      const group = groups.value.find((g) => g.id === groupId)
+      if (group) group.columns = 2
+    }
+
+    selectedModuleId.value = created[0].id
+    selectedGroupId.value = null
+    triggerRef(groups)
+    triggerRef(modules)
+    isDirty.value = true
+    return groupId
+  }
+
+  /**
    * [컬럼 분할] 모듈이 차지한 영역을 컬럼으로 나눈다.
    * - 그룹에 없으면: 그 모듈만으로 그룹을 만들고 2컬럼으로 시작(모듈=0번, 1번은 빈 컬럼).
    * - 이미 컬럼 그룹이면: 컬럼 수 +1 (최대 4).
@@ -1134,6 +1279,7 @@ export const useModuleStore = defineStore('module', () => {
         styles: JSON.parse(JSON.stringify(m.styles)),
         ...(m.groupId ? { groupId: m.groupId } : {}),
         ...(m.columnIndex != null ? { columnIndex: m.columnIndex } : {}),
+        ...(m.fullWidth ? { fullWidth: true } : {}),
       })),
       groups: JSON.parse(JSON.stringify(groups.value)),
     }
@@ -2084,7 +2230,12 @@ export const useModuleStore = defineStore('module', () => {
     const basePath = import.meta.env.BASE_URL || '/'
 
     // 1) 모듈별 HTML을 순서대로 생성 (그룹/컬럼 정보와 함께 보관)
-    const rendered: Array<{ html: string; groupId?: string; columnIndex?: number }> = []
+    const rendered: Array<{
+      html: string
+      groupId?: string
+      columnIndex?: number
+      fullWidth?: boolean
+    }> = []
     for (const module of [...modules.value].sort((a, b) => a.order - b.order)) {
       try {
         const modulePath = normalizePath(`${basePath}modules/${module.moduleId}.html`)
@@ -2114,7 +2265,12 @@ export const useModuleStore = defineStore('module', () => {
         // 다국어 폰트: 선택 언어에 따라 기본 폰트 스택을 일괄 치환
         html = applyFontFamily(html, wrapSettings.fontLanguage)
 
-        rendered.push({ html, groupId: module.groupId, columnIndex: module.columnIndex })
+        rendered.push({
+          html,
+          groupId: module.groupId,
+          columnIndex: module.columnIndex,
+          fullWidth: module.fullWidth,
+        })
       } catch (error) {
         console.error(
           `[generateHtml] Failed to generate HTML for module ${module.moduleId}:`,
@@ -2130,22 +2286,43 @@ export const useModuleStore = defineStore('module', () => {
       const gid = rendered[i].groupId
       const group = gid ? groups.value.find((g) => g.id === gid) : undefined
       if (gid && group) {
-        // 그룹 멤버 수집 (컬럼 인덱스 포함)
-        const members: Array<{ html: string; columnIndex: number }> = []
+        // 그룹 멤버 수집 (컬럼 인덱스 + 전체폭 여부 포함)
+        const members: Array<{ html: string; columnIndex: number; fullWidth: boolean }> = []
         while (i < rendered.length && rendered[i].groupId === gid) {
-          members.push({ html: rendered[i].html, columnIndex: rendered[i].columnIndex ?? 0 })
+          members.push({
+            html: rendered[i].html,
+            columnIndex: rendered[i].columnIndex ?? 0,
+            fullWidth: !!rendered[i].fullWidth,
+          })
           i++
         }
         const cols = group.columns && group.columns > 1 ? Math.min(group.columns, 4) : 1
         let inner: string
         if (cols > 1) {
-          // 컬럼별로 멤버 HTML을 나눠 fluid-hybrid 레이아웃으로 결합 (모바일 100% 스택)
-          const columnHtml: string[] = Array.from({ length: cols }, () => '')
-          for (const mem of members) {
-            const c = Math.min(Math.max(mem.columnIndex, 0), cols - 1)
-            columnHtml[c] += mem.html + '\n'
+          // 멤버를 순서대로 밴드(행)로 나눈다:
+          //  - 전체폭(fullWidth) 멤버 구간 → 그대로 세로 스택(전체폭)
+          //  - 일반 멤버 구간 → 컬럼별로 나눠 fluid-hybrid 레이아웃(모바일 100% 스택)
+          inner = ''
+          let j = 0
+          while (j < members.length) {
+            if (members[j].fullWidth) {
+              // 전체폭 밴드
+              while (j < members.length && members[j].fullWidth) {
+                inner += members[j].html + '\n'
+                j++
+              }
+            } else {
+              // 컬럼 밴드
+              const columnHtml: string[] = Array.from({ length: cols }, () => '')
+              while (j < members.length && !members[j].fullWidth) {
+                const mem = members[j]
+                const c = Math.min(Math.max(mem.columnIndex, 0), cols - 1)
+                columnHtml[c] += mem.html + '\n'
+                j++
+              }
+              inner += buildColumnLayoutHtml(columnHtml)
+            }
           }
-          inner = buildColumnLayoutHtml(columnHtml)
         } else {
           inner = members.map((m) => m.html).join('\n') + '\n'
         }
@@ -2325,6 +2502,7 @@ ${fullHtml}
     addComposedModule02,
     addComposedModule04,
     addComposedModule011,
+    addComposedModule05,
     selectModule,
     updateModuleProperty,
     updateModuleStyle,

@@ -134,6 +134,20 @@
             </div>
           </div>
         </div>
+        <div
+          @click="addComposedModule05"
+          class="p-3 border-2 border-dashed border-amber-300 rounded-lg cursor-pointer hover:bg-amber-50 hover:border-amber-400 transition-colors"
+        >
+          <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-amber-100 text-amber-700 rounded flex items-center justify-center">
+              <i class="pi pi-objects-column"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-medium text-sm truncate">모듈 05 (조립형)</div>
+              <div class="text-xs text-gray-500 truncate">상단 섹션 타이틀·텍스트 + 하단 2단(좌 이미지·우 타이틀·텍스트·버튼)</div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- 모듈 리스트 -->
@@ -267,6 +281,20 @@ const addComposedModule011 = () => {
     summary: groupId ? '조립형 모듈 추가됨' : '조립 실패',
     detail: groupId
       ? '모듈 01-1(2컬럼 조립) 그룹이 추가되었습니다. 설명 텍스트의 배경 박스로 제목/내용 카드를 만듭니다.'
+      : '원소 모듈을 찾을 수 없습니다.',
+    life: 2500,
+  })
+}
+
+// [임시/POC] 모듈 05번을 2컬럼 조립 그룹으로 추가 (좌 이미지 · 우 텍스트+작은버튼)
+const addComposedModule05 = () => {
+  onModuleLeave()
+  const groupId = moduleStore.addComposedModule05()
+  toast.add({
+    severity: groupId ? 'success' : 'error',
+    summary: groupId ? '조립형 모듈 추가됨' : '조립 실패',
+    detail: groupId
+      ? '모듈 05(2컬럼 조립) 그룹이 추가되었습니다. 좌측 이미지 · 우측 텍스트+작은 버튼, 모바일은 세로로 쌓입니다.'
       : '원소 모듈을 찾을 수 없습니다.',
     life: 2500,
   })

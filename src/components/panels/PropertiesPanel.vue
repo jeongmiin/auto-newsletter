@@ -168,6 +168,72 @@
           </div>
         </div>
 
+        <!-- 영역 컬럼 분할 -->
+        <div class="px-4 py-3 border-b bg-white">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-1.5">
+              <i class="pi pi-th-large text-gray-500 text-sm"></i>
+              <span class="text-sm font-medium text-gray-700">영역 컬럼 분할</span>
+            </div>
+            <span
+              v-if="moduleColumnInfo.fullWidth && moduleColumnInfo.columns > 1"
+              class="text-xs text-purple-600 bg-purple-100 px-2 py-0.5 rounded-full"
+            >전체폭 (모든 컬럼)</span>
+            <span
+              v-else-if="moduleColumnInfo.columns > 1"
+              class="text-xs text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full"
+            >{{ moduleColumnInfo.columns }}단 중 {{ moduleColumnInfo.columnIndex + 1 }}번</span>
+            <span v-else class="text-xs text-gray-400">1단 (분할 안 됨)</span>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-1.5">
+            <Button
+              @click="splitSelectedModule"
+              icon="pi pi-plus"
+              label="컬럼 추가"
+              severity="contrast"
+              size="small"
+              outlined
+              :disabled="moduleColumnInfo.columns >= 4"
+              v-tooltip.top="'영역을 컬럼으로 분할 (+1단, 최대 4단 · 모바일은 세로로 쌓임)'"
+            />
+            <Button
+              v-if="moduleColumnInfo.columns > 1"
+              @click="unsplitSelectedModule"
+              icon="pi pi-replay"
+              label="되돌리기"
+              severity="secondary"
+              size="small"
+              outlined
+              v-tooltip.top="'컬럼 분할 되돌리기 (-1단)'"
+            />
+            <template v-if="moduleColumnInfo.columns > 1 && !moduleColumnInfo.fullWidth">
+              <span class="w-px h-5 bg-gray-200 mx-0.5"></span>
+              <Button
+                @click="moveSelectedModuleColumn('left')"
+                :disabled="moduleColumnInfo.columnIndex === 0"
+                icon="pi pi-arrow-left"
+                severity="secondary"
+                size="small"
+                text
+                v-tooltip.top="'이 모듈을 왼쪽 컬럼으로 이동'"
+              />
+              <Button
+                @click="moveSelectedModuleColumn('right')"
+                :disabled="moduleColumnInfo.columnIndex >= moduleColumnInfo.columns - 1"
+                icon="pi pi-arrow-right"
+                severity="secondary"
+                size="small"
+                text
+                v-tooltip.top="'이 모듈을 오른쪽 컬럼으로 이동'"
+              />
+            </template>
+          </div>
+          <p class="text-xs text-gray-400 mt-2">
+            데스크톱은 컬럼이 가로로 나란히, 모바일에서는 각 컬럼이 세로로 쌓입니다.
+          </p>
+        </div>
+
         <!-- 속성 편집 폼 -->
       <div class="p-4 space-y-3 bg-gray-50">
         <component
@@ -1131,6 +1197,26 @@ const selectedModule = computed(() => moduleStore.selectedModule)
 const selectedGroup = computed(() => moduleStore.selectedGroup)
 const selectedModuleMetadata = computed(() => moduleStore.selectedModuleMetadata)
 const editableProps = computed(() => selectedModuleMetadata.value?.editableProps || [])
+
+// ===== 영역 컬럼 분할 =====
+// 선택 모듈이 속한 그룹의 컬럼 수와, 그 안에서의 컬럼 위치(0-based)
+const moduleColumnInfo = computed(() => {
+  const mod = selectedModule.value
+  if (!mod?.groupId) return { columns: 1, columnIndex: 0, fullWidth: false }
+  const group = moduleStore.groups.find((g) => g.id === mod.groupId)
+  const columns = group?.columns && group.columns > 1 ? Math.min(group.columns, 4) : 1
+  return { columns, columnIndex: mod.columnIndex ?? 0, fullWidth: !!mod.fullWidth }
+})
+
+const splitSelectedModule = () => {
+  if (selectedModule.value) moduleStore.splitModuleColumns(selectedModule.value.id)
+}
+const unsplitSelectedModule = () => {
+  if (selectedModule.value) moduleStore.unsplitModuleColumns(selectedModule.value.id)
+}
+const moveSelectedModuleColumn = (direction: 'left' | 'right') => {
+  if (selectedModule.value) moduleStore.moveModuleColumn(selectedModule.value.id, direction)
+}
 
 // 아코디언 그룹: 모든 prop에 group이 지정되면 그룹별 묶기, 그렇지 않으면 단일 평면 그룹
 const propGroups = computed(() => {

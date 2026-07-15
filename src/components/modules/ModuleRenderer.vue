@@ -66,43 +66,6 @@
         v-tooltip.bottom="'이 모듈을 복제합니다'"
       />
       <Button
-        @click.stop="$emit('split', module.id)"
-        icon="pi pi-table"
-        severity="secondary"
-        text
-        size="small"
-        v-tooltip.bottom="'영역을 컬럼으로 분할합니다 (최대 4단, 모바일은 세로로 쌓임)'"
-      />
-      <!-- 컬럼 그룹일 때만: 되돌리기 + 왼/오른쪽 컬럼으로 이동 -->
-      <template v-if="columnInfo && columnInfo.columns > 1">
-        <Button
-          @click.stop="$emit('unsplit', module.id)"
-          icon="pi pi-replay"
-          severity="secondary"
-          text
-          size="small"
-          v-tooltip.bottom="'컬럼 분할 되돌리기 (-1단)'"
-        />
-        <Button
-          @click.stop="$emit('move-column', module.id, 'left')"
-          :disabled="columnInfo.columnIndex === 0"
-          icon="pi pi-arrow-left"
-          severity="secondary"
-          text
-          size="small"
-          v-tooltip.bottom="'왼쪽 컬럼으로 이동'"
-        />
-        <Button
-          @click.stop="$emit('move-column', module.id, 'right')"
-          :disabled="columnInfo.columnIndex >= columnInfo.columns - 1"
-          icon="pi pi-arrow-right"
-          severity="secondary"
-          text
-          size="small"
-          v-tooltip.bottom="'오른쪽 컬럼으로 이동'"
-        />
-      </template>
-      <Button
         @click.stop="$emit('delete', module.id)"
         icon="pi pi-trash"
         severity="danger"
@@ -136,9 +99,6 @@ defineEmits<{
   'move-down': [moduleId: string]
   duplicate: [moduleId: string]
   delete: [moduleId: string]
-  split: [moduleId: string]
-  unsplit: [moduleId: string]
-  'move-column': [moduleId: string, direction: 'left' | 'right']
 }>()
 
 const { renderedHtml, moduleMetadata, isLoading } = useModuleRenderer(props.module.id)
