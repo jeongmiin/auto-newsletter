@@ -126,6 +126,8 @@ export const moduleDescTextConfig: ModuleConfig = {
   defaults: {
     bgColor: 'transparent',
     textColor: '#333333',
+    // 텍스트 정렬 (기존 인스턴스 폴백 = left → 겉모습 변화 없음. 문단별 인라인 정렬이 더 우선)
+    textAlign: 'left',
     // 안쪽 여백(배경 박스) 폴백 — 기존 하드코딩 값과 동일
     paddingTop: '0px',
     paddingRight: '0px',
@@ -148,6 +150,9 @@ export const moduleImgConfig: ModuleConfig = {
   defaults: {
     imageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-1column.png',
     imageAlt: '이미지',
+    // 정렬·최대 너비 (기존 인스턴스 폴백 = 가운데 · 100% → 겉모습 변화 없음)
+    imageAlign: 'center',
+    imageMaxWidth: '100%',
     imageBorderRadius: '0px',
     imageLinkUrl: '#',
     // 이미지 테두리 (기본 none = 기존 인스턴스 폴백 = 테두리 없음)
