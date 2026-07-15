@@ -4,7 +4,8 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const goToEditor = () => {
-  router.push('/editor')
+  // 에디터로 바로 가지 않고, 템플릿을 먼저 고르는 화면으로 이동
+  router.push('/templates')
 }
 
 const navLinks = [

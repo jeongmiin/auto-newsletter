@@ -1,13 +1,17 @@
 <template>
-  <header class="flex items-center justify-between px-4 py-2 bg-white border-b">
-    <!-- 왼쪽: 로고 + 타이틀 -->
-    <div class="flex items-center gap-2">
+  <header class="flex items-center justify-between px-4 py-2 bg-white border-b h-14">
+    <!-- 왼쪽: 로고 + 타이틀 (클릭 시 홈으로) -->
+    <button
+      type="button"
+      class="flex items-center gap-2 bg-transparent border-0 p-0 cursor-pointer"
+      @click="goHome"
+    >
       <img src="/src/assets/img/logo/logo.png" alt="Logo" class="w-7 h-7" />
       <h2 class="font-bold text-gray-800 text-lg">Newsletter Builder</h2>
-    </div>
+    </button>
 
-    <!-- 오른쪽: 파일 관리 버튼들 -->
-    <div class="flex items-center gap-2">
+    <!-- 오른쪽: 파일 관리 버튼들 (템플릿 선택 화면 등에서는 숨김) -->
+    <div v-if="showActions" class="flex items-center gap-2">
       <span v-if="lastDownload" class="text-sm text-gray-500 whitespace-nowrap">
         {{ lastDownloadDateLabel }}<span class="font-bold">{{ lastDownload.type }}</span> 내려받음
       </span>
@@ -59,16 +63,39 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { useConfirm } from 'primevue/useconfirm'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
 import { processQuillHtml } from '@/utils/quillHtmlProcessor'
 import { useNewsletterImport } from '@/composables/useNewsletterImport'
 import { useToast } from 'primevue/usetoast'
 
+// showActions=false면 오른쪽 파일 관리 버튼들을 숨긴다(예: 템플릿 선택 화면)
+withDefaults(defineProps<{ showActions?: boolean }>(), { showActions: true })
+
 const moduleStore = useModuleStore()
 const editorStore = useEditorStore()
 const toast = useToast()
+const router = useRouter()
+const confirm = useConfirm()
 const { importHtmlFile } = useNewsletterImport()
+
+// 로고 클릭 → 홈으로. 작업 중(변경사항 있음)이면 확인 후 이동.
+const goHome = () => {
+  if (moduleStore.modules.length > 0 && moduleStore.isDirty) {
+    confirm.require({
+      message: '저장하지 않은 변경사항이 있습니다. 홈으로 나가시겠어요?',
+      header: '홈으로 이동',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: '나가기',
+      rejectLabel: '취소',
+      accept: () => router.push('/'),
+    })
+    return
+  }
+  router.push('/')
+}
 
 // 최근 내려받음 표시 (메모리 상태 — 새로고침 시 초기화)
 const lastDownload = ref<{ time: Date; type: '저장용' | '발송용' } | null>(null)

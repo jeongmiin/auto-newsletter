@@ -4,6 +4,7 @@
       "id": "gocaf-template",
       "name": "고카프 템플릿",
       "description": "2026 고카프 뉴스레터 구성",
+      "team": "레저산업팀",
       "wrapSettings": {
         "backgroundColor": "#ffffff",
         "borderWidth": "0px",
@@ -972,6 +973,7 @@
       "id": "kfarm-template",
       "name": "케이팜 템플릿",
       "description": "2026 케이팜 뉴스레터 구성",
+      "team": "레저산업팀",
       "wrapSettings": {
         "backgroundColor": "#f9f9f9",
         "borderWidth": "0px",
@@ -2274,6 +2276,7 @@
       "id": "kpet-template",
       "name": "케이펫 템플릿",
       "description": "2026 케이펫 뉴스레터 구성",
+      "team": "펫산업팀",
       "wrapSettings": {
         "backgroundColor": "#f9f9f9",
         "borderWidth": "0px",
@@ -3366,6 +3369,7 @@
       "id": "megazoo-template",
       "name": "메가주 템플릿",
       "description": "2026 메가주 뉴스레터 구성",
+      "team": "펫산업팀",
       "wrapSettings": {
         "backgroundColor": "#f9f9f9",
         "borderWidth": "0px",
@@ -4867,7 +4871,8 @@
           },
           "styles": {}
         }
-      ]
+      ],
+      "team": "라이프콘텐츠팀"
     },
     {
       "id": "lawexpo-template",
@@ -5207,7 +5212,8 @@
           },
           "styles": {}
         }
-      ]
+      ],
+      "team": "신성장전략팀"
     },
     {
       "id": "khf-template",
@@ -5629,7 +5635,8 @@
           },
           "styles": {}
         }
-      ]
+      ],
+      "team": "신성장전략팀"
     },
     {
       "id": "issa-template",
@@ -6887,7 +6894,8 @@
           },
           "styles": {}
         }
-      ]
+      ],
+      "team": "융합산업1팀"
     },
     {
       "id": "police-template",
@@ -7995,7 +8003,8 @@
           },
           "styles": {}
         }
-      ]
+      ],
+      "team": "융합산업1팀"
     }
   ]
 }

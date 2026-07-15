@@ -10,6 +10,11 @@ const router = createRouter({
       component: LandingView,
     },
     {
+      path: '/templates',
+      name: 'templates',
+      component: () => import('../views/TemplateSelectView.vue'),
+    },
+    {
       path: '/editor',
       name: 'editor',
       component: () => import('../views/HomeView.vue'),

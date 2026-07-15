@@ -191,6 +191,8 @@ export interface NewsletterTemplate {
   name: string
   description: string
   thumbnail?: string
+  /** 소속 팀(템플릿 선택 화면의 좌측 부서/팀 필터용). 미지정이면 '전체'에서만 보인다. */
+  team?: string
   wrapSettings: {
     backgroundColor: string
     borderWidth: string

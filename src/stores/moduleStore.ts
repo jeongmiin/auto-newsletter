@@ -11,6 +11,7 @@ import type {
   NewsletterTemplate,
   ModuleGroup,
   ModuleGroupStyles,
+  ModuleStyles,
   DisplayItem,
 } from '@/types'
 import { useEditorStore } from './editorStore'
@@ -200,6 +201,20 @@ export const useModuleStore = defineStore('module', () => {
         return
       }
       columnTarget.value = null
+    }
+
+    // 그룹이 선택돼 있고(모듈은 미선택) 있으면, 새 모듈을 그 그룹 '바로 아래'(그룹 밖 단독)에 삽입한다.
+    if (!selectedModuleId.value && selectedGroupId.value) {
+      const gid = selectedGroupId.value
+      const lastIdx = modules.value.map((m) => m.groupId).lastIndexOf(gid)
+      if (lastIdx !== -1) {
+        modules.value.splice(lastIdx + 1, 0, newModule) // groupId 미지정 = 그룹에 속하지 않음
+        reorderModules()
+        selectedModuleId.value = newModule.id
+        selectedGroupId.value = null
+        isDirty.value = true
+        return
+      }
     }
 
     // 선택된 모듈이 있으면 그 바로 아래에 삽입, 없으면 맨 끝에 추가
@@ -1562,6 +1577,91 @@ export const useModuleStore = defineStore('module', () => {
   }
 
   /**
+   * [행별 컬럼] 선택 모듈들을 하나의 그룹으로 병합한다. (이미 그룹인 것도 허용)
+   * - 각 기존 그룹의 (행,컬럼) 구조는 보존되어 새 그룹에서 연속된 행 블록이 된다.
+   * - 그룹에 안 속했던 단독 모듈은 각각 1컬럼 행이 된다.
+   * → "1컬럼짜리 + 2컬럼 그룹"을 합치면 1컬럼 행 + 2컬럼 행을 가진 한 그룹이 된다.
+   * @returns 새 그룹 id (실패 시 null)
+   */
+  const mergeModulesIntoGroup = (moduleIds: string[]): string | null => {
+    const targets = moduleIds
+      .map((id) => modules.value.find((m) => m.id === id))
+      .filter((m): m is ModuleInstance => !!m)
+    if (targets.length < 1) return null
+
+    // 관련된 기존 그룹을 행 모델로 승격
+    const involvedGroupIds = new Set(
+      targets.map((m) => m.groupId).filter((g): g is string => !!g),
+    )
+    involvedGroupIds.forEach((gid) => {
+      const g = groups.value.find((x) => x.id === gid)
+      if (g) ensureGroupRows(g)
+    })
+
+    const sortedTargets = [...targets].sort((a, b) => a.order - b.order)
+    const newGroupId = generateUniqueId('group')
+
+    // 새 행 배정: (기존 그룹 + 기존 행) 단위로 묶고, 단독 모듈은 각각 새 행
+    const rowKeyToNewIndex = new Map<string, number>()
+    const newRows: number[] = []
+    const plan = sortedTargets.map((m) => {
+      const key = m.groupId ? `${m.groupId}:${m.rowIndex ?? 0}` : `solo:${m.id}`
+      let newRow = rowKeyToNewIndex.get(key)
+      if (newRow == null) {
+        newRow = newRows.length
+        rowKeyToNewIndex.set(key, newRow)
+        newRows.push(1)
+      }
+      const col = m.groupId ? m.columnIndex ?? 0 : 0
+      newRows[newRow] = Math.max(newRows[newRow], clampColumns(col + 1))
+      return { m, newRow, col }
+    })
+
+    // 위치 계산 (첫 멤버 자리에 연속 배치)
+    const firstIndex = modules.value.map((m) => m.id).indexOf(sortedTargets[0].id)
+    const targetIdSet = new Set(sortedTargets.map((m) => m.id))
+    const remaining = modules.value.filter((m) => !targetIdSet.has(m.id))
+    const insertAt = modules.value
+      .slice(0, firstIndex)
+      .filter((m) => !targetIdSet.has(m.id)).length
+
+    // 배치 적용
+    plan.forEach(({ m, newRow, col }) => {
+      m.groupId = newGroupId
+      m.rowIndex = newRow
+      m.columnIndex = col
+      delete m.fullWidth
+    })
+
+    const next = [...remaining]
+    next.splice(insertAt, 0, ...sortedTargets)
+    modules.value.splice(0, modules.value.length, ...next)
+
+    groups.value.push({ id: newGroupId, styles: { ...DEFAULT_GROUP_STYLES }, rows: newRows })
+
+    // 비게 된 기존 그룹 정의 제거, 멤버가 남은 그룹은 rows 재유도
+    involvedGroupIds.forEach((gid) => {
+      const rest = modules.value.filter((m) => m.groupId === gid)
+      if (rest.length === 0) {
+        const gi = groups.value.findIndex((g) => g.id === gid)
+        if (gi !== -1) groups.value.splice(gi, 1)
+        if (selectedGroupId.value === gid) selectedGroupId.value = null
+      } else {
+        const g = groups.value.find((x) => x.id === gid)
+        if (g) g.rows = deriveRowsFromMembers(rest.sort((a, b) => a.order - b.order))
+      }
+    })
+
+    reorderModules()
+    selectedGroupId.value = newGroupId
+    selectedModuleId.value = null
+    triggerRef(groups)
+    triggerRef(modules)
+    isDirty.value = true
+    return newGroupId
+  }
+
+  /**
    * 그룹 통째 복제 — 그룹의 모든 멤버 모듈 + 그룹 스타일을 새 ID로 복제해
    * 원본 그룹 바로 아래에 연속 배치한다. (그룹 연속성 유지)
    * @returns 생성된 새 그룹 id (실패 시 null)
@@ -2807,20 +2907,32 @@ export const useModuleStore = defineStore('module', () => {
    * 전체 HTML 생성
    * @param wrapWithDocument - true면 완전한 HTML 문서로 감싸고, false면 콘텐츠만 반환
    */
-  const generateHtml = async (wrapWithDocument: boolean = false): Promise<string> => {
+  const generateHtml = async (
+    wrapWithDocument: boolean = false,
+    source?: {
+      modules: ModuleInstance[]
+      groups: ModuleGroup[]
+      wrapSettings: ReturnType<typeof useEditorStore>['wrapSettings']
+    },
+  ): Promise<string> => {
     const editorStore = useEditorStore()
-    const wrapSettings = editorStore.wrapSettings
+    // source가 주어지면 그 데이터를 렌더(템플릿 썸네일 등), 없으면 현재 스토어 상태를 렌더
+    const wrapSettings = source?.wrapSettings ?? editorStore.wrapSettings
+    const srcModules = source?.modules ?? modules.value
+    const srcGroups = source?.groups ?? groups.value
 
     const basePath = import.meta.env.BASE_URL || '/'
 
     // 1) 모듈별 HTML을 순서대로 생성 (그룹/컬럼 정보와 함께 보관)
     const rendered: Array<{
+      id: string
       html: string
       groupId?: string
+      rowIndex?: number
       columnIndex?: number
       fullWidth?: boolean
     }> = []
-    for (const module of [...modules.value].sort((a, b) => a.order - b.order)) {
+    for (const module of [...srcModules].sort((a, b) => a.order - b.order)) {
       try {
         const modulePath = normalizePath(`${basePath}modules/${module.moduleId}.html`)
 
@@ -2955,6 +3067,35 @@ ${fullHtml}
     ${wrapClose}
 </body>
 </html>`
+  }
+
+  /**
+   * 템플릿 썸네일용 콘텐츠 HTML 생성.
+   * - store를 건드리지 않고(clearAll 없이) 템플릿의 modules/groups/wrapSettings를 렌더한다.
+   * - 템플릿 선택 화면의 iframe 썸네일에서 사용(680px 렌더 → CSS scale로 축소).
+   */
+  const renderTemplateHtml = async (template: NewsletterTemplate): Promise<string> => {
+    if (availableModules.value.length === 0) {
+      await loadAvailableModules()
+    }
+    const editorStore = useEditorStore()
+    // 템플릿 modules → 임시 ModuleInstance[] (스토어에 추가하지 않음, id는 그룹 매핑용으로만 유일하면 됨)
+    const mods: ModuleInstance[] = template.modules.map((md, idx) => ({
+      id: `tpl-${idx}`,
+      moduleId: md.moduleId,
+      order: md.order ?? idx,
+      properties: migrateModuleProperties(md.moduleId, md.properties || {}),
+      styles: (md.styles as ModuleStyles) || {},
+      ...(md.groupId ? { groupId: md.groupId } : {}),
+      ...(md.rowIndex != null ? { rowIndex: md.rowIndex } : {}),
+      ...(md.columnIndex != null ? { columnIndex: md.columnIndex } : {}),
+      ...(md.fullWidth ? { fullWidth: true } : {}),
+    }))
+    const grps: ModuleGroup[] = template.groups
+      ? JSON.parse(JSON.stringify(template.groups))
+      : []
+    const wrapSettings = { ...editorStore.wrapSettings, ...(template.wrapSettings || {}) }
+    return generateHtml(false, { modules: mods, groups: grps, wrapSettings })
   }
 
   /**
@@ -3101,6 +3242,7 @@ ${fullHtml}
     markAsSaved,
     generateHtml,
     renderModulePreview,
+    renderTemplateHtml,
     addTableRow,
     updateTableRow,
     removeTableRow,
