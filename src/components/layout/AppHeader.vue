@@ -1,63 +1,114 @@
 <template>
-  <header class="flex items-center justify-between px-4 py-2 bg-white border-b h-14">
-    <!-- 왼쪽: 로고 + 타이틀 (클릭 시 홈으로) -->
+  <header class="flex items-center gap-2 px-3 bg-white border-b h-14">
+    <!-- 왼쪽: 로고 (클릭 시 홈으로) -->
     <button
       type="button"
-      class="flex items-center gap-2 bg-transparent border-0 p-0 cursor-pointer"
+      class="flex items-center gap-1.5 bg-transparent border-0 p-0 cursor-pointer flex-shrink-0"
       @click="goHome"
+      v-tooltip.bottom="'홈으로'"
     >
-      <img src="/src/assets/img/logo/logo.png" alt="Logo" class="w-7 h-7" />
-      <h2 class="font-bold text-gray-800 text-lg">Newsletter Builder</h2>
+      <img src="/src/assets/img/logo/logo.png" alt="Logo" class="w-6 h-6" />
+      <span class="font-bold text-gray-800 text-base whitespace-nowrap">Newsletter Builder</span>
     </button>
 
-    <!-- 오른쪽: 파일 관리 버튼들 (템플릿 선택 화면 등에서는 숨김) -->
-    <div v-if="showActions" class="flex items-center gap-2">
-      <span v-if="lastDownload" class="text-sm text-gray-500 whitespace-nowrap">
-        {{ lastDownloadDateLabel }}<span class="font-bold">{{ lastDownload.type }}</span> 내려받음
-      </span>
-      <Button
-        @click="downloadForSave"
-        label="저장용 내려받기"
-        icon="pi pi-save"
-        outlined
-        size="small"
-        v-tooltip.bottom="'재편집용 — 다시 불러와 편집 가능'"
-      />
-      <Button
-        @click="importHtmlFile"
-        label="파일 열기"
-        icon="pi pi-folder-open"
-        outlined
-        size="small"
-        v-tooltip.bottom="'이전에 저장한 파일을 불러옵니다'"
-      />
-      <Button
-        @click="previewEmail"
-        label="미리보기"
-        icon="pi pi-eye"
-        severity="secondary"
-        outlined
-        size="small"
-        v-tooltip.bottom="'새 창에서 완성된 모습을 확인합니다'"
-      />
-      <Button
-        @click="exportHtml"
-        label="코드 복사"
-        icon="pi pi-copy"
-        severity="secondary"
-        outlined
-        size="small"
-        v-tooltip.bottom="'코드를 클립보드에 복사합니다'"
-      />
+    <template v-if="showActions">
+      <!-- 브레드크럼 -->
+      <span class="text-sm text-gray-500 ml-1 truncate">뉴스레터 › 빌더</span>
 
-      <Button
-        @click="downloadForSend"
-        label="발송용 내려받기"
-        icon="pi pi-send"
-        size="small"
-        v-tooltip.bottom="'메일 발송용 — 다시 불러와 편집 불가능'"
-      />
-    </div>
+      <span class="hbar"></span>
+
+      <!-- 실행취소/다시실행 (아이콘 버튼) -->
+      <button
+        type="button"
+        class="hicon"
+        :disabled="!canUndo"
+        @click="doUndo"
+        v-tooltip.bottom="'이전으로'"
+      >
+        <span class="material-symbols-outlined">undo</span>
+      </button>
+      <button
+        type="button"
+        class="hicon"
+        :disabled="!canRedo"
+        @click="doRedo"
+        v-tooltip.bottom="'다음으로'"
+      >
+        <span class="material-symbols-outlined">redo</span>
+      </button>
+
+      <!-- 중앙: PC / 모바일 토글 -->
+      <div class="flex-1 flex justify-center">
+        <div class="seg">
+          <button
+            type="button"
+            class="seg-btn"
+            :class="{ 'is-active': canvasWidth === 'desktop' }"
+            @click="editorStore.setCanvasWidth('desktop')"
+            v-tooltip.bottom="'PC 화면'"
+          >
+            <span class="material-symbols-outlined">desktop_windows</span>
+          </button>
+          <button
+            type="button"
+            class="seg-btn"
+            :class="{ 'is-active': canvasWidth === 'mobile' }"
+            @click="editorStore.setCanvasWidth('mobile')"
+            v-tooltip.bottom="'모바일 화면'"
+          >
+            <span class="material-symbols-outlined">smartphone</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 우측: 저장상태 + 파일 관리 버튼들 -->
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <span v-if="lastDownload" class="text-xs text-gray-500 whitespace-nowrap">
+          {{ lastDownloadDateLabel }}<span class="font-bold">{{ lastDownload.type }}</span> 내려받음
+        </span>
+        <Button
+          @click="downloadForSave"
+          label="저장용 내려받기"
+          icon="pi pi-save"
+          outlined
+          size="small"
+          v-tooltip.bottom="'재편집용 — 다시 불러와 편집 가능'"
+        />
+        <Button
+          @click="importHtmlFile"
+          label="파일 열기"
+          icon="pi pi-folder-open"
+          outlined
+          size="small"
+          v-tooltip.bottom="'이전에 저장한 파일을 불러옵니다'"
+        />
+        <Button
+          @click="previewEmail"
+          label="미리보기"
+          icon="pi pi-eye"
+          severity="secondary"
+          outlined
+          size="small"
+          v-tooltip.bottom="'새 창에서 완성된 모습을 확인합니다'"
+        />
+        <Button
+          @click="exportHtml"
+          label="코드 복사"
+          icon="pi pi-copy"
+          severity="secondary"
+          outlined
+          size="small"
+          v-tooltip.bottom="'코드를 클립보드에 복사합니다'"
+        />
+        <Button
+          @click="downloadForSend"
+          label="발송용 내려받기"
+          icon="pi pi-send"
+          size="small"
+          v-tooltip.bottom="'메일 발송용 — 다시 불러와 편집 불가능'"
+        />
+      </div>
+    </template>
   </header>
 </template>
 
@@ -69,6 +120,7 @@ import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
 import { processQuillHtml } from '@/utils/quillHtmlProcessor'
 import { useNewsletterImport } from '@/composables/useNewsletterImport'
+import { getHistoryInstance } from '@/composables/useHistory'
 import { useToast } from 'primevue/usetoast'
 
 // showActions=false면 오른쪽 파일 관리 버튼들을 숨긴다(예: 템플릿 선택 화면)
@@ -80,6 +132,16 @@ const toast = useToast()
 const router = useRouter()
 const confirm = useConfirm()
 const { importHtmlFile } = useNewsletterImport()
+
+// 실행취소/다시실행 (전역 히스토리 싱글턴)
+const history = getHistoryInstance()
+const canUndo = history.canUndo
+const canRedo = history.canRedo
+const doUndo = () => history.undo()
+const doRedo = () => history.redo()
+
+// PC/모바일 토글 상태
+const canvasWidth = computed(() => editorStore.canvasWidth)
 
 // 로고 클릭 → 홈으로. 작업 중(변경사항 있음)이면 확인 후 이동.
 const goHome = () => {
@@ -544,3 +606,63 @@ const downloadForSave = (): Promise<void> => downloadHtml(true)
 // 발송용: 메타데이터 제거 (메일 발송용)
 const downloadForSend = (): Promise<void> => downloadHtml(false)
 </script>
+
+<style scoped>
+/* 세로 구분선 */
+.hbar {
+  width: 1px;
+  height: 24px;
+  background: #e5e8eb;
+  flex-shrink: 0;
+}
+/* 아이콘 버튼 (실행취소/다시실행) */
+.hicon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #4b5563;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.12s;
+}
+.hicon:hover:not(:disabled) {
+  background: #f2f4f6;
+}
+.hicon:disabled {
+  color: #cbd1d8;
+  cursor: default;
+}
+.hicon .material-symbols-outlined {
+  font-size: 22px;
+}
+/* PC/모바일 세그먼트 토글 */
+.seg {
+  display: inline-flex;
+  gap: 4px;
+}
+.seg-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 30px;
+  border: 0;
+  border-radius: 1000px;
+  background: #f3f4f6;
+  color: #6b7280;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.seg-btn.is-active {
+  background: #111827;
+  color: #fff;
+}
+.seg-btn .material-symbols-outlined {
+  font-size: 20px;
+}
+</style>

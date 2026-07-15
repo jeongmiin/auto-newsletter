@@ -3,8 +3,11 @@
     <!-- 상단 헤더: 로고 + 파일 관리 버튼들 -->
     <AppHeader />
 
-    <!-- 메인 영역: 모듈 패널 / 캔버스 / 속성 패널 -->
+    <!-- 메인 영역: 아이콘 레일 / 모듈 패널 / 캔버스 / 속성 패널 -->
     <div class="flex-1 flex min-h-0">
+      <!-- 좌측 아이콘 레일 (신규 디자인 IA) -->
+      <EditorSidebar />
+
       <!-- 왼쪽 모듈 패널 -->
       <ModulePanel class="w-72 xl:w-80 border-r bg-white flex-shrink-0" />
 
@@ -59,6 +62,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
+import EditorSidebar from '@/components/editor/EditorSidebar.vue'
 import ModulePanel from '@/components/panels/ModulePanel.vue'
 import EditorToolbar from '@/components/editor/EditorToolbar.vue'
 import ModuleOutlinePanel from '@/components/editor/ModuleOutlinePanel.vue'

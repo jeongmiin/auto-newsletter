@@ -295,44 +295,31 @@
         <div
           v-for="module in filteredModules"
           :key="module.id"
+          :ref="(el) => observeCard(el as Element | null, module.id)"
+          :data-module-id="module.id"
           @click="addModule(module)"
-          @mouseenter="onModuleHover(module, $event)"
-          @mouseleave="onModuleLeave"
-          class="p-3 border rounded-lg cursor-pointer hover:bg-gray-50 hover:border-blue-300 transition-colors"
+          class="module-card border rounded-lg cursor-pointer hover:border-blue-400 transition-colors overflow-hidden"
         >
-          <div class="flex items-center space-x-3">
-            <div class="w-8 h-8 bg-blue-50 text-blue-600 rounded flex items-center justify-center">
-              <i :class="module.icon"></i>
+          <!-- 상시 썸네일 (호버 없이 카드에 바로 표시) -->
+          <div class="module-thumb">
+            <iframe
+              v-if="thumbs[module.id]"
+              :srcdoc="thumbs[module.id]"
+              class="module-thumb-iframe"
+              title="모듈 미리보기"
+              sandbox="allow-same-origin"
+            ></iframe>
+            <div v-else class="module-thumb-loading">
+              <i :class="module.icon" class="text-2xl text-gray-300"></i>
             </div>
-            <div class="flex-1 min-w-0">
-              <div class="font-medium text-sm truncate">{{ module.name }}</div>
-              <div class="text-xs text-gray-500 truncate">{{ module.description }}</div>
-            </div>
+          </div>
+          <div class="px-3 py-2">
+            <div class="font-medium text-sm truncate">{{ module.name }}</div>
+            <div class="text-xs text-gray-500 truncate">{{ module.description }}</div>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- 모듈 호버 미리보기 (라이브 렌더 iframe, 화면 흐름 밖 floating) -->
-    <Teleport to="body">
-      <div
-        v-if="preview.visible"
-        class="module-preview-pop"
-        :class="{ 'is-ready': preview.ready }"
-        :style="{ left: preview.left + 'px', top: preview.top + 'px' }"
-      >
-        <div class="module-preview-inner" :style="{ height: preview.height + 'px' }">
-          <iframe
-            v-if="preview.srcdoc"
-            :srcdoc="preview.srcdoc"
-            class="module-preview-iframe"
-            title="모듈 미리보기"
-            sandbox="allow-same-origin"
-            @load="onPreviewLoad"
-          ></iframe>
-        </div>
-      </div>
-    </Teleport>
 
   </div>
 </template>
@@ -511,134 +498,68 @@ const addComposedTwoButton = () => {
   composedToast(moduleStore.addComposedTwoButton(), '복수 버튼')
 }
 
-// ===== 모듈 호버 라이브 미리보기 =====
-const PREVIEW_WIDTH = 300 // 미리보기 가시 폭(px)
+// ===== 모듈 인라인 썸네일 (호버 없이 카드에 상시 표시) =====
 const MODULE_WIDTH = 680 // 모듈 템플릿 기준 폭(px)
-const PREVIEW_SCALE = PREVIEW_WIDTH / MODULE_WIDTH
-const HOVER_DELAY = 180 // 호버 후 표시까지 지연(ms)
-const VIEWPORT_MARGIN = 8 // 화면 가장자리 최소 여백(px)
-const GAP = 8 // 호버한 모듈과 미리보기 사이 간격(px)
 
-const preview = reactive({
-  visible: false, // DOM 마운트 여부
-  ready: false, // 높이 측정 완료 → 화면에 표시(깜빡임/리사이즈 방지)
-  srcdoc: '',
-  left: 0,
-  top: 0,
-  height: 0,
-})
-
-let hoverTimer: ReturnType<typeof setTimeout> | null = null
-let currentHoverId: string | null = null
-let previewToken = 0 // 비동기(이미지 로드 등) 결과의 최신성 판별
-let anchorTop = 0 // 호버한 모듈의 화면상 top — 측정 후 세로 위치 정렬 기준
 const previewCache = new Map<string, string>()
+const thumbs = reactive<Record<string, string>>({}) // module.id → iframe srcdoc
 
 const buildPreviewDoc = (content: string): string =>
   `<!DOCTYPE html><html><head><meta charset="utf-8"><base target="_blank">` +
   `<style>html,body{margin:0;padding:0;background:#fff;overflow:hidden;}*{box-sizing:border-box;}</style></head>` +
   `<body><div style="width:${MODULE_WIDTH}px;max-width:${MODULE_WIDTH}px;margin:0;">${content}</div></body></html>`
 
-const onModuleHover = (module: ModuleMetadata, event: MouseEvent) => {
-  if (hoverTimer) clearTimeout(hoverTimer)
-  const el = event.currentTarget as HTMLElement
-  hoverTimer = setTimeout(() => openPreview(module, el), HOVER_DELAY)
-}
-
-const openPreview = async (module: ModuleMetadata, el: HTMLElement) => {
-  const rect = el.getBoundingClientRect()
-  currentHoverId = module.id
-  previewToken++
-  // 호버한 모듈 바로 오른쪽, 세로는 모듈 상단에 맞춤(측정 후 화면 밖이면 보정)
-  preview.left = rect.right + GAP
-  anchorTop = rect.top
-  preview.top = rect.top
-  preview.ready = false // 높이 확정 전까지 숨김
-  preview.visible = true
-
-  const cached = previewCache.get(module.id)
+// 카드가 화면에 들어올 때만 렌더(성능) — 결과는 캐시
+const renderThumb = async (id: string) => {
+  if (thumbs[id]) return
+  const cached = previewCache.get(id)
   if (cached) {
-    preview.srcdoc = cached
+    thumbs[id] = cached
     return
   }
-
-  preview.srcdoc = ''
   try {
-    const content = await moduleStore.renderModulePreview(module.id)
-    const doc = buildPreviewDoc(content)
-    previewCache.set(module.id, doc)
-    if (preview.visible && currentHoverId === module.id) {
-      preview.srcdoc = doc
-    }
+    const doc = buildPreviewDoc(await moduleStore.renderModulePreview(id))
+    previewCache.set(id, doc)
+    thumbs[id] = doc
   } catch (e) {
-    if (currentHoverId === module.id) onModuleLeave()
-    console.error('[ModulePanel] 미리보기 렌더 실패:', e)
+    console.warn('[ModulePanel] 썸네일 렌더 실패:', id, e)
   }
 }
 
-const onModuleLeave = () => {
-  if (hoverTimer) {
-    clearTimeout(hoverTimer)
-    hoverTimer = null
+// IntersectionObserver로 보이는 카드만 지연 렌더
+const cardEls = new Map<string, Element>()
+const thumbObserver =
+  typeof IntersectionObserver !== 'undefined'
+    ? new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (!e.isIntersecting) continue
+            const id = (e.target as HTMLElement).dataset.moduleId
+            if (id) renderThumb(id)
+            thumbObserver?.unobserve(e.target)
+          }
+        },
+        { rootMargin: '200px' },
+      )
+    : null
+
+const observeCard = (el: Element | null, id: string) => {
+  const prev = cardEls.get(id)
+  if (prev && thumbObserver) thumbObserver.unobserve(prev)
+  if (!el) {
+    cardEls.delete(id)
+    return
   }
-  currentHoverId = null
-  previewToken++ // 진행 중인 측정 결과 무효화
-  preview.visible = false
-  preview.ready = false
-  preview.srcdoc = ''
+  cardEls.set(id, el)
+  if (thumbObserver) thumbObserver.observe(el)
+  else renderThumb(id) // 옵저버 미지원 폴백
 }
 
-/** iframe 내 이미지 로드 완료까지 대기(정확한 높이 측정용) — 안전 타임아웃 포함 */
-const waitForImages = (doc: Document): Promise<void> => {
-  const imgs = Array.from(doc.images || [])
-  const pending = imgs
-    .filter((im) => !im.complete)
-    .map(
-      (im) =>
-        new Promise<void>((res) => {
-          im.addEventListener('load', () => res(), { once: true })
-          im.addEventListener('error', () => res(), { once: true })
-        }),
-    )
-  if (pending.length === 0) return Promise.resolve()
-  return Promise.race([
-    Promise.all(pending).then(() => undefined),
-    new Promise<void>((res) => setTimeout(res, 1200)),
-  ])
-}
-
-// iframe 로드 후 이미지까지 기다렸다가 실제 높이를 한 번에 확정 → 표시
-const onPreviewLoad = async (event: Event) => {
-  const iframe = event.target as HTMLIFrameElement
-  const token = previewToken
-  try {
-    const doc = iframe.contentDocument
-    if (!doc?.body) return
-    await waitForImages(doc)
-    // 대기 중 다른 모듈로 이동/닫힘 → 무시
-    if (token !== previewToken || !preview.visible) return
-
-    const contentHeight = Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight)
-    iframe.style.height = contentHeight + 'px'
-    const scaled = Math.ceil(contentHeight * PREVIEW_SCALE)
-    const maxH = window.innerHeight - VIEWPORT_MARGIN * 2
-    preview.height = Math.min(scaled, maxH)
-
-    // 세로 위치: 모듈 상단 정렬, 화면 아래로 넘치면 위로만 보정
-    let top = anchorTop
-    if (top + preview.height > window.innerHeight - VIEWPORT_MARGIN) {
-      top = window.innerHeight - preview.height - VIEWPORT_MARGIN
-    }
-    preview.top = Math.max(VIEWPORT_MARGIN, top)
-    preview.ready = true
-  } catch {
-    /* contentDocument 접근 불가 시 표시만 (높이 기본) */
-    if (token === previewToken) preview.ready = true
-  }
-}
+// 조립형 핸들러 호환용 — 인라인 썸네일에선 닫을 미리보기가 없음(no-op)
+const onModuleLeave = () => {}
 
 onUnmounted(() => {
-  if (hoverTimer) clearTimeout(hoverTimer)
+  thumbObserver?.disconnect()
 })
 
 const applyTemplate = (template: NewsletterTemplate) => {
@@ -684,34 +605,32 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* 모듈 호버 미리보기 — 화면 흐름 밖 floating, 클릭/호버 방해 없음 */
-.module-preview-pop {
-  position: fixed;
-  z-index: 1100;
-  width: 300px;
-  pointer-events: none;
-  filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.18));
-  /* 높이 확정 전엔 숨김 → 커졌다 작아지는 리사이즈 없이 한 번에 표시 */
-  opacity: 0;
-  transition: opacity 0.12s ease;
-}
-.module-preview-pop.is-ready {
-  opacity: 1;
-}
-.module-preview-inner {
-  width: 300px;
+/* 모듈 카드 인라인 썸네일 — 680px 렌더를 카드 폭에 맞춰 축소, 상단 크롭 */
+.module-thumb {
+  width: 100%;
+  height: 116px;
   overflow: hidden;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  background: #fff;
+  border-bottom: 1px solid #eef0f2;
+  position: relative;
 }
-.module-preview-iframe {
+.module-thumb-iframe {
   width: 680px;
+  height: 900px;
   border: 0;
   display: block;
-  background: #ffffff;
-  transform: scale(0.4412);
+  background: #fff;
+  /* 262/680 ≈ 0.385 — 좁은 패널 카드 폭 기준 */
+  transform: scale(0.385);
   transform-origin: top left;
+  pointer-events: none;
+}
+.module-thumb-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
 

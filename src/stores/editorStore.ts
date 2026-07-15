@@ -13,6 +13,14 @@ export const useEditorStore = defineStore('editor', () => {
   // 목차 패널 ↔ 캔버스 하이라이트 동기화용 (마우스 올린 모듈 id)
   const hoveredModuleId = ref<string | null>(null)
 
+  // 좌측 아이콘 레일 활성 메뉴 (신규 디자인 IA)
+  type EditorMenu =
+    | 'style' | 'point' | 'modules' | 'text' | 'image' | 'button' | 'table' | 'ai' | 'order'
+  const activeMenu = ref<EditorMenu>('modules')
+  const setActiveMenu = (m: EditorMenu): void => {
+    activeMenu.value = m
+  }
+
   const canvasSettings = ref<CanvasSettings>({
     width: EDITOR_CONFIG.canvasDefaultWidth,
     backgroundColor: '#ffffff',
@@ -81,6 +89,8 @@ export const useEditorStore = defineStore('editor', () => {
     wrapSettings,
     modulePanelMode,
     hoveredModuleId,
+    activeMenu,
+    setActiveMenu,
     setCanvasWidth,
     setModulePanelMode,
     setHoveredModuleId,
