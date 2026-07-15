@@ -15,6 +15,7 @@ interface ProjectMetadata {
     properties: Record<string, unknown>
     styles: Record<string, unknown>
     groupId?: string
+    rowIndex?: number
     columnIndex?: number
     fullWidth?: boolean
   }>
@@ -133,6 +134,9 @@ export function useNewsletterImport() {
               // 그룹 소속·컬럼 레이아웃 복원 (그룹 정의는 아래에서 일괄 복원)
               if (moduleData.groupId) {
                 addedModule.groupId = moduleData.groupId
+              }
+              if (moduleData.rowIndex != null) {
+                addedModule.rowIndex = moduleData.rowIndex
               }
               if (moduleData.columnIndex != null) {
                 addedModule.columnIndex = moduleData.columnIndex

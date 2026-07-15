@@ -132,76 +132,22 @@
                 :style="groupWrapperStyle(item.group)"
                 @click.self="selectGroupBox(item.id)"
               >
-                <!-- 컬럼 분할 레이아웃 (fluid-hybrid: 데스크톱 가로, 모바일 세로 스택) -->
-                <!-- 밴드(행)별 렌더: 전체폭(fullWidth) 밴드는 통째로, 컬럼 밴드는 col-row로 -->
-                <template v-if="groupColumns(item) > 1">
-                  <template
-                    v-for="(band, bandIdx) in groupBands(item)"
-                    :key="`band-${item.id}-${bandIdx}`"
-                  >
-                    <!-- 컬럼 밴드 (.col-row: font-size:0 으로 셀 사이 공백 제거 → 폭 균등 분할) -->
-                    <div v-if="band.type === 'cols'" class="col-row">
+                <!-- 행별 독립 컬럼 렌더: 각 행이 자기 컬럼 수를 가진다. -->
+                <!-- 1컬럼 행 = 전체폭 세로 스택, 2+컬럼 행 = fluid-hybrid col-row(모바일 세로 스택) -->
+                <template
+                  v-for="(row, rowIdx) in groupRows(item)"
+                  :key="`row-${item.id}-${rowIdx}`"
+                >
+                  <!-- 다단 행 (.col-row: font-size:0 으로 셀 사이 공백 제거 → 폭 균등 분할) -->
+                  <div v-if="row.columns > 1" class="col-row">
+                    <div
+                      v-for="col in row.columns"
+                      :key="`col-${rowIdx}-${col}`"
+                      class="col-cell"
+                      :style="colCellStyle(row.columns)"
+                    >
                       <div
-                        v-for="col in band.columns"
-                        :key="`col-${bandIdx}-${col}`"
-                        class="col-cell"
-                        :style="colCellStyle(band.columns)"
-                      >
-                        <div
-                          v-for="member in bandColumnMembers(band, col - 1)"
-                          :key="member.id"
-                          :id="`canvas-module-${member.id}`"
-                          class="relative transition-all"
-                          :class="{ 'ring-2 ring-amber-400 ring-inset rounded-sm': hoveredModuleId === member.id }"
-                        >
-                          <ModuleRenderer
-                            :module="member"
-                            :index="member.order"
-                            :is-selected="selectedModuleId === member.id"
-                            :column-info="{ columns: band.columns, columnIndex: member.columnIndex ?? 0 }"
-                            @select="selectModule"
-                            @move-up="moveModuleUp"
-                            @move-down="moveModuleDown"
-                            @duplicate="duplicateModule"
-                            @delete="deleteModule"
-                          />
-                        </div>
-                        <!-- 빈 컬럼 placeholder -->
-                        <div
-                          v-if="bandColumnMembers(band, col - 1).length === 0"
-                          class="empty-col no-drag"
-                          :class="{ 'empty-col--target': isColTarget(item.id, col - 1) }"
-                          @click.stop="targetColumn(item.id, col - 1)"
-                        >
-                          <i class="pi pi-plus-circle empty-col__icon"></i>
-                          <div class="empty-col__title">빈 컬럼</div>
-                          <div class="empty-col__actions">
-                            <button
-                              type="button"
-                              class="empty-col__btn"
-                              @click.stop="dupIntoColumn(item.id, col - 1)"
-                            >
-                              옆 컬럼 복제
-                            </button>
-                            <button
-                              type="button"
-                              class="empty-col__btn empty-col__btn--danger"
-                              @click.stop="removeColumn(item.id, col - 1)"
-                            >
-                              빈 컬럼 삭제
-                            </button>
-                          </div>
-                          <div class="empty-col__hint">
-                            {{ isColTarget(item.id, col - 1) ? '왼쪽 패널에서 모듈을 추가하세요' : '클릭 후 모듈 추가' }}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- 전체폭 밴드 (모든 컬럼을 가로지르는 멤버들) -->
-                    <template v-else>
-                      <div
-                        v-for="member in band.members"
+                        v-for="member in row.cells[col - 1]"
                         :key="member.id"
                         :id="`canvas-module-${member.id}`"
                         class="relative transition-all"
@@ -211,7 +157,7 @@
                           :module="member"
                           :index="member.order"
                           :is-selected="selectedModuleId === member.id"
-                          :column-info="{ columns: 1, columnIndex: 0 }"
+                          :column-info="{ columns: row.columns, columnIndex: member.columnIndex ?? 0 }"
                           @select="selectModule"
                           @move-up="moveModuleUp"
                           @move-down="moveModuleDown"
@@ -219,30 +165,60 @@
                           @delete="deleteModule"
                         />
                       </div>
-                    </template>
-                  </template>
-                </template>
-
-                <!-- 기본: 그룹 멤버 세로 스택 -->
-                <template v-else>
-                  <div
-                    v-for="member in item.modules"
-                    :key="member.id"
-                    :id="`canvas-module-${member.id}`"
-                    class="relative transition-all"
-                    :class="{ 'ring-2 ring-amber-400 ring-inset rounded-sm': hoveredModuleId === member.id }"
-                  >
-                    <ModuleRenderer
-                      :module="member"
-                      :index="member.order"
-                      :is-selected="selectedModuleId === member.id"
-                      @select="selectModule"
-                      @move-up="moveModuleUp"
-                      @move-down="moveModuleDown"
-                      @duplicate="duplicateModule"
-                      @delete="deleteModule"
-                    />
+                      <!-- 빈 컬럼 placeholder -->
+                      <div
+                        v-if="row.cells[col - 1].length === 0"
+                        class="empty-col no-drag"
+                        :class="{ 'empty-col--target': isColTarget(item.id, rowIdx, col - 1) }"
+                        @click.stop="targetColumn(item.id, rowIdx, col - 1)"
+                      >
+                        <i class="pi pi-plus-circle empty-col__icon"></i>
+                        <div class="empty-col__title">빈 컬럼</div>
+                        <div class="empty-col__actions">
+                          <button
+                            type="button"
+                            class="empty-col__btn"
+                            @click.stop="dupIntoColumn(item.id, rowIdx, col - 1)"
+                          >
+                            옆 컬럼 복제
+                          </button>
+                          <button
+                            type="button"
+                            class="empty-col__btn empty-col__btn--danger"
+                            @click.stop="removeColumn(item.id, rowIdx, col - 1)"
+                          >
+                            빈 컬럼 삭제
+                          </button>
+                        </div>
+                        <div class="empty-col__hint">
+                          {{ isColTarget(item.id, rowIdx, col - 1) ? '왼쪽 패널에서 모듈을 추가하세요' : '클릭 후 모듈 추가' }}
+                        </div>
+                      </div>
+                    </div>
                   </div>
+
+                  <!-- 전체폭 행 (1컬럼): 그 칸의 멤버들을 세로 스택 -->
+                  <template v-else>
+                    <div
+                      v-for="member in row.cells[0]"
+                      :key="member.id"
+                      :id="`canvas-module-${member.id}`"
+                      class="relative transition-all"
+                      :class="{ 'ring-2 ring-amber-400 ring-inset rounded-sm': hoveredModuleId === member.id }"
+                    >
+                      <ModuleRenderer
+                        :module="member"
+                        :index="member.order"
+                        :is-selected="selectedModuleId === member.id"
+                        :column-info="{ columns: 1, columnIndex: 0 }"
+                        @select="selectModule"
+                        @move-up="moveModuleUp"
+                        @move-down="moveModuleDown"
+                        @duplicate="duplicateModule"
+                        @delete="deleteModule"
+                      />
+                    </div>
+                  </template>
                 </template>
               </div>
             </div>
@@ -290,6 +266,7 @@ import ModuleRenderer from '../modules/ModuleRenderer.vue'
 import draggable from 'vuedraggable'
 import type { DisplayItem, ModuleGroup, ModuleInstance } from '@/types'
 import { groupDivStyle, resolveGroupStyles, columnCellStyle } from '@/utils/groupStyle'
+import { computeGroupLayout, type GroupRowLayout } from '@/utils/groupLayout'
 
 const moduleStore = useModuleStore()
 const editorStore = useEditorStore()
@@ -387,64 +364,31 @@ const deleteModule = (moduleId: string) => {
   moduleStore.removeModule(moduleId)
 }
 
-// ===== 컬럼 분할 =====
+// ===== 행별 독립 컬럼 =====
 // 분할/되돌리기/좌우 이동은 속성 패널(PropertiesPanel)에서 제어한다.
 
-// 그룹의 컬럼 수 (1이면 세로 스택, 2~4면 가로 컬럼)
-const groupColumns = (item: DisplayItem): number => {
-  if (item.type !== 'group') return 1
-  const c = item.group.columns
-  return c && c > 1 ? Math.min(c, 4) : 1
-}
-
-// 그룹 멤버를 순서대로 '밴드(행)'로 나눈다:
-//  - 전체폭(fullWidth) 멤버 구간 → 전체폭 밴드(세로 스택)
-//  - 일반 멤버 구간 → 컬럼 밴드(컬럼별 배치)
-// → 한 그룹에서 "전체폭 상단 + 2단 하단"처럼 1단/다단 혼합을 렌더한다.
-type GroupBand =
-  | { type: 'full'; members: ModuleInstance[] }
-  | { type: 'cols'; columns: number; members: ModuleInstance[] }
-
-const groupBands = (item: DisplayItem): GroupBand[] => {
+// 그룹을 '행'들로 배치한다. 각 행은 자기 컬럼 수를 가지며 cells[colIdx]=그 칸의 멤버들.
+const groupRows = (item: DisplayItem): GroupRowLayout<ModuleInstance>[] => {
   if (item.type !== 'group') return []
-  const cols = groupColumns(item)
-  if (cols <= 1) return [{ type: 'full', members: item.modules }]
-  const bands: GroupBand[] = []
-  for (const m of item.modules) {
-    const wantType: GroupBand['type'] = m.fullWidth ? 'full' : 'cols'
-    const last = bands[bands.length - 1]
-    if (last && last.type === wantType) {
-      last.members.push(m)
-    } else if (wantType === 'full') {
-      bands.push({ type: 'full', members: [m] })
-    } else {
-      bands.push({ type: 'cols', columns: cols, members: [m] })
-    }
-  }
-  return bands
-}
-
-// 특정 컬럼 밴드의 특정 컬럼(0-based)에 속한 멤버들
-const bandColumnMembers = (band: GroupBand, colIdx: number): ModuleInstance[] => {
-  if (band.type !== 'cols') return []
-  return band.members.filter((m) => (m.columnIndex ?? 0) === colIdx)
+  return computeGroupLayout(item.group, item.modules)
 }
 
 // 컬럼 셀 인라인 스타일 (캔버스·이메일 공용 fluid-hybrid)
 const colCellStyle = (columns: number): string => columnCellStyle(columns)
 
-// 빈 컬럼을 '추가 대상'으로 지정 / 지정 여부
-const targetColumn = (groupId: string, colIdx: number) =>
-  moduleStore.setColumnTarget(groupId, colIdx)
-const isColTarget = (groupId: string, colIdx: number): boolean =>
+// 빈 컬럼을 '추가 대상'으로 지정 / 지정 여부 (행 기준)
+const targetColumn = (groupId: string, rowIdx: number, colIdx: number) =>
+  moduleStore.setColumnTarget(groupId, rowIdx, colIdx)
+const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =>
   moduleStore.columnTarget?.groupId === groupId &&
+  moduleStore.columnTarget?.rowIndex === rowIdx &&
   moduleStore.columnTarget?.columnIndex === colIdx
-// 이웃 컬럼 복제로 빈 컬럼 채우기
-const dupIntoColumn = (groupId: string, colIdx: number) =>
-  moduleStore.duplicateIntoColumn(groupId, colIdx)
-// 빈 컬럼 삭제 (오른쪽 컬럼들을 왼쪽으로 당김)
-const removeColumn = (groupId: string, colIdx: number) =>
-  moduleStore.removeColumn(groupId, colIdx)
+// 이웃 컬럼 복제로 빈 컬럼 채우기 (같은 행)
+const dupIntoColumn = (groupId: string, rowIdx: number, colIdx: number) =>
+  moduleStore.duplicateIntoColumn(groupId, rowIdx, colIdx)
+// 빈 컬럼 삭제 (그 행에서 오른쪽 컬럼들을 왼쪽으로 당김)
+const removeColumn = (groupId: string, rowIdx: number, colIdx: number) =>
+  moduleStore.removeColumn(groupId, rowIdx, colIdx)
 </script>
 
 <style scoped>

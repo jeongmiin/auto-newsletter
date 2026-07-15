@@ -173,17 +173,13 @@
           <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-1.5">
               <i class="pi pi-th-large text-gray-500 text-sm"></i>
-              <span class="text-sm font-medium text-gray-700">영역 컬럼 분할</span>
+              <span class="text-sm font-medium text-gray-700">이 행 컬럼 분할</span>
             </div>
             <span
-              v-if="moduleColumnInfo.fullWidth && moduleColumnInfo.columns > 1"
-              class="text-xs text-purple-600 bg-purple-100 px-2 py-0.5 rounded-full"
-            >전체폭 (모든 컬럼)</span>
-            <span
-              v-else-if="moduleColumnInfo.columns > 1"
+              v-if="moduleColumnInfo.columns > 1"
               class="text-xs text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full"
-            >{{ moduleColumnInfo.columns }}단 중 {{ moduleColumnInfo.columnIndex + 1 }}번</span>
-            <span v-else class="text-xs text-gray-400">1단 (분할 안 됨)</span>
+            >이 행 {{ moduleColumnInfo.columns }}단 중 {{ moduleColumnInfo.columnIndex + 1 }}번</span>
+            <span v-else class="text-xs text-gray-400">이 행 1단 (분할 안 됨)</span>
           </div>
 
           <div class="flex flex-wrap items-center gap-1.5">
@@ -195,7 +191,7 @@
               size="small"
               outlined
               :disabled="moduleColumnInfo.columns >= 4"
-              v-tooltip.top="'영역을 컬럼으로 분할 (+1단, 최대 4단 · 모바일은 세로로 쌓임)'"
+              v-tooltip.top="'이 모듈이 있는 행만 컬럼으로 분할 (+1단, 최대 4단 · 모바일은 세로로 쌓임)'"
             />
             <Button
               v-if="moduleColumnInfo.columns > 1"
@@ -205,9 +201,9 @@
               severity="secondary"
               size="small"
               outlined
-              v-tooltip.top="'컬럼 분할 되돌리기 (-1단)'"
+              v-tooltip.top="'이 행의 컬럼 분할 되돌리기 (-1단)'"
             />
-            <template v-if="moduleColumnInfo.columns > 1 && !moduleColumnInfo.fullWidth">
+            <template v-if="moduleColumnInfo.columns > 1">
               <span class="w-px h-5 bg-gray-200 mx-0.5"></span>
               <Button
                 @click="moveSelectedModuleColumn('left')"
@@ -230,7 +226,7 @@
             </template>
           </div>
           <p class="text-xs text-gray-400 mt-2">
-            데스크톱은 컬럼이 가로로 나란히, 모바일에서는 각 컬럼이 세로로 쌓입니다.
+            선택한 모듈이 있는 <b>행</b>만 컬럼으로 나뉩니다(행마다 독립). 데스크톱은 가로, 모바일은 세로로 쌓입니다.
           </p>
         </div>
 
@@ -1202,10 +1198,21 @@ const editableProps = computed(() => selectedModuleMetadata.value?.editableProps
 // 선택 모듈이 속한 그룹의 컬럼 수와, 그 안에서의 컬럼 위치(0-based)
 const moduleColumnInfo = computed(() => {
   const mod = selectedModule.value
-  if (!mod?.groupId) return { columns: 1, columnIndex: 0, fullWidth: false }
+  const fallback = { columns: 1, columnIndex: 0, rowIndex: 0, rowCount: 1 }
+  if (!mod?.groupId) return fallback
   const group = moduleStore.groups.find((g) => g.id === mod.groupId)
-  const columns = group?.columns && group.columns > 1 ? Math.min(group.columns, 4) : 1
-  return { columns, columnIndex: mod.columnIndex ?? 0, fullWidth: !!mod.fullWidth }
+  if (!group) return fallback
+  const members = moduleStore.modules
+    .filter((m) => m.groupId === group.id)
+    .sort((a, b) => a.order - b.order)
+  const res = resolveGroupRows(group, members)
+  const r = res.rowIndexById[mod.id] ?? 0
+  return {
+    columns: res.rowCols[r] ?? 1,
+    columnIndex: res.colIndexById[mod.id] ?? 0,
+    rowIndex: r,
+    rowCount: res.rowCols.length,
+  }
 })
 
 const splitSelectedModule = () => {

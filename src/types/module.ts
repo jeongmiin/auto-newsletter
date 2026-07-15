@@ -97,9 +97,15 @@ export interface ModuleInstance {
    */
   columnIndex?: number
   /**
-   * 컬럼 그룹 안에서 이 모듈이 '전체폭'으로 모든 컬럼을 가로지르는지 여부.
-   * true면 columns>1 그룹이라도 이 멤버는 컬럼에 배치되지 않고 단독 행(밴드)으로 전체폭 렌더된다.
-   * → 한 그룹에서 "전체폭 상단 + 2단 하단"처럼 1단/다단을 혼합할 수 있다.
+   * 컬럼 그룹 안에서 이 모듈이 속한 '행(row)'(0-based).
+   * 행별 독립 컬럼 모델에서 사용 — 그룹은 여러 행을 가지고 각 행이 자기 컬럼 수를 갖는다.
+   * columnIndex는 '그 행 안에서의' 컬럼 위치를 뜻한다. 미지정이면 0행으로 간주.
+   */
+  rowIndex?: number
+  /**
+   * [레거시] 컬럼 그룹 안에서 이 모듈이 '전체폭'으로 모든 컬럼을 가로지르는지 여부.
+   * 행별 독립 컬럼 모델(rowIndex + ModuleGroup.rows) 도입 이후에는 "컬럼 1개짜리 행"으로 대체된다.
+   * 예전 데이터 마이그레이션을 위해서만 읽는다.
    */
   fullWidth?: boolean
 }
@@ -148,9 +154,15 @@ export interface ModuleGroup {
   id: string
   styles: ModuleGroupStyles
   /**
-   * 컬럼 분할 수 (1~4). 미지정/1이면 기존처럼 세로 스택.
-   * 2 이상이면 멤버를 columnIndex별 컬럼으로 나눠 가로 배치하고,
-   * 모바일(좁은 폭)에서는 fluid-hybrid 기법으로 100% 세로 스택된다.
+   * 행별 독립 컬럼 수 배열. rows[r] = r번째 행의 컬럼 수(1~4).
+   * 각 행이 자기 컬럼 수를 가지므로 "1단 행 + 2단 행"처럼 행마다 다른 분할이 가능하다.
+   * 멤버는 rowIndex(행)·columnIndex(그 행 안 컬럼)로 배치된다.
+   * 미지정이면 레거시 columns/fullWidth로부터 유도된다.
+   */
+  rows?: number[]
+  /**
+   * [레거시] 그룹 전체의 단일 컬럼 분할 수 (1~4).
+   * 행별 독립 컬럼 모델(rows) 도입 이후에는 rows로 대체된다. 마이그레이션 용도로만 읽는다.
    */
   columns?: number
 }
@@ -195,8 +207,12 @@ export interface NewsletterTemplate {
     styles: Record<string, unknown>
     /** 소속 그룹 id (없으면 그룹에 속하지 않음) */
     groupId?: string
-    /** 컬럼 분할 그룹에서의 컬럼 인덱스(0-based) */
+    /** 행별 독립 컬럼 그룹에서의 행 인덱스(0-based) */
+    rowIndex?: number
+    /** 그 행 안에서의 컬럼 인덱스(0-based) */
     columnIndex?: number
+    /** [레거시] 전체폭 여부 — 로드 시 rows로 유도됨 */
+    fullWidth?: boolean
   }>
   /** 모듈 그룹 정의 (그룹 단위 스타일). 없으면 그룹 없음. */
   groups?: ModuleGroup[]

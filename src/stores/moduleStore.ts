@@ -55,6 +55,7 @@ import { applyFontFamily } from '@/utils/fontFamily'
 import { migrateModuleProperties } from '@/utils/moduleMigrations'
 import { sanitizeHtml } from '@/utils/sanitize'
 import { DEFAULT_GROUP_STYLES, wrapGroupHtmlForEmail, resolveGroupStyles, buildColumnLayoutHtml } from '@/utils/groupStyle'
+import { computeGroupLayout, resolveGroupRows, clampColumns } from '@/utils/groupLayout'
 
 export const useModuleStore = defineStore('module', () => {
   // ============= State =============
@@ -69,8 +70,8 @@ export const useModuleStore = defineStore('module', () => {
   // 현재 선택된 그룹 (속성 패널에서 그룹 스타일 편집 대상)
   const selectedGroupId = ref<string | null>(null)
   // [컬럼 분할] 빈 컬럼을 클릭해 '추가 대상'으로 지정한 상태.
-  // 지정돼 있으면 다음에 추가되는 모듈이 이 그룹의 해당 컬럼에 들어간다.
-  const columnTarget = ref<{ groupId: string; columnIndex: number } | null>(null)
+  // 지정돼 있으면 다음에 추가되는 모듈이 이 그룹의 해당 (행, 컬럼)에 들어간다.
+  const columnTarget = ref<{ groupId: string; rowIndex: number; columnIndex: number } | null>(null)
 
   // ============= Computed =============
   const selectedModule = computed(
@@ -181,12 +182,13 @@ export const useModuleStore = defineStore('module', () => {
       styles: moduleMetadata.defaultStyles || {},
     }
 
-    // [컬럼 분할] 빈 컬럼이 '추가 대상'으로 지정돼 있으면 그 컬럼에 넣는다.
+    // [컬럼 분할] 빈 컬럼이 '추가 대상'으로 지정돼 있으면 그 (행, 컬럼)에 넣는다.
     if (columnTarget.value) {
-      const { groupId, columnIndex } = columnTarget.value
+      const { groupId, rowIndex, columnIndex } = columnTarget.value
       const lastIdx = modules.value.map((m) => m.groupId).lastIndexOf(groupId)
       if (lastIdx !== -1) {
         newModule.groupId = groupId
+        newModule.rowIndex = rowIndex
         newModule.columnIndex = columnIndex
         modules.value.splice(lastIdx + 1, 0, newModule)
         reorderModules()
@@ -212,6 +214,7 @@ export const useModuleStore = defineStore('module', () => {
       const sel = modules.value[selectedIndex]
       if (sel.groupId) {
         newModule.groupId = sel.groupId
+        newModule.rowIndex = sel.rowIndex ?? 0
         newModule.columnIndex = sel.columnIndex ?? 0
       }
     }
@@ -347,6 +350,7 @@ export const useModuleStore = defineStore('module', () => {
           order: 0,
           properties: { ...getDefaultProperties(meta), ...spec.overrides },
           styles: meta.defaultStyles || {},
+          rowIndex: 0,
           columnIndex: col,
         })
       }
@@ -355,11 +359,8 @@ export const useModuleStore = defineStore('module', () => {
 
     modules.value.push(...created)
     reorderModules()
+    // createGroup이 멤버 rowIndex/columnIndex로부터 rows(=[2])를 유도한다.
     const groupId = createGroup(created.map((m) => m.id))
-    if (groupId) {
-      const group = groups.value.find((g) => g.id === groupId)
-      if (group) group.columns = 2 // 2단 컬럼 레이아웃
-    }
     selectedModuleId.value = created[0].id
     selectedGroupId.value = null
     triggerRef(groups)
@@ -431,6 +432,7 @@ export const useModuleStore = defineStore('module', () => {
           order: 0,
           properties: { ...getDefaultProperties(meta), ...spec.overrides },
           styles: meta.defaultStyles || {},
+          rowIndex: 0,
           columnIndex: col,
         })
       }
@@ -438,11 +440,8 @@ export const useModuleStore = defineStore('module', () => {
 
     modules.value.push(...created)
     reorderModules()
+    // createGroup이 멤버 rowIndex/columnIndex로부터 rows(=[2])를 유도한다.
     const groupId = createGroup(created.map((m) => m.id))
-    if (groupId) {
-      const group = groups.value.find((g) => g.id === groupId)
-      if (group) group.columns = 2
-    }
     selectedModuleId.value = created[0].id
     selectedGroupId.value = null
     triggerRef(groups)
@@ -459,18 +458,18 @@ export const useModuleStore = defineStore('module', () => {
    * @returns 생성된 그룹 id (실패 시 null)
    */
   const addComposedModule05 = (): string | null => {
-    // fullWidth: true = 전체폭(상단 섹션), false = 2단 배치(하단) / col: 하단에서의 컬럼 인덱스
+    // row: 행 인덱스(0=상단 전체폭 섹션, 1=하단 2단) / col: 그 행 안 컬럼 인덱스
     const specs: Array<{
       id: string
-      fullWidth: boolean
+      row: number
       col: number
       overrides: Record<string, unknown>
     }> = [
-      // ── 상단 섹션 (전체폭) ──
+      // ── 0행: 상단 섹션 (1컬럼 전체폭) ──
       {
         // 상단 섹션 타이틀 (회색 배경 박스, 좌측 정렬, 굵게)
         id: 'ModuleDescText',
-        fullWidth: true,
+        row: 0,
         col: 0,
         overrides: {
           descriptionText:
@@ -487,7 +486,7 @@ export const useModuleStore = defineStore('module', () => {
       {
         // 상단 섹션 텍스트
         id: 'ModuleDescText',
-        fullWidth: true,
+        row: 0,
         col: 0,
         overrides: {
           descriptionText:
@@ -500,10 +499,10 @@ export const useModuleStore = defineStore('module', () => {
           paddingLeft: '0px',
         },
       },
-      // ── 하단 2단 (좌 이미지 · 우 타이틀+텍스트+버튼) ──
+      // ── 1행: 하단 2단 (좌 이미지 · 우 타이틀+텍스트+버튼) ──
       {
         id: 'ModuleImg',
-        fullWidth: false,
+        row: 1,
         col: 0,
         overrides: {
           imageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-2column.png',
@@ -516,7 +515,7 @@ export const useModuleStore = defineStore('module', () => {
       {
         // 오른쪽 타이틀 (굵게)
         id: 'ModuleDescText',
-        fullWidth: false,
+        row: 1,
         col: 1,
         overrides: {
           descriptionText:
@@ -532,7 +531,7 @@ export const useModuleStore = defineStore('module', () => {
       {
         // 오른쪽 텍스트
         id: 'ModuleDescText',
-        fullWidth: false,
+        row: 1,
         col: 1,
         overrides: {
           descriptionText:
@@ -547,7 +546,7 @@ export const useModuleStore = defineStore('module', () => {
       },
       {
         id: 'ModuleSmallButton',
-        fullWidth: false,
+        row: 1,
         col: 1,
         overrides: {
           align: 'left',
@@ -572,8 +571,8 @@ export const useModuleStore = defineStore('module', () => {
         order: 0,
         properties: { ...getDefaultProperties(meta), ...spec.overrides },
         styles: meta.defaultStyles || {},
+        rowIndex: spec.row,
         columnIndex: spec.col,
-        ...(spec.fullWidth ? { fullWidth: true } : {}),
       })
     }
     if (created.length === 0) return null
@@ -581,12 +580,9 @@ export const useModuleStore = defineStore('module', () => {
     modules.value.push(...created)
     reorderModules()
 
-    // 단일 그룹으로 조립 (columns=2). 상단 섹션 멤버만 fullWidth라 전체폭 밴드로 렌더된다.
+    // 단일 그룹으로 조립. createGroup이 멤버 (row,col)로부터 rows=[1,2]를 유도한다.
+    // → 0행: 전체폭(1컬럼) 상단 섹션 / 1행: 2컬럼 하단
     const groupId = createGroup(created.map((m) => m.id))
-    if (groupId) {
-      const group = groups.value.find((g) => g.id === groupId)
-      if (group) group.columns = 2
-    }
 
     selectedModuleId.value = created[0].id
     selectedGroupId.value = null
@@ -597,11 +593,595 @@ export const useModuleStore = defineStore('module', () => {
   }
 
   /**
-   * [컬럼 분할] 모듈이 차지한 영역을 컬럼으로 나눈다.
-   * - 그룹에 없으면: 그 모듈만으로 그룹을 만들고 2컬럼으로 시작(모듈=0번, 1번은 빈 컬럼).
-   * - 이미 컬럼 그룹이면: 컬럼 수 +1 (최대 4).
-   * 렌더/내보내기 시 fluid-hybrid div로 감싸지고, 모바일에선 100% 세로 스택된다.
-   * @returns 적용된 컬럼 수 (실패 시 null)
+   * [조립형 공통] specs(원소 모듈 + row/col + 오버라이드)로부터 하나의 조립 그룹을 만든다.
+   * createGroup이 멤버의 rowIndex/columnIndex로부터 group.rows(행별 컬럼 수)를 유도한다.
+   */
+  const buildComposedGroup = (
+    specs: Array<{ id: string; row: number; col: number; overrides: Record<string, unknown> }>,
+    groupStyles?: Partial<ModuleGroupStyles>,
+  ): string | null => {
+    const created: ModuleInstance[] = []
+    for (const spec of specs) {
+      const meta = availableModules.value.find((m) => m.id === spec.id)
+      if (!meta) {
+        console.warn(`[buildComposedGroup] 원소 모듈을 찾을 수 없음: ${spec.id}`)
+        continue
+      }
+      created.push({
+        id: generateUniqueId('module'),
+        moduleId: meta.id,
+        order: 0,
+        properties: { ...getDefaultProperties(meta), ...spec.overrides },
+        styles: meta.defaultStyles || {},
+        rowIndex: spec.row,
+        columnIndex: spec.col,
+      })
+    }
+    if (created.length === 0) return null
+    modules.value.push(...created)
+    reorderModules()
+    const groupId = createGroup(created.map((m) => m.id))
+    // 그룹 스타일(배경색 등) 오버라이드 — 예: 푸터 전체 배경색
+    if (groupId && groupStyles) {
+      const g = groups.value.find((x) => x.id === groupId)
+      if (g) g.styles = { ...g.styles, ...groupStyles }
+    }
+    selectedModuleId.value = created[0].id
+    selectedGroupId.value = null
+    triggerRef(groups)
+    triggerRef(modules)
+    isDirty.value = true
+    return groupId
+  }
+
+  // 조립형 헬퍼: 굵은 타이틀 DescText 내용 HTML
+  const boldTitleHtml = (text: string, fontSize: string, align = 'left'): string =>
+    `<p style="margin:0; padding:0; line-height:1.7; text-align:${align};"><strong style="font-size:${fontSize};">${text}</strong></p>`
+  const textHtml = (text: string, align = 'left'): string =>
+    `<p style="margin:0; padding:0; line-height:1.7; text-align:${align};">${text}</p>`
+
+  /**
+   * [POC/실험] 모듈 05-1번 조립형 — 2단(좌 이미지 · 우 강조 타이틀 박스 + 텍스트 + 작은 버튼)
+   */
+  const addComposedModule051 = (): string | null =>
+    buildComposedGroup([
+      {
+        id: 'ModuleImg',
+        row: 0,
+        col: 0,
+        overrides: { paddingTop: '0px', paddingRight: '0px', paddingBottom: '8px', paddingLeft: '0px' },
+      },
+      {
+        // 강조 타이틀 (회색 배경 박스)
+        id: 'ModuleDescText',
+        row: 0,
+        col: 1,
+        overrides: {
+          descriptionText: boldTitleHtml('강조 타이틀', '16px'),
+          bgColor: '#e5e5e5',
+          textColor: '#111111',
+          fontSize: '16px',
+          paddingTop: '6px',
+          paddingRight: '10px',
+          paddingBottom: '6px',
+          paddingLeft: '10px',
+        },
+      },
+      {
+        id: 'ModuleDescText',
+        row: 0,
+        col: 1,
+        overrides: {
+          descriptionText: textHtml('콘텐츠 텍스트를 입력하세요.'),
+          textColor: '#333333',
+          fontSize: '14px',
+          paddingTop: '10px',
+          paddingRight: '0px',
+          paddingBottom: '10px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        id: 'ModuleSmallButton',
+        row: 0,
+        col: 1,
+        overrides: { align: 'left', paddingTop: '0px', paddingRight: '0px', paddingBottom: '0px', paddingLeft: '0px' },
+      },
+    ])
+
+  /**
+   * [POC/실험] 모듈 06번 조립형 — 2단 대칭. 각 컬럼 = 타이틀 박스(가운데) → 이미지 → 텍스트 → 작은 버튼
+   */
+  const addComposedModule06 = (): string | null => {
+    const column = (col: number): Array<{ id: string; row: number; col: number; overrides: Record<string, unknown> }> => [
+      {
+        id: 'ModuleDescText',
+        row: 0,
+        col,
+        overrides: {
+          descriptionText: boldTitleHtml(col === 0 ? '왼쪽 섹션 타이틀' : '오른쪽 섹션 타이틀', '16px', 'center'),
+          bgColor: '#e5e5e5',
+          textColor: '#111111',
+          fontSize: '16px',
+          paddingTop: '6px',
+          paddingRight: '10px',
+          paddingBottom: '6px',
+          paddingLeft: '10px',
+        },
+      },
+      {
+        id: 'ModuleImg',
+        row: 0,
+        col,
+        overrides: { paddingTop: '10px', paddingRight: '0px', paddingBottom: '8px', paddingLeft: '0px' },
+      },
+      {
+        id: 'ModuleDescText',
+        row: 0,
+        col,
+        overrides: {
+          descriptionText: textHtml(col === 0 ? '왼쪽 콘텐츠 텍스트입니다.' : '오른쪽 콘텐츠 텍스트입니다.'),
+          textColor: '#333333',
+          fontSize: '14px',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '10px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        id: 'ModuleSmallButton',
+        row: 0,
+        col,
+        overrides: { align: 'left', paddingTop: '0px', paddingRight: '0px', paddingBottom: '0px', paddingLeft: '0px' },
+      },
+    ]
+    return buildComposedGroup([...column(0), ...column(1)])
+  }
+
+  /**
+   * [POC/실험] 모듈 07번 조립형 — 2단(좌 이미지 · 우 타이틀 + 텍스트 + 작은 버튼)
+   * @param reverse true면 이미지를 오른쪽에 배치(07 반대 방향)
+   */
+  const addComposedModule07 = (reverse = false): string | null => {
+    const imgCol = reverse ? 1 : 0
+    const textCol = reverse ? 0 : 1
+    return buildComposedGroup([
+      {
+        id: 'ModuleImg',
+        row: 0,
+        col: imgCol,
+        overrides: { paddingTop: '0px', paddingRight: '0px', paddingBottom: '8px', paddingLeft: '0px' },
+      },
+      {
+        id: 'ModuleDescText',
+        row: 0,
+        col: textCol,
+        overrides: {
+          descriptionText: boldTitleHtml('콘텐츠 타이틀', '18px'),
+          textColor: '#111111',
+          fontSize: '18px',
+          paddingTop: '4px',
+          paddingRight: '0px',
+          paddingBottom: '8px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        id: 'ModuleDescText',
+        row: 0,
+        col: textCol,
+        overrides: {
+          descriptionText: textHtml('콘텐츠 텍스트를 입력하세요.'),
+          textColor: '#333333',
+          fontSize: '14px',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '10px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        id: 'ModuleSmallButton',
+        row: 0,
+        col: textCol,
+        overrides: { align: 'left', paddingTop: '0px', paddingRight: '0px', paddingBottom: '0px', paddingLeft: '0px' },
+      },
+    ])
+  }
+
+  /**
+   * [POC/실험] 뉴스 헤드라인 헤더 조립형 —
+   * 로고(가운데·40%) → 굵은 라인 → (제목 | 👀 웹으로 보기) 2컬럼 → 얇은 라인
+   * '웹으로 보기'는 ModuleDescText의 textAlign='right'로 오른쪽 정렬.
+   */
+  const addComposedNewsHeader = (): string | null =>
+    buildComposedGroup([
+      {
+        // 로고 (가운데 · 최대 너비 40%)
+        id: 'ModuleImg',
+        row: 0,
+        col: 0,
+        overrides: {
+          imageUrl:
+            'https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/newsletter/images/logo-gray.png',
+          imageAlt: '로고',
+          imageAlign: 'center',
+          imageMaxWidth: '40%',
+          paddingTop: '30px',
+          paddingRight: '0px',
+          paddingBottom: '20px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        // 로고 하단 굵은 라인
+        id: 'ModuleDivider',
+        row: 1,
+        col: 0,
+        overrides: { borderColor: '#000000', borderWidth: '5px', borderStyle: 'solid', paddingTop: '0px', paddingBottom: '0px' },
+      },
+      {
+        // 제목 (왼쪽)
+        id: 'ModuleDescText',
+        row: 2,
+        col: 0,
+        overrides: {
+          descriptionText: boldTitleHtml('NEWSLETTER VOL.1', '16px'),
+          textColor: '#333333',
+          fontSize: '16px',
+          textAlign: 'left',
+          paddingTop: '8px',
+          paddingRight: '0px',
+          paddingBottom: '8px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        // 웹으로 보기 (오른쪽 정렬 — textAlign 속성 사용)
+        id: 'ModuleDescText',
+        row: 2,
+        col: 1,
+        overrides: {
+          descriptionText:
+            '<p style="margin:0; padding:0; line-height:1.7;"><a href="#" target="_blank" style="color:#333333; text-decoration:none; font-size:16px;">👀 웹으로 보기</a></p>',
+          textColor: '#333333',
+          fontSize: '16px',
+          textAlign: 'right',
+          paddingTop: '8px',
+          paddingRight: '0px',
+          paddingBottom: '8px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        // 제목 행 하단 얇은 라인
+        id: 'ModuleDivider',
+        row: 3,
+        col: 0,
+        overrides: { borderColor: '#dddddd', borderWidth: '1px', borderStyle: 'solid', paddingTop: '0px', paddingBottom: '0px' },
+      },
+    ])
+
+  /**
+   * [POC/실험] 기본 헤더 조립형 — 상단 라인 → 로고 → 하단 라인 → 헤더 타이틀 (전부 1컬럼 세로 스택)
+   */
+  const addComposedBasicHeader = (): string | null =>
+    buildComposedGroup([
+      {
+        // 상단 테두리 라인
+        id: 'ModuleDivider',
+        row: 0,
+        col: 0,
+        overrides: { borderColor: '#000000', borderWidth: '3px', borderStyle: 'solid', paddingTop: '0px', paddingBottom: '0px' },
+      },
+      {
+        // 로고 (가운데 정렬 · 최대 너비 40%)
+        id: 'ModuleImg',
+        row: 1,
+        col: 0,
+        overrides: {
+          imageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/logo-gray.png',
+          imageAlt: '로고',
+          imageAlign: 'center',
+          imageMaxWidth: '40%',
+          paddingTop: '30px',
+          paddingRight: '0px',
+          paddingBottom: '20px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        // 로고 하단 라인
+        id: 'ModuleDivider',
+        row: 2,
+        col: 0,
+        overrides: { borderColor: '#dddddd', borderWidth: '1px', borderStyle: 'solid', paddingTop: '0px', paddingBottom: '0px' },
+      },
+      {
+        // 헤더 타이틀
+        id: 'ModuleDescText',
+        row: 3,
+        col: 0,
+        overrides: {
+          descriptionText:
+            '<p style="margin:0; padding:0; line-height:1.7; text-align:center;">NEWSLETTER <strong>VOL.1</strong></p>',
+          fontSize: '20px',
+          textColor: '#111111',
+          paddingTop: '15px',
+          paddingRight: '0px',
+          paddingBottom: '15px',
+          paddingLeft: '0px',
+        },
+      },
+    ])
+
+  /**
+   * [POC/실험] 이미지형 헤더 조립형 — 비주얼 이미지 → 볼/날짜/홈 → 구분선 → 타이틀+본문 → 버튼 (전부 1컬럼)
+   */
+  const addComposedImageHeader = (): string | null =>
+    buildComposedGroup([
+      {
+        id: 'ModuleImg',
+        row: 0,
+        col: 0,
+        overrides: {
+          imageUrl:
+            'https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/newsletter/images/img-visual.png',
+          imageAlt: '전시소개글',
+          paddingTop: '20px',
+          paddingRight: '0px',
+          paddingBottom: '20px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        // 볼 · 날짜 · 홈 링크 (가운데, 줄마다 다른 크기)
+        id: 'ModuleDescText',
+        row: 1,
+        col: 0,
+        overrides: {
+          descriptionText:
+            '<p style="margin:0; padding:0; line-height:1.7; text-align:center; font-size:15px;">NEWSLETTER VOL.1</p>' +
+            '<p style="margin:0; padding:0; line-height:1.7; text-align:center; font-size:20px;"><strong>2023. 8. 3 (목) - 8. 6 (일) COEX</strong></p>' +
+            '<p style="margin:0; padding:0; line-height:1.7; text-align:center; font-size:14px;"><a href="#" style="color:#333333; text-decoration:none;">🏠 홈페이지 바로가기</a></p>',
+          textColor: '#333333',
+          fontSize: '15px',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '0px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        // 점선 구분선
+        id: 'ModuleDivider',
+        row: 2,
+        col: 0,
+        overrides: { borderColor: '#999999', borderWidth: '1px', borderStyle: 'dotted', paddingTop: '20px', paddingBottom: '20px' },
+      },
+      {
+        // 타이틀 (볼드) — 볼드 부분을 별도 설명 텍스트로 분리
+        id: 'ModuleDescText',
+        row: 3,
+        col: 0,
+        overrides: {
+          descriptionText:
+            '<p style="margin:0; padding:0; line-height:1.7; font-size:20px;"><strong>국내 유일 기계설비 종합 전시회<br><span style="color:#eb2a25;">『대한민국 기계설비전시회(HVAC KOREA)』</span>가 제 7회를 맞이하였습니다.</strong></p>',
+          textColor: '#111111',
+          fontSize: '20px',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '0px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        // 본문 (노멀) — 타이틀 아래 별도 설명 텍스트
+        id: 'ModuleDescText',
+        row: 3,
+        col: 0,
+        overrides: {
+          descriptionText:
+            '<p style="margin:0; padding:0; line-height:1.7; font-size:14px;">본 전시회는 1군건설사, 설계, 시공, 학계 등 각 부문별 바이어군을 대표하는 유관 협회들과 함께 준비하는 전시회입니다. 새로운 비즈니스 기회를 찾으세요!</p>',
+          textColor: '#333333',
+          fontSize: '14px',
+          paddingTop: '12px',
+          paddingRight: '0px',
+          paddingBottom: '0px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        // 큰 버튼 (사전등록)
+        id: 'ModuleOneButton',
+        row: 4,
+        col: 0,
+        overrides: {
+          buttonText: '사전등록 →',
+          buttonBgColor: '#111111',
+          buttonTextColor: '#ffffff',
+          buttonBorderRadius: '5px',
+          paddingTop: '20px',
+          paddingBottom: '20px',
+        },
+      },
+    ])
+
+  /**
+   * [POC/실험] 복수 이미지 조립형 — 좌·우 이미지 2컬럼 한 행 (모바일 세로 스택)
+   */
+  const addComposedMultiImage = (): string | null =>
+    buildComposedGroup([
+      {
+        id: 'ModuleImg',
+        row: 0,
+        col: 0,
+        overrides: {
+          imageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-2column.png',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '0px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        id: 'ModuleImg',
+        row: 0,
+        col: 1,
+        overrides: {
+          imageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-2column.png',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '0px',
+          paddingLeft: '0px',
+        },
+      },
+    ])
+
+  /**
+   * [POC/실험] 하단 푸터 조립형 —
+   * 회사정보+연락처 → 구분선 → SNS 아이콘 → 수신거부 안내 (전부 1컬럼).
+   * 두 난점을 해결: ①전체 배경색은 '그룹 배경색'으로, ②원형 SNS 아이콘 행은 설명 텍스트의 인라인 HTML로 재현.
+   */
+  const addComposedFooter = (): string | null => {
+    return buildComposedGroup(
+      [
+        {
+          // 회사 정보 + 연락처 (가운데)
+          id: 'ModuleDescText',
+          row: 0,
+          col: 0,
+          overrides: {
+            descriptionText:
+              '<p style="margin:0; padding:0; line-height:1.7;"><strong>코리아빌드 사무국</strong></p>' +
+              '<p style="margin:0; padding:0; line-height:1.7;">(주)메쎄이상</p>' +
+              '<p style="margin:0; padding:0; line-height:1.7; font-size:13px;">서울시 마포구 월드컵북로 58길 9 ES타워 (03922)</p>' +
+              '<p style="margin:8px 0 0; padding:0; line-height:1.7; font-size:13px;">' +
+              '<span style="padding:0 10px;"><strong>H</strong> www.koreabuild.co.kr</span>' +
+              '<span style="padding:0 10px;"><strong>T</strong> 02-6121-6362</span>' +
+              '<span style="padding:0 10px;"><strong>E</strong> hvackorea@esgroup.net</span></p>',
+            textColor: '#333333',
+            fontSize: '16px',
+            textAlign: 'center',
+            paddingTop: '30px',
+            paddingRight: '0px',
+            paddingBottom: '10px',
+            paddingLeft: '0px',
+          },
+        },
+        {
+          // 구분선
+          id: 'ModuleDivider',
+          row: 1,
+          col: 0,
+          overrides: { borderColor: '#aaaaaa', borderWidth: '1px', borderStyle: 'solid', paddingTop: '0px', paddingBottom: '15px' },
+        },
+        {
+          // SNS 아이콘 행 (독립 모듈 — 아이콘별 링크·노출 개별 설정 가능)
+          id: 'ModuleSnsIcons',
+          row: 2,
+          col: 0,
+          overrides: {
+            snsAlign: 'center',
+            paddingTop: '0px',
+            paddingRight: '5px',
+            paddingBottom: '10px',
+            paddingLeft: '5px',
+          },
+        },
+        {
+          // 수신거부 안내 (국문, 작게 · 가운데)
+          id: 'ModuleDescText',
+          row: 3,
+          col: 0,
+          overrides: {
+            descriptionText:
+              '<p style="margin:0; padding:0; line-height:1.7;">본 메일은 회원님의 수신동의 여부를 확인한 결과 회원님께서 수신동의를 하셨기에 발송되었습니다.</p>' +
+              '<p style="margin:0; padding:0; line-height:1.7;">메일 수신을 원치 않으시면 <a href="#" target="_blank" style="text-decoration:none; color:#333333; font-weight:700;">[수신거부]</a> 를 클릭하십시오.</p>' +
+              '<p style="margin:0; padding:0; line-height:1.7;">본 메일은 발신전용 메일이므로 문의사항은 <strong>hvackorea@esgroup.net</strong>으로 문의 바랍니다</p>',
+            textColor: '#333333',
+            fontSize: '12px',
+            textAlign: 'center',
+            paddingTop: '10px',
+            paddingRight: '25px',
+            paddingBottom: '40px',
+            paddingLeft: '25px',
+          },
+        },
+      ],
+      { backgroundColor: '#e9e9e9' }, // 푸터 전체 배경색
+    )
+  }
+
+  /**
+   * [POC/실험] 복수 버튼 조립형 — 단일 버튼(ModuleOneButton) 2개를 2단 행으로.
+   * 데스크톱 좌우 2단, 모바일 세로 스택. 각 버튼은 독립 요소라 개별 편집·삭제 가능.
+   */
+  const addComposedTwoButton = (): string | null =>
+    buildComposedGroup([
+      {
+        id: 'ModuleOneButton',
+        row: 0,
+        col: 0,
+        overrides: {
+          buttonText: '버튼 1 →',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '0px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        id: 'ModuleOneButton',
+        row: 0,
+        col: 1,
+        overrides: {
+          buttonText: '버튼 2 →',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '0px',
+          paddingLeft: '0px',
+        },
+      },
+    ])
+
+  /** 그룹 멤버를 order 순으로 반환 */
+  const orderedGroupMembers = (groupId: string): ModuleInstance[] =>
+    modules.value.filter((m) => m.groupId === groupId).sort((a, b) => a.order - b.order)
+
+  /** 멤버들의 rowIndex/columnIndex로부터 행별 컬럼 수 배열을 유도 */
+  const deriveRowsFromMembers = (members: ModuleInstance[]): number[] => {
+    const rowCount = Math.max(1, ...members.map((m) => (m.rowIndex ?? 0) + 1))
+    const rows = Array.from({ length: rowCount }, () => 1)
+    for (const m of members) {
+      const r = Math.min(Math.max(m.rowIndex ?? 0, 0), rowCount - 1)
+      rows[r] = Math.max(rows[r], clampColumns((m.columnIndex ?? 0) + 1))
+    }
+    return rows
+  }
+
+  /**
+   * [행별 컬럼] 레거시(group.columns + fullWidth) 그룹을 행별 독립 컬럼 모델로 승격한다.
+   * group.rows가 이미 있으면 아무것도 하지 않는다. (읽기 경로는 항상 신모델을 가정)
+   */
+  const ensureGroupRows = (group: ModuleGroup): void => {
+    if (group.rows && group.rows.length > 0) return
+    const members = orderedGroupMembers(group.id)
+    const res = resolveGroupRows(group, members)
+    members.forEach((m) => {
+      m.rowIndex = res.rowIndexById[m.id] ?? 0
+      m.columnIndex = res.colIndexById[m.id] ?? 0
+      delete m.fullWidth
+    })
+    group.rows = res.rowCols.length > 0 ? res.rowCols : [1]
+    delete group.columns
+  }
+
+  /**
+   * [행별 컬럼] 선택 모듈이 속한 '행'에 컬럼을 하나 추가한다(그 행만 +1단, 최대 4).
+   * - 그룹에 없으면: 그 모듈만으로 1행짜리 그룹을 만든 뒤 그 행을 2단으로.
+   * @returns 그 행의 적용된 컬럼 수 (실패 시 null)
    */
   const splitModuleColumns = (moduleId: string): number | null => {
     const mod = modules.value.find((m) => m.id === moduleId)
@@ -609,20 +1189,21 @@ export const useModuleStore = defineStore('module', () => {
 
     let groupId = mod.groupId
     if (!groupId) {
-      const gid = createGroup([moduleId]) // 단독 모듈 → 1개짜리 그룹
+      const gid = createGroup([moduleId]) // 단독 모듈 → 1행(1컬럼) 그룹
       if (!gid) return null
       groupId = gid
     }
     const group = groups.value.find((g) => g.id === groupId)
     if (!group) return null
-
-    const current = group.columns && group.columns > 1 ? group.columns : 1
-    const next = Math.min(current + 1, 4)
-    group.columns = next
-
-    // 컬럼 인덱스가 없는 멤버는 0번 컬럼으로 확정
+    ensureGroupRows(group)
+    const rows = group.rows as number[]
+    const r = Math.min(Math.max(mod.rowIndex ?? 0, 0), rows.length - 1)
+    const next = clampColumns(rows[r] + 1)
+    if (next === rows[r]) return rows[r]
+    rows[r] = next
+    // 그 행 멤버 중 컬럼 인덱스 미지정은 0으로 확정
     modules.value.forEach((m) => {
-      if (m.groupId === groupId && m.columnIndex == null) m.columnIndex = 0
+      if (m.groupId === groupId && (m.rowIndex ?? 0) === r && m.columnIndex == null) m.columnIndex = 0
     })
     triggerRef(groups)
     triggerRef(modules)
@@ -632,50 +1213,46 @@ export const useModuleStore = defineStore('module', () => {
   }
 
   /**
-   * [컬럼 분할] 분할을 한 단계 되돌린다 (컬럼 수 -1).
-   * - 사라지는 오른쪽 컬럼의 모듈들은 마지막 남는 컬럼으로 합쳐진다.
-   * - 컬럼이 1이 되면: 멤버가 1개뿐이면 그룹까지 해제(완전 원복), 여러 개면 세로 스택 그룹으로 유지.
-   * @returns 되돌린 뒤 컬럼 수 (실패 시 null)
+   * [행별 컬럼] 선택 모듈이 속한 '행'의 컬럼을 하나 줄인다(-1단).
+   * - 사라지는 마지막 컬럼의 모듈들은 그 행의 마지막 남는 컬럼으로 합쳐진다.
+   * - 그룹이 1행·1컬럼·단일 멤버가 되면 그룹까지 해제(완전 원복).
+   * @returns 그 행의 되돌린 뒤 컬럼 수 (실패 시 null)
    */
   const unsplitModuleColumns = (moduleId: string): number | null => {
     const mod = modules.value.find((m) => m.id === moduleId)
     if (!mod || !mod.groupId) return null
     const group = groups.value.find((g) => g.id === mod.groupId)
     if (!group) return null
-    const cur = group.columns && group.columns > 1 ? Math.min(group.columns, 4) : 1
+    ensureGroupRows(group)
+    const rows = group.rows as number[]
+    const r = Math.min(Math.max(mod.rowIndex ?? 0, 0), rows.length - 1)
+    const cur = rows[r]
     if (cur <= 1) return cur
     const next = cur - 1
 
-    // 사라지는 컬럼(next 이상)의 모듈을 마지막 남는 컬럼(next-1)으로 클램프
+    // 이 행에서 사라지는 컬럼(next 이상)의 모듈을 마지막 남는 컬럼(next-1)으로 클램프
     modules.value.forEach((m) => {
-      if (m.groupId === group.id && (m.columnIndex ?? 0) > next - 1) {
+      if (m.groupId === group.id && (m.rowIndex ?? 0) === r && (m.columnIndex ?? 0) > next - 1) {
         m.columnIndex = next - 1
       }
     })
+    rows[r] = next
 
-    if (next === 1) {
-      const members = modules.value.filter((m) => m.groupId === group.id)
-      if (members.length <= 1) {
-        // 단일 멤버 → 그룹 해제로 완전 원복 (ungroup 인라인)
-        members.forEach((m) => {
-          delete m.groupId
-          delete m.columnIndex
-        })
-        const gi = groups.value.findIndex((g) => g.id === group.id)
-        if (gi !== -1) groups.value.splice(gi, 1)
-        if (selectedGroupId.value === group.id) selectedGroupId.value = null
-        triggerRef(groups)
-        triggerRef(modules)
-        isDirty.value = true
-        return 1
-      }
-      // 여러 멤버 → 세로 스택 그룹으로 유지 (컬럼 인덱스 정리)
+    // 그룹이 1행·1컬럼·단일 멤버로 축소되면 그룹 해제(완전 원복)
+    const members = orderedGroupMembers(group.id)
+    if (rows.length === 1 && rows[0] === 1 && members.length <= 1) {
       members.forEach((m) => {
-        m.columnIndex = 0
+        delete m.groupId
+        delete m.rowIndex
+        delete m.columnIndex
       })
-      group.columns = 1
-    } else {
-      group.columns = next
+      const gi = groups.value.findIndex((g) => g.id === group.id)
+      if (gi !== -1) groups.value.splice(gi, 1)
+      if (selectedGroupId.value === group.id) selectedGroupId.value = null
+      triggerRef(groups)
+      triggerRef(modules)
+      isDirty.value = true
+      return 1
     }
     triggerRef(groups)
     triggerRef(modules)
@@ -684,49 +1261,30 @@ export const useModuleStore = defineStore('module', () => {
   }
 
   /**
-   * [컬럼 분할] 특정 컬럼(주로 빈 컬럼)을 삭제한다.
+   * [행별 컬럼] 특정 행의 특정 컬럼(주로 빈 컬럼)을 삭제한다.
    * - 삭제 컬럼보다 오른쪽 컬럼들은 왼쪽으로 한 칸 당겨진다.
    * - 삭제 컬럼에 모듈이 남아 있으면 왼쪽 컬럼으로 흡수된다.
-   * - 컬럼이 1이 되면: 멤버 1개면 그룹 해제(완전 원복), 여러 개면 세로 스택 그룹으로 유지.
-   * @returns 삭제 후 컬럼 수 (실패 시 null)
+   * @returns 삭제 후 그 행의 컬럼 수 (실패 시 null)
    */
-  const removeColumn = (groupId: string, columnIndex: number): number | null => {
+  const removeColumn = (groupId: string, rowIndex: number, columnIndex: number): number | null => {
     const group = groups.value.find((g) => g.id === groupId)
     if (!group) return null
-    const cols = group.columns && group.columns > 1 ? Math.min(group.columns, 4) : 1
+    ensureGroupRows(group)
+    const rows = group.rows as number[]
+    if (rowIndex < 0 || rowIndex >= rows.length) return null
+    const cols = rows[rowIndex]
     if (cols <= 1) return cols
     const next = cols - 1
 
-    // 삭제 컬럼 오른쪽은 왼쪽으로 당기고, 삭제 컬럼의 잔여 모듈은 왼쪽 컬럼으로 흡수
+    // 이 행에서 삭제 컬럼 오른쪽은 왼쪽으로 당기고, 삭제 컬럼의 잔여 모듈은 왼쪽 컬럼으로 흡수
     modules.value.forEach((m) => {
-      if (m.groupId !== groupId) return
+      if (m.groupId !== groupId || (m.rowIndex ?? 0) !== rowIndex) return
       const c = m.columnIndex ?? 0
       if (c > columnIndex) m.columnIndex = c - 1
       else if (c === columnIndex) m.columnIndex = Math.max(columnIndex - 1, 0)
     })
+    rows[rowIndex] = next
 
-    if (next === 1) {
-      const members = modules.value.filter((m) => m.groupId === groupId)
-      if (members.length <= 1) {
-        members.forEach((m) => {
-          delete m.groupId
-          delete m.columnIndex
-        })
-        const gi = groups.value.findIndex((g) => g.id === groupId)
-        if (gi !== -1) groups.value.splice(gi, 1)
-        if (selectedGroupId.value === groupId) selectedGroupId.value = null
-        triggerRef(groups)
-        triggerRef(modules)
-        isDirty.value = true
-        return 1
-      }
-      members.forEach((m) => {
-        m.columnIndex = 0
-      })
-      group.columns = 1
-    } else {
-      group.columns = next
-    }
     // 삭제한 컬럼이 추가 대상이었다면 해제
     if (columnTarget.value?.groupId === groupId) columnTarget.value = null
     triggerRef(groups)
@@ -735,32 +1293,35 @@ export const useModuleStore = defineStore('module', () => {
     return next
   }
 
-  /** [컬럼 분할] 빈 컬럼을 '추가 대상'으로 지정 (다음에 추가되는 모듈이 이 컬럼으로) */
-  const setColumnTarget = (groupId: string, columnIndex: number): void => {
-    columnTarget.value = { groupId, columnIndex }
+  /** [행별 컬럼] 빈 컬럼을 '추가 대상'으로 지정 (다음에 추가되는 모듈이 이 행/컬럼으로) */
+  const setColumnTarget = (groupId: string, rowIndex: number, columnIndex: number): void => {
+    columnTarget.value = { groupId, rowIndex, columnIndex }
   }
-  /** [컬럼 분할] 추가 대상 컬럼 지정 해제 */
+  /** [행별 컬럼] 추가 대상 컬럼 지정 해제 */
   const clearColumnTarget = (): void => {
     columnTarget.value = null
   }
 
   /**
-   * [컬럼 분할] 이웃 컬럼의 모듈을 복제해 대상(빈) 컬럼을 채운다.
+   * [행별 컬럼] 같은 행 이웃 컬럼의 모듈을 복제해 대상(빈) 컬럼을 채운다.
    * 대상보다 왼쪽에서 가장 가까운 컬럼(없으면 가장 왼쪽 컬럼)의 멤버들을 복제한다.
    */
-  const duplicateIntoColumn = (groupId: string, columnIndex: number): void => {
-    const members = modules.value.filter((m) => m.groupId === groupId)
-    if (members.length === 0) return
-    const cols = Array.from(new Set(members.map((m) => m.columnIndex ?? 0)))
+  const duplicateIntoColumn = (groupId: string, rowIndex: number, columnIndex: number): void => {
+    const rowMembers = modules.value.filter(
+      (m) => m.groupId === groupId && (m.rowIndex ?? 0) === rowIndex,
+    )
+    if (rowMembers.length === 0) return
+    const cols = Array.from(new Set(rowMembers.map((m) => m.columnIndex ?? 0)))
     const leftCols = cols.filter((c) => c < columnIndex).sort((a, b) => b - a)
     const sourceCol = leftCols.length > 0 ? leftCols[0] : Math.min(...cols)
-    const sources = members.filter((m) => (m.columnIndex ?? 0) === sourceCol)
+    const sources = rowMembers.filter((m) => (m.columnIndex ?? 0) === sourceCol)
     if (sources.length === 0) return
 
     const lastIdx = modules.value.map((m) => m.groupId).lastIndexOf(groupId)
     const clones: ModuleInstance[] = sources.map((m) => ({
       ...m,
       id: generateUniqueId('module'),
+      rowIndex,
       columnIndex,
       properties: JSON.parse(JSON.stringify(m.properties)),
       styles: JSON.parse(JSON.stringify(m.styles)),
@@ -772,12 +1333,16 @@ export const useModuleStore = defineStore('module', () => {
     isDirty.value = true
   }
 
-  /** [컬럼 분할] 모듈을 왼쪽/오른쪽 이웃 컬럼으로 이동 */
+  /** [행별 컬럼] 모듈을 같은 행 안에서 왼쪽/오른쪽 이웃 컬럼으로 이동 */
   const moveModuleColumn = (moduleId: string, direction: 'left' | 'right'): void => {
     const mod = modules.value.find((m) => m.id === moduleId)
     if (!mod || !mod.groupId) return
     const group = groups.value.find((g) => g.id === mod.groupId)
-    const cols = group?.columns && group.columns > 1 ? Math.min(group.columns, 4) : 1
+    if (!group) return
+    ensureGroupRows(group)
+    const rows = group.rows as number[]
+    const r = Math.min(Math.max(mod.rowIndex ?? 0, 0), rows.length - 1)
+    const cols = rows[r]
     if (cols <= 1) return
     const cur = mod.columnIndex ?? 0
     const next = Math.min(Math.max(cur + (direction === 'right' ? 1 : -1), 0), cols - 1)
@@ -969,15 +1534,24 @@ export const useModuleStore = defineStore('module', () => {
       .slice(0, firstIndex)
       .filter((m) => !targetIdSet.has(m.id)).length
 
+    // 멤버가 이미 rowIndex/columnIndex를 갖고 있으면(조립형) 그 배치를 존중하고,
+    // 없으면 1행·1컬럼 세로 스택으로 둔다.
     sortedTargets.forEach((m) => {
       m.groupId = newGroupId
+      if (m.rowIndex == null) m.rowIndex = 0
+      if (m.columnIndex == null) m.columnIndex = 0
+      delete m.fullWidth
     })
 
     const next = [...remaining]
     next.splice(insertAt, 0, ...sortedTargets)
     modules.value.splice(0, modules.value.length, ...next)
 
-    groups.value.push({ id: newGroupId, styles: { ...DEFAULT_GROUP_STYLES } })
+    groups.value.push({
+      id: newGroupId,
+      styles: { ...DEFAULT_GROUP_STYLES },
+      rows: deriveRowsFromMembers(sortedTargets),
+    })
 
     reorderModules()
     selectedGroupId.value = newGroupId
@@ -1208,9 +1782,15 @@ export const useModuleStore = defineStore('module', () => {
       if (moduleData.groupId) {
         added.groupId = moduleData.groupId
       }
-      // 컬럼 인덱스 복원 (컬럼 분할 그룹)
+      // 행/컬럼 인덱스 복원 (행별 독립 컬럼 그룹)
+      if (moduleData.rowIndex != null) {
+        added.rowIndex = moduleData.rowIndex
+      }
       if (moduleData.columnIndex != null) {
         added.columnIndex = moduleData.columnIndex
+      }
+      if (moduleData.fullWidth) {
+        added.fullWidth = true // 레거시 데이터 — 렌더 시 rows로 유도됨
       }
     }
 
@@ -1278,8 +1858,8 @@ export const useModuleStore = defineStore('module', () => {
         properties: JSON.parse(JSON.stringify(m.properties)),
         styles: JSON.parse(JSON.stringify(m.styles)),
         ...(m.groupId ? { groupId: m.groupId } : {}),
+        ...(m.rowIndex != null ? { rowIndex: m.rowIndex } : {}),
         ...(m.columnIndex != null ? { columnIndex: m.columnIndex } : {}),
-        ...(m.fullWidth ? { fullWidth: true } : {}),
       })),
       groups: JSON.parse(JSON.stringify(groups.value)),
     }
@@ -2266,8 +2846,10 @@ export const useModuleStore = defineStore('module', () => {
         html = applyFontFamily(html, wrapSettings.fontLanguage)
 
         rendered.push({
+          id: module.id,
           html,
           groupId: module.groupId,
+          rowIndex: module.rowIndex,
           columnIndex: module.columnIndex,
           fullWidth: module.fullWidth,
         })
@@ -2284,47 +2866,38 @@ export const useModuleStore = defineStore('module', () => {
     let i = 0
     while (i < rendered.length) {
       const gid = rendered[i].groupId
-      const group = gid ? groups.value.find((g) => g.id === gid) : undefined
+      const group = gid ? srcGroups.find((g) => g.id === gid) : undefined
       if (gid && group) {
-        // 그룹 멤버 수집 (컬럼 인덱스 + 전체폭 여부 포함)
-        const members: Array<{ html: string; columnIndex: number; fullWidth: boolean }> = []
+        // 그룹 멤버 수집 (행/컬럼 배치 정보 포함) — html을 실어 layoutGroupRows로 격자 배치
+        const htmlById: Record<string, string> = {}
+        const groupMembers: ModuleInstance[] = []
         while (i < rendered.length && rendered[i].groupId === gid) {
-          members.push({
-            html: rendered[i].html,
-            columnIndex: rendered[i].columnIndex ?? 0,
-            fullWidth: !!rendered[i].fullWidth,
+          const r = rendered[i]
+          htmlById[r.id] = r.html
+          groupMembers.push({
+            id: r.id,
+            moduleId: '',
+            order: 0,
+            properties: {},
+            styles: {},
+            rowIndex: r.rowIndex,
+            columnIndex: r.columnIndex,
+            fullWidth: r.fullWidth,
           })
           i++
         }
-        const cols = group.columns && group.columns > 1 ? Math.min(group.columns, 4) : 1
-        let inner: string
-        if (cols > 1) {
-          // 멤버를 순서대로 밴드(행)로 나눈다:
-          //  - 전체폭(fullWidth) 멤버 구간 → 그대로 세로 스택(전체폭)
-          //  - 일반 멤버 구간 → 컬럼별로 나눠 fluid-hybrid 레이아웃(모바일 100% 스택)
-          inner = ''
-          let j = 0
-          while (j < members.length) {
-            if (members[j].fullWidth) {
-              // 전체폭 밴드
-              while (j < members.length && members[j].fullWidth) {
-                inner += members[j].html + '\n'
-                j++
-              }
-            } else {
-              // 컬럼 밴드
-              const columnHtml: string[] = Array.from({ length: cols }, () => '')
-              while (j < members.length && !members[j].fullWidth) {
-                const mem = members[j]
-                const c = Math.min(Math.max(mem.columnIndex, 0), cols - 1)
-                columnHtml[c] += mem.html + '\n'
-                j++
-              }
-              inner += buildColumnLayoutHtml(columnHtml)
-            }
+        // 행별 독립 컬럼 레이아웃: 각 행이 자기 컬럼 수를 갖는다
+        const layoutRows = computeGroupLayout(group, groupMembers)
+        let inner = ''
+        for (const row of layoutRows) {
+          if (row.columns <= 1) {
+            // 전체폭 행: 그 컬럼의 멤버들을 세로 스택
+            inner += row.cells[0].map((m) => htmlById[m.id]).join('\n') + '\n'
+          } else {
+            // 다단 행: 컬럼별 HTML로 fluid-hybrid 레이아웃(모바일 100% 세로 스택)
+            const columnHtml = row.cells.map((cell) => cell.map((m) => htmlById[m.id]).join('\n') + '\n')
+            inner += buildColumnLayoutHtml(columnHtml)
           }
-        } else {
-          inner = members.map((m) => m.html).join('\n') + '\n'
         }
         const resolvedGroupStyles = resolveGroupStyles(group.styles, wrapSettings.pointColor)
         fullHtml +=
@@ -2478,6 +3051,7 @@ ${fullHtml}
     selectedGroup,
     displayItems,
     createGroup,
+    mergeModulesIntoGroup,
     duplicateGroup,
     ungroup,
     deleteGroup,
@@ -2503,6 +3077,15 @@ ${fullHtml}
     addComposedModule04,
     addComposedModule011,
     addComposedModule05,
+    addComposedModule051,
+    addComposedModule06,
+    addComposedModule07,
+    addComposedNewsHeader,
+    addComposedBasicHeader,
+    addComposedImageHeader,
+    addComposedMultiImage,
+    addComposedFooter,
+    addComposedTwoButton,
     selectModule,
     updateModuleProperty,
     updateModuleStyle,

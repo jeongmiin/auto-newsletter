@@ -232,25 +232,20 @@ const groupChecked = (): void => {
   const checkedModules = modules.value.filter((m) => checkedIds.value.has(m.id))
   if (checkedModules.length < 1) return
 
-  // 이미 그룹에 속한 모듈이 포함되면 안내 후 중단 (기존 그룹 해제 필요)
-  if (checkedModules.some((m) => m.groupId)) {
-    toast.add({
-      severity: 'warn',
-      summary: '그룹 생성 불가',
-      detail: '이미 그룹인 모듈이 있습니다. 그룹을 해제 후 새 그룹으로 적용해주세요.',
-      life: 4000,
-    })
-    return
-  }
-
   const ids = checkedModules.map((m) => m.id)
-  const groupId = moduleStore.createGroup(ids)
+  // 이미 그룹인 모듈이 섞여 있으면 '병합'(각 그룹의 행 구조를 보존), 아니면 새 그룹 생성
+  const hasGrouped = checkedModules.some((m) => m.groupId)
+  const groupId = hasGrouped
+    ? moduleStore.mergeModulesIntoGroup(ids)
+    : moduleStore.createGroup(ids)
   if (groupId) {
     clearChecked()
     toast.add({
       severity: 'success',
-      summary: '그룹 생성',
-      detail: `${ids.length}개 모듈을 한 그룹으로 묶었습니다`,
+      summary: hasGrouped ? '그룹 병합' : '그룹 생성',
+      detail: hasGrouped
+        ? `${ids.length}개 모듈을 한 그룹으로 병합했습니다 (각 행 구조 유지)`
+        : `${ids.length}개 모듈을 한 그룹으로 묶었습니다`,
       life: 2500,
     })
   } else {

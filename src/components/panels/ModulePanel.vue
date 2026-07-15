@@ -148,6 +148,146 @@
             </div>
           </div>
         </div>
+        <div
+          @click="addComposedModule051"
+          class="p-3 border-2 border-dashed border-amber-300 rounded-lg cursor-pointer hover:bg-amber-50 hover:border-amber-400 transition-colors"
+        >
+          <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-amber-100 text-amber-700 rounded flex items-center justify-center">
+              <i class="pi pi-objects-column"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-medium text-sm truncate">모듈 05-1 (조립형·2컬럼)</div>
+              <div class="text-xs text-gray-500 truncate">좌 이미지 · 우 강조 타이틀 박스 + 텍스트 + 작은 버튼</div>
+            </div>
+          </div>
+        </div>
+        <div
+          @click="addComposedModule06"
+          class="p-3 border-2 border-dashed border-amber-300 rounded-lg cursor-pointer hover:bg-amber-50 hover:border-amber-400 transition-colors"
+        >
+          <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-amber-100 text-amber-700 rounded flex items-center justify-center">
+              <i class="pi pi-objects-column"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-medium text-sm truncate">모듈 06 (조립형·2컬럼)</div>
+              <div class="text-xs text-gray-500 truncate">2단 대칭 · 타이틀 박스 → 이미지 → 텍스트 → 버튼</div>
+            </div>
+          </div>
+        </div>
+        <div
+          @click="addComposedModule07"
+          class="p-3 border-2 border-dashed border-amber-300 rounded-lg cursor-pointer hover:bg-amber-50 hover:border-amber-400 transition-colors"
+        >
+          <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-amber-100 text-amber-700 rounded flex items-center justify-center">
+              <i class="pi pi-objects-column"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-medium text-sm truncate">모듈 07 (조립형·2컬럼)</div>
+              <div class="text-xs text-gray-500 truncate">좌 이미지 · 우 타이틀 + 텍스트 + 작은 버튼</div>
+            </div>
+          </div>
+        </div>
+        <div
+          @click="addComposedModule07Reverse"
+          class="p-3 border-2 border-dashed border-amber-300 rounded-lg cursor-pointer hover:bg-amber-50 hover:border-amber-400 transition-colors"
+        >
+          <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-amber-100 text-amber-700 rounded flex items-center justify-center">
+              <i class="pi pi-objects-column"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-medium text-sm truncate">모듈 07 반대 (조립형·2컬럼)</div>
+              <div class="text-xs text-gray-500 truncate">우 이미지 · 좌 타이틀 + 텍스트 + 작은 버튼</div>
+            </div>
+          </div>
+        </div>
+        <div
+          @click="addComposedNewsHeader"
+          class="p-3 border-2 border-dashed border-amber-300 rounded-lg cursor-pointer hover:bg-amber-50 hover:border-amber-400 transition-colors"
+        >
+          <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-amber-100 text-amber-700 rounded flex items-center justify-center">
+              <i class="pi pi-id-card"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-medium text-sm truncate">뉴스 헤드라인 헤더 (조립형)</div>
+              <div class="text-xs text-gray-500 truncate">로고 → 굵은선 → (제목 | 👀 웹으로 보기 2단) → 얇은선</div>
+            </div>
+          </div>
+        </div>
+        <div
+          @click="addComposedBasicHeader"
+          class="p-3 border-2 border-dashed border-amber-300 rounded-lg cursor-pointer hover:bg-amber-50 hover:border-amber-400 transition-colors"
+        >
+          <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-amber-100 text-amber-700 rounded flex items-center justify-center">
+              <i class="pi pi-id-card"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-medium text-sm truncate">기본 헤더 (조립형)</div>
+              <div class="text-xs text-gray-500 truncate">상단선 → 로고 → 하단선 → 헤더 타이틀 (세로 스택)</div>
+            </div>
+          </div>
+        </div>
+        <div
+          @click="addComposedImageHeader"
+          class="p-3 border-2 border-dashed border-amber-300 rounded-lg cursor-pointer hover:bg-amber-50 hover:border-amber-400 transition-colors"
+        >
+          <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-amber-100 text-amber-700 rounded flex items-center justify-center">
+              <i class="pi pi-id-card"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-medium text-sm truncate">이미지형 헤더 (조립형)</div>
+              <div class="text-xs text-gray-500 truncate">비주얼 → 볼/날짜/홈 → 구분선 → 타이틀+본문 → 버튼</div>
+            </div>
+          </div>
+        </div>
+        <div
+          @click="addComposedMultiImage"
+          class="p-3 border-2 border-dashed border-amber-300 rounded-lg cursor-pointer hover:bg-amber-50 hover:border-amber-400 transition-colors"
+        >
+          <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-amber-100 text-amber-700 rounded flex items-center justify-center">
+              <i class="pi pi-images"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-medium text-sm truncate">복수 이미지 (조립형·2컬럼)</div>
+              <div class="text-xs text-gray-500 truncate">좌·우 이미지 2컬럼 (모바일 세로 스택)</div>
+            </div>
+          </div>
+        </div>
+        <div
+          @click="addComposedFooter"
+          class="p-3 border-2 border-dashed border-amber-300 rounded-lg cursor-pointer hover:bg-amber-50 hover:border-amber-400 transition-colors"
+        >
+          <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-amber-100 text-amber-700 rounded flex items-center justify-center">
+              <i class="pi pi-align-center"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-medium text-sm truncate">하단 푸터 (조립형)</div>
+              <div class="text-xs text-gray-500 truncate">회사정보 → 구분선 → SNS 아이콘 → 수신거부 (그룹 배경색)</div>
+            </div>
+          </div>
+        </div>
+        <div
+          @click="addComposedTwoButton"
+          class="p-3 border-2 border-dashed border-amber-300 rounded-lg cursor-pointer hover:bg-amber-50 hover:border-amber-400 transition-colors"
+        >
+          <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-amber-100 text-amber-700 rounded flex items-center justify-center">
+              <i class="pi pi-clone"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-medium text-sm truncate">복수 버튼 (조립형·2컬럼)</div>
+              <div class="text-xs text-gray-500 truncate">단일 버튼 2개 좌우 배치 (모바일 세로 스택)</div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- 모듈 리스트 -->
@@ -294,10 +434,81 @@ const addComposedModule05 = () => {
     severity: groupId ? 'success' : 'error',
     summary: groupId ? '조립형 모듈 추가됨' : '조립 실패',
     detail: groupId
-      ? '모듈 05(2컬럼 조립) 그룹이 추가되었습니다. 좌측 이미지 · 우측 텍스트+작은 버튼, 모바일은 세로로 쌓입니다.'
+      ? '모듈 05(조립) 그룹이 추가되었습니다. 상단 섹션 + 하단 2단, 모바일은 세로로 쌓입니다.'
       : '원소 모듈을 찾을 수 없습니다.',
     life: 2500,
   })
+}
+
+const composedToast = (groupId: string | null, name: string) => {
+  toast.add({
+    severity: groupId ? 'success' : 'error',
+    summary: groupId ? '조립형 모듈 추가됨' : '조립 실패',
+    detail: groupId
+      ? `${name}(조립) 그룹이 추가되었습니다. 각 원소를 선택해 개별 편집하세요.`
+      : '원소 모듈을 찾을 수 없습니다.',
+    life: 2500,
+  })
+}
+
+// [임시/POC] 모듈 05-1 조립형 (좌 이미지 · 우 강조 타이틀 박스 + 텍스트 + 버튼)
+const addComposedModule051 = () => {
+  onModuleLeave()
+  composedToast(moduleStore.addComposedModule051(), '모듈 05-1')
+}
+
+// [임시/POC] 모듈 06 조립형 (2단 대칭 · 타이틀 박스 → 이미지 → 텍스트 → 버튼)
+const addComposedModule06 = () => {
+  onModuleLeave()
+  composedToast(moduleStore.addComposedModule06(), '모듈 06')
+}
+
+// [임시/POC] 모듈 07 조립형 (좌 이미지 · 우 타이틀+텍스트+버튼)
+const addComposedModule07 = () => {
+  onModuleLeave()
+  composedToast(moduleStore.addComposedModule07(false), '모듈 07')
+}
+
+// [임시/POC] 모듈 07 반대 방향 조립형 (우 이미지 · 좌 타이틀+텍스트+버튼)
+const addComposedModule07Reverse = () => {
+  onModuleLeave()
+  composedToast(moduleStore.addComposedModule07(true), '모듈 07(반대)')
+}
+
+// [임시/POC] 뉴스 헤드라인 헤더 조립형 (로고 → 굵은선 → 제목|웹으로보기 → 얇은선)
+const addComposedNewsHeader = () => {
+  onModuleLeave()
+  composedToast(moduleStore.addComposedNewsHeader(), '뉴스 헤드라인 헤더')
+}
+
+// [임시/POC] 기본 헤더 조립형 (상단선 → 로고 → 하단선 → 타이틀)
+const addComposedBasicHeader = () => {
+  onModuleLeave()
+  composedToast(moduleStore.addComposedBasicHeader(), '기본 헤더')
+}
+
+// [임시/POC] 이미지형 헤더 조립형 (비주얼 → 볼/날짜/홈 → 구분선 → 타이틀+본문 → 버튼)
+const addComposedImageHeader = () => {
+  onModuleLeave()
+  composedToast(moduleStore.addComposedImageHeader(), '이미지형 헤더')
+}
+
+// [임시/POC] 복수 이미지 조립형 (좌·우 이미지 2컬럼)
+const addComposedMultiImage = () => {
+  onModuleLeave()
+  composedToast(moduleStore.addComposedMultiImage(), '복수 이미지')
+}
+
+// [임시/POC] 하단 푸터 조립형 (회사정보 → 구분선 → SNS 아이콘 → 수신거부, 그룹 배경색)
+const addComposedFooter = () => {
+  onModuleLeave()
+  composedToast(moduleStore.addComposedFooter(), '하단 푸터')
+}
+
+// [임시/POC] 복수 버튼 조립형 (단일 버튼 2개 · 2단)
+const addComposedTwoButton = () => {
+  onModuleLeave()
+  composedToast(moduleStore.addComposedTwoButton(), '복수 버튼')
 }
 
 // ===== 모듈 호버 라이브 미리보기 =====
