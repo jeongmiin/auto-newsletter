@@ -1192,7 +1192,7 @@
           "key": "paddingRight",
           "label": "안쪽 우측 여백",
           "type": "text",
-          "default": "20px",
+          "default": "0px",
           "placeholder": "예: 20px, 0",
           "group": "배경 박스"
         },
@@ -1208,7 +1208,7 @@
           "key": "paddingLeft",
           "label": "안쪽 좌측 여백",
           "type": "text",
-          "default": "20px",
+          "default": "0px",
           "placeholder": "예: 20px, 0",
           "group": "배경 박스"
         },
@@ -1313,7 +1313,7 @@
           "key": "paddingRight",
           "label": "우측 여백",
           "type": "text",
-          "default": "20px",
+          "default": "0px",
           "placeholder": "예: 20px, 0"
         },
         {
@@ -1327,7 +1327,7 @@
           "key": "paddingLeft",
           "label": "좌측 여백",
           "type": "text",
-          "default": "20px",
+          "default": "0px",
           "placeholder": "예: 20px, 0"
         }
       ]
@@ -1413,7 +1413,7 @@
           "key": "paddingRight",
           "label": "우측 여백",
           "type": "text",
-          "default": "20px",
+          "default": "0px",
           "placeholder": "예: 20px, 0"
         },
         {
@@ -1427,7 +1427,7 @@
           "key": "paddingLeft",
           "label": "좌측 여백",
           "type": "text",
-          "default": "20px",
+          "default": "0px",
           "placeholder": "예: 20px, 0"
         }
       ]
@@ -1704,7 +1704,7 @@
           "key": "paddingRight",
           "label": "우측 여백",
           "type": "text",
-          "default": "20px",
+          "default": "0px",
           "placeholder": "예: 20px, 0",
           "group": "여백"
         },
@@ -1720,7 +1720,7 @@
           "key": "paddingLeft",
           "label": "좌측 여백",
           "type": "text",
-          "default": "20px",
+          "default": "0px",
           "placeholder": "예: 20px, 0",
           "group": "여백"
         }
@@ -1954,7 +1954,7 @@
           "key": "paddingRight",
           "label": "우측 여백",
           "type": "text",
-          "default": "15px",
+          "default": "0px",
           "placeholder": "예: 15px, 0",
           "group": "여백"
         },
@@ -1970,7 +1970,7 @@
           "key": "paddingLeft",
           "label": "좌측 여백",
           "type": "text",
-          "default": "15px",
+          "default": "0px",
           "placeholder": "예: 15px, 0",
           "group": "여백"
         }
@@ -2033,7 +2033,7 @@
           "key": "paddingRight",
           "label": "우측 여백",
           "type": "text",
-          "default": "20px",
+          "default": "0px",
           "placeholder": "예: 20px, 0",
           "group": "공통"
         },
@@ -2049,7 +2049,7 @@
           "key": "paddingLeft",
           "label": "좌측 여백",
           "type": "text",
-          "default": "20px",
+          "default": "0px",
           "placeholder": "예: 20px, 0",
           "group": "공통"
         },
@@ -2635,14 +2635,14 @@
           "key": "paddingLeft",
           "label": "좌측 여백",
           "type": "text",
-          "default": "20px",
+          "default": "0px",
           "group": "여백"
         },
         {
           "key": "paddingRight",
           "label": "우측 여백",
           "type": "text",
-          "default": "20px",
+          "default": "0px",
           "group": "여백"
         }
       ]
@@ -2755,7 +2755,7 @@
           "key": "paddingRight",
           "label": "우측 여백",
           "type": "text",
-          "default": "20px",
+          "default": "0px",
           "placeholder": "예: 20px, 0",
           "group": "여백"
         },
@@ -2771,7 +2771,7 @@
           "key": "paddingLeft",
           "label": "좌측 여백",
           "type": "text",
-          "default": "20px",
+          "default": "0px",
           "placeholder": "예: 20px, 0",
           "group": "여백"
         }
@@ -7110,7 +7110,7 @@
           "key": "paddingRight",
           "label": "우측 여백",
           "type": "text",
-          "default": "20px",
+          "default": "0px",
           "placeholder": "예: 20px, 0",
           "group": "여백"
         },
@@ -7126,7 +7126,7 @@
           "key": "paddingLeft",
           "label": "좌측 여백",
           "type": "text",
-          "default": "20px",
+          "default": "0px",
           "placeholder": "예: 20px, 0",
           "group": "여백"
         }
@@ -7309,7 +7309,7 @@
           "key": "paddingRight",
           "label": "우측 여백",
           "type": "text",
-          "default": "25px",
+          "default": "0px",
           "placeholder": "예: 25px, 0",
           "group": "여백"
         },
@@ -7325,7 +7325,7 @@
           "key": "paddingLeft",
           "label": "좌측 여백",
           "type": "text",
-          "default": "25px",
+          "default": "0px",
           "placeholder": "예: 25px, 0",
           "group": "여백"
         }

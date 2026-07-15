@@ -312,11 +312,11 @@ export function replaceModuleTableContent(
   const headerTextColor = String(properties.headerTextColor || '#333333')
   const cellTextColor = String(properties.cellTextColor || '#333333')
 
-  // 바깥 td 상하좌우 여백 (미설정 시 기존 기본값 20px 유지)
+  // 바깥 td 여백 (미설정 시: 상/하 20px 유지, 좌/우 0px)
   const paddingTop = String(properties.paddingTop ?? '20px')
-  const paddingRight = String(properties.paddingRight ?? '20px')
+  const paddingRight = String(properties.paddingRight ?? '0px')
   const paddingBottom = String(properties.paddingBottom ?? '20px')
-  const paddingLeft = String(properties.paddingLeft ?? '20px')
+  const paddingLeft = String(properties.paddingLeft ?? '0px')
   html = html
     .replace(/\{\{\s*paddingTop\s*\}\}/g, paddingTop)
     .replace(/\{\{\s*paddingRight\s*\}\}/g, paddingRight)

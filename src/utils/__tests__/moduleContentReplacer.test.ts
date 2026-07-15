@@ -71,15 +71,15 @@ describe('moduleContentReplacer', () => {
       expect(result).toBe('<p></p>')
     })
 
-    it('바깥 여백(td)·배경 박스(안쪽 div) 분리 — 기본값은 기존과 동일(바깥 0, 배경 투명)', () => {
+    it('바깥 여백(td)·배경 박스(안쪽 div) 분리 — 기본값(바깥 0, 안쪽 상/하 0·좌/우 0, 배경 투명)', () => {
       const html =
         '<td style="padding:{{marginTop}} {{marginRight}} {{marginBottom}} {{marginLeft}};">' +
         '<div style="background-color:{{bgColor}}; padding:{{paddingTop}} {{paddingRight}} {{paddingBottom}} {{paddingLeft}}; border-radius:{{borderRadius}};">{{descriptionText}}</div></td>'
       const result = replaceModuleDescTextContent(html, { descriptionText: '<p>본문</p>' })
-      // 바깥 여백(td) = 0px, 안쪽 여백(div) = 0px 20px 0px 20px, 배경 투명, 모서리 0
+      // 바깥 여백(td) = 0px, 안쪽 여백(div) = 0px 0px 0px 0px(좌/우 여백 기본값 0px), 배경 투명, 모서리 0
       expect(result).toContain('<td style="padding:0px 0px 0px 0px;">')
       expect(result).toContain('background-color:transparent')
-      expect(result).toContain('padding:0px 20px 0px 20px')
+      expect(result).toContain('padding:0px 0px 0px 0px')
       expect(result).toContain('border-radius:0px')
     })
 

@@ -128,9 +128,9 @@ export const moduleDescTextConfig: ModuleConfig = {
     textColor: '#333333',
     // 안쪽 여백(배경 박스) 폴백 — 기존 하드코딩 값과 동일
     paddingTop: '0px',
-    paddingRight: '20px',
+    paddingRight: '0px',
     paddingBottom: '0px',
-    paddingLeft: '20px',
+    paddingLeft: '0px',
     // 바깥 여백(td, 투명) — 기존 인스턴스 폴백 = 0 (겉모습 변화 없음)
     marginTop: '0px',
     marginRight: '0px',
@@ -206,9 +206,9 @@ export const moduleSmallButtonConfig: ModuleConfig = {
     btnBorderRadius: '30px',
     btnFontSize: '13px',
     paddingTop: '10px',
-    paddingRight: '20px',
+    paddingRight: '0px',
     paddingBottom: '10px',
-    paddingLeft: '20px',
+    paddingLeft: '0px',
     // 버튼 2~4는 기본 비노출 → 처음엔 1개만 보인다
     showBtn2: false,
     showBtn3: false,
@@ -386,9 +386,9 @@ export const module01Config: ModuleConfig = {
     bgColor: '#f5f5f5',
     textAlign: 'left',
     paddingTop: '0px',
-    paddingRight: '20px',
+    paddingRight: '0px',
     paddingBottom: '10px',
-    paddingLeft: '20px',
+    paddingLeft: '0px',
   },
   processors: [processors.module12TitleProcessor],
 }
@@ -683,9 +683,9 @@ export const module12Config: ModuleConfig = {
     boxBorderColor: '#dddddd',
     textAlign: 'center',
     paddingTop: '0px',
-    paddingRight: '20px',
+    paddingRight: '0px',
     paddingBottom: '10px',
-    paddingLeft: '20px',
+    paddingLeft: '0px',
   },
   processors: [processors.module12TitleProcessor],
 }
@@ -739,9 +739,9 @@ export const moduleDividerConfig: ModuleConfig = {
     borderStyle: 'solid',
     dividerWidth: '100%',
     paddingTop: '20px',
-    paddingRight: '20px',
+    paddingRight: '0px',
     paddingBottom: '20px',
-    paddingLeft: '20px',
+    paddingLeft: '0px',
   },
 }
 
