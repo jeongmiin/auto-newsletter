@@ -5,6 +5,7 @@
 
 import type { ModuleConfig } from './moduleContentProcessor'
 import * as processors from './processors'
+import { defaultSnsIcons } from '../constants/snsIcons'
 
 /**
  * ModuleNewsHeader 설정
@@ -572,6 +573,20 @@ export const module07Config: ModuleConfig = {
 /**
  * ModuleFooter 설정
  */
+export const moduleSnsIconsConfig: ModuleConfig = {
+  defaults: {
+    snsIconBgColor: '#333333',
+    snsAlign: 'center',
+    paddingTop: '15px',
+    paddingRight: '5px',
+    paddingBottom: '15px',
+    paddingLeft: '5px',
+    // 순서 있는 아이콘 배열(노출/링크/순서를 데이터로 관리) — 렌더 폴백
+    snsIcons: defaultSnsIcons(),
+  },
+  processors: [processors.snsIconsProcessor],
+}
+
 export const moduleFooterConfig: ModuleConfig = {
   quillFields: ['companyInfo'],
   defaults: {
@@ -810,6 +825,7 @@ export const MODULE_CONFIG_REGISTRY: Record<string, ModuleConfig> = {
   Module07: module07Config,
   Module07_reverse: module07Config, // 동일한 설정 사용
   ModuleFooter: moduleFooterConfig,
+  ModuleSnsIcons: moduleSnsIconsConfig,
   Module10: module10Config,
   'Module10-1': module101Config,
   Module11: module11Config,

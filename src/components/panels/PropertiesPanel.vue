@@ -434,6 +434,61 @@
             <span class="text-sm text-gray-700">{{ prop.label }}</span>
           </div>
 
+          <!-- SNS 아이콘 (노출 토글 · 링크 · 순서 변경) -->
+          <div v-else-if="prop.type === 'sns-icons'" class="space-y-2">
+            <div
+              v-for="(icon, index) in getSnsIcons(prop.key)"
+              :key="icon.key"
+              class="p-2.5 border border-gray-200 rounded-md bg-gray-50"
+            >
+              <div class="flex items-center gap-2">
+                <img
+                  :src="snsIconMeta[icon.key]?.img"
+                  :alt="snsIconMeta[icon.key]?.label"
+                  class="w-6 h-6 object-contain rounded-full bg-gray-700 p-1 shrink-0"
+                />
+                <span class="text-sm font-medium text-gray-700 flex-1 truncate">
+                  {{ snsIconMeta[icon.key]?.label || icon.key }}
+                </span>
+                <Button
+                  @click="moveSnsIcon(prop.key, index, 'up')"
+                  :disabled="index === 0"
+                  icon="pi pi-arrow-up"
+                  severity="secondary"
+                  text
+                  size="small"
+                  class="!w-6 !h-6 !p-0"
+                  v-tooltip.top="'위로 이동'"
+                />
+                <Button
+                  @click="moveSnsIcon(prop.key, index, 'down')"
+                  :disabled="index === getSnsIcons(prop.key).length - 1"
+                  icon="pi pi-arrow-down"
+                  severity="secondary"
+                  text
+                  size="small"
+                  class="!w-6 !h-6 !p-0"
+                  v-tooltip.top="'아래로 이동'"
+                />
+                <ToggleSwitch
+                  :modelValue="icon.show"
+                  @update:modelValue="setSnsIconShow(prop.key, index, $event)"
+                />
+              </div>
+              <div v-if="icon.show" class="mt-2 flex items-center gap-1.5">
+                <label class="text-xs text-gray-500 w-8 shrink-0">링크</label>
+                <InputText
+                  :modelValue="icon.url"
+                  @update:modelValue="setSnsIconUrl(prop.key, index, $event ?? '')"
+                  placeholder="링크 URL"
+                  class="flex-1 !text-sm"
+                  size="small"
+                />
+              </div>
+            </div>
+            <p class="text-xs text-gray-400">스위치로 노출을 켜고 끄고, 화살표로 순서를 바꿉니다.</p>
+          </div>
+
           <!-- 동적 테이블 행 편집 -->
           <div v-else-if="prop.type === 'table-rows'" class="space-y-3">
             <!-- 행 추가 버튼 -->
@@ -1173,6 +1228,8 @@
 <script setup lang="ts">
 import { computed, ref, watch, nextTick, onMounted, onBeforeUnmount } from 'vue'
 import { useModuleStore } from '@/stores/moduleStore'
+import { resolveGroupRows } from '@/utils/groupLayout'
+import { SNS_ICON_META, defaultSnsIcons, type SnsIconItem } from '@/constants/snsIcons'
 import { useEditorStore } from '@/stores/editorStore'
 import type { TableRow, ContentTitle, ContentText, AdditionalContent, TableCell, WrapSettings, EditableProp } from '@/types'
 import { normalizeColorInput, isValidHexColor } from '@/utils/colorHelper'
@@ -1389,6 +1446,30 @@ const defaultTablePreset: TablePreset = {
 
 const updateProperty = (key: string, value: unknown) => {
   moduleStore.updateModuleProperty(key, value)
+}
+
+// ===== SNS 아이콘 (노출/링크/순서) =====
+const snsIconMeta = SNS_ICON_META
+const getSnsIcons = (key: string): SnsIconItem[] => {
+  const v = selectedModule.value?.properties[key]
+  return Array.isArray(v) ? (v as SnsIconItem[]) : defaultSnsIcons()
+}
+const setSnsIconShow = (key: string, index: number, show: boolean) => {
+  const icons = getSnsIcons(key).map((i, idx) => (idx === index ? { ...i, show } : { ...i }))
+  updateProperty(key, icons)
+}
+const setSnsIconUrl = (key: string, index: number, url: string) => {
+  const icons = getSnsIcons(key).map((i, idx) => (idx === index ? { ...i, url } : { ...i }))
+  updateProperty(key, icons)
+}
+const moveSnsIcon = (key: string, index: number, dir: 'up' | 'down') => {
+  const icons = getSnsIcons(key).map((i) => ({ ...i }))
+  const target = dir === 'up' ? index - 1 : index + 1
+  if (target < 0 || target >= icons.length) return
+  const tmp = icons[index]
+  icons[index] = icons[target]
+  icons[target] = tmp
+  updateProperty(key, icons)
 }
 
 // px 전용 길이 필드 판별: placeholder가 px 예시를 담고 %를 포함하지 않을 때.

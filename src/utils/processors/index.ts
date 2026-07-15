@@ -10,6 +10,7 @@ import {
   escapeForHtml,
   removeMarker,
 } from '../htmlUtils'
+import { buildSnsRowHtml, defaultSnsIcons, type SnsIconItem } from '../../constants/snsIcons'
 import { shouldRenderElement } from '../textUtils'
 import { applyModule02ButtonStyles } from '../buttonUtils'
 import { REGEX_PATTERNS, DEFAULT_TWO_COLUMN_IMAGE_URL, HTML_MARKERS } from '@/constants/defaults'
@@ -492,6 +493,20 @@ export const module07ButtonProcessor: ContentProcessor = (html, properties) => {
     return html.replace(/<!-- 버튼 -->.*?<!-- \/\/버튼 -->/gs, '')
   }
   return html
+}
+
+/**
+ * ModuleSnsIcons(독립 SNS 아이콘 모듈) 렌더 프로세서
+ * properties.snsIcons(순서 있는 배열)에서 show=true 아이콘을 순서대로 생성해 <!--SNS_ROW--> 위치에 주입.
+ * → 아이콘별 노출/링크는 물론 '순서 변경'까지 데이터로 제어된다.
+ */
+export const snsIconsProcessor: ContentProcessor = (html, properties) => {
+  const icons = Array.isArray(properties.snsIcons)
+    ? (properties.snsIcons as SnsIconItem[])
+    : defaultSnsIcons()
+  const bgColor = (properties.snsIconBgColor as string) || '#333333'
+  const row = buildSnsRowHtml(icons, bgColor)
+  return html.replace('<!--SNS_ROW-->', row)
 }
 
 /**

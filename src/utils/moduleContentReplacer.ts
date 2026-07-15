@@ -57,6 +57,13 @@ export function replaceModuleImgContent(html: string, properties: Record<string,
 }
 
 /**
+ * ModuleSnsIcons 콘텐츠 교체 (아이콘별 링크/노출 토글)
+ */
+export function replaceModuleSnsIconsContent(html: string, properties: Record<string, unknown>): string {
+  return replaceModuleContentSync(html, properties, MODULE_CONFIG_REGISTRY.ModuleSnsIcons)
+}
+
+/**
  * ModuleOneButton 콘텐츠 교체
  */
 export function replaceModuleOneButtonContent(
