@@ -19,12 +19,27 @@
       <div v-html="renderedHtml" class="module-content"></div>
     </div>
 
-    <!-- 호버 또는 선택시 표시되는 컨트롤 버튼들 -->
+    <!-- 호버 시 모듈 '위쪽 바깥'에 뜨는 통합 컨트롤 바 (번호·이름 + 액션).
+         바깥 래퍼 = 모듈 폭 전체를 덮는 투명한 '호버 유지 존'.
+           · 위로 마우스를 올릴 때 어느 위치로 올려도 호버가 끊기지 않는다.
+           · 평소엔 pointer-events-none 이라 위 모듈을 방해하지 않고, 호버 중에만 활성화.
+         안쪽 알약(bg-white) = 실제 보이는 바(왼쪽 정렬). 높이 낮은 모듈도 내용이 가려지지 않는다. -->
     <div
-      :class="[
-        'absolute top-2 right-2 flex items-center gap-1 bg-white rounded-lg shadow-lg border p-1 transition-opacity opacity-0 group-hover:opacity-100'
-      ]"
+      class="absolute left-0 right-0 bottom-full z-20 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity"
     >
+      <div class="inline-flex items-center gap-0.5 bg-white rounded-lg shadow-lg border p-1 ml-2">
+      <!-- 번호 + 이름 (좁은 컬럼에서는 번호만, 이름은 툴팁으로) -->
+      <span
+        class="flex items-center gap-1 pl-0.5 pr-1.5 mr-0.5 border-r border-gray-200"
+        v-tooltip.bottom="moduleName"
+      >
+        <span class="inline-flex items-center justify-center w-5 h-5 bg-blue-500 text-white rounded-full text-xs font-medium shrink-0">{{ index + 1 }}</span>
+        <span
+          v-if="!compact"
+          class="text-xs text-gray-700 whitespace-nowrap max-w-[110px] truncate"
+        >{{ moduleName }}</span>
+      </span>
+
       <Button
         @click.stop="$emit('move-up', module.id)"
         :disabled="index === 0"
@@ -51,6 +66,43 @@
         v-tooltip.bottom="'이 모듈을 복제합니다'"
       />
       <Button
+        @click.stop="$emit('split', module.id)"
+        icon="pi pi-table"
+        severity="secondary"
+        text
+        size="small"
+        v-tooltip.bottom="'영역을 컬럼으로 분할합니다 (최대 4단, 모바일은 세로로 쌓임)'"
+      />
+      <!-- 컬럼 그룹일 때만: 되돌리기 + 왼/오른쪽 컬럼으로 이동 -->
+      <template v-if="columnInfo && columnInfo.columns > 1">
+        <Button
+          @click.stop="$emit('unsplit', module.id)"
+          icon="pi pi-replay"
+          severity="secondary"
+          text
+          size="small"
+          v-tooltip.bottom="'컬럼 분할 되돌리기 (-1단)'"
+        />
+        <Button
+          @click.stop="$emit('move-column', module.id, 'left')"
+          :disabled="columnInfo.columnIndex === 0"
+          icon="pi pi-arrow-left"
+          severity="secondary"
+          text
+          size="small"
+          v-tooltip.bottom="'왼쪽 컬럼으로 이동'"
+        />
+        <Button
+          @click.stop="$emit('move-column', module.id, 'right')"
+          :disabled="columnInfo.columnIndex >= columnInfo.columns - 1"
+          icon="pi pi-arrow-right"
+          severity="secondary"
+          text
+          size="small"
+          v-tooltip.bottom="'오른쪽 컬럼으로 이동'"
+        />
+      </template>
+      <Button
         @click.stop="$emit('delete', module.id)"
         icon="pi pi-trash"
         severity="danger"
@@ -58,19 +110,13 @@
         size="small"
         v-tooltip.bottom="'이 모듈을 삭제합니다'"
       />
-    </div>
-
-    <!-- 호버시 표시되는 레이블 (모든 모듈에 표시) -->
-    <div
-      class="absolute top-2 left-10 z-10 px-2 py-1 bg-black/90 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
-    >
-      <span class="inline-flex items-center justify-center w-6 h-6 mr-1 bg-blue-500 text-white rounded-full text-xs font-medium">{{ index + 1 }}</span>
-      {{ moduleMetadata?.name || module.moduleId }}
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { ModuleInstance } from '@/types'
 import { useModuleRenderer } from '@/composables/useModuleRenderer'
 
@@ -78,6 +124,8 @@ interface Props {
   module: ModuleInstance
   index: number
   isSelected: boolean
+  /** 컬럼 그룹 멤버일 때 좌/우 이동 버튼 표시용 (컬럼 수 + 현재 컬럼) */
+  columnInfo?: { columns: number; columnIndex: number }
 }
 
 const props = defineProps<Props>()
@@ -88,9 +136,17 @@ defineEmits<{
   'move-down': [moduleId: string]
   duplicate: [moduleId: string]
   delete: [moduleId: string]
+  split: [moduleId: string]
+  unsplit: [moduleId: string]
+  'move-column': [moduleId: string, direction: 'left' | 'right']
 }>()
 
 const { renderedHtml, moduleMetadata, isLoading } = useModuleRenderer(props.module.id)
+
+// 모듈 표시 이름
+const moduleName = computed(() => moduleMetadata.value?.name || props.module.moduleId)
+// 좁은 컬럼(2단 이상)에서는 이름을 숨겨 바 폭을 줄인다 (이름은 툴팁으로 확인)
+const compact = computed(() => !!props.columnInfo && props.columnInfo.columns > 1)
 </script>
 
 <style scoped>

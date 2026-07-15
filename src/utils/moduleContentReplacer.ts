@@ -77,6 +77,16 @@ export function replaceModuleTwoButtonContent(
 }
 
 /**
+ * ModuleSmallButton 콘텐츠 교체 (작은 버튼)
+ */
+export function replaceModuleSmallButtonContent(
+  html: string,
+  properties: Record<string, unknown>,
+): string {
+  return replaceModuleContentSync(html, properties, MODULE_CONFIG_REGISTRY.ModuleSmallButton)
+}
+
+/**
  * SectionTitle 콘텐츠 교체
  */
 export function replaceSectionTitleContent(

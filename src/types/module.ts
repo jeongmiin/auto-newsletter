@@ -91,6 +91,11 @@ export interface ModuleInstance {
   htmlContent?: string
   /** 소속 그룹 id. 같은 groupId를 가진 '연속된' 모듈이 하나의 그룹으로 묶인다. */
   groupId?: string
+  /**
+   * 컬럼 분할 그룹에서 이 모듈이 속한 컬럼(0-based).
+   * 그룹이 columns>1일 때만 의미가 있으며, 미지정이면 0번 컬럼으로 간주한다.
+   */
+  columnIndex?: number
 }
 
 /**
@@ -113,8 +118,20 @@ export interface ModuleGroupStyles {
    * 빈 배열([])이면 테두리 없음.
    */
   borderSides?: BorderSide[]
+  /** 안쪽 여백 shorthand (하위 호환). 4방향 값이 있으면 그쪽이 우선한다. */
   padding?: string
+  /** 바깥 여백 shorthand (하위 호환). 4방향 값이 있으면 그쪽이 우선한다. */
   margin?: string
+  /** 안쪽 여백 4방향 (상/우/하/좌) — 지정 시 shorthand보다 우선 */
+  paddingTop?: string
+  paddingRight?: string
+  paddingBottom?: string
+  paddingLeft?: string
+  /** 바깥 여백 4방향 (상/우/하/좌) — 지정 시 shorthand보다 우선 */
+  marginTop?: string
+  marginRight?: string
+  marginBottom?: string
+  marginLeft?: string
 }
 
 /**
@@ -124,6 +141,12 @@ export interface ModuleGroupStyles {
 export interface ModuleGroup {
   id: string
   styles: ModuleGroupStyles
+  /**
+   * 컬럼 분할 수 (1~4). 미지정/1이면 기존처럼 세로 스택.
+   * 2 이상이면 멤버를 columnIndex별 컬럼으로 나눠 가로 배치하고,
+   * 모바일(좁은 폭)에서는 fluid-hybrid 기법으로 100% 세로 스택된다.
+   */
+  columns?: number
 }
 
 /**
@@ -166,6 +189,8 @@ export interface NewsletterTemplate {
     styles: Record<string, unknown>
     /** 소속 그룹 id (없으면 그룹에 속하지 않음) */
     groupId?: string
+    /** 컬럼 분할 그룹에서의 컬럼 인덱스(0-based) */
+    columnIndex?: number
   }>
   /** 모듈 그룹 정의 (그룹 단위 스타일). 없으면 그룹 없음. */
   groups?: ModuleGroup[]

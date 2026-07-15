@@ -21,6 +21,16 @@
         >
           템플릿
         </button>
+        <!-- 임시 실험 탭 (조립형 모듈 POC) — 검증 후 제거/정식화 예정 -->
+        <button
+          @click="mode = 'modules-v2'"
+          :class="[
+            'flex-1 py-1.5 text-sm font-semibold rounded-md transition-colors',
+            mode === 'modules-v2' ? 'bg-white text-amber-600 shadow-sm' : 'text-gray-500 hover:text-gray-700',
+          ]"
+        >
+          모듈 v2
+        </button>
       </div>
     </div>
 
@@ -72,6 +82,56 @@
           <div class="text-xs text-gray-500 mt-3 px-1 flex flex-wrap gap-2 items-center">
             <i class="pi pi-info-circle"></i>
             템플릿을 적용하면 현재 작업이 대체됩니다
+          </div>
+        </div>
+      </div>
+
+      <!-- [임시] 조립형 모듈 v2 (POC) -->
+      <div v-else-if="mode === 'modules-v2'" class="space-y-3">
+        <div class="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-md p-2 leading-relaxed">
+          <i class="pi pi-info-circle mr-1"></i>실험용 임시 탭입니다. 원소 모듈(단일 이미지·설명 텍스트·단일 버튼)을 하나의 그룹으로 조립합니다.
+          그룹 멤버를 선택한 뒤 다른 모듈을 추가하면 <b>그룹 안</b>에 들어가고, 삭제로 노출/비노출을 제어합니다.
+        </div>
+        <div
+          @click="addComposedModule02"
+          class="p-3 border-2 border-dashed border-amber-300 rounded-lg cursor-pointer hover:bg-amber-50 hover:border-amber-400 transition-colors"
+        >
+          <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-amber-100 text-amber-700 rounded flex items-center justify-center">
+              <i class="pi pi-objects-column"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-medium text-sm truncate">모듈 02 (조립형)</div>
+              <div class="text-xs text-gray-500 truncate">단일 이미지 · 타이틀 · 텍스트 · 단일 버튼 그룹</div>
+            </div>
+          </div>
+        </div>
+        <div
+          @click="addComposedModule04"
+          class="p-3 border-2 border-dashed border-amber-300 rounded-lg cursor-pointer hover:bg-amber-50 hover:border-amber-400 transition-colors"
+        >
+          <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-amber-100 text-amber-700 rounded flex items-center justify-center">
+              <i class="pi pi-table"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-medium text-sm truncate">모듈 04 (조립형·2컬럼)</div>
+              <div class="text-xs text-gray-500 truncate">이미지 · 타이틀 · 텍스트 · 작은버튼 × 2컬럼 (모바일 세로 스택)</div>
+            </div>
+          </div>
+        </div>
+        <div
+          @click="addComposedModule011"
+          class="p-3 border-2 border-dashed border-amber-300 rounded-lg cursor-pointer hover:bg-amber-50 hover:border-amber-400 transition-colors"
+        >
+          <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-amber-100 text-amber-700 rounded flex items-center justify-center">
+              <i class="pi pi-id-card"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-medium text-sm truncate">모듈 01-1 (조립형·2컬럼)</div>
+              <div class="text-xs text-gray-500 truncate">제목 박스 + 내용 박스 × 2컬럼 (설명 텍스트 배경 박스, 모바일 세로 스택)</div>
+            </div>
           </div>
         </div>
       </div>
@@ -167,6 +227,48 @@ const addModule = (module: ModuleMetadata) => {
     summary: '모듈 추가됨',
     detail: `${module.name} 모듈이 추가되었습니다`,
     life: 2000,
+  })
+}
+
+// [임시/POC] 모듈 02번을 원소 모듈 그룹으로 조립해 추가
+const addComposedModule02 = () => {
+  onModuleLeave()
+  const groupId = moduleStore.addComposedModule02()
+  toast.add({
+    severity: groupId ? 'success' : 'error',
+    summary: groupId ? '조립형 모듈 추가됨' : '조립 실패',
+    detail: groupId
+      ? '모듈 02(조립형) 그룹이 추가되었습니다. 각 원소를 선택해 개별 편집하세요.'
+      : '원소 모듈을 찾을 수 없습니다.',
+    life: 2500,
+  })
+}
+
+// [임시/POC] 모듈 04번을 2컬럼 조립 그룹으로 추가
+const addComposedModule04 = () => {
+  onModuleLeave()
+  const groupId = moduleStore.addComposedModule04()
+  toast.add({
+    severity: groupId ? 'success' : 'error',
+    summary: groupId ? '조립형 모듈 추가됨' : '조립 실패',
+    detail: groupId
+      ? '모듈 04(2컬럼 조립) 그룹이 추가되었습니다. 데스크톱은 2단, 모바일은 세로로 쌓입니다.'
+      : '원소 모듈을 찾을 수 없습니다.',
+    life: 2500,
+  })
+}
+
+// [임시/POC] 모듈 01-1번을 2컬럼 조립 그룹으로 추가 (제목 박스 + 내용 박스)
+const addComposedModule011 = () => {
+  onModuleLeave()
+  const groupId = moduleStore.addComposedModule011()
+  toast.add({
+    severity: groupId ? 'success' : 'error',
+    summary: groupId ? '조립형 모듈 추가됨' : '조립 실패',
+    detail: groupId
+      ? '모듈 01-1(2컬럼 조립) 그룹이 추가되었습니다. 설명 텍스트의 배경 박스로 제목/내용 카드를 만듭니다.'
+      : '원소 모듈을 찾을 수 없습니다.',
+    life: 2500,
   })
 }
 

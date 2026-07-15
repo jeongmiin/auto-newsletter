@@ -5,6 +5,11 @@ import {
   wrapGroupHtmlForEmail,
   resolveGroupStyles,
   DEFAULT_GROUP_STYLES,
+  columnCellStyle,
+  buildColumnLayoutHtml,
+  COLUMN_BREAKPOINT_PX,
+  groupBoxSide,
+  groupBoxShorthand,
 } from '@/utils/groupStyle'
 
 describe('groupStyle', () => {
@@ -165,6 +170,83 @@ describe('groupStyle', () => {
       expect(html).toMatch(/border-left:1px solid #000/)
       expect(html).not.toMatch(/border-right:/)
       expect(html).not.toMatch(/border-bottom:/)
+    })
+  })
+
+  describe('그룹 여백 4방향 (안/밖)', () => {
+    it('4방향 필드가 없으면 기존 shorthand를 그대로 사용(하위 호환)', () => {
+      expect(groupBoxShorthand({ padding: '16px' }, 'padding')).toBe('16px')
+      expect(groupBoxShorthand({ margin: '12px 0' }, 'margin')).toBe('12px 0')
+      expect(groupBoxShorthand({}, 'padding')).toBe('')
+    })
+
+    it('4방향 값이 하나라도 있으면 상·우·하·좌로 조합(미설정 변은 shorthand 폴백)', () => {
+      // shorthand 16px + top만 20px 지정 → "20px 16px 16px 16px"
+      expect(groupBoxShorthand({ padding: '16px', paddingTop: '20px' }, 'padding')).toBe(
+        '20px 16px 16px 16px',
+      )
+      // 4방향 전부 지정
+      expect(
+        groupBoxShorthand(
+          { marginTop: '4px', marginRight: '8px', marginBottom: '4px', marginLeft: '8px' },
+          'margin',
+        ),
+      ).toBe('4px 8px 4px 8px')
+    })
+
+    it('모두 0/빈값이면 빈 문자열', () => {
+      expect(
+        groupBoxShorthand(
+          { paddingTop: '0px', paddingRight: '0', paddingBottom: '0px', paddingLeft: '0' },
+          'padding',
+        ),
+      ).toBe('')
+    })
+
+    it('groupBoxSide: 명시 4방향 우선, 없으면 shorthand 파싱값', () => {
+      // shorthand "10px 20px" → 상/하 10px, 좌/우 20px
+      expect(groupBoxSide({ padding: '10px 20px' }, 'padding', 'top')).toBe('10px')
+      expect(groupBoxSide({ padding: '10px 20px' }, 'padding', 'right')).toBe('20px')
+      // 명시 필드가 있으면 그 값
+      expect(groupBoxSide({ padding: '10px 20px', paddingTop: '30px' }, 'padding', 'top')).toBe(
+        '30px',
+      )
+    })
+  })
+
+  describe('columnCellStyle (컬럼 fluid-hybrid)', () => {
+    it('컬럼 수에 따라 min-width 비율이 정확히 균등 분할된다', () => {
+      expect(columnCellStyle(2)).toContain('min-width:50.0000%')
+      expect(columnCellStyle(3)).toContain('min-width:33.3333%')
+      expect(columnCellStyle(4)).toContain('min-width:25.0000%')
+    })
+
+    it('모바일 스택용 fluid-hybrid width 공식과 inline-block을 포함한다', () => {
+      const s = columnCellStyle(2)
+      expect(s).toContain('display:inline-block')
+      expect(s).toContain(`width:calc((${COLUMN_BREAKPOINT_PX}px - 100%) * ${COLUMN_BREAKPOINT_PX})`)
+      expect(s).toContain('max-width:100%')
+    })
+
+    it('컬럼 수는 1~4로 클램프된다', () => {
+      expect(columnCellStyle(1)).toContain('min-width:100.0000%')
+      expect(columnCellStyle(9)).toContain('min-width:25.0000%')
+    })
+  })
+
+  describe('buildColumnLayoutHtml', () => {
+    it('컬럼별 HTML을 각 셀 div로 감싼다', () => {
+      const html = buildColumnLayoutHtml(['<p>A</p>', '<p>B</p>'])
+      expect((html.match(/display:inline-block/g) || []).length).toBe(2)
+      expect(html).toContain('<p>A</p>')
+      expect(html).toContain('<p>B</p>')
+      // inline-block 공백 제거용 부모 font-size:0
+      expect(html).toContain('font-size:0')
+    })
+
+    it('빈 컬럼은 &nbsp;로 자리를 유지한다', () => {
+      const html = buildColumnLayoutHtml(['<p>A</p>', ''])
+      expect(html).toContain('&nbsp;')
     })
   })
 })
