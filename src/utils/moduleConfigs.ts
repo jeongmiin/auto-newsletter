@@ -518,11 +518,16 @@ export const module07Config: ModuleConfig = {
  * ModuleFooter 설정
  */
 export const moduleFooterConfig: ModuleConfig = {
-  quillFields: ['companyInfo'],
+  quillFields: ['companyInfo', 'koreanNoticeText', 'englishNoticeText'],
   defaults: {
     // 푸터 공통 배경색·텍스트 색상 (기존 인스턴스 폴백 = 기존 하드코딩 값)
     footerBgColor: '#e9e9e9',
     footerTextColor: '#333333',
+    // 안내문구(국문/영문) — 편집 가능. [수신거부]/[unsubscription] 마커는 프로세서가 링크로 감쌈
+    koreanNoticeText:
+      '본 메일은 회원님의 수신동의 여부를 확인한 결과 회원님께서 수신동의를 하셨기에 발송되었습니다.<br>메일 수신을 원치 않으시면 <a style="text-decoration:none; color:#333333; font-weight:700;" href="#" target="_blank">[수신거부]</a> 를 클릭하십시오.<br><div style="margin-top:2px;">본 메일은 발신전용 메일이므로 문의사항은 <strong>evinfra@esgroup.net</strong>으로 문의 바랍니다</div>',
+    englishNoticeText:
+      'If you don\'t want this type of information or e-mail, please click the <a style="text-decoration:none; color:#333333; font-weight:700;" href="#" target="_blank">[unsubscription]</a><br>Please note that this is a no-reply email. For any inquiries,<br>contact us at 02-6121-6394 or via email at evinfra@esgroup.net.',
     companyInfo:
       '<p style="margin:0; padding:0;"><strong>코리아빌드 사무국</strong></p><p style="margin:0; padding:0;">(주)메쎄이상</p><p style="margin:0; padding:0; font-size:13px;">서울시 마포구&nbsp;월드컵북로&nbsp;58길&nbsp;9 ES타워&nbsp;(03922)</p>',
     companyInfoFontSize: '16px',
@@ -530,8 +535,6 @@ export const moduleFooterConfig: ModuleConfig = {
     phone: '02-6121-6362',
     email: 'hvackorea@esgroup.net',
     fax: '02-6121-6363',
-    unsubscribeUrl: '#',
-    inquiryEmail: 'hvackorea@esgroup.net',
     // 안내문구 다국어(영문) 표시 — 미설정 시 국문 안내문구 노출
     showEnglishFooter: false,
     // SNS 아이콘 공통 배경색 (모든 원형 아이콘에 적용) — 기존 하드코딩 #333333을 속성화

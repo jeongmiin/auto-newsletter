@@ -519,15 +519,9 @@ export const footerSnsProcessor: ContentProcessor = (html, properties) => {
     [!showKoreanFooter && !showEnglishFooter, '안내문구'],
   ]
 
-  // 문의 이메일 안내 줄: 미설정 시 발신전용 안내 문구로 대체 (설정 시 기존 문구 유지)
+  // 안내문구(국문/영문)는 이제 koreanNoticeText/englishNoticeText로 자유 편집된다.
+  // 국문/영문 블록 자체의 노출 여부만 마커로 제어한다.
   let result = html
-  if (properties.showInquiry === false) {
-    result = result.replace(
-      /<!-- 문의 -->.*?<!-- \/\/문의 -->/gs,
-      '<!-- 문의 --><div>본 메일은 발신전용 메일입니다.</div><!-- //문의 -->'
-    )
-  }
-
   result = removals.reduce((acc, [shouldRemove, label]) => {
     if (!shouldRemove) return acc
     const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`)

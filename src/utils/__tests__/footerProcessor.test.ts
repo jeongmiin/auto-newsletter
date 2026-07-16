@@ -87,19 +87,6 @@ describe('footerSnsProcessor - 회사 정보 H/T/E 토글', () => {
     expect(result).not.toContain('<strong>F</strong>')
   })
 
-  it('문의 이메일 줄은 미설정 시 표시됨 (기본 노출)', () => {
-    const result = run({})
-    expect(result).toContain('문의 바랍니다')
-  })
-
-  it('showInquiry=false 이면 발신전용 안내 문구로 대체됨', () => {
-    const result = run({ showInquiry: false })
-    expect(result).not.toContain('문의 바랍니다')
-    expect(result).toContain('본 메일은 발신전용 메일입니다.')
-    // 수신거부 안내 문구는 유지
-    expect(result).toContain('[수신거부]')
-  })
-
   it('모두 false 이면 회사 정보 줄이 전부 제거됨', () => {
     const result = run({ showWebsite: false, showPhone: false, showEmail: false })
     expect(result).not.toContain('<strong>H</strong>')
@@ -152,42 +139,37 @@ describe('footerSnsProcessor - 안내문구 국문/영문 독립 토글', () => 
     expect(footerHtml).toContain('<!-- 안내문구-영문 -->')
   })
 
-  it('미설정 시 국문만 노출 (국문 기본 표시 · 영문 기본 숨김)', () => {
+  // 안내문구 본문은 이제 koreanNoticeText/englishNoticeText 속성으로 치환된다.
+  // 프로세서는 블록(placeholder를 감싼 국문/영문 마커)의 노출 여부만 제어한다.
+  it('미설정 시 국문 블록만 노출 (국문 기본 표시 · 영문 기본 숨김)', () => {
     const result = run({})
-    expect(result).toContain('메일 수신을 원치 않으시면')
-    expect(result).toContain('[수신거부]')
-    expect(result).not.toContain('Please note that this is a no-reply email')
+    expect(result).toContain('{{koreanNoticeText}}')
+    expect(result).toContain('<!-- 안내문구-국문 -->')
+    expect(result).not.toContain('{{englishNoticeText}}')
     expect(result).not.toContain('<!-- 안내문구-영문 -->')
   })
 
-  it('showEnglishFooter=true 만 켜면 국문+영문 모두 노출 (독립 토글 — 국문 유지)', () => {
+  it('showEnglishFooter=true 만 켜면 국문+영문 블록 모두 노출 (독립 토글 — 국문 유지)', () => {
     const result = run({ showEnglishFooter: true })
-    expect(result).toContain('메일 수신을 원치 않으시면') // 국문 유지
-    expect(result).toContain('Please note that this is a no-reply email') // 영문 노출
-    expect(result).toContain('[unsubscription]')
+    expect(result).toContain('{{koreanNoticeText}}') // 국문 유지
+    expect(result).toContain('{{englishNoticeText}}') // 영문 노출
   })
 
   it('showKoreanFooter=false 이면 국문 블록 제거 (영문 미설정 시 둘 다 없음)', () => {
     const result = run({ showKoreanFooter: false })
-    expect(result).not.toContain('메일 수신을 원치 않으시면')
+    expect(result).not.toContain('{{koreanNoticeText}}')
     expect(result).not.toContain('<!-- 안내문구-국문 -->')
-    expect(result).not.toContain('Please note that this is a no-reply email')
+    expect(result).not.toContain('{{englishNoticeText}}')
   })
 
-  it('showKoreanFooter=false + showEnglishFooter=true 이면 영문만 노출 (기존 영문 전용과 동일)', () => {
+  it('showKoreanFooter=false + showEnglishFooter=true 이면 영문 블록만 노출', () => {
     const result = run({ showKoreanFooter: false, showEnglishFooter: true })
-    expect(result).toContain('Please note that this is a no-reply email')
-    expect(result).toContain('[unsubscription]')
-    expect(result).not.toContain('메일 수신을 원치 않으시면')
+    expect(result).toContain('{{englishNoticeText}}')
+    expect(result).not.toContain('{{koreanNoticeText}}')
     expect(result).not.toContain('<!-- 안내문구-국문 -->')
-  })
-
-  it('영문 안내문구의 unsubscription 링크가 수신거부 URL 속성과 연결됨', () => {
-    const result = run({ showEnglishFooter: true })
-    // 링크는 placeholder로 유지(치환은 콘텐츠 교체 단계)
-    expect(result).toContain('href="{{unsubscribeUrl}}"')
   })
 })
+
 
 describe('footerSnsProcessor - 마커 잔여 검증', () => {
   it('처리 후 회사 정보/SNS 마커 주석이 남지 않아야 함 (전체 토글 ON 기준)', () => {
