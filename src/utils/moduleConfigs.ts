@@ -138,6 +138,8 @@ export const moduleImgConfig: ModuleConfig = {
     imageAlt: '이미지',
     imageBorderRadius: '0px',
     imageLinkUrl: '#',
+    // 이미지 최대 너비 (기본 100% = 기존 인스턴스 폴백 = 컨테이너 가득)
+    imageMaxWidth: '100%',
     // 이미지 테두리 (기본 none = 기존 인스턴스 폴백 = 테두리 없음)
     imageBorderStyle: 'none',
     imageBorderWidth: '1px',
@@ -568,6 +570,9 @@ export const module10Config: ModuleConfig = {
     labelTextColor: '#ffffff',
     imageBorderRadius: '0px',
     imageLinkUrl: '#',
+    // 영역 비율 (이미지/텍스트 영역 너비 %)
+    imageAreaWidth: '30%',
+    titleAreaWidth: '70%',
   },
   processors: [processors.module10LabelProcessor, processors.module10ImageProcessor, processors.module10TimeProcessor, processors.imageLinkProcessor],
 }
@@ -589,6 +594,9 @@ export const module101Config: ModuleConfig = {
     rightLabelTextColor: '#ffffff',
     rightImageBorderRadius: '0px',
     rightImageLinkUrl: '#',
+    // 영역 비율 (좌/우 컬럼 너비 %)
+    leftAreaWidth: '50%',
+    rightAreaWidth: '50%',
   },
   processors: [processors.module101LabelProcessor, processors.twoColumnImageLinkProcessor],
 }
@@ -655,6 +663,13 @@ export const moduleTableConfig: ModuleConfig = {
  */
 export const moduleSubTitleConfig: ModuleConfig = {
   autoReplacePlaceholders: false, // 커스텀 프로세서 사용
+  defaults: {
+    subtitleTextFontSize: '16px',
+    paddingTop: '20px',
+    paddingRight: '20px',
+    paddingBottom: '20px',
+    paddingLeft: '20px',
+  },
   processors: [processors.subtitleDefaultProcessor],
 }
 

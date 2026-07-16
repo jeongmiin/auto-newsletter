@@ -1304,6 +1304,13 @@
           "placeholder": "이미지 설명"
         },
         {
+          "key": "imageMaxWidth",
+          "label": "이미지 최대 너비",
+          "type": "text",
+          "default": "100%",
+          "placeholder": "예: 100%, 300px"
+        },
+        {
           "key": "showImageLink",
           "label": "이미지 링크 사용",
           "type": "boolean",
@@ -6204,6 +6211,38 @@
           "placeholder": "예: 16px, 18px",
           "group": "텍스트",
           "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
+        },
+        {
+          "key": "paddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px",
+          "group": "여백"
+        },
+        {
+          "key": "paddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px",
+          "group": "여백"
+        },
+        {
+          "key": "paddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px",
+          "group": "여백"
+        },
+        {
+          "key": "paddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px",
+          "group": "여백"
         }
       ]
     },
@@ -6353,6 +6392,23 @@
           "placeholder": "예: 16px, 18px",
           "group": "타이틀",
           "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
+        },
+        {
+          "key": "imageAreaWidth",
+          "label": "이미지 영역 너비",
+          "type": "text",
+          "default": "30%",
+          "placeholder": "예: 30%",
+          "group": "영역 비율",
+          "hint": "이미지 영역과 텍스트 영역 너비의 합이 100%가 되도록 맞춰주세요."
+        },
+        {
+          "key": "titleAreaWidth",
+          "label": "텍스트 영역 너비",
+          "type": "text",
+          "default": "70%",
+          "placeholder": "예: 70%",
+          "group": "영역 비율"
         }
       ]
     },
@@ -6553,6 +6609,23 @@
           "placeholder": "예: 16px, 18px",
           "group": "오른쪽",
           "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
+        },
+        {
+          "key": "leftAreaWidth",
+          "label": "왼쪽 영역 너비",
+          "type": "text",
+          "default": "50%",
+          "placeholder": "예: 50%",
+          "group": "영역 비율",
+          "hint": "왼쪽/오른쪽 영역 너비의 합이 100%가 되도록 맞춰주세요."
+        },
+        {
+          "key": "rightAreaWidth",
+          "label": "오른쪽 영역 너비",
+          "type": "text",
+          "default": "50%",
+          "placeholder": "예: 50%",
+          "group": "영역 비율"
         }
       ]
     },
