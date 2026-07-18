@@ -235,7 +235,15 @@
               <button type="button" class="gg-stepper-btn" @click="adjustFontSize(prop, -1)" v-tooltip.top="'작게'">
                 <i class="pi pi-minus"></i>
               </button>
-              <span class="gg-stepper-value">{{ fontSizeNumber(prop) }}</span>
+              <input
+                type="number"
+                class="gg-stepper-value"
+                :value="fontSizeNumber(prop)"
+                :min="FONT_SIZE_MIN"
+                :max="FONT_SIZE_MAX"
+                @change="onFontSizeInput(prop, $event)"
+                @keydown.enter="blurTarget"
+              />
               <button type="button" class="gg-stepper-btn" @click="adjustFontSize(prop, 1)" v-tooltip.top="'크게'">
                 <i class="pi pi-plus"></i>
               </button>
@@ -1154,32 +1162,30 @@
         </button>
       </div>
 
-      <!-- 포인트 색상으로 사용 -->
-      <label class="flex items-center gap-1.5 cursor-pointer select-none mb-2">
-        <Checkbox :modelValue="popoverUsePoint" @update:modelValue="popoverUsePoint = $event" :binary="true" />
-        <span class="text-sm text-gray-600">포인트 색상으로 사용</span>
-        <span
-          class="w-3 h-3 rounded-sm border border-gray-300"
-          :style="{ backgroundColor: pointColorValue }"
-        ></span>
-      </label>
-
       <!-- 색상 + 투명도 / HEX 입력 -->
       <div class="flex items-center gap-2">
         <ColorAlphaPicker
           :modelValue="displayPopoverColor"
           @update:modelValue="popoverColor = $event"
-          :disabled="popoverUsePoint"
+          :disabled="popoverPointIndex !== null"
         />
         <HexColorInput
           :modelValue="displayPopoverColor"
           @update:modelValue="popoverColor = $event ?? ''"
-          :disabled="popoverUsePoint"
+          :disabled="popoverPointIndex !== null"
           placeholder="#111111"
           class="flex-1 min-w-0 font-mono text-xs"
           spellcheck="false"
         />
       </div>
+
+      <!-- 포인트 색상으로 사용 (최대 3개 중 선택 — 다른 색상 필드와 동일한 스와치 UI) -->
+      <PointColorSwatchRow
+        class="mt-2"
+        :pointColors="wrapPointColors"
+        :activeIndex="popoverPointIndex"
+        @select="onSelectPopoverPointColor"
+      />
 
       <div class="flex items-center justify-between mt-3">
         <button
@@ -1212,7 +1218,7 @@ import { normalizeColorInput, isValidHexColor } from '@/utils/colorHelper'
 import { normalizePxLength } from '@/utils/cssUnit'
 import { LINE_HEIGHT_OPTIONS } from '@/utils/quillLineHeight'
 import { LETTER_SPACING_OPTIONS } from '@/utils/quillLetterSpacing'
-import { POINT_COLOR_SUFFIX, POINT_COLOR_INDEX_SUFFIX, POINT_COLOR_CSS_VAR, getPointColorIndex, pointColorAt } from '@/utils/pointColor'
+import { POINT_COLOR_SUFFIX, POINT_COLOR_INDEX_SUFFIX, POINT_COLOR_CSS_VAR, pointColorCssVar, getPointColorIndex, pointColorAt } from '@/utils/pointColor'
 import { processQuillHtml } from '@/utils/quillHtmlProcessor'
 import TableCellEditor from './TableCellEditor.vue'
 import ColorAlphaPicker from '@/components/ColorAlphaPicker.vue'
@@ -1470,9 +1476,10 @@ const normalizePxField = (prop: EditableProp) => {
   if (fixed !== raw) updateProperty(prop.key, fixed)
 }
 
-// 폰트 크기 필드 판별: key가 "...FontSize"로 끝나는 px 텍스트 필드 → 스테퍼(−/값/+) UI로 표시
+// 폰트 크기 필드 판별: key가 "...fontSize"로 끝나는 px 텍스트 필드 → 스테퍼(−/값/+) UI로 표시
+// (대소문자 무관 — "fontSize" 단독 키(ModuleDescText 등)와 "titleFontSize" 같은 접두사 케이스 모두 포함)
 const isFontSizeField = (prop: EditableProp): boolean =>
-  prop.type === 'text' && /FontSize$/.test(prop.key)
+  prop.type === 'text' && /fontsize$/i.test(prop.key)
 
 const FONT_SIZE_MIN = 8
 const FONT_SIZE_MAX = 72
@@ -1485,6 +1492,22 @@ const fontSizeNumber = (prop: EditableProp): number => {
 
 const adjustFontSize = (prop: EditableProp, delta: number) => {
   const next = Math.min(FONT_SIZE_MAX, Math.max(FONT_SIZE_MIN, fontSizeNumber(prop) + delta))
+  updateProperty(prop.key, `${next}px`)
+}
+
+// Enter 입력 시 blur시켜 change 이벤트(값 확정)를 발생시킴
+const blurTarget = (event: Event) => {
+  ;(event.target as HTMLElement).blur()
+}
+
+// 가운데 숫자를 직접 타이핑해서 수정 (blur/Enter 시 확정 — 입력 중엔 스토어를 건드리지 않음)
+const onFontSizeInput = (prop: EditableProp, event: Event) => {
+  const raw = (event.target as HTMLInputElement).value
+  const parsed = parseInt(raw, 10)
+  const next = Math.min(
+    FONT_SIZE_MAX,
+    Math.max(FONT_SIZE_MIN, Number.isFinite(parsed) ? parsed : fontSizeNumber(prop)),
+  )
   updateProperty(prop.key, `${next}px`)
 }
 
@@ -1621,25 +1644,28 @@ const colorPopover = ref<{
 }>({ visible: false, format: 'color', top: 0, left: 0 })
 const colorPopoverEl = ref<HTMLElement | null>(null)
 const popoverColor = ref('#111111')
-const popoverUsePoint = ref(false)
+// 포인트 색상(최대 3개) 중 이 필드가 따르는 인덱스. null이면 미사용(직접 지정)
+const popoverPointIndex = ref<number | null>(null)
 
 // 팝오버 대상 에디터/선택 영역 (반응형 불필요 → 일반 변수)
 let popoverQuill: Quill | null = null
 let popoverRange: { index: number; length: number } | null = null
 let popoverEditorEl: HTMLElement | null = null // 위치 기준이 되는 에디터 컨테이너
 
-// 표시용 색상 (입력 필드) — 포인트 색상 사용 시 전역 포인트 색상을 보여줌
+// 표시용 색상 (입력 필드) — 포인트 색상 사용 시 선택된 인덱스의 포인트 색상을 보여줌
 const displayPopoverColor = computed(() =>
-  popoverUsePoint.value ? pointColorValue.value : popoverColor.value,
+  popoverPointIndex.value !== null
+    ? pointColorAt(wrapPointColors.value, popoverPointIndex.value)
+    : popoverColor.value,
 )
 
 // 선택 영역에 실제 적용할 값
-// - 포인트 색상 사용: var(--point-color, <현재값>) → 에디터/미리보기는 :root 변수로 실시간 추종,
+// - 포인트 색상 사용: var(--point-color-N, <현재값>) → 에디터/미리보기는 :root 변수로 실시간 추종,
 //   이메일 내보내기 시 실제 색상으로 치환된다.
 // - 일반: 입력한 색상값 그대로
 const appliedPopoverValue = computed(() =>
-  popoverUsePoint.value
-    ? `var(${POINT_COLOR_CSS_VAR}, ${pointColorValue.value})`
+  popoverPointIndex.value !== null
+    ? `var(${pointColorCssVar(popoverPointIndex.value)}, ${pointColorAt(wrapPointColors.value, popoverPointIndex.value)})`
     : popoverColor.value,
 )
 
@@ -1697,9 +1723,14 @@ const closeColorPopover = () => {
 }
 
 const removeQuillColor = () => {
-  popoverUsePoint.value = false
+  popoverPointIndex.value = null
   applyQuillColor(false)
   closeColorPopover()
+}
+
+// 스와치 클릭: 같은 인덱스를 다시 누르면 해제(직접 지정으로 복귀), 아니면 그 인덱스로 바인딩
+const onSelectPopoverPointColor = (index: number): void => {
+  popoverPointIndex.value = popoverPointIndex.value === index ? null : index
 }
 
 const openQuillColorPopover = (quill: Quill, format: 'color' | 'background') => {
@@ -1708,12 +1739,14 @@ const openQuillColorPopover = (quill: Quill, format: 'color' | 'background') => 
   // 위치 기준 = 에디터 전체 컨테이너 (PrimeVue Editor 루트)
   popoverEditorEl = quill.container.closest<HTMLElement>('.p-editor') ?? quill.container
 
-  // 현재 선택 영역에 적용된 색/포인트 사용 여부를 초기값으로 (열 때의 세팅은 적용 억제)
+  // 현재 선택 영역에 적용된 색/포인트 사용 여부(및 인덱스)를 초기값으로 (열 때의 세팅은 적용 억제)
   suppressColorApply = true
   const range = popoverRange
   const current = range ? quill.getFormat(range.index, Math.max(range.length, 1))[format] : null
   const usingPoint = typeof current === 'string' && current.includes(POINT_COLOR_CSS_VAR)
-  popoverUsePoint.value = usingPoint
+  const indexMatch = typeof current === 'string' ? current.match(/--point-color-(\d)/) : null
+  // 인덱스 표기가 없는 레거시 값(var(--point-color, ...))은 0번으로 간주
+  popoverPointIndex.value = usingPoint ? (indexMatch ? parseInt(indexMatch[1], 10) : 0) : null
   popoverColor.value =
     typeof current === 'string' && current && !usingPoint ? current : '#111111'
   nextTick(() => {
@@ -2215,12 +2248,6 @@ const getColorValue = (key: string) => {
 }
 
 // ===== 포인트 색상 사용 =====
-// 전역 포인트 색상 (유효한 HEX면 그대로)
-const pointColorValue = computed(() => {
-  const value = wrapSettings.value.pointColor
-  return isValidHexColor(value) ? value : '#2563eb'
-})
-
 // 해당 색상 속성이 '포인트 색상 사용' 상태인지
 const isUsingPoint = (key: string): boolean => {
   return selectedModule.value?.properties[`${key}${POINT_COLOR_SUFFIX}`] === true
@@ -2712,10 +2739,22 @@ const onSelectPointColor = (key: string, index: number): void => {
   background: #f2f4f6;
 }
 .gg-stepper-value {
+  width: 100%;
+  border: none;
+  background: none;
+  outline: none;
+  text-align: center;
   font-size: 15px;
   font-weight: 500;
   letter-spacing: -0.15px;
   color: #191f28;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+.gg-stepper-value::-webkit-outer-spin-button,
+.gg-stepper-value::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 /* 리치텍스트 필드 — 행간/자간 외부 드롭다운 + 툴바 다듬기 (Figma 378-1704) */

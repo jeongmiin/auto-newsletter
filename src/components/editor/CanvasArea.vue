@@ -80,19 +80,19 @@
               class="group-wrap"
               :class="{ 'group-wrap--selected': selectedGroupId === item.id }"
             >
-              <!-- 좌측 드래그 핸들 (단독 모듈과 동일 패턴) — 그룹 전체를 끌어서 이동 -->
-              <div
-                class="dh-top module-drag-handle"
-                :class="{ 'is-visible': selectedGroupId === item.id }"
-                title="마우스로 끌어서 그룹 순서를 변경하세요"
-              >
-                <span class="material-symbols-outlined">drag_indicator</span>
-              </div>
-              <!-- 드래그 핸들 왼쪽의 세로 액션 툴바 (복제·해제·그룹 스타일·삭제) — 상단 띠 대신, 항상 노출 -->
-              <div class="group-action-toolbar">
+              <!-- 좌측 통합 카드: 드래그 핸들 + 액션(복제·해제·그룹 스타일·삭제) — 항상 노출.
+                   드래그 시작 영역은 핸들 부분(.dh-top)만이고, 버튼들은 no-drag로 예외 처리. -->
+              <div class="group-side-toolbar">
+                <div
+                  class="dh-top group-side-handle"
+                  title="마우스로 끌어서 그룹 순서를 변경하세요"
+                >
+                  <span class="material-symbols-outlined">drag_indicator</span>
+                </div>
+                <div class="group-side-divider"></div>
                 <button
                   type="button"
-                  class="group-action-btn"
+                  class="no-drag group-action-btn"
                   v-tooltip.left="'그룹 복제'"
                   @click.stop="moduleStore.duplicateGroup(item.id)"
                 >
@@ -100,7 +100,7 @@
                 </button>
                 <button
                   type="button"
-                  class="group-action-btn"
+                  class="no-drag group-action-btn"
                   v-tooltip.left="'그룹 해제 (모듈은 유지)'"
                   @click.stop="moduleStore.ungroup(item.id)"
                 >
@@ -108,7 +108,7 @@
                 </button>
                 <button
                   type="button"
-                  class="group-action-btn"
+                  class="no-drag group-action-btn"
                   v-tooltip.left="'그룹 스타일 편집'"
                   @click.stop="selectGroupBox(item.id)"
                 >
@@ -116,7 +116,7 @@
                 </button>
                 <button
                   type="button"
-                  class="group-action-btn group-action-btn--danger"
+                  class="no-drag group-action-btn group-action-btn--danger"
                   v-tooltip.left="'그룹 전체 삭제'"
                   @click.stop="confirmDeleteGroup(item)"
                 >
@@ -432,18 +432,17 @@ const removeColumn = (groupId: string, rowIdx: number, colIdx: number) =>
   transition: opacity 0.12s;
 }
 .group:hover .module-drag-handle,
-.group-wrap:hover .module-drag-handle,
 .module-drag-handle.is-visible {
   opacity: 1;
   pointer-events: auto;
 }
 
-/* 그룹 전용 세로 액션 툴바 (복제·해제·그룹 스타일·삭제) — 드래그 핸들 왼쪽에 위치.
-   기존 상단 띠(그룹 헤더 바)를 대체. 호버해야만 보이면 클릭하려는 순간 마우스가 벗어나
-   조작이 어려우므로, 드래그 핸들과 달리 항상 노출한다(그룹은 늘 조작 대상이 뚜렷해야 함). */
-.group-action-toolbar {
+/* 그룹 전용 좌측 통합 카드: 드래그 핸들 + 액션(복제·해제·그룹 스타일·삭제)을 한 장으로 병합.
+   기존엔 핸들(호버 시만 노출)과 액션 툴바(항상 노출)가 별도 카드였는데, 핸들도 계속 꺼지지
+   않도록 하나로 합쳐 항상 노출한다(그룹은 늘 조작 대상이 뚜렷해야 함). 그룹 왼쪽에 위치. */
+.group-side-toolbar {
   position: absolute;
-  left: -81px;
+  left: -49px;
   top: 50%;
   transform: translateY(-50%);
   z-index: 10;
@@ -452,11 +451,28 @@ const removeColumn = (groupId: string, rowIdx: number, colIdx: number) =>
   align-items: center;
   gap: 4px;
   width: 41px;
-  padding: 12px 0;
+  padding: 8px 0;
   background: #fff;
   border: 1px solid #e5e8eb;
   border-radius: 12px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.07);
+}
+.group-side-handle {
+  width: 100%;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8b95a1;
+  cursor: grab;
+}
+.group-side-handle:active {
+  cursor: grabbing;
+}
+.group-side-divider {
+  width: 24px;
+  height: 1px;
+  background: #e5e8eb;
 }
 .group-action-btn {
   width: 28px;

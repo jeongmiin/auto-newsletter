@@ -154,6 +154,24 @@ description: >-
   - **그룹에 실제 이름 부여**: `ModuleGroup` 타입에 `name?: string` 추가. v2 조립형 템플릿으로 그룹을 만들 때(`CategoryModulePanel.onGalleryAdd`, `ModulePanel.addModule`, "모듈 v2" POC 탭의 14개 핸들러) 클릭한 모듈의 실제 이름(`module.name`, 예: "모듈 02번")을 새 `moduleStore.setGroupName(groupId, name)`으로 그룹에 저장. `duplicateGroup`도 이름을 승계. `SelectedItemPanel.vue`의 "그룹 구성" 타이틀을 `{{ activeGroup?.name || '그룹 구성' }}`로 변경 — 이름이 있으면 그걸(예: "모듈 02번"), 없으면(컬럼 분할 등으로 만든 임의 그룹) 기존처럼 "그룹 구성"을 보여준다.
   - **검증**: `npx vue-tsc --noEmit` 클린, `npx vitest run` 362개 통과, Playwright로 그룹 생성 직후 좌측 타이틀이 실제 모듈명("모듈 02번")으로 뜨는 것 + 멤버 확장 시 중복 타이틀 없이 바로 필드가 나오는 것 + 모든 chevron이 collapsed 상태에서 `>`로 통일된 것 확인.
 
+- **Phase 9 완료(2026-07-18)**: Quill 리치텍스트 "포인트 색상으로 사용"을 3개 인덱스 지원으로 확장(Phase 2에서 미룬 항목).
+  - **CSS 변수 인프라**: `--point-color`(레거시 단일) → `--point-color-0/1/2`(인덱스별)로 확장. `App.vue`가 `wrapSettings.pointColors` 배열 전체를 watch해 세 변수를 모두 `:root`에 주입(`--point-color`는 0번 별칭으로 계속 유지 — 하위호환).
+  - **`src/utils/pointColor.ts`**: `pointColorCssVar(index)` 헬퍼 + `resolvePointColorVars(html, pointColors)` 추가 — `var(--point-color-N, ...)`과 인덱스 없는 레거시 `var(--point-color, ...)`(0번으로 간주) 둘 다 치환. 기존 단일용 `resolvePointColorVar`는 테스트 호환을 위해 그대로 남겨둠(신규 코드는 안 씀).
+  - **내보내기 연결**: `moduleStore.ts`의 `generateHtml`/`renderModulePreview` 두 곳에서 `resolvePointColorVar(html, wrapSettings.pointColor)` → `resolvePointColorVars(html, wrapSettings.pointColors)`로 교체.
+  - **`ModuleForm.vue`의 Quill 커스텀 색상 팝오버**: "포인트 색상으로 사용" 체크박스+스와치 1개 → `popoverPointIndex: number|null` 상태 + `PointColorSwatchRow`(다른 색상 필드와 동일한 컴포넌트)로 교체, 최대 3개 중 클릭 선택/재클릭 해제. 팝오버를 열 때 현재 서식 값에서 `--point-color-(\d)` 정규식으로 인덱스를 역추출(레거시 인덱스 없는 값은 0번으로 해석)해 스와치 활성 상태를 복원.
+  - **검증**: `pointColor.test.ts`에 `resolvePointColorVars` 테스트 8개 추가(총 370개 통과), `npx vue-tsc --noEmit` 클린, Playwright로 포인트 색상 3개 등록 → Quill 텍스트 선택 → 팝오버에 스와치 3개 노출 → 3번째 클릭 시 실제로 `var(--point-color-2, ...)`가 본문에 적용되는 것까지 확인.
+
+- **Phase 10 완료(2026-07-18)**: 폰트 크기 스테퍼 적용 범위 버그 수정 + 값 직접 타이핑 지원.
+  - **감지 정규식 버그**: `isFontSizeField`가 `/FontSize$/`(대문자 F로 시작하는 접미사만) 검사해 `ModuleDescText`의 단독 키 `fontSize`(소문자 f로 시작 — 접두사 없음)를 놓치고 있었음 — 실제 modules-config.json 전수 조사로 발견. `/fontsize$/i`(대소문자 무관)로 수정해 58개 접두사형 + 1개 단독형 모두 스테퍼로 렌더.
+  - **값 직접 입력**: `.gg-stepper-value`를 `<span>`(읽기 전용) → `<input type="number">`로 교체. 타이핑 중엔 스토어를 건드리지 않고 `@change`(blur/Enter)에서만 `onFontSizeInput`으로 확정 반영 — +/- 버튼(`adjustFontSize`)과 동일하게 8~72px로 클램프.
+  - **검증**: `npx vue-tsc --noEmit` 클린, `npx vitest run` 370개 통과, Playwright로 이전엔 스테퍼가 안 뜨던 "설명 텍스트" 모듈의 "기본 글자 크기" 필드가 이제 스테퍼로 뜨는 것 + 값 타이핑("42"+Enter) 후 +/- 버튼이 그 값 기준으로 이어서 동작하는 것까지 확인.
+
+- **Phase 11 완료(2026-07-18)**: 그룹 좌측 드래그 핸들 + 액션 툴바를 한 장의 카드로 병합, 항상 노출.
+  - **병합 배경**: Phase 7에서 그룹 액션 툴바(복제·해제·스타일·삭제)를 드래그 핸들 왼쪽에 별도 카드로 추가했는데(호버 조건), 이후 액션 툴바만 항상 노출로 바꿨고(직전 턴) 드래그 핸들은 여전히 호버/그룹-선택 시에만 보여 두 카드가 따로 놀았음 — 사용자가 스크린샷으로 "두 카드를 하나로 합치고 핸들도 계속 보이게" 요청.
+  - **`CanvasArea.vue`**: `.module-drag-handle`(그룹용 사용 제거, 표준 모듈은 계속 사용) + `.group-action-toolbar` 두 카드를 `.group-side-toolbar` 한 장으로 병합 — 위에서부터 드래그 핸들(`.dh-top.group-side-handle`, drag_indicator 아이콘) → 얇은 구분선(`.group-side-divider`) → 액션 버튼 4개(`.group-action-btn`, 전부 `no-drag`로 드래그 오예외 처리). 위치는 그룹 왼쪽(`left: -49px`, 카드 하나로 줄어 기존 두 카드 합산 폭보다 좁아짐), `opacity`/`pointer-events` 조건 없이 항상 노출.
+  - **드래그 동작 보존**: `handle=".dh-top"`는 이제 병합 카드 안의 핸들 세그먼트에만 있고, 액션 버튼들은 `no-drag`로 SortableJS의 드래그 시작을 막아 클릭과 드래그가 충돌하지 않음.
+  - **검증**: `npx vue-tsc --noEmit` 클린, `npx vitest run` 370개 통과, Playwright로 `.group-side-toolbar` 카드 1개로 병합된 것(구 `.group-action-toolbar`/`.module-drag-handle` 잔존 0개) + 호버 없이도 `opacity:1`로 항상 보이는 것 + 복제 버튼이 여전히 정상 동작하는 것까지 확인.
+
 ## 향후 방향 (사용자 명시, 아직 미구현)
 - **모듈 v2를 메인 시스템으로 승격** (2026-07-18 확정): 새 카테고리 레일 UI는 v2 조립형 모듈을 기본으로 적용(6-1 섹션 참고). v2 템플릿이 없는 카테고리(예: 테이블형)는 **레거시 모듈을 당분간 유지**하고 점진적으로 교체 — 한 번에 전체 전환 금지, 기능 손실 없이 진행.
 - **저장 템플릿도 v2로 재구성 예정** (아직 미착수, 사용자 예고): 지금 템플릿 저장/불러오기(`moduleStore.ts`의 템플릿 관련 함수, `src/views/*Template*`)는 레거시 모듈 기준. 위 모듈 v2 전환이 어느 정도 끝난 뒤 템플릿 쪽도 다시 작업할 계획 — 지금 당장 템플릿 구조를 손댈 필요는 없음.

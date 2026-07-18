@@ -28,7 +28,7 @@ export function pointColorAt(
 }
 
 /**
- * 본문(리치 텍스트) 인라인 색상이 포인트 색상을 따르도록 하는 CSS 변수 이름.
+ * 본문(리치 텍스트) 인라인 색상이 포인트 색상을 따르도록 하는 CSS 변수 이름(레거시, 인덱스 없음 = 0번).
  *
  * Quill 본문에서 '포인트 색상으로 사용'을 선택하면 색상값을
  * `var(--point-color, #fallback)` 형태로 저장한다. 에디터·미리보기(앱 문서)에서는
@@ -36,6 +36,25 @@ export function pointColorAt(
  * 내보낼 때는 var()를 지원하지 않으므로 resolvePointColorVar 로 실제 색상값으로 치환한다.
  */
 export const POINT_COLOR_CSS_VAR = '--point-color'
+
+/** 포인트 색상 index(0~2)별 CSS 변수 이름 — 본문에서 3개 중 하나를 선택해 따를 때 사용 */
+export const pointColorCssVar = (index: number): string => `--point-color-${index}`
+
+/**
+ * `var(--point-color-N)` (N=0~2) 및 하위호환용 `var(--point-color)`(=0번) 토큰을
+ * 실제 포인트 색상으로 치환한다 (이메일 내보내기용, CSS 변수 미지원).
+ */
+export function resolvePointColorVars(
+  html: string,
+  pointColors: string[] | undefined | null,
+): string {
+  if (!html) return ''
+  const withIndexed = html.replace(
+    /var\(\s*--point-color-(\d)\s*(?:,[^)]*)?\)/gi,
+    (_match, idxStr: string) => pointColorAt(pointColors, parseInt(idxStr, 10)),
+  )
+  return withIndexed.replace(/var\(\s*--point-color\s*(?:,[^)]*)?\)/gi, pointColorAt(pointColors, 0))
+}
 
 /** `var(--point-color)` / `var(--point-color, #fallback)` 토큰을 실제 포인트 색상으로 치환 (이메일 내보내기용) */
 export function resolvePointColorVar(

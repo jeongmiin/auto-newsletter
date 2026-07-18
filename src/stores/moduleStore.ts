@@ -52,7 +52,7 @@ import {
 } from '@/utils/moduleContentReplacer'
 import { convertQuillListsToEmailHtml } from '@/utils/quillHtmlProcessor'
 import { flattenAlphaColorsInHtml } from '@/utils/colorFlatten'
-import { resolvePointColors, resolvePointColorVar } from '@/utils/pointColor'
+import { resolvePointColors, resolvePointColorVars } from '@/utils/pointColor'
 import { applyFontFamily } from '@/utils/fontFamily'
 import { migrateModuleProperties } from '@/utils/moduleMigrations'
 import { sanitizeHtml } from '@/utils/sanitize'
@@ -2973,8 +2973,8 @@ export const useModuleStore = defineStore('module', () => {
 
         html = await replaceModuleContent(html, module)
 
-        // 본문 인라인 '포인트 색상'(var(--point-color)) → 실제 색상값 (이메일은 CSS 변수 미지원)
-        html = resolvePointColorVar(html, wrapSettings.pointColor)
+        // 본문 인라인 '포인트 색상'(var(--point-color-N)) → 실제 색상값 (이메일은 CSS 변수 미지원)
+        html = resolvePointColorVars(html, wrapSettings.pointColors)
 
         // 이메일용: Quill 리스트(<ol><li data-list>)를 인라인 스타일 <ul>/<ol>로 변환
         html = convertQuillListsToEmailHtml(html)
@@ -3152,7 +3152,7 @@ ${fullHtml}
       styles: {},
     }
     html = await replaceModuleContent(html, tempModule)
-    html = resolvePointColorVar(html, useEditorStore().wrapSettings.pointColor)
+    html = resolvePointColorVars(html, useEditorStore().wrapSettings.pointColors)
     html = convertQuillListsToEmailHtml(html)
     html = flattenAlphaColorsInHtml(html, useEditorStore().wrapSettings.backgroundColor)
     html = applyFontFamily(html, useEditorStore().wrapSettings.fontLanguage)
