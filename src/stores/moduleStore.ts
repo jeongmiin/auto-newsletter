@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed, triggerRef } from 'vue'
+import { ref, computed, triggerRef, watch } from 'vue'
 import type {
   ModuleInstance,
   ModuleMetadata,
@@ -57,6 +57,7 @@ import { applyFontFamily } from '@/utils/fontFamily'
 import { migrateModuleProperties } from '@/utils/moduleMigrations'
 import { sanitizeHtml } from '@/utils/sanitize'
 import { DEFAULT_GROUP_STYLES, wrapGroupHtmlForEmail, resolveGroupStyles, buildColumnLayoutHtml } from '@/utils/groupStyle'
+import { resolveWrapBorderCss } from '@/utils/wrapBorder'
 import { computeGroupLayout, resolveGroupRows, clampColumns } from '@/utils/groupLayout'
 
 export const useModuleStore = defineStore('module', () => {
@@ -74,6 +75,14 @@ export const useModuleStore = defineStore('module', () => {
   // [컬럼 분할] 빈 컬럼을 클릭해 '추가 대상'으로 지정한 상태.
   // 지정돼 있으면 다음에 추가되는 모듈이 이 그룹의 해당 (행, 컬럼)에 들어간다.
   const columnTarget = ref<{ groupId: string; rowIndex: number; columnIndex: number } | null>(null)
+
+  // 모듈/그룹이 "새로" 선택되면(캔버스 클릭, addModule의 자동 선택 등 경로 무관) 좌측 패널이
+  // 레일 메뉴 대신 그 속성 편집으로 자동 전환되도록 forceRailPanel을 끈다.
+  watch([selectedModuleId, selectedGroupId], ([modId, grpId], [prevModId, prevGrpId]) => {
+    if ((modId && modId !== prevModId) || (grpId && grpId !== prevGrpId)) {
+      useEditorStore().forceRailPanel = false
+    }
+  })
 
   // ============= Computed =============
   const selectedModule = computed(
@@ -1692,8 +1701,12 @@ export const useModuleStore = defineStore('module', () => {
     const insertIndex = modules.value.findIndex((m) => m.id === lastMemberId) + 1
     modules.value.splice(insertIndex, 0, ...clones)
 
-    // 그룹 정의 복제 (스타일 깊은 복사)
-    groups.value.push({ id: newGroupId, styles: JSON.parse(JSON.stringify(group.styles)) })
+    // 그룹 정의 복제 (스타일 깊은 복사, 이름도 함께 승계)
+    groups.value.push({
+      id: newGroupId,
+      name: group.name,
+      styles: JSON.parse(JSON.stringify(group.styles)),
+    })
 
     reorderModules()
     selectedGroupId.value = newGroupId
@@ -1748,6 +1761,12 @@ export const useModuleStore = defineStore('module', () => {
     selectedModuleId.value = null
   }
 
+  /** 모듈/그룹 선택 해제 — 좌측 레일 메뉴로 이동할 때 캔버스 선택 상태를 비운다 */
+  const clearSelection = (): void => {
+    selectedModuleId.value = null
+    selectedGroupId.value = null
+  }
+
   /**
    * 그룹 스타일 업데이트
    */
@@ -1761,6 +1780,15 @@ export const useModuleStore = defineStore('module', () => {
     ;(group.styles as Record<string, unknown>)[styleKey] = value
     triggerRef(groups)
     isDirty.value = true
+  }
+
+  // 조립형(v2) 템플릿에서 만든 그룹에 표시용 이름을 붙인다(예: "이미지형 헤더").
+  // 좌측 "그룹 구성" 패널이 이 이름을 타이틀로 보여준다 — 없으면 일반 라벨로 대체.
+  const setGroupName = (groupId: string, name: string): void => {
+    const group = groups.value.find((g) => g.id === groupId)
+    if (!group) return
+    group.name = name
+    triggerRef(groups)
   }
 
   /**
@@ -2805,7 +2833,7 @@ export const useModuleStore = defineStore('module', () => {
     const editorStore = useEditorStore()
     const { moduleId } = module
     // '포인트 색상 사용'으로 체크된 색상 속성을 전역 포인트 색상으로 해소
-    const properties = resolvePointColors(module.properties, editorStore.wrapSettings.pointColor)
+    const properties = resolvePointColors(module.properties, editorStore.wrapSettings.pointColors)
 
     switch (moduleId) {
       case 'ModuleNewsHeader':
@@ -3015,7 +3043,7 @@ export const useModuleStore = defineStore('module', () => {
             inner += buildColumnLayoutHtml(columnHtml)
           }
         }
-        const resolvedGroupStyles = resolveGroupStyles(group.styles, wrapSettings.pointColor)
+        const resolvedGroupStyles = resolveGroupStyles(group.styles, wrapSettings.pointColors)
         fullHtml +=
           wrapGroupHtmlForEmail(inner, resolvedGroupStyles, wrapSettings.backgroundColor) + '\n'
       } else {
@@ -3026,7 +3054,7 @@ export const useModuleStore = defineStore('module', () => {
 
     // wrap 스타일 생성 (래퍼 자체의 배경/테두리 알파는 이메일 본문(흰색) 기준으로 평탄화)
     const wrapStyle = flattenAlphaColorsInHtml(
-      `width:100%; max-width:680px; margin:0 auto; background-color:${wrapSettings.backgroundColor}; border:${wrapSettings.borderWidth} ${wrapSettings.borderStyle} ${wrapSettings.borderColor};`,
+      `width:100%; max-width:680px; margin:0 auto; background-color:${wrapSettings.backgroundColor}; border:${resolveWrapBorderCss(wrapSettings)};`,
       '#ffffff',
     )
     // 아웃룩(Word 엔진)은 max-width/margin:auto를 무시하므로, 고정폭(680) + align=center +
@@ -3182,6 +3210,28 @@ ${fullHtml}
     return props
   }
 
+  // 카테고리 갤러리(텍스트/이미지/버튼 레일 메뉴)에서 레거시 번호 모듈 카드를 클릭했을 때,
+  // v2 조립형 템플릿이 있으면 그걸 우선 사용한다("모듈 v2를 새 UI의 기본으로" 방침).
+  // 여기 없는 항목(Module01/01-2/05-3/10/10-1/11/12/ModuleTable/ModuleSnsIcons/ModuleDivider/
+  // TopLanguageButton 등)은 v2 템플릿이 아직 없어 폴백으로 기존 addModule(metadata)를 그대로 쓴다
+  // (레거시 유지 — figma-builder 스킬 6-1 참고).
+  const composedBuilderMap: Record<string, () => string | null> = {
+    Module02: addComposedModule02,
+    Module04: addComposedModule04,
+    'Module01-1': addComposedModule011,
+    Module05: addComposedModule05,
+    'Module05-1': addComposedModule051,
+    Module06: addComposedModule06,
+    Module07: () => addComposedModule07(false),
+    Module07_reverse: () => addComposedModule07(true),
+    ModuleNewsHeader: addComposedNewsHeader,
+    ModuleBasicHeader: addComposedBasicHeader,
+    ModuleImageHeader: addComposedImageHeader,
+    ModuleMultiImage: addComposedMultiImage,
+    ModuleFooter: addComposedFooter,
+    ModuleTwoButton: addComposedTwoButton,
+  }
+
   return {
     modules,
     selectedModuleId,
@@ -3201,7 +3251,9 @@ ${fullHtml}
     ungroup,
     deleteGroup,
     selectGroup,
+    clearSelection,
     updateGroupStyle,
+    setGroupName,
     columnTarget,
     splitModuleColumns,
     unsplitModuleColumns,
@@ -3231,6 +3283,7 @@ ${fullHtml}
     addComposedMultiImage,
     addComposedFooter,
     addComposedTwoButton,
+    composedBuilderMap,
     selectModule,
     updateModuleProperty,
     updateModuleStyle,

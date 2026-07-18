@@ -120,11 +120,15 @@ export interface ModuleGroupStyles {
   backgroundColor?: string
   /** 배경색에 전역 포인트 색상 사용 */
   backgroundColorUsePoint?: boolean
+  /** 배경색이 따를 포인트 색상 인덱스(0~2, 최대 3개 중). 미지정 시 0번 */
+  backgroundColorPointIndex?: number
   borderWidth?: string
   borderStyle?: string
   borderColor?: string
   /** 테두리 색상에 전역 포인트 색상 사용 */
   borderColorUsePoint?: boolean
+  /** 테두리 색상이 따를 포인트 색상 인덱스(0~2, 최대 3개 중). 미지정 시 0번 */
+  borderColorPointIndex?: number
   /**
    * 테두리를 적용할 변. 미지정(undefined)이면 4면 전체(구버전 호환),
    * 빈 배열([])이면 테두리 없음.
@@ -152,6 +156,9 @@ export interface ModuleGroupStyles {
  */
 export interface ModuleGroup {
   id: string
+  /** 조립형(v2) 템플릿으로 만들어진 그룹의 표시용 이름(예: "이미지형 헤더"). 컬럼 분할 등으로 만들어진
+   *  임의 그룹은 없을 수 있다 — 없으면 좌측 패널에서 "그룹 구성" 같은 일반 라벨로 대체해 보여준다. */
+  name?: string
   styles: ModuleGroupStyles
   /**
    * 행별 독립 컬럼 수 배열. rows[r] = r번째 행의 컬럼 수(1~4).

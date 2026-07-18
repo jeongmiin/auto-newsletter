@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { resolvePointColors, resolvePointColorVar, POINT_COLOR_SUFFIX } from '../pointColor'
+import { resolvePointColors, resolvePointColorVar, POINT_COLOR_SUFFIX, POINT_COLOR_INDEX_SUFFIX } from '../pointColor'
 
 describe('resolvePointColors', () => {
   const POINT = '#2563eb'
@@ -9,7 +9,7 @@ describe('resolvePointColors', () => {
       headerTextColor: '#111111',
       [`headerTextColor${POINT_COLOR_SUFFIX}`]: true,
     }
-    const result = resolvePointColors(props, POINT)
+    const result = resolvePointColors(props, [POINT])
     expect(result.headerTextColor).toBe(POINT)
   })
 
@@ -18,7 +18,7 @@ describe('resolvePointColors', () => {
       headerTextColor: '#111111',
       [`headerTextColor${POINT_COLOR_SUFFIX}`]: false,
     }
-    const result = resolvePointColors(props, POINT)
+    const result = resolvePointColors(props, [POINT])
     expect(result.headerTextColor).toBe('#111111')
   })
 
@@ -27,16 +27,16 @@ describe('resolvePointColors', () => {
       headerTextColor: '#111111',
       [`headerTextColor${POINT_COLOR_SUFFIX}`]: true,
     }
-    resolvePointColors(props, POINT)
+    resolvePointColors(props, [POINT])
     expect(props.headerTextColor).toBe('#111111')
   })
 
-  it('pointColor가 비어 있으면 원본을 그대로 반환한다', () => {
+  it('포인트 색상 목록이 비어 있으면 원본을 그대로 반환한다', () => {
     const props = {
       headerTextColor: '#111111',
       [`headerTextColor${POINT_COLOR_SUFFIX}`]: true,
     }
-    expect(resolvePointColors(props, '')).toBe(props)
+    expect(resolvePointColors(props, [])).toBe(props)
     expect(resolvePointColors(props, null)).toBe(props)
   })
 
@@ -48,10 +48,31 @@ describe('resolvePointColors', () => {
       [`borderColor${POINT_COLOR_SUFFIX}`]: true,
       bgColor: '#ffffff',
     }
-    const result = resolvePointColors(props, POINT)
+    const result = resolvePointColors(props, [POINT])
     expect(result.textColor).toBe(POINT)
     expect(result.borderColor).toBe(POINT)
     expect(result.bgColor).toBe('#ffffff') // 플래그 없음 → 유지
+  })
+
+  it('__pointIndex로 지정한 포인트 색상(최대 3개 중)을 사용한다', () => {
+    const pointColors = ['#2563eb', '#000000', '#ec4899']
+    const props = {
+      textColor: '#111111',
+      [`textColor${POINT_COLOR_SUFFIX}`]: true,
+      [`textColor${POINT_COLOR_INDEX_SUFFIX}`]: 2,
+    }
+    const result = resolvePointColors(props, pointColors)
+    expect(result.textColor).toBe('#ec4899')
+  })
+
+  it('__pointIndex가 없으면 0번(첫 번째) 포인트 색상을 사용한다', () => {
+    const pointColors = ['#2563eb', '#000000', '#ec4899']
+    const props = {
+      textColor: '#111111',
+      [`textColor${POINT_COLOR_SUFFIX}`]: true,
+    }
+    const result = resolvePointColors(props, pointColors)
+    expect(result.textColor).toBe('#2563eb')
   })
 })
 

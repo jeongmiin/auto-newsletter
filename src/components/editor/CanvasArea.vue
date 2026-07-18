@@ -1,5 +1,6 @@
 <template>
-  <div class="flex-1 bg-gray-100 p-8 pb-32 overflow-auto">
+  <div class="flex-1 bg-gray-100 p-8 pb-32 pl-28 overflow-auto">
+    <!-- pl-28: 좌측 여백을 넓혀 그룹 액션 툴바(-81px)가 좌측 목차 레일과 겹치지 않도록 함 -->
     <div class="flex justify-center">
       <!-- 캔버스 컨테이너 -->
       <div
@@ -79,51 +80,48 @@
               class="group-wrap"
               :class="{ 'group-wrap--selected': selectedGroupId === item.id }"
             >
-              <!-- 그룹 헤더 바 (편집 전용, 드래그 핸들 · 내보내기 미포함) -->
+              <!-- 좌측 드래그 핸들 (단독 모듈과 동일 패턴) — 그룹 전체를 끌어서 이동 -->
               <div
-                class="dh-top group-header"
-                :class="{ 'group-header--selected': selectedGroupId === item.id }"
-                title="그룹 전체를 끌어서 이동 · 클릭하면 그룹 선택"
-                @click="selectGroupBox(item.id)"
+                class="dh-top module-drag-handle"
+                :class="{ 'is-visible': selectedGroupId === item.id }"
+                title="마우스로 끌어서 그룹 순서를 변경하세요"
               >
-                <span class="group-header__label">
-                  <i class="pi pi-bars"></i>
-                  <span>그룹 · {{ item.modules.length }}개 모듈</span>
-                </span>
-                <span class="group-header__actions">
-                  <button
-                    type="button"
-                    class="no-drag group-header__btn"
-                    v-tooltip.bottom="'그룹 복제'"
-                    @click.stop="moduleStore.duplicateGroup(item.id)"
-                  >
-                    <i class="pi pi-copy"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="no-drag group-header__btn"
-                    v-tooltip.bottom="'그룹 해제 (모듈은 유지)'"
-                    @click.stop="moduleStore.ungroup(item.id)"
-                  >
-                    <i class="pi pi-link"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="no-drag group-header__btn"
-                    v-tooltip.bottom="'그룹 스타일 편집'"
-                    @click.stop="selectGroupBox(item.id)"
-                  >
-                    <i class="pi pi-sliders-h"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="no-drag group-header__btn group-header__btn--danger"
-                    v-tooltip.bottom="'그룹 전체 삭제'"
-                    @click.stop="confirmDeleteGroup(item)"
-                  >
-                    <i class="pi pi-trash"></i>
-                  </button>
-                </span>
+                <span class="material-symbols-outlined">drag_indicator</span>
+              </div>
+              <!-- 드래그 핸들 왼쪽의 세로 액션 툴바 (복제·해제·그룹 스타일·삭제) — 상단 띠 대신, 항상 노출 -->
+              <div class="group-action-toolbar">
+                <button
+                  type="button"
+                  class="group-action-btn"
+                  v-tooltip.left="'그룹 복제'"
+                  @click.stop="moduleStore.duplicateGroup(item.id)"
+                >
+                  <span class="material-symbols-outlined">content_copy</span>
+                </button>
+                <button
+                  type="button"
+                  class="group-action-btn"
+                  v-tooltip.left="'그룹 해제 (모듈은 유지)'"
+                  @click.stop="moduleStore.ungroup(item.id)"
+                >
+                  <span class="material-symbols-outlined">link_off</span>
+                </button>
+                <button
+                  type="button"
+                  class="group-action-btn"
+                  v-tooltip.left="'그룹 스타일 편집'"
+                  @click.stop="selectGroupBox(item.id)"
+                >
+                  <span class="material-symbols-outlined">tune</span>
+                </button>
+                <button
+                  type="button"
+                  class="group-action-btn group-action-btn--danger"
+                  v-tooltip.left="'그룹 전체 삭제'"
+                  @click.stop="confirmDeleteGroup(item)"
+                >
+                  <span class="material-symbols-outlined">delete</span>
+                </button>
               </div>
               <!-- 실제 스타일 박스 (배경/테두리/여백은 내보내기와 동일) -->
               <div
@@ -231,11 +229,11 @@
               :class="{ 'ring-2 ring-amber-400 ring-inset rounded-sm': hoveredModuleId === item.module.id }"
             >
               <div
-                class="dh-top absolute left-0 top-0 bottom-0 w-8 flex flex-col items-center justify-center cursor-grab opacity-0 group-hover:opacity-100 transition-opacity z-10 bg-blue-100/90 hover:bg-blue-200/90"
+                class="dh-top module-drag-handle"
+                :class="{ 'is-visible': selectedModuleId === item.module.id }"
                 title="마우스로 끌어서 순서를 변경하세요"
               >
-                <i class="pi pi-bars text-blue-600 text-lg"></i>
-                <span class="text-blue-600 text-[8px] mt-0.5">이동</span>
+                <span class="material-symbols-outlined">drag_indicator</span>
               </div>
               <ModuleRenderer
                 :module="item.module"
@@ -266,6 +264,7 @@ import ModuleRenderer from '../modules/ModuleRenderer.vue'
 import draggable from 'vuedraggable'
 import type { DisplayItem, ModuleGroup, ModuleInstance } from '@/types'
 import { groupDivStyle, resolveGroupStyles, columnCellStyle } from '@/utils/groupStyle'
+import { resolveWrapBorderCss } from '@/utils/wrapBorder'
 import { computeGroupLayout, type GroupRowLayout } from '@/utils/groupLayout'
 
 const moduleStore = useModuleStore()
@@ -309,7 +308,7 @@ const displayList = computed<DisplayItem[]>({
 // 그룹 래퍼 미리보기 스타일 (편집 화면용 — 내보내기 table과 동일한 시각 효과)
 // '포인트 색상 사용' 켜진 색상은 전역 포인트 색상으로 해소해 미리 보여준다
 const groupWrapperStyle = (group: ModuleGroup): Record<string, string> =>
-  groupDivStyle(resolveGroupStyles(group.styles, editorStore.wrapSettings.pointColor))
+  groupDivStyle(resolveGroupStyles(group.styles, editorStore.wrapSettings.pointColors))
 
 const selectGroupBox = (groupId: string): void => {
   moduleStore.selectGroup(groupId)
@@ -327,11 +326,11 @@ watch(selectedModuleId, async (id) => {
 })
 const wrapSettings = computed(() => editorStore.wrapSettings)
 
-// 캔버스 컨테이너 스타일 (공통 속성 반영)
+// 캔버스 컨테이너 스타일 (전체 스타일 반영)
 const canvasContainerStyle = computed(() => ({
   minHeight: '600px',
   backgroundColor: wrapSettings.value.backgroundColor,
-  border: `${wrapSettings.value.borderWidth} ${wrapSettings.value.borderStyle} ${wrapSettings.value.borderColor}`,
+  border: resolveWrapBorderCss(wrapSettings.value),
 }))
 
 const isDragging = ref(false)
@@ -408,6 +407,82 @@ const removeColumn = (groupId: string, rowIdx: number, colIdx: number) =>
   cursor: grabbing;
 }
 
+/* 좌측 드래그 핸들 (Figma 352-1138) — 단독 모듈 왼쪽 바깥에 붙는 흰 카드.
+   선택 중이거나 호버 중일 때 보인다(모듈 우측 툴바와 동일한 노출 조건). */
+.module-drag-handle {
+  position: absolute;
+  left: -32px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 31px;
+  height: min(100%, 208px);
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 1px solid #e5e8eb;
+  border-radius: 12px 0 0 12px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.11);
+  cursor: grab;
+  color: #8b95a1;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s;
+}
+.group:hover .module-drag-handle,
+.group-wrap:hover .module-drag-handle,
+.module-drag-handle.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* 그룹 전용 세로 액션 툴바 (복제·해제·그룹 스타일·삭제) — 드래그 핸들 왼쪽에 위치.
+   기존 상단 띠(그룹 헤더 바)를 대체. 호버해야만 보이면 클릭하려는 순간 마우스가 벗어나
+   조작이 어려우므로, 드래그 핸들과 달리 항상 노출한다(그룹은 늘 조작 대상이 뚜렷해야 함). */
+.group-action-toolbar {
+  position: absolute;
+  left: -81px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 41px;
+  padding: 12px 0;
+  background: #fff;
+  border: 1px solid #e5e8eb;
+  border-radius: 12px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.07);
+}
+.group-action-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  color: #4e5968;
+  cursor: pointer;
+  border-radius: 6px;
+}
+.group-action-btn .material-symbols-outlined {
+  font-size: 20px;
+}
+.group-action-btn:hover {
+  background: #f2f4f6;
+}
+.group-action-btn--danger {
+  color: #f04452;
+}
+.group-action-btn--danger:hover {
+  background: #fff1f1;
+}
+
 /*
   그룹 박스: 실제 스타일(배경/보더/여백)은 인라인으로 적용된다.
   편집 화면에서 그룹 경계를 항상 인지할 수 있도록 옅은 점선 outline을 덧댄다.
@@ -426,83 +501,6 @@ const removeColumn = (groupId: string, rowIdx: number, colIdx: number) =>
 
 .group-wrap {
   position: relative;
-}
-
-/*
-  그룹 헤더 바 — 박스 상단에 붙는 편집 전용 헤더(드래그 핸들 겸 컨트롤).
-  왼쪽: 그룹 식별 라벨(모듈 수), 오른쪽: 복제·해제·스타일·삭제.
-  내보내기 HTML(generateHtml)에는 포함되지 않으므로 메일에는 나타나지 않는다.
-*/
-.group-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 3px 6px 3px 8px;
-  background: #f5f3ff; /* purple-50 */
-  border: 1px solid #e9d5ff; /* purple-200 */
-  border-bottom: none;
-  border-radius: 6px 6px 0 0;
-  user-select: none;
-  cursor: grab;
-}
-.group-header:active {
-  cursor: grabbing;
-}
-.group-header--selected {
-  background: #ede9fe; /* purple-100 */
-  border-color: #c4b5fd; /* purple-300 */
-}
-
-.group-header__label {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 11px;
-  font-weight: 600;
-  color: #7c3aed; /* purple-600 */
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.group-header__label .pi {
-  font-size: 12px;
-}
-
-.group-header__actions {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  flex-shrink: 0;
-}
-.group-header__btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  color: #7c3aed; /* purple-600 */
-  background: none;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-.group-header__btn .pi {
-  font-size: 13px;
-}
-.group-header__btn:hover {
-  background: #ddd6fe; /* purple-200 */
-}
-.group-header__btn--danger {
-  color: #ef4444;
-}
-.group-header__btn--danger:hover {
-  background: #fee2e2;
-}
-
-/* 헤더와 박스가 하나의 카드처럼 이어지도록 박스 상단 모서리 각지게 */
-.group-header + .group-box {
-  border-radius: 0 0 6px 6px;
 }
 
 /* ===== 컬럼 분할 (POC) ===== */

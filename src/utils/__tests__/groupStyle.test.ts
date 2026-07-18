@@ -86,7 +86,7 @@ describe('groupStyle', () => {
           borderColor: '#dddddd',
           borderColorUsePoint: true,
         },
-        '#ff0000',
+        ['#ff0000'],
       )
       expect(out.backgroundColor).toBe('#ff0000')
       expect(out.borderColor).toBe('#ff0000')
@@ -95,7 +95,7 @@ describe('groupStyle', () => {
     it('배경이 비어있으면(배경색 미사용) 포인트 색을 적용하지 않는다', () => {
       const out = resolveGroupStyles(
         { backgroundColor: '', backgroundColorUsePoint: true },
-        '#ff0000',
+        ['#ff0000'],
       )
       expect(out.backgroundColor).toBe('')
     })
@@ -103,15 +103,33 @@ describe('groupStyle', () => {
     it('플래그가 꺼져 있으면 수동 색을 유지한다', () => {
       const out = resolveGroupStyles(
         { backgroundColor: '#ffffff', borderColor: '#dddddd' },
-        '#ff0000',
+        ['#ff0000'],
       )
       expect(out.backgroundColor).toBe('#ffffff')
       expect(out.borderColor).toBe('#dddddd')
     })
 
-    it('pointColor가 없으면 원본을 그대로 반환', () => {
+    it('pointColors가 없으면 원본을 그대로 반환', () => {
       const s = { backgroundColor: '#fff', backgroundColorUsePoint: true }
-      expect(resolveGroupStyles(s, '')).toBe(s)
+      expect(resolveGroupStyles(s, [])).toBe(s)
+      expect(resolveGroupStyles(s, null)).toBe(s)
+    })
+
+    it('backgroundColorPointIndex/borderColorPointIndex로 지정한 포인트 색상(최대 3개 중)을 사용한다', () => {
+      const pointColors = ['#2563eb', '#000000', '#ec4899']
+      const out = resolveGroupStyles(
+        {
+          backgroundColor: '#ffffff',
+          backgroundColorUsePoint: true,
+          backgroundColorPointIndex: 1,
+          borderColor: '#dddddd',
+          borderColorUsePoint: true,
+          borderColorPointIndex: 2,
+        },
+        pointColors,
+      )
+      expect(out.backgroundColor).toBe('#000000')
+      expect(out.borderColor).toBe('#ec4899')
     })
   })
 

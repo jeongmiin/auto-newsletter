@@ -45,7 +45,13 @@ const items = computed<Array<{ key: MenuKey; label: string; icon: string; divide
   { key: 'order', label: '모듈 순서', icon: 'format_list_numbered' },
 ])
 
-const select = (key: MenuKey) => editorStore.setActiveMenu(key)
+// setActiveMenu가 forceRailPanel을 켜서, 캔버스에 선택된 모듈/그룹이 남아있어도
+// 좌측 패널은 이 레일 메뉴를 그대로 보여준다(선택 자체는 유지 — 그룹 멤버 선택 중 카테고리 메뉴에서
+// 원소 모듈을 추가하면 그 그룹에 삽입되는 흐름이 끊기지 않도록). 새로 선택이 바뀌면
+// moduleStore의 감시 로직이 forceRailPanel을 자동으로 꺼서 속성 패널로 되돌아간다.
+const select = (key: MenuKey) => {
+  editorStore.setActiveMenu(key)
+}
 </script>
 
 <style scoped>

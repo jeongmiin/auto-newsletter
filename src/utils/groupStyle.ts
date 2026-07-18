@@ -1,5 +1,6 @@
 import type { ModuleGroupStyles, BorderSide } from '@/types'
 import { flattenAlphaColorsInHtml } from '@/utils/colorFlatten'
+import { pointColorAt } from '@/utils/pointColor'
 
 /** 테두리 변 순서 (출력 일관성용) */
 export const ALL_BORDER_SIDES: BorderSide[] = ['top', 'right', 'bottom', 'left']
@@ -25,21 +26,22 @@ export function groupBorderSides(s: ModuleGroupStyles): BorderSide[] {
 }
 
 /**
- * '포인트 색상 사용'이 켜진 색상(배경/테두리)을 전역 포인트 색상으로 해소한다.
+ * '포인트 색상 사용'이 켜진 색상(배경/테두리)을 지정된 포인트 색상(최대 3개 중
+ * backgroundColorPointIndex/borderColorPointIndex번째)으로 해소한다.
  * 수동 색상값은 보존되므로 체크 해제 시 자동 원복된다. (캔버스/내보내기 직전 호출)
  */
 export function resolveGroupStyles(
   s: ModuleGroupStyles,
-  pointColor?: string | null,
+  pointColors?: string[] | null,
 ): ModuleGroupStyles {
-  if (!pointColor) return s
+  if (!pointColors || pointColors.length === 0) return s
   let out = s
   // 배경은 '배경색 사용'(=값이 비어있지 않음)일 때만 포인트 색상으로 덮어쓴다
   if (s.backgroundColorUsePoint && s.backgroundColor && s.backgroundColor.trim()) {
-    out = { ...out, backgroundColor: pointColor }
+    out = { ...out, backgroundColor: pointColorAt(pointColors, s.backgroundColorPointIndex ?? 0) }
   }
   if (s.borderColorUsePoint) {
-    out = { ...out, borderColor: pointColor }
+    out = { ...out, borderColor: pointColorAt(pointColors, s.borderColorPointIndex ?? 0) }
   }
   return out
 }

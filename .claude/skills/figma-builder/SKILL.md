@@ -3,7 +3,8 @@ name: figma-builder
 description: >-
   뉴스레터 빌더(auto-newsletter)의 Figma 디자인을 코드로 반영할 때 사용. 사용자가 Figma 링크(figma.com/design/... node-id=...)를
   주며 "이 디자인대로 반영/수정", "스타일 맞춰줘", "이 화면 구현" 등을 요청하면 이 스킬을 따른다. Figma를 MCP로 읽는 절차,
-  이 코드베이스의 화면/스토어/모듈 매핑, 진행 중인 UI 개편(편집 패널 좌측 이동·전체 스타일·포인트 색상 3개)의 목표 상태를 담고 있다.
+  이 코드베이스의 화면/스토어/모듈 매핑, 진행 중인 UI 개편(편집 패널 좌측 이동·전체 스타일/포인트 색상 분리[완료]·카테고리별 레일 메뉴·
+  모듈 선택 속성 좌측 이전·캔버스 플로팅 툴바[진행 중])의 목표 상태를 담고 있다.
 ---
 
 # figma-builder — Figma 디자인 → 뉴스레터 빌더 코드 반영
@@ -64,24 +65,104 @@ description: >-
 | 334-2630 | "모듈" 메뉴 — 검색·카테고리 탭(전체/공통/이미지형/텍스트형/1단/2단)·썸네일 목록 |
 | 352-1138 | 모듈 선택 시 좌측 속성(접이식+노출토글) + 캔버스 우측 플로팅 툴바 |
 | 365-2691 | 위와 동일, "이미지" 섹션 펼침(URL·alt·링크·여백 슬라이더) |
-| 372-3000 | "텍스트" 메뉴 — 상단 빠른추가(타이틀/서브타이틀/텍스트) + 텍스트형 모듈 **카드 내 상시 썸네일** |
-| 378-1704 | 텍스트 모듈 선택 속성(1단/2단·폰트·행간/자간·리치텍스트 툴바·여백/배경/테두리) |
-| 412-2139 | "이미지" 메뉴 — 단일/2단 이미지 빠른추가 + 이미지형 모듈 상시 썸네일 |
-| 408-1758 | 단일 이미지 모듈 선택 속성(URL·alt·링크/모서리/테두리/여백 토글) |
+| 372-3000 | **"텍스트" 레일 메뉴** — 상단 빠른추가(타이틀/서브타이틀/텍스트, `+` 카드) + 텍스트형 모듈 **카드 내 상시 썸네일** 갤러리 |
+| 378-1704 | 텍스트 모듈("섹션 타이틀") 선택 속성 — 1단/2단 세그먼트, 폰트크기 스테퍼(−/+), 행간·자간 드롭다운, 리치텍스트 툴바(B/I/U/S·정렬·리스트·글자색/형광펜/잉크마커·링크), 텍스트에어리어, 여백/배경색/상단테두리 토글 |
+| 412-2139 | **"이미지" 레일 메뉴** — 단일/2단 이미지 빠른추가 카드 + 이미지형 모듈 상시 썸네일 갤러리 |
+| 408-1758 | 단일 이미지 모듈 선택 속성 — 이미지 URL·이미지 설명(접근성 힌트) 상시 노출 + 링크추가/모서리둥글기/테두리/여백 각각 chevron+토글 행 |
+| 415-2553 | **"버튼" 레일 메뉴** — 단일 버튼 추가·2단 버튼 추가 빠른추가 카드만(갤러리 없음). ⚠️ 패널 제목 레이어가 "텍스트"로 잘못 남아있음(복붙 흔적) — 구현 시 "버튼"으로 |
+
+**아직 링크 못 받음** (요청 시 이어서 확인): "테이블" · "구분선·여백" 레일 메뉴, "버튼"/"테이블" 모듈 선택 속성 패턴, 우측 플로팅 툴바 단독 노드.
 
 **모듈 카드 상시 썸네일**(372/412/334-2630): 카드에 렌더 썸네일을 처음부터 표시(호버 X). → **구현됨**:
 `ModulePanel.vue`에서 호버 floating 프리뷰 제거, 카드 안 `iframe`(680px 렌더 → `scale(0.385)` 크롭) + IntersectionObserver 지연 렌더로 교체.
 
+## 6) 카테고리별 좌측 레일 메뉴 (텍스트/이미지/버튼/테이블/구분선·여백)
+
+**핵심 인지 사항 (사용자 명시)**: 지금 코드에서 텍스트·이미지·버튼·테이블·구분선/여백은 `ModulePanel.vue` **안의 카테고리 탭**(전체/공통/이미지형/텍스트형/1단/2단)일 뿐이다. 신규 디자인에서는 이 카테고리들이 **좌측 아이콘 레일의 독립된 메뉴 항목**(이미 `EditorSidebar.vue`에 자리는 있음: 텍스트·이미지·버튼·테이블·구분선·여백)이 되어, 클릭하면 "모듈" 메뉴 전체가 아니라 **그 카테고리 전용 좌측 패널**이 뜬다. `activeMenu`가 이미 이 값들을 갖고 있으나 아직 각 메뉴에 실제 콘텐츠가 연결되어 있지 않다(전체 스타일/포인트 색상만 연결됨, `AppLayout.vue`).
+
+패널 공통 구조:
+1. **상단 타이틀** (해당 카테고리명, 20px medium)
+2. **빠른추가 카드 목록**: 흰 배경 + 테두리 rounded-8 카드, 좌측 텍스트(추가할 요소명, 예: "타이틀 추가"/"단일 이미지 추가"/"단일 버튼 추가") + 우측 `add_2` "+" 아이콘. 클릭하면 해당 요소(모듈 또는 모듈 안의 서브 콘텐츠)를 캔버스에 즉시 추가. 이미지/버튼처럼 시각 미리보기가 있는 카드는 위쪽에 목업 썸네일이 붙는다(372/412/415 참고).
+3. **(텍스트·이미지만 확인됨) 카테고리 갤러리**: "OO형 모듈" 라벨 + 그 카테고리에 속하는 완성형 모듈들을 상시 썸네일 카드로 나열(기존 `ModulePanel.vue`의 카드/썸네일 로직 재사용 가능 — 카테고리로 이미 필터링된 상태로 렌더하면 됨). **버튼 메뉴(415-2553)에는 이 갤러리가 없음** — 빠른추가 카드 2개뿐. 테이블/구분선·여백은 미확인이라 갤러리 유무 불명.
+
+**모듈순서 레일 메뉴 = 신규 디자인 아님.** 사용자 명시: 클릭 시 **기존에 이미 구현된 `ModuleOutlinePanel.vue`**(모듈 목차) 그대로 보여주면 된다. 새로 디자인할 필요 없음 — `activeMenu === 'order'`일 때 좌측에 `ModuleOutlinePanel`을 배치하는 배선 작업만 필요.
+
+### 6-1) ⭐ 새 UI는 레거시 모듈이 아니라 **모듈 v2(조립형)를 기본으로 적용한다** (사용자 명시, 중요)
+
+지금까지 프로덕션에서 쓰던 건 레거시 단일 모듈(`public/modules/*.html`)이고, `ModulePanel.vue`의 "모듈 v2" 탭은 "[임시] 조립형 모듈 v2 (POC)"로 표시된 실험 기능이었다. **이 방향이 바뀐다**: 새 카테고리 레일 메뉴(6번 섹션)의 빠른추가 카드·갤러리는 **v2 조립형 모듈을 기본값으로 노출**한다. 나중에 저장된 템플릿들도 v2 기반으로 재구성될 예정(아직 미착수).
+
+- **좋은 신호**: `moduleStore.ts`에 이미 v2 조립형 템플릿 13개가 구현돼 있다 — `addComposedModule02/04/011/05/051/06/07(+Reverse)/NewsHeader/BasicHeader/ImageHeader/MultiImage/Footer/TwoButton`. Figma 텍스트·이미지형 갤러리(372-3000/412-2139)에 나온 카드 이름("모듈 02", "모듈 04", "모듈 05", "모듈 06" 등)이 이 목록과 거의 겹친다 — **완전히 새로 만드는 게 아니라 지금 "실험용 임시 탭"에 숨겨둔 걸 정식 UI로 승격**하는 작업에 가깝다. (단, "모듈 01"/"모듈 01-2"/"모듈 11" 등 정확히 안 맞는 번호도 있어 1:1 매핑을 맹신하지 말고 스크린샷으로 재확인할 것.)
+- **v2 템플릿이 아직 없는 카테고리(예: 테이블형) 처리 방침(사용자 확정)**: **레거시 모듈을 당분간 그대로 유지**한다. 새 카테고리 갤러리에서 v2 템플릿이 있으면 그걸, 없으면 레거시 모듈을 보여주는 식으로 **카테고리별로 점진적 전환**. v2 쪽이 채워지는 대로 하나씩 레거시를 교체 — 한 번에 전체를 갈아엎지 않는다. 기능 손실 없이 진행하는 게 최우선.
+- **원소 모듈(element module)**: v2의 조립 단위인 "단일 이미지·타이틀·텍스트·단일 버튼" 등 개별 원소 모듈이, 새 UI의 "빠른추가" 카드(예: "타이틀 추가"/"단일 이미지 추가")가 캔버스에 넣는 대상과 사실상 같은 것으로 보인다 — 카테고리 메뉴의 빠른추가 = 원소 모듈 단독 추가, 카테고리 갤러리 = 완성된 조립(`buildComposedGroup`) 템플릿, 으로 매핑해서 구현할 것.
+- **연결된 향후 과제**(기존 "향후 방향" 섹션 참고): v2 그룹의 원소 모듈 노출/비노출을 지금은 `show*` 스위치 토글로 하지만, 앞으로 "그룹 안 원소 모듈을 삭제"하는 방식으로 바꿀 예정 — 이것도 v2를 메인으로 승격하는 이번 방향과 같은 축의 작업이다.
+
+## 7) 모듈 선택 시 좌측 속성 패턴 (우측 `PropertiesPanel` → 좌측 이전)
+
+`352-1138`/`365-2691`/`378-1704`/`408-1758`를 종합하면 모듈 타입에 따라 두 가지 표현 방식이 있다:
+
+- **복합형 모듈**(헤더처럼 여러 서브요소로 구성): 서브요소별로 그룹 카드 하나씩 — **좌측 chevron(펼침/접힘) + 우측 노출 토글**을 가진 행(예: 이미지/상단정보/구분선/타이틀/텍스트/버튼). 펼치면 그 서브요소의 세부 필드가 나온다(365-2691: "이미지" 펼침 → URL·설명·링크·여백).
+- **단일 목적 모듈**(단일 이미지, 텍스트 섹션처럼 모듈 전체가 하나의 콘텐츠): 핵심 필드(URL/텍스트 등)는 **항상 펼쳐진 상태로 상단에 노출**, 부가 옵션(링크/모서리둥글기/테두리/여백, 또는 여백/배경색/상단테두리)만 **chevron+토글 행**으로 접혀 있다(408-1758, 378-1704 하단).
+
+공통 규칙: 토글 OFF = 해당 스타일/요소 미적용(예: 테두리 없음), 토글 ON + chevron 펼침 = 세부값 편집 가능. 이 토글+chevron 행 패턴은 이미 이번 세션에서 만든 `GlobalStylePanel.vue`의 테두리 토글과 컨셉이 같으므로 재사용/일반화를 고려할 것(공용 아코디언+토글 행 컴포넌트로 뽑는 것도 방법).
+
+**캔버스 쪽 변화(선택된 모듈에 부착)**:
+- **우측 세로 플로팅 툴바**: 흰 카드(border+그림자, rounded-12) 안에 위→아래로 **삭제(delete) · 복제(content_copy) · 위로이동 · 아래로이동** 4개 아이콘. 위/아래 이동은 같은 `arrow_downward` 아이콘을 위쪽 것만 180도 뒤집어 재사용(별도 아이콘 에셋 아님).
+- **좌측 드래그 핸들**(신규 확인, 이전에 미기록): 모듈 왼쪽 바깥에 작은 흰 카드(rounded-left) + `drag_indicator`(⣿) 아이콘. 지금의 캔버스 호버 버튼(위치 `ModuleRenderer.vue`쪽)을 이 좌우 분리된 고정 UI로 교체하는 것으로 보임.
+
 ## 구현 현황 (개편 진행)
 - **Phase 1 완료**: Material Symbols 폰트 추가(`index.html`), **헤더 재디자인**(`AppHeader.vue` — 브레드크럼·**undo/redo 아이콘 버튼**(Material `undo`/`redo`, `getHistoryInstance`)·PC/모바일 토글(`desktop_windows`/`smartphone`)·저장상태·다운로드, 에디터에서만 `showActions`), **좌측 아이콘 레일**(`EditorSidebar.vue`, `editorStore.activeMenu`) `AppLayout`에 추가.
-- **아직**: 우측 `PropertiesPanel` 제거 후 좌측 패널로 병합, 레일 메뉴별 패널 콘텐츠 스위칭(전체스타일/포인트색상 패널 신설), 포인트 색상 3개 모델, 캔버스 우측 플로팅 툴바, `EditorToolbar`의 PC/모바일 중복 제거.
+- **Phase 2 완료(이번 세션)**: `activeMenu==='style'/'point'` 배선 — **`GlobalStylePanel.vue`**(배경색·폰트·테두리 토글+라디오+슬라이더·뉴스레터 요약)와 **`PointColorPanel.vue`**(포인트 색상 최대 3개, `+`추가/삭제/활성전환) 신설, `AppLayout.vue`에서 `ModulePanel`과 스위칭. 공용 색상 팝오버 **`ColorPopoverPicker.vue`**(퀵스와치+기본팔레트+hex+투명도+inline 그라디언트/휴 피커) 신설. 우측 `PropertiesPanel`의 옛 "공통 속성" 아코디언은 제거함.
+  - **포인트 색상 데이터 모델 전환 완료**: `wrapSettings.pointColors: string[]`(≤3) 추가, `pointColor`(단일)는 `pointColors[0]`과 항상 동기화되어 렌더/내보내기 파이프라인은 그대로 유지(`editorStore.ts`의 `updateWrapSettings`/`addPointColor`/`setActivePointColor`/`removePointColor`).
+  - **"포인트 색상으로 사용" 개편 완료**: 체크박스 → **`PointColorSwatchRow.vue`**(필드 아래 한 줄, 최대 3개 중 클릭해 선택/해제)로 교체. `properties[key]__usePoint`(bool) + 신규 `properties[key]__pointIndex`(0~2) 저장. `resolvePointColors`/`resolveGroupStyles`가 배열+인덱스 기반으로 해소(`src/utils/pointColor.ts`, `src/utils/groupStyle.ts`). `PropertiesPanel.vue`(모듈 색상 필드)·`GroupPropertiesPanel.vue`(그룹 배경/테두리) 양쪽 적용. **Quill 리치텍스트 안의 "포인트 색상으로 사용"은 미포함**(여전히 단일 `--point-color` CSS 변수, index 0 고정) — 확장하려면 `--point-color-1/2/3` CSS 변수 인프라가 별도로 필요.
+- **Phase 3 완료(2026-07-18)**: 텍스트/이미지/버튼 레일 메뉴 + 모듈 선택 좌측 속성 + 캔버스 툴바/드래그 핸들.
+  - **`CategoryModulePanel.vue`**(신규, `category: 'text'|'image'|'button'` 공통): 빠른추가 카드(원소 모듈, 항상 `moduleStore.addModule()`) + 카테고리 갤러리(`moduleStore.composedBuilderMap`에 있으면 v2 조립형, 없으면 `addModule` 폴백). 썸네일은 `useModuleThumbnails.ts`(신규 컴포저블, `ModulePanel.vue`와 공유)로 추출.
+  - **`SelectedItemPanel.vue`**(신규): 모듈/그룹 선택 시 좌측에 표시. 그룹 선택 시 멤버 목록(chevron+**삭제 아이콘** — 토글 아님, 삭제=비노출)을 보여주고, 멤버를 펼치면 그 자리에 `ModuleForm.vue`가 인라인 렌더(전역 `selectedModuleId`를 "펼침 상태"로 재사용). 그룹 스타일은 `GroupPropertiesPanel.vue`를 그대로 재배치. 단독 모듈은 `ModuleForm.vue`를 그대로 표시.
+  - **`ModuleForm.vue`**(신규, `PropertiesPanel.vue`에서 로직 변경 없이 추출): 우측 `PropertiesPanel.vue`(당분간 유지)와 좌측 `SelectedItemPanel.vue`가 동일 컴포넌트를 공유 — 두 곳에서 항상 동일하게 동작함을 확인.
+  - **`AppLayout.vue` 좌측 패널 우선순위**: 캔버스 선택(`hasSelection`) > 레일 메뉴. 단 `editorStore.forceRailPanel` 플래그로 예외 처리 — 레일 메뉴를 명시적으로 클릭하면(`setActiveMenu`가 켬) 선택이 남아있어도 그 메뉴 패널을 보여주고(그래야 레일 클릭이 무반응처럼 안 보임), `moduleStore`의 `selectedModuleId`/`selectedGroupId` watcher가 **새 선택**이 생기면(캔버스 클릭이든 `addModule`의 자동 선택이든) 자동으로 꺼서 속성 패널로 되돌린다. → "그룹 멤버 선택 후 카테고리 메뉴에서 원소 모듈 추가 → 그 그룹에 삽입" 흐름이 이 플래그 덕에 끊기지 않음.
+  - **캔버스 툴바/핸들**: `ModuleRenderer.vue`의 상단 가로 pill → 우측 세로 카드(삭제·복제·위·아래, `isSelected || hover` 노출)로 교체. `CanvasArea.vue`의 좌측 `dh-top` 바 → Figma 스펙의 흰 카드+`drag_indicator` 아이콘으로 교체(클래스명 `dh-top`은 유지 — vuedraggable `handle` 옵션 의존). 그룹 헤더 바는 라운드/그림자만 가볍게 다듬음(구조 불변).
+  - **미구현**: 테이블/구분선·여백 레일 메뉴 콘텐츠(Figma 스펙 없음), `EditorToolbar`의 PC/모바일 중복 제거, 모듈순서 메뉴 ↔ `ModuleOutlinePanel` 배선(지금도 항상 별도 렌더되지만 레일의 `order` 메뉴와는 아직 안 이어짐).
+- **Phase 4 완료(2026-07-18)**: `ModuleForm.vue` 필드 레벨 스타일링 (Figma 372-3000/378-1704/412-2139/408-1758 기준) — 인풋 필드·셀렉트·텍스트 에디터·컬럼분할 버튼·행간·자간·폰트크기·여백 필드.
+  - **공통 필드 토큰**(`.gg-*` 클래스): 라벨 15px `#4e5968`, 힌트 14px `#6b7684`, 텍스트/URL 필드는 filled `#f2f4f6` 배경 h-40 rounded-8, 셀렉트는 흰 배경+`#e5e8eb` 테두리 h-40, 토글 행은 `justify-between` + 16px `#333d4b` 라벨 + 36×20 ToggleSwitch.
+  - **컬럼분할**: "컬럼 추가"/"되돌리기" 버튼을 세그먼트 필(`.gg-segment` — 좌: 진한 `#4e5968` 채움, 우: 흰 배경+테두리)로 교체. 클릭 핸들러(`splitSelectedModule`/`unsplitSelectedModule`)는 완전히 그대로.
+  - **폰트 크기 필드**: `prop.key`가 `FontSize`로 끝나는 텍스트 필드(`isFontSizeField`)를 스테퍼(−/값/+, `.gg-stepper`)로 렌더. 값 포맷(`"22px"` 문자열)은 기존과 동일하게 유지(`adjustFontSize`가 파싱 후 다시 `${n}px`로 저장).
+  - **행간/자간 외부 분리(핵심 회귀 리스크 항목)**: Quill 툴바 안의 `<select class="ql-lineHeight/ql-letterSpacing">`를 제거하고, 에디터 바로 위에 별도 PrimeVue `Select` 2개(`.rte-ext-row`)로 이전. 내부적으로 색상 팝오버와 동일한 "필드별 Quill 인스턴스 추적" 패턴(`quillByKey`/`quillRangeByKey`, `onEditorLoad(event, key)`)을 재사용 — `applyLineHeight`는 `quill.format('lineHeight', value, 'user')`(블록 스코프), `applyLetterSpacing`은 선택범위 있으면 `formatText`, 없으면 `setSelection`+`format`(인라인 스코프). 드롭다운 표시값은 `selection-change`/`text-change` 리스너로 `editorFormatState[key]`에 동기화. Playwright로 실제 `line-height`/`letter-spacing` 인라인 스타일이 적용되는 것까지 검증 완료(동일 기능 유지 확인).
+  - **검증**: `npx vue-tsc --noEmit` 클린, `npx vitest run` 362개 전부 통과, Playwright로 텍스트/이미지 모듈 좌·우 양쪽 패널에서 필드 스타일 및 행간·자간·폰트크기 스테퍼·세그먼트 버튼 동작 확인.
+  - **미구현/보류**: 여백(padding/margin) 필드는 4방향 개별 `text` px 필드 그대로 유지하고 공통 필드 토큰만 적용 — Figma에서 "여백" 행이 펼쳤을 때의 lock 아이콘+슬라이더 레이아웃이 캡처되지 않아 재설계는 보류. 리치텍스트 툴바의 나머지 버튼(B/I/U/S/정렬 등)은 Quill 기본 아이콘을 유지한 채 여백/테두리만 다듬음(Figma 아이콘 글리프로 전량 교체는 안 함).
+- **Phase 5 완료(2026-07-18)**: 여백 잠금 슬라이더(Figma 365-2691) · 필드 오버플로우 수정 · 그룹 헤더 바 플로팅 툴바화.
+  - **여백/패딩 4방향 잠금 슬라이더**: `ModuleForm.vue`에 `isQuadStart`/`isQuadMember`(modules-config의 `...Top/Right/Bottom/Left` 4연속 키 패턴을 감지, 모든 `padding*`/`margin*`/`buttonPadding*`/`logoPadding*` 등 접두사에 범용 적용) + `.gg-margin-quad`(잠금 아이콘 토글, 잠금 시 슬라이더+필드 하나로 4방향 동시 조정, 해제 시 상/우/하/좌 2×2 그리드로 개별 조정). 기존 `paddingTop` 등 개별 prop 저장 방식은 그대로(`updateProperty`를 4번 호출)라 하위호환 문제 없음. Playwright로 슬라이더 드래그 → 4방향 모두 반영 → 잠금 해제 시 그리드 값 유지까지 확인.
+  - **좌측 패널 필드 오버플로우 수정**: 360px 패널(Figma 스펙 그대로 유지, 패널 자체는 넓히지 않음) 안에서 컬러 필드 행(`ColorAlphaPicker`+`HexColorInput`)이 `scrollWidth > clientWidth`로 잘리던 문제 — 원인은 `HexColorInput`(내부 `<input>`)이 `flex-1`만 있고 `min-width:0`이 없어 flexbox가 content 폭 밑으로 못 줄인 것. `min-w-0` 추가(`ModuleForm.vue` 색상 필드 2곳 + Quill 팝오버, `GroupPropertiesPanel.vue` 배경/테두리 색상 2곳) + `ColorAlphaPicker`의 투명도 `InputNumber` 폭을 4.5rem→3.5rem로 축소. Playwright로 `scrollWidth === clientWidth` 확인.
+  - **그룹 헤더 바 리스킨**: `CanvasArea.vue`의 `.group-header`(그룹 상단 바, 드래그 핸들 겸용) — 보라색 PrimeIcons 팔레트 → 흰 배경+`#e5e8eb` 테두리+그림자(모듈 우측 플로팅 툴바와 동일 톤) + Material Symbols 아이콘(`content_copy`/`link_off`/`tune`/`delete`)로 교체. 선택 상태는 `#ebf3ff`+`#4083f3` 테두리(파란 액센트로 통일). 클릭 핸들러는 전부 그대로(복제/해제/스타일편집/삭제 동작 불변) — Playwright로 복제·삭제 확인 다이얼로그까지 확인.
+  - **검증**: `npx vue-tsc --noEmit` 클린, `npx vitest run` 362개 통과, Playwright로 여백 슬라이더/오버플로우/그룹 헤더 액션 모두 확인.
+
+- **Phase 6 완료(2026-07-18)**: `ModuleForm.vue`의 PrimeVue `Panel`(named prop group) → Figma 352-1138 접이식 헤더로 교체 + `ModulePanel.vue` v2 스왑.
+  - **named prop 그룹 헤더 리스킨**: `<component :is="group.name ? 'Panel' : 'div'">` 방식을 걷어내고, 항상 `<div>`로 감싼 뒤 `group.name`이 있을 때만 `.gg-acc-header`(Phase 4/5에서 이미 만든 클래스 재사용) 커스텀 헤더를 그 위에 얹는 방식으로 변경 — 거대한 prop-type 렌더 블록(900줄+)은 단 한 번도 중복 없이 그대로 재사용(추가 조건 하나만 v-show에 덧붙임). PrimeVue Panel의 `togglericon`/`pt`/`onPanelHeaderClick` 관련 코드는 전부 제거.
+  - **그룹 전체를 켜고 끄는 토글을 판넬 헤더로 승격**: `groupHeaderToggle(group)` — 그룹의 첫 prop이 boolean이고 나머지 전부가 그 prop을 참조하는 showWhen이면(예: "로고" 그룹의 `showLogo`), 그 토글을 본문에서 빼서 헤더의 chevron 옆에 배치. 판넬을 열지 않아도 켜고 끌 수 있음(Figma 352-1138의 "구분선/타이틀/텍스트/버튼" 토글 행과 동일 패턴). 조건에 안 맞는 그룹(예: "헤더 타이틀")은 chevron만 있는 헤더로 표시.
+  - **`ModulePanel.vue` "모듈" 탭 v2 스왑**: 기존엔 `addModule()`이 항상 레거시 단일 모듈만 추가했음 — `CategoryModulePanel.vue`의 `onGalleryAdd`와 동일하게 `moduleStore.composedBuilderMap[module.id]`를 먼저 확인해 v2 조립 빌더가 있으면 그걸 쓰고 없으면 폴백하도록 수정. `composedBuilderMap`에 있는 14개(Module02/04/011/05/051/06/07(+Reverse)/NewsHeader/BasicHeader/ImageHeader/MultiImage/Footer/TwoButton)는 이제 "모듈" 탭에서 클릭해도 v2 그룹으로 추가된다.
+  - **확인된 기존 동작(버그 아님)**: `buildComposedGroup()`은 그룹 생성 후 `selectedModuleId`만 설정하고 `selectedGroupId`는 null로 둔다(첫 멤버 선택) — 좌측 `SelectedItemPanel`은 `selectedModule.groupId`로 그룹을 역으로 찾아내 정상적으로 "그룹 구성"을 보여주지만, 우측 `PropertiesPanel`은 `moduleStore.selectedGroup`(= `selectedGroupId` 전용)에만 의존해 그룹 대신 첫 멤버의 `ModuleForm`을 보여준다. 좌/우 패널의 "그룹 인식" 방식이 다른 기존 동작이며 이번 스왑과 무관 — 필요시 향후 별도로 통일 고려.
+  - **검증**: `npx vue-tsc --noEmit` 클린, `npx vitest run` 362개 통과, Playwright로 (1) "로고" 그룹 헤더 토글이 판넬 열기 전에 상태를 보여주고 클릭 시 정상 on/off, (2) "헤더 타이틀" 등 토글 없는 그룹은 chevron만 노출, (3) "모듈" 탭에서 "뉴스 헤드라인 헤더" 클릭 시 5개 멤버짜리 v2 그룹(`member-row` 5개, 좌측 패널 "그룹 구성")으로 추가되는 것까지 확인.
+
+- **Phase 7 완료(2026-07-18)**: 그룹 상단 띠(그룹 헤더 바) 제거 → 좌측 드래그 핸들 왼쪽에 세로 액션 툴바로 이전.
+  - `CanvasArea.vue`의 `.group-header`(그룹 · N개 모듈 라벨 + 복제/해제/스타일/삭제 아이콘이 있던 상단 가로 띠)를 완전히 제거. 대신 `.group-action-toolbar`(모듈 우측 플로팅 툴바와 동일 톤의 흰 카드, `left: -81px`)를 새로 만들어 좌측 드래그 핸들(`left: -32px`) 바로 왼쪽에 배치 — 같은 4개 아이콘(복제·해제·그룹 스타일·삭제)을 그대로 이전.
+  - **레이아웃 여유 확보**: 좌측 목차 레일(`ModuleOutlinePanel`, 약 40px)과 캔버스 사이 여백이 기존 `p-8`(32px)뿐이라 드래그 핸들(-32px)은 딱 맞았지만 새 액션 툴바(-81px)는 목차 레일과 겹쳐 클릭이 막혔다(Playwright로 실제 클릭 실패 확인 — 목차 레일 엘리먼트가 pointer-event를 가로챔). `CanvasArea.vue` 캔버스 스크롤 컨테이너의 좌측 패딩을 `p-8`→`pl-28`(112px)로 넓혀 해결(다른 변은 그대로: 상/우 32px, 하 128px).
+  - 그룹 선택/클릭은 `.group-box`의 `@click.self="selectGroupBox"`로 계속 동작(헤더 바 제거로 없어진 "헤더 클릭 시 선택" 기능 대체). 액션 버튼 클릭 핸들러(`duplicateGroup`/`ungroup`/`selectGroupBox`/`confirmDeleteGroup`)는 전부 그대로.
+  - **검증**: `npx vue-tsc --noEmit` 클린, `npx vitest run` 362개 통과, Playwright로 헤더 바 소멸(`group-header` count 0) + 새 툴바 클릭 성공(그룹 복제 시 `.group-wrap` 개수 1→2) + 개별 모듈 우측 툴바 영향 없음(기존처럼 클릭 성공) 확인.
+  - **추가 수정(같은 날)**: `.group-action-toolbar`가 호버 시에만 보이면 클릭하려고 마우스를 옮기는 순간 사라져 조작이 어렵다는 피드백 — `opacity:0/pointer-events:none` 기본값과 `.group-wrap:hover`/`.is-visible` 노출 조건을 제거하고 **항상 노출**로 변경(개별 모듈의 우측 툴바·좌측 드래그 핸들은 호버 조건 그대로 유지 — 그룹 액션만 예외).
+
+- **Phase 8 완료(2026-07-18)**: 그룹 구성 패널 chevron 방향 통일 · 중복 타이틀 제거 · 그룹 실제 이름 표시.
+  - **chevron 방향 통일**: `SelectedItemPanel.vue`의 그룹 멤버 행이 `pi-chevron-up`(펼침)/`pi-chevron-down`(접힘)을 쓰던 걸 `GroupPropertiesPanel.vue`의 `.gg-acc-header`와 동일한 `pi-chevron-down`(펼침)/`pi-chevron-right`(접힘)로 통일.
+  - **`ModuleForm.vue`의 자체 상단 타이틀(`gg-panel-title`) 완전 제거**: 그룹 멤버를 펼쳤을 때 "멤버 행 라벨"과 "ModuleForm 내부 타이틀"이 같은 이름을 두 번 보여주는 중복이 있었음 — `ModuleForm.vue`에서 그 타이틀 블록과 전용 CSS를 삭제(다른 곳에 이미 있는 타이틀들: 멤버 행 라벨, `SelectedItemPanel`/`PropertiesPanel`의 헤더로 충분).
+  - **그룹에 실제 이름 부여**: `ModuleGroup` 타입에 `name?: string` 추가. v2 조립형 템플릿으로 그룹을 만들 때(`CategoryModulePanel.onGalleryAdd`, `ModulePanel.addModule`, "모듈 v2" POC 탭의 14개 핸들러) 클릭한 모듈의 실제 이름(`module.name`, 예: "모듈 02번")을 새 `moduleStore.setGroupName(groupId, name)`으로 그룹에 저장. `duplicateGroup`도 이름을 승계. `SelectedItemPanel.vue`의 "그룹 구성" 타이틀을 `{{ activeGroup?.name || '그룹 구성' }}`로 변경 — 이름이 있으면 그걸(예: "모듈 02번"), 없으면(컬럼 분할 등으로 만든 임의 그룹) 기존처럼 "그룹 구성"을 보여준다.
+  - **검증**: `npx vue-tsc --noEmit` 클린, `npx vitest run` 362개 통과, Playwright로 그룹 생성 직후 좌측 타이틀이 실제 모듈명("모듈 02번")으로 뜨는 것 + 멤버 확장 시 중복 타이틀 없이 바로 필드가 나오는 것 + 모든 chevron이 collapsed 상태에서 `>`로 통일된 것 확인.
 
 ## 향후 방향 (사용자 명시, 아직 미구현)
+- **모듈 v2를 메인 시스템으로 승격** (2026-07-18 확정): 새 카테고리 레일 UI는 v2 조립형 모듈을 기본으로 적용(6-1 섹션 참고). v2 템플릿이 없는 카테고리(예: 테이블형)는 **레거시 모듈을 당분간 유지**하고 점진적으로 교체 — 한 번에 전체 전환 금지, 기능 손실 없이 진행.
+- **저장 템플릿도 v2로 재구성 예정** (아직 미착수, 사용자 예고): 지금 템플릿 저장/불러오기(`moduleStore.ts`의 템플릿 관련 함수, `src/views/*Template*`)는 레거시 모듈 기준. 위 모듈 v2 전환이 어느 정도 끝난 뒤 템플릿 쪽도 다시 작업할 계획 — 지금 당장 템플릿 구조를 손댈 필요는 없음.
 - **조립형(v2) 모듈의 노출/비노출**: 지금은 원본 모듈의 `show*` **스위치 토글**로 제어하지만, 앞으로는 **"그룹 안 원소 모듈을 삭제"** 하는 방식으로 전환 예정. (v2 = 원소 모듈 그룹이므로, 요소 삭제 = 비노출.) SNS 아이콘 등 토글 UI는 이 방향과 함께 재검토.
 
-## 5) 반영 규칙
+## 8) 반영 규칙
 - **최소 변경**: 해당 노드가 바꾸는 것만. 렌더 관련은 **캔버스·내보내기 두 경로 모두** 반영했는지 확인.
-- **검증**: `npx vue-tsc --noEmit -p tsconfig.app.json` + `npx vitest run` 통과 확인. 필요시 dev 서버 기동해 스크린샷.
-- **하위호환**: 기존 인스턴스/템플릿이 깨지지 않게 기본값·마이그레이션 유지(예: pointColor→pointColors 시 단일값 폴백).
+- **검증**: `npx vue-tsc --noEmit -p tsconfig.app.json` + `npx vitest run` 통과 확인. 필요시 dev 서버 기동해 스크린샷(Playwright: `NODE_PATH=<npx 캐시 경로>/node_modules node script.cjs` — 로컬에 playwright 브라우저 미설치 시 `npx playwright install chromium` 먼저).
+- **하위호환**: 기존 인스턴스/템플릿이 깨지지 않게 기본값·마이그레이션 유지(예: pointColor→pointColors 시 단일값 폴백, `__pointIndex` 미지정 시 0번 폴백).
 - **커밋**: `feat:`/`fix:` 한글 컨벤션. (사용자가 Claude 트레일러 제외를 요청한 이력 있음 — 커밋 전 확인.)
 - 큰 개편은 단계로 쪼개 진행(데이터 모델 → 스토어 → 렌더 → UI 순).
+- Figma 노드 안에 레이어명/텍스트가 복붙 흔적으로 실제 내용과 안 맞는 경우가 있다(예: 415-2553 버튼 메뉴의 제목 레이어가 "텍스트"로 남음) — 스크린샷/카드 내용으로 실제 의도를 판단하고 레이어 텍스트를 맹신하지 말 것.

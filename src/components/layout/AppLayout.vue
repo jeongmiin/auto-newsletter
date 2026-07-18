@@ -8,8 +8,15 @@
       <!-- 좌측 아이콘 레일 (신규 디자인 IA) -->
       <EditorSidebar />
 
-      <!-- 왼쪽 모듈 패널 -->
-      <ModulePanel class="w-72 xl:w-80 border-r bg-white flex-shrink-0" />
+      <!-- 좌측 컨텍스트 패널: 캔버스에서 모듈/그룹을 선택 중이면 그게 최우선, 아니면 활성 레일 메뉴에 따라 전환 -->
+      <GlobalStylePanel v-if="!hasSelection && editorStore.activeMenu === 'style'" />
+      <PointColorPanel v-else-if="!hasSelection && editorStore.activeMenu === 'point'" />
+      <CategoryModulePanel
+        v-else-if="!hasSelection && activeCategory"
+        :category="activeCategory"
+      />
+      <SelectedItemPanel v-else-if="hasSelection" />
+      <ModulePanel v-else class="w-72 xl:w-80 border-r bg-white flex-shrink-0" />
 
       <!-- 모듈 목차/순서 패널 (캔버스와 실시간 연동) -->
       <ModuleOutlinePanel />
@@ -60,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import EditorSidebar from '@/components/editor/EditorSidebar.vue'
 import ModulePanel from '@/components/panels/ModulePanel.vue'
@@ -68,6 +75,30 @@ import EditorToolbar from '@/components/editor/EditorToolbar.vue'
 import ModuleOutlinePanel from '@/components/editor/ModuleOutlinePanel.vue'
 import CanvasArea from '@/components/editor/CanvasArea.vue'
 import PropertiesPanel from '@/components/panels/PropertiesPanel.vue'
+import GlobalStylePanel from '@/components/panels/GlobalStylePanel.vue'
+import PointColorPanel from '@/components/panels/PointColorPanel.vue'
+import CategoryModulePanel from '@/components/panels/CategoryModulePanel.vue'
+import SelectedItemPanel from '@/components/panels/SelectedItemPanel.vue'
+import { useEditorStore } from '@/stores/editorStore'
+import { useModuleStore } from '@/stores/moduleStore'
+
+const editorStore = useEditorStore()
+const moduleStore = useModuleStore()
+
+// 캔버스에서 모듈/그룹을 선택 중이면 좌측 컨텍스트 패널이 그 속성 편집으로 전환된다(레일 메뉴보다 우선).
+// 단, 레일 메뉴를 방금 명시적으로 클릭했으면(forceRailPanel) 선택이 남아있어도 그 메뉴를 그대로 보여준다
+// — 그룹 멤버를 선택한 채로 카테고리 메뉴에서 원소 모듈을 추가하면 그 그룹에 삽입되는 흐름을 유지하기 위함.
+const hasSelection = computed(
+  () => (!!moduleStore.selectedModuleId || !!moduleStore.selectedGroupId) && !editorStore.forceRailPanel,
+)
+
+const CATEGORY_MENUS = ['text', 'image', 'button'] as const
+const activeCategory = computed(() => {
+  const menu = editorStore.activeMenu
+  return (CATEGORY_MENUS as readonly string[]).includes(menu)
+    ? (menu as (typeof CATEGORY_MENUS)[number])
+    : null
+})
 
 // 속성 패널 너비 상태
 const MIN_WIDTH = 300

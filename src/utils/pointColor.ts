@@ -2,13 +2,30 @@
  * 포인트(강조) 색상 해소 유틸
  *
  * 각 색상 속성 옆 '포인트 색상 사용' 체크 상태는 모듈 properties에
- * `${colorKey}__usePoint: true` 형태로 저장된다. 렌더링 직전 이 유틸로
- * 플래그가 켜진 색상 키의 값을 전역 pointColor로 덮어쓴다.
+ * `${colorKey}__usePoint: true` 형태로 저장된다. 어느 포인트 색상(최대 3개 중)을
+ * 따를지는 `${colorKey}__pointIndex: 0|1|2`에 저장된다(미지정 시 0번). 렌더링
+ * 직전 이 유틸로 플래그가 켜진 색상 키의 값을 해당 인덱스의 포인트 색상으로 덮어쓴다.
  *
  * 수동으로 입력한 색상값(properties[colorKey])은 그대로 보존되므로,
  * 체크를 해제하면 자동으로 직전 수동 색상으로 원복된다.
  */
 export const POINT_COLOR_SUFFIX = '__usePoint'
+export const POINT_COLOR_INDEX_SUFFIX = '__pointIndex'
+
+/** properties에 저장된 포인트 색상 인덱스(0|1|2)를 읽는다. 미지정이면 0(첫 번째 포인트 색상). */
+export function getPointColorIndex(properties: Record<string, unknown>, colorKey: string): number {
+  const raw = properties[`${colorKey}${POINT_COLOR_INDEX_SUFFIX}`]
+  return typeof raw === 'number' && raw >= 0 ? raw : 0
+}
+
+/** 포인트 색상 배열에서 index번째 색상을 가져온다. 범위를 벗어나면 0번, 그마저 없으면 기본값. */
+export function pointColorAt(
+  pointColors: string[] | undefined | null,
+  index: number,
+  fallback = '#2563eb',
+): string {
+  return pointColors?.[index] ?? pointColors?.[0] ?? fallback
+}
 
 /**
  * 본문(리치 텍스트) 인라인 색상이 포인트 색상을 따르도록 하는 CSS 변수 이름.
@@ -32,16 +49,16 @@ export function resolvePointColorVar(
 
 export function resolvePointColors(
   properties: Record<string, unknown>,
-  pointColor: string | undefined | null,
+  pointColors: string[] | undefined | null,
 ): Record<string, unknown> {
-  if (!pointColor) return properties
+  if (!pointColors || pointColors.length === 0) return properties
 
   let result: Record<string, unknown> | null = null
   for (const key of Object.keys(properties)) {
     if (key.endsWith(POINT_COLOR_SUFFIX) && properties[key] === true) {
       const colorKey = key.slice(0, -POINT_COLOR_SUFFIX.length)
       if (!result) result = { ...properties }
-      result[colorKey] = pointColor
+      result[colorKey] = pointColorAt(pointColors, getPointColorIndex(properties, colorKey))
     }
   }
   return result ?? properties

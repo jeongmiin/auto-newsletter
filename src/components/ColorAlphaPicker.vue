@@ -15,7 +15,7 @@
       :disabled="disabled"
       suffix=" %"
       class="text-xs"
-      :inputStyle="{ width: '4.5rem' }"
+      :inputStyle="{ width: '3.5rem' }"
       title="불투명도(%)"
     />
   </div>

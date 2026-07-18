@@ -325,7 +325,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useModuleThumbnails } from '@/composables/useModuleThumbnails'
 import { storeToRefs } from 'pinia'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
@@ -360,9 +361,17 @@ const filteredModules = computed(() => {
   return visible.filter((module) => module.category === selectedCategory.value)
 })
 
+// 모듈 v2(조립형) 템플릿이 있으면 그걸 추가하고, 없으면 레거시 단일 모듈로 폴백한다
+// (CategoryModulePanel.vue의 onGalleryAdd와 동일한 규칙 — "모듈" 탭에서도 v2로 갈아끼울 수 있는 것은 v2로)
 const addModule = (module: ModuleMetadata) => {
   onModuleLeave() // 추가 시 미리보기 닫기
-  moduleStore.addModule(module)
+  const builder = moduleStore.composedBuilderMap[module.id]
+  if (builder) {
+    const groupId = builder()
+    if (groupId) moduleStore.setGroupName(groupId, module.name)
+  } else {
+    moduleStore.addModule(module)
+  }
   toast.add({
     severity: 'success',
     summary: '모듈 추가됨',
@@ -375,6 +384,7 @@ const addModule = (module: ModuleMetadata) => {
 const addComposedModule02 = () => {
   onModuleLeave()
   const groupId = moduleStore.addComposedModule02()
+  if (groupId) moduleStore.setGroupName(groupId, '모듈 02')
   toast.add({
     severity: groupId ? 'success' : 'error',
     summary: groupId ? '조립형 모듈 추가됨' : '조립 실패',
@@ -389,6 +399,7 @@ const addComposedModule02 = () => {
 const addComposedModule04 = () => {
   onModuleLeave()
   const groupId = moduleStore.addComposedModule04()
+  if (groupId) moduleStore.setGroupName(groupId, '모듈 04')
   toast.add({
     severity: groupId ? 'success' : 'error',
     summary: groupId ? '조립형 모듈 추가됨' : '조립 실패',
@@ -403,6 +414,7 @@ const addComposedModule04 = () => {
 const addComposedModule011 = () => {
   onModuleLeave()
   const groupId = moduleStore.addComposedModule011()
+  if (groupId) moduleStore.setGroupName(groupId, '모듈 01-1')
   toast.add({
     severity: groupId ? 'success' : 'error',
     summary: groupId ? '조립형 모듈 추가됨' : '조립 실패',
@@ -417,6 +429,7 @@ const addComposedModule011 = () => {
 const addComposedModule05 = () => {
   onModuleLeave()
   const groupId = moduleStore.addComposedModule05()
+  if (groupId) moduleStore.setGroupName(groupId, '모듈 05')
   toast.add({
     severity: groupId ? 'success' : 'error',
     summary: groupId ? '조립형 모듈 추가됨' : '조립 실패',
@@ -428,6 +441,7 @@ const addComposedModule05 = () => {
 }
 
 const composedToast = (groupId: string | null, name: string) => {
+  if (groupId) moduleStore.setGroupName(groupId, name)
   toast.add({
     severity: groupId ? 'success' : 'error',
     summary: groupId ? '조립형 모듈 추가됨' : '조립 실패',
@@ -499,68 +513,11 @@ const addComposedTwoButton = () => {
 }
 
 // ===== 모듈 인라인 썸네일 (호버 없이 카드에 상시 표시) =====
-const MODULE_WIDTH = 680 // 모듈 템플릿 기준 폭(px)
-
-const previewCache = new Map<string, string>()
-const thumbs = reactive<Record<string, string>>({}) // module.id → iframe srcdoc
-
-const buildPreviewDoc = (content: string): string =>
-  `<!DOCTYPE html><html><head><meta charset="utf-8"><base target="_blank">` +
-  `<style>html,body{margin:0;padding:0;background:#fff;overflow:hidden;}*{box-sizing:border-box;}</style></head>` +
-  `<body><div style="width:${MODULE_WIDTH}px;max-width:${MODULE_WIDTH}px;margin:0;">${content}</div></body></html>`
-
-// 카드가 화면에 들어올 때만 렌더(성능) — 결과는 캐시
-const renderThumb = async (id: string) => {
-  if (thumbs[id]) return
-  const cached = previewCache.get(id)
-  if (cached) {
-    thumbs[id] = cached
-    return
-  }
-  try {
-    const doc = buildPreviewDoc(await moduleStore.renderModulePreview(id))
-    previewCache.set(id, doc)
-    thumbs[id] = doc
-  } catch (e) {
-    console.warn('[ModulePanel] 썸네일 렌더 실패:', id, e)
-  }
-}
-
-// IntersectionObserver로 보이는 카드만 지연 렌더
-const cardEls = new Map<string, Element>()
-const thumbObserver =
-  typeof IntersectionObserver !== 'undefined'
-    ? new IntersectionObserver(
-        (entries) => {
-          for (const e of entries) {
-            if (!e.isIntersecting) continue
-            const id = (e.target as HTMLElement).dataset.moduleId
-            if (id) renderThumb(id)
-            thumbObserver?.unobserve(e.target)
-          }
-        },
-        { rootMargin: '200px' },
-      )
-    : null
-
-const observeCard = (el: Element | null, id: string) => {
-  const prev = cardEls.get(id)
-  if (prev && thumbObserver) thumbObserver.unobserve(prev)
-  if (!el) {
-    cardEls.delete(id)
-    return
-  }
-  cardEls.set(id, el)
-  if (thumbObserver) thumbObserver.observe(el)
-  else renderThumb(id) // 옵저버 미지원 폴백
-}
+// CategoryModulePanel.vue와 공유하는 composable로 추출됨(캐시도 인스턴스 간 공유)
+const { thumbs, observeCard } = useModuleThumbnails()
 
 // 조립형 핸들러 호환용 — 인라인 썸네일에선 닫을 미리보기가 없음(no-op)
 const onModuleLeave = () => {}
-
-onUnmounted(() => {
-  thumbObserver?.disconnect()
-})
 
 const applyTemplate = (template: NewsletterTemplate) => {
   const doLoad = async () => {

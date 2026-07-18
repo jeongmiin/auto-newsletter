@@ -19,61 +19,46 @@
       <div v-html="renderedHtml" class="module-content"></div>
     </div>
 
-    <!-- 호버 시 모듈 '위쪽 바깥'에 뜨는 통합 컨트롤 바 (번호·이름 + 액션).
-         바깥 래퍼 = 모듈 폭 전체를 덮는 투명한 '호버 유지 존'.
-           · 위로 마우스를 올릴 때 어느 위치로 올려도 호버가 끊기지 않는다.
-           · 평소엔 pointer-events-none 이라 위 모듈을 방해하지 않고, 호버 중에만 활성화.
-         안쪽 알약(bg-white) = 실제 보이는 바(왼쪽 정렬). 높이 낮은 모듈도 내용이 가려지지 않는다. -->
+    <!-- 우측 세로 플로팅 툴바 (Figma 352-1138) — 삭제/복제/위로/아래로.
+         선택 중이거나 호버 중일 때 보인다(기존엔 호버로만 노출 — 편집 중 접근성을 위해 선택 시에도 유지). -->
     <div
-      class="absolute left-0 right-0 bottom-full z-20 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity"
+      class="module-toolbar"
+      :class="{ 'is-visible': isSelected }"
+      v-tooltip.left="compact ? moduleName : undefined"
     >
-      <div class="inline-flex items-center gap-0.5 bg-white rounded-lg shadow-lg border p-1 ml-2">
-      <!-- 번호 + 이름 (좁은 컬럼에서는 번호만, 이름은 툴팁으로) -->
-      <span
-        class="flex items-center gap-1 pl-0.5 pr-1.5 mr-0.5 border-r border-gray-200"
-        v-tooltip.bottom="moduleName"
-      >
-        <span class="inline-flex items-center justify-center w-5 h-5 bg-blue-500 text-white rounded-full text-xs font-medium shrink-0">{{ index + 1 }}</span>
-        <span
-          v-if="!compact"
-          class="text-xs text-gray-700 whitespace-nowrap max-w-[110px] truncate"
-        >{{ moduleName }}</span>
-      </span>
-
-      <Button
-        @click.stop="$emit('move-up', module.id)"
-        :disabled="index === 0"
-        icon="pi pi-arrow-up"
-        severity="secondary"
-        text
-        size="small"
-        v-tooltip.bottom="'이 모듈을 위로 이동합니다'"
-      />
-      <Button
-        @click.stop="$emit('move-down', module.id)"
-        icon="pi pi-arrow-down"
-        severity="secondary"
-        text
-        size="small"
-        v-tooltip.bottom="'이 모듈을 아래로 이동합니다'"
-      />
-      <Button
-        @click.stop="$emit('duplicate', module.id)"
-        icon="pi pi-copy"
-        severity="secondary"
-        text
-        size="small"
-        v-tooltip.bottom="'이 모듈을 복제합니다'"
-      />
-      <Button
+      <button
+        type="button"
+        class="module-toolbar-btn is-danger"
         @click.stop="$emit('delete', module.id)"
-        icon="pi pi-trash"
-        severity="danger"
-        text
-        size="small"
-        v-tooltip.bottom="'이 모듈을 삭제합니다'"
-      />
-      </div>
+        v-tooltip.left="'삭제'"
+      >
+        <span class="material-symbols-outlined">delete</span>
+      </button>
+      <button
+        type="button"
+        class="module-toolbar-btn"
+        @click.stop="$emit('duplicate', module.id)"
+        v-tooltip.left="'복제'"
+      >
+        <span class="material-symbols-outlined">content_copy</span>
+      </button>
+      <button
+        type="button"
+        class="module-toolbar-btn"
+        :disabled="index === 0"
+        @click.stop="$emit('move-up', module.id)"
+        v-tooltip.left="'위로 이동'"
+      >
+        <span class="material-symbols-outlined toolbar-icon-flip">arrow_downward</span>
+      </button>
+      <button
+        type="button"
+        class="module-toolbar-btn"
+        @click.stop="$emit('move-down', module.id)"
+        v-tooltip.left="'아래로 이동'"
+      >
+        <span class="material-symbols-outlined">arrow_downward</span>
+      </button>
     </div>
   </div>
 </template>
@@ -121,6 +106,67 @@ const compact = computed(() => !!props.columnInfo && props.columnInfo.columns > 
   - 테이블 요소에 padding 값을 명시적으로 허용
   - inline 스타일이 항상 우선순위를 갖도록 설정
 */
+
+/* 우측 세로 플로팅 툴바 */
+.module-toolbar {
+  position: absolute;
+  right: -49px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 41px;
+  padding: 12px 0;
+  background: #fff;
+  border: 1px solid #e5e8eb;
+  border-radius: 12px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.07);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s;
+}
+.group:hover .module-toolbar,
+.module-toolbar.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+.module-toolbar-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  color: #4e5968;
+  cursor: pointer;
+  border-radius: 6px;
+}
+.module-toolbar-btn .material-symbols-outlined {
+  font-size: 20px;
+}
+.module-toolbar-btn:hover {
+  background: #f2f4f6;
+}
+.module-toolbar-btn:disabled {
+  color: #d1d6db;
+  cursor: not-allowed;
+}
+.module-toolbar-btn:disabled:hover {
+  background: none;
+}
+.module-toolbar-btn.is-danger {
+  color: #f04452;
+}
+.module-toolbar-btn.is-danger:hover {
+  background: #fff1f1;
+}
+.toolbar-icon-flip {
+  transform: rotate(180deg);
+}
 
 /* CSS 격리 레이어 */
 .module-content-wrapper {

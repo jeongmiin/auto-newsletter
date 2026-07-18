@@ -67,7 +67,7 @@ export function useModuleRenderer(moduleId: string) {
   ): Promise<string> => {
     const { moduleId: mId } = moduleInstance
     // '포인트 색상 사용'으로 체크된 색상 속성을 전역 포인트 색상으로 해소
-    const properties = resolvePointColors(moduleInstance.properties, editorStore.wrapSettings.pointColor)
+    const properties = resolvePointColors(moduleInstance.properties, editorStore.wrapSettings.pointColors)
 
     switch (mId) {
       case 'ModuleNewsHeader':
@@ -268,14 +268,15 @@ export function useModuleRenderer(moduleId: string) {
     { deep: true, immediate: false }  // deep: true로 properties 변경 감지
   )
 
-  // 전역 포인트 색상 변경 시 — '포인트 색상 사용'으로 체크된 모듈들도 다시 렌더
+  // 전역 포인트 색상(최대 3개) 변경 시 — '포인트 색상 사용'으로 체크된 모듈들도 다시 렌더
   watch(
-    () => editorStore.wrapSettings.pointColor,
+    () => editorStore.wrapSettings.pointColors,
     () => {
       if (currentModule.value) {
         debouncedLoadModuleHtml()
       }
-    }
+    },
+    { deep: true }
   )
 
   // 다국어 폰트 변경 시 — 모든 모듈을 선택 언어 폰트로 다시 렌더
