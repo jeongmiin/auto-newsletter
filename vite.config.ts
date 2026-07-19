@@ -19,6 +19,13 @@ export default defineConfig(({ command }) => {
         '@': fileURLToPath(new URL('./src', import.meta.url))
       },
     },
+    // 개발 서버 — 포트를 항상 5173으로 고정.
+    // strictPort:true 라 5173이 이미 점유돼 있으면 임의 포트로 넘어가지 않고 에러로 알려준다
+    // (매 실행마다 포트가 바뀌어 열어둔 탭의 URL이 죽는 문제 방지).
+    server: {
+      port: 5173,
+      strictPort: true,
+    },
     // public 폴더 처리 명시
     publicDir: 'public',
     build: {
