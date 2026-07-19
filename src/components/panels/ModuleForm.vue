@@ -77,8 +77,14 @@
         >
         <!-- 이름 있는 prop 그룹(레거시 모듈의 로고/타이틀 등 섹션) — Figma 352-1138의 접이식 헤더 패턴.
              그룹 전체를 켜고 끄는 토글(예: showLogo)이 있으면 헤더로 끌어올려 판넬을 열기 전에도 제어 가능하게 한다. -->
-        <div v-if="group.name" class="gg-acc-header" @click="toggleGroupPanel(group, gIdx)">
+        <div
+          v-if="group.name"
+          class="gg-acc-header"
+          :class="{ 'is-static': isGroupSelfLabeled(group) }"
+          @click="isGroupSelfLabeled(group) || toggleGroupPanel(group, gIdx)"
+        >
           <i
+            v-if="!isGroupSelfLabeled(group)"
             class="pi gg-acc-chevron"
             :class="isGroupPanelExpanded(group, gIdx) ? 'pi-chevron-down' : 'pi-chevron-right'"
           ></i>
@@ -94,16 +100,16 @@
         <div
           class="space-y-5"
           :class="{ 'gg-acc-body': !!group.name }"
-          v-show="!group.name || isGroupPanelExpanded(group, gIdx)"
+          v-show="!group.name || isGroupSelfLabeled(group) || isGroupPanelExpanded(group, gIdx)"
         >
         <div
           v-for="(prop, index) in group.props"
           :key="prop.key"
-          v-show="evalShowWhen(prop.showWhen) && !isQuadMember(prop, group.props, index) && isGatedFieldVisible(prop, group.props) && groupHeaderToggle(group) !== prop"
+          v-show="evalShowWhen(prop.showWhen) && !isQuadMember(prop, group.props, index) && !isBorderMember(prop, group.props) && isGatedFieldVisible(prop, group.props) && groupHeaderToggle(group) !== prop"
           :class="{ 'pt-4 border-t border-gray-100': index > 0 && !prop.showWhen }"
         >
           <label
-            v-show="prop.type !== 'boolean' && prop.type !== 'checkbox' && !isColorBlock(prop) && !isQuadStart(prop, group.props, index)"
+            v-show="prop.type !== 'boolean' && prop.type !== 'checkbox' && !isColorBlock(prop) && !isQuadStart(prop, group.props, index) && !isBorderStyleStart(prop)"
             class="gg-field-label"
           >
             {{ prop.label }}
@@ -112,7 +118,8 @@
           <!-- 여백/패딩 등 4방향(Top/Right/Bottom/Left) 세트 — 잠금 슬라이더 UI (Figma 365-2691) -->
           <div v-if="isQuadStart(prop, group.props, index)" class="gg-margin-quad">
             <div class="gg-margin-quad-head">
-              <span class="gg-field-label !mb-0">{{ quadLabel(prop) }}</span>
+              <!-- 그룹명과 같으면(예: 그룹"여백" 안의 여백) 이름을 한 번만 — 빈 span으로 자리만 유지해 잠금 버튼은 우측 정렬 -->
+              <span class="gg-field-label !mb-0">{{ isDupLabelProp(group, prop) ? '' : quadLabel(prop) }}</span>
               <button
                 type="button"
                 class="gg-lock-btn"
@@ -190,43 +197,23 @@
             </div>
           </div>
 
-          <!-- 텍스트 입력 (컬러 필드) 또는 color 타입 -->
+          <!-- 컬러 필드 — 전체 스타일과 동일한 팝오버 방식. 포인트 색상 "추종"(__usePoint/__pointIndex) 보존 -->
           <div
             v-else-if="isColorBlock(prop)"
-            class="space-y-2"
+            class="gg-color-row"
           >
-            <span class="text-sm font-medium text-gray-500">{{ prop.label }}</span>
-
-            <div class="flex items-center gap-2">
-              <!-- 색상 + 투명도 -->
-              <ColorAlphaPicker
-                :modelValue="isUsingPoint(prop.key) ? pointColorForKey(prop.key) : getColorValue(prop.key)"
-                @update:modelValue="handleColorPickerUpdate(prop.key, $event)"
-                :disabled="isUsingPoint(prop.key)"
-              />
-              <!-- HEX 입력 (알파 숨김: 투명도 적용 시에도 6자리만 노출) -->
-              <HexColorInput
-                :modelValue="isUsingPoint(prop.key) ? pointColorForKey(prop.key) : String(selectedModule.properties[prop.key] || '')"
-                @update:modelValue="handleColorInput(prop.key, $event ?? '')"
-                :disabled="isUsingPoint(prop.key)"
-                :placeholder="prop.placeholder || '#000000'"
-                class="flex-1 min-w-0 font-mono text-sm"
-                spellcheck="false"
-              />
-            </div>
-
-            <!-- 포인트 색상 사용 (필드 아래 한 줄 — 스와치 클릭으로 최대 3개 중 선택/해제) -->
-            <PointColorSwatchRow
+            <span class="gg-field-label !mb-0">{{ prop.label }}</span>
+            <ColorPopoverPicker
+              :title="prop.label"
+              :modelValue="isUsingPoint(prop.key) ? pointColorForKey(prop.key) : String(selectedModule.properties[prop.key] || '')"
               :pointColors="wrapPointColors"
+              pointFollow
               :activeIndex="isUsingPoint(prop.key) ? pointIndexFor(prop.key) : null"
-              @select="onSelectPointColor(prop.key, $event)"
+              @update:modelValue="handleColorInput(prop.key, $event)"
+              @select-point="onSelectPointColor(prop.key, $event)"
+              @add-point-color="editorStore.addPointColor($event)"
+              @remove-point-color="editorStore.removePointColor($event)"
             />
-
-            <p class="text-xs text-gray-400">
-              {{ isUsingPoint(prop.key)
-                ? '포인트 색상을 따릅니다 (같은 스와치를 다시 누르면 해제)'
-                : '색상 박스를 클릭하거나 #000000 형식으로 입력하세요' }}
-            </p>
           </div>
 
           <!-- 폰트 크기 필드: 스테퍼(−/값/+) UI (Figma 378-1704 "TextField/Small/Default") -->
@@ -375,6 +362,76 @@
               class="w-full"
             />
             <p class="gg-field-hint">https:// 로 시작하는 전체 주소를 입력하세요</p>
+          </div>
+
+          <!-- 테두리 스타일 — 전체 스타일(GlobalStylePanel)과 동일한 통합 블록(토글/라디오/색상/두께) -->
+          <div v-else-if="isBorderStyleStart(prop)" class="gg-border-block">
+            <!-- 헤더: 'none' 옵션이 있으면 on/off 토글, 없으면 라벨만 -->
+            <div v-if="borderHasNone(prop)" class="gg-color-row">
+              <!-- 그룹명과 같으면 이름을 한 번만 — 빈 span으로 자리만 유지해 토글은 우측 정렬 -->
+              <span class="gg-field-label !mb-0">{{ isDupLabelProp(group, prop) ? '' : prop.label }}</span>
+              <ToggleSwitch :modelValue="borderIsOn(prop)" @update:modelValue="toggleBorderOn(prop, $event)" />
+            </div>
+            <span v-else-if="!isDupLabelProp(group, prop)" class="gg-field-label">{{ prop.label }}</span>
+
+            <template v-if="borderIsOn(prop)">
+              <!-- 스타일 라디오 -->
+              <div class="flex flex-col gap-[10px]">
+                <span class="gg-sub-label">스타일</span>
+                <div class="flex flex-col gap-[14px]">
+                  <label v-for="opt in borderStyleOptionsFor(prop)" :key="opt.value" class="gg-brd-radio-row">
+                    <span
+                      class="gg-brd-radio-dot"
+                      :class="{ 'is-checked': String(selectedModule.properties[prop.key] || '') === opt.value }"
+                      @click="updateProperty(prop.key, opt.value)"
+                    ></span>
+                    <span class="gg-brd-radio-label" @click="updateProperty(prop.key, opt.value)">{{ opt.label }}</span>
+                    <span class="gg-brd-radio-preview" :style="{ borderTop: `4px ${opt.value} #333d4b` }"></span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- 색상 (전체 스타일과 동일한 팝오버 + 포인트색 추종) -->
+              <div class="gg-color-row">
+                <span class="gg-sub-label">색상</span>
+                <ColorPopoverPicker
+                  title="테두리 색상"
+                  :modelValue="isUsingPoint(borderColorKey(prop)) ? pointColorForKey(borderColorKey(prop)) : String(selectedModule.properties[borderColorKey(prop)] || '')"
+                  :pointColors="wrapPointColors"
+                  pointFollow
+                  :activeIndex="isUsingPoint(borderColorKey(prop)) ? pointIndexFor(borderColorKey(prop)) : null"
+                  @update:modelValue="handleColorInput(borderColorKey(prop), $event)"
+                  @select-point="onSelectPointColor(borderColorKey(prop), $event)"
+                  @add-point-color="editorStore.addPointColor($event)"
+                  @remove-point-color="editorStore.removePointColor($event)"
+                />
+              </div>
+
+              <!-- 두께 (전체 스타일과 동일한 슬라이더 + px 필드) -->
+              <div class="flex flex-col gap-[10px]">
+                <span class="gg-sub-label">두께</span>
+                <div class="gg-margin-slider-row">
+                  <input
+                    type="range"
+                    min="0"
+                    max="20"
+                    :value="borderWidthNum(prop)"
+                    @input="onBorderWidthInput(prop, $event)"
+                    class="gg-margin-slider"
+                  />
+                  <div class="gg-margin-value-field">
+                    <input
+                      type="number"
+                      min="0"
+                      :value="borderWidthNum(prop)"
+                      @input="onBorderWidthInput(prop, $event)"
+                      class="gg-margin-value-input"
+                    />
+                    <span class="gg-margin-value-unit">px</span>
+                  </div>
+                </div>
+              </div>
+            </template>
           </div>
 
           <!-- 셀렉트 -->
@@ -1224,6 +1281,7 @@ import TableCellEditor from './TableCellEditor.vue'
 import ColorAlphaPicker from '@/components/ColorAlphaPicker.vue'
 import HexColorInput from '@/components/HexColorInput.vue'
 import PointColorSwatchRow from '@/components/PointColorSwatchRow.vue'
+import ColorPopoverPicker from './ColorPopoverPicker.vue'
 import type Quill from 'quill'
 
 const moduleStore = useModuleStore()
@@ -1511,31 +1569,34 @@ const onFontSizeInput = (prop: EditableProp, event: Event) => {
   updateProperty(prop.key, `${next}px`)
 }
 
-// ===== 여백/패딩 4방향(...Top/Right/Bottom/Left) 세트 — 잠금 슬라이더 UI (Figma 365-2691) =====
-// modules-config.json은 이 4개를 항상 Top→Right→Bottom→Left 순서로 연속 배치한다(paddingTop.../marginTop... 등
-// 여러 접두사에서 공통 패턴). 그 순서를 그대로 이용해 감지하고, 하나의 잠금+슬라이더 컨트롤로 묶어서 보여준다.
+// ===== 여백/패딩 4방향(...Top/Right/Bottom/Left) 세트 — 방향별 그리드 + 잠금 슬라이더 UI (Figma 365-2691) =====
+// 같은 접두사의 Top/Right/Bottom/Left 4개를 하나의 컨트롤로 묶는다. 배치 순서는 모듈마다 달라서
+// (예: ModuleDivider는 Top/Bottom/Left/Right) 위치가 아니라 '키 조회'로 형제를 찾는다.
+// 기본은 방향별 개별 조정 그리드이고, 잠금 아이콘을 누르면 4방향 동시조정 슬라이더로 바뀐다.
 const quadPrefixFor = (prop: EditableProp): string | null => {
   if (prop.type !== 'text' || !prop.key.endsWith('Top')) return null
   return prop.key.slice(0, -3)
 }
 
-const isQuadStart = (prop: EditableProp, props: EditableProp[], index: number): boolean => {
+// Top 프로퍼티가 quad-start인지 — Right/Bottom/Left 3형제가 배열 어디든(순서 무관) 존재하면 성립.
+// (일부 모듈은 Top/Bottom/Left/Right 등 다른 순서로 정의돼 있어 연속 순서를 강제하지 않는다.)
+const isQuadStart = (prop: EditableProp, props: EditableProp[], _index?: number): boolean => {
   const prefix = quadPrefixFor(prop)
   if (!prefix) return false
   return (
-    props[index + 1]?.key === `${prefix}Right` &&
-    props[index + 2]?.key === `${prefix}Bottom` &&
-    props[index + 3]?.key === `${prefix}Left`
+    props.some((p) => p.key === `${prefix}Right`) &&
+    props.some((p) => p.key === `${prefix}Bottom`) &&
+    props.some((p) => p.key === `${prefix}Left`)
   )
 }
 
 // prop이 어떤 4방향 세트의 Right/Bottom/Left(이미 Top 컨트롤에 흡수된 멤버)인지 판별 → 개별 렌더 생략
-const isQuadMember = (prop: EditableProp, props: EditableProp[], index: number): boolean => {
+const isQuadMember = (prop: EditableProp, props: EditableProp[], _index?: number): boolean => {
   for (const suffix of ['Right', 'Bottom', 'Left']) {
     if (!prop.key.endsWith(suffix)) continue
     const prefix = prop.key.slice(0, -suffix.length)
-    const topIndex = props.findIndex((p) => p.key === `${prefix}Top`)
-    if (topIndex !== -1 && topIndex < index && isQuadStart(props[topIndex], props, topIndex)) return true
+    const topProp = props.find((p) => p.key === `${prefix}Top`)
+    if (topProp && isQuadStart(topProp, props)) return true
   }
   return false
 }
@@ -1543,13 +1604,19 @@ const isQuadMember = (prop: EditableProp, props: EditableProp[], index: number):
 // Top 프로퍼티의 라벨(예: "상단 여백"/"안쪽 상단 여백")에서 방향 단어를 지워 통합 라벨을 만든다.
 const quadLabel = (prop: EditableProp): string => prop.label.replace('상단', '').replace(/\s+/g, ' ').trim() || '여백'
 
-const quadRight = (props: EditableProp[], topIndex: number): EditableProp => props[topIndex + 1]
-const quadBottom = (props: EditableProp[], topIndex: number): EditableProp => props[topIndex + 2]
-const quadLeft = (props: EditableProp[], topIndex: number): EditableProp => props[topIndex + 3]
+// 순서 무관 — Top 프로퍼티(topIndex)의 prefix로 방향 형제를 키 조회한다. (없으면 Top으로 폴백)
+const quadSibling = (props: EditableProp[], topIndex: number, suffix: 'Right' | 'Bottom' | 'Left'): EditableProp => {
+  const prefix = quadPrefixFor(props[topIndex])
+  return (prefix && props.find((p) => p.key === `${prefix}${suffix}`)) || props[topIndex]
+}
+const quadRight = (props: EditableProp[], topIndex: number): EditableProp => quadSibling(props, topIndex, 'Right')
+const quadBottom = (props: EditableProp[], topIndex: number): EditableProp => quadSibling(props, topIndex, 'Bottom')
+const quadLeft = (props: EditableProp[], topIndex: number): EditableProp => quadSibling(props, topIndex, 'Left')
 
-// 잠금 상태(기본 잠금=4방향 동시조정). prefix별로 독립 관리.
+// 잠금 상태. prefix별로 독립 관리.
+// 기본값 = 잠금 해제(상/우/하/좌 개별 조정 그리드) — 잠금 아이콘을 눌러야 4방향 동시조정 슬라이더로 바뀐다.
 const quadLockState = reactive<Record<string, boolean>>({})
-const isQuadLocked = (prefix: string | null): boolean => !prefix || quadLockState[prefix] !== false
+const isQuadLocked = (prefix: string | null): boolean => !!prefix && quadLockState[prefix] === true
 const toggleQuadLock = (prefix: string | null): void => {
   if (!prefix) return
   quadLockState[prefix] = !isQuadLocked(prefix)
@@ -1577,6 +1644,79 @@ const onQuadDirInput = (prop: EditableProp, event: Event) => {
   const raw = (event.target as HTMLInputElement).value
   const n = Math.max(0, parseInt(raw, 10) || 0)
   updateProperty(prop.key, `${n}px`)
+}
+
+// ===== 그룹명 ↔ 내부 블록 라벨 중복 제거 =====
+// 예: 그룹"여백" 안에 라벨이 "여백"인 4방향 quad, 그룹"선 스타일" 안에 라벨이 "선 스타일"인 테두리 블록.
+// 이 경우 (1)접이식 아코디언이 한 겹 더 생기고 (2)같은 이름이 두 번 보인다.
+// → 그룹을 '항상 펼쳐진 정적 헤더'로 두고, 내부 블록의 자체 라벨은 숨긴다.
+const groupSelfLabeledProp = (group: { name?: string | null; props: EditableProp[] }): EditableProp | null => {
+  if (!group.name) return null
+  for (let i = 0; i < group.props.length; i++) {
+    const p = group.props[i]
+    if (isBorderStyleStart(p) && p.label === group.name) return p
+    if (isQuadStart(p, group.props, i) && quadLabel(p) === group.name) return p
+  }
+  return null
+}
+const isGroupSelfLabeled = (group: { name?: string | null; props: EditableProp[] }): boolean =>
+  !!groupSelfLabeledProp(group)
+const isDupLabelProp = (group: { name?: string | null; props: EditableProp[] }, prop: EditableProp): boolean =>
+  groupSelfLabeledProp(group) === prop
+
+// ===== 테두리 "전체 블록" (전체 스타일 GlobalStylePanel과 동일 UI) =====
+// '테두리 스타일' select( *BorderStyle / dividerStyle )를 스타일 라디오+색상+두께 슬라이더 블록으로 렌더한다.
+const isBorderStyleStart = (prop: EditableProp): boolean =>
+  prop.type === 'select' && (/borderStyle$/i.test(prop.key) || prop.key === 'dividerStyle')
+
+// 형제 키: base = key에서 뒤의 'Style' 제거 (buttonBorderStyle→buttonBorder, dividerStyle→divider)
+const borderBaseFor = (prop: EditableProp): string => prop.key.replace(/Style$/, '')
+const borderWidthKey = (prop: EditableProp): string => `${borderBaseFor(prop)}Width`
+const borderColorKey = (prop: EditableProp): string => `${borderBaseFor(prop)}Color`
+
+// 이 prop이 어떤 테두리 블록에 흡수된 Width/Color 형제인지 → 개별 렌더 생략
+const isBorderMember = (prop: EditableProp, props: EditableProp[]): boolean => {
+  for (const s of props) {
+    if (!isBorderStyleStart(s)) continue
+    if (prop.key === borderWidthKey(s) || prop.key === borderColorKey(s)) return true
+  }
+  return false
+}
+
+// '없음(none)' 옵션 유무 — 있으면 토글(off=none)로, 없으면 항상 노출
+const borderHasNone = (prop: EditableProp): boolean =>
+  !!prop.options?.some((o) => o.value === 'none')
+
+// 라디오에 노출할 옵션 (none 제외)
+const borderStyleOptionsFor = (prop: EditableProp) =>
+  (prop.options ?? []).filter((o) => o.value !== 'none')
+
+const borderIsOn = (prop: EditableProp): boolean => {
+  if (!borderHasNone(prop)) return true
+  const v = String(selectedModule.value?.properties[prop.key] || 'none')
+  return v !== 'none' && v !== ''
+}
+
+const toggleBorderOn = (prop: EditableProp, on: boolean): void => {
+  if (on) {
+    const cur = String(selectedModule.value?.properties[prop.key] || 'none')
+    if (cur === 'none' || cur === '') {
+      updateProperty(prop.key, borderStyleOptionsFor(prop)[0]?.value ?? 'solid')
+    }
+  } else {
+    updateProperty(prop.key, 'none')
+  }
+}
+
+const borderWidthNum = (prop: EditableProp): number => {
+  const raw = String(selectedModule.value?.properties[borderWidthKey(prop)] ?? '0')
+  return parseInt(raw, 10) || 0
+}
+
+const onBorderWidthInput = (prop: EditableProp, event: Event): void => {
+  const v = (event.target as HTMLInputElement).valueAsNumber
+  const n = Number.isNaN(v) ? 0 : Math.max(0, Math.min(99, v))
+  updateProperty(borderWidthKey(prop), normalizePxLength(`${n}px`))
 }
 
 // 붙여넣기 시 모든 서식 제거 — 텍스트만 입력되도록 한다.
@@ -2577,6 +2717,63 @@ const onSelectPointColor = (key: string, index: number): void => {
   margin-top: 6px;
 }
 
+/* 컬러 필드 행 — 전체 스타일과 동일하게 라벨 좌 / 스와치 우 */
+.gg-color-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* 테두리 통합 블록 — 전체 스타일(GlobalStylePanel) 테두리 섹션과 동일 톤 */
+.gg-border-block {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.gg-sub-label {
+  font-size: 15px;
+  color: #4e5968;
+}
+.gg-brd-radio-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+.gg-brd-radio-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid #d1d6db;
+  background: #fff;
+  flex-shrink: 0;
+  position: relative;
+  cursor: pointer;
+}
+.gg-brd-radio-dot.is-checked {
+  border-color: #4083f3;
+}
+.gg-brd-radio-dot.is-checked::after {
+  content: '';
+  position: absolute;
+  inset: 3.5px;
+  border-radius: 50%;
+  background: #4083f3;
+}
+.gg-brd-radio-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #333d4b;
+  letter-spacing: -0.13px;
+  width: 40px;
+  cursor: pointer;
+}
+.gg-brd-radio-preview {
+  width: 50px;
+  height: 0;
+}
+
 /* 텍스트/URL 인풋 — TextField/Small/Filled */
 .gg-text-input :deep(.p-inputtext) {
   width: 100%;
@@ -2642,6 +2839,10 @@ const onSelectPointColor = (key: string, index: number): void => {
   border: none;
   cursor: pointer;
   text-align: left;
+}
+/* 그룹명이 내부 블록 라벨과 같아 항상 펼쳐두는 헤더 — 접히지 않으므로 클릭 어포던스 제거 */
+.gg-acc-header.is-static {
+  cursor: default;
 }
 .gg-acc-chevron {
   font-size: 12px;

@@ -48,17 +48,17 @@
               <i class="pi pi-plus text-xs"></i>
             </button>
             <div
-              v-for="c in pointColors"
+              v-for="(c, i) in pointColors"
               :key="c"
               class="quick-swatch-wrap"
             >
               <button
                 type="button"
                 class="quick-swatch"
-                :class="{ 'is-active': sameColor(c, modelValue) }"
+                :class="{ 'is-active': pointFollow ? activeIndex === i : sameColor(c, modelValue) }"
                 :style="{ backgroundColor: c }"
                 :title="c"
-                @click="pick(c)"
+                @click="onPointSwatchClick(c, i)"
               ></button>
               <button
                 v-if="pointColors.length > 1"
@@ -75,6 +75,8 @@
 
         <div class="popover-divider"></div>
 
+        <!-- 수동 색상 지정 영역 (포인트 색상 추종 중이면 흐리게·비활성) -->
+        <div :class="{ 'manual-locked': manualDisabled }">
         <!-- 기본 팔레트 -->
         <div class="flex flex-col items-center gap-2 my-3">
           <span class="text-[13px] text-gray-400 w-full">기본 팔레트</span>
@@ -142,6 +144,8 @@
             <div class="alpha-field">{{ alphaPct }} %</div>
           </div>
         </div>
+        </div>
+        <!-- /수동 색상 지정 영역 -->
 
         <!-- 포인트 색상 추가 확정 버튼 — 그라디언트/팔레트로 색을 고르는 동안은 미리보기만 하고,
              이 버튼을 눌러야 실제로 팔레트에 추가된다 (색을 조정할 때마다 즉시 추가하면
@@ -181,19 +185,39 @@ interface Props {
   showAlpha?: boolean
   /** 'add': 색상 대신 '+' 아이콘 트리거 (포인트 색상 신규 추가용) */
   triggerVariant?: 'swatch' | 'add'
+  /** 포인트 색상 "추종" 모드: 스와치 클릭 시 리터럴 픽 대신 select-point(index) emit,
+   *  추종 중이면 수동 색상 입력을 잠근다. (모듈 색상 필드용 — 전체 스타일은 미지정=리터럴) */
+  pointFollow?: boolean
+  /** 현재 추종 중인 포인트 색상 인덱스 (null = 미추종) */
+  activeIndex?: number | null
 }
 
 const props = withDefaults(defineProps<Props>(), {
   pointColors: () => [],
   showAlpha: true,
   triggerVariant: 'swatch',
+  pointFollow: false,
+  activeIndex: null,
 })
 
 const emit = defineEmits<{
   'update:modelValue': [value: string]
   'add-point-color': [value: string]
   'remove-point-color': [value: string]
+  'select-point': [index: number]
 }>()
+
+// 추종 모드이면서 실제로 포인트 색상을 따르는 중이면 수동 입력(팔레트/HEX/투명도)을 잠근다.
+const manualDisabled = computed(() => props.pointFollow && props.activeIndex != null)
+
+// 포인트 색상 스와치 클릭: 추종 모드이면 부모에 인덱스만 알린다(추종 on/off·저장은 부모 담당).
+const onPointSwatchClick = (color: string, index: number) => {
+  if (props.pointFollow) {
+    emit('select-point', index)
+    return
+  }
+  pick(color)
+}
 
 const open = ref(false)
 const triggerEl = ref<HTMLElement | null>(null)
@@ -374,6 +398,13 @@ onBeforeUnmount(() => {
   height: 1px;
   background: #f2f4f6;
   width: 100%;
+}
+
+/* 포인트 색상 추종 중 — 수동 색상 지정 영역을 흐리게·클릭 불가로 */
+.manual-locked {
+  opacity: 0.4;
+  pointer-events: none;
+  user-select: none;
 }
 
 .quick-swatch-add {

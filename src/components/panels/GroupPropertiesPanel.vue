@@ -151,26 +151,20 @@
         </div>
         <div v-show="isPanelExpanded('background')" class="gg-acc-body">
           <template v-if="hasBackground">
-            <div class="flex items-center gap-2">
-              <ColorAlphaPicker
+            <div class="flex items-center justify-between gap-3">
+              <span class="gg-sub-label">색상</span>
+              <ColorPopoverPicker
+                title="배경색"
                 :modelValue="isUsingPoint('backgroundColor') ? pointColorForKey('backgroundColor') : bgValue"
-                :disabled="isUsingPoint('backgroundColor')"
+                :pointColors="wrapPointColors"
+                pointFollow
+                :activeIndex="isUsingPoint('backgroundColor') ? pointIndexFor('backgroundColor') : null"
                 @update:modelValue="setStyle('backgroundColor', $event)"
-              />
-              <HexColorInput
-                :modelValue="isUsingPoint('backgroundColor') ? pointColorForKey('backgroundColor') : bgValue"
-                :disabled="isUsingPoint('backgroundColor')"
-                @update:modelValue="setStyle('backgroundColor', $event ?? '')"
-                placeholder="#ffffff"
-                class="flex-1 min-w-0 gg-hex-input font-mono text-sm"
-                spellcheck="false"
+                @select-point="onSelectPoint('backgroundColor', $event)"
+                @add-point-color="editorStore.addPointColor($event)"
+                @remove-point-color="editorStore.removePointColor($event)"
               />
             </div>
-            <PointColorSwatchRow
-              :pointColors="wrapPointColors"
-              :activeIndex="isUsingPoint('backgroundColor') ? pointIndexFor('backgroundColor') : null"
-              @select="onSelectPoint('backgroundColor', $event)"
-            />
           </template>
           <p v-else class="gg-field-hint">배경 없음(투명) — 켜면 묶음 전체에 배경색이 적용됩니다</p>
         </div>
@@ -206,27 +200,18 @@
             </div>
 
             <!-- 색상 -->
-            <div class="flex flex-col gap-2">
+            <div class="flex items-center justify-between gap-3">
               <span class="gg-sub-label">색상</span>
-              <div class="flex items-center gap-2">
-                <ColorAlphaPicker
-                  :modelValue="isUsingPoint('borderColor') ? pointColorForKey('borderColor') : (group.styles.borderColor || '#dddddd')"
-                  :disabled="isUsingPoint('borderColor')"
-                  @update:modelValue="setStyle('borderColor', $event)"
-                />
-                <HexColorInput
-                  :modelValue="isUsingPoint('borderColor') ? pointColorForKey('borderColor') : (group.styles.borderColor || '#dddddd')"
-                  :disabled="isUsingPoint('borderColor')"
-                  @update:modelValue="setStyle('borderColor', $event ?? '')"
-                  placeholder="#dddddd"
-                  class="flex-1 min-w-0 gg-hex-input font-mono text-sm"
-                  spellcheck="false"
-                />
-              </div>
-              <PointColorSwatchRow
+              <ColorPopoverPicker
+                title="테두리 색상"
+                :modelValue="isUsingPoint('borderColor') ? pointColorForKey('borderColor') : (group.styles.borderColor || '#dddddd')"
                 :pointColors="wrapPointColors"
+                pointFollow
                 :activeIndex="isUsingPoint('borderColor') ? pointIndexFor('borderColor') : null"
-                @select="onSelectPoint('borderColor', $event)"
+                @update:modelValue="setStyle('borderColor', $event)"
+                @select-point="onSelectPoint('borderColor', $event)"
+                @add-point-color="editorStore.addPointColor($event)"
+                @remove-point-color="editorStore.removePointColor($event)"
               />
             </div>
 
@@ -295,9 +280,7 @@ import { useEditorStore } from '@/stores/editorStore'
 import type { ModuleGroupStyles, BorderSide } from '@/types'
 import { ALL_BORDER_SIDES, groupBorderSides, groupBoxSide } from '@/utils/groupStyle'
 import { normalizePxLength } from '@/utils/cssUnit'
-import ColorAlphaPicker from '@/components/ColorAlphaPicker.vue'
-import HexColorInput from '@/components/HexColorInput.vue'
-import PointColorSwatchRow from '@/components/PointColorSwatchRow.vue'
+import ColorPopoverPicker from './ColorPopoverPicker.vue'
 import { pointColorAt } from '@/utils/pointColor'
 
 const moduleStore = useModuleStore()
