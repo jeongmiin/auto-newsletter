@@ -54,7 +54,7 @@ import { useModuleStore } from '@/stores/moduleStore'
 import { useModuleThumbnails } from '@/composables/useModuleThumbnails'
 import type { ModuleMetadata } from '@/types'
 
-type Category = 'text' | 'image' | 'button'
+type Category = 'text' | 'image' | 'button' | 'table'
 
 interface Props {
   category: Category
@@ -69,6 +69,7 @@ const CATEGORY_LABELS: Record<Category, string> = {
   text: '텍스트',
   image: '이미지',
   button: '버튼',
+  table: '테이블',
 }
 const categoryLabel = computed(() => CATEGORY_LABELS[props.category])
 
@@ -99,6 +100,8 @@ const QUICK_ADD_ITEMS: Record<Category, QuickAddItem[]> = {
     { label: '단일 버튼 추가', moduleId: 'ModuleOneButton' },
     { label: '2단 버튼 추가', moduleId: 'ModuleTwoButton' },
   ],
+  // 테이블은 v2 조립 템플릿이 아직 없어 레거시 '커스텀 테이블'(ModuleTable)을 그대로 쓴다.
+  table: [{ label: '테이블 추가', moduleId: 'ModuleTable' }],
 }
 const quickAddItems = computed(() => QUICK_ADD_ITEMS[props.category])
 

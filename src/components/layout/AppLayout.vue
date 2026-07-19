@@ -15,11 +15,10 @@
         v-else-if="!hasSelection && activeCategory"
         :category="activeCategory"
       />
+      <!-- 모듈 순서(구 '모듈 목차') — 레일의 '모듈 순서' 메뉴에서만 열린다 -->
+      <ModuleOutlinePanel v-else-if="!hasSelection && editorStore.activeMenu === 'order'" />
       <SelectedItemPanel v-else-if="hasSelection" />
       <ModulePanel v-else class="w-72 xl:w-80 border-r bg-white flex-shrink-0" />
-
-      <!-- 모듈 목차/순서 패널 (캔버스와 실시간 연동) -->
-      <ModuleOutlinePanel />
 
       <!-- 중앙 캔버스 -->
       <div class="flex-1 flex flex-col min-w-0">
@@ -92,7 +91,7 @@ const hasSelection = computed(
   () => (!!moduleStore.selectedModuleId || !!moduleStore.selectedGroupId) && !editorStore.forceRailPanel,
 )
 
-const CATEGORY_MENUS = ['text', 'image', 'button'] as const
+const CATEGORY_MENUS = ['text', 'image', 'button', 'table'] as const
 const activeCategory = computed(() => {
   const menu = editorStore.activeMenu
   return (CATEGORY_MENUS as readonly string[]).includes(menu)

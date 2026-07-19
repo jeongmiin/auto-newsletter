@@ -1,38 +1,13 @@
 <template>
-  <!-- 항상 자리를 차지하는 얇은 레일 (w-10) — 펼친 패널은 이 위로 떠오른다 -->
-  <div class="relative flex-shrink-0 w-10 bg-white border-r">
-    <!-- 접힌 레일: 펼치기 버튼 + 세로 라벨 -->
-    <div
-      class="h-full flex flex-col items-center gap-3 cursor-pointer"
-      title="목차 펼치기"
-      @click="toggleCollapsed"
-    >
-    <div class="group py-3.5 w-full bg-gray-100 text-center transition-colors">
-      <i class="pi pi-angle-double-right text-gray-400 group-hover:text-blue-500 transition-colors" @click.stop="toggleCollapsed"></i>
-    </div>
-      <span class="text-xs font-bold text-blue-500">{{ modules.length }}</span>
-      <span class="text-[10px] text-gray-400 [writing-mode:vertical-rl]">모듈 목차</span>
-    </div>
-
-    <!-- 펼쳐졌을 때: 캔버스 위로 떠오르는 플로팅 패널 -->
-    <div
-      v-if="!collapsed"
-      class="absolute top-0 left-0 h-full w-60 z-30 flex flex-col bg-white border-r shadow-2xl"
-    >
+  <!-- 좌측 레일의 '모듈 순서' 메뉴에서 열리는 컨텍스트 패널 (다른 레일 패널과 동일한 셸) -->
+  <div class="outline-panel">
+    <div class="flex flex-col h-full">
       <!-- 헤더 -->
-      <div class="flex items-center justify-between px-2 py-2 bg-gray-100 flex-shrink-0">
-        <span class="text-sm font-semibold text-gray-700 flex items-center gap-1.5">
-          <i class="pi pi-list text-gray-500"></i>
-          모듈 목차
-          <span class="text-xs font-normal text-gray-400">{{ modules.length }}</span>
-        </span>
-        <button
-          class="p-1 leading-7 text-gray-400 hover:text-blue-500 transition-colors"
-          title="목차 접기"
-          @click="toggleCollapsed"
-        >
-          <i class="pi pi-angle-double-left"></i>
-        </button>
+      <div class="flex items-center justify-between px-4 py-3 flex-shrink-0">
+        <h2 class="panel-title">
+          모듈 순서
+          <span class="text-sm font-normal text-gray-400">{{ modules.length }}</span>
+        </h2>
       </div>
 
       <div v-if="modules.length === 0" class="text-center text-gray-500 py-10 px-2 text-xs flex-1">
@@ -189,15 +164,6 @@ const moduleStore = useModuleStore()
 const editorStore = useEditorStore()
 const toast = useToast()
 
-// 기본값은 접힘 — 사용자가 '0'(펼침)으로 저장한 경우에만 펼친 상태로 시작
-const COLLAPSE_KEY = 'moduleOutlineCollapsed'
-const collapsed = ref(localStorage.getItem(COLLAPSE_KEY) !== '0')
-
-const toggleCollapsed = (): void => {
-  collapsed.value = !collapsed.value
-  localStorage.setItem(COLLAPSE_KEY, collapsed.value ? '1' : '0')
-}
-
 const modules = computed(() => moduleStore.modules)
 const selectedModuleId = computed(() => moduleStore.selectedModuleId)
 const selectedGroupId = computed(() => moduleStore.selectedGroupId)
@@ -278,6 +244,22 @@ const setHover = (moduleId: string | null): void => {
 </script>
 
 <style scoped>
+/* 다른 레일 컨텍스트 패널(GlobalStylePanel/CategoryModulePanel)과 동일한 셸 */
+.outline-panel {
+  width: 360px;
+  flex-shrink: 0;
+  background: #fff;
+  border-right: 1px solid #e5e8eb;
+  height: 100%;
+  overflow: hidden;
+}
+.panel-title {
+  font-size: 20px;
+  font-weight: 500;
+  color: #191f28;
+  letter-spacing: -0.2px;
+}
+
 /* 드래그 중 자리 표시(ghost) 스타일 */
 :deep(.outline-ghost) {
   opacity: 0.5;
