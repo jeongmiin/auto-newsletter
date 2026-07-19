@@ -78,14 +78,19 @@
             <div
               v-if="item.type === 'group'"
               class="group-wrap"
-              :class="{ 'group-wrap--selected': selectedGroupId === item.id }"
+              :class="{ 'group-wrap--selected': activeGroupId === item.id }"
             >
               <!-- 좌측 통합 카드: 드래그 핸들 + 액션(복제·해제·그룹 스타일·삭제) — 항상 노출.
                    드래그 시작 영역은 핸들 부분(.dh-top)만이고, 버튼들은 no-drag로 예외 처리. -->
               <div class="group-side-toolbar">
+                <!-- 드래그 핸들 겸 '그룹 선택' 버튼.
+                     클릭 = 그룹 전체 선택(이 상태에서 모듈을 추가하면 그룹 아래로 들어간다),
+                     드래그 = 그룹 순서 변경. 드래그 직후 발생하는 click은 onGroupHandleClick에서 무시한다. -->
                 <div
                   class="dh-top group-side-handle"
-                  title="마우스로 끌어서 그룹 순서를 변경하세요"
+                  :class="{ 'is-selected': selectedGroupId === item.id }"
+                  v-tooltip.left="groupHandleTip(item)"
+                  @click="onGroupHandleClick(item.id)"
                 >
                   <span class="material-symbols-outlined">drag_indicator</span>
                 </div>
@@ -109,7 +114,7 @@
                 <button
                   type="button"
                   class="no-drag group-action-btn"
-                  v-tooltip.left="'그룹 스타일 편집'"
+                  v-tooltip.left="'그룹 선택 · 스타일 편집'"
                   @click.stop="selectGroupBox(item.id)"
                 >
                   <span class="material-symbols-outlined">tune</span>
@@ -126,7 +131,7 @@
               <!-- 실제 스타일 박스 (배경/테두리/여백은 내보내기와 동일) -->
               <div
                 class="group-box"
-                :class="{ 'group-box--selected': selectedGroupId === item.id }"
+                :class="{ 'group-box--selected': activeGroupId === item.id }"
                 :style="groupWrapperStyle(item.group)"
                 @click.self="selectGroupBox(item.id)"
               >
@@ -296,7 +301,11 @@ const openFile = (): void => {
 
 const modules = computed(() => moduleStore.modules)
 const selectedModuleId = computed(() => moduleStore.selectedModuleId)
+// 칩의 'is-selected'(채움)는 그룹 '자체' 선택 전용 — 모듈 추가가 그룹 아래로 가는 상태임을 알린다.
 const selectedGroupId = computed(() => moduleStore.selectedGroupId)
+// 박스 하이라이트는 멤버 드릴다운까지 포함한 '활성 그룹' 기준 — 좌측에 그룹 패널이 떠 있는데
+// 캔버스에는 아무 표시가 없던 불일치를 없앤다.
+const activeGroupId = computed(() => moduleStore.activeGroup?.id ?? null)
 const canvasWidth = computed(() => editorStore.canvasWidth)
 
 // 그룹은 한 덩어리(displayItem)로 드래그 — 펼치면 store가 평평한 배열로 재구성
@@ -341,7 +350,20 @@ const onDragStart = () => {
 
 const onDragEnd = () => {
   isDragging.value = false
+  lastDragEndAt = Date.now()
 }
+
+// 드래그 핸들이 '클릭=그룹 선택'도 겸하므로, 드래그를 끝낸 직후 브라우저가 발생시키는 click을
+// 선택으로 오인하지 않도록 짧은 시간 무시한다.
+let lastDragEndAt = 0
+const onGroupHandleClick = (groupId: string) => {
+  if (Date.now() - lastDragEndAt < 250) return
+  selectGroupBox(groupId)
+}
+
+// 핸들 툴팁 — 캔버스에서 그룹 이름/멤버 수를 확인할 수 있는 유일한 지점이므로 함께 노출한다.
+const groupHandleTip = (item: { group: ModuleGroup; modules: ModuleInstance[] }): string =>
+  `${item.group.name || '그룹'} · ${item.modules.length}개 — 클릭: 그룹 선택 / 드래그: 순서 변경`
 
 const selectModule = (moduleId: string) => {
   moduleStore.selectModule(moduleId)
@@ -453,7 +475,8 @@ const removeColumn = (groupId: string, rowIdx: number, colIdx: number) =>
   width: 41px;
   padding: 8px 0;
   background: #fff;
-  border: 1px solid #e5e8eb;
+  /* 보라 액센트 — 우측 '모듈' 플로팅 툴바와 카드 스타일이 동일해 생기던 혼동 제거 */
+  border: 1px solid rgba(147, 51, 234, 0.35);
   border-radius: 12px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.07);
 }
@@ -465,9 +488,20 @@ const removeColumn = (groupId: string, rowIdx: number, colIdx: number) =>
   justify-content: center;
   color: #8b95a1;
   cursor: grab;
+  border-radius: 8px;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+.group-side-handle:hover {
+  background: #faf5ff;
+  color: #9333ea;
 }
 .group-side-handle:active {
   cursor: grabbing;
+}
+/* 그룹 자체가 선택된 상태(= 모듈 추가 시 그룹 '아래'로 들어감)를 채움으로 명확히 구분.
+   칩을 없앤 뒤 이 핸들이 그 신호를 대신한다. */
+.group-side-handle.is-selected {
+  color: #9333ea;
 }
 .group-side-divider {
   width: 24px;
@@ -506,18 +540,31 @@ const removeColumn = (groupId: string, rowIdx: number, colIdx: number) =>
 */
 .group-box {
   position: relative;
-  outline: 1px dashed rgba(147, 51, 234, 0.45);
+  /* 컬럼 경계(파란 점선)보다 확실히 무겁게 — 그룹 경계와 컬럼 경계가 혼동되지 않도록 */
+  outline: 1.5px dashed rgba(147, 51, 234, 0.5);
   outline-offset: -1px;
+  transition: outline-color 0.12s ease, background-color 0.12s ease;
 }
 
-.group-box--selected {
+/* 호버 — "여기를 클릭하면 그룹을 잡을 수 있다"는 신호 (이전엔 호버 표시가 전혀 없었다) */
+.group-box:hover {
+  outline-color: rgba(147, 51, 234, 0.85);
+}
+
+.group-box--selected,
+.group-box--selected:hover {
   outline: 2px solid #9333ea;
-  /* outline-offset: 2px; */
 }
 
 .group-wrap {
   position: relative;
 }
+
+/* 선택된 그룹 래퍼 — 기존엔 클래스만 바인딩되고 CSS가 없어 아무 효과도 없었다 */
+.group-wrap--selected .group-side-toolbar {
+  border-color: #9333ea;
+}
+
 
 /* ===== 컬럼 분할 (POC) ===== */
 /* 컬럼 행: font-size:0 으로 inline-block 셀 사이 공백 제거 → 컬럼 폭 정확 균등 분할 */
@@ -528,8 +575,9 @@ const removeColumn = (groupId: string, rowIdx: number, colIdx: number) =>
 .col-cell {
   /* 부모(col-row)의 font-size:0 을 셀 내부에서 복원 (콘텐츠는 자체 인라인 크기 사용) */
   font-size: 14px;
-  /* 편집 화면에서 컬럼 경계 인지용 옅은 점선 (내보내기에는 없음) */
-  outline: 1px dashed rgba(37, 99, 235, 0.25);
+  /* 편집 화면에서 컬럼 경계 인지용 옅은 점선 (내보내기에는 없음).
+     그룹 경계(보라 dashed 1.5px)와 헷갈리지 않도록 더 가볍게 dotted 처리. */
+  outline: 1px dotted rgba(37, 99, 235, 0.18);
   outline-offset: -1px;
   min-height: 40px;
 }

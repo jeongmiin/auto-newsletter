@@ -286,7 +286,9 @@ import { pointColorAt } from '@/utils/pointColor'
 const moduleStore = useModuleStore()
 const editorStore = useEditorStore()
 
-const group = computed(() => moduleStore.selectedGroup)
+// activeGroup: 그룹 직접 선택 + 멤버 드릴다운 모두 포함.
+// (selectedGroup만 보면 멤버 선택 시 좌측 "그룹 구성" 안에서 그룹 스타일이 통째로 사라진다)
+const group = computed(() => moduleStore.activeGroup)
 
 // ===== 포인트 색상 사용 (최대 3개 중 선택) =====
 const wrapPointColors = computed(() => editorStore.wrapSettings.pointColors ?? [])

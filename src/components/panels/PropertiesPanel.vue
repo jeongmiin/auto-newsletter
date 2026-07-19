@@ -4,6 +4,17 @@
     <!-- 패널 헤더 — 선택된 모듈/그룹이 있으면 그 이름을, 없으면 "속성"을 보여준다 -->
     <div class="p-3 border-b">
       <h2 class="font-medium text-sm truncate">{{ headerTitle }}</h2>
+      <!-- 그룹 멤버를 편집 중일 때 그룹 맥락을 알려준다 — 좌측은 "그룹 구성"을 보여주는데
+           우측만 개별 모듈로 보여 서로 다른 것을 가리키던 불일치를 해소 -->
+      <div v-if="memberGroup" class="mt-1.5 flex items-center gap-1.5 text-xs">
+        <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200 truncate">
+          <i class="pi pi-objects-column text-[10px]"></i>
+          {{ memberGroup.name || '그룹' }}
+        </span>
+        <button type="button" class="text-purple-600 hover:underline shrink-0" @click="moduleStore.selectGroup(memberGroup.id)">
+          그룹 선택
+        </button>
+      </div>
     </div>
 
     <!-- 스크롤 영역 (가로는 패널 폭으로 클리핑 — 넘치는 편집기는 자체 가로 스크롤을 가진다) -->
@@ -40,6 +51,11 @@ const moduleStore = useModuleStore()
 const selectedGroup = computed(() => moduleStore.selectedGroup)
 const selectedModule = computed(() => moduleStore.selectedModule)
 const selectedModuleMetadata = computed(() => moduleStore.selectedModuleMetadata)
+
+// 선택된 모듈이 그룹 멤버일 때 그 그룹 (그룹 자체 선택 시엔 이미 그룹 패널이 뜨므로 배지 불필요)
+const memberGroup = computed(() =>
+  selectedGroup.value ? null : (selectedModule.value?.groupId ? moduleStore.activeGroup : null),
+)
 
 const headerTitle = computed(() => {
   if (selectedGroup.value) return '그룹 스타일'

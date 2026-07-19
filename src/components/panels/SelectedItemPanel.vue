@@ -3,7 +3,13 @@
     <template v-if="activeGroup">
       <div class="p-3 border-b">
         <h2 class="text-lg font-semibold text-gray-800">{{ activeGroup?.name || '그룹 구성' }}</h2>
-        <p class="text-xs text-gray-400 mt-0.5">삭제하면 비노출, 카테고리 메뉴에서 추가하면 이 그룹에 노출됩니다</p>
+        <!-- 삽입 위치는 "그룹 자체 선택"이냐 "멤버 드릴다운"이냐로 갈리는데 화면에 표시가 없어 혼란스러웠다 -->
+        <p v-if="isGroupItselfSelected" class="text-xs text-purple-600 mt-0.5">
+          그룹 전체 선택됨 — 모듈을 추가하면 이 그룹 <b>아래</b>에 추가됩니다
+        </p>
+        <p v-else class="text-xs text-gray-400 mt-0.5">
+          모듈을 추가하면 이 그룹 <b>안</b>에 추가됩니다 (그룹 아래에 넣으려면 캔버스 왼쪽 그룹 툴바의 ⣿ 핸들을 누르세요)
+        </p>
       </div>
 
       <div class="flex-1 overflow-y-auto overflow-x-hidden">
@@ -65,12 +71,11 @@ const selectedModule = computed(() => moduleStore.selectedModule)
 const selectedModuleMetadata = computed(() => moduleStore.selectedModuleMetadata)
 
 // 그룹이 직접 선택됐거나, 그 그룹의 멤버 하나가 선택된 상태(드릴다운) 둘 다 "그룹 뷰"로 취급한다.
-const activeGroup = computed(() => {
-  if (moduleStore.selectedGroup) return moduleStore.selectedGroup
-  const groupId = selectedModule.value?.groupId
-  if (!groupId) return null
-  return moduleStore.groups.find((g) => g.id === groupId) ?? null
-})
+// (같은 로직을 GroupPropertiesPanel/CanvasArea도 쓰므로 store getter로 승격해 공유)
+const activeGroup = computed(() => moduleStore.activeGroup)
+
+// 그룹 '자체'가 선택된 상태인지 — 멤버 드릴다운과 구분해 삽입 위치 안내 문구를 바꾼다.
+const isGroupItselfSelected = computed(() => !!moduleStore.selectedGroup)
 
 const members = computed(() => {
   const group = activeGroup.value

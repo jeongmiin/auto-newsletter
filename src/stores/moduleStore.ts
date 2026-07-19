@@ -94,6 +94,22 @@ export const useModuleStore = defineStore('module', () => {
   )
 
   /**
+   * "활성 그룹" — 그룹이 직접 선택됐거나(selectedGroupId), 그 그룹의 멤버가 선택된
+   * 드릴다운 상태 둘 다를 그룹 맥락으로 취급한다.
+   *
+   * selectedModuleId/selectedGroupId는 서로를 배타적으로 지우므로 "멤버 선택 = 그룹은 null"이
+   * 정상 상태인데, UI(좌측 그룹 뷰·캔버스 하이라이트)는 계층 모델을 기대한다. 그 간극을 메우는 getter.
+   * 주의: addModule의 삽입 위치 규칙은 raw ref(selectedGroupId)에 의존하므로 이 getter로 대체하지 말 것
+   * — "그룹 자체 선택(→그룹 아래 삽입)"과 "멤버 드릴다운(→그룹 안 삽입)"의 구분이 사라진다.
+   */
+  const activeGroup = computed(() => {
+    if (selectedGroup.value) return selectedGroup.value
+    const gid = selectedModule.value?.groupId
+    if (!gid) return null
+    return groups.value.find((g) => g.id === gid) || null
+  })
+
+  /**
    * 캔버스/목차 표시용 리스트.
    * order 정렬된 모듈을 훑으며 '연속된 같은 groupId'를 하나의 group 항목으로 묶는다.
    * (그룹 멤버는 항상 연속이도록 createGroup/이동 시 보장됨)
@@ -1702,9 +1718,12 @@ export const useModuleStore = defineStore('module', () => {
     modules.value.splice(insertIndex, 0, ...clones)
 
     // 그룹 정의 복제 (스타일 깊은 복사, 이름도 함께 승계)
+    // rows(행별 컬럼 수)를 빠뜨리면 멤버는 rowIndex/columnIndex를 그대로 물려받는데 그룹엔 행 정보가
+    // 없어 다단 레이아웃이 깨진다 (createGroup/mergeModulesIntoGroup은 rows를 명시함).
     groups.value.push({
       id: newGroupId,
       name: group.name,
+      rows: group.rows ? [...group.rows] : undefined,
       styles: JSON.parse(JSON.stringify(group.styles)),
     })
 
@@ -3244,6 +3263,7 @@ ${fullHtml}
     groups,
     selectedGroupId,
     selectedGroup,
+    activeGroup,
     displayItems,
     createGroup,
     mergeModulesIntoGroup,
