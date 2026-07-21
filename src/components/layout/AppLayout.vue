@@ -8,19 +8,42 @@
       <!-- 좌측 아이콘 레일 (신규 디자인 IA) -->
       <EditorSidebar />
 
-      <!-- 좌측 컨텍스트 패널: 캔버스에서 모듈/그룹을 선택 중이면 그게 최우선, 아니면 활성 레일 메뉴에 따라 전환 -->
-      <GlobalStylePanel v-if="!hasSelection && editorStore.activeMenu === 'style'" />
-      <PointColorPanel v-else-if="!hasSelection && editorStore.activeMenu === 'point'" />
-      <CategoryModulePanel
-        v-else-if="!hasSelection && activeCategory"
-        :category="activeCategory"
-      />
-      <!-- 모듈 순서(구 '모듈 목차') — 레일의 '모듈 순서' 메뉴에서만 열린다 -->
-      <ModuleOutlinePanel v-else-if="!hasSelection && editorStore.activeMenu === 'order'" />
-      <SelectedItemPanel v-else-if="hasSelection" />
-      <ModulePanel v-else class="w-72 xl:w-80 border-r bg-white flex-shrink-0" />
+      <!-- 좌측 컨텍스트 패널: 캔버스에서 모듈/그룹을 선택 중이면 그게 최우선, 아니면 활성 레일 메뉴에 따라 전환.
+           오른쪽 가장자리 리사이즈 핸들로 너비 조절(모든 좌측 패널이 --left-panel-width를 공유). -->
+      <div class="flex flex-shrink-0 min-h-0" :style="{ '--left-panel-width': `${leftPanelWidth}px` }">
+        <GlobalStylePanel v-if="!hasSelection && editorStore.activeMenu === 'style'" />
+        <PointColorPanel v-else-if="!hasSelection && editorStore.activeMenu === 'point'" />
+        <CategoryModulePanel
+          v-else-if="!hasSelection && activeCategory"
+          :category="activeCategory"
+        />
+        <!-- 모듈 순서(구 '모듈 목차') — 레일의 '모듈 순서' 메뉴에서만 열린다 -->
+        <ModuleOutlinePanel v-else-if="!hasSelection && editorStore.activeMenu === 'order'" />
+        <SelectedItemPanel v-else-if="hasSelection" />
+        <ModulePanel
+          v-else
+          class="border-r bg-white flex-shrink-0"
+          :style="{ width: `${leftPanelWidth}px` }"
+        />
 
-      <!-- 중앙 캔버스 -->
+        <!-- 리사이즈 핸들 (좌측 패널 오른쪽 가장자리, 오른쪽으로 끌면 넓어짐) -->
+        <div
+          class="resize-handle w-2 cursor-col-resize flex-shrink-0 relative group"
+          :class="{ 'is-resizing': isLeftResizing }"
+          @mousedown="startLeftResize"
+        >
+          <div class="absolute inset-0 bg-gray-200 group-hover:bg-blue-100 transition-colors"></div>
+          <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center gap-1 opacity-40 group-hover:opacity-100 transition-opacity">
+            <div class="w-0.5 h-6 bg-gray-600 group-hover:bg-blue-500 rounded-full transition-colors"></div>
+          </div>
+          <div
+            class="absolute right-0 top-0 bottom-0 w-0.5 bg-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"
+            :class="{ 'opacity-100': isLeftResizing }"
+          ></div>
+        </div>
+      </div>
+
+      <!-- 중앙 캔버스 (속성 편집은 좌측 컨텍스트 패널로 일원화 — 우측 속성 패널 제거) -->
       <div class="flex-1 flex flex-col min-w-0">
         <!-- 캔버스 상단 툴바 (화면 크기 + 전체 삭제) -->
         <EditorToolbar />
@@ -28,39 +51,15 @@
         <!-- 캔버스 영역 -->
         <CanvasArea class="flex-1" />
       </div>
-
-      <!-- 오른쪽 속성 패널 (리사이즈 가능) -->
-      <div class="flex flex-shrink-0" :style="{ width: `${propertiesPanelWidth}px` }">
-        <!-- 리사이즈 핸들 -->
-        <div
-          class="resize-handle w-2 cursor-col-resize flex-shrink-0 relative group"
-          :class="{ 'is-resizing': isResizing }"
-          @mousedown="startResize"
-        >
-          <!-- 핸들 배경 -->
-          <div class="absolute inset-0 bg-gray-200 group-hover:bg-blue-100 transition-colors"></div>
-          <!-- 핸들 그립 라인들 -->
-          <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center gap-1 opacity-40 group-hover:opacity-100 transition-opacity">
-            <div class="w-0.5 h-6 bg-gray-600 group-hover:bg-blue-500 rounded-full transition-colors"></div>
-          </div>
-          <!-- 호버/드래그 시 강조 라인 -->
-          <div
-            class="absolute left-0 top-0 bottom-0 w-0.5 bg-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"
-            :class="{ 'opacity-100': isResizing }"
-          ></div>
-        </div>
-        <!-- 속성 패널 -->
-        <PropertiesPanel class="flex-1 border-l bg-white" />
-      </div>
     </div>
 
-    <!-- 리사이즈 오버레이 (드래그 중일 때만 표시) -->
+    <!-- 좌측 패널 리사이즈 오버레이 -->
     <div
-      v-if="isResizing"
+      v-if="isLeftResizing"
       class="fixed inset-0 z-50 cursor-col-resize"
-      @mousemove="onResize"
-      @mouseup="stopResize"
-      @mouseleave="stopResize"
+      @mousemove="onLeftResize"
+      @mouseup="stopLeftResize"
+      @mouseleave="stopLeftResize"
     ></div>
   </div>
 </template>
@@ -73,7 +72,6 @@ import ModulePanel from '@/components/panels/ModulePanel.vue'
 import EditorToolbar from '@/components/editor/EditorToolbar.vue'
 import ModuleOutlinePanel from '@/components/editor/ModuleOutlinePanel.vue'
 import CanvasArea from '@/components/editor/CanvasArea.vue'
-import PropertiesPanel from '@/components/panels/PropertiesPanel.vue'
 import GlobalStylePanel from '@/components/panels/GlobalStylePanel.vue'
 import PointColorPanel from '@/components/panels/PointColorPanel.vue'
 import CategoryModulePanel from '@/components/panels/CategoryModulePanel.vue'
@@ -99,58 +97,52 @@ const activeCategory = computed(() => {
     : null
 })
 
-// 속성 패널 너비 상태
-const MIN_WIDTH = 300
-const MAX_WIDTH = 900
-const DEFAULT_WIDTH = 640 // 넓게 펼쳐진 상태를 기본값으로 (이후 늘리거나 줄일 수 있음)
-const STORAGE_KEY = 'propertiesPanelWidth_v2'
+// ── 좌측 컨텍스트 패널 너비 상태 (오른쪽 가장자리 핸들로 조절) ──
+const LEFT_MIN_WIDTH = 280
+const LEFT_MAX_WIDTH = 720
+const LEFT_DEFAULT_WIDTH = 360 // 기존 좌측 패널 기본 폭
+const LEFT_STORAGE_KEY = 'leftPanelWidth_v1'
 
-const propertiesPanelWidth = ref(DEFAULT_WIDTH)
-const isResizing = ref(false)
-const startX = ref(0)
-const startWidth = ref(0)
+const leftPanelWidth = ref(LEFT_DEFAULT_WIDTH)
+const isLeftResizing = ref(false)
+const leftStartX = ref(0)
+const leftStartWidth = ref(0)
 
-// 로컬 스토리지에서 저장된 너비 불러오기
 onMounted(() => {
-  const savedWidth = localStorage.getItem(STORAGE_KEY)
-  if (savedWidth) {
-    const width = parseInt(savedWidth, 10)
-    if (width >= MIN_WIDTH && width <= MAX_WIDTH) {
-      propertiesPanelWidth.value = width
-    }
+  const saved = localStorage.getItem(LEFT_STORAGE_KEY)
+  if (saved) {
+    const width = parseInt(saved, 10)
+    if (width >= LEFT_MIN_WIDTH && width <= LEFT_MAX_WIDTH) leftPanelWidth.value = width
   }
 })
 
-// 리사이즈 시작
-const startResize = (e: MouseEvent) => {
-  isResizing.value = true
-  startX.value = e.clientX
-  startWidth.value = propertiesPanelWidth.value
+const startLeftResize = (e: MouseEvent) => {
+  isLeftResizing.value = true
+  leftStartX.value = e.clientX
+  leftStartWidth.value = leftPanelWidth.value
   e.preventDefault()
 }
 
-// 리사이즈 중
-const onResize = (e: MouseEvent) => {
-  if (!isResizing.value) return
-
-  // 왼쪽으로 드래그하면 너비가 커지고, 오른쪽으로 드래그하면 줄어듦
-  const diff = startX.value - e.clientX
-  const newWidth = Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, startWidth.value + diff))
-  propertiesPanelWidth.value = newWidth
+const onLeftResize = (e: MouseEvent) => {
+  if (!isLeftResizing.value) return
+  // 오른쪽으로 드래그하면 넓어지고, 왼쪽으로 드래그하면 좁아짐 (핸들이 오른쪽 가장자리)
+  const diff = e.clientX - leftStartX.value
+  leftPanelWidth.value = Math.min(
+    LEFT_MAX_WIDTH,
+    Math.max(LEFT_MIN_WIDTH, leftStartWidth.value + diff),
+  )
 }
 
-// 리사이즈 종료
-const stopResize = () => {
-  if (isResizing.value) {
-    isResizing.value = false
-    // 로컬 스토리지에 저장
-    localStorage.setItem(STORAGE_KEY, propertiesPanelWidth.value.toString())
+const stopLeftResize = () => {
+  if (isLeftResizing.value) {
+    isLeftResizing.value = false
+    localStorage.setItem(LEFT_STORAGE_KEY, leftPanelWidth.value.toString())
   }
 }
 
 // 전역 마우스 이벤트 (오버레이 밖에서 마우스를 놓았을 때 대비)
 const handleGlobalMouseUp = () => {
-  stopResize()
+  stopLeftResize()
 }
 
 onMounted(() => {

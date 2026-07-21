@@ -18,14 +18,10 @@
     <div class="p-2">
       <!-- 안쪽 여백 (padding) — 아코디언 헤더(토글 없음, Figma "여백" 행) -->
       <div class="gg-acc-section">
-        <button type="button" class="gg-acc-header" @click="togglePanelExpanded('padding')">
-          <i
-            class="pi gg-acc-chevron"
-            :class="isPanelExpanded('padding') ? 'pi-chevron-down' : 'pi-chevron-right'"
-          ></i>
+        <div class="gg-acc-header gg-acc-header--static">
           <span class="gg-acc-label">안쪽 여백</span>
-        </button>
-        <div v-show="isPanelExpanded('padding')" class="gg-acc-body">
+        </div>
+        <div class="gg-acc-body">
           <div class="gg-margin-quad">
             <div class="gg-margin-quad-head">
               <span class="gg-field-label !mb-0">안쪽 여백 (padding)</span>
@@ -79,14 +75,10 @@
 
       <!-- 바깥 여백 (margin) — 아코디언 헤더(토글 없음) -->
       <div class="gg-acc-section">
-        <button type="button" class="gg-acc-header" @click="togglePanelExpanded('margin')">
-          <i
-            class="pi gg-acc-chevron"
-            :class="isPanelExpanded('margin') ? 'pi-chevron-down' : 'pi-chevron-right'"
-          ></i>
+        <div class="gg-acc-header gg-acc-header--static">
           <span class="gg-acc-label">바깥 여백</span>
-        </button>
-        <div v-show="isPanelExpanded('margin')" class="gg-acc-body">
+        </div>
+        <div class="gg-acc-body">
           <div class="gg-margin-quad">
             <div class="gg-margin-quad-head">
               <span class="gg-field-label !mb-0">바깥 여백 (margin)</span>
@@ -140,16 +132,12 @@
 
       <!-- 배경색 — 아코디언 헤더 + 우측 노출 토글 (Figma "배경색" 행) -->
       <div class="gg-acc-section">
-        <div class="gg-acc-header" @click="togglePanelExpanded('background')">
-          <i
-            class="pi gg-acc-chevron"
-            :class="isPanelExpanded('background') ? 'pi-chevron-down' : 'pi-chevron-right'"
-          ></i>
+        <div class="gg-acc-header gg-acc-header--static">
           <span class="gg-acc-label">배경색</span>
           <span class="gg-acc-spacer"></span>
-          <ToggleSwitch :modelValue="hasBackground" @update:modelValue="toggleBackground" @click.stop />
+          <ToggleSwitch :modelValue="hasBackground" @update:modelValue="toggleBackground" />
         </div>
-        <div v-show="isPanelExpanded('background')" class="gg-acc-body">
+        <div class="gg-acc-body">
           <template v-if="hasBackground">
             <div class="flex items-center justify-between gap-3">
               <span class="gg-sub-label">색상</span>
@@ -172,16 +160,12 @@
 
       <!-- 테두리 — 아코디언 헤더 + 우측 노출 토글, 상세 필드는 전체 스타일(GlobalStylePanel)의 테두리 UI 참고 -->
       <div class="gg-acc-section">
-        <div class="gg-acc-header" @click="togglePanelExpanded('border')">
-          <i
-            class="pi gg-acc-chevron"
-            :class="isPanelExpanded('border') ? 'pi-chevron-down' : 'pi-chevron-right'"
-          ></i>
+        <div class="gg-acc-header gg-acc-header--static">
           <span class="gg-acc-label">테두리</span>
           <span class="gg-acc-spacer"></span>
-          <ToggleSwitch :modelValue="hasBorder" @update:modelValue="toggleBorder" @click.stop />
+          <ToggleSwitch :modelValue="hasBorder" @update:modelValue="toggleBorder" />
         </div>
-        <div v-show="isPanelExpanded('border')" class="gg-acc-body">
+        <div class="gg-acc-body">
           <template v-if="hasBorder">
             <!-- 스타일 라디오 (GlobalStylePanel과 동일한 radio-dot 리스트) -->
             <div class="flex flex-col gap-[10px]">
@@ -329,13 +313,6 @@ const hasBackground = computed(
   () => !!(group.value?.styles.backgroundColor && group.value.styles.backgroundColor.trim()),
 )
 const bgValue = computed(() => group.value?.styles.backgroundColor || '#ffffff')
-
-// ===== 아코디언 펼침 상태 (Figma 378-1704/408-1758 — 여백/배경색/테두리 행) =====
-const panelExpanded = reactive<Record<string, boolean>>({})
-const isPanelExpanded = (key: string): boolean => !!panelExpanded[key]
-const togglePanelExpanded = (key: string): void => {
-  panelExpanded[key] = !panelExpanded[key]
-}
 
 const setStyle = (key: keyof ModuleGroupStyles, value: string): void => {
   if (!group.value) return
@@ -489,13 +466,11 @@ const ungroup = (): void => {
   padding: 12px 8px;
   background: none;
   border: none;
-  cursor: pointer;
   text-align: left;
 }
-.gg-acc-chevron {
-  font-size: 12px;
-  color: #8b95a1;
-  flex-shrink: 0;
+/* 아코디언 제거 — 항상 펼쳐진 정적 헤더(라벨 + 배경색/테두리 노출 토글) */
+.gg-acc-header--static {
+  cursor: default;
 }
 .gg-acc-label {
   font-size: 16px;
@@ -556,7 +531,9 @@ const ungroup = (): void => {
   width: 50px;
   height: 0;
 }
-.gg-range-slider {
+/* 슬라이더 스타일 통일 — 여백(안/밖) 슬라이더도 두께 슬라이더(gg-range-slider)와 동일 트랙/썸 */
+.gg-range-slider,
+.gg-margin-slider {
   -webkit-appearance: none;
   appearance: none;
   height: 4px;
@@ -564,7 +541,8 @@ const ungroup = (): void => {
   background: #e5e8eb;
   outline: none;
 }
-.gg-range-slider::-webkit-slider-thumb {
+.gg-range-slider::-webkit-slider-thumb,
+.gg-margin-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 16px;
@@ -575,7 +553,8 @@ const ungroup = (): void => {
   border: 2px solid #fff;
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
 }
-.gg-range-slider::-moz-range-thumb {
+.gg-range-slider::-moz-range-thumb,
+.gg-margin-slider::-moz-range-thumb {
   width: 16px;
   height: 16px;
   border-radius: 50%;
@@ -646,7 +625,6 @@ const ungroup = (): void => {
 .gg-margin-slider {
   flex: 1;
   min-width: 0;
-  accent-color: #4083f3;
 }
 .gg-margin-value-field {
   display: flex;

@@ -14,7 +14,10 @@
       "Bash(timeout /t 3 /nobreak)",
       "Bash(npm run dev:*)",
       "Bash(claude mcp *)",
-      "mcp__figma__get_metadata"
+      "mcp__figma__get_metadata",
+      "Bash(rm -f .verify.tmp.mjs .verify2.tmp.mjs)",
+      "Bash(pkill -f \"vite --port 5199\")",
+      "Bash(rm -f .verify.tmp.mjs)"
     ]
   }
 }

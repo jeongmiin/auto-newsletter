@@ -150,7 +150,7 @@ const onGalleryAdd = (module: ModuleMetadata) => {
 
 <style scoped>
 .category-module-panel {
-  width: 360px;
+  width: var(--left-panel-width, 360px);
   flex-shrink: 0;
   background: #fff;
   border-right: 1px solid #e5e8eb;

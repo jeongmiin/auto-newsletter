@@ -76,13 +76,27 @@ export const useModuleStore = defineStore('module', () => {
   // 지정돼 있으면 다음에 추가되는 모듈이 이 그룹의 해당 (행, 컬럼)에 들어간다.
   const columnTarget = ref<{ groupId: string; rowIndex: number; columnIndex: number } | null>(null)
 
-  // 모듈/그룹이 "새로" 선택되면(캔버스 클릭, addModule의 자동 선택 등 경로 무관) 좌측 패널이
-  // 레일 메뉴 대신 그 속성 편집으로 자동 전환되도록 forceRailPanel을 끈다.
+  // 모듈 추가(팔레트 클릭)로 인한 자동 선택인지 표시하는 플래그 — 아래 watch가 소비한다.
+  // 추가로 선택되면 좌측 팔레트를 그대로 두고(모듈이 "추가된 상태"), 사용자가 캔버스/목차에서
+  // "직접" 선택했을 때만 속성 편집 패널로 전환한다.
+  let selectedByAdd = false
+
+  // 모듈/그룹이 "새로" 선택되면 좌측 패널을 전환한다.
+  // - 사용자 직접 선택(캔버스·목차 클릭): 속성 패널로 전환(forceRailPanel = false)
+  // - 팔레트에서 모듈 추가에 의한 자동 선택: 팔레트 유지(forceRailPanel = true)
   watch([selectedModuleId, selectedGroupId], ([modId, grpId], [prevModId, prevGrpId]) => {
     if ((modId && modId !== prevModId) || (grpId && grpId !== prevGrpId)) {
-      useEditorStore().forceRailPanel = false
+      useEditorStore().forceRailPanel = selectedByAdd
     }
+    selectedByAdd = false
   })
+
+  // 모듈 추가 시 새 모듈을 선택 상태로 두되(캔버스 하이라이트 유지), 좌측 팔레트는 그대로 유지한다.
+  const selectAddedModule = (id: string): void => {
+    selectedByAdd = true
+    selectedModuleId.value = id
+    selectedGroupId.value = null
+  }
 
   // ============= Computed =============
   const selectedModule = computed(
@@ -219,8 +233,7 @@ export const useModuleStore = defineStore('module', () => {
         newModule.columnIndex = columnIndex
         modules.value.splice(lastIdx + 1, 0, newModule)
         reorderModules()
-        selectedModuleId.value = newModule.id
-        selectedGroupId.value = null
+        selectAddedModule(newModule.id)
         columnTarget.value = null
         isDirty.value = true
         return
@@ -235,8 +248,7 @@ export const useModuleStore = defineStore('module', () => {
       if (lastIdx !== -1) {
         modules.value.splice(lastIdx + 1, 0, newModule) // groupId 미지정 = 그룹에 속하지 않음
         reorderModules()
-        selectedModuleId.value = newModule.id
-        selectedGroupId.value = null
+        selectAddedModule(newModule.id)
         isDirty.value = true
         return
       }
@@ -267,8 +279,7 @@ export const useModuleStore = defineStore('module', () => {
     }
 
     reorderModules()
-    selectedModuleId.value = newModule.id
-    selectedGroupId.value = null
+    selectAddedModule(newModule.id)
     isDirty.value = true
   }
 
@@ -324,8 +335,7 @@ export const useModuleStore = defineStore('module', () => {
     reorderModules()
     const groupId = createGroup(created.map((m) => m.id))
     // 조립 결과의 첫 원소를 선택 상태로 (속성 패널이 원소 단위로 열리는 것을 보여줌)
-    selectedModuleId.value = created[0].id
-    selectedGroupId.value = null
+    selectAddedModule(created[0].id)
     isDirty.value = true
     return groupId
   }
@@ -402,8 +412,7 @@ export const useModuleStore = defineStore('module', () => {
     reorderModules()
     // createGroup이 멤버 rowIndex/columnIndex로부터 rows(=[2])를 유도한다.
     const groupId = createGroup(created.map((m) => m.id))
-    selectedModuleId.value = created[0].id
-    selectedGroupId.value = null
+    selectAddedModule(created[0].id)
     triggerRef(groups)
     triggerRef(modules)
     isDirty.value = true
@@ -483,8 +492,7 @@ export const useModuleStore = defineStore('module', () => {
     reorderModules()
     // createGroup이 멤버 rowIndex/columnIndex로부터 rows(=[2])를 유도한다.
     const groupId = createGroup(created.map((m) => m.id))
-    selectedModuleId.value = created[0].id
-    selectedGroupId.value = null
+    selectAddedModule(created[0].id)
     triggerRef(groups)
     triggerRef(modules)
     isDirty.value = true
@@ -625,8 +633,7 @@ export const useModuleStore = defineStore('module', () => {
     // → 0행: 전체폭(1컬럼) 상단 섹션 / 1행: 2컬럼 하단
     const groupId = createGroup(created.map((m) => m.id))
 
-    selectedModuleId.value = created[0].id
-    selectedGroupId.value = null
+    selectAddedModule(created[0].id)
     triggerRef(groups)
     triggerRef(modules)
     isDirty.value = true
@@ -667,8 +674,7 @@ export const useModuleStore = defineStore('module', () => {
       const g = groups.value.find((x) => x.id === groupId)
       if (g) g.styles = { ...g.styles, ...groupStyles }
     }
-    selectedModuleId.value = created[0].id
-    selectedGroupId.value = null
+    selectAddedModule(created[0].id)
     triggerRef(groups)
     triggerRef(modules)
     isDirty.value = true
@@ -1400,6 +1406,9 @@ export const useModuleStore = defineStore('module', () => {
   const selectModule = (moduleId: string): void => {
     selectedModuleId.value = moduleId
     selectedGroupId.value = null
+    // 사용자가 직접 선택한 것이므로 속성 패널로 전환한다.
+    // (추가 직후 자동 선택된 모듈을 다시 클릭해도 확실히 전환되도록 id 변화와 무관하게 명시)
+    useEditorStore().forceRailPanel = false
   }
 
   /**

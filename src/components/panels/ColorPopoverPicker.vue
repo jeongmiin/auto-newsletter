@@ -35,11 +35,14 @@
           </button>
         </div>
 
-        <!-- 포인트 색상 퀵 스와치 -->
+        <!-- 포인트 색상 퀵 스와치 — '포인트 색상' 패널에서 추가한 색만 노출한다.
+             포인트 색상 추가(+)는 그 전용 패널(triggerVariant='add')에서만 가능하고,
+             일반 색상 조정 팝오버(텍스트/배경/테두리 등)에서는 기존 포인트 색만 골라 쓸 수 있다. -->
         <div class="flex flex-col gap-2 mb-3">
           <span class="text-[13px] text-gray-400">포인트 색상</span>
           <div class="flex items-center gap-2">
             <button
+              v-if="triggerVariant === 'add'"
               type="button"
               class="quick-swatch-add"
               title="현재 색상을 포인트 색상에 추가"
@@ -110,7 +113,7 @@
               :modelValue="modelValue"
               @update:modelValue="onHexInput"
               placeholder="#000000"
-              class="flex-1 font-mono text-sm hex-field"
+              class="flex-1 w-full font-mono text-sm hex-field"
               spellcheck="false"
             />
           </div>

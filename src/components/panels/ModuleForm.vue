@@ -216,24 +216,30 @@
             />
           </div>
 
-          <!-- 폰트 크기 필드: 스테퍼(−/값/+) UI (Figma 378-1704 "TextField/Small/Default") -->
+          <!-- 폰트 크기 필드: 슬라이더 + 값(px) — 여백 슬라이더와 동일 UI (최소 8 ~ 최대 28px) -->
           <div v-else-if="isFontSizeField(prop)" class="space-y-1">
-            <div class="gg-stepper">
-              <button type="button" class="gg-stepper-btn" @click="adjustFontSize(prop, -1)" v-tooltip.top="'작게'">
-                <i class="pi pi-minus"></i>
-              </button>
+            <div class="gg-margin-slider-row">
               <input
-                type="number"
-                class="gg-stepper-value"
-                :value="fontSizeNumber(prop)"
+                type="range"
                 :min="FONT_SIZE_MIN"
                 :max="FONT_SIZE_MAX"
-                @change="onFontSizeInput(prop, $event)"
-                @keydown.enter="blurTarget"
+                step="1"
+                :value="fontSizeNumber(prop)"
+                @input="onFontSizeInput(prop, $event)"
+                class="gg-margin-slider"
               />
-              <button type="button" class="gg-stepper-btn" @click="adjustFontSize(prop, 1)" v-tooltip.top="'크게'">
-                <i class="pi pi-plus"></i>
-              </button>
+              <div class="gg-margin-value-field">
+                <input
+                  type="number"
+                  :min="FONT_SIZE_MIN"
+                  :max="FONT_SIZE_MAX"
+                  :value="fontSizeNumber(prop)"
+                  @change="onFontSizeInput(prop, $event)"
+                  @keydown.enter="blurTarget"
+                  class="gg-margin-value-input"
+                />
+                <span class="gg-margin-value-unit">px</span>
+              </div>
             </div>
             <p v-if="prop.hint" class="gg-field-hint" v-html="prop.hint"></p>
           </div>
@@ -1540,17 +1546,12 @@ const isFontSizeField = (prop: EditableProp): boolean =>
   prop.type === 'text' && /fontsize$/i.test(prop.key)
 
 const FONT_SIZE_MIN = 8
-const FONT_SIZE_MAX = 72
+const FONT_SIZE_MAX = 28
 
 const fontSizeNumber = (prop: EditableProp): number => {
   const raw = String(selectedModule.value?.properties[prop.key] ?? prop.default ?? '16px')
   const n = parseInt(raw, 10)
   return Number.isFinite(n) ? n : 16
-}
-
-const adjustFontSize = (prop: EditableProp, delta: number) => {
-  const next = Math.min(FONT_SIZE_MAX, Math.max(FONT_SIZE_MIN, fontSizeNumber(prop) + delta))
-  updateProperty(prop.key, `${next}px`)
 }
 
 // Enter 입력 시 blur시켜 change 이벤트(값 확정)를 발생시킴
@@ -2913,51 +2914,6 @@ const onSelectPointColor = (key: string, index: number): void => {
   border-color: #e5e8eb;
 }
 
-/* 폰트 크기 스테퍼 (−/값/+, Figma 378-1704 "TextField/Small/Default") */
-.gg-stepper {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 40px;
-  padding: 0 11px;
-  background: #fff;
-  border: 1px solid #e5e8eb;
-  border-radius: 8px;
-}
-.gg-stepper-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border: none;
-  background: none;
-  color: #4e5968;
-  cursor: pointer;
-  border-radius: 6px;
-}
-.gg-stepper-btn:hover {
-  background: #f2f4f6;
-}
-.gg-stepper-value {
-  width: 100%;
-  border: none;
-  background: none;
-  outline: none;
-  text-align: center;
-  font-size: 15px;
-  font-weight: 500;
-  letter-spacing: -0.15px;
-  color: #191f28;
-  appearance: textfield;
-  -moz-appearance: textfield;
-}
-.gg-stepper-value::-webkit-outer-spin-button,
-.gg-stepper-value::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
 /* 리치텍스트 필드 — 행간/자간 외부 드롭다운 + 툴바 다듬기 (Figma 378-1704) */
 .rte-field {
   width: 100%;
@@ -3050,10 +3006,36 @@ const onSelectPointColor = (key: string, index: number): void => {
   gap: 12px;
   height: 32px;
 }
+/* 슬라이더 트랙/썸 — GroupPropertiesPanel의 gg-margin-slider와 동일한 커스텀 스타일 */
 .gg-margin-slider {
   flex: 1;
   min-width: 0;
-  accent-color: #4083f3;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: #e5e8eb;
+  outline: none;
+}
+.gg-margin-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #4083f3;
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+}
+.gg-margin-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #4083f3;
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
 }
 .gg-margin-value-field {
   display: flex;

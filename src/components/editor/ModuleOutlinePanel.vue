@@ -246,7 +246,7 @@ const setHover = (moduleId: string | null): void => {
 <style scoped>
 /* 다른 레일 컨텍스트 패널(GlobalStylePanel/CategoryModulePanel)과 동일한 셸 */
 .outline-panel {
-  width: 360px;
+  width: var(--left-panel-width, 360px);
   flex-shrink: 0;
   background: #fff;
   border-right: 1px solid #e5e8eb;
