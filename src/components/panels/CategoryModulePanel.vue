@@ -9,10 +9,45 @@
         :key="item.label"
         type="button"
         class="quick-add-card"
+        :class="{ 'quick-add-card--preview': item.preview }"
         @click="onQuickAdd(item)"
       >
-        <span class="quick-add-label">{{ item.label }}</span>
-        <span class="material-symbols-outlined quick-add-icon">add</span>
+        <!-- 이미지 카테고리: 미리보기 플레이스홀더 (단일 1칸 / 2단 2칸) -->
+        <template v-if="isImagePreview(item.preview)">
+          <div class="qa-preview" :class="{ 'qa-preview--double': item.preview === 'double-image' }">
+            <img
+              v-for="n in item.preview === 'double-image' ? 2 : 1"
+              :key="n"
+              :src="item.preview === 'double-image' ? img02 : img01"
+              alt=""
+              class="qa-preview-img"
+            />
+          </div>
+          <div class="qa-foot">
+            <span class="quick-add-label">{{ item.label }}</span>
+            <span class="material-symbols-outlined quick-add-icon">add</span>
+          </div>
+        </template>
+        <!-- 버튼 카테고리: 스타일 버튼 미리보기 (단일 큰 버튼 / 2단 / 작은 알약) -->
+        <template v-else-if="isButtonPreview(item.preview)">
+          <div class="qa-btn-preview" :class="{ 'qa-btn-preview--small': item.preview === 'small-button' }">
+            <span
+              v-for="(t, i) in buttonPreviewLabels(item.preview)"
+              :key="i"
+              class="qa-btn"
+              :class="{ 'qa-btn--small': item.preview === 'small-button' }"
+            >{{ t }}</span>
+          </div>
+          <div class="qa-foot">
+            <span class="quick-add-label">{{ item.label }}</span>
+            <span class="material-symbols-outlined quick-add-icon">add</span>
+          </div>
+        </template>
+        <!-- 그 외 카테고리: 라벨 + 추가 아이콘 한 줄 -->
+        <template v-else>
+          <span class="quick-add-label">{{ item.label }}</span>
+          <span class="material-symbols-outlined quick-add-icon">add</span>
+        </template>
       </button>
     </div>
 
@@ -55,6 +90,8 @@ import { useToast } from 'primevue/usetoast'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useModuleThumbnails } from '@/composables/useModuleThumbnails'
 import type { ModuleMetadata } from '@/types'
+import img01 from '@/assets/img/img01.png'
+import img02 from '@/assets/img/img02.png'
 
 type Category = 'text' | 'image' | 'button' | 'table'
 
@@ -86,6 +123,18 @@ interface QuickAddItem {
   moduleId: string
   /** 추가 직후 덮어쓸 속성(선택) — 예: "서브타이틀"은 전용 모듈이 없어 SectionTitle을 작은 폰트로 재사용 */
   overrideProperty?: { key: string; value: unknown }
+  /** 미리보기 카드 표시(선택) — 이미지: 플레이스홀더, 버튼: 스타일 버튼 미리보기 */
+  preview?: 'single-image' | 'double-image' | 'single-button' | 'double-button' | 'small-button'
+}
+
+const isImagePreview = (p?: string): boolean => p === 'single-image' || p === 'double-image'
+const isButtonPreview = (p?: string): boolean =>
+  p === 'single-button' || p === 'double-button' || p === 'small-button'
+// 버튼 미리보기에 그릴 버튼 라벨들 (각 모듈 기본 텍스트에 맞춤)
+const buttonPreviewLabels = (p?: string): string[] => {
+  if (p === 'double-button') return ['버튼 1 →', '버튼 2 →']
+  if (p === 'small-button') return ['버튼 1 →']
+  return ['큰 버튼 →']
 }
 
 // 원소 모듈 "빠른추가" — 항상 moduleStore.addModule()로 삽입한다.
@@ -101,12 +150,13 @@ const QUICK_ADD_ITEMS: Record<Category, QuickAddItem[]> = {
     { label: '텍스트 추가', moduleId: 'ModuleDescText' },
   ],
   image: [
-    { label: '단일 이미지 추가', moduleId: 'ModuleImg' },
-    { label: '2단 이미지 추가', moduleId: 'ModuleMultiImage' },
+    { label: '단일 이미지 추가', moduleId: 'ModuleImg', preview: 'single-image' },
+    { label: '2단 이미지 추가', moduleId: 'ModuleMultiImage', preview: 'double-image' },
   ],
   button: [
-    { label: '단일 버튼 추가', moduleId: 'ModuleOneButton' },
-    { label: '2단 버튼 추가', moduleId: 'ModuleTwoButton' },
+    { label: '단일 버튼 추가', moduleId: 'ModuleOneButton', preview: 'single-button' },
+    { label: '2단 버튼 추가', moduleId: 'ModuleTwoButton', preview: 'double-button' },
+    { label: '작은 버튼 추가 (최대 4단)', moduleId: 'ModuleSmallButton', preview: 'small-button' },
   ],
   // 테이블은 v2 조립 템플릿이 아직 없어 레거시 '커스텀 테이블'(ModuleTable)을 그대로 쓴다.
   table: [{ label: '테이블 추가', moduleId: 'ModuleTable' }],
@@ -115,9 +165,13 @@ const quickAddItems = computed(() => QUICK_ADD_ITEMS[props.category])
 
 // 갤러리: 이 카테고리에 속하는 완성형 모듈. 클릭 시 v2 조립 템플릿이 있으면 그걸(onGalleryAdd),
 // 없으면 레거시 addModule로 폴백한다(moduleStore.composedBuilderMap 참고).
-const galleryModules = computed<ModuleMetadata[]>(() =>
-  moduleStore.availableModules.filter((m) => !m.hidden && m.category === props.category),
-)
+// 빠른추가로 이미 제공되는 원소 모듈(예: 단일 이미지·복수 이미지)은 갤러리에서 중복 제외한다.
+const galleryModules = computed<ModuleMetadata[]>(() => {
+  const quickIds = new Set(quickAddItems.value.map((q) => q.moduleId))
+  return moduleStore.availableModules.filter(
+    (m) => !m.hidden && m.category === props.category && !quickIds.has(m.id),
+  )
+})
 
 onMounted(() => {
   if (moduleStore.availableModules.length === 0) {
@@ -137,9 +191,16 @@ const notifyAdded = (name: string) => {
 const onQuickAdd = (item: QuickAddItem) => {
   const meta = moduleStore.availableModules.find((m) => m.id === item.moduleId)
   if (!meta) return
-  moduleStore.addModule(meta)
-  if (item.overrideProperty) {
-    moduleStore.updateModuleProperty(item.overrideProperty.key, item.overrideProperty.value)
+  // 조립형 빌더가 있으면(예: 2단 이미지=단일 이미지 2개, 2단 버튼=단일 버튼 2개) 2컬럼 그룹으로 추가
+  const builder = moduleStore.composedBuilderMap[item.moduleId]
+  if (builder) {
+    const groupId = builder()
+    if (groupId) moduleStore.setGroupName(groupId, meta.name)
+  } else {
+    moduleStore.addModule(meta)
+    if (item.overrideProperty) {
+      moduleStore.updateModuleProperty(item.overrideProperty.key, item.overrideProperty.value)
+    }
   }
   notifyAdded(item.label.replace(/\s*추가$/, ''))
 }
@@ -208,6 +269,64 @@ const onGalleryAdd = (module: ModuleMetadata) => {
   flex-shrink: 0;
 }
 
+/* 미리보기 빠른추가 카드(이미지·버튼) — 상단 미리보기 + 하단 라벨/추가 아이콘 (세로 배치) */
+.quick-add-card--preview {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  padding: 12px;
+}
+.qa-preview {
+  display: flex;
+  gap: 10px;
+}
+.qa-preview-img {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 4px;
+}
+.qa-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 버튼 미리보기 — 실제 버튼 형태로 표시 */
+.qa-btn-preview {
+  display: flex;
+  gap: 8px;
+}
+.qa-btn-preview--small {
+  justify-content: flex-start;
+}
+.qa-btn {
+  flex: 1;
+  min-width: 0;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #191f28;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+/* 작은 버튼: 알약형 회색, 폭 고정(왼쪽 정렬) */
+.qa-btn--small {
+  flex: 0 0 auto;
+  height: 30px;
+  padding: 0 18px;
+  background: #e5e5e5;
+  color: #333333;
+  font-weight: 500;
+  border-radius: 30px;
+}
+
 .gallery-section {
   display: flex;
   flex-direction: column;
@@ -222,8 +341,7 @@ const onGalleryAdd = (module: ModuleMetadata) => {
    패널이 넓어져도 단일 열을 유지하고 넓어진 폭은 좌우 여백으로 두어 중앙 정렬한다. */
 .gallery-list {
   display: grid;
-  grid-template-columns: 314px;
-  justify-content: center;
+  grid-template-columns: 298px;
   gap: 20px;
 }
 .gallery-card {
@@ -251,7 +369,7 @@ const onGalleryAdd = (module: ModuleMetadata) => {
   display: block;
   background: #fff;
   /* 314/680 ≈ 0.462 — 이 패널 카드 폭(314px = 360 - 23*2) 기준 */
-  transform: scale(0.462);
+  transform: scale(0.44);
   transform-origin: top left;
   pointer-events: none;
 }

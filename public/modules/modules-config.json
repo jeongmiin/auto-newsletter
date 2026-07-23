@@ -1019,6 +1019,29 @@
           "group": "서브 타이틀"
         },
         {
+          "key": "sectionBgColor",
+          "label": "전체 배경색",
+          "type": "color",
+          "default": "transparent",
+          "placeholder": "예: #f5f5f5 (비우면 투명)",
+          "group": "스타일"
+        },
+        {
+          "key": "topBorderWidth",
+          "label": "상단 테두리 두께",
+          "type": "text",
+          "default": "2px",
+          "placeholder": "예: 2px, 3px",
+          "group": "스타일"
+        },
+        {
+          "key": "topBorderColor",
+          "label": "상단 테두리 색상",
+          "type": "color",
+          "default": "#333333",
+          "group": "스타일"
+        },
+        {
           "key": "showSectionImage",
           "label": "이미지 타이틀 표시",
           "type": "boolean",
@@ -1118,29 +1141,6 @@
           "placeholder": "예: 20px, 0",
           "showWhen": "showSectionImage",
           "group": "이미지 타이틀"
-        },
-        {
-          "key": "sectionBgColor",
-          "label": "전체 배경색",
-          "type": "color",
-          "default": "transparent",
-          "placeholder": "예: #f5f5f5 (비우면 투명)",
-          "group": "스타일"
-        },
-        {
-          "key": "topBorderWidth",
-          "label": "상단 테두리 두께",
-          "type": "text",
-          "default": "2px",
-          "placeholder": "예: 2px, 3px",
-          "group": "스타일"
-        },
-        {
-          "key": "topBorderColor",
-          "label": "상단 테두리 색상",
-          "type": "color",
-          "default": "#333333",
-          "group": "스타일"
         }
       ]
     },

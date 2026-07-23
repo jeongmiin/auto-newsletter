@@ -575,7 +575,7 @@ onMounted(async () => {
 .module-list {
   display: grid;
   grid-template-columns: 320px;
-  gap: 12px;
+  gap: 20px;
 }
 
 /* 모듈 카드 인라인 썸네일 — 680px 렌더를 카드 폭에 맞춰 축소, 상단 크롭 */

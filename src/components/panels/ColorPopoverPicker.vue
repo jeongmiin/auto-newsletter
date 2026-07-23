@@ -6,10 +6,10 @@
       ref="triggerEl"
       type="button"
       class="color-add-trigger"
-      title="색상 추가"
+      title="포인트 색상 추가"
       @click="toggleOpen"
     >
-      <i class="pi pi-plus"></i>
+      <img :src="addPointColorBtn" alt="포인트 색상 추가" />
     </button>
     <button
       v-else
@@ -48,7 +48,7 @@
               title="현재 색상을 포인트 색상에 추가"
               @click="addCurrentAsPointColor"
             >
-              <i class="pi pi-plus text-xs"></i>
+              <img :src="addPointColorBtn" alt="포인트 색상 추가" />
             </button>
             <div
               v-for="(c, i) in pointColors"
@@ -172,6 +172,7 @@ import ColorPicker from 'primevue/colorpicker'
 import HexColorInput from '@/components/HexColorInput.vue'
 import { parseColorToRgba, rgbToHex } from '@/utils/colorFlatten'
 import { normalizeColorInput } from '@/utils/colorHelper'
+import addPointColorBtn from '@/assets/img/add_point_color_btn.png'
 
 // Figma node 334-2080 "기본 팔레트" 6x4 그리드 색상값
 const DEFAULT_PALETTE = [
@@ -370,21 +371,23 @@ onBeforeUnmount(() => {
   background-blend-mode: normal;
 }
 
+/* 포인트 색상 추가 버튼 — add_point_color_btn.png 이미지 트리거 */
 .color-add-trigger {
   width: 32px;
   height: 32px;
-  border-radius: 8px;
-  border: 1.5px dashed #d1d6db;
-  color: #8b95a1;
-  background: #fff;
+  padding: 0;
+  border: 0;
+  background: none;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
+}
+.color-add-trigger img {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 .color-add-trigger:hover {
-  border-color: #4083f3;
-  color: #4083f3;
+  opacity: 0.85;
 }
 
 .color-popover {
@@ -410,21 +413,24 @@ onBeforeUnmount(() => {
   user-select: none;
 }
 
+/* 팝오버 내 '포인트 색상 추가' 버튼 — add_point_color_btn.png 이미지 */
 .quick-swatch-add {
   width: 32px;
   height: 32px;
-  border-radius: 8px;
-  border: 1.5px dashed #d1d6db;
-  color: #8b95a1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: none;
   cursor: pointer;
   flex-shrink: 0;
+  display: block;
+}
+.quick-swatch-add img {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 .quick-swatch-add:hover {
-  border-color: #4083f3;
-  color: #4083f3;
+  opacity: 0.85;
 }
 
 .quick-swatch-wrap {

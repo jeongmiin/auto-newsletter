@@ -68,7 +68,7 @@
         </div>
 
         <!-- 속성 편집 폼 -->
-      <div class="p-4 space-y-3 bg-gray-50">
+      <div class="p-4 space-y-3 ">
         <div
           v-for="(group, gIdx) in propGroups"
           :key="`grp-${gIdx}-${group.name || 'flat'}`"
@@ -1660,8 +1660,19 @@ const groupSelfLabeledProp = (group: { name?: string | null; props: EditableProp
   }
   return null
 }
+// 특정 모듈은 모든 속성 그룹을 아코디언 없이 항상 펼쳐서 보여준다(chevron 제거·접기 불가).
+const ALWAYS_EXPANDED_MODULE_IDS = new Set([
+  'SectionTitle',
+  'ModuleOneButton', // 단일 버튼
+  'ModuleTwoButton', // 복수 버튼
+  'ModuleSmallButton', // 작은 버튼
+])
+const isModuleAlwaysExpanded = computed(
+  () => !!selectedModule.value && ALWAYS_EXPANDED_MODULE_IDS.has(selectedModule.value.moduleId),
+)
+// 정적(항상 펼침) 그룹 여부. always-expanded 모듈이면 이름 있는 그룹은 모두 정적으로 취급한다.
 const isGroupSelfLabeled = (group: { name?: string | null; props: EditableProp[] }): boolean =>
-  !!groupSelfLabeledProp(group)
+  isModuleAlwaysExpanded.value ? !!group.name : !!groupSelfLabeledProp(group)
 const isDupLabelProp = (group: { name?: string | null; props: EditableProp[] }, prop: EditableProp): boolean =>
   groupSelfLabeledProp(group) === prop
 
@@ -2862,7 +2873,7 @@ const onSelectPointColor = (key: string, index: number): void => {
 
 /* 이름 있는 prop 그룹(로고/타이틀 등 섹션) 래퍼 — Figma 352-1138 접이식 패널 대체 */
 .gg-acc-section {
-  border-top: 1px solid #f2f4f6;
+  /* border-top: 1px solid #f2f4f6; */
   padding-top: 4px;
 }
 .gg-acc-section:first-child {
@@ -2947,7 +2958,7 @@ const onSelectPointColor = (key: string, index: number): void => {
 .rte-ext-select :deep(.p-select-label) {
   display: flex;
   align-items: center;
-  padding: 0 10px;
+  padding: 5px 10px;
   font-size: 15px;
   color: #333d4b;
 }

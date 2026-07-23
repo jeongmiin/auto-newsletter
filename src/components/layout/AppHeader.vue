@@ -5,7 +5,6 @@
       type="button"
       class="flex items-center gap-1.5 bg-transparent border-0 p-0 cursor-pointer flex-shrink-0"
       @click="goHome"
-      v-tooltip.bottom="'홈으로'"
     >
       <img src="/src/assets/img/logo/logo.png" alt="Logo" class="w-6 h-6" />
       <span class="font-bold text-gray-800 text-base whitespace-nowrap">Newsletter Builder</span>

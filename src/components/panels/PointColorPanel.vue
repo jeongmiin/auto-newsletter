@@ -118,5 +118,6 @@ const onAdd = (color: string) => {
 .hint-text {
   font-size: 13px;
   color: #8b95a1;
+  word-break: keep-all;
 }
 </style>

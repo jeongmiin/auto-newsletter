@@ -10,7 +10,7 @@
         </h2>
       </div>
 
-      <div v-if="modules.length === 0" class="text-center text-gray-500 py-10 px-2 text-xs flex-1">
+      <div v-if="modules.length === 0" class="text-center text-gray-500 py-10 px-2 text-base flex-1">
         추가된 모듈이 없습니다.
       </div>
 
