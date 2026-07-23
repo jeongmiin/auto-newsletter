@@ -1,0 +1,7121 @@
+{
+  "modules": [
+    {
+      "id": "ModuleNewsHeader",
+      "name": "뉴스 헤드라인 헤더",
+      "description": "로고 + 타이틀 + 웹으로 보기 링크가 있는 헤더",
+      "category": "common",
+      "icon": "pi pi-home",
+      "htmlFile": "ModuleNewsHeader.html",
+      "editableProps": [
+        {
+          "key": "tableSummary",
+          "label": "전체 테이블 요약 (접근성)",
+          "type": "text",
+          "default": "전시 뉴스레터 입니다.",
+          "placeholder": "스크린 리더용 테이블 설명",
+          "group": "접근성"
+        },
+        {
+          "key": "showLogo",
+          "label": "로고 노출",
+          "type": "boolean",
+          "default": true,
+          "group": "로고"
+        },
+        {
+          "key": "logoImageUrl",
+          "label": "이미지 URL",
+          "type": "url",
+          "default": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/newsletter/images/logo-gray.png",
+          "placeholder": "이미지 URL을 입력하세요",
+          "showWhen": "showLogo",
+          "group": "로고"
+        },
+        {
+          "key": "logoAlign",
+          "label": "정렬",
+          "type": "select",
+          "default": "center",
+          "options": [
+            {
+              "label": "왼쪽",
+              "value": "left"
+            },
+            {
+              "label": "가운데",
+              "value": "center"
+            },
+            {
+              "label": "오른쪽",
+              "value": "right"
+            }
+          ],
+          "showWhen": "showLogo",
+          "group": "로고"
+        },
+        {
+          "key": "logoAlt",
+          "label": "대체 텍스트",
+          "type": "text",
+          "default": "로고",
+          "showWhen": "showLogo",
+          "group": "로고"
+        },
+        {
+          "key": "logoMaxWidth",
+          "label": "최대 너비",
+          "type": "text",
+          "default": "100%",
+          "placeholder": "예: 100%, 200px",
+          "hint": "로고 이미지의 최대 너비입니다. 100%면 영역 너비에 맞춰지고, 200px처럼 고정값도 가능합니다.",
+          "showWhen": "showLogo",
+          "group": "로고"
+        },
+        {
+          "key": "logoBorderWidth",
+          "label": "하단 테두리 두께",
+          "type": "text",
+          "default": "5px",
+          "showWhen": "showLogo",
+          "group": "로고"
+        },
+        {
+          "key": "logoBorderColor",
+          "label": "하단 테두리 색상",
+          "type": "text",
+          "default": "#000000",
+          "showWhen": "showLogo",
+          "group": "로고"
+        },
+        {
+          "key": "headerTitle",
+          "label": "헤더 타이틀",
+          "type": "text",
+          "default": "NEWSLETTER VOL.1",
+          "placeholder": "뉴스레터 타이틀",
+          "group": "헤더 타이틀"
+        },
+        {
+          "key": "headerTitleFontSize",
+          "label": "폰트 크기",
+          "type": "text",
+          "default": "16px",
+          "placeholder": "예: 16px, 18px",
+          "group": "헤더 타이틀"
+        },
+        {
+          "key": "titleColor",
+          "label": "타이틀 색상",
+          "type": "text",
+          "default": "#333333",
+          "group": "헤더 타이틀"
+        },
+        {
+          "key": "webViewText",
+          "label": "텍스트",
+          "type": "text",
+          "default": "👀 웹으로 보기",
+          "group": "웹으로 보기"
+        },
+        {
+          "key": "webViewFontSize",
+          "label": "폰트 크기",
+          "type": "text",
+          "default": "16px",
+          "placeholder": "예: 14px, 16px",
+          "group": "웹으로 보기"
+        },
+        {
+          "key": "webViewUrl",
+          "label": "URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "웹 버전 URL",
+          "group": "웹으로 보기"
+        },
+        {
+          "key": "webViewColor",
+          "label": "링크 색상",
+          "type": "text",
+          "default": "#333333",
+          "group": "웹으로 보기"
+        },
+        {
+          "key": "headerTitlePaddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "5px",
+          "placeholder": "예: 0, 10px",
+          "group": "헤더 타이틀 여백"
+        },
+        {
+          "key": "headerTitlePaddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 10px, 0",
+          "group": "헤더 타이틀 여백"
+        },
+        {
+          "key": "headerTitlePaddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "10px",
+          "placeholder": "예: 10px, 0",
+          "group": "헤더 타이틀 여백"
+        },
+        {
+          "key": "headerTitlePaddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 10px, 0",
+          "group": "헤더 타이틀 여백"
+        }
+      ]
+    },
+    {
+      "id": "ModuleBasicHeader",
+      "name": "기본 헤더",
+      "description": "로고와 뉴스레터 타이틀이 포함된 기본 헤더",
+      "category": "common",
+      "icon": "pi pi-home",
+      "htmlFile": "ModuleBasicHeader.html",
+      "editableProps": [
+        {
+          "key": "tableSummary",
+          "label": "전체 테이블 요약 (접근성)",
+          "type": "text",
+          "default": "전시 뉴스레터 입니다.",
+          "placeholder": "스크린 리더용 테이블 설명",
+          "group": "접근성"
+        },
+        {
+          "key": "topBorderWidth",
+          "label": "두께",
+          "type": "text",
+          "default": "3px",
+          "group": "상단 테두리"
+        },
+        {
+          "key": "topBorderColor",
+          "label": "색상",
+          "type": "color",
+          "default": "#000000",
+          "group": "상단 테두리"
+        },
+        {
+          "key": "logoImageUrl",
+          "label": "이미지 URL",
+          "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/logo-gray.png",
+          "placeholder": "이미지 URL을 입력하세요",
+          "group": "로고"
+        },
+        {
+          "key": "logoAlign",
+          "label": "정렬",
+          "type": "select",
+          "default": "center",
+          "options": [
+            {
+              "label": "왼쪽",
+              "value": "left"
+            },
+            {
+              "label": "가운데",
+              "value": "center"
+            },
+            {
+              "label": "오른쪽",
+              "value": "right"
+            }
+          ],
+          "group": "로고"
+        },
+        {
+          "key": "logoAlt",
+          "label": "대체 텍스트",
+          "type": "text",
+          "default": "로고",
+          "placeholder": "로고",
+          "group": "로고"
+        },
+        {
+          "key": "logoMaxWidth",
+          "label": "최대 너비",
+          "type": "text",
+          "default": "100%",
+          "placeholder": "예: 100%, 200px",
+          "hint": "로고 이미지의 최대 너비입니다. 100%면 영역 너비에 맞춰지고, 200px처럼 고정값도 가능합니다.",
+          "group": "로고"
+        },
+        {
+          "key": "logoPaddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "30px",
+          "placeholder": "예: 30px, 0",
+          "group": "로고"
+        },
+        {
+          "key": "logoPaddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "0",
+          "placeholder": "예: 0, 20px",
+          "group": "로고"
+        },
+        {
+          "key": "logoPaddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "group": "로고"
+        },
+        {
+          "key": "logoPaddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "0",
+          "placeholder": "예: 0, 20px",
+          "group": "로고"
+        },
+        {
+          "key": "logoBorderWidth",
+          "label": "하단 테두리 두께",
+          "type": "text",
+          "default": "1px",
+          "group": "로고"
+        },
+        {
+          "key": "logoBorderColor",
+          "label": "하단 테두리 색상",
+          "type": "color",
+          "default": "#dddddd",
+          "group": "로고"
+        },
+        {
+          "key": "headerText",
+          "label": "헤더 타이틀",
+          "type": "textarea",
+          "default": "<p style=\"margin:0; padding:0;\">NEWSLETTER <strong>VOL.1</strong></p>",
+          "placeholder": "헤더 타이틀를 입력하세요",
+          "group": "헤더 타이틀"
+        },
+        {
+          "key": "headerFontSize",
+          "label": "NEWSLETTER 기본 글자 크기",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 24px",
+          "group": "헤더 타이틀",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
+        },
+        {
+          "key": "headerTextColor",
+          "label": "색상",
+          "type": "color",
+          "default": "#111111",
+          "group": "헤더 타이틀"
+        },
+        {
+          "key": "headerTitlePaddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 0",
+          "group": "헤더 타이틀 여백"
+        },
+        {
+          "key": "headerTitlePaddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "0",
+          "placeholder": "예: 0, 10px",
+          "group": "헤더 타이틀 여백"
+        },
+        {
+          "key": "headerTitlePaddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 0",
+          "group": "헤더 타이틀 여백"
+        },
+        {
+          "key": "headerTitlePaddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "0",
+          "placeholder": "예: 0, 10px",
+          "group": "헤더 타이틀 여백"
+        }
+      ]
+    },
+    {
+      "id": "ModuleImageHeader",
+      "name": "이미지형 헤더",
+      "description": "비주얼 이미지 + 타이틀 + 텍스트 + 버튼이 있는 헤더",
+      "category": "common",
+      "icon": "pi pi-image",
+      "htmlFile": "ModuleImageHeader.html",
+      "editableProps": [
+        {
+          "key": "tableSummary",
+          "label": "전체 테이블 요약 (접근성)",
+          "type": "text",
+          "default": "전시 뉴스레터 입니다.",
+          "placeholder": "스크린 리더용 테이블 설명",
+          "group": "접근성"
+        },
+        {
+          "key": "imageUrl",
+          "label": "이미지 URL",
+          "type": "url",
+          "default": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/newsletter/images/img-visual.png",
+          "placeholder": "이미지 URL을 입력하세요",
+          "group": "이미지"
+        },
+        {
+          "key": "imageAlt",
+          "label": "대체 텍스트",
+          "type": "text",
+          "default": "전시소개글",
+          "group": "이미지"
+        },
+        {
+          "key": "showImageLink",
+          "label": "이미지 링크 사용",
+          "type": "boolean",
+          "default": false,
+          "group": "이미지"
+        },
+        {
+          "key": "imageLinkUrl",
+          "label": "이미지 링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showImageLink",
+          "group": "이미지"
+        },
+        {
+          "key": "imagePaddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "group": "이미지"
+        },
+        {
+          "key": "imagePaddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "group": "이미지"
+        },
+        {
+          "key": "imagePaddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "group": "이미지"
+        },
+        {
+          "key": "imagePaddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "group": "이미지"
+        },
+        {
+          "key": "showVol",
+          "label": "상단 라벨 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "상단 정보"
+        },
+        {
+          "key": "volText",
+          "label": "상단 라벨",
+          "type": "text",
+          "default": "NEWSLETTER VOL.1",
+          "placeholder": "예: NEWSLETTER VOL.1",
+          "showWhen": "showVol",
+          "group": "상단 정보"
+        },
+        {
+          "key": "volFontSize",
+          "label": "상단 라벨 폰트 크기",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 16px",
+          "showWhen": "showVol",
+          "group": "상단 정보"
+        },
+        {
+          "key": "volColor",
+          "label": "상단 라벨 색상",
+          "type": "color",
+          "default": "#333333",
+          "showWhen": "showVol",
+          "group": "상단 정보"
+        },
+        {
+          "key": "volLineHeight",
+          "label": "상단 라벨 행간",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "showWhen": "showVol",
+          "group": "상단 정보"
+        },
+        {
+          "key": "showDate",
+          "label": "일정/장소 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "상단 정보"
+        },
+        {
+          "key": "dateText",
+          "label": "일정/장소",
+          "type": "text",
+          "default": "2023. 8. 3 (목) - 8. 6 (일) COEX",
+          "placeholder": "예: 2023. 8. 3 (목) - 8. 6 (일) COEX",
+          "showWhen": "showDate",
+          "group": "상단 정보"
+        },
+        {
+          "key": "dateFontSize",
+          "label": "일정/장소 폰트 크기",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 18px, 20px",
+          "showWhen": "showDate",
+          "group": "상단 정보"
+        },
+        {
+          "key": "dateColor",
+          "label": "일정/장소 색상",
+          "type": "color",
+          "default": "#333333",
+          "showWhen": "showDate",
+          "group": "상단 정보"
+        },
+        {
+          "key": "dateLineHeight",
+          "label": "일정/장소 행간",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "showWhen": "showDate",
+          "group": "상단 정보"
+        },
+        {
+          "key": "showHome",
+          "label": "홈 링크 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "상단 정보"
+        },
+        {
+          "key": "homeLinkText",
+          "label": "링크 텍스트",
+          "type": "text",
+          "default": "🏠 홈페이지 바로가기",
+          "showWhen": "showHome",
+          "group": "상단 정보"
+        },
+        {
+          "key": "homeLinkUrl",
+          "label": "링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "홈페이지 URL",
+          "showWhen": "showHome",
+          "group": "상단 정보"
+        },
+        {
+          "key": "homeFontSize",
+          "label": "링크 폰트 크기",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px",
+          "showWhen": "showHome",
+          "group": "상단 정보"
+        },
+        {
+          "key": "homeColor",
+          "label": "링크 색상",
+          "type": "color",
+          "default": "#333333",
+          "showWhen": "showHome",
+          "group": "상단 정보"
+        },
+        {
+          "key": "homeLineHeight",
+          "label": "링크 행간",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "showWhen": "showHome",
+          "group": "상단 정보"
+        },
+        {
+          "key": "dividerStyle",
+          "label": "선 스타일",
+          "type": "select",
+          "default": "dotted",
+          "options": [
+            {
+              "label": "실선",
+              "value": "solid"
+            },
+            {
+              "label": "점선",
+              "value": "dotted"
+            },
+            {
+              "label": "파선",
+              "value": "dashed"
+            },
+            {
+              "label": "이중선",
+              "value": "double"
+            }
+          ],
+          "group": "구분선"
+        },
+        {
+          "key": "dividerWidth",
+          "label": "선 두께",
+          "type": "text",
+          "default": "1px",
+          "placeholder": "예: 1px, 2px",
+          "group": "구분선"
+        },
+        {
+          "key": "dividerColor",
+          "label": "선 색상",
+          "type": "color",
+          "default": "#999999",
+          "group": "구분선"
+        },
+        {
+          "key": "dividerPaddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 10px",
+          "group": "구분선"
+        },
+        {
+          "key": "dividerPaddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 25px, 0",
+          "group": "구분선"
+        },
+        {
+          "key": "dividerPaddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 0px, 10px",
+          "group": "구분선"
+        },
+        {
+          "key": "dividerPaddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 25px, 0",
+          "group": "구분선"
+        },
+        {
+          "key": "showTitle",
+          "label": "타이틀 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "타이틀"
+        },
+        {
+          "key": "titleText",
+          "label": "타이틀",
+          "type": "textarea",
+          "default": "국내 유일 기계설비 종합 전시회<br><span style=\"color:#eb2a25;\">『대한민국 기계설비전시회(HVAC KOREA)』</span>가 제 7회를 맞이하였습니다.",
+          "placeholder": "타이틀을 입력하세요",
+          "required": true,
+          "showWhen": "showTitle",
+          "group": "타이틀"
+        },
+        {
+          "key": "titleFontSize",
+          "label": "기본 글자 크기 (본문)",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 22px",
+          "showWhen": "showTitle",
+          "group": "타이틀",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
+        },
+        {
+          "key": "titleColor",
+          "label": "색상",
+          "type": "color",
+          "default": "#111111",
+          "showWhen": "showTitle",
+          "group": "타이틀"
+        },
+        {
+          "key": "showBody",
+          "label": "텍스트 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "텍스트"
+        },
+        {
+          "key": "bodyText",
+          "label": "텍스트",
+          "type": "textarea",
+          "default": "본 전시회는 1군건설사, 설계, 시공, 학계 등 각 부문별 바이어군을 대표하는 유관 협회들과 함께 준비하는 전시회로서 참가기업의 정확한 목표 바이어들이 방문하는 전시회입니다. 기계설비산업의 트렌드를 선도하는 대한민국 기계설비전시회에서 새로운 비즈니스 기회를 찾으세요!",
+          "placeholder": "내용을 입력하세요",
+          "showWhen": "showBody",
+          "group": "텍스트"
+        },
+        {
+          "key": "bodyFontSize",
+          "label": "기본 글자 크기 (본문)",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px",
+          "showWhen": "showBody",
+          "group": "텍스트",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
+        },
+        {
+          "key": "bodyColor",
+          "label": "색상",
+          "type": "color",
+          "default": "#333333",
+          "showWhen": "showBody",
+          "group": "텍스트"
+        },
+        {
+          "key": "showButton",
+          "label": "버튼 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "버튼"
+        },
+        {
+          "key": "buttonText",
+          "label": "텍스트",
+          "type": "text",
+          "default": "사전등록 →",
+          "placeholder": "버튼 텍스트",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonUrl",
+          "label": "링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 링크 URL",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonBgColor",
+          "label": "배경색",
+          "type": "color",
+          "default": "#111111",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonTextColor",
+          "label": "글자색",
+          "type": "color",
+          "default": "#ffffff",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonBorderStyle",
+          "label": "테두리 스타일",
+          "type": "select",
+          "default": "none",
+          "options": [
+            {
+              "label": "없음",
+              "value": "none"
+            },
+            {
+              "label": "실선",
+              "value": "solid"
+            },
+            {
+              "label": "점선",
+              "value": "dashed"
+            },
+            {
+              "label": "점",
+              "value": "dotted"
+            }
+          ],
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonBorderWidth",
+          "label": "테두리 두께",
+          "type": "text",
+          "default": "1px",
+          "placeholder": "예: 1px, 2px",
+          "showWhen": {
+            "key": "buttonBorderStyle",
+            "notEquals": "none"
+          },
+          "group": "버튼"
+        },
+        {
+          "key": "buttonBorderColor",
+          "label": "테두리 색상",
+          "type": "color",
+          "default": "#000000",
+          "showWhen": {
+            "key": "buttonBorderStyle",
+            "notEquals": "none"
+          },
+          "group": "버튼"
+        },
+        {
+          "key": "buttonBorderRadius",
+          "label": "모서리 둥글기",
+          "type": "text",
+          "default": "5px",
+          "placeholder": "예: 5px, 50%",
+          "hint": "값이 클수록 모서리가 둥글어집니다. 100px이면 완전히 둥근(알약형) 버튼이 됩니다.",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonPaddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonPaddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonPaddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonPaddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "showWhen": "showButton",
+          "group": "버튼"
+        }
+      ]
+    },
+    {
+      "id": "SectionTitle",
+      "name": "섹션 타이틀",
+      "description": "제목과 부제목이 있는 헤더",
+      "category": "text",
+      "icon": "pi pi-align-left",
+      "htmlFile": "SectionTitle.html",
+      "editableProps": [
+        {
+          "key": "showMainTitle",
+          "label": "메인 타이틀 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "메인 타이틀"
+        },
+        {
+          "key": "mainTitle",
+          "label": "메인 타이틀",
+          "type": "textarea",
+          "default": "섹션 타이틀",
+          "placeholder": "메인 타이틀을 입력하세요",
+          "showWhen": "showMainTitle",
+          "group": "메인 타이틀"
+        },
+        {
+          "key": "mainTitleFontSize",
+          "label": "기본 글자 크기 (본문)",
+          "type": "text",
+          "default": "22px",
+          "placeholder": "예: 22px, 24px",
+          "showWhen": "showMainTitle",
+          "group": "메인 타이틀",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
+        },
+        {
+          "key": "mainTitleFontWeight",
+          "label": "기본 굵기",
+          "type": "select",
+          "default": "700",
+          "options": [
+            { "label": "보통 (400)", "value": "400" },
+            { "label": "중간 (500)", "value": "500" },
+            { "label": "약간 굵게 (600)", "value": "600" },
+            { "label": "굵게 (700)", "value": "700" },
+            { "label": "매우 굵게 (800)", "value": "800" }
+          ],
+          "showWhen": "showMainTitle",
+          "group": "메인 타이틀",
+          "hint": "굵기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '굵게(B)'를 쓰세요."
+        },
+        {
+          "key": "mainTitleColor",
+          "label": "색상",
+          "type": "color",
+          "default": "#111111",
+          "showWhen": "showMainTitle",
+          "group": "메인 타이틀"
+        },
+        {
+          "key": "mainTitlePaddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 0",
+          "showWhen": "showMainTitle",
+          "group": "메인 타이틀"
+        },
+        {
+          "key": "mainTitlePaddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "showWhen": "showMainTitle",
+          "group": "메인 타이틀"
+        },
+        {
+          "key": "mainTitlePaddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 0",
+          "showWhen": "showMainTitle",
+          "group": "메인 타이틀"
+        },
+        {
+          "key": "mainTitlePaddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "showWhen": "showMainTitle",
+          "group": "메인 타이틀"
+        },
+        {
+          "key": "showSubTitle",
+          "label": "서브 타이틀 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "서브 타이틀"
+        },
+        {
+          "key": "subTitle",
+          "label": "서브 타이틀",
+          "type": "textarea",
+          "default": "서브 타이틀 영역입니다",
+          "placeholder": "서브 타이틀을 입력하세요",
+          "showWhen": "showSubTitle",
+          "group": "서브 타이틀"
+        },
+        {
+          "key": "subTitleFontSize",
+          "label": "기본 글자 크기 (본문)",
+          "type": "text",
+          "default": "16px",
+          "placeholder": "예: 14px, 16px",
+          "showWhen": "showSubTitle",
+          "group": "서브 타이틀",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
+        },
+        {
+          "key": "subTitlePaddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "0",
+          "placeholder": "예: 0, 10px",
+          "showWhen": "showSubTitle",
+          "group": "서브 타이틀"
+        },
+        {
+          "key": "subTitlePaddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 0",
+          "showWhen": "showSubTitle",
+          "group": "서브 타이틀"
+        },
+        {
+          "key": "subTitlePaddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "showWhen": "showSubTitle",
+          "group": "서브 타이틀"
+        },
+        {
+          "key": "subTitlePaddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 0",
+          "showWhen": "showSubTitle",
+          "group": "서브 타이틀"
+        },
+        {
+          "key": "showSectionImage",
+          "label": "이미지 타이틀 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "이미지 타이틀"
+        },
+        {
+          "key": "sectionImageUrl",
+          "label": "이미지 URL",
+          "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-1column.png",
+          "placeholder": "이미지 URL을 입력하세요",
+          "showWhen": "showSectionImage",
+          "group": "이미지 타이틀"
+        },
+        {
+          "key": "sectionImageLinkUrl",
+          "label": "이미지 링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showSectionImage",
+          "group": "이미지 타이틀"
+        },
+        {
+          "key": "sectionImageAlt",
+          "label": "대체 텍스트",
+          "type": "text",
+          "default": "섹션 이미지 타이틀",
+          "placeholder": "이미지 설명",
+          "showWhen": "showSectionImage",
+          "group": "이미지 타이틀"
+        },
+        {
+          "key": "sectionImageMaxWidth",
+          "label": "최대 너비",
+          "type": "text",
+          "default": "100%",
+          "placeholder": "예: 100%, 300px",
+          "showWhen": "showSectionImage",
+          "group": "이미지 타이틀"
+        },
+        {
+          "key": "sectionImageAlign",
+          "label": "정렬",
+          "type": "select",
+          "default": "center",
+          "options": [
+            {
+              "label": "왼쪽",
+              "value": "left"
+            },
+            {
+              "label": "가운데",
+              "value": "center"
+            },
+            {
+              "label": "오른쪽",
+              "value": "right"
+            }
+          ],
+          "showWhen": "showSectionImage",
+          "group": "이미지 타이틀"
+        },
+        {
+          "key": "sectionImagePaddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 0",
+          "showWhen": "showSectionImage",
+          "group": "이미지 타이틀"
+        },
+        {
+          "key": "sectionImagePaddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "showWhen": "showSectionImage",
+          "group": "이미지 타이틀"
+        },
+        {
+          "key": "sectionImagePaddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "0",
+          "placeholder": "예: 0, 10px",
+          "showWhen": "showSectionImage",
+          "group": "이미지 타이틀"
+        },
+        {
+          "key": "sectionImagePaddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "showWhen": "showSectionImage",
+          "group": "이미지 타이틀"
+        },
+        {
+          "key": "sectionBgColor",
+          "label": "전체 배경색",
+          "type": "color",
+          "default": "transparent",
+          "placeholder": "예: #f5f5f5 (비우면 투명)",
+          "group": "스타일"
+        },
+        {
+          "key": "topBorderWidth",
+          "label": "상단 테두리 두께",
+          "type": "text",
+          "default": "2px",
+          "placeholder": "예: 2px, 3px",
+          "group": "스타일"
+        },
+        {
+          "key": "topBorderColor",
+          "label": "상단 테두리 색상",
+          "type": "color",
+          "default": "#333333",
+          "group": "스타일"
+        }
+      ]
+    },
+    {
+      "id": "ModuleDescText",
+      "name": "설명 텍스트",
+      "description": "단순 텍스트 콘텐츠 블록",
+      "category": "text",
+      "icon": "pi pi-align-left",
+      "htmlFile": "ModuleDescText.html",
+      "editableProps": [
+        {
+          "key": "descriptionText",
+          "label": "텍스트",
+          "type": "textarea",
+          "default": "<p style=\"margin:0; padding:0;\">콘텐츠 텍스트를 입력하세요.</p>",
+          "placeholder": "텍스트를 입력하세요"
+        },
+        {
+          "key": "fontSize",
+          "label": "기본 글자 크기 (본문)",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
+        },
+        {
+          "key": "bgColor",
+          "label": "배경색",
+          "type": "color",
+          "default": "transparent",
+          "placeholder": "예: #f5f5f5 (비우면 투명)"
+        },
+        {
+          "key": "textColor",
+          "label": "텍스트 색상",
+          "type": "color",
+          "default": "#333333",
+          "placeholder": "예: #333333"
+        },
+        {
+          "key": "paddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 10px"
+        },
+        {
+          "key": "paddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0"
+        },
+        {
+          "key": "paddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 10px"
+        },
+        {
+          "key": "paddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0"
+        }
+      ]
+    },
+    {
+      "id": "ModuleTable",
+      "name": "커스텀 테이블",
+      "description": "행/열 추가/삭제, colspan/rowspan 편집이 가능한 테이블",
+      "category": "table",
+      "icon": "pi pi-table",
+      "htmlFile": "ModuleTable.html",
+      "editableProps": [
+        {
+          "key": "tableCells",
+          "label": "테이블 편집",
+          "type": "table-editor"
+        },
+        {
+          "key": "borderTopWidth",
+          "label": "테이블 상단 테두리 두께",
+          "type": "text",
+          "default": "2px"
+        },
+        {
+          "key": "borderTopColor",
+          "label": "테이블 상단 테두리 색상",
+          "type": "text",
+          "default": "#333333"
+        },
+        {
+          "key": "cellBorderColor",
+          "label": "셀 테두리 색상",
+          "type": "text",
+          "default": "#dddddd"
+        },
+        {
+          "key": "headerBgColor",
+          "label": "제목(th) 배경색",
+          "type": "text",
+          "default": "#f6f6f6"
+        },
+        {
+          "key": "headerTextColor",
+          "label": "제목(th) 글자색",
+          "type": "color",
+          "default": "#333333"
+        },
+        {
+          "key": "cellBgColor",
+          "label": "내용(td) 배경색",
+          "type": "text",
+          "default": "#ffffff"
+        },
+        {
+          "key": "cellTextColor",
+          "label": "내용(td) 글자색",
+          "type": "color",
+          "default": "#333333"
+        },
+        {
+          "key": "paddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0"
+        },
+        {
+          "key": "paddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0"
+        },
+        {
+          "key": "paddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0"
+        },
+        {
+          "key": "paddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0"
+        }
+      ]
+    },
+    {
+      "id": "ModuleImg",
+      "name": "단일 이미지",
+      "description": "단일 이미지 블록",
+      "category": "image",
+      "icon": "pi pi-image",
+      "htmlFile": "ModuleImg.html",
+      "editableProps": [
+        {
+          "key": "imageUrl",
+          "label": "이미지 URL",
+          "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-1column.png",
+          "placeholder": "이미지 URL을 입력하세요"
+        },
+        {
+          "key": "imageAlt",
+          "label": "이미지 설명 (Alt)",
+          "type": "text",
+          "default": "이미지",
+          "placeholder": "이미지 설명"
+        },
+        {
+          "key": "imageMaxWidth",
+          "label": "이미지 최대 너비",
+          "type": "text",
+          "default": "100%",
+          "placeholder": "예: 100%, 300px"
+        },
+        {
+          "key": "showImageLink",
+          "label": "이미지 링크 사용",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "imageLinkUrl",
+          "label": "이미지 링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showImageLink"
+        },
+        {
+          "key": "imageBorderRadius",
+          "label": "이미지 모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%"
+        },
+        {
+          "key": "imageBorderStyle",
+          "label": "테두리 스타일",
+          "type": "select",
+          "default": "none",
+          "options": [
+            { "label": "없음", "value": "none" },
+            { "label": "실선", "value": "solid" },
+            { "label": "점선", "value": "dashed" },
+            { "label": "점", "value": "dotted" }
+          ]
+        },
+        {
+          "key": "imageBorderWidth",
+          "label": "테두리 두께",
+          "type": "text",
+          "default": "1px",
+          "placeholder": "예: 1px, 2px",
+          "showWhen": { "key": "imageBorderStyle", "notEquals": "none" }
+        },
+        {
+          "key": "imageBorderColor",
+          "label": "테두리 색상",
+          "type": "color",
+          "default": "#000000",
+          "showWhen": { "key": "imageBorderStyle", "notEquals": "none" }
+        },
+        {
+          "key": "paddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 10px"
+        },
+        {
+          "key": "paddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0"
+        },
+        {
+          "key": "paddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0"
+        },
+        {
+          "key": "paddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0"
+        }
+      ]
+    },
+    {
+      "id": "ModuleMultiImage",
+      "name": "복수 이미지",
+      "description": "2컬럼 이미지 레이아웃",
+      "category": "image",
+      "icon": "pi pi-images",
+      "htmlFile": "ModuleMultiImage.html",
+      "editableProps": [
+        {
+          "key": "leftImageUrl",
+          "label": "URL",
+          "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
+          "placeholder": "왼쪽 이미지 URL",
+          "group": "왼쪽 이미지"
+        },
+        {
+          "key": "leftImageAlt",
+          "label": "설명 (Alt)",
+          "type": "text",
+          "default": "이미지",
+          "group": "왼쪽 이미지"
+        },
+        {
+          "key": "showLeftImageLink",
+          "label": "링크 사용",
+          "type": "boolean",
+          "default": false,
+          "group": "왼쪽 이미지"
+        },
+        {
+          "key": "leftImageLinkUrl",
+          "label": "링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showLeftImageLink",
+          "group": "왼쪽 이미지"
+        },
+        {
+          "key": "leftImageBorderRadius",
+          "label": "모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%",
+          "group": "왼쪽 이미지"
+        },
+        {
+          "key": "leftImageBorderStyle",
+          "label": "테두리 스타일",
+          "type": "select",
+          "default": "none",
+          "options": [
+            { "label": "없음", "value": "none" },
+            { "label": "실선", "value": "solid" },
+            { "label": "점선", "value": "dashed" },
+            { "label": "점", "value": "dotted" }
+          ],
+          "group": "왼쪽 이미지"
+        },
+        {
+          "key": "leftImageBorderWidth",
+          "label": "테두리 두께",
+          "type": "text",
+          "default": "1px",
+          "placeholder": "예: 1px, 2px",
+          "showWhen": { "key": "leftImageBorderStyle", "notEquals": "none" },
+          "group": "왼쪽 이미지"
+        },
+        {
+          "key": "leftImageBorderColor",
+          "label": "테두리 색상",
+          "type": "color",
+          "default": "#000000",
+          "showWhen": { "key": "leftImageBorderStyle", "notEquals": "none" },
+          "group": "왼쪽 이미지"
+        },
+        {
+          "key": "rightImageUrl",
+          "label": "URL",
+          "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
+          "placeholder": "오른쪽 이미지 URL",
+          "group": "오른쪽 이미지"
+        },
+        {
+          "key": "rightImageAlt",
+          "label": "설명 (Alt)",
+          "type": "text",
+          "default": "이미지",
+          "group": "오른쪽 이미지"
+        },
+        {
+          "key": "showRightImageLink",
+          "label": "링크 사용",
+          "type": "boolean",
+          "default": false,
+          "group": "오른쪽 이미지"
+        },
+        {
+          "key": "rightImageLinkUrl",
+          "label": "링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showRightImageLink",
+          "group": "오른쪽 이미지"
+        },
+        {
+          "key": "rightImageBorderRadius",
+          "label": "모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%",
+          "group": "오른쪽 이미지"
+        },
+        {
+          "key": "rightImageBorderStyle",
+          "label": "테두리 스타일",
+          "type": "select",
+          "default": "none",
+          "options": [
+            { "label": "없음", "value": "none" },
+            { "label": "실선", "value": "solid" },
+            { "label": "점선", "value": "dashed" },
+            { "label": "점", "value": "dotted" }
+          ],
+          "group": "오른쪽 이미지"
+        },
+        {
+          "key": "rightImageBorderWidth",
+          "label": "테두리 두께",
+          "type": "text",
+          "default": "1px",
+          "placeholder": "예: 1px, 2px",
+          "showWhen": { "key": "rightImageBorderStyle", "notEquals": "none" },
+          "group": "오른쪽 이미지"
+        },
+        {
+          "key": "rightImageBorderColor",
+          "label": "테두리 색상",
+          "type": "color",
+          "default": "#000000",
+          "showWhen": { "key": "rightImageBorderStyle", "notEquals": "none" },
+          "group": "오른쪽 이미지"
+        }
+      ]
+    },
+    {
+      "id": "ModuleOneButton",
+      "name": "단일 버튼",
+      "description": "하나의 버튼이 있는 블록",
+      "category": "button",
+      "icon": "pi pi-stop",
+      "htmlFile": "ModuleOneButton.html",
+      "editableProps": [
+        {
+          "key": "buttonText",
+          "label": "버튼 텍스트",
+          "type": "text",
+          "default": "큰 버튼 →",
+          "placeholder": "버튼 텍스트를 입력하세요",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonFontSize",
+          "label": "버튼 폰트 크기",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 16px",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonPaddingV",
+          "label": "버튼 안쪽 상하 여백",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 20px",
+          "hint": "버튼 안쪽 위·아래 여백입니다. 값이 클수록 버튼 높이가 커집니다.",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonUrl",
+          "label": "버튼 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 링크 URL을 입력하세요",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonBgColor",
+          "label": "버튼 배경색",
+          "type": "text",
+          "default": "#111111",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonTextColor",
+          "label": "버튼 글자색",
+          "type": "text",
+          "default": "#ffffff",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonBorderStyle",
+          "label": "버튼 테두리 스타일",
+          "type": "select",
+          "default": "none",
+          "options": [
+            {
+              "label": "없음",
+              "value": "none"
+            },
+            {
+              "label": "실선",
+              "value": "solid"
+            },
+            {
+              "label": "점선",
+              "value": "dashed"
+            },
+            {
+              "label": "점",
+              "value": "dotted"
+            }
+          ],
+          "group": "버튼"
+        },
+        {
+          "key": "buttonBorderWidth",
+          "label": "버튼 테두리 두께",
+          "type": "text",
+          "default": "1px",
+          "placeholder": "예: 1px",
+          "showWhen": {
+            "key": "buttonBorderStyle",
+            "notEquals": "none"
+          },
+          "group": "버튼"
+        },
+        {
+          "key": "buttonBorderColor",
+          "label": "버튼 테두리 색상",
+          "type": "text",
+          "default": "#000000",
+          "showWhen": {
+            "key": "buttonBorderStyle",
+            "notEquals": "none"
+          },
+          "group": "버튼"
+        },
+        {
+          "key": "buttonBorderRadius",
+          "label": "버튼 모서리 둥글기",
+          "type": "text",
+          "default": "5px",
+          "placeholder": "예: 5px, 50%",
+          "hint": "값이 클수록 모서리가 둥글어집니다. 100px이면 완전히 둥근(알약형) 버튼이 됩니다.",
+          "group": "버튼"
+        },
+        {
+          "key": "paddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 0",
+          "group": "여백"
+        },
+        {
+          "key": "paddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "group": "여백"
+        },
+        {
+          "key": "paddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "group": "여백"
+        },
+        {
+          "key": "paddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "group": "여백"
+        }
+      ]
+    },
+    {
+      "id": "ModuleTwoButton",
+      "name": "복수 버튼",
+      "description": "두 개의 버튼이 나란히 있는 블록",
+      "category": "button",
+      "icon": "pi pi-stop",
+      "htmlFile": "ModuleTwoButton.html",
+      "editableProps": [
+        {
+          "key": "button1Text",
+          "label": "텍스트",
+          "type": "text",
+          "default": "버튼 1 →",
+          "placeholder": "버튼 텍스트를 입력하세요",
+          "group": "첫 번째 버튼"
+        },
+        {
+          "key": "button1FontSize",
+          "label": "폰트 크기",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 16px",
+          "group": "첫 번째 버튼"
+        },
+        {
+          "key": "button1PaddingV",
+          "label": "안쪽 상하 여백",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 20px",
+          "hint": "버튼 안쪽 위·아래 여백입니다. 값이 클수록 버튼 높이가 커집니다.",
+          "group": "첫 번째 버튼"
+        },
+        {
+          "key": "button1Url",
+          "label": "링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 링크 URL을 입력하세요",
+          "group": "첫 번째 버튼"
+        },
+        {
+          "key": "button1BgColor",
+          "label": "배경색",
+          "type": "text",
+          "default": "#111111",
+          "group": "첫 번째 버튼"
+        },
+        {
+          "key": "button1TextColor",
+          "label": "글자색",
+          "type": "text",
+          "default": "#ffffff",
+          "group": "첫 번째 버튼"
+        },
+        {
+          "key": "button1BorderStyle",
+          "label": "테두리 스타일",
+          "type": "select",
+          "default": "none",
+          "options": [
+            {
+              "label": "없음",
+              "value": "none"
+            },
+            {
+              "label": "실선",
+              "value": "solid"
+            },
+            {
+              "label": "점선",
+              "value": "dashed"
+            },
+            {
+              "label": "점",
+              "value": "dotted"
+            }
+          ],
+          "group": "첫 번째 버튼"
+        },
+        {
+          "key": "button1BorderWidth",
+          "label": "테두리 두께",
+          "type": "text",
+          "default": "1px",
+          "placeholder": "예: 1px",
+          "showWhen": {
+            "key": "button1BorderStyle",
+            "notEquals": "none"
+          },
+          "group": "첫 번째 버튼"
+        },
+        {
+          "key": "button1BorderColor",
+          "label": "테두리 색상",
+          "type": "text",
+          "default": "#000000",
+          "showWhen": {
+            "key": "button1BorderStyle",
+            "notEquals": "none"
+          },
+          "group": "첫 번째 버튼"
+        },
+        {
+          "key": "button1BorderRadius",
+          "label": "모서리 둥글기",
+          "type": "text",
+          "default": "5px",
+          "placeholder": "예: 5px, 50%",
+          "hint": "값이 클수록 모서리가 둥글어집니다. 100px이면 완전히 둥근(알약형) 버튼이 됩니다.",
+          "group": "첫 번째 버튼"
+        },
+        {
+          "key": "button2Text",
+          "label": "텍스트",
+          "type": "text",
+          "default": "버튼 2 →",
+          "placeholder": "버튼 텍스트를 입력하세요",
+          "group": "두 번째 버튼"
+        },
+        {
+          "key": "button2FontSize",
+          "label": "폰트 크기",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 16px",
+          "group": "두 번째 버튼"
+        },
+        {
+          "key": "button2PaddingV",
+          "label": "안쪽 상하 여백",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 20px",
+          "hint": "버튼 안쪽 위·아래 여백입니다. 값이 클수록 버튼 높이가 커집니다.",
+          "group": "두 번째 버튼"
+        },
+        {
+          "key": "button2Url",
+          "label": "링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 링크 URL을 입력하세요",
+          "group": "두 번째 버튼"
+        },
+        {
+          "key": "button2BgColor",
+          "label": "배경색",
+          "type": "text",
+          "default": "#111111",
+          "group": "두 번째 버튼"
+        },
+        {
+          "key": "button2TextColor",
+          "label": "글자색",
+          "type": "text",
+          "default": "#ffffff",
+          "group": "두 번째 버튼"
+        },
+        {
+          "key": "button2BorderStyle",
+          "label": "테두리 스타일",
+          "type": "select",
+          "default": "none",
+          "options": [
+            {
+              "label": "없음",
+              "value": "none"
+            },
+            {
+              "label": "실선",
+              "value": "solid"
+            },
+            {
+              "label": "점선",
+              "value": "dashed"
+            },
+            {
+              "label": "점",
+              "value": "dotted"
+            }
+          ],
+          "group": "두 번째 버튼"
+        },
+        {
+          "key": "button2BorderWidth",
+          "label": "테두리 두께",
+          "type": "text",
+          "default": "1px",
+          "placeholder": "예: 1px",
+          "showWhen": {
+            "key": "button2BorderStyle",
+            "notEquals": "none"
+          },
+          "group": "두 번째 버튼"
+        },
+        {
+          "key": "button2BorderColor",
+          "label": "테두리 색상",
+          "type": "text",
+          "default": "#000000",
+          "showWhen": {
+            "key": "button2BorderStyle",
+            "notEquals": "none"
+          },
+          "group": "두 번째 버튼"
+        },
+        {
+          "key": "button2BorderRadius",
+          "label": "모서리 둥글기",
+          "type": "text",
+          "default": "5px",
+          "placeholder": "예: 5px, 50%",
+          "hint": "값이 클수록 모서리가 둥글어집니다. 100px이면 완전히 둥근(알약형) 버튼이 됩니다.",
+          "group": "두 번째 버튼"
+        },
+        {
+          "key": "paddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "10px",
+          "placeholder": "예: 10px, 0",
+          "group": "여백"
+        },
+        {
+          "key": "paddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 0",
+          "group": "여백"
+        },
+        {
+          "key": "paddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 0",
+          "group": "여백"
+        },
+        {
+          "key": "paddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 0",
+          "group": "여백"
+        }
+      ]
+    },
+    {
+      "id": "ModuleFooter",
+      "name": "하단 푸터",
+      "description": "푸터 - 회사정보, SNS 링크, 수신거부",
+      "category": "common",
+      "icon": "pi pi-building",
+      "htmlFile": "ModuleFooter.html",
+      "editableProps": [
+        {
+          "key": "footerBgColor",
+          "label": "푸터 배경색",
+          "type": "color",
+          "default": "#e9e9e9",
+          "group": "공통"
+        },
+        {
+          "key": "footerTextColor",
+          "label": "푸터 텍스트 색상",
+          "type": "color",
+          "default": "#333333",
+          "hint": "푸터의 모든 텍스트(회사정보·연락처·안내문구·수신거부)에 일괄 적용됩니다.",
+          "group": "공통"
+        },
+        {
+          "key": "companyInfo",
+          "label": "회사 정보 (제목·회사명·주소)",
+          "type": "textarea",
+          "default": "<p style=\"margin:0; padding:0;\"><strong>코리아빌드 사무국</strong></p><p style=\"margin:0; padding:0;\">(주)메쎄이상</p><p style=\"margin:0; padding:0; font-size:13px;\">서울시 마포구 월드컵북로 58길 9 ES타워 (03922)</p>",
+          "placeholder": "상단 제목·회사명·주소를 한 번에 작성하세요",
+          "hint": "제목·회사명·주소를 한 에디터에서 작성합니다. 글자 크기·굵게 등은 에디터 툴바로 지정하세요.",
+          "group": "회사 정보"
+        },
+        {
+          "key": "companyInfoFontSize",
+          "label": "회사 정보 기본 폰트 크기",
+          "type": "text",
+          "default": "16px",
+          "placeholder": "예: 16px, 14px",
+          "hint": "회사 정보 영역의 기본 글자 크기입니다. 특정 부분만 다르게 하려면 에디터 툴바에서 글자 크기를 지정하세요.",
+          "group": "회사 정보"
+        },
+        {
+          "key": "showWebsite",
+          "label": "웹사이트(H) 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "회사 정보"
+        },
+        {
+          "key": "websiteUrl",
+          "label": "웹사이트 URL",
+          "type": "text",
+          "default": "www.koreabuild.co.kr",
+          "placeholder": "웹사이트 주소",
+          "showWhen": "showWebsite",
+          "group": "회사 정보"
+        },
+        {
+          "key": "showPhone",
+          "label": "전화번호(T) 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "회사 정보"
+        },
+        {
+          "key": "phone",
+          "label": "전화번호",
+          "type": "text",
+          "default": "02-6121-6362",
+          "placeholder": "팩스 또는 전화번호",
+          "showWhen": "showPhone",
+          "group": "회사 정보"
+        },
+        {
+          "key": "showEmail",
+          "label": "이메일(E) 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "회사 정보"
+        },
+        {
+          "key": "email",
+          "label": "이메일",
+          "type": "text",
+          "default": "hvackorea@esgroup.net",
+          "placeholder": "회사 이메일",
+          "showWhen": "showEmail",
+          "group": "회사 정보"
+        },
+        {
+          "key": "showFax",
+          "label": "팩스(F) 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "회사 정보"
+        },
+        {
+          "key": "fax",
+          "label": "팩스번호",
+          "type": "text",
+          "default": "02-6121-6363",
+          "placeholder": "팩스번호",
+          "showWhen": "showFax",
+          "group": "회사 정보"
+        },
+        {
+          "key": "contactInfoFontSize",
+          "label": "연락처(H/T/E/F) 폰트 크기",
+          "type": "text",
+          "default": "13px",
+          "placeholder": "예: 13px, 14px",
+          "group": "회사 정보"
+        },
+        {
+          "key": "snsIconBgColor",
+          "label": "SNS 아이콘 배경색",
+          "type": "color",
+          "default": "#333333",
+          "hint": "모든 SNS 원형 아이콘의 배경색을 일괄 지정합니다.",
+          "group": "SNS 링크"
+        },
+        {
+          "key": "showHome",
+          "label": "홈 아이콘 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "SNS 링크"
+        },
+        {
+          "key": "homeUrl",
+          "label": "홈 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "홈페이지 URL",
+          "showWhen": "showHome",
+          "group": "SNS 링크"
+        },
+        {
+          "key": "showFacebook",
+          "label": "페이스북 아이콘 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "SNS 링크"
+        },
+        {
+          "key": "facebookUrl",
+          "label": "페이스북 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "페이스북 URL",
+          "showWhen": "showFacebook",
+          "group": "SNS 링크"
+        },
+        {
+          "key": "showX",
+          "label": "X(트위터) 아이콘 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "SNS 링크"
+        },
+        {
+          "key": "xUrl",
+          "label": "X(트위터) 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "X(트위터) URL",
+          "showWhen": "showX",
+          "group": "SNS 링크"
+        },
+        {
+          "key": "showBlog",
+          "label": "블로그 아이콘 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "SNS 링크"
+        },
+        {
+          "key": "blogUrl",
+          "label": "블로그 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "블로그 URL",
+          "showWhen": "showBlog",
+          "group": "SNS 링크"
+        },
+        {
+          "key": "showYoutube",
+          "label": "유튜브 아이콘 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "SNS 링크"
+        },
+        {
+          "key": "youtubeUrl",
+          "label": "유튜브 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "유튜브 URL",
+          "showWhen": "showYoutube",
+          "group": "SNS 링크"
+        },
+        {
+          "key": "showInstagram",
+          "label": "인스타그램 아이콘 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "SNS 링크"
+        },
+        {
+          "key": "instagramUrl",
+          "label": "인스타그램 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "인스타그램 URL",
+          "showWhen": "showInstagram",
+          "group": "SNS 링크"
+        },
+        {
+          "key": "showKakao",
+          "label": "카카오톡 아이콘 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "SNS 링크"
+        },
+        {
+          "key": "kakaoUrl",
+          "label": "카카오톡 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "카카오톡 채널 URL",
+          "showWhen": "showKakao",
+          "group": "SNS 링크"
+        },
+        {
+          "key": "showLinkedin",
+          "label": "링크드인 아이콘 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "SNS 링크"
+        },
+        {
+          "key": "linkedinUrl",
+          "label": "링크드인 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "링크드인 URL",
+          "showWhen": "showLinkedin",
+          "group": "SNS 링크"
+        },
+        {
+          "key": "showZuzuzu",
+          "label": "쭈쭈쭈 링크 아이콘 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "SNS 링크"
+        },
+        {
+          "key": "zuzuzuUrl",
+          "label": "쭈쭈쭈 링크",
+          "type": "url",
+          "default": "https://kcoupet.com/",
+          "placeholder": "쭈쭈쭈 URL",
+          "showWhen": "showZuzuzu",
+          "group": "SNS 링크"
+        },
+        {
+          "key": "showEn",
+          "label": "영어 뉴스레터 아이콘 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "SNS 링크"
+        },
+        {
+          "key": "enUrl",
+          "label": "영어 뉴스레터 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "영어 뉴스레터 URL",
+          "showWhen": "showEn",
+          "group": "SNS 링크"
+        },
+        {
+          "key": "showJp",
+          "label": "일본어 뉴스레터 아이콘 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "SNS 링크"
+        },
+        {
+          "key": "jpUrl",
+          "label": "일본어 뉴스레터 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "일본어 뉴스레터 URL",
+          "showWhen": "showJp",
+          "group": "SNS 링크"
+        },
+        {
+          "key": "showTh",
+          "label": "태국어 뉴스레터 아이콘 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "SNS 링크"
+        },
+        {
+          "key": "thUrl",
+          "label": "태국어 뉴스레터 링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "태국어 뉴스레터 URL",
+          "showWhen": "showTh",
+          "group": "SNS 링크"
+        },
+        {
+          "key": "showKoreanFooter",
+          "label": "국문 안내문구 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "수신거부 / 문의"
+        },
+        {
+          "key": "koreanNoticeText",
+          "label": "국문 안내문구",
+          "type": "textarea",
+          "default": "본 메일은 회원님의 수신동의 여부를 확인한 결과 회원님께서 수신동의를 하셨기에 발송되었습니다.<br>메일 수신을 원치 않으시면 <a style=\"text-decoration:none; color:#333333; font-weight:700;\" href=\"#\" target=\"_blank\">[수신거부]</a> 를 클릭하십시오.<br><div style=\"margin-top:2px;\">본 메일은 발신전용 메일이므로 문의사항은 <strong>name@esgroup.net</strong>으로 문의 바랍니다</div>",
+          "placeholder": "수신동의/수신거부 안내 문구",
+          "hint": "수신거부 링크는 [수신거부] 텍스트를 선택하고 툴바의 링크 버튼으로 지정하세요.",
+          "showWhen": "showKoreanFooter",
+          "group": "수신거부 / 문의"
+        },
+        {
+          "key": "showEnglishFooter",
+          "label": "영문 안내문구 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "수신거부 / 문의"
+        },
+        {
+          "key": "englishNoticeText",
+          "label": "영문 안내문구",
+          "type": "textarea",
+          "default": "If you don't want this type of information or e-mail, please click the <a style=\"text-decoration:none; color:#333333; font-weight:700;\" href=\"#\" target=\"_blank\">[unsubscription]</a><br>Please note that this is a no-reply email. For any inquiries,<br>contact us at 02-0000-0000 or via email at name@esgroup.net.",
+          "placeholder": "English notice",
+          "hint": "구독취소 링크는 [unsubscription] 텍스트를 선택하고 툴바의 링크 버튼으로 지정하세요.",
+          "showWhen": "showEnglishFooter",
+          "group": "수신거부 / 문의"
+        }
+      ]
+    },
+    {
+      "id": "ModuleDivider",
+      "name": "구분선, 여백",
+      "description": "콘텐츠 사이에 구분선과 여백 추가",
+      "category": "common",
+      "icon": "pi pi-minus",
+      "htmlFile": "ModuleDivider.html",
+      "editableProps": [
+        {
+          "key": "borderColor",
+          "label": "선 색상",
+          "type": "color",
+          "default": "#dddddd",
+          "group": "선 스타일"
+        },
+        {
+          "key": "borderWidth",
+          "label": "선 두께",
+          "type": "text",
+          "default": "1px",
+          "placeholder": "예: 1px, 2px",
+          "group": "선 스타일"
+        },
+        {
+          "key": "borderStyle",
+          "label": "선 스타일",
+          "type": "select",
+          "default": "solid",
+          "options": [
+            {
+              "label": "실선",
+              "value": "solid"
+            },
+            {
+              "label": "점선",
+              "value": "dotted"
+            },
+            {
+              "label": "파선",
+              "value": "dashed"
+            },
+            {
+              "label": "이중선",
+              "value": "double"
+            }
+          ],
+          "group": "선 스타일"
+        },
+        {
+          "key": "dividerWidth",
+          "label": "선 너비",
+          "type": "text",
+          "default": "100%",
+          "placeholder": "예: 100%, 50%, 300px",
+          "group": "선 스타일"
+        },
+        {
+          "key": "paddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "20px",
+          "group": "여백"
+        },
+        {
+          "key": "paddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "20px",
+          "group": "여백"
+        },
+        {
+          "key": "paddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "20px",
+          "group": "여백"
+        },
+        {
+          "key": "paddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "20px",
+          "group": "여백"
+        }
+      ]
+    },
+    {
+      "id": "Module01",
+      "name": "모듈 01번",
+      "description": "강조 타이틀과 텍스트가 있는 박스",
+      "category": "text",
+      "icon": "pi pi-th-large",
+      "htmlFile": "Module01.html",
+      "editableProps": [
+        {
+          "key": "showTitle",
+          "label": "타이틀 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "타이틀"
+        },
+        {
+          "key": "contentTitle",
+          "label": "타이틀",
+          "type": "text",
+          "default": "콘텐츠 타이틀",
+          "placeholder": "타이틀을 입력하세요",
+          "required": true,
+          "showWhen": "showTitle",
+          "group": "타이틀"
+        },
+        {
+          "key": "contentTitleFontSize",
+          "label": "폰트 크기",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px",
+          "showWhen": "showTitle",
+          "group": "타이틀"
+        },
+        {
+          "key": "contentTitleLineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "showWhen": "showTitle",
+          "group": "타이틀"
+        },
+        {
+          "key": "titleColor",
+          "label": "색상",
+          "type": "text",
+          "default": "#eb2a25",
+          "showWhen": "showTitle",
+          "group": "타이틀"
+        },
+        {
+          "key": "contentText",
+          "label": "텍스트",
+          "type": "textarea",
+          "default": "콘텐츠 텍스트",
+          "placeholder": "내용을 입력하세요",
+          "group": "텍스트"
+        },
+        {
+          "key": "contentTextFontSize",
+          "label": "기본 글자 크기 (본문)",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px",
+          "group": "텍스트",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
+        },
+        {
+          "key": "bgColor",
+          "label": "배경색",
+          "type": "text",
+          "default": "#f5f5f5",
+          "group": "스타일"
+        },
+        {
+          "key": "textAlign",
+          "label": "텍스트 정렬",
+          "type": "select",
+          "default": "left",
+          "options": [
+            {
+              "label": "왼쪽",
+              "value": "left"
+            },
+            {
+              "label": "가운데",
+              "value": "center"
+            },
+            {
+              "label": "오른쪽",
+              "value": "right"
+            }
+          ],
+          "group": "스타일"
+        },
+        {
+          "key": "paddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 10px",
+          "group": "여백"
+        },
+        {
+          "key": "paddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "group": "여백"
+        },
+        {
+          "key": "paddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "10px",
+          "placeholder": "예: 10px, 0",
+          "group": "여백"
+        },
+        {
+          "key": "paddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "group": "여백"
+        }
+      ]
+    },
+    {
+      "id": "Module01-1",
+      "name": "모듈 01-1번",
+      "description": "타이틀과 설명글이 있는 2컬럼 박스",
+      "category": "text",
+      "icon": "pi pi-th-large",
+      "htmlFile": "Module01-1.html",
+      "editableProps": [
+        {
+          "key": "leftTitle",
+          "label": "타이틀",
+          "type": "text",
+          "default": "왼쪽 타이틀",
+          "placeholder": "타이틀 영역",
+          "required": true,
+          "group": "왼쪽 콘텐츠"
+        },
+        {
+          "key": "leftTitleFontSize",
+          "label": "타이틀 폰트 크기",
+          "type": "text",
+          "default": "16px",
+          "placeholder": "예: 16px, 18px",
+          "group": "왼쪽 콘텐츠"
+        },
+        {
+          "key": "leftTitleLineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "group": "왼쪽 콘텐츠"
+        },
+        {
+          "key": "leftContent",
+          "label": "콘텐츠 텍스트",
+          "type": "textarea",
+          "default": "왼쪽 콘텐츠 텍스트입니다",
+          "placeholder": "콘텐츠 텍스트",
+          "group": "왼쪽 콘텐츠"
+        },
+        {
+          "key": "leftContentFontSize",
+          "label": "텍스트 기본 글자 크기",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px",
+          "group": "왼쪽 콘텐츠",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
+        },
+        {
+          "key": "rightTitle",
+          "label": "타이틀",
+          "type": "text",
+          "default": "오른쪽 타이틀",
+          "placeholder": "타이틀 영역",
+          "required": true,
+          "group": "오른쪽 콘텐츠"
+        },
+        {
+          "key": "rightTitleFontSize",
+          "label": "타이틀 폰트 크기",
+          "type": "text",
+          "default": "16px",
+          "placeholder": "예: 16px, 18px",
+          "group": "오른쪽 콘텐츠"
+        },
+        {
+          "key": "rightTitleLineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "group": "오른쪽 콘텐츠"
+        },
+        {
+          "key": "rightContent",
+          "label": "콘텐츠 텍스트",
+          "type": "textarea",
+          "default": "오른쪽 콘텐츠 텍스트입니다",
+          "placeholder": "콘텐츠 텍스트",
+          "group": "오른쪽 콘텐츠"
+        },
+        {
+          "key": "rightContentFontSize",
+          "label": "텍스트 기본 글자 크기",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px",
+          "group": "오른쪽 콘텐츠",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
+        },
+        {
+          "key": "titleBgColor",
+          "label": "타이틀 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "group": "스타일",
+          "hint": "좌·우 타이틀 박스에 공통 적용됩니다."
+        },
+        {
+          "key": "titleTextColor",
+          "label": "타이틀 글자색",
+          "type": "text",
+          "default": "#111111",
+          "group": "스타일"
+        },
+        {
+          "key": "contentBgColor",
+          "label": "텍스트 배경색",
+          "type": "text",
+          "default": "#f3f3f3",
+          "group": "스타일",
+          "hint": "좌·우 텍스트 박스에 공통 적용됩니다."
+        },
+        {
+          "key": "contentTextColor",
+          "label": "텍스트 글자색",
+          "type": "text",
+          "default": "#333333",
+          "group": "스타일"
+        }
+      ]
+    },
+    {
+      "id": "Module01-2",
+      "name": "모듈 01-2번",
+      "description": "카테고리와 설명글 박스",
+      "category": "text",
+      "icon": "pi pi-th-large",
+      "htmlFile": "Module01-2.html",
+      "editableProps": [
+        {
+          "key": "categoryText",
+          "label": "카테고리",
+          "type": "text",
+          "default": "카테고리",
+          "placeholder": "카테고리 영역",
+          "required": true,
+          "group": "카테고리"
+        },
+        {
+          "key": "categoryTextFontSize",
+          "label": "폰트 크기",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px",
+          "group": "카테고리"
+        },
+        {
+          "key": "categoryBgColor",
+          "label": "배경색",
+          "type": "text",
+          "default": "#666666",
+          "group": "카테고리"
+        },
+        {
+          "key": "categoryTextColor",
+          "label": "글자색",
+          "type": "text",
+          "default": "#ffffff",
+          "group": "카테고리"
+        },
+        {
+          "key": "contentText",
+          "label": "콘텐츠",
+          "type": "textarea",
+          "default": "콘텐츠 텍스트를 입력하세요",
+          "placeholder": "콘텐츠 텍스트",
+          "group": "텍스트"
+        },
+        {
+          "key": "contentTextFontSize",
+          "label": "기본 글자 크기 (본문)",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px",
+          "group": "텍스트",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
+        }
+      ]
+    },
+    {
+      "id": "Module02",
+      "name": "모듈 02번",
+      "description": "이미지와 텍스트, 버튼이 포함된 모듈",
+      "category": "image",
+      "icon": "pi pi-th-large",
+      "htmlFile": "Module02.html",
+      "editableProps": [
+        {
+          "key": "imageUrl",
+          "label": "URL",
+          "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-1column.png",
+          "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-1column.png",
+          "group": "이미지"
+        },
+        {
+          "key": "imageAlt",
+          "label": "설명 Alt",
+          "type": "text",
+          "default": "이미지",
+          "placeholder": "이미지",
+          "group": "이미지"
+        },
+        {
+          "key": "showImageLink",
+          "label": "링크 사용",
+          "type": "boolean",
+          "default": false,
+          "group": "이미지"
+        },
+        {
+          "key": "imageLinkUrl",
+          "label": "링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showImageLink",
+          "group": "이미지"
+        },
+        {
+          "key": "imageBorderRadius",
+          "label": "모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%",
+          "group": "이미지"
+        },
+        {
+          "key": "showTitle",
+          "label": "콘텐츠 타이틀 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "타이틀·텍스트"
+        },
+        {
+          "key": "title",
+          "label": "콘텐츠 타이틀",
+          "type": "text",
+          "default": "콘텐츠 타이틀",
+          "required": true,
+          "placeholder": "콘텐츠 타이틀",
+          "showWhen": "showTitle",
+          "group": "타이틀·텍스트"
+        },
+        {
+          "key": "titleFontSize",
+          "label": "타이틀 폰트 크기",
+          "type": "text",
+          "default": "18px",
+          "placeholder": "예: 18px, 20px",
+          "showWhen": "showTitle",
+          "group": "타이틀·텍스트"
+        },
+        {
+          "key": "titleLineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "showWhen": "showTitle",
+          "group": "타이틀·텍스트"
+        },
+        {
+          "key": "description",
+          "label": "콘텐츠 텍스트",
+          "type": "textarea",
+          "default": "콘텐츠 텍스트를 입력하세요",
+          "placeholder": "콘텐츠 텍스트",
+          "group": "타이틀·텍스트"
+        },
+        {
+          "key": "descriptionFontSize",
+          "label": "텍스트 기본 글자 크기",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px",
+          "group": "타이틀·텍스트",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
+        },
+        {
+          "key": "showButton",
+          "label": "표시",
+          "type": "boolean",
+          "default": true,
+          "group": "버튼"
+        },
+        {
+          "key": "buttonText",
+          "label": "텍스트",
+          "type": "text",
+          "default": "큰 버튼 →",
+          "placeholder": "큰 버튼 →",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonUrl",
+          "label": "링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "#",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonBgColor",
+          "label": "배경색",
+          "type": "text",
+          "default": "#111111",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonTextColor",
+          "label": "글자색",
+          "type": "text",
+          "default": "#ffffff",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonBorderStyle",
+          "label": "테두리 스타일",
+          "type": "select",
+          "default": "none",
+          "options": [
+            {
+              "label": "없음",
+              "value": "none"
+            },
+            {
+              "label": "실선",
+              "value": "solid"
+            },
+            {
+              "label": "점선",
+              "value": "dashed"
+            },
+            {
+              "label": "점",
+              "value": "dotted"
+            }
+          ],
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonBorderWidth",
+          "label": "테두리 두께",
+          "type": "text",
+          "default": "1px",
+          "placeholder": "예: 1px",
+          "showWhen": {
+            "key": "buttonBorderStyle",
+            "notEquals": "none"
+          },
+          "group": "버튼"
+        },
+        {
+          "key": "buttonBorderColor",
+          "label": "테두리 색상",
+          "type": "text",
+          "default": "#000000",
+          "showWhen": {
+            "key": "buttonBorderStyle",
+            "notEquals": "none"
+          },
+          "group": "버튼"
+        },
+        {
+          "key": "buttonBorderRadius",
+          "label": "모서리 둥글기",
+          "type": "text",
+          "default": "5px",
+          "placeholder": "예: 5px, 50%",
+          "hint": "값이 클수록 모서리가 둥글어집니다. 100px이면 완전히 둥근(알약형) 버튼이 됩니다.",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonPaddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonPaddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonPaddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 0, 20px",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonPaddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "showWhen": "showButton",
+          "group": "버튼"
+        }
+      ]
+    },
+    {
+      "id": "Module04",
+      "name": "모듈 04번",
+      "description": "이미지와 텍스트가 있는 2단 구성 모듈",
+      "category": "image",
+      "icon": "pi pi-th-large",
+      "htmlFile": "Module04.html",
+      "editableProps": [
+        {
+          "key": "leftImageUrl",
+          "label": "URL",
+          "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
+          "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
+          "group": "왼쪽 이미지"
+        },
+        {
+          "key": "showLeftImageLink",
+          "label": "링크 사용",
+          "type": "boolean",
+          "default": false,
+          "group": "왼쪽 이미지"
+        },
+        {
+          "key": "leftImageLinkUrl",
+          "label": "링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showLeftImageLink",
+          "group": "왼쪽 이미지"
+        },
+        {
+          "key": "leftImageBorderRadius",
+          "label": "모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%",
+          "group": "왼쪽 이미지"
+        },
+        {
+          "key": "leftImageBorderStyle",
+          "label": "테두리 스타일",
+          "type": "select",
+          "default": "none",
+          "options": [
+            { "label": "없음", "value": "none" },
+            { "label": "실선", "value": "solid" },
+            { "label": "점선", "value": "dashed" },
+            { "label": "점", "value": "dotted" }
+          ],
+          "group": "왼쪽 이미지"
+        },
+        {
+          "key": "leftImageBorderWidth",
+          "label": "테두리 두께",
+          "type": "text",
+          "default": "1px",
+          "placeholder": "예: 1px, 2px",
+          "showWhen": { "key": "leftImageBorderStyle", "notEquals": "none" },
+          "group": "왼쪽 이미지"
+        },
+        {
+          "key": "leftImageBorderColor",
+          "label": "테두리 색상",
+          "type": "color",
+          "default": "#000000",
+          "showWhen": { "key": "leftImageBorderStyle", "notEquals": "none" },
+          "group": "왼쪽 이미지"
+        },
+        {
+          "key": "showLeftTitle",
+          "label": "타이틀 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "왼쪽 콘텐츠"
+        },
+        {
+          "key": "leftTitle",
+          "label": "타이틀",
+          "type": "text",
+          "default": "왼쪽 타이틀",
+          "placeholder": "콘텐츠 타이틀",
+          "required": true,
+          "group": "왼쪽 콘텐츠",
+          "showWhen": "showLeftTitle"
+        },
+        {
+          "key": "leftTitleFontSize",
+          "label": "타이틀 폰트 크기",
+          "type": "text",
+          "default": "16px",
+          "placeholder": "예: 16px, 18px",
+          "group": "왼쪽 콘텐츠",
+          "showWhen": "showLeftTitle"
+        },
+        {
+          "key": "leftTitleLineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "group": "왼쪽 콘텐츠",
+          "showWhen": "showLeftTitle"
+        },
+        {
+          "key": "leftContent",
+          "label": "텍스트",
+          "type": "textarea",
+          "default": "왼쪽 콘텐츠 텍스트입니다",
+          "placeholder": "콘텐츠 텍스트",
+          "group": "왼쪽 콘텐츠"
+        },
+        {
+          "key": "leftContentFontSize",
+          "label": "텍스트 기본 글자 크기",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px",
+          "group": "왼쪽 콘텐츠",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
+        },
+        {
+          "key": "showLeftSmallBtn1",
+          "label": "작은 버튼 1 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftSmallBtn1Text",
+          "label": "작은 버튼 1 텍스트",
+          "type": "text",
+          "default": "버튼 1 →",
+          "showWhen": "showLeftSmallBtn1",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftSmallBtn1Url",
+          "label": "작은 버튼 1 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showLeftSmallBtn1",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftSmallBtn1BgColor",
+          "label": "작은 버튼 1 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showLeftSmallBtn1",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftSmallBtn1TextColor",
+          "label": "작은 버튼 1 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showLeftSmallBtn1",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "showLeftSmallBtn2",
+          "label": "작은 버튼 2 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftSmallBtn2Text",
+          "label": "작은 버튼 2 텍스트",
+          "type": "text",
+          "default": "버튼 2 →",
+          "showWhen": "showLeftSmallBtn2",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftSmallBtn2Url",
+          "label": "작은 버튼 2 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showLeftSmallBtn2",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftSmallBtn2BgColor",
+          "label": "작은 버튼 2 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showLeftSmallBtn2",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftSmallBtn2TextColor",
+          "label": "작은 버튼 2 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showLeftSmallBtn2",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "showLeftSmallBtn3",
+          "label": "작은 버튼 3 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftSmallBtn3Text",
+          "label": "작은 버튼 3 텍스트",
+          "type": "text",
+          "default": "버튼 3 →",
+          "showWhen": "showLeftSmallBtn3",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftSmallBtn3Url",
+          "label": "작은 버튼 3 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showLeftSmallBtn3",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftSmallBtn3BgColor",
+          "label": "작은 버튼 3 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showLeftSmallBtn3",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftSmallBtn3TextColor",
+          "label": "작은 버튼 3 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showLeftSmallBtn3",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "showLeftSmallBtn4",
+          "label": "작은 버튼 4 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftSmallBtn4Text",
+          "label": "작은 버튼 4 텍스트",
+          "type": "text",
+          "default": "버튼 4 →",
+          "showWhen": "showLeftSmallBtn4",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftSmallBtn4Url",
+          "label": "작은 버튼 4 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showLeftSmallBtn4",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftSmallBtn4BgColor",
+          "label": "작은 버튼 4 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showLeftSmallBtn4",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftSmallBtn4TextColor",
+          "label": "작은 버튼 4 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showLeftSmallBtn4",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftSmallBtnWidth",
+          "label": "작은 버튼 너비 (공통)",
+          "type": "text",
+          "default": "auto",
+          "placeholder": "예: auto, 50%, 120px (최대 100%)",
+          "hint": "auto는 글자 크기에 맞춤이며, % 또는 px로 너비를 지정할 수 있습니다.",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftSmallBtnBorderRadius",
+          "label": "작은 버튼 모서리 둥글기 (공통)",
+          "type": "text",
+          "default": "30px",
+          "placeholder": "예: 30px, 0px, 50%",
+          "hint": "값이 클수록 모서리가 둥글어집니다. 0px이면 각진 버튼이 됩니다.",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftSmallBtnAlign",
+          "label": "작은 버튼 텍스트 정렬 (공통)",
+          "type": "select",
+          "default": "center",
+          "options": [
+            {
+              "label": "왼쪽",
+              "value": "left"
+            },
+            {
+              "label": "가운데",
+              "value": "center"
+            },
+            {
+              "label": "오른쪽",
+              "value": "right"
+            }
+          ],
+          "hint": "버튼 너비를 넓게 지정했을 때 버튼 안 텍스트의 정렬입니다.",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "showLeftBigBtn",
+          "label": "큰 버튼 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftBigBtnText",
+          "label": "큰 버튼 텍스트",
+          "type": "text",
+          "default": "큰 버튼 →",
+          "showWhen": "showLeftBigBtn",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftBigBtnUrl",
+          "label": "큰 버튼 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showLeftBigBtn",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftBigBtnBgColor",
+          "label": "큰 버튼 배경색",
+          "type": "text",
+          "default": "#111111",
+          "showWhen": "showLeftBigBtn",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftBigBtnTextColor",
+          "label": "큰 버튼 글자색",
+          "type": "text",
+          "default": "#ffffff",
+          "showWhen": "showLeftBigBtn",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftBigBtnBorderStyle",
+          "label": "큰 버튼 테두리 스타일",
+          "type": "select",
+          "default": "none",
+          "options": [
+            {
+              "label": "없음",
+              "value": "none"
+            },
+            {
+              "label": "실선",
+              "value": "solid"
+            },
+            {
+              "label": "점선",
+              "value": "dashed"
+            },
+            {
+              "label": "점",
+              "value": "dotted"
+            }
+          ],
+          "showWhen": "showLeftBigBtn",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftBigBtnBorderWidth",
+          "label": "큰 버튼 테두리 두께",
+          "type": "text",
+          "default": "1px",
+          "placeholder": "예: 1px",
+          "showWhen": {
+            "key": "leftBigBtnBorderStyle",
+            "notEquals": "none"
+          },
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftBigBtnBorderColor",
+          "label": "큰 버튼 테두리 색상",
+          "type": "text",
+          "default": "#000000",
+          "showWhen": {
+            "key": "leftBigBtnBorderStyle",
+            "notEquals": "none"
+          },
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftBigBtnBorderRadius",
+          "label": "큰 버튼 모서리 둥글기",
+          "type": "text",
+          "default": "5px",
+          "placeholder": "예: 5px, 50%",
+          "hint": "값이 클수록 모서리가 둥글어집니다. 100px이면 완전히 둥근(알약형) 버튼이 됩니다.",
+          "showWhen": "showLeftBigBtn",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftBigBtnMarginTop",
+          "label": "큰 버튼 상단 여백",
+          "type": "text",
+          "default": "10px",
+          "placeholder": "예: 0px, 10px",
+          "showWhen": "showLeftBigBtn",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftBigBtnMarginRight",
+          "label": "큰 버튼 우측 여백",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 10px",
+          "showWhen": "showLeftBigBtn",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftBigBtnMarginBottom",
+          "label": "큰 버튼 하단 여백",
+          "type": "text",
+          "default": "10px",
+          "placeholder": "예: 0px, 10px",
+          "showWhen": "showLeftBigBtn",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftBigBtnMarginLeft",
+          "label": "큰 버튼 좌측 여백",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 10px",
+          "showWhen": "showLeftBigBtn",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "rightImageUrl",
+          "label": "URL",
+          "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
+          "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
+          "group": "오른쪽 이미지"
+        },
+        {
+          "key": "showRightImageLink",
+          "label": "링크 사용",
+          "type": "boolean",
+          "default": false,
+          "group": "오른쪽 이미지"
+        },
+        {
+          "key": "rightImageLinkUrl",
+          "label": "링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showRightImageLink",
+          "group": "오른쪽 이미지"
+        },
+        {
+          "key": "rightImageBorderRadius",
+          "label": "모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%",
+          "group": "오른쪽 이미지"
+        },
+        {
+          "key": "rightImageBorderStyle",
+          "label": "테두리 스타일",
+          "type": "select",
+          "default": "none",
+          "options": [
+            { "label": "없음", "value": "none" },
+            { "label": "실선", "value": "solid" },
+            { "label": "점선", "value": "dashed" },
+            { "label": "점", "value": "dotted" }
+          ],
+          "group": "오른쪽 이미지"
+        },
+        {
+          "key": "rightImageBorderWidth",
+          "label": "테두리 두께",
+          "type": "text",
+          "default": "1px",
+          "placeholder": "예: 1px, 2px",
+          "showWhen": { "key": "rightImageBorderStyle", "notEquals": "none" },
+          "group": "오른쪽 이미지"
+        },
+        {
+          "key": "rightImageBorderColor",
+          "label": "테두리 색상",
+          "type": "color",
+          "default": "#000000",
+          "showWhen": { "key": "rightImageBorderStyle", "notEquals": "none" },
+          "group": "오른쪽 이미지"
+        },
+        {
+          "key": "showRightTitle",
+          "label": "타이틀 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "오른쪽 콘텐츠"
+        },
+        {
+          "key": "rightTitle",
+          "label": "타이틀",
+          "type": "text",
+          "default": "오른쪽 타이틀",
+          "placeholder": "콘텐츠 타이틀",
+          "group": "오른쪽 콘텐츠",
+          "showWhen": "showRightTitle"
+        },
+        {
+          "key": "rightTitleFontSize",
+          "label": "타이틀 폰트 크기",
+          "type": "text",
+          "default": "16px",
+          "placeholder": "예: 16px, 18px",
+          "group": "오른쪽 콘텐츠",
+          "showWhen": "showRightTitle"
+        },
+        {
+          "key": "rightTitleLineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "group": "오른쪽 콘텐츠",
+          "showWhen": "showRightTitle"
+        },
+        {
+          "key": "rightContent",
+          "label": "텍스트",
+          "type": "textarea",
+          "default": "오른쪽 콘텐츠 텍스트입니다",
+          "placeholder": "콘텐츠 텍스트",
+          "group": "오른쪽 콘텐츠"
+        },
+        {
+          "key": "rightContentFontSize",
+          "label": "텍스트 기본 글자 크기",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px",
+          "group": "오른쪽 콘텐츠",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
+        },
+        {
+          "key": "showRightSmallBtn1",
+          "label": "작은 버튼 1 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightSmallBtn1Text",
+          "label": "작은 버튼 1 텍스트",
+          "type": "text",
+          "default": "버튼 1 →",
+          "showWhen": "showRightSmallBtn1",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightSmallBtn1Url",
+          "label": "작은 버튼 1 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showRightSmallBtn1",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightSmallBtn1BgColor",
+          "label": "작은 버튼 1 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showRightSmallBtn1",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightSmallBtn1TextColor",
+          "label": "작은 버튼 1 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showRightSmallBtn1",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "showRightSmallBtn2",
+          "label": "작은 버튼 2 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightSmallBtn2Text",
+          "label": "작은 버튼 2 텍스트",
+          "type": "text",
+          "default": "버튼 2 →",
+          "showWhen": "showRightSmallBtn2",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightSmallBtn2Url",
+          "label": "작은 버튼 2 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showRightSmallBtn2",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightSmallBtn2BgColor",
+          "label": "작은 버튼 2 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showRightSmallBtn2",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightSmallBtn2TextColor",
+          "label": "작은 버튼 2 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showRightSmallBtn2",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "showRightSmallBtn3",
+          "label": "작은 버튼 3 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightSmallBtn3Text",
+          "label": "작은 버튼 3 텍스트",
+          "type": "text",
+          "default": "버튼 3 →",
+          "showWhen": "showRightSmallBtn3",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightSmallBtn3Url",
+          "label": "작은 버튼 3 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showRightSmallBtn3",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightSmallBtn3BgColor",
+          "label": "작은 버튼 3 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showRightSmallBtn3",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightSmallBtn3TextColor",
+          "label": "작은 버튼 3 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showRightSmallBtn3",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "showRightSmallBtn4",
+          "label": "작은 버튼 4 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightSmallBtn4Text",
+          "label": "작은 버튼 4 텍스트",
+          "type": "text",
+          "default": "버튼 4 →",
+          "showWhen": "showRightSmallBtn4",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightSmallBtn4Url",
+          "label": "작은 버튼 4 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showRightSmallBtn4",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightSmallBtn4BgColor",
+          "label": "작은 버튼 4 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showRightSmallBtn4",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightSmallBtn4TextColor",
+          "label": "작은 버튼 4 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showRightSmallBtn4",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightSmallBtnWidth",
+          "label": "작은 버튼 너비 (공통)",
+          "type": "text",
+          "default": "auto",
+          "placeholder": "예: auto, 50%, 120px (최대 100%)",
+          "hint": "auto는 글자 크기에 맞춤이며, % 또는 px로 너비를 지정할 수 있습니다.",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightSmallBtnBorderRadius",
+          "label": "작은 버튼 모서리 둥글기 (공통)",
+          "type": "text",
+          "default": "30px",
+          "placeholder": "예: 30px, 0px, 50%",
+          "hint": "값이 클수록 모서리가 둥글어집니다. 0px이면 각진 버튼이 됩니다.",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightSmallBtnAlign",
+          "label": "작은 버튼 텍스트 정렬 (공통)",
+          "type": "select",
+          "default": "center",
+          "options": [
+            {
+              "label": "왼쪽",
+              "value": "left"
+            },
+            {
+              "label": "가운데",
+              "value": "center"
+            },
+            {
+              "label": "오른쪽",
+              "value": "right"
+            }
+          ],
+          "hint": "버튼 너비를 넓게 지정했을 때 버튼 안 텍스트의 정렬입니다.",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "showRightBigBtn",
+          "label": "큰 버튼 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightBigBtnText",
+          "label": "큰 버튼 텍스트",
+          "type": "text",
+          "default": "큰 버튼 →",
+          "showWhen": "showRightBigBtn",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightBigBtnUrl",
+          "label": "큰 버튼 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showRightBigBtn",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightBigBtnBgColor",
+          "label": "큰 버튼 배경색",
+          "type": "text",
+          "default": "#111111",
+          "showWhen": "showRightBigBtn",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightBigBtnTextColor",
+          "label": "큰 버튼 글자색",
+          "type": "text",
+          "default": "#ffffff",
+          "showWhen": "showRightBigBtn",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightBigBtnBorderStyle",
+          "label": "큰 버튼 테두리 스타일",
+          "type": "select",
+          "default": "none",
+          "options": [
+            {
+              "label": "없음",
+              "value": "none"
+            },
+            {
+              "label": "실선",
+              "value": "solid"
+            },
+            {
+              "label": "점선",
+              "value": "dashed"
+            },
+            {
+              "label": "점",
+              "value": "dotted"
+            }
+          ],
+          "showWhen": "showRightBigBtn",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightBigBtnBorderWidth",
+          "label": "큰 버튼 테두리 두께",
+          "type": "text",
+          "default": "1px",
+          "placeholder": "예: 1px",
+          "showWhen": {
+            "key": "rightBigBtnBorderStyle",
+            "notEquals": "none"
+          },
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightBigBtnBorderColor",
+          "label": "큰 버튼 테두리 색상",
+          "type": "text",
+          "default": "#000000",
+          "showWhen": {
+            "key": "rightBigBtnBorderStyle",
+            "notEquals": "none"
+          },
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightBigBtnBorderRadius",
+          "label": "큰 버튼 모서리 둥글기",
+          "type": "text",
+          "default": "5px",
+          "placeholder": "예: 5px, 50%",
+          "hint": "값이 클수록 모서리가 둥글어집니다. 100px이면 완전히 둥근(알약형) 버튼이 됩니다.",
+          "showWhen": "showRightBigBtn",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightBigBtnMarginTop",
+          "label": "큰 버튼 상단 여백",
+          "type": "text",
+          "default": "10px",
+          "placeholder": "예: 0px, 10px",
+          "showWhen": "showRightBigBtn",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightBigBtnMarginRight",
+          "label": "큰 버튼 우측 여백",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 10px",
+          "showWhen": "showRightBigBtn",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightBigBtnMarginBottom",
+          "label": "큰 버튼 하단 여백",
+          "type": "text",
+          "default": "10px",
+          "placeholder": "예: 0px, 10px",
+          "showWhen": "showRightBigBtn",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightBigBtnMarginLeft",
+          "label": "큰 버튼 좌측 여백",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 10px",
+          "showWhen": "showRightBigBtn",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "leftWidthPercent",
+          "label": "왼쪽 영역 너비(%)",
+          "type": "text",
+          "default": "50",
+          "placeholder": "예: 50 (숫자만 입력, 좌+우=100)",
+          "hint": "PC에서 좌우로 나란히 표시될 때의 왼쪽 칸 비율입니다. 모바일에서는 위아래로 쌓입니다.",
+          "group": "영역 비율"
+        },
+        {
+          "key": "rightWidthPercent",
+          "label": "오른쪽 영역 너비(%)",
+          "type": "text",
+          "default": "50",
+          "placeholder": "예: 50 (숫자만 입력, 좌+우=100)",
+          "hint": "PC에서 좌우로 나란히 표시될 때의 오른쪽 칸 비율입니다. 모바일에서는 위아래로 쌓입니다.",
+          "group": "영역 비율"
+        }
+      ]
+    },
+    {
+      "id": "Module05",
+      "name": "모듈 05번",
+      "description": "이미지 + 텍스트 + 4개의 독립적인 버튼",
+      "category": "image",
+      "icon": "pi pi-th-large",
+      "htmlFile": "Module05.html",
+      "editableProps": [
+        {
+          "key": "imageUrl",
+          "label": "URL",
+          "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
+          "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
+          "group": "이미지"
+        },
+        {
+          "key": "imageAlt",
+          "label": "설명 (Alt)",
+          "type": "text",
+          "default": "이미지",
+          "placeholder": "이미지",
+          "group": "이미지"
+        },
+        {
+          "key": "showImageLink",
+          "label": "링크 사용",
+          "type": "boolean",
+          "default": false,
+          "group": "이미지"
+        },
+        {
+          "key": "imageLinkUrl",
+          "label": "링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showImageLink",
+          "group": "이미지"
+        },
+        {
+          "key": "imageBorderRadius",
+          "label": "모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%",
+          "group": "이미지"
+        },
+        {
+          "key": "contentText",
+          "label": "텍스트",
+          "type": "textarea",
+          "default": "콘텐츠 텍스트를 입력하세요",
+          "placeholder": "텍스트 내용을 입력하세요",
+          "group": "텍스트"
+        },
+        {
+          "key": "contentTextFontSize",
+          "label": "기본 글자 크기 (본문)",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px",
+          "group": "텍스트",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
+        },
+        {
+          "key": "showButton1",
+          "label": "표시",
+          "type": "boolean",
+          "default": true,
+          "group": "버튼"
+        },
+        {
+          "key": "button1Text",
+          "label": "텍스트",
+          "type": "text",
+          "default": "버튼 1 →",
+          "placeholder": "버튼 텍스트",
+          "showWhen": "showButton1",
+          "group": "버튼"
+        },
+        {
+          "key": "button1Url",
+          "label": "링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 URL",
+          "showWhen": "showButton1",
+          "group": "버튼"
+        },
+        {
+          "key": "button1BgColor",
+          "label": "배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showButton1",
+          "group": "버튼"
+        },
+        {
+          "key": "button1TextColor",
+          "label": "글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showButton1",
+          "group": "버튼"
+        },
+        {
+          "key": "showButton2",
+          "label": "표시",
+          "type": "boolean",
+          "default": false,
+          "group": "버튼"
+        },
+        {
+          "key": "button2Text",
+          "label": "텍스트",
+          "type": "text",
+          "default": "버튼 2 →",
+          "placeholder": "버튼 텍스트",
+          "showWhen": "showButton2",
+          "group": "버튼"
+        },
+        {
+          "key": "button2Url",
+          "label": "링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 URL",
+          "showWhen": "showButton2",
+          "group": "버튼"
+        },
+        {
+          "key": "button2BgColor",
+          "label": "배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showButton2",
+          "group": "버튼"
+        },
+        {
+          "key": "button2TextColor",
+          "label": "글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showButton2",
+          "group": "버튼"
+        },
+        {
+          "key": "showButton3",
+          "label": "표시",
+          "type": "boolean",
+          "default": false,
+          "group": "버튼"
+        },
+        {
+          "key": "button3Text",
+          "label": "텍스트",
+          "type": "text",
+          "default": "버튼 3 →",
+          "placeholder": "버튼 텍스트",
+          "showWhen": "showButton3",
+          "group": "버튼"
+        },
+        {
+          "key": "button3Url",
+          "label": "링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 URL",
+          "showWhen": "showButton3",
+          "group": "버튼"
+        },
+        {
+          "key": "button3BgColor",
+          "label": "배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showButton3",
+          "group": "버튼"
+        },
+        {
+          "key": "button3TextColor",
+          "label": "글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showButton3",
+          "group": "버튼"
+        },
+        {
+          "key": "showButton4",
+          "label": "표시",
+          "type": "boolean",
+          "default": false,
+          "group": "버튼"
+        },
+        {
+          "key": "button4Text",
+          "label": "텍스트",
+          "type": "text",
+          "default": "버튼 4 →",
+          "placeholder": "버튼 텍스트",
+          "showWhen": "showButton4",
+          "group": "버튼"
+        },
+        {
+          "key": "button4Url",
+          "label": "링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 URL",
+          "showWhen": "showButton4",
+          "group": "버튼"
+        },
+        {
+          "key": "button4BgColor",
+          "label": "배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showButton4",
+          "group": "버튼"
+        },
+        {
+          "key": "button4TextColor",
+          "label": "글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showButton4",
+          "group": "버튼"
+        },
+        {
+          "key": "smallBtnWidth",
+          "label": "버튼 너비 (공통)",
+          "type": "text",
+          "default": "auto",
+          "placeholder": "예: auto, 50%, 120px (최대 100%)",
+          "hint": "auto는 글자 크기에 맞춤이며, % 또는 px로 너비를 지정할 수 있습니다.",
+          "group": "버튼"
+        },
+        {
+          "key": "smallBtnBorderRadius",
+          "label": "버튼 모서리 둥글기 (공통)",
+          "type": "text",
+          "default": "30px",
+          "placeholder": "예: 30px, 0px, 50%",
+          "hint": "값이 클수록 모서리가 둥글어집니다. 0px이면 각진 버튼이 됩니다.",
+          "group": "버튼"
+        },
+        {
+          "key": "smallBtnAlign",
+          "label": "버튼 텍스트 정렬 (공통)",
+          "type": "select",
+          "default": "center",
+          "options": [
+            {
+              "label": "왼쪽",
+              "value": "left"
+            },
+            {
+              "label": "가운데",
+              "value": "center"
+            },
+            {
+              "label": "오른쪽",
+              "value": "right"
+            }
+          ],
+          "hint": "버튼 너비를 넓게 지정했을 때 버튼 안 텍스트의 정렬입니다.",
+          "group": "버튼"
+        },
+        {
+          "key": "leftWidthPercent",
+          "label": "왼쪽(이미지) 영역 너비(%)",
+          "type": "text",
+          "default": "50",
+          "placeholder": "예: 50 (숫자만 입력, 좌+우=100)",
+          "hint": "PC에서 좌우로 나란히 표시될 때의 왼쪽 칸 비율입니다. 모바일에서는 위아래로 쌓입니다.",
+          "group": "영역 비율"
+        },
+        {
+          "key": "rightWidthPercent",
+          "label": "오른쪽(텍스트) 영역 너비(%)",
+          "type": "text",
+          "default": "50",
+          "placeholder": "예: 50 (숫자만 입력, 좌+우=100)",
+          "hint": "PC에서 좌우로 나란히 표시될 때의 오른쪽 칸 비율입니다. 모바일에서는 위아래로 쌓입니다.",
+          "group": "영역 비율"
+        }
+      ],
+      "hidden": true
+    },
+    {
+      "id": "Module05-1",
+      "name": "모듈 05-1번",
+      "description": "2컬럼 이미지와 강조된 타이틀 + 최대 4개 버튼",
+      "category": "image",
+      "icon": "pi pi-th-large",
+      "htmlFile": "Module05-1.html",
+      "editableProps": [
+        {
+          "key": "ImageUrl",
+          "label": "URL",
+          "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
+          "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
+          "group": "이미지"
+        },
+        {
+          "key": "ImageAlt",
+          "label": "설명 (Alt)",
+          "type": "text",
+          "default": "이미지",
+          "placeholder": "이미지",
+          "group": "이미지"
+        },
+        {
+          "key": "showImageLink",
+          "label": "링크 사용",
+          "type": "boolean",
+          "default": false,
+          "group": "이미지"
+        },
+        {
+          "key": "imageLinkUrl",
+          "label": "링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showImageLink",
+          "group": "이미지"
+        },
+        {
+          "key": "imageBorderRadius",
+          "label": "모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%",
+          "group": "이미지"
+        },
+        {
+          "key": "boxTitle",
+          "label": "타이틀",
+          "type": "text",
+          "default": "강조 타이틀",
+          "placeholder": "콘텐츠 텍스트",
+          "group": "타이틀·텍스트"
+        },
+        {
+          "key": "boxTitleFontSize",
+          "label": "타이틀 폰트 크기",
+          "type": "text",
+          "default": "16px",
+          "placeholder": "예: 16px, 18px",
+          "group": "타이틀·텍스트"
+        },
+        {
+          "key": "boxTitleLineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "group": "타이틀·텍스트"
+        },
+        {
+          "key": "boxBgColor",
+          "label": "텍스트 박스 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "group": "타이틀·텍스트"
+        },
+        {
+          "key": "boxColor",
+          "label": "텍스트 박스 글자색",
+          "type": "text",
+          "default": "#111111",
+          "group": "타이틀·텍스트"
+        },
+        {
+          "key": "contentText",
+          "label": "텍스트",
+          "type": "textarea",
+          "default": "콘텐츠 텍스트를 입력하세요",
+          "placeholder": "콘텐츠 텍스트",
+          "required": true,
+          "group": "타이틀·텍스트"
+        },
+        {
+          "key": "contentTextFontSize",
+          "label": "텍스트 기본 글자 크기",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px",
+          "group": "타이틀·텍스트",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
+        },
+        {
+          "key": "showButton1",
+          "label": "표시",
+          "type": "boolean",
+          "default": true,
+          "group": "버튼"
+        },
+        {
+          "key": "button1Text",
+          "label": "텍스트",
+          "type": "text",
+          "default": "버튼 1 →",
+          "showWhen": "showButton1",
+          "group": "버튼"
+        },
+        {
+          "key": "button1Url",
+          "label": "링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showButton1",
+          "group": "버튼"
+        },
+        {
+          "key": "button1BgColor",
+          "label": "배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showButton1",
+          "group": "버튼"
+        },
+        {
+          "key": "button1TextColor",
+          "label": "글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showButton1",
+          "group": "버튼"
+        },
+        {
+          "key": "showButton2",
+          "label": "표시",
+          "type": "boolean",
+          "default": false,
+          "group": "버튼"
+        },
+        {
+          "key": "button2Text",
+          "label": "텍스트",
+          "type": "text",
+          "default": "버튼 2 →",
+          "showWhen": "showButton2",
+          "group": "버튼"
+        },
+        {
+          "key": "button2Url",
+          "label": "링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showButton2",
+          "group": "버튼"
+        },
+        {
+          "key": "button2BgColor",
+          "label": "배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showButton2",
+          "group": "버튼"
+        },
+        {
+          "key": "button2TextColor",
+          "label": "글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showButton2",
+          "group": "버튼"
+        },
+        {
+          "key": "showButton3",
+          "label": "표시",
+          "type": "boolean",
+          "default": false,
+          "group": "버튼"
+        },
+        {
+          "key": "button3Text",
+          "label": "텍스트",
+          "type": "text",
+          "default": "버튼 3 →",
+          "showWhen": "showButton3",
+          "group": "버튼"
+        },
+        {
+          "key": "button3Url",
+          "label": "링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showButton3",
+          "group": "버튼"
+        },
+        {
+          "key": "button3BgColor",
+          "label": "배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showButton3",
+          "group": "버튼"
+        },
+        {
+          "key": "button3TextColor",
+          "label": "글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showButton3",
+          "group": "버튼"
+        },
+        {
+          "key": "showButton4",
+          "label": "표시",
+          "type": "boolean",
+          "default": false,
+          "group": "버튼"
+        },
+        {
+          "key": "button4Text",
+          "label": "텍스트",
+          "type": "text",
+          "default": "버튼 4 →",
+          "showWhen": "showButton4",
+          "group": "버튼"
+        },
+        {
+          "key": "button4Url",
+          "label": "링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showButton4",
+          "group": "버튼"
+        },
+        {
+          "key": "button4BgColor",
+          "label": "배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showButton4",
+          "group": "버튼"
+        },
+        {
+          "key": "button4TextColor",
+          "label": "글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showButton4",
+          "group": "버튼"
+        },
+        {
+          "key": "smallBtnWidth",
+          "label": "버튼 너비 (공통)",
+          "type": "text",
+          "default": "auto",
+          "placeholder": "예: auto, 50%, 120px (최대 100%)",
+          "hint": "auto는 글자 크기에 맞춤이며, % 또는 px로 너비를 지정할 수 있습니다.",
+          "group": "버튼"
+        },
+        {
+          "key": "smallBtnBorderRadius",
+          "label": "버튼 모서리 둥글기 (공통)",
+          "type": "text",
+          "default": "30px",
+          "placeholder": "예: 30px, 0px, 50%",
+          "hint": "값이 클수록 모서리가 둥글어집니다. 0px이면 각진 버튼이 됩니다.",
+          "group": "버튼"
+        },
+        {
+          "key": "smallBtnAlign",
+          "label": "버튼 텍스트 정렬 (공통)",
+          "type": "select",
+          "default": "center",
+          "options": [
+            {
+              "label": "왼쪽",
+              "value": "left"
+            },
+            {
+              "label": "가운데",
+              "value": "center"
+            },
+            {
+              "label": "오른쪽",
+              "value": "right"
+            }
+          ],
+          "hint": "버튼 너비를 넓게 지정했을 때 버튼 안 텍스트의 정렬입니다.",
+          "group": "버튼"
+        },
+        {
+          "key": "leftWidthPercent",
+          "label": "왼쪽(이미지) 영역 너비(%)",
+          "type": "text",
+          "default": "50",
+          "placeholder": "예: 50 (숫자만 입력, 좌+우=100)",
+          "hint": "PC에서 좌우로 나란히 표시될 때의 왼쪽 칸 비율입니다. 모바일에서는 위아래로 쌓입니다.",
+          "group": "영역 비율"
+        },
+        {
+          "key": "rightWidthPercent",
+          "label": "오른쪽(텍스트) 영역 너비(%)",
+          "type": "text",
+          "default": "50",
+          "placeholder": "예: 50 (숫자만 입력, 좌+우=100)",
+          "hint": "PC에서 좌우로 나란히 표시될 때의 오른쪽 칸 비율입니다. 모바일에서는 위아래로 쌓입니다.",
+          "group": "영역 비율"
+        }
+      ],
+      "hidden": true
+    },
+    {
+      "id": "Module05-3",
+      "name": "모듈 05번",
+      "description": "상단 섹션·이미지·타이틀·작은 버튼·큰 버튼을 표시 토글로 구성하는 통합 2단 모듈",
+      "category": "image",
+      "icon": "pi pi-th-large",
+      "htmlFile": "Module05-3.html",
+      "editableProps": [
+        {
+          "key": "showTopSectionTitle",
+          "label": "상단 섹션 타이틀 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "상단 섹션"
+        },
+        {
+          "key": "topSectionTitle",
+          "label": "회색 타이틀",
+          "type": "text",
+          "default": "상단 섹션 타이틀",
+          "placeholder": "상단 섹션 타이틀",
+          "required": true,
+          "group": "상단 섹션",
+          "showWhen": "showTopSectionTitle"
+        },
+        {
+          "key": "topSectionTitleFontSize",
+          "label": "회색 타이틀 폰트 크기",
+          "type": "text",
+          "default": "16px",
+          "placeholder": "예: 16px, 18px",
+          "group": "상단 섹션",
+          "showWhen": "showTopSectionTitle"
+        },
+        {
+          "key": "topSectionTitleLineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "group": "상단 섹션",
+          "showWhen": "showTopSectionTitle"
+        },
+        {
+          "key": "topSectionTitleBgColor",
+          "label": "타이틀 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "group": "상단 섹션",
+          "showWhen": "showTopSectionTitle"
+        },
+        {
+          "key": "topSectionTitleTextColor",
+          "label": "타이틀 글자색",
+          "type": "text",
+          "default": "#111111",
+          "group": "상단 섹션",
+          "showWhen": "showTopSectionTitle"
+        },
+        {
+          "key": "showTopSectionText",
+          "label": "상단 섹션 텍스트 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "상단 섹션"
+        },
+        {
+          "key": "topSectionText",
+          "label": "텍스트",
+          "type": "textarea",
+          "default": "상단 섹션 텍스트입니다",
+          "placeholder": "상단 섹션 텍스트",
+          "group": "상단 섹션",
+          "showWhen": "showTopSectionText"
+        },
+        {
+          "key": "topSectionTextFontSize",
+          "label": "텍스트 기본 글자 크기",
+          "type": "text",
+          "default": "15px",
+          "placeholder": "예: 15px, 16px",
+          "group": "상단 섹션",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요.",
+          "showWhen": "showTopSectionText"
+        },
+        {
+          "key": "topLeftImageUrl",
+          "label": "URL",
+          "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
+          "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
+          "group": "이미지"
+        },
+        {
+          "key": "topLeftImageAlt",
+          "label": "설명 (Alt)",
+          "type": "text",
+          "default": "이미지",
+          "placeholder": "이미지",
+          "group": "이미지"
+        },
+        {
+          "key": "showImageLink",
+          "label": "링크 사용",
+          "type": "boolean",
+          "default": false,
+          "group": "이미지"
+        },
+        {
+          "key": "imageLinkUrl",
+          "label": "링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showImageLink",
+          "group": "이미지"
+        },
+        {
+          "key": "imageBorderRadius",
+          "label": "모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%",
+          "group": "이미지"
+        },
+        {
+          "key": "showRightTitle",
+          "label": "오른쪽 타이틀 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "오른쪽 텍스트"
+        },
+        {
+          "key": "topRightTitle1",
+          "label": "오른쪽 타이틀",
+          "type": "text",
+          "default": "오른쪽 타이틀",
+          "placeholder": "오른쪽 타이틀",
+          "group": "오른쪽 텍스트",
+          "showWhen": "showRightTitle"
+        },
+        {
+          "key": "topRightTitle1FontSize",
+          "label": "오른쪽 타이틀 폰트 크기",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px",
+          "group": "오른쪽 텍스트",
+          "showWhen": "showRightTitle"
+        },
+        {
+          "key": "topRightTitle1LineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "group": "오른쪽 텍스트",
+          "showWhen": "showRightTitle"
+        },
+        {
+          "key": "rightTitleEmphasis",
+          "label": "타이틀 강조(배경 박스)",
+          "type": "boolean",
+          "default": false,
+          "showWhen": "showRightTitle",
+          "hint": "켜면 타이틀에 배경색 박스가 적용됩니다 (모듈 05-1 스타일).",
+          "group": "오른쪽 텍스트"
+        },
+        {
+          "key": "rightTitleBgColor",
+          "label": "타이틀 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "rightTitleEmphasis",
+          "group": "오른쪽 텍스트"
+        },
+        {
+          "key": "rightTitleTextColor",
+          "label": "타이틀 글자색",
+          "type": "text",
+          "default": "#111111",
+          "showWhen": "rightTitleEmphasis",
+          "group": "오른쪽 텍스트"
+        },
+        {
+          "key": "topRightText1",
+          "label": "오른쪽 텍스트",
+          "type": "textarea",
+          "default": "오른쪽 텍스트입니다",
+          "placeholder": "오른쪽 텍스트",
+          "group": "오른쪽 텍스트"
+        },
+        {
+          "key": "topRightText1FontSize",
+          "label": "기본 글자 크기 (본문)",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px",
+          "group": "오른쪽 텍스트",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
+        },
+        {
+          "key": "showSmallBtn1",
+          "label": "1 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "작은 버튼"
+        },
+        {
+          "key": "smallBtn1Text",
+          "label": "1 텍스트",
+          "type": "text",
+          "default": "버튼 1 →",
+          "showWhen": "showSmallBtn1",
+          "group": "작은 버튼"
+        },
+        {
+          "key": "smallBtn1Url",
+          "label": "1 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showSmallBtn1",
+          "group": "작은 버튼"
+        },
+        {
+          "key": "smallBtn1BgColor",
+          "label": "1 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showSmallBtn1",
+          "group": "작은 버튼"
+        },
+        {
+          "key": "smallBtn1TextColor",
+          "label": "1 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showSmallBtn1",
+          "group": "작은 버튼"
+        },
+        {
+          "key": "showSmallBtn2",
+          "label": "2 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "작은 버튼"
+        },
+        {
+          "key": "smallBtn2Text",
+          "label": "2 텍스트",
+          "type": "text",
+          "default": "버튼 2 →",
+          "showWhen": "showSmallBtn2",
+          "group": "작은 버튼"
+        },
+        {
+          "key": "smallBtn2Url",
+          "label": "2 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showSmallBtn2",
+          "group": "작은 버튼"
+        },
+        {
+          "key": "smallBtn2BgColor",
+          "label": "2 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showSmallBtn2",
+          "group": "작은 버튼"
+        },
+        {
+          "key": "smallBtn2TextColor",
+          "label": "2 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showSmallBtn2",
+          "group": "작은 버튼"
+        },
+        {
+          "key": "showSmallBtn3",
+          "label": "3 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "작은 버튼"
+        },
+        {
+          "key": "smallBtn3Text",
+          "label": "3 텍스트",
+          "type": "text",
+          "default": "버튼 3 →",
+          "showWhen": "showSmallBtn3",
+          "group": "작은 버튼"
+        },
+        {
+          "key": "smallBtn3Url",
+          "label": "3 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showSmallBtn3",
+          "group": "작은 버튼"
+        },
+        {
+          "key": "smallBtn3BgColor",
+          "label": "3 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showSmallBtn3",
+          "group": "작은 버튼"
+        },
+        {
+          "key": "smallBtn3TextColor",
+          "label": "3 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showSmallBtn3",
+          "group": "작은 버튼"
+        },
+        {
+          "key": "showSmallBtn4",
+          "label": "4 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "작은 버튼"
+        },
+        {
+          "key": "smallBtn4Text",
+          "label": "4 텍스트",
+          "type": "text",
+          "default": "버튼 4 →",
+          "showWhen": "showSmallBtn4",
+          "group": "작은 버튼"
+        },
+        {
+          "key": "smallBtn4Url",
+          "label": "4 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showSmallBtn4",
+          "group": "작은 버튼"
+        },
+        {
+          "key": "smallBtn4BgColor",
+          "label": "4 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showSmallBtn4",
+          "group": "작은 버튼"
+        },
+        {
+          "key": "smallBtn4TextColor",
+          "label": "4 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showSmallBtn4",
+          "group": "작은 버튼"
+        },
+        {
+          "key": "smallBtnWidth",
+          "label": "작은 버튼 너비 (공통)",
+          "type": "text",
+          "default": "auto",
+          "placeholder": "예: auto, 50%, 120px (최대 100%)",
+          "hint": "auto는 글자 크기에 맞춤이며, % 또는 px로 너비를 지정할 수 있습니다.",
+          "group": "작은 버튼"
+        },
+        {
+          "key": "smallBtnBorderRadius",
+          "label": "작은 버튼 모서리 둥글기 (공통)",
+          "type": "text",
+          "default": "30px",
+          "placeholder": "예: 30px, 0px, 50%",
+          "hint": "값이 클수록 모서리가 둥글어집니다. 0px이면 각진 버튼이 됩니다.",
+          "group": "작은 버튼"
+        },
+        {
+          "key": "smallBtnAlign",
+          "label": "작은 버튼 텍스트 정렬 (공통)",
+          "type": "select",
+          "default": "center",
+          "options": [
+            {
+              "label": "왼쪽",
+              "value": "left"
+            },
+            {
+              "label": "가운데",
+              "value": "center"
+            },
+            {
+              "label": "오른쪽",
+              "value": "right"
+            }
+          ],
+          "hint": "버튼 너비를 넓게 지정했을 때 버튼 안 텍스트의 정렬입니다.",
+          "group": "작은 버튼"
+        },
+        {
+          "key": "showBigBtn",
+          "label": "표시",
+          "type": "boolean",
+          "default": false,
+          "group": "큰 버튼"
+        },
+        {
+          "key": "bigBtnText",
+          "label": "텍스트",
+          "type": "text",
+          "default": "큰 버튼 →",
+          "showWhen": "showBigBtn",
+          "group": "큰 버튼"
+        },
+        {
+          "key": "bigBtnUrl",
+          "label": "링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showBigBtn",
+          "group": "큰 버튼"
+        },
+        {
+          "key": "bigBtnBgColor",
+          "label": "배경색",
+          "type": "text",
+          "default": "#111111",
+          "showWhen": "showBigBtn",
+          "group": "큰 버튼"
+        },
+        {
+          "key": "bigBtnTextColor",
+          "label": "글자색",
+          "type": "text",
+          "default": "#ffffff",
+          "showWhen": "showBigBtn",
+          "group": "큰 버튼"
+        },
+        {
+          "key": "bigBtnBorderStyle",
+          "label": "테두리 스타일",
+          "type": "select",
+          "default": "none",
+          "options": [
+            {
+              "label": "없음",
+              "value": "none"
+            },
+            {
+              "label": "실선",
+              "value": "solid"
+            },
+            {
+              "label": "점선",
+              "value": "dashed"
+            },
+            {
+              "label": "점",
+              "value": "dotted"
+            }
+          ],
+          "showWhen": "showBigBtn",
+          "group": "큰 버튼"
+        },
+        {
+          "key": "bigBtnBorderWidth",
+          "label": "테두리 두께",
+          "type": "text",
+          "default": "1px",
+          "placeholder": "예: 1px",
+          "showWhen": {
+            "key": "bigBtnBorderStyle",
+            "notEquals": "none"
+          },
+          "group": "큰 버튼"
+        },
+        {
+          "key": "bigBtnBorderColor",
+          "label": "테두리 색상",
+          "type": "text",
+          "default": "#000000",
+          "showWhen": {
+            "key": "bigBtnBorderStyle",
+            "notEquals": "none"
+          },
+          "group": "큰 버튼"
+        },
+        {
+          "key": "bigBtnBorderRadius",
+          "label": "모서리 둥글기",
+          "type": "text",
+          "default": "5px",
+          "placeholder": "예: 5px, 50%",
+          "hint": "값이 클수록 모서리가 둥글어집니다. 100px이면 완전히 둥근(알약형) 버튼이 됩니다.",
+          "showWhen": "showBigBtn",
+          "group": "큰 버튼"
+        },
+        {
+          "key": "leftWidthPercent",
+          "label": "왼쪽(이미지) 영역 너비(%)",
+          "type": "text",
+          "default": "50",
+          "placeholder": "예: 50 (숫자만 입력, 좌+우=100)",
+          "hint": "PC에서 좌우로 나란히 표시될 때의 왼쪽 칸 비율입니다. 모바일에서는 위아래로 쌓입니다.",
+          "group": "영역 비율"
+        },
+        {
+          "key": "rightWidthPercent",
+          "label": "오른쪽(텍스트) 영역 너비(%)",
+          "type": "text",
+          "default": "50",
+          "placeholder": "예: 50 (숫자만 입력, 좌+우=100)",
+          "hint": "PC에서 좌우로 나란히 표시될 때의 오른쪽 칸 비율입니다. 모바일에서는 위아래로 쌓입니다.",
+          "group": "영역 비율"
+        }
+      ]
+    },
+    {
+      "id": "Module06",
+      "name": "모듈 06번",
+      "description": "2개 섹션, 각각 타이틀 + 이미지 + 텍스트 + 버튼",
+      "category": "image",
+      "icon": "pi pi-th-large",
+      "htmlFile": "Module06.html",
+      "editableProps": [
+        {
+          "key": "leftTitle",
+          "label": "왼쪽 타이틀",
+          "type": "text",
+          "default": "왼쪽 섹션 타이틀",
+          "placeholder": "왼쪽 섹션 타이틀",
+          "group": "왼쪽 타이틀"
+        },
+        {
+          "key": "leftTitleFontSize",
+          "label": "폰트 크기",
+          "type": "text",
+          "default": "16px",
+          "placeholder": "예: 16px, 18px",
+          "group": "왼쪽 타이틀"
+        },
+        {
+          "key": "leftTitleLineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "group": "왼쪽 타이틀"
+        },
+        {
+          "key": "leftTitleBgColor",
+          "label": "배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "group": "왼쪽 타이틀"
+        },
+        {
+          "key": "leftTitleColor",
+          "label": "글자색",
+          "type": "text",
+          "default": "#111111",
+          "group": "왼쪽 타이틀"
+        },
+        {
+          "key": "leftImageUrl",
+          "label": "URL",
+          "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
+          "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
+          "group": "왼쪽 이미지"
+        },
+        {
+          "key": "leftImageAlt",
+          "label": "설명 (Alt)",
+          "type": "text",
+          "default": "이미지",
+          "placeholder": "이미지",
+          "group": "왼쪽 이미지"
+        },
+        {
+          "key": "showLeftImageLink",
+          "label": "링크 사용",
+          "type": "boolean",
+          "default": false,
+          "group": "왼쪽 이미지"
+        },
+        {
+          "key": "leftImageLinkUrl",
+          "label": "링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showLeftImageLink",
+          "group": "왼쪽 이미지"
+        },
+        {
+          "key": "leftImageBorderRadius",
+          "label": "모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%",
+          "group": "왼쪽 이미지"
+        },
+        {
+          "key": "leftContent",
+          "label": "왼쪽 텍스트",
+          "type": "textarea",
+          "default": "왼쪽 콘텐츠 텍스트입니다",
+          "placeholder": "왼쪽 섹션 텍스트",
+          "group": "왼쪽 텍스트"
+        },
+        {
+          "key": "leftContentFontSize",
+          "label": "기본 글자 크기 (본문)",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px",
+          "group": "왼쪽 텍스트",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
+        },
+        {
+          "key": "showLeftButton1",
+          "label": "1 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftButton1Text",
+          "label": "1 텍스트",
+          "type": "text",
+          "default": "버튼 1 →",
+          "showWhen": "showLeftButton1",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftButton1Url",
+          "label": "1 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showLeftButton1",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftButton1BgColor",
+          "label": "1 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showLeftButton1",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftButton1TextColor",
+          "label": "1 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showLeftButton1",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "showLeftButton2",
+          "label": "2 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftButton2Text",
+          "label": "2 텍스트",
+          "type": "text",
+          "default": "버튼 2 →",
+          "showWhen": "showLeftButton2",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftButton2Url",
+          "label": "2 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showLeftButton2",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftButton2BgColor",
+          "label": "2 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showLeftButton2",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftButton2TextColor",
+          "label": "2 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showLeftButton2",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "showLeftButton3",
+          "label": "3 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftButton3Text",
+          "label": "3 텍스트",
+          "type": "text",
+          "default": "버튼 3 →",
+          "showWhen": "showLeftButton3",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftButton3Url",
+          "label": "3 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showLeftButton3",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftButton3BgColor",
+          "label": "3 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showLeftButton3",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftButton3TextColor",
+          "label": "3 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showLeftButton3",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "showLeftButton4",
+          "label": "4 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftButton4Text",
+          "label": "4 텍스트",
+          "type": "text",
+          "default": "버튼 4 →",
+          "showWhen": "showLeftButton4",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftButton4Url",
+          "label": "4 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showLeftButton4",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftButton4BgColor",
+          "label": "4 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showLeftButton4",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftButton4TextColor",
+          "label": "4 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showLeftButton4",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftSmallBtnWidth",
+          "label": "버튼 너비 (공통)",
+          "type": "text",
+          "default": "auto",
+          "placeholder": "예: auto, 50%, 120px (최대 100%)",
+          "hint": "auto는 글자 크기에 맞춤이며, % 또는 px로 너비를 지정할 수 있습니다.",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftSmallBtnBorderRadius",
+          "label": "버튼 모서리 둥글기 (공통)",
+          "type": "text",
+          "default": "30px",
+          "placeholder": "예: 30px, 0px, 50%",
+          "hint": "값이 클수록 모서리가 둥글어집니다. 0px이면 각진 버튼이 됩니다.",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "leftSmallBtnAlign",
+          "label": "버튼 텍스트 정렬 (공통)",
+          "type": "select",
+          "default": "center",
+          "options": [
+            {
+              "label": "왼쪽",
+              "value": "left"
+            },
+            {
+              "label": "가운데",
+              "value": "center"
+            },
+            {
+              "label": "오른쪽",
+              "value": "right"
+            }
+          ],
+          "hint": "버튼 너비를 넓게 지정했을 때 버튼 안 텍스트의 정렬입니다.",
+          "group": "왼쪽 버튼"
+        },
+        {
+          "key": "rightTitle",
+          "label": "오른쪽 타이틀",
+          "type": "text",
+          "default": "오른쪽 섹션 타이틀",
+          "placeholder": "오른쪽 섹션 타이틀",
+          "group": "오른쪽 타이틀"
+        },
+        {
+          "key": "rightTitleFontSize",
+          "label": "폰트 크기",
+          "type": "text",
+          "default": "16px",
+          "placeholder": "예: 16px, 18px",
+          "group": "오른쪽 타이틀"
+        },
+        {
+          "key": "rightTitleLineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "group": "오른쪽 타이틀"
+        },
+        {
+          "key": "rightTitleBgColor",
+          "label": "배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "group": "오른쪽 타이틀"
+        },
+        {
+          "key": "rightTitleColor",
+          "label": "글자색",
+          "type": "text",
+          "default": "#111111",
+          "group": "오른쪽 타이틀"
+        },
+        {
+          "key": "rightImageUrl",
+          "label": "URL",
+          "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
+          "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
+          "group": "오른쪽 이미지"
+        },
+        {
+          "key": "rightImageAlt",
+          "label": "설명 (Alt)",
+          "type": "text",
+          "default": "이미지",
+          "placeholder": "이미지",
+          "group": "오른쪽 이미지"
+        },
+        {
+          "key": "showRightImageLink",
+          "label": "링크 사용",
+          "type": "boolean",
+          "default": false,
+          "group": "오른쪽 이미지"
+        },
+        {
+          "key": "rightImageLinkUrl",
+          "label": "링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showRightImageLink",
+          "group": "오른쪽 이미지"
+        },
+        {
+          "key": "rightImageBorderRadius",
+          "label": "모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%",
+          "group": "오른쪽 이미지"
+        },
+        {
+          "key": "rightContent",
+          "label": "오른쪽 텍스트",
+          "type": "textarea",
+          "default": "오른쪽 콘텐츠 텍스트입니다",
+          "placeholder": "오른쪽 섹션 텍스트",
+          "group": "오른쪽 텍스트"
+        },
+        {
+          "key": "rightContentFontSize",
+          "label": "기본 글자 크기 (본문)",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px",
+          "group": "오른쪽 텍스트",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
+        },
+        {
+          "key": "showRightButton1",
+          "label": "1 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightButton1Text",
+          "label": "1 텍스트",
+          "type": "text",
+          "default": "버튼 1 →",
+          "showWhen": "showRightButton1",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightButton1Url",
+          "label": "1 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showRightButton1",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightButton1BgColor",
+          "label": "1 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showRightButton1",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightButton1TextColor",
+          "label": "1 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showRightButton1",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "showRightButton2",
+          "label": "2 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightButton2Text",
+          "label": "2 텍스트",
+          "type": "text",
+          "default": "버튼 2 →",
+          "showWhen": "showRightButton2",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightButton2Url",
+          "label": "2 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showRightButton2",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightButton2BgColor",
+          "label": "2 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showRightButton2",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightButton2TextColor",
+          "label": "2 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showRightButton2",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "showRightButton3",
+          "label": "3 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightButton3Text",
+          "label": "3 텍스트",
+          "type": "text",
+          "default": "버튼 3 →",
+          "showWhen": "showRightButton3",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightButton3Url",
+          "label": "3 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showRightButton3",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightButton3BgColor",
+          "label": "3 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showRightButton3",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightButton3TextColor",
+          "label": "3 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showRightButton3",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "showRightButton4",
+          "label": "4 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightButton4Text",
+          "label": "4 텍스트",
+          "type": "text",
+          "default": "버튼 4 →",
+          "showWhen": "showRightButton4",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightButton4Url",
+          "label": "4 링크",
+          "type": "url",
+          "default": "#",
+          "showWhen": "showRightButton4",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightButton4BgColor",
+          "label": "4 배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showRightButton4",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightButton4TextColor",
+          "label": "4 글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showRightButton4",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightSmallBtnWidth",
+          "label": "버튼 너비 (공통)",
+          "type": "text",
+          "default": "auto",
+          "placeholder": "예: auto, 50%, 120px (최대 100%)",
+          "hint": "auto는 글자 크기에 맞춤이며, % 또는 px로 너비를 지정할 수 있습니다.",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightSmallBtnBorderRadius",
+          "label": "버튼 모서리 둥글기 (공통)",
+          "type": "text",
+          "default": "30px",
+          "placeholder": "예: 30px, 0px, 50%",
+          "hint": "값이 클수록 모서리가 둥글어집니다. 0px이면 각진 버튼이 됩니다.",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "rightSmallBtnAlign",
+          "label": "버튼 텍스트 정렬 (공통)",
+          "type": "select",
+          "default": "center",
+          "options": [
+            {
+              "label": "왼쪽",
+              "value": "left"
+            },
+            {
+              "label": "가운데",
+              "value": "center"
+            },
+            {
+              "label": "오른쪽",
+              "value": "right"
+            }
+          ],
+          "hint": "버튼 너비를 넓게 지정했을 때 버튼 안 텍스트의 정렬입니다.",
+          "group": "오른쪽 버튼"
+        },
+        {
+          "key": "leftWidthPercent",
+          "label": "왼쪽 영역 너비(%)",
+          "type": "text",
+          "default": "50",
+          "placeholder": "예: 50 (숫자만 입력, 좌+우=100)",
+          "hint": "PC에서 좌우로 나란히 표시될 때의 왼쪽 칸 비율입니다. 모바일에서는 위아래로 쌓입니다.",
+          "group": "영역 비율"
+        },
+        {
+          "key": "rightWidthPercent",
+          "label": "오른쪽 영역 너비(%)",
+          "type": "text",
+          "default": "50",
+          "placeholder": "예: 50 (숫자만 입력, 좌+우=100)",
+          "hint": "PC에서 좌우로 나란히 표시될 때의 오른쪽 칸 비율입니다. 모바일에서는 위아래로 쌓입니다.",
+          "group": "영역 비율"
+        }
+      ]
+    },
+    {
+      "id": "Module07",
+      "name": "모듈 07번",
+      "description": "이미지 왼쪽 + 텍스트/버튼 오른쪽",
+      "category": "image",
+      "icon": "pi pi-th-large",
+      "htmlFile": "Module07.html",
+      "editableProps": [
+        {
+          "key": "imageUrl",
+          "label": "URL",
+          "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
+          "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
+          "group": "이미지"
+        },
+        {
+          "key": "imageAlt",
+          "label": "설명 (Alt)",
+          "type": "text",
+          "default": "이미지",
+          "placeholder": "이미지",
+          "group": "이미지"
+        },
+        {
+          "key": "showImageLink",
+          "label": "링크 사용",
+          "type": "boolean",
+          "default": false,
+          "group": "이미지"
+        },
+        {
+          "key": "imageLinkUrl",
+          "label": "링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showImageLink",
+          "group": "이미지"
+        },
+        {
+          "key": "imageBorderRadius",
+          "label": "모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%",
+          "group": "이미지"
+        },
+        {
+          "key": "title",
+          "label": "타이틀",
+          "type": "text",
+          "default": "콘텐츠 타이틀",
+          "placeholder": "타이틀을 입력하세요",
+          "group": "텍스트"
+        },
+        {
+          "key": "titleAlign",
+          "label": "타이틀 정렬",
+          "type": "select",
+          "default": "left",
+          "options": [
+            { "label": "왼쪽", "value": "left" },
+            { "label": "가운데", "value": "center" },
+            { "label": "오른쪽", "value": "right" }
+          ],
+          "group": "텍스트"
+        },
+        {
+          "key": "titleBgColor",
+          "label": "타이틀 배경색",
+          "type": "color",
+          "default": "transparent",
+          "placeholder": "예: #f5f5f5 (비우면 투명)",
+          "group": "텍스트"
+        },
+        {
+          "key": "titleTextColor",
+          "label": "타이틀 글자색",
+          "type": "color",
+          "default": "#111111",
+          "placeholder": "예: #111111",
+          "group": "텍스트"
+        },
+        {
+          "key": "titleFontWeight",
+          "label": "타이틀 굵기",
+          "type": "select",
+          "default": "700",
+          "options": [
+            { "label": "보통 (400)", "value": "400" },
+            { "label": "중간 (500)", "value": "500" },
+            { "label": "약간 굵게 (600)", "value": "600" },
+            { "label": "굵게 (700)", "value": "700" },
+            { "label": "매우 굵게 (800)", "value": "800" }
+          ],
+          "group": "텍스트"
+        },
+        {
+          "key": "titleBorderRadius",
+          "label": "타이틀 모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 8px, 0",
+          "group": "텍스트"
+        },
+        {
+          "key": "titleFontSize",
+          "label": "타이틀 폰트 크기",
+          "type": "text",
+          "default": "18px",
+          "placeholder": "예: 18px, 20px",
+          "group": "텍스트"
+        },
+        {
+          "key": "titleLineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "group": "텍스트"
+        },
+        {
+          "key": "contentText",
+          "label": "텍스트",
+          "type": "textarea",
+          "default": "콘텐츠 텍스트를 입력하세요",
+          "placeholder": "텍스트 내용을 입력하세요",
+          "group": "텍스트"
+        },
+        {
+          "key": "contentTextFontSize",
+          "label": "기본 글자 크기 (본문)",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px",
+          "group": "텍스트",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
+        },
+        {
+          "key": "contentFontWeight",
+          "label": "본문 굵기",
+          "type": "select",
+          "default": "400",
+          "options": [
+            { "label": "보통 (400)", "value": "400" },
+            { "label": "중간 (500)", "value": "500" },
+            { "label": "약간 굵게 (600)", "value": "600" },
+            { "label": "굵게 (700)", "value": "700" }
+          ],
+          "group": "텍스트"
+        },
+        {
+          "key": "contentBgColor",
+          "label": "본문 배경색",
+          "type": "color",
+          "default": "transparent",
+          "placeholder": "예: #f5f5f5 (비우면 투명)",
+          "group": "텍스트"
+        },
+        {
+          "key": "contentTextColor",
+          "label": "본문 글자색",
+          "type": "color",
+          "default": "#333333",
+          "placeholder": "예: #333333",
+          "group": "텍스트"
+        },
+        {
+          "key": "contentBorderRadius",
+          "label": "본문 모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 8px, 0",
+          "group": "텍스트"
+        },
+        {
+          "key": "textAreaPaddingTop",
+          "label": "텍스트 영역 상단 여백",
+          "type": "text",
+          "default": "25px",
+          "placeholder": "예: 25px, 0px",
+          "group": "텍스트"
+        },
+        {
+          "key": "textAreaPaddingRight",
+          "label": "텍스트 영역 우측 여백",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 10px",
+          "group": "텍스트"
+        },
+        {
+          "key": "textAreaPaddingBottom",
+          "label": "텍스트 영역 하단 여백",
+          "type": "text",
+          "default": "25px",
+          "placeholder": "예: 25px, 0px",
+          "group": "텍스트"
+        },
+        {
+          "key": "textAreaPaddingLeft",
+          "label": "텍스트 영역 좌측 여백",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 10px",
+          "group": "텍스트"
+        },
+        {
+          "key": "showButton",
+          "label": "표시",
+          "type": "boolean",
+          "default": false,
+          "group": "버튼"
+        },
+        {
+          "key": "buttonText",
+          "label": "텍스트",
+          "type": "text",
+          "default": "더보기 →",
+          "placeholder": "버튼 텍스트",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonUrl",
+          "label": "링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 URL",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonBgColor",
+          "label": "배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonTextColor",
+          "label": "글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonWidth",
+          "label": "버튼 너비",
+          "type": "text",
+          "default": "auto",
+          "placeholder": "예: auto, 50%, 120px (최대 100%)",
+          "hint": "auto는 글자 크기에 맞춤이며, % 또는 px로 너비를 지정할 수 있습니다.",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonBorderRadius",
+          "label": "버튼 모서리 둥글기",
+          "type": "text",
+          "default": "30px",
+          "placeholder": "예: 30px, 0px, 50%",
+          "hint": "값이 클수록 모서리가 둥글어집니다. 0px이면 각진 버튼이 됩니다.",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonAlign",
+          "label": "버튼 텍스트 정렬",
+          "type": "select",
+          "default": "center",
+          "options": [
+            {
+              "label": "왼쪽",
+              "value": "left"
+            },
+            {
+              "label": "가운데",
+              "value": "center"
+            },
+            {
+              "label": "오른쪽",
+              "value": "right"
+            }
+          ],
+          "hint": "버튼 너비를 넓게 지정했을 때 버튼 안 텍스트의 정렬입니다.",
+          "group": "버튼"
+        },
+        {
+          "key": "leftWidthPercent",
+          "label": "왼쪽(이미지) 영역 너비(%)",
+          "type": "text",
+          "default": "51",
+          "placeholder": "예: 50 (숫자만 입력, 좌+우=100)",
+          "hint": "PC에서 좌우로 나란히 표시될 때의 왼쪽(이미지) 칸 비율입니다. 모바일에서는 위아래로 쌓입니다.",
+          "group": "영역 비율"
+        },
+        {
+          "key": "rightWidthPercent",
+          "label": "오른쪽(텍스트) 영역 너비(%)",
+          "type": "text",
+          "default": "50",
+          "placeholder": "예: 50 (숫자만 입력, 좌+우=100)",
+          "hint": "PC에서 좌우로 나란히 표시될 때의 오른쪽(텍스트) 칸 비율입니다. 모바일에서는 위아래로 쌓입니다.",
+          "group": "영역 비율"
+        }
+      ]
+    },
+    {
+      "id": "Module07_reverse",
+      "name": "모듈 07번 (반대 방향)",
+      "description": "텍스트/버튼 왼쪽 + 이미지 오른쪽",
+      "category": "image",
+      "icon": "pi pi-th-large",
+      "htmlFile": "Module07_reverse.html",
+      "editableProps": [
+        {
+          "key": "imageUrl",
+          "label": "URL",
+          "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
+          "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
+          "group": "이미지"
+        },
+        {
+          "key": "imageAlt",
+          "label": "설명 (Alt)",
+          "type": "text",
+          "default": "이미지",
+          "placeholder": "이미지",
+          "group": "이미지"
+        },
+        {
+          "key": "showImageLink",
+          "label": "링크 사용",
+          "type": "boolean",
+          "default": false,
+          "group": "이미지"
+        },
+        {
+          "key": "imageLinkUrl",
+          "label": "링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showImageLink",
+          "group": "이미지"
+        },
+        {
+          "key": "imageBorderRadius",
+          "label": "모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%",
+          "group": "이미지"
+        },
+        {
+          "key": "title",
+          "label": "타이틀",
+          "type": "text",
+          "default": "콘텐츠 타이틀",
+          "placeholder": "타이틀을 입력하세요",
+          "group": "텍스트"
+        },
+        {
+          "key": "titleAlign",
+          "label": "타이틀 정렬",
+          "type": "select",
+          "default": "left",
+          "options": [
+            { "label": "왼쪽", "value": "left" },
+            { "label": "가운데", "value": "center" },
+            { "label": "오른쪽", "value": "right" }
+          ],
+          "group": "텍스트"
+        },
+        {
+          "key": "titleBgColor",
+          "label": "타이틀 배경색",
+          "type": "color",
+          "default": "transparent",
+          "placeholder": "예: #f5f5f5 (비우면 투명)",
+          "group": "텍스트"
+        },
+        {
+          "key": "titleTextColor",
+          "label": "타이틀 글자색",
+          "type": "color",
+          "default": "#111111",
+          "placeholder": "예: #111111",
+          "group": "텍스트"
+        },
+        {
+          "key": "titleFontWeight",
+          "label": "타이틀 굵기",
+          "type": "select",
+          "default": "700",
+          "options": [
+            { "label": "보통 (400)", "value": "400" },
+            { "label": "중간 (500)", "value": "500" },
+            { "label": "약간 굵게 (600)", "value": "600" },
+            { "label": "굵게 (700)", "value": "700" },
+            { "label": "매우 굵게 (800)", "value": "800" }
+          ],
+          "group": "텍스트"
+        },
+        {
+          "key": "titleBorderRadius",
+          "label": "타이틀 모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 8px, 0",
+          "group": "텍스트"
+        },
+        {
+          "key": "titleFontSize",
+          "label": "타이틀 폰트 크기",
+          "type": "text",
+          "default": "18px",
+          "placeholder": "예: 18px, 20px",
+          "group": "텍스트"
+        },
+        {
+          "key": "titleLineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "group": "텍스트"
+        },
+        {
+          "key": "contentText",
+          "label": "텍스트",
+          "type": "textarea",
+          "default": "콘텐츠 텍스트를 입력하세요",
+          "placeholder": "텍스트 내용을 입력하세요",
+          "group": "텍스트"
+        },
+        {
+          "key": "contentTextFontSize",
+          "label": "기본 글자 크기 (본문)",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px",
+          "group": "텍스트",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
+        },
+        {
+          "key": "contentFontWeight",
+          "label": "본문 굵기",
+          "type": "select",
+          "default": "400",
+          "options": [
+            { "label": "보통 (400)", "value": "400" },
+            { "label": "중간 (500)", "value": "500" },
+            { "label": "약간 굵게 (600)", "value": "600" },
+            { "label": "굵게 (700)", "value": "700" }
+          ],
+          "group": "텍스트"
+        },
+        {
+          "key": "contentBgColor",
+          "label": "본문 배경색",
+          "type": "color",
+          "default": "transparent",
+          "placeholder": "예: #f5f5f5 (비우면 투명)",
+          "group": "텍스트"
+        },
+        {
+          "key": "contentTextColor",
+          "label": "본문 글자색",
+          "type": "color",
+          "default": "#333333",
+          "placeholder": "예: #333333",
+          "group": "텍스트"
+        },
+        {
+          "key": "contentBorderRadius",
+          "label": "본문 모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 8px, 0",
+          "group": "텍스트"
+        },
+        {
+          "key": "textAreaPaddingTop",
+          "label": "텍스트 영역 상단 여백",
+          "type": "text",
+          "default": "25px",
+          "placeholder": "예: 25px, 0px",
+          "group": "텍스트"
+        },
+        {
+          "key": "textAreaPaddingRight",
+          "label": "텍스트 영역 우측 여백",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 10px",
+          "group": "텍스트"
+        },
+        {
+          "key": "textAreaPaddingBottom",
+          "label": "텍스트 영역 하단 여백",
+          "type": "text",
+          "default": "25px",
+          "placeholder": "예: 25px, 0px",
+          "group": "텍스트"
+        },
+        {
+          "key": "textAreaPaddingLeft",
+          "label": "텍스트 영역 좌측 여백",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 10px",
+          "group": "텍스트"
+        },
+        {
+          "key": "showButton",
+          "label": "표시",
+          "type": "boolean",
+          "default": false,
+          "group": "버튼"
+        },
+        {
+          "key": "buttonText",
+          "label": "텍스트",
+          "type": "text",
+          "default": "더보기 →",
+          "placeholder": "버튼 텍스트",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonUrl",
+          "label": "링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 URL",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonBgColor",
+          "label": "배경색",
+          "type": "text",
+          "default": "#e5e5e5",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonTextColor",
+          "label": "글자색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonWidth",
+          "label": "버튼 너비",
+          "type": "text",
+          "default": "auto",
+          "placeholder": "예: auto, 50%, 120px (최대 100%)",
+          "hint": "auto는 글자 크기에 맞춤이며, % 또는 px로 너비를 지정할 수 있습니다.",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonBorderRadius",
+          "label": "버튼 모서리 둥글기",
+          "type": "text",
+          "default": "30px",
+          "placeholder": "예: 30px, 0px, 50%",
+          "hint": "값이 클수록 모서리가 둥글어집니다. 0px이면 각진 버튼이 됩니다.",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonAlign",
+          "label": "버튼 텍스트 정렬",
+          "type": "select",
+          "default": "center",
+          "options": [
+            {
+              "label": "왼쪽",
+              "value": "left"
+            },
+            {
+              "label": "가운데",
+              "value": "center"
+            },
+            {
+              "label": "오른쪽",
+              "value": "right"
+            }
+          ],
+          "hint": "버튼 너비를 넓게 지정했을 때 버튼 안 텍스트의 정렬입니다.",
+          "group": "버튼"
+        },
+        {
+          "key": "leftWidthPercent",
+          "label": "왼쪽(텍스트) 영역 너비(%)",
+          "type": "text",
+          "default": "50",
+          "placeholder": "예: 50 (숫자만 입력, 좌+우=100)",
+          "hint": "PC에서 좌우로 나란히 표시될 때의 왼쪽(텍스트) 칸 비율입니다. 모바일에서는 위아래로 쌓입니다.",
+          "group": "영역 비율"
+        },
+        {
+          "key": "rightWidthPercent",
+          "label": "오른쪽(이미지) 영역 너비(%)",
+          "type": "text",
+          "default": "51",
+          "placeholder": "예: 50 (숫자만 입력, 좌+우=100)",
+          "hint": "PC에서 좌우로 나란히 표시될 때의 오른쪽(이미지) 칸 비율입니다. 모바일에서는 위아래로 쌓입니다.",
+          "group": "영역 비율"
+        }
+      ]
+    },
+    {
+      "id": "ModuleSubTitle",
+      "name": "모듈 10번 타이틀",
+      "description": "섹션 구분 서브타이틀",
+      "category": "image",
+      "icon": "pi pi-align-left",
+      "htmlFile": "ModuleSubTitle.html",
+      "editableProps": [
+        {
+          "key": "subtitleText",
+          "label": "서브타이틀",
+          "type": "textarea",
+          "default": "서브타이틀 (14:20~14:40)",
+          "placeholder": "기조연설 (14:20~14:40)",
+          "required": true,
+          "group": "텍스트"
+        },
+        {
+          "key": "subtitleTextFontSize",
+          "label": "서브타이틀 기본 글자 크기",
+          "type": "text",
+          "default": "16px",
+          "placeholder": "예: 16px, 18px",
+          "group": "텍스트",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
+        },
+        {
+          "key": "paddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px",
+          "group": "여백"
+        },
+        {
+          "key": "paddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px",
+          "group": "여백"
+        },
+        {
+          "key": "paddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px",
+          "group": "여백"
+        },
+        {
+          "key": "paddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px",
+          "group": "여백"
+        }
+      ]
+    },
+    {
+      "id": "Module10",
+      "name": "모듈 10번",
+      "description": "이미지 + 라벨 + 타이틀 + 부제목 (1열)",
+      "category": "image",
+      "icon": "pi pi-th-large",
+      "htmlFile": "Module10.html",
+      "editableProps": [
+        {
+          "key": "showImage",
+          "label": "이미지 사용",
+          "type": "boolean",
+          "default": true,
+          "group": "이미지"
+        },
+        {
+          "key": "imageUrl",
+          "label": "URL",
+          "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-speaker.png",
+          "showWhen": "showImage",
+          "group": "이미지"
+        },
+        {
+          "key": "imageAlt",
+          "label": "설명 (Alt)",
+          "type": "text",
+          "default": "이미지",
+          "showWhen": "showImage",
+          "group": "이미지"
+        },
+        {
+          "key": "showImageLink",
+          "label": "링크 사용",
+          "type": "boolean",
+          "default": false,
+          "showWhen": "showImage",
+          "group": "이미지"
+        },
+        {
+          "key": "imageLinkUrl",
+          "label": "링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showImageLink",
+          "group": "이미지"
+        },
+        {
+          "key": "imageBorderRadius",
+          "label": "모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%",
+          "showWhen": "showImage",
+          "group": "이미지"
+        },
+        {
+          "key": "showLabel",
+          "label": "표시",
+          "type": "boolean",
+          "default": true,
+          "group": "카테고리"
+        },
+        {
+          "key": "labelText",
+          "label": "텍스트",
+          "type": "text",
+          "default": "기조연설",
+          "showWhen": "showLabel",
+          "group": "카테고리"
+        },
+        {
+          "key": "labelTextFontSize",
+          "label": "폰트 크기",
+          "type": "text",
+          "default": "13px",
+          "placeholder": "예: 13px, 14px",
+          "showWhen": "showLabel",
+          "group": "카테고리"
+        },
+        {
+          "key": "labelBgColor",
+          "label": "배경색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showLabel",
+          "group": "카테고리"
+        },
+        {
+          "key": "labelTextColor",
+          "label": "글자색",
+          "type": "text",
+          "default": "#ffffff",
+          "showWhen": "showLabel",
+          "group": "카테고리"
+        },
+        {
+          "key": "showTime",
+          "label": "표시",
+          "type": "boolean",
+          "default": false,
+          "group": "시간"
+        },
+        {
+          "key": "timeText",
+          "label": "텍스트",
+          "type": "text",
+          "default": "09:00 ~ 10:00",
+          "showWhen": "showTime",
+          "group": "시간"
+        },
+        {
+          "key": "timeTextFontSize",
+          "label": "폰트 크기",
+          "type": "text",
+          "default": "13px",
+          "placeholder": "예: 13px, 14px",
+          "showWhen": "showTime",
+          "group": "시간"
+        },
+        {
+          "key": "timeTextColor",
+          "label": "글자색",
+          "type": "color",
+          "default": "#666666",
+          "showWhen": "showTime",
+          "group": "시간"
+        },
+        {
+          "key": "title",
+          "label": "타이틀",
+          "type": "textarea",
+          "default": "발표자 타이틀",
+          "placeholder": "타이틀 텍스트",
+          "required": true,
+          "group": "타이틀"
+        },
+        {
+          "key": "titleFontSize",
+          "label": "기본 글자 크기 (본문)",
+          "type": "text",
+          "default": "16px",
+          "placeholder": "예: 16px, 18px",
+          "group": "타이틀",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
+        },
+        {
+          "key": "imageAreaWidth",
+          "label": "이미지 영역 너비",
+          "type": "text",
+          "default": "30%",
+          "placeholder": "예: 30%",
+          "group": "영역 비율",
+          "hint": "이미지 영역과 텍스트 영역 너비의 합이 100%가 되도록 맞춰주세요."
+        },
+        {
+          "key": "titleAreaWidth",
+          "label": "텍스트 영역 너비",
+          "type": "text",
+          "default": "70%",
+          "placeholder": "예: 70%",
+          "group": "영역 비율"
+        }
+      ]
+    },
+    {
+      "id": "Module10-1",
+      "name": "모듈 10-1번",
+      "description": "이미지 + 라벨 + 타이틀 + 부제목 (2열)",
+      "category": "image",
+      "icon": "pi pi-th-large",
+      "htmlFile": "Module10-1.html",
+      "editableProps": [
+        {
+          "key": "leftImageUrl",
+          "label": "이미지 URL",
+          "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-speaker.png",
+          "group": "왼쪽"
+        },
+        {
+          "key": "leftImageAlt",
+          "label": "이미지 설명 (Alt)",
+          "type": "text",
+          "default": "이미지",
+          "group": "왼쪽"
+        },
+        {
+          "key": "showLeftImageLink",
+          "label": "이미지 링크 사용",
+          "type": "boolean",
+          "default": false,
+          "group": "왼쪽"
+        },
+        {
+          "key": "leftImageLinkUrl",
+          "label": "이미지 링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showLeftImageLink",
+          "group": "왼쪽"
+        },
+        {
+          "key": "leftImageBorderRadius",
+          "label": "이미지 모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%",
+          "group": "왼쪽"
+        },
+        {
+          "key": "showLeftLabel",
+          "label": "카테고리 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "왼쪽"
+        },
+        {
+          "key": "leftLabelText",
+          "label": "카테고리 텍스트",
+          "type": "text",
+          "default": "10:10 ~ 10:15",
+          "showWhen": "showLeftLabel",
+          "group": "왼쪽"
+        },
+        {
+          "key": "leftLabelTextFontSize",
+          "label": "카테고리 폰트 크기",
+          "type": "text",
+          "default": "13px",
+          "placeholder": "예: 13px, 14px",
+          "showWhen": "showLeftLabel",
+          "group": "왼쪽"
+        },
+        {
+          "key": "leftLabelBgColor",
+          "label": "카테고리 배경색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showLeftLabel",
+          "group": "왼쪽"
+        },
+        {
+          "key": "leftLabelTextColor",
+          "label": "카테고리 글자색",
+          "type": "text",
+          "default": "#ffffff",
+          "showWhen": "showLeftLabel",
+          "group": "왼쪽"
+        },
+        {
+          "key": "leftTitle",
+          "label": "타이틀",
+          "type": "textarea",
+          "default": "왼쪽 발표자 타이틀",
+          "placeholder": "왼쪽 타이틀",
+          "group": "왼쪽"
+        },
+        {
+          "key": "leftTitleFontSize",
+          "label": "타이틀 기본 글자 크기",
+          "type": "text",
+          "default": "16px",
+          "placeholder": "예: 16px, 18px",
+          "group": "왼쪽",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
+        },
+        {
+          "key": "rightImageUrl",
+          "label": "이미지 URL",
+          "type": "url",
+          "default": "https://design.messeesang.com/e-dm/newsletter/images/img-speaker.png",
+          "group": "오른쪽"
+        },
+        {
+          "key": "rightImageAlt",
+          "label": "이미지 설명 (Alt)",
+          "type": "text",
+          "default": "이미지",
+          "group": "오른쪽"
+        },
+        {
+          "key": "showRightImageLink",
+          "label": "이미지 링크 사용",
+          "type": "boolean",
+          "default": false,
+          "group": "오른쪽"
+        },
+        {
+          "key": "rightImageLinkUrl",
+          "label": "이미지 링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "이미지 클릭 시 이동할 URL",
+          "showWhen": "showRightImageLink",
+          "group": "오른쪽"
+        },
+        {
+          "key": "rightImageBorderRadius",
+          "label": "이미지 모서리 둥글기",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 10px, 50%",
+          "group": "오른쪽"
+        },
+        {
+          "key": "showRightLabel",
+          "label": "카테고리 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "오른쪽"
+        },
+        {
+          "key": "rightLabelText",
+          "label": "카테고리 텍스트",
+          "type": "text",
+          "default": "10:10 ~ 10:15",
+          "showWhen": "showRightLabel",
+          "group": "오른쪽"
+        },
+        {
+          "key": "rightLabelTextFontSize",
+          "label": "카테고리 폰트 크기",
+          "type": "text",
+          "default": "13px",
+          "placeholder": "예: 13px, 14px",
+          "showWhen": "showRightLabel",
+          "group": "오른쪽"
+        },
+        {
+          "key": "rightLabelBgColor",
+          "label": "카테고리 배경색",
+          "type": "text",
+          "default": "#333333",
+          "showWhen": "showRightLabel",
+          "group": "오른쪽"
+        },
+        {
+          "key": "rightLabelTextColor",
+          "label": "카테고리 글자색",
+          "type": "text",
+          "default": "#ffffff",
+          "showWhen": "showRightLabel",
+          "group": "오른쪽"
+        },
+        {
+          "key": "rightTitle",
+          "label": "타이틀",
+          "type": "textarea",
+          "default": "오른쪽 발표자 타이틀",
+          "placeholder": "오른쪽 타이틀",
+          "group": "오른쪽"
+        },
+        {
+          "key": "rightTitleFontSize",
+          "label": "타이틀 기본 글자 크기",
+          "type": "text",
+          "default": "16px",
+          "placeholder": "예: 16px, 18px",
+          "group": "오른쪽",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
+        },
+        {
+          "key": "leftAreaWidth",
+          "label": "왼쪽 영역 너비",
+          "type": "text",
+          "default": "50%",
+          "placeholder": "예: 50%",
+          "group": "영역 비율",
+          "hint": "왼쪽/오른쪽 영역 너비의 합이 100%가 되도록 맞춰주세요."
+        },
+        {
+          "key": "rightAreaWidth",
+          "label": "오른쪽 영역 너비",
+          "type": "text",
+          "default": "50%",
+          "placeholder": "예: 50%",
+          "group": "영역 비율"
+        }
+      ]
+    },
+    {
+      "id": "Module11",
+      "name": "모듈 11번",
+      "description": "라벨 + 텍스트 + 버튼이 있는 링크 박스",
+      "category": "text",
+      "icon": "pi pi-th-large",
+      "htmlFile": "Module11.html",
+      "editableProps": [
+        {
+          "key": "linkUrl",
+          "label": "링크 URL",
+          "type": "url",
+          "default": "#",
+          "placeholder": "클릭 시 이동할 URL",
+          "group": "스타일"
+        },
+        {
+          "key": "bgColor",
+          "label": "배경색",
+          "type": "text",
+          "default": "#eaeaea",
+          "group": "스타일"
+        },
+        {
+          "key": "textColor",
+          "label": "본문 글자색",
+          "type": "text",
+          "default": "#111111",
+          "group": "스타일"
+        },
+        {
+          "key": "showLabel",
+          "label": "라벨 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "라벨"
+        },
+        {
+          "key": "labelText",
+          "label": "텍스트",
+          "type": "text",
+          "default": "[중랑구]",
+          "placeholder": "라벨 텍스트",
+          "showWhen": "showLabel",
+          "group": "라벨"
+        },
+        {
+          "key": "labelTextFontSize",
+          "label": "폰트 크기",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px",
+          "showWhen": "showLabel",
+          "group": "라벨"
+        },
+        {
+          "key": "labelColor",
+          "label": "색상",
+          "type": "text",
+          "default": "#111111",
+          "showWhen": "showLabel",
+          "group": "라벨"
+        },
+        {
+          "key": "labelTextLineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "showWhen": "showLabel",
+          "group": "라벨"
+        },
+        {
+          "key": "contentText",
+          "label": "콘텐츠",
+          "type": "text",
+          "default": "2022년 국내전시회 참가기업 지원사업(~2/25)",
+          "placeholder": "내용을 입력하세요",
+          "group": "텍스트"
+        },
+        {
+          "key": "contentTextFontSize",
+          "label": "폰트 크기",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px",
+          "group": "텍스트"
+        },
+        {
+          "key": "contentTextLineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "group": "텍스트"
+        },
+        {
+          "key": "showButton",
+          "label": "버튼 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "버튼"
+        },
+        {
+          "key": "buttonText",
+          "label": "텍스트",
+          "type": "text",
+          "default": "GO →",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonBgColor",
+          "label": "배경색",
+          "type": "text",
+          "default": "#999999",
+          "showWhen": "showButton",
+          "group": "버튼"
+        },
+        {
+          "key": "buttonTextColor",
+          "label": "글자색",
+          "type": "text",
+          "default": "#ffffff",
+          "showWhen": "showButton",
+          "group": "버튼"
+        }
+      ]
+    },
+    {
+      "id": "Module12",
+      "name": "모듈 12번",
+      "description": "타이틀과 텍스트가 있는 박스",
+      "category": "text",
+      "icon": "pi pi-th-large",
+      "htmlFile": "Module12.html",
+      "editableProps": [
+        {
+          "key": "showTitle",
+          "label": "타이틀 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "타이틀"
+        },
+        {
+          "key": "titleText",
+          "label": "타이틀",
+          "type": "text",
+          "default": "콘텐츠 타이틀",
+          "placeholder": "타이틀을 입력하세요",
+          "required": true,
+          "showWhen": "showTitle",
+          "group": "타이틀"
+        },
+        {
+          "key": "titleFontSize",
+          "label": "폰트 크기",
+          "type": "text",
+          "default": "16px",
+          "placeholder": "예: 16px, 18px",
+          "showWhen": "showTitle",
+          "group": "타이틀"
+        },
+        {
+          "key": "titleColor",
+          "label": "색상",
+          "type": "color",
+          "default": "#f20404",
+          "showWhen": "showTitle",
+          "group": "타이틀"
+        },
+        {
+          "key": "titleLineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "showWhen": "showTitle",
+          "group": "타이틀"
+        },
+        {
+          "key": "contentText",
+          "label": "텍스트",
+          "type": "textarea",
+          "default": "콘텐츠 텍스트를 입력하세요",
+          "placeholder": "내용을 입력하세요",
+          "group": "텍스트"
+        },
+        {
+          "key": "textFontSize",
+          "label": "기본 글자 크기 (본문)",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px",
+          "group": "텍스트",
+          "hint": "크기 미지정 본문에 적용됩니다.<br>일부만 다르게 하려면 에디터 툴바의 '글자 크기'를 쓰세요."
+        },
+        {
+          "key": "textColor",
+          "label": "색상",
+          "type": "color",
+          "default": "#333333",
+          "group": "텍스트"
+        },
+        {
+          "key": "textLineHeight",
+          "label": "행간(line-height)",
+          "type": "text",
+          "default": "1.7",
+          "placeholder": "예: 1.5, 1.7em",
+          "group": "텍스트"
+        },
+        {
+          "key": "boxBgColor",
+          "label": "박스 배경색",
+          "type": "color",
+          "default": "#f5f5f5",
+          "group": "스타일"
+        },
+        {
+          "key": "boxBorderWidth",
+          "label": "테두리 두께",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 1px, 2px",
+          "group": "스타일"
+        },
+        {
+          "key": "boxBorderColor",
+          "label": "테두리 색상",
+          "type": "color",
+          "default": "#dddddd",
+          "group": "스타일"
+        },
+        {
+          "key": "textAlign",
+          "label": "정렬",
+          "type": "select",
+          "default": "center",
+          "options": [
+            {
+              "label": "왼쪽",
+              "value": "left"
+            },
+            {
+              "label": "가운데",
+              "value": "center"
+            },
+            {
+              "label": "오른쪽",
+              "value": "right"
+            }
+          ],
+          "group": "스타일"
+        },
+        {
+          "key": "paddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 10px",
+          "group": "여백"
+        },
+        {
+          "key": "paddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "group": "여백"
+        },
+        {
+          "key": "paddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "10px",
+          "placeholder": "예: 10px, 0",
+          "group": "여백"
+        },
+        {
+          "key": "paddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "group": "여백"
+        }
+      ]
+    },
+    {
+      "id": "TopLanguageButton",
+      "name": "언어 선택 버튼",
+      "description": "상단 다국어(EN/JP/TH) 선택 버튼",
+      "category": "common",
+      "icon": "pi pi-globe",
+      "htmlFile": "TopLanguageButton.html",
+      "editableProps": [
+        {
+          "key": "button1Show",
+          "label": "버튼 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "버튼 1"
+        },
+        {
+          "key": "button1Text",
+          "label": "텍스트",
+          "type": "text",
+          "default": "EN",
+          "placeholder": "비우면 표시 안 됨",
+          "showWhen": "button1Show",
+          "group": "버튼 1"
+        },
+        {
+          "key": "button1Link",
+          "label": "링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 링크 URL을 입력하세요",
+          "showWhen": "button1Show",
+          "group": "버튼 1"
+        },
+        {
+          "key": "button1Active",
+          "label": "활성(액티브) 버튼",
+          "type": "boolean",
+          "default": true,
+          "showWhen": "button1Show",
+          "group": "버튼 1"
+        },
+        {
+          "key": "button2Show",
+          "label": "버튼 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "버튼 2"
+        },
+        {
+          "key": "button2Text",
+          "label": "텍스트",
+          "type": "text",
+          "default": "JP",
+          "placeholder": "비우면 표시 안 됨",
+          "showWhen": "button2Show",
+          "group": "버튼 2"
+        },
+        {
+          "key": "button2Link",
+          "label": "링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 링크 URL을 입력하세요",
+          "showWhen": "button2Show",
+          "group": "버튼 2"
+        },
+        {
+          "key": "button2Active",
+          "label": "활성(액티브) 버튼",
+          "type": "boolean",
+          "default": false,
+          "showWhen": "button2Show",
+          "group": "버튼 2"
+        },
+        {
+          "key": "button3Show",
+          "label": "버튼 표시",
+          "type": "boolean",
+          "default": true,
+          "group": "버튼 3"
+        },
+        {
+          "key": "button3Text",
+          "label": "텍스트",
+          "type": "text",
+          "default": "TH",
+          "placeholder": "비우면 표시 안 됨",
+          "showWhen": "button3Show",
+          "group": "버튼 3"
+        },
+        {
+          "key": "button3Link",
+          "label": "링크",
+          "type": "url",
+          "default": "#",
+          "placeholder": "버튼 링크 URL을 입력하세요",
+          "showWhen": "button3Show",
+          "group": "버튼 3"
+        },
+        {
+          "key": "button3Active",
+          "label": "활성(액티브) 버튼",
+          "type": "boolean",
+          "default": false,
+          "showWhen": "button3Show",
+          "group": "버튼 3"
+        },
+        {
+          "key": "defaultBgColor",
+          "label": "배경색",
+          "type": "color",
+          "default": "#ffffff",
+          "group": "기본 버튼 색상"
+        },
+        {
+          "key": "defaultTextColor",
+          "label": "텍스트 색상",
+          "type": "color",
+          "default": "#fe5f0d",
+          "group": "기본 버튼 색상"
+        },
+        {
+          "key": "defaultBorderColor",
+          "label": "테두리 색상",
+          "type": "color",
+          "default": "#fe5f0d",
+          "group": "기본 버튼 색상"
+        },
+        {
+          "key": "activeBgColor",
+          "label": "배경색",
+          "type": "color",
+          "default": "#fe5f0d",
+          "group": "액티브 버튼 색상"
+        },
+        {
+          "key": "activeTextColor",
+          "label": "텍스트 색상",
+          "type": "color",
+          "default": "#ffffff",
+          "group": "액티브 버튼 색상"
+        },
+        {
+          "key": "activeBorderColor",
+          "label": "테두리 색상",
+          "type": "color",
+          "default": "#fe5f0d",
+          "group": "액티브 버튼 색상"
+        },
+        {
+          "key": "buttonFontSize",
+          "label": "폰트 크기",
+          "type": "text",
+          "default": "16px",
+          "placeholder": "예: 16px",
+          "group": "버튼 공통"
+        },
+        {
+          "key": "buttonWidth",
+          "label": "버튼 너비",
+          "type": "text",
+          "default": "70px",
+          "placeholder": "예: 70px",
+          "group": "버튼 공통"
+        },
+        {
+          "key": "paddingTop",
+          "label": "상단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "group": "여백"
+        },
+        {
+          "key": "paddingRight",
+          "label": "우측 여백",
+          "type": "text",
+          "default": "25px",
+          "placeholder": "예: 25px, 0",
+          "group": "여백"
+        },
+        {
+          "key": "paddingBottom",
+          "label": "하단 여백",
+          "type": "text",
+          "default": "20px",
+          "placeholder": "예: 20px, 0",
+          "group": "여백"
+        },
+        {
+          "key": "paddingLeft",
+          "label": "좌측 여백",
+          "type": "text",
+          "default": "25px",
+          "placeholder": "예: 25px, 0",
+          "group": "여백"
+        }
+      ]
+    }
+  ]
+}
