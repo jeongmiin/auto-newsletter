@@ -8,8 +8,14 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 export default defineConfig(({ command }) => {
   const isGitHubActionsBuild = command === 'build' && process.env.GITHUB_ACTIONS === 'true'
 
+  // 배포 경로(base)는 워크플로에서 DEPLOY_BASE로 지정한다.
+  //  - master → '/auto-newsletter/'          (https://<user>.github.io/auto-newsletter/)
+  //  - develop → '/auto-newsletter/develop/'  (…/auto-newsletter/develop/)
+  // DEPLOY_BASE가 없으면 기존 동작(로컬='/', GH Actions='/auto-newsletter/')을 유지한다.
+  const deployBase = process.env.DEPLOY_BASE || (isGitHubActionsBuild ? '/auto-newsletter/' : '/')
+
   return {
-    base: isGitHubActionsBuild ? '/auto-newsletter/' : '/',
+    base: deployBase,
     plugins: [
       vue(),
       vueDevTools(),
