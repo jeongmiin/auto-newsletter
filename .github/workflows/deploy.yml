@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy master to GitHub Pages
 
 on:
   push:
@@ -6,17 +6,17 @@ on:
       - master
   workflow_dispatch:
 
+# gh-pages 브랜치로 푸시하기 위한 쓰기 권한
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
+# master·develop 배포가 같은 gh-pages 브랜치를 건드리므로 직렬화(동시 푸시 충돌 방지)
 concurrency:
-  group: 'pages'
-  cancel-in-progress: true
+  group: 'gh-pages-deploy'
+  cancel-in-progress: false
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -31,48 +31,26 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
+      - name: Build (base=/auto-newsletter/)
         run: npm run build
         env:
           NODE_ENV: production
+          DEPLOY_BASE: /auto-newsletter/
 
       - name: Verify build output
         run: |
-          echo "=========================================="
-          echo "📁 dist 폴더 구조 확인"
-          echo "=========================================="
-          ls -laR dist/
-          echo ""
-          echo "=========================================="
-          echo "📦 modules 폴더 확인"
-          echo "=========================================="
+          echo "📁 dist 구조"; ls -laR dist/ | head -50
           if [ -d "dist/modules" ]; then
-            ls -lah dist/modules/
-            echo ""
-            echo "✅ modules 폴더 존재"
-            echo "📄 파일 개수: $(ls -1 dist/modules/ | wc -l)"
+            echo "✅ modules 폴더 존재 ($(ls -1 dist/modules/ | wc -l)개)"
           else
-            echo "❌ ERROR: modules 폴더가 없습니다!"
-            exit 1
+            echo "❌ ERROR: modules 폴더가 없습니다!"; exit 1
           fi
-          echo ""
-          echo "=========================================="
-          echo "📄 modules 폴더 내 파일 목록"
-          echo "=========================================="
-          find dist/modules/ -type f -exec echo "  ✓ {}" \;
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      # gh-pages 브랜치의 '루트'에 배포. keep_files=true 라 /develop 하위 미리보기는 보존한다.
+      - name: Deploy to gh-pages (root)
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          path: './dist'
-
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          keep_files: true
+          commit_message: 'deploy(master): ${{ github.sha }}'
