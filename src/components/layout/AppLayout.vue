@@ -100,21 +100,13 @@ const activeCategory = computed(() => {
 // ── 좌측 컨텍스트 패널 너비 상태 (오른쪽 가장자리 핸들로 조절) ──
 const LEFT_MIN_WIDTH = 280
 const LEFT_MAX_WIDTH = 720
-const LEFT_DEFAULT_WIDTH = 360 // 기존 좌측 패널 기본 폭
-const LEFT_STORAGE_KEY = 'leftPanelWidth_v1'
+const LEFT_DEFAULT_WIDTH = 360 // 좌측 패널 기본 폭 — 진입 시 항상 이 값으로 시작(폭은 저장하지 않음)
 
+// 리사이즈는 세션 내에서만 유지되고, 재진입 시 항상 360px로 초기화된다(localStorage 저장 안 함).
 const leftPanelWidth = ref(LEFT_DEFAULT_WIDTH)
 const isLeftResizing = ref(false)
 const leftStartX = ref(0)
 const leftStartWidth = ref(0)
-
-onMounted(() => {
-  const saved = localStorage.getItem(LEFT_STORAGE_KEY)
-  if (saved) {
-    const width = parseInt(saved, 10)
-    if (width >= LEFT_MIN_WIDTH && width <= LEFT_MAX_WIDTH) leftPanelWidth.value = width
-  }
-})
 
 const startLeftResize = (e: MouseEvent) => {
   isLeftResizing.value = true
@@ -134,10 +126,7 @@ const onLeftResize = (e: MouseEvent) => {
 }
 
 const stopLeftResize = () => {
-  if (isLeftResizing.value) {
-    isLeftResizing.value = false
-    localStorage.setItem(LEFT_STORAGE_KEY, leftPanelWidth.value.toString())
-  }
+  if (isLeftResizing.value) isLeftResizing.value = false
 }
 
 // 전역 마우스 이벤트 (오버레이 밖에서 마우스를 놓았을 때 대비)

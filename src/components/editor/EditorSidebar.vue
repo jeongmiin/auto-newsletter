@@ -9,7 +9,6 @@
         class="rail-item"
         :class="{ 'is-active': activeMenu === item.key }"
         @click="select(item.key)"
-        v-tooltip.right="item.label"
       >
         <span class="material-symbols-outlined rail-icon">{{ item.icon }}</span>
         <span class="rail-label">{{ item.label }}</span>

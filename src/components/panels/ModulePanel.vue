@@ -290,8 +290,8 @@
         </div>
       </div>
 
-      <!-- 모듈 리스트 -->
-      <div v-else class="space-y-2">
+      <!-- 모듈 리스트 (카드 폭 고정 — 패널이 넓어져도 카드는 안 늘고 열 수만 늘어남) -->
+      <div v-else class="module-list">
         <div
           v-for="module in filteredModules"
           :key="module.id"
@@ -300,12 +300,14 @@
           @click="addModule(module)"
           class="module-card border rounded-lg cursor-pointer hover:border-blue-400 transition-colors overflow-hidden"
         >
-          <!-- 상시 썸네일 (호버 없이 카드에 바로 표시) -->
-          <div class="module-thumb">
+          <!-- 상시 썸네일 (호버 없이 카드에 바로 표시) — 높이는 각 iframe 실제 콘텐츠 높이×스케일 -->
+          <div class="module-thumb" :style="{ height: `${thumbBoxHeight(module.id)}px` }">
             <iframe
               v-if="thumbs[module.id]"
               :srcdoc="thumbs[module.id]"
               class="module-thumb-iframe"
+              :style="{ height: `${thumbIframeHeight(module.id)}px` }"
+              @load="measureThumbHeight(module.id, $event)"
               title="모듈 미리보기"
               sandbox="allow-same-origin"
             ></iframe>
@@ -313,9 +315,8 @@
               <i :class="module.icon" class="text-2xl text-gray-300"></i>
             </div>
           </div>
-          <div class="px-3 py-2">
+          <div class="p-3 bg-gray-50">
             <div class="font-medium text-sm truncate">{{ module.name }}</div>
-            <div class="text-xs text-gray-500 truncate">{{ module.description }}</div>
           </div>
         </div>
       </div>
@@ -514,7 +515,14 @@ const addComposedTwoButton = () => {
 
 // ===== 모듈 인라인 썸네일 (호버 없이 카드에 상시 표시) =====
 // CategoryModulePanel.vue와 공유하는 composable로 추출됨(캐시도 인스턴스 간 공유)
-const { thumbs, observeCard } = useModuleThumbnails()
+const { thumbs, observeCard, thumbHeights, measureThumbHeight } = useModuleThumbnails()
+
+// 썸네일 카드 폭 320px = 680px 렌더 × 0.47 스케일. 높이도 같은 스케일로 맞춰야 잘리지 않는다.
+// (CSS .module-thumb-iframe transform: scale(0.47)과 반드시 같은 값이어야 함)
+const THUMB_SCALE = 0.47
+const THUMB_FALLBACK_H = 900 // 측정 전 임시 높이(미스케일)
+const thumbIframeHeight = (id: string): number => thumbHeights[id] || THUMB_FALLBACK_H
+const thumbBoxHeight = (id: string): number => Math.round(thumbIframeHeight(id) * THUMB_SCALE)
 
 // 조립형 핸들러 호환용 — 인라인 썸네일에선 닫을 미리보기가 없음(no-op)
 const onModuleLeave = () => {}
@@ -562,23 +570,32 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+/* 모듈 카드 폭 고정(320px) + 항상 1열 — 카드 높이가 모듈마다 달라서 다열 그리드는 어긋나 보이므로
+   패널이 넓어져도 단일 열을 유지하고, 넓어진 폭은 좌우 여백으로 두어 카드를 중앙 정렬한다. */
+.module-list {
+  display: grid;
+  grid-template-columns: 320px;
+  gap: 12px;
+}
+
 /* 모듈 카드 인라인 썸네일 — 680px 렌더를 카드 폭에 맞춰 축소, 상단 크롭 */
 .module-thumb {
   width: 100%;
-  height: 116px;
+  /* 높이는 각 모듈 iframe의 실제 콘텐츠 높이×스케일로 인라인 지정 (고정 높이 없음) */
   overflow: hidden;
-  background: #fff;
+  background: #F9F9F9;
   border-bottom: 1px solid #eef0f2;
   position: relative;
 }
 .module-thumb-iframe {
   width: 680px;
-  height: 900px;
+  /* height는 실제 콘텐츠 높이로 인라인 지정 */
   border: 0;
   display: block;
   background: #fff;
-  /* 262/680 ≈ 0.385 — 좁은 패널 카드 폭 기준 */
-  transform: scale(0.385);
+  /* 320/680 ≈ 0.47 — 카드 폭 320px 기준 (THUMB_SCALE과 동일 값) */
+  transform: scale(0.47);
+  border-radius: 0.5rem;
   transform-origin: top left;
   pointer-events: none;
 }

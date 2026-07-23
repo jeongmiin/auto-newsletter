@@ -28,11 +28,13 @@
           class="gallery-card"
           @click="onGalleryAdd(module)"
         >
-          <div class="gallery-thumb">
+          <div class="gallery-thumb" :style="{ height: `${thumbBoxHeight(module.id)}px` }">
             <iframe
               v-if="thumbs[module.id]"
               :srcdoc="thumbs[module.id]"
               class="gallery-thumb-iframe"
+              :style="{ height: `${thumbIframeHeight(module.id)}px` }"
+              @load="measureThumbHeight(module.id, $event)"
               title="모듈 미리보기"
               sandbox="allow-same-origin"
             ></iframe>
@@ -63,7 +65,13 @@ const props = defineProps<Props>()
 
 const moduleStore = useModuleStore()
 const toast = useToast()
-const { thumbs, observeCard } = useModuleThumbnails()
+const { thumbs, observeCard, thumbHeights, measureThumbHeight } = useModuleThumbnails()
+
+// 갤러리 카드 폭 314px = 680px 렌더 × 0.462 스케일. 높이도 각 iframe 실제 콘텐츠 높이×스케일로 맞춘다.
+const THUMB_SCALE = 0.462
+const THUMB_FALLBACK_H = 900 // 측정 전 임시 높이(미스케일)
+const thumbIframeHeight = (id: string): number => thumbHeights[id] || THUMB_FALLBACK_H
+const thumbBoxHeight = (id: string): number => Math.round(thumbIframeHeight(id) * THUMB_SCALE)
 
 const CATEGORY_LABELS: Record<Category, string> = {
   text: '텍스트',
@@ -210,9 +218,12 @@ const onGalleryAdd = (module: ModuleMetadata) => {
   font-weight: 500;
   color: #333d4b;
 }
+/* 카드 폭 고정(314px) + 항상 1열 — 카드 높이가 모듈마다 달라 다열은 어긋나 보이므로,
+   패널이 넓어져도 단일 열을 유지하고 넓어진 폭은 좌우 여백으로 두어 중앙 정렬한다. */
 .gallery-list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 314px;
+  justify-content: center;
   gap: 20px;
 }
 .gallery-card {
@@ -227,7 +238,7 @@ const onGalleryAdd = (module: ModuleMetadata) => {
 }
 .gallery-thumb {
   width: 100%;
-  height: 145px;
+  /* 높이는 각 모듈 iframe의 실제 콘텐츠 높이×스케일로 인라인 지정 (고정 높이 없음) */
   overflow: hidden;
   background: #fff;
   border-bottom: 1px solid #eef0f2;
@@ -235,7 +246,7 @@ const onGalleryAdd = (module: ModuleMetadata) => {
 }
 .gallery-thumb-iframe {
   width: 680px;
-  height: 900px;
+  /* height는 실제 콘텐츠 높이로 인라인 지정 */
   border: 0;
   display: block;
   background: #fff;

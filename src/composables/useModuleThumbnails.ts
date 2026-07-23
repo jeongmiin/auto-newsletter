@@ -18,6 +18,27 @@ const buildPreviewDoc = (content: string): string =>
 export function useModuleThumbnails() {
   const moduleStore = useModuleStore()
   const thumbs = reactive<Record<string, string>>({})
+  // module.id → 실제 렌더된 콘텐츠 높이(680px 폭 기준, 미스케일 px). 카드가 이 높이×스케일로 맞춰진다.
+  const thumbHeights = reactive<Record<string, number>>({})
+
+  // iframe 로드 시 실제 콘텐츠 높이를 측정한다. sandbox="allow-same-origin"이라 contentDocument 접근 가능.
+  // (load 이벤트는 이미지 등 하위 리소스까지 로드된 뒤 발생 → scrollHeight가 정확)
+  const measureThumbHeight = (id: string, event: Event): void => {
+    const iframe = event.target as HTMLIFrameElement
+    const read = (): void => {
+      try {
+        const doc = iframe.contentDocument
+        if (!doc) return
+        const h = doc.body?.scrollHeight || doc.documentElement?.scrollHeight || 0
+        if (h > 0 && h !== thumbHeights[id]) thumbHeights[id] = h
+      } catch {
+        /* 접근 불가 시 폴백 높이 사용 */
+      }
+    }
+    read()
+    // 폰트·이미지 로드로 인한 레이아웃 안정화 후 한 번 더 측정
+    if (typeof requestAnimationFrame !== 'undefined') requestAnimationFrame(read)
+  }
 
   // 카드가 화면에 들어올 때만 렌더(성능) — 결과는 캐시
   const renderThumb = async (id: string) => {
@@ -65,5 +86,5 @@ export function useModuleThumbnails() {
     else renderThumb(id) // 옵저버 미지원 폴백
   }
 
-  return { thumbs, observeCard }
+  return { thumbs, observeCard, thumbHeights, measureThumbHeight }
 }
