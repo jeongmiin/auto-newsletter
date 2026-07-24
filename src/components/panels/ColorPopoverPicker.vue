@@ -253,10 +253,16 @@ const emitFrom = (r: number, g: number, b: number, aPct: number) => {
   emit('update:modelValue', `${hex6}${aHex}`)
 }
 
+// 팔레트/그라디언트로 '새 색'을 고를 때 사용할 알파(%).
+// 현재 색이 완전 투명(a=0, 예: 배경색 기본값 'transparent')이면 색을 골라도 alpha 00이 붙어
+// 배경이 안 보이던 문제가 있었다 → 이 경우 불투명(100%)에서 시작한다.
+// (이미 반투명한 색을 조정 중이면 기존 알파를 유지)
+const pickAlpha = (): number => (parsed.value.a === 0 ? 100 : alphaPct.value)
+
 const pick = (hex: string) => {
   const rgba = parseColorToRgba(hex)
   if (!rgba) return
-  emitFrom(rgba.r, rgba.g, rgba.b, alphaPct.value)
+  emitFrom(rgba.r, rgba.g, rgba.b, pickAlpha())
 }
 
 const onHexInput = (value: string | undefined) => {
@@ -267,7 +273,7 @@ const onGradientPickerUpdate = (hex: string) => {
   const norm = hex.startsWith('#') ? hex : `#${hex}`
   const rgba = parseColorToRgba(norm)
   if (!rgba) return
-  emitFrom(rgba.r, rgba.g, rgba.b, alphaPct.value)
+  emitFrom(rgba.r, rgba.g, rgba.b, pickAlpha())
 }
 
 const onAlphaInput = (value: number) => {
