@@ -10,6 +10,15 @@ import { useModuleStore } from '@/stores/moduleStore'
 const MODULE_WIDTH = 680 // 모듈 템플릿 기준 폭(px)
 const previewCache = new Map<string, string>() // module.id → iframe srcdoc (인스턴스 간 공유)
 
+// ===== 썸네일 카드 기하 (ModulePanel·CategoryModulePanel·ModuleCard 공유 단일 소스) =====
+// 표시 영역 = 카드 폭 320px − 카드 테두리 1px×2 − .module-thumb padding 10px×2 = 298px.
+// 680px 렌더를 298/680 ≈ 0.4382로 축소해 padding을 제외한 영역에 딱 맞춘다.
+// ModuleCard의 CSS transform: scale()은 이 상수를 CSS 변수로 받아 쓰므로 값이 항상 일치한다.
+export const THUMB_RENDER_WIDTH = MODULE_WIDTH
+export const THUMB_PADDING = 10
+export const THUMB_SCALE = 0.4382
+export const THUMB_FALLBACK_H = 900 // 측정 전 임시 높이(미스케일 px)
+
 const buildPreviewDoc = (content: string): string =>
   `<!DOCTYPE html><html><head><meta charset="utf-8"><base target="_blank">` +
   `<style>html,body{margin:0;padding:0;background:#fff;overflow:hidden;}*{box-sizing:border-box;}</style></head>` +
@@ -77,7 +86,9 @@ export function useModuleThumbnails() {
   const observeCard = (el: Element | null, id: string) => {
     const prev = cardEls.get(id)
     if (prev && thumbObserver) thumbObserver.unobserve(prev)
-    if (!el) {
+    // el이 실제 DOM Element일 때만 관찰(방어) — 컴포넌트 ref가 비Element를 넘기면 observe가 throw해
+    // 렌더 트리 전체가 크래시했었다. Element가 아니면 관찰만 건너뛴다.
+    if (!(el instanceof Element)) {
       cardEls.delete(id)
       return
     }
@@ -86,5 +97,18 @@ export function useModuleThumbnails() {
     else renderThumb(id) // 옵저버 미지원 폴백
   }
 
-  return { thumbs, observeCard, thumbHeights, measureThumbHeight }
+  // 카드가 표시할 iframe 높이(미스케일) — 측정 전에는 폴백 높이
+  const thumbIframeHeight = (id: string): number => thumbHeights[id] || THUMB_FALLBACK_H
+  // .module-thumb는 box-sizing:border-box → 축소 높이 + 상하 padding
+  const thumbBoxHeight = (id: string): number =>
+    Math.round(thumbIframeHeight(id) * THUMB_SCALE) + THUMB_PADDING * 2
+
+  return {
+    thumbs,
+    observeCard,
+    thumbHeights,
+    measureThumbHeight,
+    thumbIframeHeight,
+    thumbBoxHeight,
+  }
 }

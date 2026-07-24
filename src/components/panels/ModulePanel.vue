@@ -311,33 +311,17 @@
 
       <!-- 모듈 리스트 (카드 폭 고정 — 패널이 넓어져도 카드는 안 늘고 열 수만 늘어남) -->
       <div v-else class="module-list">
-        <div
+        <ModuleCard
           v-for="module in filteredModules"
           :key="module.id"
-          :ref="(el) => observeCard(el as Element | null, module.id)"
-          :data-module-id="module.id"
-          @click="addModule(module)"
-          class="module-card border rounded-lg cursor-pointer hover:border-blue-400 transition-colors overflow-hidden"
-        >
-          <!-- 상시 썸네일 (호버 없이 카드에 바로 표시) — 높이는 각 iframe 실제 콘텐츠 높이×스케일 -->
-          <div class="module-thumb" :style="{ height: `${thumbBoxHeight(module.id)}px` }">
-            <iframe
-              v-if="thumbs[module.id]"
-              :srcdoc="thumbs[module.id]"
-              class="module-thumb-iframe"
-              :style="{ height: `${thumbIframeHeight(module.id)}px` }"
-              @load="measureThumbHeight(module.id, $event)"
-              title="모듈 미리보기"
-              sandbox="allow-same-origin"
-            ></iframe>
-            <div v-else class="module-thumb-loading">
-              <i :class="module.icon" class="text-2xl text-gray-300"></i>
-            </div>
-          </div>
-          <div class="p-3 bg-gray-50">
-            <div class="font-medium text-sm truncate">{{ module.name }}</div>
-          </div>
-        </div>
+          :ref="(inst: any) => observeCard(inst?.rootEl ?? null, module.id)"
+          :module="module"
+          :srcdoc="thumbs[module.id]"
+          :iframe-height="thumbIframeHeight(module.id)"
+          :box-height="thumbBoxHeight(module.id)"
+          @add="addModule(module)"
+          @thumb-load="(e: Event) => measureThumbHeight(module.id, e)"
+        />
       </div>
     </div>
 
@@ -346,6 +330,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import ModuleCard from './ModuleCard.vue'
 import { useModuleThumbnails } from '@/composables/useModuleThumbnails'
 import { storeToRefs } from 'pinia'
 import { useModuleStore } from '@/stores/moduleStore'
@@ -593,19 +578,10 @@ const addComposedTwoButton = () => {
 }
 
 // ===== 모듈 인라인 썸네일 (호버 없이 카드에 상시 표시) =====
-// CategoryModulePanel.vue와 공유하는 composable로 추출됨(캐시도 인스턴스 간 공유)
-const { thumbs, observeCard, thumbHeights, measureThumbHeight } = useModuleThumbnails()
-
-// 썸네일 표시 영역 = 카드 320px − 카드 테두리 1px×2 − .module-thumb padding 10px×2 = 298px.
-// 680px 렌더를 298/680 ≈ 0.4382로 축소해 padding을 제외한 영역에 딱 맞춘다.
-// (CSS의 .module-thumb padding, .module-thumb-iframe transform: scale()과 반드시 같은 값)
-const THUMB_PADDING = 10
-const THUMB_SCALE = 0.4382
-const THUMB_FALLBACK_H = 900 // 측정 전 임시 높이(미스케일)
-const thumbIframeHeight = (id: string): number => thumbHeights[id] || THUMB_FALLBACK_H
-// .module-thumb는 box-sizing:border-box라 height에 padding이 포함된다 → 축소 높이 + 상하 padding
-const thumbBoxHeight = (id: string): number =>
-  Math.round(thumbIframeHeight(id) * THUMB_SCALE) + THUMB_PADDING * 2
+// CategoryModulePanel.vue와 공유하는 composable로 추출됨(캐시·기하 모두 인스턴스 간 공유).
+// 카드 마크업/CSS도 ModuleCard.vue 한 곳에서 관리해 두 패널이 동일한 UI로 렌더된다.
+const { thumbs, observeCard, measureThumbHeight, thumbIframeHeight, thumbBoxHeight } =
+  useModuleThumbnails()
 
 // 조립형 핸들러 호환용 — 인라인 썸네일에선 닫을 미리보기가 없음(no-op)
 const onModuleLeave = () => {}
@@ -728,42 +704,13 @@ onMounted(async () => {
   border-bottom-color: #4083f3;
 }
 
-/* 모듈 카드 폭 고정(320px) + 항상 1열 — 카드 높이가 모듈마다 달라서 다열 그리드는 어긋나 보이므로
+/* 모듈 카드(ModuleCard.vue) 폭 고정(320px) + 항상 1열 — 카드 높이가 모듈마다 달라 다열은 어긋나 보이므로
    패널이 넓어져도 단일 열을 유지하고, 넓어진 폭은 좌우 여백으로 두어 카드를 중앙 정렬한다. */
 .module-list {
   display: grid;
   grid-template-columns: 320px;
-  gap: 20px;
-}
-
-/* 모듈 카드 인라인 썸네일 — 680px 렌더를 카드 폭에 맞춰 축소, 상단 크롭 */
-.module-thumb {
-  width: 100%;
-  padding: 10px;
-  overflow: hidden;
-  background: #ffffff;
-  border-bottom: 1px solid #eef0f2;
-  position: relative;
-  box-sizing: border-box;
-}
-.module-thumb-iframe {
-  width: 680px;
-  /* height는 실제 콘텐츠 높이로 인라인 지정 */
-  border: 0;
-  display: block;
-  background: #fff;
-  /* 298/680 ≈ 0.4382 — 카드 320px − 테두리 2px − padding 20px = 표시 영역 298px 기준 (THUMB_SCALE과 동일 값) */
-  transform: scale(0.4382);
-  border-radius: 0.5rem;
-  transform-origin: top left;
-  pointer-events: none;
-}
-.module-thumb-loading {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
   justify-content: center;
+  gap: 20px;
 }
 </style>
 

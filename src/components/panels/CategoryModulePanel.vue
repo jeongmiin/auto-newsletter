@@ -52,33 +52,21 @@
     </div>
 
     <!-- 카테고리 갤러리 (완성 조립 블록 · v2 우선, 없으면 레거시 폴백) -->
+    <!-- 카드는 ModulePanel(모듈 탭)과 동일한 ModuleCard.vue를 공유해 UI가 완전히 일치한다. -->
     <div v-if="galleryModules.length" class="gallery-section">
       <span class="gallery-title">{{ categoryLabel }}형 모듈</span>
       <div class="gallery-list">
-        <div
+        <ModuleCard
           v-for="module in galleryModules"
           :key="module.id"
-          :ref="(el) => observeCard(el as Element | null, module.id)"
-          :data-module-id="module.id"
-          class="gallery-card"
-          @click="onGalleryAdd(module)"
-        >
-          <div class="gallery-thumb" :style="{ height: `${thumbBoxHeight(module.id)}px` }">
-            <iframe
-              v-if="thumbs[module.id]"
-              :srcdoc="thumbs[module.id]"
-              class="gallery-thumb-iframe"
-              :style="{ height: `${thumbIframeHeight(module.id)}px` }"
-              @load="measureThumbHeight(module.id, $event)"
-              title="모듈 미리보기"
-              sandbox="allow-same-origin"
-            ></iframe>
-            <div v-else class="gallery-thumb-loading">
-              <i :class="module.icon" class="text-2xl text-gray-300"></i>
-            </div>
-          </div>
-          <div class="gallery-card-label">{{ module.name }}</div>
-        </div>
+          :ref="(inst: any) => observeCard(inst?.rootEl ?? null, module.id)"
+          :module="module"
+          :srcdoc="thumbs[module.id]"
+          :iframe-height="thumbIframeHeight(module.id)"
+          :box-height="thumbBoxHeight(module.id)"
+          @add="onGalleryAdd(module)"
+          @thumb-load="(e: Event) => measureThumbHeight(module.id, e)"
+        />
       </div>
     </div>
   </div>
@@ -87,6 +75,7 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
 import { useToast } from 'primevue/usetoast'
+import ModuleCard from './ModuleCard.vue'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useModuleThumbnails } from '@/composables/useModuleThumbnails'
 import type { ModuleMetadata } from '@/types'
@@ -102,13 +91,9 @@ const props = defineProps<Props>()
 
 const moduleStore = useModuleStore()
 const toast = useToast()
-const { thumbs, observeCard, thumbHeights, measureThumbHeight } = useModuleThumbnails()
-
-// 갤러리 카드 폭 314px = 680px 렌더 × 0.462 스케일. 높이도 각 iframe 실제 콘텐츠 높이×스케일로 맞춘다.
-const THUMB_SCALE = 0.462
-const THUMB_FALLBACK_H = 900 // 측정 전 임시 높이(미스케일)
-const thumbIframeHeight = (id: string): number => thumbHeights[id] || THUMB_FALLBACK_H
-const thumbBoxHeight = (id: string): number => Math.round(thumbIframeHeight(id) * THUMB_SCALE)
+// 썸네일 캐시·기하 모두 composable에서 공유 — ModulePanel과 동일 로직/동일 카드(ModuleCard.vue)
+const { thumbs, observeCard, measureThumbHeight, thumbIframeHeight, thumbBoxHeight } =
+  useModuleThumbnails()
 
 const CATEGORY_LABELS: Record<Category, string> = {
   text: '텍스트',
@@ -225,7 +210,8 @@ const onGalleryAdd = (module: ModuleMetadata) => {
   border-right: 1px solid #e5e8eb;
   height: 100%;
   overflow-y: auto;
-  padding: 24px 23px 29px;
+  /* 좌우 20px → 내부 폭 320px = ModuleCard 폭과 정확히 일치 (넘침 방지) */
+  padding: 24px 20px 29px;
   display: flex;
   flex-direction: column;
   gap: 26px;
@@ -337,53 +323,13 @@ const onGalleryAdd = (module: ModuleMetadata) => {
   font-weight: 500;
   color: #333d4b;
 }
-/* 카드 폭 고정(314px) + 항상 1열 — 카드 높이가 모듈마다 달라 다열은 어긋나 보이므로,
-   패널이 넓어져도 단일 열을 유지하고 넓어진 폭은 좌우 여백으로 두어 중앙 정렬한다. */
+/* 카드(ModuleCard.vue) 폭 고정(320px) + 항상 1열 — 카드 높이가 모듈마다 달라 다열은 어긋나 보이므로,
+   패널이 넓어져도 단일 열을 유지하고 넓어진 폭은 좌우 여백으로 두어 중앙 정렬한다.
+   카드 마크업/스타일은 ModulePanel과 공유하는 ModuleCard.vue에 있다. */
 .gallery-list {
   display: grid;
-  grid-template-columns: 298px;
-  gap: 20px;
-}
-.gallery-card {
-  border: 1px solid #e5e8eb;
-  border-radius: 8px;
-  overflow: hidden;
-  cursor: pointer;
-  background: #fff;
-}
-.gallery-card:hover {
-  border-color: #4083f3;
-}
-.gallery-thumb {
-  width: 100%;
-  /* 높이는 각 모듈 iframe의 실제 콘텐츠 높이×스케일로 인라인 지정 (고정 높이 없음) */
-  overflow: hidden;
-  background: #fff;
-  border-bottom: 1px solid #eef0f2;
-  position: relative;
-}
-.gallery-thumb-iframe {
-  width: 680px;
-  /* height는 실제 콘텐츠 높이로 인라인 지정 */
-  border: 0;
-  display: block;
-  background: #fff;
-  /* 314/680 ≈ 0.462 — 이 패널 카드 폭(314px = 360 - 23*2) 기준 */
-  transform: scale(0.44);
-  transform-origin: top left;
-  pointer-events: none;
-}
-.gallery-thumb-loading {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
+  grid-template-columns: 320px;
   justify-content: center;
-}
-.gallery-card-label {
-  padding: 8px 12px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #191f28;
+  gap: 20px;
 }
 </style>
