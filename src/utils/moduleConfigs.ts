@@ -141,7 +141,14 @@ export const moduleDescTextConfig: ModuleConfig = {
     marginLeft: '0px',
     // 배경 박스 모서리 둥글기 (기존 인스턴스 폴백 = 0)
     borderRadius: '0px',
+    // 테두리 (기본 off = 기존 인스턴스 폴백 = 테두리 없음)
+    showBorder: false,
+    borderPosition: 'bottom',
+    borderStyle: 'solid',
+    borderWidth: '1px',
+    borderColor: '#999999',
   },
+  processors: [processors.descTextBorderProcessor],
 }
 
 /**

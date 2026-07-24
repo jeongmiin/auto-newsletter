@@ -770,5 +770,30 @@ export const topLanguageButtonProcessor: ContentProcessor = (html, properties) =
   return html.replace(/\{\{\s*languageButtons\s*\}\}/g, buttonsHtml)
 }
 
+/**
+ * 설명 텍스트(ModuleDescText) 테두리 프로세서
+ * showBorder 토글이 켜지면 borderPosition(아래/위/위·아래)에 맞춰 배경 박스 div에
+ * 구분선 CSS({{borderCss}})를 주입한다. (모듈 10번 타이틀처럼 텍스트 위/아래 구분선용)
+ * 꺼져 있으면 빈 문자열로 치환해 테두리 없음.
+ */
+export const descTextBorderProcessor: ContentProcessor = (html, properties) => {
+  const str = (value: unknown, fallback: string): string => {
+    const s = typeof value === 'string' ? value.trim() : ''
+    return s === '' ? fallback : s
+  }
+  let css = ''
+  if (properties.showBorder === true) {
+    const width = str(properties.borderWidth, '1px')
+    const style = str(properties.borderStyle, 'solid')
+    const color = str(properties.borderColor, '#999999')
+    const line = `${width} ${style} ${color}`
+    const pos = properties.borderPosition
+    if (pos === 'top') css = ` border-top:${line};`
+    else if (pos === 'both') css = ` border-top:${line}; border-bottom:${line};`
+    else css = ` border-bottom:${line};` // 기본: 아래
+  }
+  return html.replace(/\{\{\s*borderCss\s*\}\}/g, css)
+}
+
 // SubTitle 프로세서
 export { subtitleDefaultProcessor } from './subtitleProcessor'

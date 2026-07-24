@@ -1250,6 +1250,76 @@
           "group": "배경 박스"
         },
         {
+          "key": "showBorder",
+          "label": "테두리 사용",
+          "type": "boolean",
+          "default": false,
+          "hint": "모듈 10번 타이틀처럼 텍스트 위/아래에 구분선을 넣을 때 사용합니다.",
+          "group": "테두리"
+        },
+        {
+          "key": "borderPosition",
+          "label": "테두리 위치",
+          "type": "select",
+          "default": "bottom",
+          "options": [
+            {
+              "label": "아래",
+              "value": "bottom"
+            },
+            {
+              "label": "위",
+              "value": "top"
+            },
+            {
+              "label": "위·아래",
+              "value": "both"
+            }
+          ],
+          "showWhen": "showBorder",
+          "group": "테두리"
+        },
+        {
+          "key": "borderStyle",
+          "label": "테두리 종류",
+          "type": "select",
+          "default": "solid",
+          "options": [
+            {
+              "label": "실선",
+              "value": "solid"
+            },
+            {
+              "label": "점선",
+              "value": "dashed"
+            },
+            {
+              "label": "점(도트)",
+              "value": "dotted"
+            }
+          ],
+          "showWhen": "showBorder",
+          "group": "테두리"
+        },
+        {
+          "key": "borderWidth",
+          "label": "테두리 두께",
+          "type": "text",
+          "default": "1px",
+          "placeholder": "예: 1px, 2px",
+          "showWhen": "showBorder",
+          "group": "테두리"
+        },
+        {
+          "key": "borderColor",
+          "label": "테두리 색상",
+          "type": "color",
+          "default": "#999999",
+          "placeholder": "예: #999999",
+          "showWhen": "showBorder",
+          "group": "테두리"
+        },
+        {
           "key": "marginTop",
           "label": "바깥 상단 여백",
           "type": "text",
