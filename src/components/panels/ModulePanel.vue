@@ -224,6 +224,20 @@
           </div>
         </div>
         <div
+          @click="addComposedModule10"
+          class="p-3 border-2 border-dashed border-amber-300 rounded-lg cursor-pointer hover:bg-amber-50 hover:border-amber-400 transition-colors"
+        >
+          <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-amber-100 text-amber-700 rounded flex items-center justify-center">
+              <i class="pi pi-th-large"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-medium text-sm truncate">모듈 10 (조립형·세로)</div>
+              <div class="text-xs text-gray-500 truncate">서브타이틀(설명텍스트) → 모듈 10번 본체 (1컬럼 세로 스택)</div>
+            </div>
+          </div>
+        </div>
+        <div
           @click="addComposedNewsHeader"
           class="p-3 border-2 border-dashed border-amber-300 rounded-lg cursor-pointer hover:bg-amber-50 hover:border-amber-400 transition-colors"
         >
@@ -539,6 +553,12 @@ const addComposedModule07 = () => {
 const addComposedModule07Reverse = () => {
   onModuleLeave()
   composedToast(moduleStore.addComposedModule07(true), '모듈 07(반대)')
+}
+
+// [임시/POC] 모듈 10 조립형 (위 서브타이틀=설명텍스트 · 아래 모듈 10번 본체, 세로 스택)
+const addComposedModule10 = () => {
+  onModuleLeave()
+  composedToast(moduleStore.addComposedModule10(), '모듈 10')
 }
 
 // [임시/POC] 뉴스 헤드라인 헤더 조립형 (로고 → 굵은선 → 제목|웹으로보기 → 얇은선)

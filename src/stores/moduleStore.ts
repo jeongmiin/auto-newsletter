@@ -838,6 +838,43 @@ export const useModuleStore = defineStore('module', () => {
   }
 
   /**
+   * [POC/실험] 모듈 10번 조립형 — 위: 서브타이틀(모듈 10번 타이틀), 아래: 모듈 10번 본체.
+   * 세로 스택(1컬럼)이라 컬럼 분할 없음. 타이틀은 굵은 설명텍스트 + 하단 구분선(설명텍스트의
+   * '테두리 사용' 토글)으로 기존 ModuleSubTitle 모양을 재현한다.
+   */
+  const addComposedModule10 = (): string | null =>
+    buildComposedGroup([
+      {
+        // 모듈 10번 타이틀 → 설명텍스트로 (굵게 + 하단 구분선: showBorder)
+        id: 'ModuleDescText',
+        row: 0,
+        col: 0,
+        overrides: {
+          descriptionText: boldTitleHtml('서브타이틀 (14:20~14:40)', '16px'),
+          textColor: '#111111',
+          fontSize: '16px',
+          textAlign: 'left',
+          showBorder: true,
+          borderPosition: 'bottom',
+          borderStyle: 'solid',
+          borderWidth: '1px',
+          borderColor: '#999999',
+          paddingTop: '20px',
+          paddingRight: '20px',
+          paddingBottom: '10px',
+          paddingLeft: '20px',
+        },
+      },
+      {
+        // 모듈 10번 본체 (이미지 + 라벨 + 타이틀 + 부제목, 1열) — 기본값 그대로
+        id: 'Module10',
+        row: 1,
+        col: 0,
+        overrides: {},
+      },
+    ])
+
+  /**
    * [POC/실험] 뉴스 헤드라인 헤더 조립형 —
    * 로고(가운데·40%) → 굵은 라인 → (제목 | 👀 웹으로 보기) 2컬럼 → 얇은 라인
    * '웹으로 보기'는 ModuleDescText의 textAlign='right'로 오른쪽 정렬.
@@ -3252,6 +3289,7 @@ ${fullHtml}
     Module06: addComposedModule06,
     Module07: () => addComposedModule07(false),
     Module07_reverse: () => addComposedModule07(true),
+    Module10: addComposedModule10,
     ModuleNewsHeader: addComposedNewsHeader,
     ModuleBasicHeader: addComposedBasicHeader,
     ModuleImageHeader: addComposedImageHeader,
@@ -3306,6 +3344,7 @@ ${fullHtml}
     addComposedModule051,
     addComposedModule06,
     addComposedModule07,
+    addComposedModule10,
     addComposedNewsHeader,
     addComposedBasicHeader,
     addComposedImageHeader,
