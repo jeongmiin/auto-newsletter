@@ -34,19 +34,38 @@
       </div>
     </div>
 
-    <!-- 카테고리 (모듈 모드에서만) — 세그먼트 트랙 3열 그리드 -->
-    <div v-if="mode === 'modules'" class="p-3 border-b">
-      <div class="grid grid-cols-3 gap-1 bg-gray-100 rounded-lg p-1">
+    <!-- 검색 + 카테고리 (모듈 모드에서만) — Figma 334-2630 -->
+    <div v-if="mode === 'modules'" class=" pt-3 border-b">
+      <!-- 모듈 검색 -->
+      <div class="mp-search mx-3">
+        <span class="material-symbols-outlined mp-search-icon">search</span>
+        <input
+          v-model="searchQuery"
+          type="text"
+          class="mp-search-input"
+          placeholder="모듈을 검색하세요"
+          spellcheck="false"
+        />
+        <button
+          v-if="searchQuery"
+          type="button"
+          class="mp-search-clear"
+          title="검색어 지우기"
+          @click="searchQuery = ''"
+        >
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <!-- 카테고리 탭 (한 줄, 활성 탭 밑줄) -->
+      <div class="mp-tabs">
         <button
           v-for="category in categories"
           :key="category.id"
+          type="button"
+          class="mp-tab"
+          :class="{ 'is-active': selectedCategory === category.id }"
           @click="selectedCategory = category.id"
-          :class="[
-            'px-2 py-1.5 text-sm font-medium text-center rounded-md transition-colors',
-            selectedCategory === category.id
-              ? 'bg-white text-blue-600 shadow-sm'
-              : 'text-gray-500 hover:text-gray-700',
-          ]"
         >
           {{ category.name }}
         </button>
@@ -346,20 +365,80 @@ const selectedCategory = ref<string>('all')
 const modules = ref<ModuleMetadata[]>([])
 const templates = ref<NewsletterTemplate[]>([])
 
+const searchQuery = ref('')
+
 const categories = [
   { id: 'all', name: '전체' },
   { id: 'common', name: '공통' },
-  { id: 'text', name: '텍스트' },
-  { id: 'image', name: '이미지' },
-  { id: 'button', name: '버튼' },
-  { id: 'table', name: '테이블' },
+  { id: 'imageType', name: '이미지형' },
+  { id: 'textType', name: '텍스트형' },
+  { id: 'col1', name: '1단' },
+  { id: 'col2', name: '2단' },
 ]
+
+// 카테고리별 모듈 목록 — 모듈의 category 필드가 아니라 명시적 id 목록으로 관리한다.
+// (한 모듈이 여러 카테고리에 속할 수 있음: 예) 모듈 02 = 이미지형 + 1단)
+const CATEGORY_MODULE_IDS: Record<string, string[]> = {
+  common: [
+    'ModuleNewsHeader', // 뉴스 헤드라인 헤더
+    'ModuleBasicHeader', // 기본 헤더
+    'ModuleImageHeader', // 이미지형 헤더
+    'ModuleFooter', // 하단 푸터
+    'ModuleSnsIcons', // SNS 아이콘
+    'ModuleDivider', // 구분선, 여백
+    'TopLanguageButton', // 언어 선택 버튼
+  ],
+  imageType: [
+    'Module02',
+    'Module04',
+    'Module05-3', // 노출되는 '모듈 05번' (Module05/05-1은 hidden)
+    'Module06',
+    'Module07',
+    'Module07_reverse', // 모듈 07번 (반대 방향)
+    'Module10',
+    'Module10-1',
+  ],
+  textType: ['Module01', 'Module01-1', 'Module01-2', 'Module11', 'Module12'],
+  col1: [
+    'ModuleImg', // 단일 이미지
+    'ModuleOneButton', // 단일 버튼
+    'ModuleSmallButton', // 작은 버튼
+    'Module01',
+    'Module01-2',
+    'Module02',
+    'Module11',
+    'Module12',
+  ],
+  col2: [
+    'ModuleMultiImage', // 복수 이미지
+    'ModuleTwoButton', // 복수 버튼
+    'Module01-1',
+    'Module04',
+    'Module05-3',
+    'Module06',
+    'Module07',
+    'Module07_reverse',
+    'Module10',
+    'Module10-1',
+  ],
+}
 
 const filteredModules = computed(() => {
   // hidden 모듈은 팔레트에서 제외 (통합/폐기된 모듈 — 기존 데이터 렌더링은 계속 지원)
   const visible = modules.value.filter((module) => !module.hidden)
-  if (selectedCategory.value === 'all') return visible
-  return visible.filter((module) => module.category === selectedCategory.value)
+  const inCategory =
+    selectedCategory.value === 'all'
+      ? visible
+      : visible.filter((module) =>
+          (CATEGORY_MODULE_IDS[selectedCategory.value] ?? []).includes(module.id),
+        )
+  const q = searchQuery.value.trim().toLowerCase()
+  if (!q) return inCategory
+  return inCategory.filter(
+    (module) =>
+      module.name.toLowerCase().includes(q) ||
+      (module.description ?? '').toLowerCase().includes(q),
+  )
 })
 
 // 모듈 v2(조립형) 템플릿이 있으면 그걸 추가하고, 없으면 레거시 단일 모듈로 폴백한다
@@ -517,12 +596,16 @@ const addComposedTwoButton = () => {
 // CategoryModulePanel.vue와 공유하는 composable로 추출됨(캐시도 인스턴스 간 공유)
 const { thumbs, observeCard, thumbHeights, measureThumbHeight } = useModuleThumbnails()
 
-// 썸네일 카드 폭 320px = 680px 렌더 × 0.47 스케일. 높이도 같은 스케일로 맞춰야 잘리지 않는다.
-// (CSS .module-thumb-iframe transform: scale(0.47)과 반드시 같은 값이어야 함)
-const THUMB_SCALE = 0.47
+// 썸네일 표시 영역 = 카드 320px − 카드 테두리 1px×2 − .module-thumb padding 10px×2 = 298px.
+// 680px 렌더를 298/680 ≈ 0.4382로 축소해 padding을 제외한 영역에 딱 맞춘다.
+// (CSS의 .module-thumb padding, .module-thumb-iframe transform: scale()과 반드시 같은 값)
+const THUMB_PADDING = 10
+const THUMB_SCALE = 0.4382
 const THUMB_FALLBACK_H = 900 // 측정 전 임시 높이(미스케일)
 const thumbIframeHeight = (id: string): number => thumbHeights[id] || THUMB_FALLBACK_H
-const thumbBoxHeight = (id: string): number => Math.round(thumbIframeHeight(id) * THUMB_SCALE)
+// .module-thumb는 box-sizing:border-box라 height에 padding이 포함된다 → 축소 높이 + 상하 padding
+const thumbBoxHeight = (id: string): number =>
+  Math.round(thumbIframeHeight(id) * THUMB_SCALE) + THUMB_PADDING * 2
 
 // 조립형 핸들러 호환용 — 인라인 썸네일에선 닫을 미리보기가 없음(no-op)
 const onModuleLeave = () => {}
@@ -570,6 +653,81 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+/* 모듈 검색 (Figma 334-2630) */
+.mp-search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid #e5e8eb;
+  border-radius: 8px;
+  background: #fff;
+}
+.mp-search:focus-within {
+  border-color: #4083f3;
+}
+.mp-search-icon {
+  font-size: 18px;
+  color: #8b95a1;
+  flex-shrink: 0;
+}
+.mp-search-input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: none;
+  font-size: 14px;
+  color: #191f28;
+}
+.mp-search-input::placeholder {
+  color: #b0b8c1;
+}
+.mp-search-clear {
+  display: flex;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #b0b8c1;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.mp-search-clear:hover {
+  color: #6b7684;
+}
+.mp-search-clear .material-symbols-outlined {
+  font-size: 16px;
+}
+
+/* 카테고리 탭 — 한 줄, 활성 탭 밑줄 (Figma 334-2630) */
+.mp-tabs {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+.mp-tab {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 2px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: #8b95a1;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: color 0.12s, border-color 0.12s;
+}
+.mp-tab:hover {
+  color: #4e5968;
+}
+.mp-tab.is-active {
+  color: #4083f3;
+  border-bottom-color: #4083f3;
+}
+
 /* 모듈 카드 폭 고정(320px) + 항상 1열 — 카드 높이가 모듈마다 달라서 다열 그리드는 어긋나 보이므로
    패널이 넓어져도 단일 열을 유지하고, 넓어진 폭은 좌우 여백으로 두어 카드를 중앙 정렬한다. */
 .module-list {
@@ -581,11 +739,12 @@ onMounted(async () => {
 /* 모듈 카드 인라인 썸네일 — 680px 렌더를 카드 폭에 맞춰 축소, 상단 크롭 */
 .module-thumb {
   width: 100%;
-  /* 높이는 각 모듈 iframe의 실제 콘텐츠 높이×스케일로 인라인 지정 (고정 높이 없음) */
+  padding: 10px;
   overflow: hidden;
-  background: #F9F9F9;
+  background: #ffffff;
   border-bottom: 1px solid #eef0f2;
   position: relative;
+  box-sizing: border-box;
 }
 .module-thumb-iframe {
   width: 680px;
@@ -593,8 +752,8 @@ onMounted(async () => {
   border: 0;
   display: block;
   background: #fff;
-  /* 320/680 ≈ 0.47 — 카드 폭 320px 기준 (THUMB_SCALE과 동일 값) */
-  transform: scale(0.47);
+  /* 298/680 ≈ 0.4382 — 카드 320px − 테두리 2px − padding 20px = 표시 영역 298px 기준 (THUMB_SCALE과 동일 값) */
+  transform: scale(0.4382);
   border-radius: 0.5rem;
   transform-origin: top left;
   pointer-events: none;

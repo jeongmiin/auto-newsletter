@@ -27,7 +27,9 @@
       "Bash(git ls-tree *)",
       "Bash(MSYS_NO_PATHCONV=1 git show 'origin/master:.github/workflows/deploy.yml')",
       "Bash(git worktree *)",
-      "Bash(rm -rf /d/tmp/anl-master-wt)"
+      "Bash(rm -rf /d/tmp/anl-master-wt)",
+      "mcp__figma-remote-mcp__get_screenshot",
+      "Bash(curl -sL -o \"C:/Users/ESN-D0~1/AppData/Local/Temp/claude/d--Projects-auto-newsletter/bf64c939-9165-4bf0-bedf-49bc7f235cc6/scratchpad/fig-mod.png\" \"https://www.figma.com/api/mcp/asset/77d92683-6c19-4b88-b738-eac79fa7bb5c\")"
     ]
   }
 }
