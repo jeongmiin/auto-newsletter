@@ -1,0 +1,199 @@
+/* 좌측 속성 패널 공용 스타일 — ModuleForm.vue · GroupPropertiesPanel.vue 공유.
+   두 패널에 스코프 스타일로 중복 정의돼 있던 필드 토큰·잠금 버튼·4방향 여백 슬라이더를 한 곳으로 통합한다.
+   (아코디언 컨테이너·라디오 등 컴포넌트마다 값이 다른 스타일은 각 컴포넌트 스코프에 그대로 둔다.) */
+
+/* ===== 필드 라벨 / 힌트 / 서브 라벨 ===== */
+.gg-field-label {
+  display: block;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #4e5968;
+  margin-bottom: 8px;
+}
+.gg-field-hint {
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: -0.14px;
+  color: #6b7684;
+  margin-top: 6px;
+  word-break: keep-all;
+}
+.gg-sub-label {
+  font-size: 15px;
+  color: #4e5968;
+}
+
+/* 아코디언 헤더(라벨 + 우측 토글/스페이서를 한 줄로). 정적 헤더라 커서는 기본값.
+   (섹션 컨테이너 .gg-acc-section / 본문 .gg-acc-body 는 패널마다 값이 달라 각 컴포넌트 스코프에 둔다) */
+.gg-acc-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 26px 0;
+  background: none;
+  border: none;
+  text-align: left;
+}
+.gg-acc-label {
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.16px;
+  color: #333d4b;
+}
+.gg-acc-spacer {
+  flex: 1;
+}
+/* 섹션 컨테이너: 섹션 사이 얇은 구분선(첫 섹션 제외) */
+.gg-acc-section {
+  border-top: 1px solid #f2f4f6;
+}
+.gg-acc-section:first-child {
+  border-top: none;
+}
+/* 본문: 세로 스택 + 12px 간격 (하위 필드/블록 공통) */
+.gg-acc-body {
+  display: flex;
+  flex-direction: column;
+  /* gap: 12px; */
+  padding: 0 0 26px;
+}
+
+/* ===== 4방향(상·우·하·좌) 여백 잠금 컨트롤 ===== */
+.gg-margin-quad {
+  width: 100%;
+}
+.gg-margin-quad-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.gg-lock-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: none;
+  color: #8b95a1;
+  cursor: pointer;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+.gg-lock-btn:hover {
+  background: #f2f4f6;
+}
+.gg-lock-btn.is-locked {
+  color: #4083f3;
+}
+.gg-margin-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 32px;
+}
+.gg-margin-slider {
+  flex: 1;
+  min-width: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: #e5e8eb;
+  outline: none;
+}
+.gg-margin-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #4083f3;
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+}
+.gg-margin-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #4083f3;
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+}
+.gg-margin-value-field {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 32px;
+  padding: 0 12px;
+  background: #f2f4f6;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+.gg-margin-value-input {
+  width: 28px;
+  border: none;
+  background: none;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.15px;
+  color: #191f28;
+  text-align: right;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+.gg-margin-value-input::-webkit-outer-spin-button,
+.gg-margin-value-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.gg-margin-value-input:focus {
+  outline: none;
+}
+.gg-margin-value-unit {
+  font-size: 14px;
+  color: #6b7684;
+}
+.gg-margin-grid {
+  display: grid;
+  /* 1fr만 쓰면 트랙 최소폭이 auto(=콘텐츠 min-content)로 잡혀 좁은 패널에서 넘친다 → 0으로 고정 */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.gg-margin-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 10px;
+  background: #f2f4f6;
+  border-radius: 8px;
+  min-width: 0;
+}
+.gg-margin-cell-label {
+  font-size: 13px;
+  color: #6b7684;
+  flex-shrink: 0;
+}
+.gg-margin-cell-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: none;
+  font-size: 14px;
+  color: #191f28;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+.gg-margin-cell-input::-webkit-outer-spin-button,
+.gg-margin-cell-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.gg-margin-cell-input:focus {
+  outline: none;
+}

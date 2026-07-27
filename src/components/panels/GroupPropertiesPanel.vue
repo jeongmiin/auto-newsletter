@@ -1,5 +1,5 @@
 <template>
-  <div v-if="group" class="space-y-4">
+  <div v-if="group">
     <!-- 그룹 정보 — Figma 352-1138 패턴: 아이콘/설명 없이 타이틀만(그룹 해제는 캔버스 좌측 액션 툴바에도 있지만
          패널에서도 바로 접근 가능하도록 타이틀 옆에 작게 유지) -->
     <div class="p-4 pb-3 flex items-center justify-between gap-2">
@@ -15,7 +15,7 @@
       />
     </div>
 
-    <div class="p-2">
+    <div class="px-[25px] pb-[25px] mt-0!">
       <!-- 안쪽 여백 (padding) — 아코디언 헤더(토글 없음, Figma "여백" 행) -->
       <div class="gg-acc-section">
         <div class="gg-acc-header gg-acc-header--static">
@@ -69,7 +69,7 @@
               </div>
             </div>
           </div>
-          <p class="gg-field-hint">그룹 테두리와 내부 모듈 사이 간격입니다 (상·우·하·좌)</p>
+          <p class="gg-field-hint">*내용과 테두리 사이의 간격입니다.</p>
         </div>
       </div>
 
@@ -126,7 +126,7 @@
               </div>
             </div>
           </div>
-          <p class="gg-field-hint">그룹과 위/아래 다른 모듈 사이 간격입니다 (상·우·하·좌)</p>
+          <p class="gg-field-hint">*그룹과 그룹 사이의 간격입니다.</p>
         </div>
       </div>
 
@@ -137,24 +137,21 @@
           <span class="gg-acc-spacer"></span>
           <ToggleSwitch :modelValue="hasBackground" @update:modelValue="toggleBackground" />
         </div>
-        <div class="gg-acc-body">
-          <template v-if="hasBackground">
-            <div class="flex items-center justify-between gap-3">
-              <span class="gg-sub-label">색상</span>
-              <ColorPopoverPicker
-                title="배경색"
-                :modelValue="isUsingPoint('backgroundColor') ? pointColorForKey('backgroundColor') : bgValue"
-                :pointColors="wrapPointColors"
-                pointFollow
-                :activeIndex="isUsingPoint('backgroundColor') ? pointIndexFor('backgroundColor') : null"
-                @update:modelValue="setStyle('backgroundColor', $event)"
-                @select-point="onSelectPoint('backgroundColor', $event)"
-                @add-point-color="editorStore.addPointColor($event)"
-                @remove-point-color="editorStore.removePointColor($event)"
-              />
-            </div>
-          </template>
-          <p v-else class="gg-field-hint">배경 없음(투명) — 켜면 묶음 전체에 배경색이 적용됩니다</p>
+        <div class="gg-acc-body" v-if="hasBackground">
+          <div class="flex items-center justify-between gap-3">
+            <span class="gg-sub-label">색상</span>
+            <ColorPopoverPicker
+              title="배경색"
+              :modelValue="isUsingPoint('backgroundColor') ? pointColorForKey('backgroundColor') : bgValue"
+              :pointColors="wrapPointColors"
+              pointFollow
+              :activeIndex="isUsingPoint('backgroundColor') ? pointIndexFor('backgroundColor') : null"
+              @update:modelValue="setStyle('backgroundColor', $event)"
+              @select-point="onSelectPoint('backgroundColor', $event)"
+              @add-point-color="editorStore.addPointColor($event)"
+              @remove-point-color="editorStore.removePointColor($event)"
+            />
+          </div>
         </div>
       </div>
 
@@ -165,8 +162,7 @@
           <span class="gg-acc-spacer"></span>
           <ToggleSwitch :modelValue="hasBorder" @update:modelValue="toggleBorder" />
         </div>
-        <div class="gg-acc-body">
-          <template v-if="hasBorder">
+        <div class="gg-acc-body" v-if="hasBorder">
             <!-- 스타일 라디오 (GlobalStylePanel과 동일한 radio-dot 리스트) -->
             <div class="flex flex-col gap-[10px]">
               <span class="gg-sub-label">스타일</span>
@@ -249,8 +245,6 @@
               </div>
               <p class="gg-field-hint">'전체'는 위·아래·좌·우 모두 적용합니다.</p>
             </div>
-          </template>
-          <p v-else class="gg-field-hint">테두리 없음 — 켜면 묶음 전체에 테두리가 적용됩니다</p>
         </div>
       </div>
     </div>
@@ -435,65 +429,7 @@ const ungroup = (): void => {
   letter-spacing: -0.2px;
 }
 
-/* ModuleForm.vue와 동일한 필드 토큰 (스코프 스타일이라 컴포넌트별로 중복 정의) */
-.gg-field-label {
-  display: block;
-  font-size: 15px;
-  line-height: 1.5;
-  color: #4e5968;
-  margin-bottom: 8px;
-}
-.gg-field-hint {
-  font-size: 12px;
-  line-height: 1.5;
-  letter-spacing: -0.14px;
-  color: #6b7684;
-  margin-top: 6px;
-  word-break: keep-all;
-}
-
-/* 아코디언 섹션(여백/배경색/테두리) — 좌측 chevron + 우측 노출 토글, Figma 378-1704/408-1758 */
-.gg-acc-section {
-  border-top: 1px solid #f2f4f6;
-}
-.gg-acc-section:first-child {
-  border-top: none;
-}
-.gg-acc-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  padding: 12px 8px;
-  background: none;
-  border: none;
-  text-align: left;
-}
-/* 아코디언 제거 — 항상 펼쳐진 정적 헤더(라벨 + 배경색/테두리 노출 토글) */
-.gg-acc-header--static {
-  cursor: default;
-}
-.gg-acc-label {
-  font-size: 16px;
-  font-weight: 500;
-  letter-spacing: -0.16px;
-  color: #333d4b;
-}
-.gg-acc-spacer {
-  flex: 1;
-}
-.gg-acc-body {
-  padding: 4px 8px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-/* 테두리 상세 — GlobalStylePanel.vue와 동일한 라디오/슬라이더 스타일(스코프상 중복 정의) */
-.gg-sub-label {
-  font-size: 15px;
-  color: #4e5968;
-}
+/* 테두리 상세 — 라디오/슬라이더 스타일 */
 .gg-radio-row {
   display: flex;
   align-items: center;
@@ -532,9 +468,8 @@ const ungroup = (): void => {
   width: 50px;
   height: 0;
 }
-/* 슬라이더 스타일 통일 — 여백(안/밖) 슬라이더도 두께 슬라이더(gg-range-slider)와 동일 트랙/썸 */
-.gg-range-slider,
-.gg-margin-slider {
+/* 테두리 두께 슬라이더 — 여백 슬라이더(gg-margin-slider, 전역)와 동일 트랙/썸 */
+.gg-range-slider {
   -webkit-appearance: none;
   appearance: none;
   height: 4px;
@@ -542,8 +477,7 @@ const ungroup = (): void => {
   background: #e5e8eb;
   outline: none;
 }
-.gg-range-slider::-webkit-slider-thumb,
-.gg-margin-slider::-webkit-slider-thumb {
+.gg-range-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 16px;
@@ -554,8 +488,7 @@ const ungroup = (): void => {
   border: 2px solid #fff;
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
 }
-.gg-range-slider::-moz-range-thumb,
-.gg-margin-slider::-moz-range-thumb {
+.gg-range-slider::-moz-range-thumb {
   width: 16px;
   height: 16px;
   border-radius: 50%;
@@ -586,118 +519,5 @@ const ungroup = (): void => {
 .gg-select-sm :deep(.p-select-label) {
   font-size: 13px;
   color: #333d4b;
-}
-
-/* 여백/패딩 4방향 잠금 슬라이더 (ModuleForm.vue "여백" 컨트롤과 동일) */
-.gg-margin-quad {
-  width: 100%;
-}
-.gg-margin-quad-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
-.gg-lock-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border: none;
-  background: none;
-  color: #8b95a1;
-  cursor: pointer;
-  border-radius: 6px;
-  flex-shrink: 0;
-}
-.gg-lock-btn:hover {
-  background: #f2f4f6;
-}
-.gg-lock-btn.is-locked {
-  color: #4083f3;
-}
-.gg-margin-slider-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  height: 32px;
-}
-.gg-margin-slider {
-  flex: 1;
-  min-width: 0;
-}
-.gg-margin-value-field {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  height: 32px;
-  padding: 0 12px;
-  background: #f2f4f6;
-  border-radius: 8px;
-  flex-shrink: 0;
-}
-.gg-margin-value-input {
-  width: 28px;
-  border: none;
-  background: none;
-  font-size: 15px;
-  font-weight: 500;
-  letter-spacing: -0.15px;
-  color: #191f28;
-  text-align: right;
-  appearance: textfield;
-  -moz-appearance: textfield;
-}
-.gg-margin-value-input::-webkit-outer-spin-button,
-.gg-margin-value-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-.gg-margin-value-input:focus {
-  outline: none;
-}
-.gg-margin-value-unit {
-  font-size: 14px;
-  color: #6b7684;
-}
-.gg-margin-grid {
-  display: grid;
-  /* 1fr만 쓰면 트랙 최소폭이 auto(=콘텐츠 min-content)로 잡혀 좁은 패널에서 넘친다 → 0으로 고정 */
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-}
-.gg-margin-cell {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  height: 32px;
-  padding: 0 10px;
-  background: #f2f4f6;
-  border-radius: 8px;
-  min-width: 0;
-}
-.gg-margin-cell-label {
-  font-size: 13px;
-  color: #6b7684;
-  flex-shrink: 0;
-}
-.gg-margin-cell-input {
-  flex: 1;
-  min-width: 0;
-  border: none;
-  background: none;
-  font-size: 14px;
-  color: #191f28;
-  appearance: textfield;
-  -moz-appearance: textfield;
-}
-.gg-margin-cell-input::-webkit-outer-spin-button,
-.gg-margin-cell-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-.gg-margin-cell-input:focus {
-  outline: none;
 }
 </style>

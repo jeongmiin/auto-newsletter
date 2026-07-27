@@ -5,6 +5,7 @@ import router from './router'
 
 // CSS를 먼저 import
 import './assets/main.css'
+import './assets/panels.css'
 import 'primeicons/primeicons.css'
 
 // ============= 전역 에러 핸들러 =============

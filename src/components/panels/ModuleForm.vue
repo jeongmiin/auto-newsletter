@@ -3,6 +3,11 @@
        selectedModule가 없으면 아무것도 그리지 않는다(호출부가 보통 이미 selectedModule 존재를 보고 렌더하지만,
        v-if로 한 번 더 방어해 selectedModule 타입도 non-null로 좁힌다). -->
   <div v-if="selectedModule">
+        <!-- 패널 상단 타이틀 (그룹 스타일 패널과 동일 스타일) — 선택한 모듈 이름 -->
+        <div class="p-4 pb-3 flex items-center justify-between gap-2">
+          <p class="gg-panel-title truncate">{{ selectedModuleMetadata?.name }}</p>
+        </div>
+
         <!-- 영역 컬럼 분할 -->
         <div class="px-[25px] py-3 border-b bg-white">
           <div class="flex items-center justify-between mb-2">
@@ -68,27 +73,30 @@
         </div>
 
         <!-- 속성 편집 폼 -->
-      <div class="px-[25px] py-4 space-y-3">
+      <div class="px-[25px] pb-7">
         <div
           v-for="(group, gIdx) in propGroups"
           :key="`grp-${gIdx}-${group.name || 'flat'}`"
           class="gg-acc-section"
-          :class="{ 'gg-acc-section--flat': !group.name }"
+          :class="{
+            'gg-acc-section--flat': !group.name,
+            'gg-acc-section--quad': isQuadSelfLabeledGroup(group),
+          }"
         >
         <!-- 이름 있는 prop 그룹(레거시 모듈의 로고/타이틀 등 섹션) — Figma 352-1138의 접이식 헤더 패턴.
              그룹 전체를 켜고 끄는 토글(예: showLogo)이 있으면 헤더로 끌어올려 판넬을 열기 전에도 제어 가능하게 한다. -->
         <div
-          v-if="group.name"
+          v-if="(group.name && !isQuadSelfLabeledGroup(group)) || (!group.name && flatHeaderLabel)"
           class="gg-acc-header"
-          :class="{ 'is-static': isGroupSelfLabeled(group) }"
-          @click="isGroupSelfLabeled(group) || toggleGroupPanel(group, gIdx)"
+          :class="{ 'is-static': !group.name || isGroupSelfLabeled(group) }"
+          @click="!group.name || isGroupSelfLabeled(group) || toggleGroupPanel(group, gIdx)"
         >
           <i
-            v-if="!isGroupSelfLabeled(group)"
+            v-if="group.name && !isGroupSelfLabeled(group)"
             class="pi gg-acc-chevron"
             :class="isGroupPanelExpanded(group, gIdx) ? 'pi-chevron-down' : 'pi-chevron-right'"
           ></i>
-          <span class="gg-acc-label">{{ group.name }}</span>
+          <span class="gg-acc-label">{{ group.name || flatHeaderLabel }}</span>
           <span class="gg-acc-spacer"></span>
           <ToggleSwitch
             v-if="groupHeaderToggle(group)"
@@ -98,15 +106,18 @@
           />
         </div>
         <div
-          class="space-y-5"
-          :class="{ 'gg-acc-body': !!group.name }"
-          v-show="!group.name || isGroupSelfLabeled(group) || isGroupPanelExpanded(group, gIdx)"
+          class="gg-acc-body"
+          v-show="
+            (!group.name || isGroupSelfLabeled(group) || isGroupPanelExpanded(group, gIdx)) &&
+            (!groupHeaderToggle(group) ||
+              Boolean(selectedModule.properties[groupHeaderToggle(group)!.key]))
+          "
         >
         <div
           v-for="(prop, index) in group.props"
           :key="prop.key"
+          :class="{ 'mf-toggle-divider': !group.name && index > 0 && isTogglePropStart(prop, group.props) }"
           v-show="evalShowWhen(prop.showWhen) && !isQuadMember(prop, group.props, index) && !isBorderMember(prop, group.props) && groupHeaderToggle(group) !== prop"
-          :class="{ 'pt-4 border-t border-gray-100': index > 0 && !prop.showWhen }"
         >
           <label
             v-show="prop.type !== 'boolean' && prop.type !== 'checkbox' && !isColorBlock(prop) && !isQuadStart(prop, group.props, index) && !isBorderStyleStart(prop)"
@@ -118,8 +129,9 @@
           <!-- 여백/패딩 등 4방향(Top/Right/Bottom/Left) 세트 — 잠금 슬라이더 UI (Figma 365-2691) -->
           <div v-if="isQuadStart(prop, group.props, index)" class="gg-margin-quad">
             <div class="gg-margin-quad-head">
-              <!-- 그룹명과 같으면(예: 그룹"여백" 안의 여백) 이름을 한 번만 — 빈 span으로 자리만 유지해 잠금 버튼은 우측 정렬 -->
-              <span class="gg-field-label !mb-0">{{ isDupLabelProp(group, prop) ? '' : quadLabel(prop) }}</span>
+              <!-- 여백 라벨은 항상 quad-head(잠금 버튼과 한 줄)에 노출. 그룹이 이 quad로만 자기 이름을
+                   가지면(예: 그룹"바깥 여백") 섹션 헤더는 생략되고 이 라벨이 그 이름을 대신한다. -->
+              <span class="gg-field-label !mb-0">{{ quadLabel(prop) }}</span>
               <button
                 type="button"
                 class="gg-lock-btn"
@@ -1279,6 +1291,23 @@ const selectedModule = computed(() => moduleStore.selectedModule)
 const selectedModuleMetadata = computed(() => moduleStore.selectedModuleMetadata)
 const editableProps = computed(() => selectedModuleMetadata.value?.editableProps || [])
 
+// flat(그룹 없는) 모듈도 상단 섹션 헤더(gg-acc-header)를 그려 이름 있는 모듈과 상단 여백을 맞춘다.
+// 라벨은 모듈 카테고리 기준(이미지/텍스트/버튼/…) — 예: 이미지 모듈 → "이미지"
+const FLAT_HEADER_LABELS: Record<string, string> = {
+  image: '이미지',
+  text: '텍스트',
+  button: '버튼',
+  table: '테이블',
+  header: '헤더',
+  divider: '구분선',
+  social: 'SNS',
+  common: '모듈',
+}
+const flatHeaderLabel = computed(() => {
+  const cat = selectedModuleMetadata.value?.category
+  return cat ? (FLAT_HEADER_LABELS[cat] ?? null) : null
+})
+
 // ===== 영역 컬럼 분할 =====
 // 선택 모듈이 속한 그룹의 컬럼 수와, 그 안에서의 컬럼 위치(0-based)
 const moduleColumnInfo = computed(() => {
@@ -1621,6 +1650,14 @@ const isGroupSelfLabeled = (group: { name?: string | null; props: EditableProp[]
 const isDupLabelProp = (group: { name?: string | null; props: EditableProp[] }, prop: EditableProp): boolean =>
   groupSelfLabeledProp(group) === prop
 
+// 그룹이 '여백 4방향(quad)'으로만 자기 이름을 가진 경우(예: 그룹"바깥 여백" 안의 marginTop 라벨이 "바깥 여백").
+// 이때는 별도 섹션 헤더(gg-acc-header) 없이 quad-head 라벨 위치(잠금 버튼과 한 줄)에만 이름을 노출한다.
+// (배경 박스처럼 quad 외 다른 속성도 있는 그룹은 해당 없음)
+const isQuadSelfLabeledGroup = (group: { name?: string | null; props: EditableProp[] }): boolean => {
+  const p = groupSelfLabeledProp(group)
+  return !!p && isQuadStart(p, group.props, group.props.indexOf(p))
+}
+
 // ===== 테두리 "전체 블록" (전체 스타일 GlobalStylePanel과 동일 UI) =====
 // '테두리 스타일' select( *BorderStyle / dividerStyle )를 스타일 라디오+색상+두께 슬라이더 블록으로 렌더한다.
 const isBorderStyleStart = (prop: EditableProp): boolean =>
@@ -1643,6 +1680,16 @@ const isBorderMember = (prop: EditableProp, props: EditableProp[]): boolean => {
 // '없음(none)' 옵션 유무 — 있으면 토글(off=none)로, 없으면 항상 노출
 const borderHasNone = (prop: EditableProp): boolean =>
   !!prop.options?.some((o) => o.value === 'none')
+
+// 이 prop이 "토글이 달린 섹션의 시작"인지 → 위에 구분선(1px #f2f4f6)을 그린다.
+// (flat 모듈 전용: 이름 있는 그룹은 gg-acc-section 구분선이 이미 섹션을 나눈다)
+// (1) showWhen 하위 속성을 거느린 boolean 토글(예: 이미지 링크 사용)
+// (2) on/off 토글이 달린 테두리 블록(none 옵션 보유)
+const isTogglePropStart = (prop: EditableProp, props: EditableProp[]): boolean => {
+  if (prop.type === 'boolean' && props.some((p) => showWhenKey(p) === prop.key)) return true
+  if (isBorderStyleStart(prop) && borderHasNone(prop)) return true
+  return false
+}
 
 // 라디오에 노출할 옵션 (none 제외)
 const borderStyleOptionsFor = (prop: EditableProp) =>
@@ -2381,6 +2428,15 @@ const onSelectPointColor = (key: string, index: number): void => {
 </script>
 
 <style scoped>
+/* 좌측 패널 상단 타이틀 — 그룹 스타일 패널(GroupPropertiesPanel)과 동일 (Figma 352-1138) */
+.gg-panel-title {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #191f28;
+  letter-spacing: -0.2px;
+}
+
 /* Quill 에디터를 이메일 기본 폰트로 통일 (입력 시 결과물과 동일하게 보이도록) */
 :deep(.ql-editor) {
   font-family: AppleSDGothic, 'malgun gothic', 'nanum gothic', 'Noto Sans KR', sans-serif;
@@ -2658,23 +2714,6 @@ const onSelectPointColor = (key: string, index: number): void => {
    필드 레벨 스타일 토큰 (Figma 372-3000/378-1704/412-2139/408-1758)
    ============================================================ */
 
-/* 라벨/힌트 */
-.gg-field-label {
-  display: block;
-  font-size: 15px;
-  line-height: 1.5;
-  color: #4e5968;
-  margin-bottom: 8px;
-}
-.gg-field-hint {
-  font-size: 12px;
-  line-height: 1.5;
-  letter-spacing: -0.14px;
-  color: #6b7684;
-  margin-top: 6px;
-  word-break: keep-all;
-}
-
 /* 컬러 필드 행 — 전체 스타일과 동일하게 라벨 좌 / 스와치 우 */
 .gg-color-row {
   display: flex;
@@ -2688,10 +2727,6 @@ const onSelectPointColor = (key: string, index: number): void => {
   display: flex;
   flex-direction: column;
   gap: 18px;
-}
-.gg-sub-label {
-  font-size: 15px;
-  color: #4e5968;
 }
 .gg-brd-radio-row {
   display: flex;
@@ -2786,52 +2821,36 @@ const onSelectPointColor = (key: string, index: number): void => {
   color: #333d4b;
 }
 
-/* 하위 필드를 가진 토글 — 아코디언 헤더 행 (챙긴 chevron + 우측 노출 토글, Figma 378-1704/408-1758) */
-.gg-acc-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  padding: 8px 0;
-  background: none;
-  border: none;
-  cursor: pointer;
-  text-align: left;
-}
-/* 그룹명이 내부 블록 라벨과 같아 항상 펼쳐두는 헤더 — 접히지 않으므로 클릭 어포던스 제거 */
-.gg-acc-header.is-static {
-  cursor: default;
-}
 .gg-acc-chevron {
   font-size: 12px;
   color: #8b95a1;
   flex-shrink: 0;
 }
-.gg-acc-label {
-  font-size: 16px;
-  font-weight: 500;
-  letter-spacing: -0.16px;
-  color: #333d4b;
-}
-.gg-acc-spacer {
-  flex: 1;
-}
-
-/* 이름 있는 prop 그룹(로고/타이틀 등 섹션) 래퍼 — Figma 352-1138 접이식 패널 대체 */
-.gg-acc-section {
-  /* border-top: 1px solid #f2f4f6; */
-  padding-top: 4px;
-}
-.gg-acc-section:first-child {
-  border-top: none;
-  padding-top: 0;
-}
+/* 이름 없는(flat) 그룹은 구분선 제거 (ModuleForm 전용) */
 .gg-acc-section--flat {
   border-top: none;
+}
+
+/* 여백-quad 전용 그룹(헤더 없음, 예: '바깥 여백')은 섹션 구분선·상단 여백을 제거해
+   flat 모듈의 '여백'(본문 속 인라인 필드)과 동일한 간격으로 앞 섹션에 이어 붙인다. */
+.gg-acc-section--quad {
+  border-top: none;
+}
+.gg-acc-section--quad > .gg-acc-body {
   padding-top: 0;
 }
+
+/* 속성 간격 26px 통일 — space-y 유틸(마진)은 v-show(display:none) 요소 주변에도 유령 여백을
+   남겨 간격이 들쭉날쭉해지므로 flex gap으로 일원화한다(숨긴 요소는 flow에서 빠져 gap 미적용). */
 .gg-acc-body {
-  padding: 4px 0 12px;
+  gap: 26px;
+}
+
+/* flat 모듈의 인라인 토글(이미지 링크 사용·테두리 등) 위 구분선 —
+   이름 있는 섹션의 gg-acc-section 구분선과 동일하게 토글 섹션을 시각적으로 분리한다. */
+.mf-toggle-divider {
+  border-top: 1px solid #f2f4f6;
+  padding-top: 26px;
 }
 
 /* 컬럼 분할 세그먼트 필 버튼 (1단/2단 세그먼트, Figma 378-1706) */
@@ -2929,143 +2948,4 @@ const onSelectPointColor = (key: string, index: number): void => {
   height: 24px;
 }
 
-/* 여백/패딩 4방향 잠금 슬라이더 (Figma 365-2691 "여백") */
-.gg-margin-quad {
-  width: 100%;
-}
-.gg-margin-quad-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
-.gg-lock-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border: none;
-  background: none;
-  color: #8b95a1;
-  cursor: pointer;
-  border-radius: 6px;
-  flex-shrink: 0;
-}
-.gg-lock-btn:hover {
-  background: #f2f4f6;
-}
-.gg-lock-btn.is-locked {
-  color: #4083f3;
-}
-.gg-margin-slider-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  height: 32px;
-}
-/* 슬라이더 트랙/썸 — GroupPropertiesPanel의 gg-margin-slider와 동일한 커스텀 스타일 */
-.gg-margin-slider {
-  flex: 1;
-  min-width: 0;
-  -webkit-appearance: none;
-  appearance: none;
-  height: 4px;
-  border-radius: 2px;
-  background: #e5e8eb;
-  outline: none;
-}
-.gg-margin-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #4083f3;
-  cursor: pointer;
-  border: 2px solid #fff;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
-}
-.gg-margin-slider::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #4083f3;
-  cursor: pointer;
-  border: 2px solid #fff;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
-}
-.gg-margin-value-field {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  height: 32px;
-  padding: 0 12px;
-  background: #f2f4f6;
-  border-radius: 8px;
-  flex-shrink: 0;
-}
-.gg-margin-value-input {
-  width: 28px;
-  border: none;
-  background: none;
-  font-size: 15px;
-  font-weight: 500;
-  letter-spacing: -0.15px;
-  color: #191f28;
-  text-align: right;
-  appearance: textfield;
-  -moz-appearance: textfield;
-}
-.gg-margin-value-input::-webkit-outer-spin-button,
-.gg-margin-value-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-.gg-margin-value-input:focus {
-  outline: none;
-}
-.gg-margin-value-unit {
-  font-size: 14px;
-  color: #6b7684;
-}
-.gg-margin-grid {
-  display: grid;
-  /* 1fr만 쓰면 트랙 최소폭이 auto(=콘텐츠 min-content)로 잡혀 좁은 패널에서 넘친다 → 0으로 고정 */
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-}
-.gg-margin-cell {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  height: 32px;
-  padding: 0 10px;
-  background: #f2f4f6;
-  border-radius: 8px;
-  min-width: 0;
-}
-.gg-margin-cell-label {
-  font-size: 13px;
-  color: #6b7684;
-  flex-shrink: 0;
-}
-.gg-margin-cell-input {
-  flex: 1;
-  min-width: 0;
-  border: none;
-  background: none;
-  font-size: 14px;
-  color: #191f28;
-  appearance: textfield;
-  -moz-appearance: textfield;
-}
-.gg-margin-cell-input::-webkit-outer-spin-button,
-.gg-margin-cell-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-.gg-margin-cell-input:focus {
-  outline: none;
-}
 </style>
