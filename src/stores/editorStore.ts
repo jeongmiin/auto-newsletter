@@ -113,6 +113,33 @@ export const useEditorStore = defineStore('editor', () => {
     wrapSettings.value = { ...wrapSettings.value, pointColors: next, pointColor: next[0] ?? wrapSettings.value.pointColor }
   }
 
+  /**
+   * 새 포인트 색상 슬롯을 하나 추가하고 그 인덱스를 반환한다(중복 검사 없음, 최대 3개).
+   * 포인트 색상 추가 모달에서 "색을 고르는 즉시" 새 슬롯을 만들 때 사용한다.
+   * 이후 같은 슬롯을 updatePointColorAt로 갱신하면 슬롯이 계속 늘지 않는다.
+   */
+  const appendPointColor = (color: string): number => {
+    const current = wrapSettings.value.pointColors ?? []
+    const next = current.length >= 3 ? [...current.slice(0, 2), color] : [...current, color]
+    const index = next.length - 1
+    wrapSettings.value = { ...wrapSettings.value, pointColors: next, pointColor: color }
+    return index
+  }
+
+  /** 특정 인덱스의 포인트 색상 값을 교체(추가 모달에서 편집 중인 슬롯 실시간 갱신용) */
+  const updatePointColorAt = (index: number, color: string): void => {
+    const current = wrapSettings.value.pointColors ?? []
+    if (index < 0 || index >= current.length) return
+    const prev = current[index]
+    const next = current.slice()
+    next[index] = color
+    wrapSettings.value = {
+      ...wrapSettings.value,
+      pointColors: next,
+      pointColor: wrapSettings.value.pointColor === prev ? color : wrapSettings.value.pointColor,
+    }
+  }
+
   /** 팔레트의 특정 색상을 활성(pointColor)으로 지정 — 맨 앞으로 이동 */
   const setActivePointColor = (color: string): void => {
     const current = wrapSettings.value.pointColors ?? []
@@ -124,15 +151,14 @@ export const useEditorStore = defineStore('editor', () => {
     }
   }
 
-  /** 팔레트에서 색상 제거 (최소 1개는 유지) */
+  /** 팔레트에서 색상 제거 (전부 삭제 가능 — 비면 pointColor는 '' → 렌더는 기본색으로 폴백) */
   const removePointColor = (color: string): void => {
     const current = wrapSettings.value.pointColors ?? []
-    if (current.length <= 1) return
     const next = current.filter((c) => c !== color)
     wrapSettings.value = {
       ...wrapSettings.value,
       pointColors: next,
-      pointColor: next[0] ?? wrapSettings.value.pointColor,
+      pointColor: next[0] ?? '',
     }
   }
 
@@ -151,6 +177,8 @@ export const useEditorStore = defineStore('editor', () => {
     updateCanvasSettings,
     updateWrapSettings,
     addPointColor,
+    appendPointColor,
+    updatePointColorAt,
     setActivePointColor,
     removePointColor,
     setZoom

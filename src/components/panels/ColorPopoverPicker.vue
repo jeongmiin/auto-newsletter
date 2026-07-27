@@ -35,21 +35,76 @@
           </button>
         </div>
 
-        <!-- 포인트 색상 퀵 스와치 — '포인트 색상' 패널에서 추가한 색만 노출한다.
-             포인트 색상 추가(+)는 그 전용 패널(triggerVariant='add')에서만 가능하고,
-             일반 색상 조정 팝오버(텍스트/배경/테두리 등)에서는 기존 포인트 색만 골라 쓸 수 있다. -->
+        <!-- ============ 포인트 색상 풀 피커 모달 (추가·수정 공용) ============
+             그라디언트+휴 피커를 상시 노출하고, 색을 바꾸면 부모가 즉시 팔레트에 반영한다.
+             (확정 버튼 없음 — 변경 즉시 추가/갱신) -->
+        <template v-if="fullPicker">
+          <!-- 채도·명도(사각형) 위 · 색상(휴) 슬라이더 아래, 세로 스택 · 콘텐츠 폭 100% (커스텀 피커) -->
+          <div class="cp-picker">
+            <div ref="svEl" class="cp-sv" :style="svBgStyle" @pointerdown="onSvDown">
+              <span class="cp-sv-handle" :style="{ left: `${hsvView.s}%`, top: `${100 - hsvView.v}%` }"></span>
+            </div>
+            <div ref="hueEl" class="cp-hue" @pointerdown="onHueDown">
+              <span class="cp-hue-handle" :style="{ left: `${(hsvView.h / 360) * 100}%` }"></span>
+            </div>
+          </div>
+
+          <!-- HEX (미리보기 스와치 + 입력) -->
+          <div class="flex items-center gap-2 mt-3">
+            <span class="custom-swatch-preview" :style="{ backgroundColor: displayColor }"></span>
+            <HexColorInput
+              :modelValue="modelValue"
+              @update:modelValue="onHexInput"
+              placeholder="#000000"
+              class="flex-1 w-full font-mono text-sm hex-field"
+              spellcheck="false"
+            />
+          </div>
+
+          <!-- 불투명도 -->
+          <div v-if="showAlpha" class="flex flex-col mt-3">
+            <span class="text-[13px] text-gray-400">불투명도</span>
+            <div class="flex items-center justify-between gap-3">
+              <input
+                type="range"
+                min="0"
+                max="100"
+                :value="alphaPct"
+                @input="onAlphaInputEvent"
+                class="alpha-slider flex-1"
+                :style="alphaTrackStyle"
+              />
+              <div class="alpha-field">{{ alphaPct }} %</div>
+            </div>
+          </div>
+
+          <div class="popover-divider mt-3"></div>
+
+          <!-- 기본 팔레트 -->
+          <div class="flex flex-col items-center gap-2 mt-3">
+            <span class="text-[13px] text-gray-400 w-full">기본 팔레트</span>
+            <div class="palette-grid">
+              <button
+                v-for="c in DEFAULT_PALETTE"
+                :key="c"
+                type="button"
+                class="palette-swatch"
+                :class="{ 'is-selected': sameColor(c, modelValue) }"
+                :style="{ backgroundColor: c }"
+                :title="c"
+                @click="pick(c)"
+              ></button>
+            </div>
+          </div>
+        </template>
+
+        <!-- ============ 일반 색상 조정 팝오버(텍스트/배경/테두리 등) ============ -->
+        <template v-else>
+        <!-- 포인트 색상 퀵 스와치 — '포인트 색상' 패널에서 추가한 색만 '선택'해 쓸 수 있다.
+             (추가·삭제는 포인트 색상 패널에서만 — 여기선 삭제 버튼 없음) -->
         <div class="flex flex-col gap-2 mb-3">
           <span class="text-[13px] text-gray-400">포인트 색상</span>
           <div class="flex items-center gap-2">
-            <button
-              v-if="triggerVariant === 'add'"
-              type="button"
-              class="quick-swatch-add"
-              title="현재 색상을 포인트 색상에 추가"
-              @click="addCurrentAsPointColor"
-            >
-              <img :src="addPointColorBtn" alt="포인트 색상 추가" />
-            </button>
             <div
               v-for="(c, i) in pointColors"
               :key="c"
@@ -63,15 +118,6 @@
                 :title="c"
                 @click="onPointSwatchClick(c, i)"
               ></button>
-              <button
-                v-if="pointColors.length > 1"
-                type="button"
-                class="quick-swatch-remove"
-                title="포인트 색상 삭제"
-                @click.stop="emit('remove-point-color', c)"
-              >
-                <i class="pi pi-times"></i>
-              </button>
             </div>
           </div>
         </div>
@@ -89,6 +135,7 @@
               :key="c"
               type="button"
               class="palette-swatch"
+              :class="{ 'is-selected': sameColor(c, modelValue) }"
               :style="{ backgroundColor: c }"
               :title="c"
               @click="pick(c)"
@@ -118,9 +165,6 @@
             />
           </div>
 
-          <!-- 팔레트/휴 그라디언트 피커 — 이 팝오버 안에서 position:absolute로 떠서
-               별도 오버레이(body 텔레포트)를 쓰지 않는다. inline 모드라 z-index·바깥클릭
-               충돌 없이 모달(팝오버) 앞에 자연스럽게 겹쳐서 뜬다. -->
           <div v-if="gradientOpen" ref="gradientPanelEl" class="gradient-popover">
             <ColorPicker
               :modelValue="baseHexNoHash"
@@ -132,9 +176,9 @@
           </div>
         </div>
 
-        <!-- 투명도 -->
+        <!-- 불투명도 — 트랙은 (좌)투명 체크패턴 → (우)선택 색상 그라디언트. 100%로 갈수록 색이 진하게 보임 -->
         <div v-if="showAlpha" class="flex flex-col gap-1 mt-3">
-          <span class="text-[13px] text-gray-400">투명도</span>
+          <span class="text-[13px] text-gray-400">불투명도</span>
           <div class="flex items-center justify-between gap-3">
             <input
               type="range"
@@ -142,32 +186,22 @@
               max="100"
               :value="alphaPct"
               @input="onAlphaInputEvent"
-              class="range-slider flex-1"
+              class="alpha-slider flex-1"
+              :style="alphaTrackStyle"
             />
             <div class="alpha-field">{{ alphaPct }} %</div>
           </div>
         </div>
         </div>
         <!-- /수동 색상 지정 영역 -->
-
-        <!-- 포인트 색상 추가 확정 버튼 — 그라디언트/팔레트로 색을 고르는 동안은 미리보기만 하고,
-             이 버튼을 눌러야 실제로 팔레트에 추가된다 (색을 조정할 때마다 즉시 추가하면
-             pointColors가 금방 3개를 채워 v-if로 팝오버 자체가 사라지는 문제가 있었다) -->
-        <button
-          v-if="triggerVariant === 'add'"
-          type="button"
-          class="confirm-add-btn"
-          @click="confirmAdd"
-        >
-          이 색상을 포인트 색상으로 추가
-        </button>
+        </template>
       </div>
     </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, nextTick, onBeforeUnmount } from 'vue'
+import { computed, ref, watch, nextTick, onBeforeUnmount } from 'vue'
 import ColorPicker from 'primevue/colorpicker'
 import HexColorInput from '@/components/HexColorInput.vue'
 import { parseColorToRgba, rgbToHex } from '@/utils/colorFlatten'
@@ -189,6 +223,9 @@ interface Props {
   showAlpha?: boolean
   /** 'add': 색상 대신 '+' 아이콘 트리거 (포인트 색상 신규 추가용) */
   triggerVariant?: 'swatch' | 'add'
+  /** true면 그라디언트+휴 상시 노출의 '풀 피커' 모달로 표시(포인트 색상 추가·수정용).
+   *  false면 팔레트+포인트 스와치 중심의 컴팩트 모달(모듈 색상 필드용). */
+  fullPicker?: boolean
   /** 포인트 색상 "추종" 모드: 스와치 클릭 시 리터럴 픽 대신 select-point(index) emit,
    *  추종 중이면 수동 색상 입력을 잠근다. (모듈 색상 필드용 — 전체 스타일은 미지정=리터럴) */
   pointFollow?: boolean
@@ -200,6 +237,7 @@ const props = withDefaults(defineProps<Props>(), {
   pointColors: () => [],
   showAlpha: true,
   triggerVariant: 'swatch',
+  fullPicker: false,
   pointFollow: false,
   activeIndex: null,
 })
@@ -209,6 +247,8 @@ const emit = defineEmits<{
   'add-point-color': [value: string]
   'remove-point-color': [value: string]
   'select-point': [index: number]
+  open: []
+  close: []
 }>()
 
 // 추종 모드이면서 실제로 포인트 색상을 따르는 중이면 수동 입력(팔레트/HEX/투명도)을 잠근다.
@@ -224,6 +264,20 @@ const onPointSwatchClick = (color: string, index: number) => {
 }
 
 const open = ref(false)
+// 열림/닫힘을 부모에 알린다(포인트 색상 추가 모달의 실시간 추가 세션 시작/종료 신호로 사용)
+watch(open, (v) => {
+  if (v) {
+    emit('open')
+    // 열릴 때 현재 색의 휴를 보존값으로 초기화(회색/검정에서 휴가 튀지 않도록)
+    const rgb = parseColorToRgba(props.modelValue)
+    if (rgb) {
+      const c = rgbToHsv(rgb.r, rgb.g, rgb.b)
+      if (c.s >= 1 && c.v >= 1) persistedHue.value = c.h
+    }
+  } else {
+    emit('close')
+  }
+})
 const triggerEl = ref<HTMLElement | null>(null)
 const popoverEl = ref<HTMLElement | null>(null)
 const pos = ref({ top: 0, left: 0 })
@@ -238,6 +292,112 @@ const displayColor = computed(() => props.modelValue || '#cccccc')
 const alphaPct = computed(() => Math.round(parsed.value.a * 100))
 // PrimeVue ColorPicker는 '#' 없는 6자리 HEX를 사용
 const baseHexNoHash = computed(() => rgbToHex(parsed.value.r, parsed.value.g, parsed.value.b).slice(1))
+
+// ===== 커스텀 채도·명도(SV) + 휴 피커 (포인트 색상 추가 모달) =====
+// PrimeVue ColorPicker는 150px 고정·세로 휴라 세로 스택/가로 휴/100% 폭이 불가능해 직접 구현한다.
+function rgbToHsv(r: number, g: number, b: number) {
+  const rr = r / 255, gg = g / 255, bb = b / 255
+  const max = Math.max(rr, gg, bb), min = Math.min(rr, gg, bb)
+  const d = max - min
+  let h = 0
+  if (d !== 0) {
+    if (max === rr) h = 60 * (((gg - bb) / d) % 6)
+    else if (max === gg) h = 60 * ((bb - rr) / d + 2)
+    else h = 60 * ((rr - gg) / d + 4)
+  }
+  if (h < 0) h += 360
+  const s = max === 0 ? 0 : (d / max) * 100
+  return { h, s, v: max * 100 }
+}
+function hsvToRgb(h: number, s: number, v: number) {
+  const ss = s / 100, vv = v / 100
+  const c = vv * ss
+  const x = c * (1 - Math.abs(((h / 60) % 2) - 1))
+  const m = vv - c
+  let r = 0, g = 0, b = 0
+  if (h < 60) [r, g, b] = [c, x, 0]
+  else if (h < 120) [r, g, b] = [x, c, 0]
+  else if (h < 180) [r, g, b] = [0, c, x]
+  else if (h < 240) [r, g, b] = [0, x, c]
+  else if (h < 300) [r, g, b] = [x, 0, c]
+  else [r, g, b] = [c, 0, x]
+  return { r: Math.round((r + m) * 255), g: Math.round((g + m) * 255), b: Math.round((b + m) * 255) }
+}
+
+// 회색/검정에선 휴가 rgb로 복원되지 않으므로(0으로 튐) 마지막 유효 휴를 보존한다.
+const persistedHue = ref(210)
+const hsvView = computed(() => {
+  const c = rgbToHsv(parsed.value.r, parsed.value.g, parsed.value.b)
+  return { h: c.s < 1 ? persistedHue.value : c.h, s: c.s, v: c.v }
+})
+const svBgStyle = computed(() => ({
+  backgroundColor: `hsl(${hsvView.value.h}, 100%, 50%)`,
+  backgroundImage:
+    'linear-gradient(to bottom, rgba(0,0,0,0), #000), linear-gradient(to right, #fff, rgba(255,255,255,0))',
+}))
+const svEl = ref<HTMLElement | null>(null)
+const hueEl = ref<HTMLElement | null>(null)
+
+const emitHsv = (h: number, s: number, v: number) => {
+  const { r, g, b } = hsvToRgb(h, s, v)
+  emitFrom(r, g, b, pickAlpha())
+}
+const onSvMove = (e: PointerEvent) => {
+  const el = svEl.value
+  if (!el) return
+  const rect = el.getBoundingClientRect()
+  const x = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width))
+  const y = Math.min(1, Math.max(0, (e.clientY - rect.top) / rect.height))
+  emitHsv(hsvView.value.h, Math.round(x * 100), Math.round((1 - y) * 100))
+}
+const onSvUp = () => {
+  window.removeEventListener('pointermove', onSvMove)
+  window.removeEventListener('pointerup', onSvUp)
+}
+const onSvDown = (e: PointerEvent) => {
+  onSvMove(e)
+  window.addEventListener('pointermove', onSvMove)
+  window.addEventListener('pointerup', onSvUp)
+}
+const onHueMove = (e: PointerEvent) => {
+  const el = hueEl.value
+  if (!el) return
+  const rect = el.getBoundingClientRect()
+  const x = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width))
+  const h = Math.round(x * 360)
+  persistedHue.value = h
+  emitHsv(h, hsvView.value.s, hsvView.value.v)
+}
+const onHueUp = () => {
+  window.removeEventListener('pointermove', onHueMove)
+  window.removeEventListener('pointerup', onHueUp)
+}
+const onHueDown = (e: PointerEvent) => {
+  onHueMove(e)
+  window.addEventListener('pointermove', onHueMove)
+  window.addEventListener('pointerup', onHueUp)
+}
+
+// 불투명도 슬라이더 트랙 배경 — 체크패턴(투명) 위에 (좌)투명→(우)선택색 그라디언트를 얹는다.
+// 맨 앞 레이어가 위에 그려지므로, 왼쪽(투명)에선 체크패턴이 비치고 오른쪽(불투명)에선 색이 덮인다.
+const alphaTrackStyle = computed(() => {
+  const base = `#${baseHexNoHash.value}` // 선택색(불투명 6자리)
+  const checker = '#dcdfe3'
+  return {
+    '--thumb-color': base,
+    backgroundColor: '#ffffff',
+    backgroundImage: [
+      `linear-gradient(to right, ${base}00, ${base}ff)`,
+      `linear-gradient(45deg, ${checker} 25%, transparent 25%)`,
+      `linear-gradient(-45deg, ${checker} 25%, transparent 25%)`,
+      `linear-gradient(45deg, transparent 75%, ${checker} 75%)`,
+      `linear-gradient(-45deg, transparent 75%, ${checker} 75%)`,
+    ].join(', '),
+    backgroundSize: '100% 100%, 8px 8px, 8px 8px, 8px 8px, 8px 8px',
+    backgroundPosition: '0 0, 0 0, 0 4px, 4px -4px, -4px 0',
+    backgroundRepeat: 'no-repeat, repeat, repeat, repeat, repeat',
+  }
+})
 
 const sameColor = (a: string, b: string) => a.replace('#', '').toLowerCase().slice(0, 6) === b.replace('#', '').toLowerCase().slice(0, 6)
 
@@ -285,15 +445,6 @@ const onAlphaInputEvent = (event: Event) => {
   onAlphaInput((event.target as HTMLInputElement).valueAsNumber)
 }
 
-const addCurrentAsPointColor = () => {
-  emit('add-point-color', displayColor.value)
-}
-
-const confirmAdd = () => {
-  addCurrentAsPointColor()
-  open.value = false
-}
-
 const POPOVER_WIDTH = 262
 const computePosition = () => {
   const el = triggerEl.value
@@ -305,7 +456,10 @@ const computePosition = () => {
     left = rect.left - POPOVER_WIDTH - margin
   }
   left = Math.max(margin, left)
-  const top = Math.max(margin, Math.min(rect.top, window.innerHeight - 520))
+  // 포인트 색상 풀 피커 모달은 상단 고정 위치(top 180px), 그 외 색상 팝오버는 트리거 근처에 배치
+  const top = props.fullPicker
+    ? 180
+    : Math.max(margin, Math.min(rect.top, window.innerHeight - 520))
   pos.value = { left: left + window.scrollX, top: top + window.scrollY }
 }
 
@@ -356,6 +510,9 @@ onBeforeUnmount(() => {
   window.removeEventListener('mousedown', onGradientOutsideClick, true)
   window.removeEventListener('scroll', computePosition, true)
   window.removeEventListener('resize', computePosition)
+  // 드래그 중 언마운트 대비
+  onSvUp()
+  onHueUp()
 })
 </script>
 
@@ -364,17 +521,11 @@ onBeforeUnmount(() => {
   width: 35px;
   height: 35px;
   border-radius: 8px;
-  border: 1px solid #d1d6db;
+  /* 바깥 아웃라인 1px(#E5E8EB) → 그 안 흰색 2px 링 → 안쪽에 선택 색상(inline background-color) */
+  border: 1px solid #e5e8eb;
+  box-shadow: inset 0 0 0 2px #fff;
   cursor: pointer;
-  /* background-image:
-    linear-gradient(45deg, #eee 25%, transparent 25%),
-    linear-gradient(-45deg, #eee 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, #eee 75%),
-    linear-gradient(-45deg, transparent 75%, #eee 75%); */
-  background-size: 8px 8px;
-  background-position: 0 0, 0 4px, 4px -4px, -4px 0;
   background-color: #fff;
-  background-blend-mode: normal;
 }
 
 /* 포인트 색상 추가 버튼 — add_point_color_btn.png 이미지 트리거 */
@@ -452,7 +603,8 @@ onBeforeUnmount(() => {
   display: block;
 }
 .quick-swatch.is-active {
-  border-color: #4083f3;
+  border: 1px solid #4083f3;
+  box-shadow: inset 0 0 0 2px #fff;
 }
 .quick-swatch-remove {
   position: absolute;
@@ -485,6 +637,11 @@ onBeforeUnmount(() => {
   border: 1px solid #e5e8eb;
   cursor: pointer;
 }
+/* 선택된 색 — 파란 외곽선 + 안쪽 흰 링(선택 색상이 가운데에 보임) */
+.palette-swatch.is-selected {
+  border: 1px solid #4083f3;
+  box-shadow: inset 0 0 0 2px #fff;
+}
 
 .custom-swatch-preview {
   width: 32px;
@@ -516,6 +673,63 @@ onBeforeUnmount(() => {
   box-shadow: none;
   border: none;
   padding: 0;
+}
+
+/* 커스텀 SV+휴 피커 — 세로 스택(사각형 위 · 휴 아래), 콘텐츠 폭 100% */
+.cp-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+.cp-sv {
+  position: relative;
+  width: 100%;
+  height: 140px;
+  border-radius: 8px;
+  cursor: crosshair;
+  touch-action: none;
+  box-sizing: border-box;
+}
+.cp-sv-handle {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.cp-hue {
+  position: relative;
+  width: 100%;
+  height: 14px;
+  border-radius: 7px;
+  cursor: pointer;
+  touch-action: none;
+  background: linear-gradient(
+    to right,
+    #ff0000 0%,
+    #ffff00 17%,
+    #00ff00 33%,
+    #00ffff 50%,
+    #0000ff 67%,
+    #ff00ff 83%,
+    #ff0000 100%
+  );
+}
+.cp-hue-handle {
+  position: absolute;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #fff;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.45);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
 }
 
 .hex-field :deep(input) {
@@ -554,32 +768,35 @@ onBeforeUnmount(() => {
   background: #2563d4;
 }
 
-.range-slider {
+/* 불투명도 슬라이더 — 트랙(체크패턴+색 그라디언트)은 인라인 style(alphaTrackStyle)로 주입,
+   썸은 선택 색상(--thumb-color)으로 채운다. */
+.alpha-slider {
   -webkit-appearance: none;
   appearance: none;
-  height: 4px;
-  border-radius: 2px;
-  background: #e5e8eb;
+  height: 12px;
+  border-radius: 6px;
   outline: none;
+  border: 1px solid #e5e8eb;
+  box-sizing: border-box;
 }
-.range-slider::-webkit-slider-thumb {
+.alpha-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
-  background: #4083f3;
+  background: var(--thumb-color, #4083f3);
   cursor: pointer;
   border: 2px solid #fff;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.35);
 }
-.range-slider::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
+.alpha-slider::-moz-range-thumb {
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
-  background: #4083f3;
+  background: var(--thumb-color, #4083f3);
   cursor: pointer;
   border: 2px solid #fff;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.35);
 }
 </style>

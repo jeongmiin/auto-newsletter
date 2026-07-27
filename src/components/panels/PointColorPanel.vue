@@ -2,32 +2,35 @@
   <div class="point-color-panel">
     <h2 class="panel-title">포인트색상</h2>
 
-    <div class="swatch-row">
-      <!-- 추가 버튼: 새 포인트 색상 선택 팝오버 -->
-      <ColorPopoverPicker
-        v-if="pointColors.length < 3"
-        title="포인트 색상 추가"
-        :modelValue="draftColor"
-        :pointColors="pointColors"
-        :showAlpha="false"
-        trigger-variant="add"
-        @update:modelValue="draftColor = $event"
-        @add-point-color="onAdd"
-        @remove-point-color="editorStore.removePointColor($event)"
-      />
+    <!-- 추가 버튼 (상단) — 새 포인트 색상 선택 팝오버. 색을 바꾸는 즉시 팔레트에 추가/갱신된다.
+         편집 중(editingIndex≠null)이면 3개가 채워져도 팝오버가 사라지지 않도록 유지한다. -->
+    <ColorPopoverPicker
+      v-if="pointColors.length < 3 || editingIndex !== null"
+      title="포인트 색상"
+      :modelValue="draftColor"
+      :pointColors="pointColors"
+      :showAlpha="true"
+      trigger-variant="add"
+      full-picker
+      @update:modelValue="onLiveChange"
+      @open="onPickerOpen"
+      @close="onPickerClose"
+      @remove-point-color="editorStore.removePointColor($event)"
+    />
 
-      <!-- 기존 스와치 (최대 3개) — 클릭 시 활성화, 호버 시 삭제 -->
-      <div
-        v-for="c in pointColors"
-        :key="c"
-        class="swatch-wrap"
-        :class="{ 'is-active': c === wrapSettings.pointColor }"
-        :style="{ backgroundColor: c }"
-        :title="c"
-        @click="editorStore.setActivePointColor(c)"
-      >
+    <!-- 색상 스와치 (하단 행) — 스와치 클릭 시 그 색이 담긴 편집 모달, × 클릭 시에만 삭제.
+         key는 인덱스로 두어 색을 바꿔도 모달이 닫히지 않게 한다(색을 key로 쓰면 재마운트됨). -->
+    <div v-if="pointColors.length" class="swatch-row">
+      <div v-for="(c, i) in pointColors" :key="i" class="swatch-wrap">
+        <ColorPopoverPicker
+          :modelValue="c"
+          :showAlpha="true"
+          title="포인트 색상"
+          trigger-variant="swatch"
+          full-picker
+          @update:modelValue="(color) => editorStore.updatePointColorAt(i, color)"
+        />
         <button
-          v-if="pointColors.length > 1"
           type="button"
           class="remove-btn"
           title="삭제"
@@ -38,7 +41,7 @@
       </div>
     </div>
 
-    <p class="hint-text">최대 3개까지 저장할 수 있어요. 클릭하면 활성 포인트 색상으로 지정됩니다.</p>
+    <p class="hint-text">최대 3개까지 저장할 수 있어요. 색상을 클릭하면 수정, ×로 삭제할 수 있어요.</p>
   </div>
 </template>
 
@@ -51,12 +54,29 @@ const editorStore = useEditorStore()
 const wrapSettings = computed(() => editorStore.wrapSettings)
 const pointColors = computed(() => wrapSettings.value.pointColors ?? [])
 
-// "+" 팝오버는 빈 상태에서 시작 — 사용자가 팔레트/헥사에서 고르는 즉시 추가+활성화한다
+// 추가 모달에서 편집 중인 색(미리보기용) — 팔레트/그라디언트/HEX에서 고르는 즉시 반영된다
 const draftColor = ref('#2563eb')
+// 추가 모달로 지금 편집 중인 포인트 색상 슬롯 인덱스(null = 아직 추가 전)
+const editingIndex = ref<number | null>(null)
 
-const onAdd = (color: string) => {
-  editorStore.addPointColor(color)
-  editorStore.setActivePointColor(color)
+// 색을 바꾸면 즉시 팔레트에 반영 — 첫 변경은 새 슬롯으로 추가, 이후 변경은 그 슬롯을 갱신(무한 증가 방지)
+const onLiveChange = (color: string) => {
+  draftColor.value = color
+  if (editingIndex.value === null) {
+    editingIndex.value = editorStore.appendPointColor(color)
+  } else {
+    editorStore.updatePointColorAt(editingIndex.value, color)
+  }
+}
+
+// 모달 열릴 때: 새 편집 세션 시작 (아직 추가 전)
+const onPickerOpen = () => {
+  editingIndex.value = null
+}
+// 모달 닫힐 때: 편집 세션 종료(추가된 색은 그대로 유지)
+const onPickerClose = () => {
+  editingIndex.value = null
+  draftColor.value = '#2563eb'
 }
 </script>
 
@@ -85,33 +105,27 @@ const onAdd = (color: string) => {
   gap: 14px;
   flex-wrap: wrap;
 }
+/* 스와치 = ColorPopoverPicker(swatch 트리거)를 감싸는 래퍼. × 버튼 위치 기준(position: relative). */
 .swatch-wrap {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  border: 2px solid transparent;
-  cursor: pointer;
   position: relative;
   flex-shrink: 0;
-}
-.swatch-wrap.is-active {
-  border-color: #4083f3;
+  display: inline-flex;
 }
 .remove-btn {
   position: absolute;
-  top: -6px;
-  right: -6px;
-  width: 16px;
-  height: 16px;
+  top: -8px;
+  right: -8px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  background: #191f28;
+  background: rgba(0,0,0,0.5);
   color: #fff;
   display: none;
   align-items: center;
   justify-content: center;
-  font-size: 9px;
   cursor: pointer;
 }
+.remove-btn i{font-size: 10px;}
 .swatch-wrap:hover .remove-btn {
   display: flex;
 }
