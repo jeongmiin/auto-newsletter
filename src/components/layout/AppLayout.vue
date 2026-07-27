@@ -43,11 +43,8 @@
         </div>
       </div>
 
-      <!-- 중앙 캔버스 (속성 편집은 좌측 컨텍스트 패널로 일원화 — 우측 속성 패널 제거) -->
+      <!-- 중앙 캔버스 (화면 크기 토글·실행취소는 상단 헤더로 이동 · 전체 삭제는 추후 추가 예정) -->
       <div class="flex-1 flex flex-col min-w-0">
-        <!-- 캔버스 상단 툴바 (화면 크기 + 전체 삭제) -->
-        <EditorToolbar />
-
         <!-- 캔버스 영역 -->
         <CanvasArea class="flex-1" />
       </div>
@@ -69,7 +66,6 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import EditorSidebar from '@/components/editor/EditorSidebar.vue'
 import ModulePanel from '@/components/panels/ModulePanel.vue'
-import EditorToolbar from '@/components/editor/EditorToolbar.vue'
 import ModuleOutlinePanel from '@/components/editor/ModuleOutlinePanel.vue'
 import CanvasArea from '@/components/editor/CanvasArea.vue'
 import GlobalStylePanel from '@/components/panels/GlobalStylePanel.vue'
