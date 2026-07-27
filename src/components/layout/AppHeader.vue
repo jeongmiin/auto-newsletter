@@ -11,8 +11,15 @@
     </button>
 
     <template v-if="showActions">
-      <!-- 브레드크럼 -->
-      <span class="text-sm text-gray-500 ml-1 truncate">뉴스레터 › 빌더</span>
+      <!-- 브레드크럼: 선택한 템플릿명(클릭 시 템플릿 선택 페이지로 이동) › 빌더 -->
+      <span class="text-sm text-gray-500 mx-8 truncate flex gap-2">
+        <button
+          type="button"
+          class="underline underline-offset-4 hover:text-blue-500"
+          @click="goTemplates"
+        >{{ currentTemplateName }}</button>
+        > 빌더
+      </span>
 
       <span class="hbar"></span>
 
@@ -141,6 +148,10 @@ const doRedo = () => history.redo()
 
 // PC/모바일 토글 상태
 const canvasWidth = computed(() => editorStore.canvasWidth)
+
+// 브레드크럼: 현재 템플릿명(빈 문서면 '빈 템플릿') → 클릭 시 템플릿 선택 페이지로 이동
+const currentTemplateName = computed(() => editorStore.currentTemplateName)
+const goTemplates = () => router.push('/templates')
 
 // 로고 클릭 → 홈으로. 작업 중(변경사항 있음)이면 확인 후 이동.
 const goHome = () => {

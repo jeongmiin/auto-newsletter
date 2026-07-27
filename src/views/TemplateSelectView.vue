@@ -102,11 +102,13 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useModuleStore } from '@/stores/moduleStore'
+import { useEditorStore } from '@/stores/editorStore'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import type { NewsletterTemplate } from '@/types'
 
 const router = useRouter()
 const moduleStore = useModuleStore()
+const editorStore = useEditorStore()
 
 // 좌측 부서/팀 트리. 필터는 template.team 값과 매칭한다.
 const departments = [
@@ -163,6 +165,7 @@ onMounted(async () => {
 // 빈 템플릿으로 시작 (에디터를 빈 상태로)
 const startBlank = () => {
   moduleStore.clearAll()
+  editorStore.setCurrentTemplateName('빈 템플릿')
   router.push('/editor')
 }
 
@@ -172,6 +175,7 @@ const pickTemplate = async (t: NewsletterTemplate) => {
   applying.value = true
   try {
     await moduleStore.loadTemplate(t.id)
+    editorStore.setCurrentTemplateName(t.name)
     router.push('/editor')
   } finally {
     applying.value = false

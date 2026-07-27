@@ -13,6 +13,12 @@ export const useEditorStore = defineStore('editor', () => {
   // 목차 패널 ↔ 캔버스 하이라이트 동기화용 (마우스 올린 모듈 id)
   const hoveredModuleId = ref<string | null>(null)
 
+  // 현재 편집 중인 템플릿 이름 (헤더 브레드크럼 표시용) — 빈 문서면 '빈 템플릿'
+  const currentTemplateName = ref('빈 템플릿')
+  const setCurrentTemplateName = (name: string): void => {
+    currentTemplateName.value = name || '빈 템플릿'
+  }
+
   // 좌측 아이콘 레일 활성 메뉴 (신규 디자인 IA)
   type EditorMenu =
     | 'style' | 'point' | 'modules' | 'text' | 'image' | 'button' | 'table' | 'ai' | 'order'
@@ -168,6 +174,8 @@ export const useEditorStore = defineStore('editor', () => {
     wrapSettings,
     modulePanelMode,
     hoveredModuleId,
+    currentTemplateName,
+    setCurrentTemplateName,
     activeMenu,
     forceRailPanel,
     setActiveMenu,
