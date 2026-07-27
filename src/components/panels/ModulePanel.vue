@@ -748,8 +748,6 @@ onMounted(async () => {
   border-bottom-color: #4083f3;
 }
 
-/* 카드 그리드 레이아웃은 전역 .module-card-grid(main.css)로 통일 — CategoryModulePanel과 공용 */
-
 /* 카테고리 아코디언 (Figma 483-2618 / 637-2113) */
 .mp-acc-list {
   display: flex;

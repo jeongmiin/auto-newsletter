@@ -187,7 +187,7 @@ const onSummaryInput = (event: Event) => {
   flex-shrink: 0;
 }
 .hint-text {
-  font-size: 14px;
+  font-size: 12px;
   color: #8b95a1;
 }
 

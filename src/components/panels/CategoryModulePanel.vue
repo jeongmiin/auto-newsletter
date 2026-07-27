@@ -323,5 +323,4 @@ const onGalleryAdd = (module: ModuleMetadata) => {
   font-weight: 500;
   color: #333d4b;
 }
-/* 카드 그리드 레이아웃은 전역 .module-card-grid(main.css)로 통일 — ModulePanel과 공용 */
 </style>

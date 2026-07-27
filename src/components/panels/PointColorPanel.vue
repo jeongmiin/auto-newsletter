@@ -41,7 +41,7 @@
       </div>
     </div>
 
-    <p class="hint-text">최대 3개까지 저장할 수 있어요. 색상을 클릭하면 수정, ×로 삭제할 수 있어요.</p>
+    <p class="hint-text">최대 3개까지 저장할 수 있습니다.</p>
   </div>
 </template>
 
