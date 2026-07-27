@@ -1,43 +1,9 @@
 <template>
   <div class="h-full flex flex-col">
-    <!-- 모듈 / 템플릿 세그먼트 토글 -->
-    <div class="p-2 border-b">
-      <div class="flex bg-gray-100 rounded-lg p-0.5">
-        <button
-          @click="mode = 'modules'"
-          :class="[
-            'flex-1 py-1.5 text-sm font-semibold rounded-md transition-colors',
-            mode === 'modules' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700',
-          ]"
-        >
-          모듈
-        </button>
-        <button
-          @click="mode = 'templates'"
-          :class="[
-            'flex-1 py-1.5 text-sm font-semibold rounded-md transition-colors',
-            mode === 'templates' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700',
-          ]"
-        >
-          템플릿
-        </button>
-        <!-- 임시 실험 탭 (조립형 모듈 POC) — 검증 후 제거/정식화 예정 -->
-        <button
-          @click="mode = 'modules-v2'"
-          :class="[
-            'flex-1 py-1.5 text-sm font-semibold rounded-md transition-colors',
-            mode === 'modules-v2' ? 'bg-white text-amber-600 shadow-sm' : 'text-gray-500 hover:text-gray-700',
-          ]"
-        >
-          모듈 v2
-        </button>
-      </div>
-    </div>
-
-    <!-- 검색 + 카테고리 (모듈 모드에서만) — Figma 334-2630 -->
-    <div v-if="mode === 'modules'" class=" pt-3 border-b">
+    <!-- 검색 + 카테고리 -->
+    <div v-if="mode === 'modules'" class="pt-[25px] border-b">
       <!-- 모듈 검색 -->
-      <div class="mp-search mx-3">
+      <div class="mp-search">
         <span class="material-symbols-outlined mp-search-icon">search</span>
         <input
           v-model="searchQuery"
@@ -65,7 +31,7 @@
           type="button"
           class="mp-tab"
           :class="{ 'is-active': selectedCategory === category.id }"
-          @click="selectedCategory = category.id"
+          @click="goToCategory(category.id)"
         >
           {{ category.name }}
         </button>
@@ -73,7 +39,7 @@
     </div>
 
     <!-- 콘텐츠 영역 -->
-    <div class="flex-1 overflow-y-auto p-3 pb-10" @scroll="onModuleLeave">
+    <div ref="contentEl" class="flex-1 overflow-y-auto px-[25px] pt-2 pb-10" @scroll="onModuleLeave">
       <!-- 템플릿 리스트 -->
       <div v-if="mode === 'templates'">
         <div v-if="templates.length === 0" class="text-center py-8 text-gray-500">
@@ -323,19 +289,37 @@
         </div>
       </div>
 
-      <!-- 모듈 리스트 (카드 폭 고정 — 패널이 넓어져도 카드는 안 늘고 열 수만 늘어남) -->
-      <div v-else class="module-list">
-        <ModuleCard
-          v-for="module in filteredModules"
-          :key="module.id"
-          :ref="(inst: any) => observeCard(inst?.rootEl ?? null, module.id)"
-          :module="module"
-          :srcdoc="thumbs[module.id]"
-          :iframe-height="thumbIframeHeight(module.id)"
-          :box-height="thumbBoxHeight(module.id)"
-          @add="addModule(module)"
-          @thumb-load="(e: Event) => measureThumbHeight(module.id, e)"
-        />
+      <!-- 카테고리 아코디언 (기본 열림 · 상단 탭과 연동) -->
+      <div v-else class="mp-acc-list">
+        <section
+          v-for="cat in visibleAccordionCategories"
+          :key="cat.id"
+          :ref="(el) => setSectionEl(el, cat.id)"
+          class="mp-acc"
+        >
+          <button type="button" class="mp-acc-header" @click="toggleCategory(cat.id)">
+            <span class="mp-acc-title">
+              {{ cat.name }} <span class="mp-acc-count">({{ categoryModules(cat.id).length }})</span>
+            </span>
+            <i
+              class="pi mp-acc-chevron"
+              :class="openCategories[cat.id] ? 'pi-chevron-up' : 'pi-chevron-down'"
+            ></i>
+          </button>
+          <div v-show="openCategories[cat.id]" class="module-card-grid">
+            <ModuleCard
+              v-for="module in categoryModules(cat.id)"
+              :key="module.id"
+              :ref="(inst: any) => observeCard(inst?.rootEl ?? null, module.id)"
+              :module="module"
+              :srcdoc="thumbs[module.id]"
+              :iframe-height="thumbIframeHeight(module.id)"
+              :box-height="thumbBoxHeight(module.id)"
+              @add="addModule(module)"
+              @thumb-load="(e: Event) => measureThumbHeight(module.id, e)"
+            />
+          </div>
+        </section>
       </div>
     </div>
 
@@ -343,7 +327,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, reactive, computed, nextTick, onMounted } from 'vue'
 import ModuleCard from './ModuleCard.vue'
 import { useModuleThumbnails } from '@/composables/useModuleThumbnails'
 import { storeToRefs } from 'pinia'
@@ -422,23 +406,53 @@ const CATEGORY_MODULE_IDS: Record<string, string[]> = {
   ],
 }
 
-const filteredModules = computed(() => {
-  // hidden 모듈은 팔레트에서 제외 (통합/폐기된 모듈 — 기존 데이터 렌더링은 계속 지원)
-  const visible = modules.value.filter((module) => !module.hidden)
-  const inCategory =
-    selectedCategory.value === 'all'
-      ? visible
-      : visible.filter((module) =>
-          (CATEGORY_MODULE_IDS[selectedCategory.value] ?? []).includes(module.id),
-        )
+// ===== 카테고리 아코디언 (Figma 483-2618 / 637-2113) =====
+// '전체'를 제외한 카테고리들이 각각 아코디언 섹션이 되고, 상단 탭은 이 섹션으로 이동시키는 내비게이션이다.
+const accordionCategories = categories.filter((c) => c.id !== 'all')
+
+// 아코디언 열림 상태 — 기본 전부 열림
+const openCategories = reactive<Record<string, boolean>>(
+  Object.fromEntries(accordionCategories.map((c) => [c.id, true])),
+)
+const toggleCategory = (id: string) => {
+  openCategories[id] = !openCategories[id]
+}
+
+// 카테고리별 모듈(검색어 반영, hidden 제외)
+const categoryModules = (catId: string): ModuleMetadata[] => {
+  const ids = CATEGORY_MODULE_IDS[catId] ?? []
+  const list = modules.value.filter((m) => !m.hidden && ids.includes(m.id))
   const q = searchQuery.value.trim().toLowerCase()
-  if (!q) return inCategory
-  return inCategory.filter(
-    (module) =>
-      module.name.toLowerCase().includes(q) ||
-      (module.description ?? '').toLowerCase().includes(q),
+  if (!q) return list
+  return list.filter(
+    (m) => m.name.toLowerCase().includes(q) || (m.description ?? '').toLowerCase().includes(q),
   )
-})
+}
+
+// 검색 중에는 결과가 없는 카테고리 아코디언은 숨긴다
+const visibleAccordionCategories = computed(() =>
+  accordionCategories.filter((c) => !searchQuery.value.trim() || categoryModules(c.id).length > 0),
+)
+
+// ===== 탭 ↔ 아코디언 연동 =====
+// 탭 클릭 → 해당 아코디언으로 스크롤(닫혀 있으면 열면서 이동). '전체'는 맨 위로.
+const contentEl = ref<HTMLElement | null>(null)
+const sectionEls: Record<string, HTMLElement> = {}
+const setSectionEl = (el: unknown, id: string) => {
+  if (el instanceof HTMLElement) sectionEls[id] = el
+}
+const goToCategory = (id: string) => {
+  selectedCategory.value = id
+  if (id === 'all') {
+    contentEl.value?.scrollTo({ top: 0, behavior: 'smooth' })
+    return
+  }
+  openCategories[id] = true
+  // 썸네일 높이를 미리 확정(prerenderThumbs)해 두므로 한 번의 부드러운 스크롤로 안착한다(깜빡임 없음).
+  nextTick(() => {
+    sectionEls[id]?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  })
+}
 
 // 모듈 v2(조립형) 템플릿이 있으면 그걸 추가하고, 없으면 레거시 단일 모듈로 폴백한다
 // (CategoryModulePanel.vue의 onGalleryAdd와 동일한 규칙 — "모듈" 탭에서도 v2로 갈아끼울 수 있는 것은 v2로)
@@ -600,7 +614,7 @@ const addComposedTwoButton = () => {
 // ===== 모듈 인라인 썸네일 (호버 없이 카드에 상시 표시) =====
 // CategoryModulePanel.vue와 공유하는 composable로 추출됨(캐시·기하 모두 인스턴스 간 공유).
 // 카드 마크업/CSS도 ModuleCard.vue 한 곳에서 관리해 두 패널이 동일한 UI로 렌더된다.
-const { thumbs, observeCard, measureThumbHeight, thumbIframeHeight, thumbBoxHeight } =
+const { thumbs, observeCard, prerenderThumbs, measureThumbHeight, thumbIframeHeight, thumbBoxHeight } =
   useModuleThumbnails()
 
 // 조립형 핸들러 호환용 — 인라인 썸네일에선 닫을 미리보기가 없음(no-op)
@@ -610,6 +624,9 @@ const applyTemplate = (template: NewsletterTemplate) => {
   const doLoad = async () => {
     const ok = await moduleStore.loadTemplate(template.id)
     if (ok) {
+      // 세그먼트 토글을 없앴으므로, 템플릿 적용 후 모듈 목록으로 자동 복귀
+      // (템플릿 모드는 캔버스 빈 화면의 '템플릿으로 시작'에서만 진입한다)
+      mode.value = 'modules'
       toast.add({
         severity: 'success',
         summary: '템플릿 적용됨',
@@ -645,6 +662,12 @@ const applyTemplate = (template: NewsletterTemplate) => {
 onMounted(async () => {
   modules.value = await moduleStore.loadAvailableModules()
   templates.value = await moduleStore.loadAvailableTemplates()
+  // 카테고리 아코디언에 들어가는 모든 모듈 썸네일을 미리 렌더 → 카드 높이 확정 → 탭 이동 시 깜빡임 방지
+  const ids = new Set<string>()
+  for (const catId of Object.keys(CATEGORY_MODULE_IDS)) {
+    for (const id of CATEGORY_MODULE_IDS[catId]) ids.add(id)
+  }
+  prerenderThumbs([...ids])
 })
 </script>
 
@@ -656,6 +679,7 @@ onMounted(async () => {
   gap: 6px;
   height: 36px;
   padding: 0 10px;
+  margin: 0 25px;
   border: 1px solid #e5e8eb;
   border-radius: 8px;
   background: #fff;
@@ -724,13 +748,44 @@ onMounted(async () => {
   border-bottom-color: #4083f3;
 }
 
-/* 모듈 카드(ModuleCard.vue) 폭 고정(320px) + 항상 1열 — 카드 높이가 모듈마다 달라 다열은 어긋나 보이므로
-   패널이 넓어져도 단일 열을 유지하고, 넓어진 폭은 좌우 여백으로 두어 카드를 중앙 정렬한다. */
-.module-list {
-  display: grid;
-  grid-template-columns: 320px;
-  justify-content: center;
-  gap: 20px;
+/* 카드 그리드 레이아웃은 전역 .module-card-grid(main.css)로 통일 — CategoryModulePanel과 공용 */
+
+/* 카테고리 아코디언 (Figma 483-2618 / 637-2113) */
+.mp-acc-list {
+  display: flex;
+  flex-direction: column;
+}
+.mp-acc {
+  border-bottom: 1px solid #f2f4f6;
+}
+.mp-acc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 16px 2px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+.mp-acc-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: #333d4b;
+  letter-spacing: -0.15px;
+}
+.mp-acc-count {
+  color: #8b95a1;
+  font-weight: 400;
+}
+.mp-acc-chevron {
+  font-size: 13px;
+  color: #8b95a1;
+}
+/* 아코디언 본문 — 카드 목록 하단 여백 (아코디언 전용 차이) */
+.mp-acc .module-card-grid {
+  padding-bottom: 20px;
 }
 </style>
 

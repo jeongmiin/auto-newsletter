@@ -55,7 +55,7 @@
     <!-- 카드는 ModulePanel(모듈 탭)과 동일한 ModuleCard.vue를 공유해 UI가 완전히 일치한다. -->
     <div v-if="galleryModules.length" class="gallery-section">
       <span class="gallery-title">{{ categoryLabel }}형 모듈</span>
-      <div class="gallery-list">
+      <div class="module-card-grid">
         <ModuleCard
           v-for="module in galleryModules"
           :key="module.id"
@@ -211,7 +211,7 @@ const onGalleryAdd = (module: ModuleMetadata) => {
   height: 100%;
   overflow-y: auto;
   /* 좌우 20px → 내부 폭 320px = ModuleCard 폭과 정확히 일치 (넘침 방지) */
-  padding: 24px 20px 29px;
+  padding: 25px;
   display: flex;
   flex-direction: column;
   gap: 26px;
@@ -323,13 +323,5 @@ const onGalleryAdd = (module: ModuleMetadata) => {
   font-weight: 500;
   color: #333d4b;
 }
-/* 카드(ModuleCard.vue) 폭 고정(320px) + 항상 1열 — 카드 높이가 모듈마다 달라 다열은 어긋나 보이므로,
-   패널이 넓어져도 단일 열을 유지하고 넓어진 폭은 좌우 여백으로 두어 중앙 정렬한다.
-   카드 마크업/스타일은 ModulePanel과 공유하는 ModuleCard.vue에 있다. */
-.gallery-list {
-  display: grid;
-  grid-template-columns: 320px;
-  justify-content: center;
-  gap: 20px;
-}
+/* 카드 그리드 레이아웃은 전역 .module-card-grid(main.css)로 통일 — ModulePanel과 공용 */
 </style>

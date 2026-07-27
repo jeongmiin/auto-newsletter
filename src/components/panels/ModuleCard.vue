@@ -57,9 +57,9 @@ defineEmits<{
 </script>
 
 <style scoped>
-/* 모듈 카드 — 폭 320px 고정, 인라인 썸네일 + 라벨 */
+/* 모듈 카드 — 폭 308px 고정, 인라인 썸네일 + 라벨 (패널 360px − 테두리 1px − 좌우 25px 여백에 맞춤) */
 .module-card {
-  width: 320px;
+  width: 308px;
   border: 1px solid #e5e8eb;
   border-radius: 8px;
   overflow: hidden;

@@ -11,12 +11,12 @@ const MODULE_WIDTH = 680 // 모듈 템플릿 기준 폭(px)
 const previewCache = new Map<string, string>() // module.id → iframe srcdoc (인스턴스 간 공유)
 
 // ===== 썸네일 카드 기하 (ModulePanel·CategoryModulePanel·ModuleCard 공유 단일 소스) =====
-// 표시 영역 = 카드 폭 320px − 카드 테두리 1px×2 − .module-thumb padding 10px×2 = 298px.
-// 680px 렌더를 298/680 ≈ 0.4382로 축소해 padding을 제외한 영역에 딱 맞춘다.
+// 표시 영역 = 카드 폭 308px − 카드 테두리 1px×2 − .module-thumb padding 10px×2 = 286px.
+// 680px 렌더를 286/680 ≈ 0.4206으로 축소해 padding을 제외한 영역에 딱 맞춘다.
 // ModuleCard의 CSS transform: scale()은 이 상수를 CSS 변수로 받아 쓰므로 값이 항상 일치한다.
 export const THUMB_RENDER_WIDTH = MODULE_WIDTH
 export const THUMB_PADDING = 10
-export const THUMB_SCALE = 0.4382
+export const THUMB_SCALE = 0.4206
 export const THUMB_FALLBACK_H = 900 // 측정 전 임시 높이(미스케일 px)
 
 const buildPreviewDoc = (content: string): string =>
@@ -66,8 +66,9 @@ export function useModuleThumbnails() {
     }
   }
 
-  // IntersectionObserver로 보이는 카드만 지연 렌더
-  const cardEls = new Map<string, Element>()
+  // IntersectionObserver로 보이는 카드만 지연 렌더.
+  // 같은 모듈 id가 여러 아코디언(카테고리)에 중복 노출될 수 있으므로 '엘리먼트 단위'로 관찰한다.
+  // (한 곳이 보이면 renderThumb(id)로 캐시 → 나머지 중복 카드도 같은 썸네일을 즉시 공유)
   const thumbObserver =
     typeof IntersectionObserver !== 'undefined'
       ? new IntersectionObserver(
@@ -84,17 +85,17 @@ export function useModuleThumbnails() {
       : null
 
   const observeCard = (el: Element | null, id: string) => {
-    const prev = cardEls.get(id)
-    if (prev && thumbObserver) thumbObserver.unobserve(prev)
     // el이 실제 DOM Element일 때만 관찰(방어) — 컴포넌트 ref가 비Element를 넘기면 observe가 throw해
-    // 렌더 트리 전체가 크래시했었다. Element가 아니면 관찰만 건너뛴다.
-    if (!(el instanceof Element)) {
-      cardEls.delete(id)
-      return
-    }
-    cardEls.set(id, el)
+    // 렌더 트리 전체가 크래시했었다. Element가 아니면 건너뛴다.
+    if (!(el instanceof Element)) return
     if (thumbObserver) thumbObserver.observe(el)
     else renderThumb(id) // 옵저버 미지원 폴백
+  }
+
+  // 여러 썸네일을 미리 렌더(캐시)한다 — 카테고리 아코디언에서 카드 높이를 미리 확정해
+  // 탭 이동 시 스크롤 위치가 흔들리지 않도록 한다.
+  const prerenderThumbs = (ids: string[]): void => {
+    for (const id of ids) renderThumb(id)
   }
 
   // 카드가 표시할 iframe 높이(미스케일) — 측정 전에는 폴백 높이
@@ -106,6 +107,7 @@ export function useModuleThumbnails() {
   return {
     thumbs,
     observeCard,
+    prerenderThumbs,
     thumbHeights,
     measureThumbHeight,
     thumbIframeHeight,
