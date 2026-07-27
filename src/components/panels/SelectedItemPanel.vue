@@ -11,7 +11,7 @@
     <!-- 2) 모듈 선택(그룹 멤버 드릴다운 또는 단독) → 그 모듈의 속성 폼만 노출.
          멤버 간 이동/삭제·그룹 스타일은 캔버스 선택으로 전환한다(아코디언 목록 없음). -->
     <template v-else-if="selectedModule">
-      <div class="p-3 border-b">
+      <div class="px-[25px] py-3 border-b">
         <!-- 그룹 멤버일 때만 그룹 복귀 브레드크럼 -->
         <button v-if="memberGroup" type="button" class="back-to-group" @click="backToGroup">
           <i class="pi pi-chevron-left"></i>

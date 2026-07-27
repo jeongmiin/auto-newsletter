@@ -4,7 +4,7 @@
        v-if로 한 번 더 방어해 selectedModule 타입도 non-null로 좁힌다). -->
   <div v-if="selectedModule">
         <!-- 영역 컬럼 분할 -->
-        <div class="px-4 py-3 border-b bg-white">
+        <div class="px-[25px] py-3 border-b bg-white">
           <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-1.5">
               <i class="pi pi-th-large text-gray-500 text-sm"></i>
@@ -68,7 +68,7 @@
         </div>
 
         <!-- 속성 편집 폼 -->
-      <div class="p-4 space-y-3 ">
+      <div class="px-[25px] py-4 space-y-3">
         <div
           v-for="(group, gIdx) in propGroups"
           :key="`grp-${gIdx}-${group.name || 'flat'}`"
@@ -105,7 +105,7 @@
         <div
           v-for="(prop, index) in group.props"
           :key="prop.key"
-          v-show="evalShowWhen(prop.showWhen) && !isQuadMember(prop, group.props, index) && !isBorderMember(prop, group.props) && isGatedFieldVisible(prop, group.props) && groupHeaderToggle(group) !== prop"
+          v-show="evalShowWhen(prop.showWhen) && !isQuadMember(prop, group.props, index) && !isBorderMember(prop, group.props) && groupHeaderToggle(group) !== prop"
           :class="{ 'pt-4 border-t border-gray-100': index > 0 && !prop.showWhen }"
         >
           <label
@@ -264,7 +264,7 @@
             <div class="rte-ext-row">
               <div class="rte-ext-field">
                 <span class="rte-ext-label">
-                  <i class="pi pi-arrows-v text-xs"></i>
+                  <i class="pi pi-arrows-v"></i>
                   행간
                 </span>
                 <Select
@@ -280,7 +280,7 @@
               </div>
               <div class="rte-ext-field">
                 <span class="rte-ext-label">
-                  <i class="pi pi-arrows-h text-xs"></i>
+                  <i class="pi pi-arrows-h"></i>
                   자간
                 </span>
                 <Select
@@ -452,26 +452,8 @@
             placeholder="선택하세요"
           />
 
-          <!-- 체크박스(ToggleSwitch) — 하위 필드를 갖는 토글은 챙겨서 아코디언 헤더로 (Figma 378-1704/408-1758) -->
-          <div
-            v-else-if="(prop.type === 'boolean' || prop.type === 'checkbox') && isGatingToggle(prop, group.props)"
-            class="gg-acc-header"
-            @click="toggleAccordionOpen(prop.key)"
-          >
-            <i
-              class="pi gg-acc-chevron"
-              :class="isToggleAccordionExpanded(prop.key) ? 'pi-chevron-down' : 'pi-chevron-right'"
-            ></i>
-            <span class="gg-acc-label">{{ prop.label }}</span>
-            <span class="gg-acc-spacer"></span>
-            <ToggleSwitch
-              :modelValue="Boolean(selectedModule.properties[prop.key])"
-              @update:modelValue="updateProperty(prop.key, $event)"
-              @click.stop
-            />
-          </div>
-
-          <!-- 체크박스(ToggleSwitch) — 하위 필드가 없는 단순 토글 -->
+          <!-- 체크박스(ToggleSwitch) — 토글 온/오프로 하위 필드(showWhen)를 바로 노출/숨김
+               (아코디언 화살표 없이 토글이 곧바로 하위 속성을 제어한다) -->
           <div
             v-else-if="prop.type === 'boolean' || prop.type === 'checkbox'"
             class="gg-toggle-row"
@@ -1191,7 +1173,7 @@
       </div>
 
         <!-- 모듈 제거 버튼 -->
-        <div class="p-4 border-t pb-10">
+        <div class="px-[25px] pt-4 border-t pb-10">
           <Button
             @click="removeModule"
             label="모듈 삭제"
@@ -1367,7 +1349,6 @@ const evalShowWhen = (showWhen: unknown): boolean => {
   return true
 }
 
-// ===== 노출 여부 토글(boolean) + showWhen 하위 필드 — 아코디언 헤더 UI (Figma 378-1704/408-1758) =====
 // showWhen이 가리키는 트리거 key를 문자열/객체 두 형태 모두에서 추출
 const showWhenKey = (prop: EditableProp): string | null => {
   const sw = prop.showWhen
@@ -1375,34 +1356,6 @@ const showWhenKey = (prop: EditableProp): string | null => {
   if (typeof sw === 'string') return sw
   if (typeof sw === 'object' && sw !== null && 'key' in sw) return (sw as { key: string }).key
   return null
-}
-
-// prop이 boolean 토글이며, 같은 그룹 안에 자신의 key를 참조하는 showWhen 필드가 하나 이상 있는지
-// (= 켜고 끄는 것 외에 딸린 하위 필드가 있어 아코디언 헤더로 그려야 하는 토글인지)
-const isGatingToggle = (prop: EditableProp, props: EditableProp[]): boolean =>
-  prop.type === 'boolean' && props.some((p) => showWhenKey(p) === prop.key)
-
-// 아코디언 펼침 상태 — prop.key(트리거)별로 관리. 기본값은 "토글이 이미 켜져 있으면 펼침"
-// (기존에 이미 설정해둔 하위 필드값을 바로 볼 수 있도록 — 꺼져 있으면 evalShowWhen에서 이미 숨겨지므로 무관)
-const toggleAccordionExpanded = reactive<Record<string, boolean>>({})
-const isToggleAccordionExpanded = (key: string): boolean => {
-  if (!(key in toggleAccordionExpanded)) {
-    toggleAccordionExpanded[key] = Boolean(selectedModule.value?.properties[key])
-  }
-  return toggleAccordionExpanded[key]
-}
-const toggleAccordionOpen = (key: string): void => {
-  toggleAccordionExpanded[key] = !isToggleAccordionExpanded(key)
-}
-
-// 하위 필드 표시 여부 — 트리거가 "아코디언이 있는 boolean 토글"일 때만 챙겨서 판단(챙기지 않으면
-// select 등 다른 종류의 showWhen 조건은 기존 동작 그대로 유지)
-const isGatedFieldVisible = (prop: EditableProp, props: EditableProp[]): boolean => {
-  const key = showWhenKey(prop)
-  if (!key) return true
-  const trigger = props.find((p) => p.key === key)
-  if (!trigger || !isGatingToggle(trigger, props)) return true
-  return isToggleAccordionExpanded(key)
 }
 
 // ===== 이름 있는 prop 그룹(레거시 모듈의 로고/타이틀 등 섹션) 헤더 — Figma 352-1138 패턴 =====
@@ -1660,19 +1613,11 @@ const groupSelfLabeledProp = (group: { name?: string | null; props: EditableProp
   }
   return null
 }
-// 특정 모듈은 모든 속성 그룹을 아코디언 없이 항상 펼쳐서 보여준다(chevron 제거·접기 불가).
-const ALWAYS_EXPANDED_MODULE_IDS = new Set([
-  'SectionTitle',
-  'ModuleOneButton', // 단일 버튼
-  'ModuleTwoButton', // 복수 버튼
-  'ModuleSmallButton', // 작은 버튼
-])
-const isModuleAlwaysExpanded = computed(
-  () => !!selectedModule.value && ALWAYS_EXPANDED_MODULE_IDS.has(selectedModule.value.moduleId),
-)
-// 정적(항상 펼침) 그룹 여부. always-expanded 모듈이면 이름 있는 그룹은 모두 정적으로 취급한다.
+// 이름 있는 속성 그룹은 모두 아코디언 없이 항상 정적 헤더로 노출한다(chevron·접기 제거).
+// 헤더는 그룹 라벨(+그룹 토글)만 두고, 하위 속성은 토글/showWhen으로 노출된다.
+// (내용·배경 박스: 속성 바로 노출 / 테두리 등 토글 그룹: 토글 ON일 때 하위 속성 노출)
 const isGroupSelfLabeled = (group: { name?: string | null; props: EditableProp[] }): boolean =>
-  isModuleAlwaysExpanded.value ? !!group.name : !!groupSelfLabeledProp(group)
+  !!group.name
 const isDupLabelProp = (group: { name?: string | null; props: EditableProp[] }, prop: EditableProp): boolean =>
   groupSelfLabeledProp(group) === prop
 
@@ -2722,11 +2667,12 @@ const onSelectPointColor = (key: string, index: number): void => {
   margin-bottom: 8px;
 }
 .gg-field-hint {
-  font-size: 14px;
+  font-size: 12px;
   line-height: 1.5;
   letter-spacing: -0.14px;
   color: #6b7684;
   margin-top: 6px;
+  word-break: keep-all;
 }
 
 /* 컬러 필드 행 — 전체 스타일과 동일하게 라벨 좌 / 스와치 우 */
@@ -2944,11 +2890,12 @@ const onSelectPointColor = (key: string, index: number): void => {
 .rte-ext-label {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 10px;
   font-size: 15px;
   color: #4e5968;
   letter-spacing: -0.15px;
 }
+.rte-ext-label i{font-size: 12px;}
 .rte-ext-select :deep(.p-select) {
   height: 32px;
   border: 1px solid #e5e8eb;
