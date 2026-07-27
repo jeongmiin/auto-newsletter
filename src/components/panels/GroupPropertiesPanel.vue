@@ -444,11 +444,12 @@ const ungroup = (): void => {
   margin-bottom: 8px;
 }
 .gg-field-hint {
-  font-size: 14px;
+  font-size: 12px;
   line-height: 1.5;
   letter-spacing: -0.14px;
   color: #6b7684;
   margin-top: 6px;
+  word-break: keep-all;
 }
 
 /* 아코디언 섹션(여백/배경색/테두리) — 좌측 chevron + 우측 노출 토글, Figma 378-1704/408-1758 */

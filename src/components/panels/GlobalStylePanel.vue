@@ -104,7 +104,7 @@
         placeholder="전시 뉴스레터입니다."
       />
     </div>
-    <p class="hint-text -mt-3">*시각장애인를 위한 뉴스레터 한 줄 설명입니다.</p>
+    <p class="hint-text -mt-3">*검색 엔진과 스크린 리더를 위한 한 줄 설명입니다.</p>
   </div>
 </template>
 

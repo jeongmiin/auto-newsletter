@@ -1,5 +1,5 @@
 <template>
-  <div class="flex-1 bg-gray-100 p-8 pb-32 pl-28 overflow-auto">
+  <div class="flex-1 bg-gray-100 px-8 pt-24 pb-36 overflow-auto">
     <!-- pl-28: 좌측 여백을 넓혀 그룹 액션 툴바(-81px)가 좌측 목차 레일과 겹치지 않도록 함 -->
     <div class="flex justify-center">
       <!-- 캔버스 컨테이너 -->

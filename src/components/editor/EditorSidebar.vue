@@ -41,7 +41,7 @@ const items = computed<Array<{ key: MenuKey; label: string; icon: string; divide
   { key: 'table', label: '', icon: '', divider: true },
   { key: 'ai', label: 'AI 도구', icon: 'auto_awesome' },
   { key: 'ai', label: '', icon: '', divider: true },
-  { key: 'order', label: '모듈 순서', icon: 'format_list_numbered' },
+  { key: 'order', label: '모듈 순서', icon: '123' },
 ])
 
 // setActiveMenu가 forceRailPanel을 켜서, 캔버스에 선택된 모듈/그룹이 남아있어도

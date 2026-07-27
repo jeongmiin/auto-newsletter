@@ -41,7 +41,7 @@
           <i class="pi pi-search"></i>
           <InputText
             v-model="search"
-            placeholder="검색어를 입력하세요"
+            placeholder="전시명 / 템플릿명을 입력하세요"
             class="tpl-search-input"
             aria-label="템플릿 검색"
           />
