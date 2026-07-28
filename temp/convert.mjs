@@ -49,6 +49,12 @@ const newTemplate = {
   modules: cleanedModules,
 }
 
+// 그룹 정의(모듈 묶음)가 있으면 반드시 함께 저장한다.
+// (빠지면 로드 시 모듈에 groupId만 남고 그룹은 풀려버려 '이미 그룹에 속함' 오류가 난다)
+if (Array.isArray(data.groups) && data.groups.length > 0) {
+  newTemplate.groups = data.groups
+}
+
 // Load existing config, replace/insert the entry by id.
 let config = { templates: [] }
 if (fs.existsSync(DEST)) {

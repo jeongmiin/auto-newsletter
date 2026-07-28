@@ -630,11 +630,14 @@ export const useModuleStore = defineStore('module', () => {
       }
     }
 
-    // 그룹 정의 복원 후 연속성 정리
+    // 그룹 정의 복원
     if (template.groups && template.groups.length > 0) {
       groups.value = JSON.parse(JSON.stringify(template.groups))
-      normalizeGroupContiguity()
     }
+    // 연속성 정리는 항상 수행한다. 그룹 정의가 없는데 모듈에 groupId만 남은
+    // 불완전 템플릿(구버전 convert 산출물 등)의 dangling groupId를 제거해
+    // "그룹이 풀렸는데 이미 그룹에 속함" 오류를 방지한다.
+    normalizeGroupContiguity()
 
     if (modules.value.length > 0) {
       selectedModuleId.value = modules.value[0].id
