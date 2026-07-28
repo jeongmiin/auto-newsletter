@@ -16010,6 +16010,489 @@
           "styles": {}
         }
       ]
+    },
+    {
+      "id": "beautysumindia-template",
+      "name": "뷰티썸 템플릿",
+      "description": "뷰티썸 수원 뉴스레터 구성",
+      "wrapSettings": {
+        "backgroundColor": "#ffffff",
+        "borderWidth": "0px",
+        "borderColor": "#dddddd",
+        "borderStyle": "solid",
+        "pointColor": "#287dfa",
+        "fontLanguage": "default"
+      },
+      "modules": [
+        {
+          "moduleId": "ModuleImg",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/beautysumindia/vol03/main-sum.png",
+            "imageAlt": "이미지",
+            "imageMaxWidth": "100%",
+            "showImageLink": false,
+            "imageLinkUrl": "#",
+            "imageBorderRadius": "0px",
+            "imageBorderStyle": "none",
+            "imageBorderWidth": "1px",
+            "imageBorderColor": "#000000",
+            "paddingTop": "40px",
+            "paddingRight": "20px",
+            "paddingBottom": "40px",
+            "paddingLeft": "20px"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"font-size: 20px; color: var(--point-color, #287dfa);\">소재에서 시작되는 브랜드 결정</strong></p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><span style=\"font-size: 16px;\">좋은 소재와 기술로 완성된 브랜드, 이제는 그 가치를 알아주는 바이어의 선택을 받을 차례! 뷰티썸 수원에서 만나보세요.</span></p><p style=\"word-break: break-all; line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">&nbsp;</p><p style=\"word-break: break-all; line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">💄 <strong>행사명 </strong>: 2026 뷰티썸 수원 (BeautySum Korea Suwon 2026)</p><p style=\"word-break: break-all; line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">📆 <strong>일정 </strong>: 2026년 11월 5일(목) ~ 7일(토)</p><p style=\"word-break: break-all; line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">🚩 <strong>장소 </strong>: 수원컨벤션센터 전시홀</p><p style=\"word-break: break-all; line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">✔️ <strong>주최 </strong>: 수원특례시</p><p style=\"word-break: break-all; line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">📌 <strong>주관 </strong>: 수원특례시, 수원컨벤션센터, (주)메쎄이상</p><p style=\"word-break: break-all; line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">🎯 <strong>프로그램 </strong>: 수출상담회, 제2회 화장품 소재 R&amp;D 세미나, 한-중 뷰티 비즈니스 포럼</p><p style=\"word-break: break-all; line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">🛍️ <strong>전시품목 </strong>: 브랜드 완제품, 에스테틱 의료기기, 기능성 원료, 친환경 용기</p>",
+            "fontSize": "14px",
+            "bgColor": "transparent",
+            "textColor": "#333333",
+            "paddingTop": "0px",
+            "paddingRight": "20px",
+            "paddingBottom": "0px",
+            "paddingLeft": "20px"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleTwoButton",
+          "properties": {
+            "button1Text": "행사소개 →",
+            "button1FontSize": "15px",
+            "button1PaddingV": "15px",
+            "button1Url": "https://bit.ly/4mjR0Vg",
+            "button1BgColor": "#111111",
+            "button1TextColor": "#ffffff",
+            "button1BorderStyle": "none",
+            "button1BorderWidth": "1px",
+            "button1BorderColor": "#000000",
+            "button1BorderRadius": "5px",
+            "button2Text": " 지난결과  →",
+            "button2FontSize": "15px",
+            "button2PaddingV": "15px",
+            "button2Url": "https://bit.ly/4spwoMT",
+            "button2BgColor": "#bdd7ee",
+            "button2TextColor": "#ffffff",
+            "button2BorderStyle": "none",
+            "button2BorderWidth": "1px",
+            "button2BorderColor": "#000000",
+            "button2BorderRadius": "5px",
+            "paddingTop": "10px",
+            "paddingRight": "15px",
+            "paddingBottom": "40px",
+            "paddingLeft": "15px",
+            "button1BgColor__usePoint": true,
+            "button2TextColor__usePoint": true
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleMultiImage",
+          "properties": {
+            "leftImageUrl": "https://d10d0o92rz7xfe.cloudfront.net/app/uploads/2026/04/27211130/ns1-scaled.jpg",
+            "leftImageAlt": "이미지",
+            "showLeftImageLink": false,
+            "leftImageLinkUrl": "#",
+            "leftImageBorderRadius": "0px",
+            "leftImageBorderStyle": "none",
+            "leftImageBorderWidth": "1px",
+            "leftImageBorderColor": "#000000",
+            "rightImageUrl": "https://d10d0o92rz7xfe.cloudfront.net/app/uploads/2026/04/27211109/ns2-scaled.jpg",
+            "rightImageAlt": "이미지",
+            "showRightImageLink": false,
+            "rightImageLinkUrl": "#",
+            "rightImageBorderRadius": "0px",
+            "rightImageBorderStyle": "none",
+            "rightImageBorderWidth": "1px",
+            "rightImageBorderColor": "#000000"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleMultiImage",
+          "properties": {
+            "leftImageUrl": "https://d10d0o92rz7xfe.cloudfront.net/app/uploads/2026/04/27211115/ns3-scaled.jpg",
+            "leftImageAlt": "이미지",
+            "showLeftImageLink": false,
+            "leftImageLinkUrl": "#",
+            "leftImageBorderRadius": "0px",
+            "leftImageBorderStyle": "none",
+            "leftImageBorderWidth": "1px",
+            "leftImageBorderColor": "#000000",
+            "rightImageUrl": "https://d10d0o92rz7xfe.cloudfront.net/app/uploads/2026/04/27211123/ns4-scaled.jpg",
+            "rightImageAlt": "이미지",
+            "showRightImageLink": false,
+            "rightImageLinkUrl": "#",
+            "rightImageBorderRadius": "0px",
+            "rightImageBorderStyle": "none",
+            "rightImageBorderWidth": "1px",
+            "rightImageBorderColor": "#000000"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "SectionTitle",
+          "properties": {
+            "showMainTitle": true,
+            "mainTitle": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">뷰티썸 수원 참가기업 모집 중📢</p>",
+            "mainTitleFontSize": "22px",
+            "mainTitleFontWeight": "700",
+            "mainTitleColor": "#111111",
+            "mainTitlePaddingTop": "30px",
+            "mainTitlePaddingRight": "20px",
+            "mainTitlePaddingBottom": "10px",
+            "mainTitlePaddingLeft": "20px",
+            "showSubTitle": true,
+            "subTitle": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">조기신청 할인 8월 31일까지</p>",
+            "subTitleFontSize": "16px",
+            "subTitlePaddingTop": "0px",
+            "subTitlePaddingRight": "15px",
+            "subTitlePaddingBottom": "20px",
+            "subTitlePaddingLeft": "15px",
+            "showSectionImage": false,
+            "sectionImageUrl": "https://design.messeesang.com/e-dm/newsletter/images/img-1column.png",
+            "sectionImageLinkUrl": "#",
+            "sectionImageAlt": "섹션 이미지 타이틀",
+            "sectionImageMaxWidth": "100%",
+            "sectionImageAlign": "center",
+            "sectionImagePaddingTop": "15px",
+            "sectionImagePaddingRight": "20px",
+            "sectionImagePaddingBottom": "0",
+            "sectionImagePaddingLeft": "20px",
+            "sectionBgColor": "transparent",
+            "topBorderWidth": "0px",
+            "topBorderColor": "#333333"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\"><strong>[할인 정책]</strong></p>",
+            "fontSize": "14px",
+            "bgColor": "transparent",
+            "textColor": "#333333",
+            "paddingTop": "0px",
+            "paddingRight": "20px",
+            "paddingBottom": "0px",
+            "paddingLeft": "20px"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleTable",
+          "properties": {
+            "tableCells": [
+              [
+                {
+                  "id": "cell-1785228048093-9d4js7iag",
+                  "type": "th",
+                  "content": "구분",
+                  "colspan": 1,
+                  "rowspan": 1
+                },
+                {
+                  "id": "cell-1785228048093-x9gmz2rii",
+                  "type": "th",
+                  "content": "할인금액",
+                  "colspan": 1,
+                  "rowspan": 1,
+                  "align": "center"
+                }
+              ],
+              [
+                {
+                  "id": "cell-1785228068666-opxooq7qf",
+                  "type": "td",
+                  "content": "**조기신청 할인**(~8월 31일 까지)",
+                  "colspan": 1,
+                  "rowspan": 1,
+                  "align": "left",
+                  "bgColor": "#f2f2f2"
+                },
+                {
+                  "id": "cell-1785228068666-neinzk40h",
+                  "type": "td",
+                  "content": "600,000원(부스당)",
+                  "colspan": 1,
+                  "rowspan": 1
+                }
+              ],
+              [
+                {
+                  "id": "cell-1785228048093-wa9lo45a7",
+                  "type": "td",
+                  "content": "**연속참가 할인**\n2025 뷰티썸 수원 참가기업 대상",
+                  "colspan": 1,
+                  "rowspan": 1,
+                  "align": "left",
+                  "bgColor": "#f2f2f2"
+                },
+                {
+                  "id": "cell-1785228048093-wjfs2qtz6",
+                  "type": "td",
+                  "content": "200,000원(부스당)",
+                  "colspan": 1,
+                  "rowspan": 1
+                }
+              ]
+            ],
+            "tableColAligns": [
+              "center",
+              "center"
+            ],
+            "borderTopWidth": "1px",
+            "borderTopColor": "#333333",
+            "cellBorderColor": "#a7a7a7",
+            "headerBgColor": "#bdd7ee",
+            "headerTextColor": "#333333",
+            "cellBgColor": "#ffffff",
+            "cellTextColor": "#333333",
+            "paddingTop": "0px",
+            "paddingRight": "20px",
+            "paddingBottom": "10px",
+            "paddingLeft": "20px",
+            "tableColWidths": [
+              "55%",
+              "45%"
+            ]
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">* 조기신청, 연속참가 할인 중복 가능</p>",
+            "fontSize": "14px",
+            "bgColor": "transparent",
+            "textColor": "#666666",
+            "paddingTop": "0px",
+            "paddingRight": "20px",
+            "paddingBottom": "40px",
+            "paddingLeft": "20px"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "Module06",
+          "properties": {
+            "leftTitle": "독립부스(3m x 3m)",
+            "leftTitleFontSize": "16px",
+            "leftTitleLineHeight": "1.7",
+            "leftTitleBgColor": "#bdd7ee",
+            "leftTitleColor": "#111111",
+            "leftImageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/beautysumindia/vol03/img-01.png",
+            "leftImageAlt": "이미지",
+            "showLeftImageLink": false,
+            "leftImageLinkUrl": "#",
+            "leftImageBorderRadius": "0px",
+            "leftContent": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">• <s>2,300,000원</s>(vat 별도)</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><span style=\"color: var(--point-color, #287dfa);\">→조기신청 기업: 1,700,000원</span></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><span style=\"color: var(--point-color, #287dfa);\">→2025 뷰티썸 수원 참가기업: 1,500,000원</span></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">• 2부스부터 신청가능</p>",
+            "leftContentFontSize": "14px",
+            "showLeftButton1": false,
+            "leftButton1Text": "버튼 1 →",
+            "leftButton1Url": "#",
+            "leftButton1BgColor": "#e5e5e5",
+            "leftButton1TextColor": "#333333",
+            "showLeftButton2": false,
+            "leftButton2Text": "버튼 2 →",
+            "leftButton2Url": "#",
+            "leftButton2BgColor": "#e5e5e5",
+            "leftButton2TextColor": "#333333",
+            "showLeftButton3": false,
+            "leftButton3Text": "버튼 3 →",
+            "leftButton3Url": "#",
+            "leftButton3BgColor": "#e5e5e5",
+            "leftButton3TextColor": "#333333",
+            "showLeftButton4": false,
+            "leftButton4Text": "버튼 4 →",
+            "leftButton4Url": "#",
+            "leftButton4BgColor": "#e5e5e5",
+            "leftButton4TextColor": "#333333",
+            "leftSmallBtnWidth": "auto",
+            "leftSmallBtnBorderRadius": "30px",
+            "leftSmallBtnAlign": "center",
+            "rightTitle": "조립부스(3m x 3m)",
+            "rightTitleFontSize": "16px",
+            "rightTitleLineHeight": "1.7",
+            "rightTitleBgColor": "#bdd7ee",
+            "rightTitleColor": "#111111",
+            "rightImageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/beautysumindia/vol03/img-03.png",
+            "rightImageAlt": "이미지",
+            "showRightImageLink": false,
+            "rightImageLinkUrl": "#",
+            "rightImageBorderRadius": "0px",
+            "rightContent": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">• <s>2,800,000원</s>(vat 별도)</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\"><span style=\"color: var(--point-color, #287dfa);\">→조기신청 기업: 2,200,000원</span></p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\"><span style=\"color: var(--point-color, #287dfa);\">→2025 뷰티썸 수원 참가기업: 2,000,000원</span></p>",
+            "rightContentFontSize": "14px",
+            "showRightButton1": false,
+            "rightButton1Text": "버튼 1 →",
+            "rightButton1Url": "#",
+            "rightButton1BgColor": "#e5e5e5",
+            "rightButton1TextColor": "#333333",
+            "showRightButton2": false,
+            "rightButton2Text": "버튼 2 →",
+            "rightButton2Url": "#",
+            "rightButton2BgColor": "#e5e5e5",
+            "rightButton2TextColor": "#333333",
+            "showRightButton3": false,
+            "rightButton3Text": "버튼 3 →",
+            "rightButton3Url": "#",
+            "rightButton3BgColor": "#e5e5e5",
+            "rightButton3TextColor": "#333333",
+            "showRightButton4": false,
+            "rightButton4Text": "버튼 4 →",
+            "rightButton4Url": "#",
+            "rightButton4BgColor": "#e5e5e5",
+            "rightButton4TextColor": "#333333",
+            "rightSmallBtnWidth": "auto",
+            "rightSmallBtnBorderRadius": "30px",
+            "rightSmallBtnAlign": "center",
+            "leftWidthPercent": "50",
+            "rightWidthPercent": "50"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\"><strong style=\"font-size: 16px;\">참가기업 대상 </strong><strong style=\"font-size: 16px; color: var(--point-color, #287dfa);\">해외유통사 매칭 수출상담회</strong><strong style=\"font-size: 16px;\"> 참여 기회🌏</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\">참가기업의 성공적인 해외 진출을 위해 검증된 유통사·바이어를 만날 수 있는</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\">1:1 매칭 수출상담회를 운영합니다. 해외 바이어가 제품을 직접 검토하고</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\">구매를 결정하는 실질적인 비즈니스 기회를 잡으세요.</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\"><strong>2025년 참여 바이어 국가</strong></p>",
+            "fontSize": "14px",
+            "bgColor": "transparent",
+            "textColor": "#333333",
+            "paddingTop": "0px",
+            "paddingRight": "20px",
+            "paddingBottom": "0px",
+            "paddingLeft": "20px"
+          },
+          "styles": {},
+          "groupId": "group-1785228577402-b4w2vbhm2"
+        },
+        {
+          "moduleId": "ModuleImg",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/beautysumindia/vol03/img-06.png",
+            "imageAlt": "이미지",
+            "imageMaxWidth": "100%",
+            "showImageLink": false,
+            "imageLinkUrl": "#",
+            "imageBorderRadius": "0px",
+            "imageBorderStyle": "none",
+            "imageBorderWidth": "1px",
+            "imageBorderColor": "#000000",
+            "paddingTop": "0px",
+            "paddingRight": "20px",
+            "paddingBottom": "20px",
+            "paddingLeft": "20px"
+          },
+          "styles": {},
+          "groupId": "group-1785228577402-b4w2vbhm2"
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong style=\"color: var(--point-color, #287dfa);\">2026년 해외유통사 20개팀 참여 예정</strong></p>",
+            "fontSize": "17px",
+            "bgColor": "transparent",
+            "textColor": "#333333",
+            "paddingTop": "0px",
+            "paddingRight": "20px",
+            "paddingBottom": "0px",
+            "paddingLeft": "20px"
+          },
+          "styles": {},
+          "groupId": "group-1785228577402-b4w2vbhm2"
+        },
+        {
+          "moduleId": "ModuleOneButton",
+          "properties": {
+            "buttonText": "출품 안내 →",
+            "buttonFontSize": "15px",
+            "buttonPaddingV": "15px",
+            "buttonUrl": "https://bit.ly/4t20OWu",
+            "buttonBgColor": "#111111",
+            "buttonTextColor": "#ffffff",
+            "buttonBorderStyle": "none",
+            "buttonBorderWidth": "1px",
+            "buttonBorderColor": "#000000",
+            "buttonBorderRadius": "5px",
+            "paddingTop": "0px",
+            "paddingRight": "20px",
+            "paddingBottom": "40px",
+            "paddingLeft": "20px",
+            "buttonBgColor__usePoint": true
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleFooter",
+          "properties": {
+            "footerBgColor": "#e9e9e9",
+            "footerTextColor": "#333333",
+            "companyInfo": "<p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong style=\"font-size: 16px;\">뷰티썸 사무국 (주)메쎄이상</strong></p><p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">서울시 마포구 월드컵북로 58길 9 ES타워 (03922)</p>",
+            "companyInfoFontSize": "13px",
+            "showWebsite": false,
+            "websiteUrl": "www.koreabuild.co.kr",
+            "showPhone": true,
+            "phone": " +82-2-6121-6418  ",
+            "showEmail": true,
+            "email": "beautysum@esgroup.net",
+            "showFax": false,
+            "fax": "02-6121-6363",
+            "contactInfoFontSize": "13px",
+            "snsIconBgColor": "#333333",
+            "showHome": false,
+            "homeUrl": "#",
+            "showFacebook": false,
+            "facebookUrl": "#",
+            "showX": false,
+            "xUrl": "#",
+            "showBlog": false,
+            "blogUrl": "#",
+            "showYoutube": false,
+            "youtubeUrl": "#",
+            "showInstagram": false,
+            "instagramUrl": "#",
+            "showKakao": false,
+            "kakaoUrl": "#",
+            "showLinkedin": false,
+            "linkedinUrl": "#",
+            "showZuzuzu": false,
+            "zuzuzuUrl": "https://kcoupet.com/",
+            "showEn": false,
+            "enUrl": "#",
+            "showJp": false,
+            "jpUrl": "#",
+            "showTh": false,
+            "thUrl": "#",
+            "showKoreanFooter": true,
+            "koreanNoticeText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"color: #d94251;\">BeautySum India New Delhi</strong>  <strong>&nbsp;</strong><a href=\"https://beautysumindia.com/\" rel=\"noopener noreferrer\" target=\"_blank\">WEB</a> ｜ <a href=\"https://www.instagram.com/beautysum_india/\" rel=\"noopener noreferrer\" target=\"_blank\">INSTAGRAM </a>｜<a href=\"https://www.linkedin.com/company/beautysum-india\" rel=\"noopener noreferrer\" target=\"_blank\">Linked in</a></p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"color: var(--point-color, #287dfa);\">BeautySum Korea Suwon</strong><strong>&nbsp;</strong>&nbsp;<a href=\"https://beautysumkorea.com/\" rel=\"noopener noreferrer\" target=\"_blank\">WEB</a>｜ <a href=\"https://www.instagram.com/beauty_suwon/\" rel=\"noopener noreferrer\" target=\"_blank\">INSTAGRAM</a> ｜<a href=\"http://pf.kakao.com/_yzLUn\" rel=\"noopener noreferrer\" target=\"_blank\">KAKAO</a></p>",
+            "showEnglishFooter": false,
+            "englishNoticeText": "If you don't want this type of information or e-mail, please click the <a style=\"text-decoration:none; color:#333333; font-weight:700;\" href=\"#\" target=\"_blank\">[unsubscription]</a><br>Please note that this is a no-reply email. For any inquiries,<br>contact us at 02-0000-0000 or via email at name@esgroup.net."
+          },
+          "styles": {}
+        }
+      ],
+      "groups": [
+        {
+          "id": "group-1785228577402-b4w2vbhm2",
+          "styles": {
+            "backgroundColor": "#eaeaea",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "15px",
+            "margin": "20px"
+          }
+        }
+      ]
     }
   ]
 }
