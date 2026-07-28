@@ -280,6 +280,8 @@ interface TableCellType {
   align?: 'left' | 'center' | 'right'
   bgColor?: string
   textColor?: string
+  imageUrl?: string
+  imageAlt?: string
   hidden?: boolean
 }
 
