@@ -58,6 +58,35 @@ describe('replaceModuleTableContent - 셀별 색상', () => {
   })
 })
 
+describe('replaceModuleTableContent - 셀 이미지', () => {
+  it('imageUrl 지정 시 셀은 padding 없이 이미지가 꽉 차게(width:100%) 렌더됨', () => {
+    const cells = [[makeCell({ content: '무시될 텍스트', imageUrl: 'https://example.com/a.png', imageAlt: '대체' })]]
+    const result = replaceModuleTableContent(TEMPLATE, { tableCells: cells })
+    expect(result).toContain('padding:0')
+    expect(result).toContain('<img src="https://example.com/a.png"')
+    expect(result).toContain('alt="대체"')
+    expect(result).toContain('width:100%')
+    // 이미지 셀은 텍스트/기본 셀 padding을 쓰지 않는다
+    expect(result).not.toContain('padding:5px 10px')
+    expect(result).not.toContain('무시될 텍스트')
+  })
+
+  it('imageUrl 이 빈 문자열/공백이면 일반 텍스트 셀로 렌더됨', () => {
+    const cells = [[makeCell({ content: '내용', imageUrl: '   ' })]]
+    const result = replaceModuleTableContent(TEMPLATE, { tableCells: cells })
+    expect(result).toContain('padding:5px 10px')
+    expect(result).toContain('내용')
+    expect(result).not.toContain('<img')
+  })
+
+  it('이미지 URL 의 따옴표/꺾쇠는 이스케이프되어 속성 주입이 방지됨', () => {
+    const cells = [[makeCell({ imageUrl: 'x" onerror="alert(1)' })]]
+    const result = replaceModuleTableContent(TEMPLATE, { tableCells: cells })
+    expect(result).not.toContain('onerror="alert(1)"')
+    expect(result).toContain('&quot;')
+  })
+})
+
 describe('replaceModuleTableContent - 부분 굵게(**마커**)', () => {
   it('**…** 로 감싼 구간만 <strong>으로 변환됨', () => {
     const cells = [[makeCell({ content: '일반 **강조** 텍스트' })]]

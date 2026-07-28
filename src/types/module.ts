@@ -61,6 +61,8 @@ export interface TableCell {
   align?: 'left' | 'center' | 'right'  // 텍스트 정렬
   bgColor?: string         // 셀 배경색 (미지정 시 타입별 일괄 색상 사용)
   textColor?: string       // 셀 글자색 (미지정 시 타입별 일괄 색상 사용)
+  imageUrl?: string        // 셀 이미지 주소 (지정 시 셀 padding 없이 이미지가 꽉 차게 표시, 텍스트 대신)
+  imageAlt?: string        // 셀 이미지 대체 텍스트
   hidden?: boolean         // 병합으로 인해 숨겨진 셀 여부
 }
 

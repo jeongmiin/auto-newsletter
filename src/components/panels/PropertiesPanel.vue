@@ -838,6 +838,20 @@
                           :style="{ backgroundColor: getCellEffectiveBg(cell), color: getCellEffectiveText(cell) }"
                           v-tooltip.top="'셀 정렬·배경색·글자색·굵게'"
                         >가</button>
+
+                        <!-- 셀 이미지 버튼 (클릭 시 이미지 주소 입력창 펼침) -->
+                        <button
+                          @click="toggleCellImageEditor(rowIndex, colIndex)"
+                          class="flex items-center justify-center w-6 h-6 rounded border leading-none transition-colors"
+                          :class="isCellImageOpen(rowIndex, colIndex)
+                            ? 'border-blue-500 ring-1 ring-blue-200 text-blue-600'
+                            : cell.imageUrl
+                              ? 'border-blue-400 text-blue-600 bg-blue-50'
+                              : 'border-gray-300 hover:border-gray-400 text-gray-500'"
+                          v-tooltip.top="'셀 이미지 (넣으면 여백 없이 꽉 차게 표시)'"
+                        >
+                          <i class="pi pi-image text-xs"></i>
+                        </button>
                       </div>
 
                       <!-- 오른쪽: 병합 컨트롤 -->
@@ -970,6 +984,32 @@
                         @click="resetCellColors(rowIndex, colIndex)"
                         class="text-xs text-gray-500 hover:text-blue-600 underline"
                       >기본값으로</button>
+                    </div>
+
+                    <!-- 셀 이미지 입력창 (펼침) — '가' 옆 이미지 버튼으로 토글 -->
+                    <div
+                      v-if="isCellImageOpen(rowIndex, colIndex)"
+                      class="cell-image-editor mb-1.5 p-2 bg-gray-50 border border-gray-200 rounded space-y-1"
+                    >
+                      <div class="flex flex-wrap items-center gap-1.5">
+                        <label class="text-xs text-gray-500 w-7 shrink-0">이미지</label>
+                        <input
+                          :value="cell.imageUrl || ''"
+                          @input="updateCellImage(rowIndex, colIndex, ($event.target as HTMLInputElement).value)"
+                          placeholder="https:// 이미지 주소"
+                          class="flex-1 min-w-[5rem] text-xs border border-gray-300 rounded px-1.5 py-0.5 outline-none focus:border-blue-500"
+                          spellcheck="false"
+                        />
+                        <button
+                          v-if="cell.imageUrl"
+                          @click="clearCellImage(rowIndex, colIndex)"
+                          class="text-xs text-gray-500 hover:text-blue-600 underline shrink-0"
+                          v-tooltip.top="'이미지를 제거하고 텍스트 셀로 되돌리기'"
+                        >지우기</button>
+                      </div>
+                      <p class="text-xs text-gray-400">
+                        이미지를 넣으면 이 셀은 여백 없이 이미지로 꽉 차게 표시됩니다.
+                      </p>
                     </div>
 
                     <!-- 셀 내용 입력 (굵게는 화면에 실제 굵게로 표시, ** 마커는 숨김) -->
@@ -1757,6 +1797,17 @@ const isCellColorOpen = (rowIndex: number, colIndex: number) =>
 const toggleCellColorEditor = (rowIndex: number, colIndex: number) => {
   const key = `${rowIndex}-${colIndex}`
   openColorCellKey.value = openColorCellKey.value === key ? null : key
+  if (openColorCellKey.value) openImageCellKey.value = null // 색상 편집기를 열면 이미지 입력은 닫는다
+}
+
+// 펼쳐진 이미지 입력창의 대상 셀 (rowIndex-colIndex 키) — '가' 옆 이미지 버튼으로 토글
+const openImageCellKey = ref<string | null>(null)
+const isCellImageOpen = (rowIndex: number, colIndex: number) =>
+  openImageCellKey.value === `${rowIndex}-${colIndex}`
+const toggleCellImageEditor = (rowIndex: number, colIndex: number) => {
+  const key = `${rowIndex}-${colIndex}`
+  openImageCellKey.value = openImageCellKey.value === key ? null : key
+  if (openImageCellKey.value) openColorCellKey.value = null // 이미지 입력을 열면 색상 편집기는 닫는다
 }
 
 // 타입별(th/td) 일괄 색상 기본값 (렌더러 폴백과 동일)
@@ -1814,6 +1865,23 @@ const resetCellColors = (rowIndex: number, colIndex: number) => {
   moduleStore.updateTableCell(selectedModule.value.id, rowIndex, colIndex, {
     bgColor: undefined,
     textColor: undefined,
+  })
+}
+
+// 셀 이미지 주소 설정/변경 (지정 시 렌더러가 padding 없이 이미지를 꽉 차게 표시)
+const updateCellImage = (rowIndex: number, colIndex: number, value: string) => {
+  if (!selectedModule.value) return
+  const url = value.trim()
+  moduleStore.updateTableCell(selectedModule.value.id, rowIndex, colIndex, {
+    imageUrl: url || undefined,
+  })
+}
+// 셀 이미지 제거 (텍스트 셀로 복귀)
+const clearCellImage = (rowIndex: number, colIndex: number) => {
+  if (!selectedModule.value) return
+  moduleStore.updateTableCell(selectedModule.value.id, rowIndex, colIndex, {
+    imageUrl: undefined,
+    imageAlt: undefined,
   })
 }
 

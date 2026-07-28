@@ -363,6 +363,28 @@ export function replaceModuleTableContent(
         const textAlign =
           cell.align || colAligns[colIndex] || (cell.type === 'th' ? 'center' : 'left')
 
+        // colspan, rowspan 속성 (열 너비는 colgroup>col로 일괄 관리)
+        const colspanAttr = cell.colspan > 1 ? ` colspan="${cell.colspan}"` : ''
+        const rowspanAttr = cell.rowspan > 1 ? ` rowspan="${cell.rowspan}"` : ''
+
+        // 이미지 셀: padding 없이 이미지가 셀을 꽉 채운다(텍스트 대신 이미지 렌더).
+        const imageUrl = (cell.imageUrl || '').trim()
+        if (imageUrl) {
+          const imgStyle = [
+            `border:1px ${cellBorderColor} solid`,
+            `background:${bgColor}`,
+            `bgcolor:${bgColor}`,
+            `padding:0`,
+            `font-size:0`,
+            `line-height:0`,
+            `box-sizing:border-box`,
+          ].join('; ')
+          const safeUrl = escapeForHtml(imageUrl).replace(/"/g, '&quot;')
+          const safeAlt = escapeForHtml(cell.imageAlt || '').replace(/"/g, '&quot;')
+          const img = `<img src="${safeUrl}" alt="${safeAlt}" width="100%" style="display:block; width:100%; height:auto; border:0; margin:0;">`
+          return `<${tag}${colspanAttr}${rowspanAttr} style="${imgStyle}">${img}</${tag}>`
+        }
+
         // 인라인 스타일 (이메일 호환성)
         const style = [
           `font-size:14px`,
@@ -380,10 +402,6 @@ export function replaceModuleTableContent(
           `word-break:break-all`,
           `box-sizing:border-box`,
         ].join('; ')
-
-        // colspan, rowspan 속성 (열 너비는 colgroup>col로 일괄 관리)
-        const colspanAttr = cell.colspan > 1 ? ` colspan="${cell.colspan}"` : ''
-        const rowspanAttr = cell.rowspan > 1 ? ` rowspan="${cell.rowspan}"` : ''
 
         // & < > " → HTML 엔티티로 변환(&부터 처리해 이중 이스케이프 방지) 후
         // 줄바꿈/굵게 마커만 태그로 복원
