@@ -48,6 +48,27 @@
           </div>
         </div>
 
+        <!-- 구성 요소 (Figma 717-9607) — 나눈 컬럼(직접 구성)의 멤버를 선택하면 노출.
+             이미지·타이틀·텍스트·버튼 체크로 이 컬럼의 원소를 추가/제거한다. 캔버스에서 삭제하면 체크가 풀리고,
+             다시 체크하면 기본값으로 재생성된다. 선택한 모듈의 속성은 이 아래에 표시된다. -->
+        <div v-if="showComposedSection" class="px-[25px] pt-4 pb-4 border-b">
+          <p class="gg-acc-label !text-[16px] mb-3">구성 요소</p>
+          <div class="cmp-list">
+            <label
+              v-for="el in COMPOSED_ELEMENTS"
+              :key="el.kind"
+              class="cmp-row"
+            >
+              <Checkbox
+                :modelValue="hasElement(el.kind)"
+                :binary="true"
+                @update:modelValue="toggleElement(el.kind, $event)"
+              />
+              <span class="cmp-label">{{ el.label }}</span>
+            </label>
+          </div>
+        </div>
+
         <!-- 속성 편집 폼 -->
       <div class="px-[25px] pb-7">
         <div
@@ -1461,6 +1482,32 @@ const moduleColumnInfo = computed(() => {
 // 이 모듈이 나눌 수 있는 최대 컬럼 수 — config의 maxColumns(예: 설명 텍스트=2), 없으면 전역 3단.
 const maxColumns = computed(() => selectedModuleMetadata.value?.maxColumns ?? 3)
 
+// ===== 구성 요소 (Figma 717-9607) — 나눈 컬럼(직접 구성)의 원소 토글 =====
+type ComposedKind = 'image' | 'title' | 'text' | 'button'
+const COMPOSED_ELEMENTS: { kind: ComposedKind; label: string }[] = [
+  { kind: 'image', label: '이미지' },
+  { kind: 'title', label: '타이틀' },
+  { kind: 'text', label: '텍스트' },
+  { kind: 'button', label: '버튼' },
+]
+// 다단 컬럼(직접 구성)의 멤버를 선택했을 때만 노출
+const showComposedSection = computed(
+  () => !!selectedModule.value?.groupId && moduleColumnInfo.value.columns > 1,
+)
+const composedCtx = computed(() => {
+  const m = selectedModule.value
+  if (!m?.groupId) return null
+  return { groupId: m.groupId, rowIndex: moduleColumnInfo.value.rowIndex, columnIndex: moduleColumnInfo.value.columnIndex }
+})
+const hasElement = (kind: ComposedKind): boolean => {
+  const c = composedCtx.value
+  return c ? moduleStore.hasColumnElement(c.groupId, c.rowIndex, c.columnIndex, kind) : false
+}
+const toggleElement = (kind: ComposedKind, on: boolean): void => {
+  const c = composedCtx.value
+  if (c) moduleStore.setColumnElement(c.groupId, c.rowIndex, c.columnIndex, kind, on)
+}
+
 // 1단/2단/3단 세그먼트: 현재 컬럼 수에서 목표 n단까지 split(+1)/unsplit(-1) 반복.
 // (split/unsplit이 적용된 컬럼 수를 반환하므로 반응성 타이밍과 무관하게 반복 판단)
 const setColumnsTo = (n: number) => {
@@ -2726,6 +2773,28 @@ const onSelectPointColor = (key: string, index: number): void => {
   background: #4e5968;
   border-color: #4e5968;
   color: #fff;
+}
+
+/* 구성 요소 리스트 (Figma 717-9607) — 체크박스 + 라벨 행 */
+.cmp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cmp-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 45px;
+  padding: 0 12px;
+  background: #f7f8fa;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.cmp-label {
+  font-size: 14px;
+  color: #333d4b;
+  letter-spacing: -0.14px;
 }
 
 /* 정렬 세그먼트 (좌측/중앙/우측) — Figma 686-3949 */

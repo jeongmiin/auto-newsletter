@@ -60,6 +60,9 @@ import { DEFAULT_GROUP_STYLES, wrapGroupHtmlForEmail, resolveGroupStyles, buildC
 import { resolveWrapBorderCss } from '@/utils/wrapBorder'
 import { computeGroupLayout, resolveGroupRows, clampColumns, type GroupRowLayout } from '@/utils/groupLayout'
 
+// 나눈 컬럼의 '구성 요소' 종류 (Figma 717-9607)
+export type ComposedKind = 'image' | 'title' | 'text' | 'button'
+
 export const useModuleStore = defineStore('module', () => {
   // ============= State =============
   const modules = ref<ModuleInstance[]>([])
@@ -1415,6 +1418,101 @@ export const useModuleStore = defineStore('module', () => {
     selectedModuleId.value = clones[0].id
     columnTarget.value = null
     isDirty.value = true
+  }
+
+  // ===== [행별 컬럼] 구성 요소(조립 원소) 토글 — Figma 717-9607 =====
+  // 나눈 컬럼(셀)을 이미지·타이틀·텍스트·버튼 원소로 구성한다. 체크=존재, 해제=제거.
+  // (조립형 02와 동일한 원소 매핑. 타이틀/텍스트는 둘 다 ModuleDescText라 __composedKind로 구분)
+  const COMPOSED_SPECS: Record<ComposedKind, { moduleId: string; overrides: Record<string, unknown> }> = {
+    image: { moduleId: 'ModuleImg', overrides: {} },
+    title: {
+      moduleId: 'ModuleDescText',
+      overrides: {
+        descriptionText:
+          '<p style="margin:0; padding:0; line-height:1.7;"><strong style="font-size:22px;">타이틀을 입력하세요</strong></p>',
+        textColor: '#111111',
+      },
+    },
+    text: {
+      moduleId: 'ModuleDescText',
+      overrides: {
+        descriptionText: '<p style="margin:0; padding:0; line-height:1.7;">본문 텍스트를 입력하세요.</p>',
+      },
+    },
+    button: { moduleId: 'ModuleOneButton', overrides: { buttonText: '자세히 보기 →' } },
+  }
+
+  // 셀(그룹/행/컬럼) 멤버 — order 기준 정렬
+  const cellMembers = (groupId: string, rowIndex: number, columnIndex: number): ModuleInstance[] =>
+    modules.value
+      .filter(
+        (m) =>
+          m.groupId === groupId && (m.rowIndex ?? 0) === rowIndex && (m.columnIndex ?? 0) === columnIndex,
+      )
+      .sort((a, b) => a.order - b.order)
+
+  // 모듈 → 구성 요소 종류 판별 (타이틀/텍스트는 __composedKind로, 없으면 텍스트로 간주)
+  const moduleComposedKind = (m: ModuleInstance): ComposedKind | null => {
+    if (m.moduleId === 'ModuleImg') return 'image'
+    if (m.moduleId === 'ModuleOneButton') return 'button'
+    if (m.moduleId === 'ModuleDescText')
+      return m.properties.__composedKind === 'title' ? 'title' : 'text'
+    return null
+  }
+
+  // 셀에 특정 구성 요소가 존재하는지
+  const hasColumnElement = (
+    groupId: string,
+    rowIndex: number,
+    columnIndex: number,
+    kind: ComposedKind,
+  ): boolean => cellMembers(groupId, rowIndex, columnIndex).some((m) => moduleComposedKind(m) === kind)
+
+  // 구성 요소 토글: on=true면 기본값으로 생성해 셀에 추가(+선택), off면 그 종류 모듈을 셀에서 제거
+  const setColumnElement = (
+    groupId: string,
+    rowIndex: number,
+    columnIndex: number,
+    kind: ComposedKind,
+    on: boolean,
+  ): void => {
+    if (on) {
+      if (hasColumnElement(groupId, rowIndex, columnIndex, kind)) return
+      const spec = COMPOSED_SPECS[kind]
+      const meta = availableModules.value.find((m) => m.id === spec.moduleId)
+      if (!meta) return
+      const properties: Record<string, unknown> = { ...getDefaultProperties(meta), ...spec.overrides }
+      // 타이틀/텍스트(둘 다 ModuleDescText) 구분용 마커
+      if (spec.moduleId === 'ModuleDescText') properties.__composedKind = kind
+      const newModule: ModuleInstance = {
+        id: generateUniqueId('module'),
+        moduleId: meta.id,
+        order: 0,
+        groupId,
+        rowIndex,
+        columnIndex,
+        properties,
+        styles: meta.defaultStyles || {},
+      }
+      const lastIdx = modules.value.map((m) => m.groupId).lastIndexOf(groupId)
+      if (lastIdx === -1) return
+      modules.value.splice(lastIdx + 1, 0, newModule)
+      reorderModules()
+      // 속성 폼을 유지한 채 새 원소를 선택(구성 요소 + 새 모듈 속성 계속 노출). selectAddedModule은
+      // forceRailPanel을 켜서 팔레트로 전환되므로 여기서는 selectModule을 쓴다.
+      selectModule(newModule.id)
+      isDirty.value = true
+    } else {
+      const target = cellMembers(groupId, rowIndex, columnIndex).find(
+        (m) => moduleComposedKind(m) === kind,
+      )
+      if (!target) return
+      // 제거 후에도 구성 요소가 유지되도록, 같은 셀의 다른 멤버를 선택(없으면 선택 해제).
+      const wasSelected = selectedModuleId.value === target.id
+      const rest = cellMembers(groupId, rowIndex, columnIndex).filter((m) => m.id !== target.id)
+      removeModule(target.id)
+      if (wasSelected && rest.length > 0) selectModule(rest[0].id)
+    }
   }
 
   /** [행별 컬럼] 모듈을 같은 행 안에서 왼쪽/오른쪽 이웃 컬럼으로 이동 */
@@ -3372,6 +3470,8 @@ ${fullHtml}
     setColumnTarget,
     clearColumnTarget,
     duplicateIntoColumn,
+    hasColumnElement,
+    setColumnElement,
     moveModuleColumn,
     setDisplayOrder,
     moveGroup,
