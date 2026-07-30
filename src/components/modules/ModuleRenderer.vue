@@ -19,8 +19,8 @@
       <div v-html="renderedHtml" class="module-content"></div>
     </div>
 
-    <!-- 우측 세로 플로팅 툴바 (Figma 352-1138) — 삭제/복제/위로/아래로.
-         선택 중이거나 호버 중일 때 보인다(기존엔 호버로만 노출 — 편집 중 접근성을 위해 선택 시에도 유지). -->
+    <!-- 우측 세로 플로팅 툴바 (모듈 바깥 오른쪽) — 위로/아래로/복제/삭제.
+         선택 중이거나 호버 중일 때 보인다(편집 중 접근성을 위해 선택 시에도 유지). -->
     <div
       class="module-toolbar"
       :class="{ 'is-visible': isSelected }"
@@ -28,11 +28,20 @@
     >
       <button
         type="button"
-        class="module-toolbar-btn is-danger"
-        @click.stop="$emit('delete', module.id)"
-        v-tooltip.left="'삭제'"
+        class="module-toolbar-btn"
+        :disabled="index === 0"
+        @click.stop="$emit('move-up', module.id)"
+        v-tooltip.left="'위로 이동'"
       >
-        <span class="material-symbols-outlined">delete</span>
+        <span class="material-symbols-outlined">arrow_upward</span>
+      </button>
+      <button
+        type="button"
+        class="module-toolbar-btn"
+        @click.stop="$emit('move-down', module.id)"
+        v-tooltip.left="'아래로 이동'"
+      >
+        <span class="material-symbols-outlined">arrow_downward</span>
       </button>
       <button
         type="button"
@@ -44,20 +53,11 @@
       </button>
       <button
         type="button"
-        class="module-toolbar-btn"
-        :disabled="index === 0"
-        @click.stop="$emit('move-up', module.id)"
-        v-tooltip.left="'위로 이동'"
+        class="module-toolbar-btn is-danger"
+        @click.stop="$emit('delete', module.id)"
+        v-tooltip.left="'삭제'"
       >
-        <span class="material-symbols-outlined toolbar-icon-flip">arrow_downward</span>
-      </button>
-      <button
-        type="button"
-        class="module-toolbar-btn"
-        @click.stop="$emit('move-down', module.id)"
-        v-tooltip.left="'아래로 이동'"
-      >
-        <span class="material-symbols-outlined">arrow_downward</span>
+        <span class="material-symbols-outlined">delete</span>
       </button>
     </div>
   </div>
@@ -107,19 +107,19 @@ const compact = computed(() => !!props.columnInfo && props.columnInfo.columns > 
   - inline 스타일이 항상 우선순위를 갖도록 설정
 */
 
-/* 우측 세로 플로팅 툴바 */
+/* 우측 세로 플로팅 툴바 (모듈 바깥 오른쪽) */
 .module-toolbar {
   position: absolute;
-  right: -49px;
+  right: -50px;
   top: 50%;
   transform: translateY(-50%);
   z-index: 20;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 10px;
   width: 41px;
-  padding: 12px 0;
+  padding: 16px 0;
   background: #fff;
   border: 1px solid #e5e8eb;
   border-radius: 12px;
@@ -134,8 +134,8 @@ const compact = computed(() => !!props.columnInfo && props.columnInfo.columns > 
   pointer-events: auto;
 }
 .module-toolbar-btn {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -163,9 +163,6 @@ const compact = computed(() => !!props.columnInfo && props.columnInfo.columns > 
 }
 .module-toolbar-btn.is-danger:hover {
   background: #fff1f1;
-}
-.toolbar-icon-flip {
-  transform: rotate(180deg);
 }
 
 /* CSS 격리 레이어 */

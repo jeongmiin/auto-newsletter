@@ -19,6 +19,8 @@
         />
         <!-- 모듈 순서(구 '모듈 목차') — 레일의 '모듈 순서' 메뉴에서만 열린다 -->
         <ModuleOutlinePanel v-else-if="!hasSelection && editorStore.activeMenu === 'order'" />
+        <!-- AI 도구 — 아직 준비 중(안내 패널) -->
+        <ComingSoonPanel v-else-if="!hasSelection && editorStore.activeMenu === 'ai'" />
         <SelectedItemPanel v-else-if="hasSelection" />
         <ModulePanel
           v-else
@@ -72,6 +74,7 @@ import GlobalStylePanel from '@/components/panels/GlobalStylePanel.vue'
 import PointColorPanel from '@/components/panels/PointColorPanel.vue'
 import CategoryModulePanel from '@/components/panels/CategoryModulePanel.vue'
 import SelectedItemPanel from '@/components/panels/SelectedItemPanel.vue'
+import ComingSoonPanel from '@/components/panels/ComingSoonPanel.vue'
 import { useEditorStore } from '@/stores/editorStore'
 import { useModuleStore } from '@/stores/moduleStore'
 
