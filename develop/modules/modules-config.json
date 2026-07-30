@@ -381,9 +381,11 @@
         },
         {
           "key": "imageAlt",
-          "label": "대체 텍스트",
+          "label": "이미지 설명",
           "type": "text",
-          "default": "전시소개글",
+          "default": "전시 소개글",
+          "placeholder": "이미지 소개글",
+          "hint": "*검색엔진과 스크린리더를 위한 뉴스레터 한 줄 설명입니다.",
           "group": "이미지"
         },
         {
@@ -395,10 +397,9 @@
         },
         {
           "key": "imageLinkUrl",
-          "label": "이미지 링크 URL",
+          "label": "링크 URL",
           "type": "url",
-          "default": "#",
-          "placeholder": "이미지 클릭 시 이동할 URL",
+          "placeholder": "https://",
           "showWhen": "showImageLink",
           "group": "이미지"
         },
@@ -1151,6 +1152,7 @@
       "category": "text",
       "icon": "pi pi-align-left",
       "htmlFile": "ModuleDescText.html",
+      "maxColumns": 2,
       "editableProps": [
         {
           "key": "descriptionText",
@@ -1452,14 +1454,41 @@
           "label": "이미지 URL",
           "type": "url",
           "default": "https://design.messeesang.com/e-dm/newsletter/images/img-1column.png",
-          "placeholder": "이미지 URL을 입력하세요"
+          "placeholder": "이미지 URL을 입력하세요",
+          "group": "이미지 파일"
         },
         {
           "key": "imageAlt",
-          "label": "이미지 설명 (Alt)",
+          "label": "이미지 설명",
           "type": "text",
           "default": "이미지",
-          "placeholder": "이미지 설명"
+          "placeholder": "이미지 소개글",
+          "hint": "*검색엔진과 스크린리더를 위한 뉴스레터 한 줄 설명입니다.",
+          "group": "이미지 파일"
+        },
+        {
+          "key": "showImageLink",
+          "label": "이미지 링크 사용",
+          "type": "boolean",
+          "default": false,
+          "group": "링크 추가"
+        },
+        {
+          "key": "imageLinkUrl",
+          "label": "링크 URL",
+          "type": "url",
+          "placeholder": "https://",
+          "hint": "*https://로 시작하는 전체 주소를 입력하세요",
+          "showWhen": "showImageLink",
+          "group": "링크 추가"
+        },
+        {
+          "key": "imageMaxWidth",
+          "label": "이미지 최대 너비",
+          "type": "text",
+          "default": "100%",
+          "placeholder": "예: 100%, 280px",
+          "group": "이미지 크기 조정"
         },
         {
           "key": "imageAlign",
@@ -1479,35 +1508,16 @@
               "label": "오른쪽",
               "value": "right"
             }
-          ]
-        },
-        {
-          "key": "imageMaxWidth",
-          "label": "이미지 최대 너비",
-          "type": "text",
-          "default": "100%",
-          "placeholder": "예: 100%, 280px"
-        },
-        {
-          "key": "showImageLink",
-          "label": "이미지 링크 사용",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "key": "imageLinkUrl",
-          "label": "이미지 링크 URL",
-          "type": "url",
-          "default": "#",
-          "placeholder": "이미지 클릭 시 이동할 URL",
-          "showWhen": "showImageLink"
+          ],
+          "group": "이미지 크기 조정"
         },
         {
           "key": "imageBorderRadius",
           "label": "이미지 모서리 둥글기",
           "type": "text",
           "default": "0px",
-          "placeholder": "예: 10px, 50%"
+          "placeholder": "예: 10px, 50%",
+          "group": "모서리 둥글기"
         },
         {
           "key": "imageBorderStyle",
@@ -1525,13 +1535,18 @@
             },
             {
               "label": "점선",
+              "value": "dotted"
+            },
+            {
+              "label": "파선",
               "value": "dashed"
             },
             {
-              "label": "점",
-              "value": "dotted"
+              "label": "이중선",
+              "value": "double"
             }
-          ]
+          ],
+          "group": "테두리"
         },
         {
           "key": "imageBorderWidth",
@@ -1542,7 +1557,8 @@
           "showWhen": {
             "key": "imageBorderStyle",
             "notEquals": "none"
-          }
+          },
+          "group": "테두리"
         },
         {
           "key": "imageBorderColor",
@@ -1552,35 +1568,40 @@
           "showWhen": {
             "key": "imageBorderStyle",
             "notEquals": "none"
-          }
+          },
+          "group": "테두리"
         },
         {
           "key": "paddingTop",
           "label": "상단 여백",
           "type": "text",
           "default": "0px",
-          "placeholder": "예: 0px, 10px"
+          "placeholder": "예: 0px, 10px",
+          "group": "여백"
         },
         {
           "key": "paddingRight",
           "label": "우측 여백",
           "type": "text",
           "default": "0px",
-          "placeholder": "예: 20px, 0"
+          "placeholder": "예: 20px, 0",
+          "group": "여백"
         },
         {
           "key": "paddingBottom",
           "label": "하단 여백",
           "type": "text",
           "default": "20px",
-          "placeholder": "예: 20px, 0"
+          "placeholder": "예: 20px, 0",
+          "group": "여백"
         },
         {
           "key": "paddingLeft",
           "label": "좌측 여백",
           "type": "text",
           "default": "0px",
-          "placeholder": "예: 20px, 0"
+          "placeholder": "예: 20px, 0",
+          "group": "여백"
         }
       ]
     },
@@ -3305,10 +3326,11 @@
         },
         {
           "key": "imageAlt",
-          "label": "설명 Alt",
+          "label": "이미지 설명",
           "type": "text",
           "default": "이미지",
-          "placeholder": "이미지",
+          "placeholder": "이미지 소개글",
+          "hint": "*검색엔진과 스크린리더를 위한 뉴스레터 한 줄 설명입니다.",
           "group": "이미지"
         },
         {
@@ -3322,8 +3344,7 @@
           "key": "imageLinkUrl",
           "label": "링크 URL",
           "type": "url",
-          "default": "#",
-          "placeholder": "이미지 클릭 시 이동할 URL",
+          "placeholder": "https://",
           "showWhen": "showImageLink",
           "group": "이미지"
         },
@@ -4494,10 +4515,11 @@
         },
         {
           "key": "imageAlt",
-          "label": "설명 (Alt)",
+          "label": "이미지 설명",
           "type": "text",
           "default": "이미지",
-          "placeholder": "이미지",
+          "placeholder": "이미지 소개글",
+          "hint": "*검색엔진과 스크린리더를 위한 뉴스레터 한 줄 설명입니다.",
           "group": "이미지"
         },
         {
@@ -4511,8 +4533,7 @@
           "key": "imageLinkUrl",
           "label": "링크 URL",
           "type": "url",
-          "default": "#",
-          "placeholder": "이미지 클릭 시 이동할 URL",
+          "placeholder": "https://",
           "showWhen": "showImageLink",
           "group": "이미지"
         },
@@ -4801,8 +4822,7 @@
           "key": "imageLinkUrl",
           "label": "링크 URL",
           "type": "url",
-          "default": "#",
-          "placeholder": "이미지 클릭 시 이동할 URL",
+          "placeholder": "https://",
           "showWhen": "showImageLink",
           "group": "이미지"
         },
@@ -5199,8 +5219,7 @@
           "key": "imageLinkUrl",
           "label": "링크 URL",
           "type": "url",
-          "default": "#",
-          "placeholder": "이미지 클릭 시 이동할 URL",
+          "placeholder": "https://",
           "showWhen": "showImageLink",
           "group": "이미지"
         },
@@ -6230,10 +6249,11 @@
         },
         {
           "key": "imageAlt",
-          "label": "설명 (Alt)",
+          "label": "이미지 설명",
           "type": "text",
           "default": "이미지",
-          "placeholder": "이미지",
+          "placeholder": "이미지 소개글",
+          "hint": "*검색엔진과 스크린리더를 위한 뉴스레터 한 줄 설명입니다.",
           "group": "이미지"
         },
         {
@@ -6247,8 +6267,7 @@
           "key": "imageLinkUrl",
           "label": "링크 URL",
           "type": "url",
-          "default": "#",
-          "placeholder": "이미지 클릭 시 이동할 URL",
+          "placeholder": "https://",
           "showWhen": "showImageLink",
           "group": "이미지"
         },
@@ -6575,10 +6594,11 @@
         },
         {
           "key": "imageAlt",
-          "label": "설명 (Alt)",
+          "label": "이미지 설명",
           "type": "text",
           "default": "이미지",
-          "placeholder": "이미지",
+          "placeholder": "이미지 소개글",
+          "hint": "*검색엔진과 스크린리더를 위한 뉴스레터 한 줄 설명입니다.",
           "group": "이미지"
         },
         {
@@ -6592,8 +6612,7 @@
           "key": "imageLinkUrl",
           "label": "링크 URL",
           "type": "url",
-          "default": "#",
-          "placeholder": "이미지 클릭 시 이동할 URL",
+          "placeholder": "https://",
           "showWhen": "showImageLink",
           "group": "이미지"
         },
@@ -6955,9 +6974,11 @@
         },
         {
           "key": "imageAlt",
-          "label": "설명 (Alt)",
+          "label": "이미지 설명",
           "type": "text",
           "default": "이미지",
+          "placeholder": "이미지 소개글",
+          "hint": "*검색엔진과 스크린리더를 위한 뉴스레터 한 줄 설명입니다.",
           "showWhen": "showImage",
           "group": "이미지"
         },
@@ -6973,8 +6994,7 @@
           "key": "imageLinkUrl",
           "label": "링크 URL",
           "type": "url",
-          "default": "#",
-          "placeholder": "이미지 클릭 시 이동할 URL",
+          "placeholder": "https://",
           "showWhen": "showImageLink",
           "group": "이미지"
         },
