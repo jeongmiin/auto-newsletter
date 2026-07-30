@@ -659,6 +659,20 @@ export const imageLinkProcessor: ContentProcessor = (html, properties) => {
 }
 
 /**
+ * 섹션 타이틀 '이미지 타이틀' 링크 조건부 제거 프로세서 (SectionTitle 전용)
+ * showSectionImageLink가 false이면 a 태그를 제거하고 img만 남긴다(단일 이미지 모듈과 동일 동작).
+ */
+export const sectionImageLinkProcessor: ContentProcessor = (html, properties) => {
+  if (properties.showSectionImageLink !== true) {
+    return html.replace(
+      /<!-- 섹션 이미지 링크 --><a[^>]*>([\s\S]*?)<\/a><!-- \/\/섹션 이미지 링크 -->/g,
+      (_, imgContent) => imgContent,
+    )
+  }
+  return html
+}
+
+/**
  * 왼쪽/오른쪽 이미지 링크 조건부 제거 프로세서 (2컬럼용)
  */
 export const twoColumnImageLinkProcessor: ContentProcessor = (html, properties) => {

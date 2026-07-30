@@ -213,6 +213,7 @@ export const sectionTitleConfig: ModuleConfig = {
     processors.removeMainTitleProcessor,
     processors.removeEmptySubTitleProcessor,
     processors.removeSectionImageProcessor,
+    processors.sectionImageLinkProcessor,
   ],
 }
 
