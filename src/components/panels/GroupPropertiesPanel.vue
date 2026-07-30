@@ -16,23 +16,25 @@
     </div>
 
     <div class="px-[25px] pb-[25px] mt-0!">
-      <!-- 안쪽 여백 (padding) — 아코디언 헤더(토글 없음, Figma "여백" 행) -->
+      <!-- 여백 — Figma 557-610: "여백" 섹션 아래 안쪽/바깥 여백을 함께 배치.
+           각 여백은 [라벨 + 공통적용 락] + (잠금:공통 슬라이더 / 해제:방향별 슬라이더). -->
       <div class="gg-acc-section">
         <div class="gg-acc-header gg-acc-header--static">
-          <span class="gg-acc-label">안쪽 여백</span>
+          <span class="gg-acc-label">여백</span>
         </div>
-        <div class="gg-acc-body">
+        <div class="gg-acc-body gg-margin-body">
+          <!-- 안쪽 여백 (padding) -->
           <div class="gg-margin-quad">
             <div class="gg-margin-quad-head">
-              <span class="gg-field-label !mb-0">안쪽 여백 (padding)</span>
+              <span class="gg-field-label !mb-0">안쪽 여백</span>
               <button
                 type="button"
                 class="gg-lock-btn"
                 :class="{ 'is-locked': isQuadLocked('padding') }"
                 @click="toggleQuadLock('padding')"
-                v-tooltip.top="isQuadLocked('padding') ? '잠금 해제하면 방향별로 따로 조정할 수 있어요' : '잠그면 4방향이 함께 움직여요'"
+                v-tooltip.top="isQuadLocked('padding') ? '4방향이 같은 값으로 함께 조정돼요' : '방향별로 따로 조정할 수 있어요'"
               >
-                <i :class="isQuadLocked('padding') ? 'pi pi-lock' : 'pi pi-lock-open'"></i>
+                <span class="material-symbols-outlined gg-lock-icon">{{ isQuadLocked('padding') ? 'lock' : 'lock_open_right' }}</span>
               </button>
             </div>
             <div v-if="isQuadLocked('padding')" class="gg-margin-slider-row">
@@ -56,40 +58,47 @@
                 <span class="gg-margin-value-unit">px</span>
               </div>
             </div>
-            <div v-else class="gg-margin-grid">
-              <div v-for="side in boxSides" :key="`pad-${side.key}`" class="gg-margin-cell">
-                <span class="gg-margin-cell-label">{{ side.label }}</span>
-                <input
-                  type="number"
-                  min="0"
-                  :value="quadSideNumber('padding', side.key)"
-                  @input="onQuadDirInput('padding', side.key, $event)"
-                  class="gg-margin-cell-input"
-                />
+            <div v-else class="gg-margin-dir-list">
+              <div v-for="side in boxSides" :key="`pad-${side.key}`" class="gg-margin-dir-row">
+                <span class="gg-margin-dir-label">{{ side.label }}</span>
+                <div class="gg-margin-slider-row">
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="1"
+                    :value="quadSideNumber('padding', side.key)"
+                    @input="onQuadDirInput('padding', side.key, $event)"
+                    class="gg-margin-slider"
+                  />
+                  <div class="gg-margin-value-field">
+                    <input
+                      type="number"
+                      min="0"
+                      :value="quadSideNumber('padding', side.key)"
+                      @input="onQuadDirInput('padding', side.key, $event)"
+                      class="gg-margin-value-input"
+                    />
+                    <span class="gg-margin-value-unit">px</span>
+                  </div>
+                </div>
               </div>
             </div>
+            <p class="gg-field-hint">*내용과 테두리 사이의 간격입니다.</p>
           </div>
-          <p class="gg-field-hint">*내용과 테두리 사이의 간격입니다.</p>
-        </div>
-      </div>
 
-      <!-- 바깥 여백 (margin) — 아코디언 헤더(토글 없음) -->
-      <div class="gg-acc-section">
-        <div class="gg-acc-header gg-acc-header--static">
-          <span class="gg-acc-label">바깥 여백</span>
-        </div>
-        <div class="gg-acc-body">
+          <!-- 바깥 여백 (margin) -->
           <div class="gg-margin-quad">
             <div class="gg-margin-quad-head">
-              <span class="gg-field-label !mb-0">바깥 여백 (margin)</span>
+              <span class="gg-field-label !mb-0">바깥 여백</span>
               <button
                 type="button"
                 class="gg-lock-btn"
                 :class="{ 'is-locked': isQuadLocked('margin') }"
                 @click="toggleQuadLock('margin')"
-                v-tooltip.top="isQuadLocked('margin') ? '잠금 해제하면 방향별로 따로 조정할 수 있어요' : '잠그면 4방향이 함께 움직여요'"
+                v-tooltip.top="isQuadLocked('margin') ? '4방향이 같은 값으로 함께 조정돼요' : '방향별로 따로 조정할 수 있어요'"
               >
-                <i :class="isQuadLocked('margin') ? 'pi pi-lock' : 'pi pi-lock-open'"></i>
+                <span class="material-symbols-outlined gg-lock-icon">{{ isQuadLocked('margin') ? 'lock' : 'lock_open_right' }}</span>
               </button>
             </div>
             <div v-if="isQuadLocked('margin')" class="gg-margin-slider-row">
@@ -113,20 +122,34 @@
                 <span class="gg-margin-value-unit">px</span>
               </div>
             </div>
-            <div v-else class="gg-margin-grid">
-              <div v-for="side in boxSides" :key="`mgn-${side.key}`" class="gg-margin-cell">
-                <span class="gg-margin-cell-label">{{ side.label }}</span>
-                <input
-                  type="number"
-                  min="0"
-                  :value="quadSideNumber('margin', side.key)"
-                  @input="onQuadDirInput('margin', side.key, $event)"
-                  class="gg-margin-cell-input"
-                />
+            <div v-else class="gg-margin-dir-list">
+              <div v-for="side in boxSides" :key="`mgn-${side.key}`" class="gg-margin-dir-row">
+                <span class="gg-margin-dir-label">{{ side.label }}</span>
+                <div class="gg-margin-slider-row">
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="1"
+                    :value="quadSideNumber('margin', side.key)"
+                    @input="onQuadDirInput('margin', side.key, $event)"
+                    class="gg-margin-slider"
+                  />
+                  <div class="gg-margin-value-field">
+                    <input
+                      type="number"
+                      min="0"
+                      :value="quadSideNumber('margin', side.key)"
+                      @input="onQuadDirInput('margin', side.key, $event)"
+                      class="gg-margin-value-input"
+                    />
+                    <span class="gg-margin-value-unit">px</span>
+                  </div>
+                </div>
               </div>
             </div>
+            <p class="gg-field-hint">*그룹과 그룹 사이의 간격입니다.</p>
           </div>
-          <p class="gg-field-hint">*그룹과 그룹 사이의 간격입니다.</p>
         </div>
       </div>
 
@@ -334,12 +357,12 @@ const onBorderWidthSlide = (event: Event): void => {
   setStyle('borderWidth', normalizePxLength(`${n}px`))
 }
 
-// ===== 안/밖 여백 4방향(상·우·하·좌) =====
+// ===== 안/밖 여백 4방향 — Figma 612-4305 순서(상단·하단·좌측·우측) =====
 const boxSides: { key: BorderSide; label: string }[] = [
-  { key: 'top', label: '상' },
-  { key: 'right', label: '우' },
-  { key: 'bottom', label: '하' },
-  { key: 'left', label: '좌' },
+  { key: 'top', label: '상단' },
+  { key: 'bottom', label: '하단' },
+  { key: 'left', label: '좌측' },
+  { key: 'right', label: '우측' },
 ]
 const cap = (side: BorderSide): string => side.charAt(0).toUpperCase() + side.slice(1)
 // 현재 값(명시 4방향 우선, 없으면 기존 shorthand 파싱값)
@@ -351,6 +374,7 @@ const setBoxSide = (kind: 'padding' | 'margin', side: BorderSide, value: string)
 }
 
 // ===== 여백 4방향 잠금 슬라이더 UI (ModuleForm.vue의 모듈 여백 컨트롤과 동일 패턴) =====
+// 그룹 스타일 기본값 = 잠금(4방향 공통 슬라이더). 락을 열면 방향별(상단/하단/좌측/우측) 개별 조정으로 바뀐다.
 const quadLockState = reactive<Record<'padding' | 'margin', boolean>>({ padding: true, margin: true })
 const isQuadLocked = (kind: 'padding' | 'margin'): boolean => quadLockState[kind]
 const toggleQuadLock = (kind: 'padding' | 'margin'): void => {
@@ -427,6 +451,11 @@ const ungroup = (): void => {
   line-height: 1.5;
   color: #191f28;
   letter-spacing: -0.2px;
+}
+
+/* 여백 섹션: 안쪽/바깥 여백 두 컨트롤 사이 간격 (Figma 557-610) */
+.gg-margin-body {
+  gap: 26px;
 }
 
 /* 테두리 상세 — 라디오/슬라이더 스타일 */
