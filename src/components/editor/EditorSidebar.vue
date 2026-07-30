@@ -7,7 +7,7 @@
         v-else
         type="button"
         class="rail-item"
-        :class="{ 'is-active': activeMenu === item.key }"
+        :class="{ 'is-active': activeMenu === item.key && !hasSelection }"
         @click="select(item.key)"
       >
         <span class="material-symbols-outlined rail-icon">{{ item.icon }}</span>
@@ -21,11 +21,19 @@
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useEditorStore } from '@/stores/editorStore'
+import { useModuleStore } from '@/stores/moduleStore'
 
 type MenuKey = 'style' | 'point' | 'modules' | 'text' | 'image' | 'button' | 'table' | 'ai' | 'order'
 
 const editorStore = useEditorStore()
+const moduleStore = useModuleStore()
 const { activeMenu } = storeToRefs(editorStore)
+
+// 캔버스에서 모듈/그룹을 편집 중(속성 패널 노출)이면 어떤 레일 메뉴도 활성 표시하지 않는다.
+// AppLayout의 패널 전환 조건과 동일 — 캔버스 빈 영역 클릭으로 선택이 풀리면 직전 메뉴가 다시 is-active 된다.
+const hasSelection = computed(
+  () => (!!moduleStore.selectedModuleId || !!moduleStore.selectedGroupId) && !editorStore.forceRailPanel,
+)
 
 // 레일 메뉴 (Figma node 316-2071 순서/아이콘 기준, Material Symbols)
 const items = computed<Array<{ key: MenuKey; label: string; icon: string; divider?: boolean }>>(() => [

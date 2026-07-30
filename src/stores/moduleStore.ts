@@ -58,7 +58,7 @@ import { migrateModuleProperties } from '@/utils/moduleMigrations'
 import { sanitizeHtml } from '@/utils/sanitize'
 import { DEFAULT_GROUP_STYLES, wrapGroupHtmlForEmail, resolveGroupStyles, buildColumnLayoutHtml } from '@/utils/groupStyle'
 import { resolveWrapBorderCss } from '@/utils/wrapBorder'
-import { computeGroupLayout, resolveGroupRows, clampColumns } from '@/utils/groupLayout'
+import { computeGroupLayout, resolveGroupRows, clampColumns, type GroupRowLayout } from '@/utils/groupLayout'
 
 export const useModuleStore = defineStore('module', () => {
   // ============= State =============
@@ -1890,6 +1890,50 @@ export const useModuleStore = defineStore('module', () => {
   }
 
   /**
+   * [그룹 내부] 드래그로 재배치된 '행' 순서를 반영한다.
+   * orderedRows = 캔버스에서 새로 정렬된 GroupRowLayout 배열(각 행의 cells에 멤버 포함).
+   * - 각 멤버의 rowIndex/columnIndex를 새 행/열 위치로 갱신
+   * - group.rows(행별 컬럼 수)를 새 순서로 재구성
+   * - modules 배열에서 그 그룹의 연속 멤버 구간을 새 순서로 교체
+   */
+  const reorderGroupRows = (
+    groupId: string,
+    orderedRows: GroupRowLayout<ModuleInstance>[],
+  ): void => {
+    const group = groups.value.find((g) => g.id === groupId)
+    if (!group) return
+    const newRowCols: number[] = []
+    const newOrderIds: string[] = []
+    orderedRows.forEach((row, r) => {
+      newRowCols.push(row.columns)
+      row.cells.forEach((cellMembers, c) => {
+        cellMembers.forEach((m) => {
+          const mod = modules.value.find((x) => x.id === m.id)
+          if (mod) {
+            mod.rowIndex = r
+            mod.columnIndex = c
+          }
+          newOrderIds.push(m.id)
+        })
+      })
+    })
+    if (newOrderIds.length === 0) return
+    group.rows = newRowCols
+    // 그룹 멤버(연속 구간)를 새 순서로 교체
+    const memberSet = new Set(newOrderIds)
+    const start = modules.value.findIndex((m) => memberSet.has(m.id))
+    if (start < 0) return
+    const orderedMembers = newOrderIds
+      .map((id) => modules.value.find((m) => m.id === id))
+      .filter((m): m is ModuleInstance => !!m)
+    modules.value.splice(start, orderedMembers.length, ...orderedMembers)
+    reorderModules()
+    triggerRef(modules)
+    triggerRef(groups)
+    isDirty.value = true
+  }
+
+  /**
    * 저장됨으로 표시 (내보내기 후 호출)
    */
   const markAsSaved = (): void => {
@@ -3331,6 +3375,7 @@ ${fullHtml}
     moveModuleColumn,
     setDisplayOrder,
     moveGroup,
+    reorderGroupRows,
     normalizeGroupContiguity,
     loadAvailableModules,
     loadAvailableTemplates,

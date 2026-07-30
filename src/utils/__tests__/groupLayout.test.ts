@@ -14,11 +14,11 @@ const mk = (id: string, extra: Partial<ModuleInstance> = {}): ModuleInstance => 
 
 describe('groupLayout', () => {
   describe('clampColumns', () => {
-    it('1~4 범위로 클램프하고 미지정/0은 1로', () => {
+    it('1~3 범위로 클램프하고 미지정/0은 1로', () => {
       expect(clampColumns(undefined)).toBe(1)
       expect(clampColumns(0)).toBe(1)
       expect(clampColumns(3)).toBe(3)
-      expect(clampColumns(9)).toBe(4)
+      expect(clampColumns(9)).toBe(3)
     })
   })
 

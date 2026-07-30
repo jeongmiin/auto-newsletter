@@ -1,11 +1,11 @@
 <template>
-  <div class="flex-1 bg-gray-100 px-8 pt-24 pb-36 overflow-auto">
-    <!-- pl-28: 좌측 여백을 넓혀 그룹 액션 툴바(-81px)가 좌측 목차 레일과 겹치지 않도록 함 -->
+  <div class="flex-1 bg-gray-100 px-8 pt-24 pb-36 overflow-auto" @click="onCanvasBlankClick">
+    <!-- pt-24: 상단 여백 — 그룹 상단 툴바(top:-44px)가 잘리지 않도록 확보 -->
     <div class="flex justify-center">
       <!-- 캔버스 컨테이너 -->
       <div
         :class="[
-          'shadow-lg transition-all duration-300',
+          'canvas-container shadow-lg transition-all duration-300',
           canvasWidth === 'mobile' ? 'w-80' : 'w-full max-w-[680px]',
         ]"
         :style="canvasContainerStyle"
@@ -78,51 +78,57 @@
             <div
               v-if="item.type === 'group'"
               class="group-wrap"
-              :class="{ 'group-wrap--selected': activeGroupId === item.id }"
+              :class="{
+                'group-wrap--selected': activeGroupId === item.id,
+                'group-wrap--group-selected': selectedGroupId === item.id,
+              }"
             >
-              <!-- 좌측 통합 카드: 드래그 핸들 + 액션(복제·해제·그룹 스타일·삭제) — 항상 노출.
-                   드래그 시작 영역은 핸들 부분(.dh-top)만이고, 버튼들은 no-drag로 예외 처리. -->
-              <div class="group-side-toolbar">
-                <!-- 드래그 핸들 겸 '그룹 선택' 버튼.
-                     클릭 = 그룹 전체 선택(이 상태에서 모듈을 추가하면 그룹 아래로 들어간다),
-                     드래그 = 그룹 순서 변경. 드래그 직후 발생하는 click은 onGroupHandleClick에서 무시한다. -->
-                <div
-                  class="dh-top group-side-handle"
-                  :class="{ 'is-selected': selectedGroupId === item.id }"
-                  v-tooltip.left="groupHandleTip(item)"
-                  @click="onGroupHandleClick(item.id)"
-                >
-                  <span class="material-symbols-outlined">drag_indicator</span>
-                </div>
-                <div class="group-side-divider"></div>
+              <!-- 상단 그룹 툴바 (Figma 557-610) — 마우스 오버 또는 그룹/멤버 선택 시에만 노출.
+                   스타일 편집 · 위로 이동 · 아래로 이동 · 그룹 해제 · 복제 · 삭제. -->
+              <div class="group-top-toolbar no-drag">
                 <button
                   type="button"
-                  class="no-drag group-action-btn"
-                  v-tooltip.left="'그룹 복제'"
-                  @click.stop="moduleStore.duplicateGroup(item.id)"
+                  class="gtt-style-btn"
+                  :disabled="selectedGroupId === item.id"
+                  v-tooltip.top="selectedGroupId === item.id ? '이미 이 그룹의 스타일을 편집 중이에요' : undefined"
+                  @click.stop="selectGroupBox(item.id)"
+                >스타일 편집</button>
+                <button
+                  type="button"
+                  class="gtt-btn"
+                  v-tooltip.top="'위로 이동'"
+                  @click.stop="moduleStore.moveGroup(item.id, 'up')"
                 >
-                  <span class="material-symbols-outlined">content_copy</span>
+                  <span class="material-symbols-outlined">arrow_upward</span>
                 </button>
                 <button
                   type="button"
-                  class="no-drag group-action-btn"
-                  v-tooltip.left="'그룹 해제 (모듈은 유지)'"
+                  class="gtt-btn"
+                  v-tooltip.top="'아래로 이동'"
+                  @click.stop="moduleStore.moveGroup(item.id, 'down')"
+                >
+                  <span class="material-symbols-outlined">arrow_downward</span>
+                </button>
+                <button
+                  type="button"
+                  class="gtt-btn"
+                  v-tooltip.top="'그룹 해제 (모듈은 유지)'"
                   @click.stop="moduleStore.ungroup(item.id)"
                 >
                   <span class="material-symbols-outlined">link_off</span>
                 </button>
                 <button
                   type="button"
-                  class="no-drag group-action-btn"
-                  v-tooltip.left="'그룹 선택 · 스타일 편집'"
-                  @click.stop="selectGroupBox(item.id)"
+                  class="gtt-btn"
+                  v-tooltip.top="'그룹 복제'"
+                  @click.stop="moduleStore.duplicateGroup(item.id)"
                 >
-                  <span class="material-symbols-outlined">tune</span>
+                  <span class="material-symbols-outlined">content_copy</span>
                 </button>
                 <button
                   type="button"
-                  class="no-drag group-action-btn group-action-btn--danger"
-                  v-tooltip.left="'그룹 전체 삭제'"
+                  class="gtt-btn gtt-btn--danger"
+                  v-tooltip.top="'그룹 전체 삭제'"
                   @click.stop="confirmDeleteGroup(item)"
                 >
                   <span class="material-symbols-outlined">delete</span>
@@ -137,10 +143,20 @@
               >
                 <!-- 행별 독립 컬럼 렌더: 각 행이 자기 컬럼 수를 가진다. -->
                 <!-- 1컬럼 행 = 전체폭 세로 스택, 2+컬럼 행 = fluid-hybrid col-row(모바일 세로 스택) -->
-                <template
-                  v-for="(row, rowIdx) in groupRows(item)"
-                  :key="`row-${item.id}-${rowIdx}`"
+                <!-- 그룹 내부 드래그: 멤버 핸들(.dh-member)로 '행'을 그룹 안에서 재배치 -->
+                <draggable
+                  :list="groupRows(item)"
+                  :item-key="rowItemKey"
+                  handle=".dh-member"
+                  filter=".no-drag"
+                  :prevent-on-filter="false"
+                  ghost-class="dragging-ghost"
+                  chosen-class="dragging-chosen"
+                  animation="200"
+                  @end="onGroupRowDrop(item.id, $event)"
                 >
+                  <template #item="{ element: row, index: rowIdx }">
+                   <div class="group-row-item">
                   <!-- 다단 행 (.col-row: font-size:0 으로 셀 사이 공백 제거 → 폭 균등 분할) -->
                   <div v-if="row.columns > 1" class="col-row">
                     <div
@@ -153,9 +169,17 @@
                         v-for="member in row.cells[col - 1]"
                         :key="member.id"
                         :id="`canvas-module-${member.id}`"
-                        class="relative transition-all"
+                        class="relative group transition-all"
                         :class="{ 'ring-2 ring-amber-400 ring-inset rounded-sm': hoveredModuleId === member.id }"
                       >
+                        <!-- 그룹 안 모듈에도 드래그 핸들 노출 (선택/호버 시). 이 핸들로 그룹 내부에서 재배치. -->
+                        <div
+                          class="dh-member module-drag-handle"
+                          :class="{ 'is-visible': selectedModuleId === member.id }"
+                          title="마우스로 끌어서 그룹 안에서 순서를 변경하세요"
+                        >
+                          <span class="material-symbols-outlined">drag_indicator</span>
+                        </div>
                         <ModuleRenderer
                           :module="member"
                           :index="member.order"
@@ -168,34 +192,44 @@
                           @delete="deleteModule"
                         />
                       </div>
-                      <!-- 빈 컬럼 placeholder -->
+                      <!-- 빈 컬럼 placeholder (컬럼 분할 시) — Figma 745-8054:
+                           방식 선택(컬럼 복제 / 직접 구성). '직접 구성'을 고르면 이 컬럼이 활성화(추가 대상)되고
+                           왼쪽 패널에서 추가하는 모듈이 이 컬럼에 들어간다. (컬럼 수는 속성 패널 1/2/3단으로 조정) -->
                       <div
                         v-if="row.cells[col - 1].length === 0"
                         class="empty-col no-drag"
                         :class="{ 'empty-col--target': isColTarget(item.id, rowIdx, col - 1) }"
-                        @click.stop="targetColumn(item.id, rowIdx, col - 1)"
                       >
-                        <i class="pi pi-plus-circle empty-col__icon"></i>
-                        <div class="empty-col__title">빈 컬럼</div>
-                        <div class="empty-col__actions">
+                        <template v-if="isColTarget(item.id, rowIdx, col - 1)">
+                          <span class="material-symbols-outlined empty-col__icon">arrow_downward</span>
+                          <div class="empty-col__prompt">왼쪽 패널에서 모듈을 선택하면<br />이 컬럼에 추가됩니다</div>
                           <button
                             type="button"
-                            class="empty-col__btn"
-                            @click.stop="dupIntoColumn(item.id, rowIdx, col - 1)"
-                          >
-                            옆 컬럼 복제
-                          </button>
-                          <button
-                            type="button"
-                            class="empty-col__btn empty-col__btn--danger"
-                            @click.stop="removeColumn(item.id, rowIdx, col - 1)"
-                          >
-                            빈 컬럼 삭제
-                          </button>
-                        </div>
-                        <div class="empty-col__hint">
-                          {{ isColTarget(item.id, rowIdx, col - 1) ? '왼쪽 패널에서 모듈을 추가하세요' : '클릭 후 모듈 추가' }}
-                        </div>
+                            class="empty-col__cancel"
+                            @click.stop="targetColumn(item.id, rowIdx, col - 1)"
+                          >취소</button>
+                        </template>
+                        <template v-else>
+                          <div class="empty-col__prompt">원하시는 방식을 선택해주세요</div>
+                          <div class="empty-col__cards">
+                            <button
+                              type="button"
+                              class="empty-col__card"
+                              @click.stop="dupIntoColumn(item.id, rowIdx, col - 1)"
+                            >
+                              <span class="material-symbols-outlined">content_copy</span>
+                              <span class="empty-col__card-label">컬럼 복제</span>
+                            </button>
+                            <button
+                              type="button"
+                              class="empty-col__card"
+                              @click.stop="targetColumn(item.id, rowIdx, col - 1)"
+                            >
+                              <span class="material-symbols-outlined">add_photo_alternate</span>
+                              <span class="empty-col__card-label">직접 구성</span>
+                            </button>
+                          </div>
+                        </template>
                       </div>
                     </div>
                   </div>
@@ -206,9 +240,17 @@
                       v-for="member in row.cells[0]"
                       :key="member.id"
                       :id="`canvas-module-${member.id}`"
-                      class="relative transition-all"
+                      class="relative group transition-all"
                       :class="{ 'ring-2 ring-amber-400 ring-inset rounded-sm': hoveredModuleId === member.id }"
                     >
+                      <!-- 그룹 안 모듈에도 드래그 핸들 노출 (선택/호버 시). 이 핸들로 그룹 내부에서 재배치. -->
+                      <div
+                        class="dh-member module-drag-handle"
+                        :class="{ 'is-visible': selectedModuleId === member.id }"
+                        title="마우스로 끌어서 그룹 안에서 순서를 변경하세요"
+                      >
+                        <span class="material-symbols-outlined">drag_indicator</span>
+                      </div>
                       <ModuleRenderer
                         :module="member"
                         :index="member.order"
@@ -222,7 +264,9 @@
                       />
                     </div>
                   </template>
-                </template>
+                   </div>
+                  </template>
+                </draggable>
               </div>
             </div>
 
@@ -350,30 +394,47 @@ const onDragStart = () => {
 
 const onDragEnd = () => {
   isDragging.value = false
-  lastDragEndAt = Date.now()
 }
-
-// 드래그 핸들이 '클릭=그룹 선택'도 겸하므로, 드래그를 끝낸 직후 브라우저가 발생시키는 click을
-// 선택으로 오인하지 않도록 짧은 시간 무시한다.
-let lastDragEndAt = 0
-const onGroupHandleClick = (groupId: string) => {
-  if (Date.now() - lastDragEndAt < 250) return
-  selectGroupBox(groupId)
-}
-
-// 핸들 툴팁 — 캔버스에서 그룹 이름/멤버 수를 확인할 수 있는 유일한 지점이므로 함께 노출한다.
-const groupHandleTip = (item: { group: ModuleGroup; modules: ModuleInstance[] }): string =>
-  `${item.group.name || '그룹'} · ${item.modules.length}개 — 클릭: 그룹 선택 / 드래그: 순서 변경`
 
 const selectModule = (moduleId: string) => {
   moduleStore.selectModule(moduleId)
 }
 
+// 캔버스에서 미리보기 컨테이너(.canvas-container) 바깥의 빈 영역을 클릭하면
+// 모듈/그룹 선택을 해제한다. 선택이 비면 좌측 패널은 직전에 열려 있던 레일 메뉴로 자동 복귀한다.
+const onCanvasBlankClick = (e: MouseEvent): void => {
+  const target = e.target as HTMLElement | null
+  if (target?.closest('.canvas-container')) return // 컨테이너 내부(모듈/툴바) 클릭은 무시
+  if (moduleStore.selectedModuleId || moduleStore.selectedGroupId) {
+    moduleStore.clearSelection()
+  }
+}
+
+// 그룹 멤버는 rowIndex로 배치되므로 modules 배열 swap(moduleStore.moveModuleUp)만으로는 위치가 안 바뀐다.
+// → 멤버가 그룹에 속하면 그 멤버의 '행'을 위/아래로 이동(드래그 재배치와 동일: reorderGroupRows).
+const moveMemberRow = (moduleId: string, direction: 'up' | 'down'): boolean => {
+  const mod = modules.value.find((m) => m.id === moduleId)
+  if (!mod?.groupId) return false
+  const item = displayList.value.find((d) => d.type === 'group' && d.id === mod.groupId)
+  if (!item || item.type !== 'group') return false
+  const rows = groupRows(item)
+  const rowIdx = rows.findIndex((r) => r.cells.flat().some((m) => m.id === moduleId))
+  if (rowIdx < 0) return false
+  const target = direction === 'up' ? rowIdx - 1 : rowIdx + 1
+  if (target < 0 || target >= rows.length) return false
+  const [row] = rows.splice(rowIdx, 1)
+  rows.splice(target, 0, row)
+  moduleStore.reorderGroupRows(mod.groupId, rows)
+  return true
+}
+
 const moveModuleUp = (moduleId: string) => {
+  if (moveMemberRow(moduleId, 'up')) return
   moduleStore.moveModuleUp(moduleId)
 }
 
 const moveModuleDown = (moduleId: string) => {
+  if (moveMemberRow(moduleId, 'down')) return
   moduleStore.moveModuleDown(moduleId)
 }
 
@@ -394,22 +455,41 @@ const groupRows = (item: DisplayItem): GroupRowLayout<ModuleInstance>[] => {
   return computeGroupLayout(item.group, item.modules)
 }
 
+// 그룹 내부 draggable: 행의 고유 키 = 그 행 첫 멤버 id
+const rowItemKey = (row: GroupRowLayout<ModuleInstance>): string =>
+  row.cells.flat().find(Boolean)?.id ?? 'empty-row'
+
+// 그룹 안에서 '행'을 드래그로 재배치(SortableJS end 이벤트의 old/new 인덱스로 순서 갱신).
+const onGroupRowDrop = (
+  groupId: string,
+  evt: { oldIndex?: number; newIndex?: number },
+): void => {
+  const { oldIndex, newIndex } = evt
+  if (oldIndex == null || newIndex == null || oldIndex === newIndex) return
+  const item = displayList.value.find((d) => d.type === 'group' && d.id === groupId)
+  if (!item || item.type !== 'group') return
+  const rows = groupRows(item)
+  if (oldIndex < 0 || oldIndex >= rows.length || newIndex < 0 || newIndex >= rows.length) return
+  const [row] = rows.splice(oldIndex, 1)
+  rows.splice(newIndex, 0, row)
+  moduleStore.reorderGroupRows(groupId, rows)
+}
+
 // 컬럼 셀 인라인 스타일 (캔버스·이메일 공용 fluid-hybrid)
 const colCellStyle = (columns: number): string => columnCellStyle(columns)
 
-// 빈 컬럼을 '추가 대상'으로 지정 / 지정 여부 (행 기준)
-const targetColumn = (groupId: string, rowIdx: number, colIdx: number) =>
-  moduleStore.setColumnTarget(groupId, rowIdx, colIdx)
+// 이웃 컬럼 복제로 빈 컬럼 채우기 (같은 행)
+const dupIntoColumn = (groupId: string, rowIdx: number, colIdx: number) =>
+  moduleStore.duplicateIntoColumn(groupId, rowIdx, colIdx)
+// '직접 구성': 빈 컬럼을 '추가 대상'으로 지정(토글). 지정 후 왼쪽 패널에서 모듈을 추가하면 이 (행,컬럼)에 들어간다.
+const targetColumn = (groupId: string, rowIdx: number, colIdx: number) => {
+  if (isColTarget(groupId, rowIdx, colIdx)) moduleStore.clearColumnTarget()
+  else moduleStore.setColumnTarget(groupId, rowIdx, colIdx)
+}
 const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =>
   moduleStore.columnTarget?.groupId === groupId &&
   moduleStore.columnTarget?.rowIndex === rowIdx &&
   moduleStore.columnTarget?.columnIndex === colIdx
-// 이웃 컬럼 복제로 빈 컬럼 채우기 (같은 행)
-const dupIntoColumn = (groupId: string, rowIdx: number, colIdx: number) =>
-  moduleStore.duplicateIntoColumn(groupId, rowIdx, colIdx)
-// 빈 컬럼 삭제 (그 행에서 오른쪽 컬럼들을 왼쪽으로 당김)
-const removeColumn = (groupId: string, rowIdx: number, colIdx: number) =>
-  moduleStore.removeColumn(groupId, rowIdx, colIdx)
 </script>
 
 <style scoped>
@@ -462,75 +542,79 @@ const removeColumn = (groupId: string, rowIdx: number, colIdx: number) =>
 /* 그룹 전용 좌측 통합 카드: 드래그 핸들 + 액션(복제·해제·그룹 스타일·삭제)을 한 장으로 병합.
    기존엔 핸들(호버 시만 노출)과 액션 툴바(항상 노출)가 별도 카드였는데, 핸들도 계속 꺼지지
    않도록 하나로 합쳐 항상 노출한다(그룹은 늘 조작 대상이 뚜렷해야 함). 그룹 왼쪽에 위치. */
-.group-side-toolbar {
+/* 상단 그룹 툴바 (Figma 557-610) — 그룹 상단에 가로 다크 바.
+   기본은 숨김, 그룹에 마우스 오버 또는 '스타일 편집'으로 그룹 자체 선택(group-wrap--group-selected) 시에만 노출. */
+.group-top-toolbar {
   position: absolute;
-  left: -49px;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 10;
+  top: -50px;
+  left: -1px;
+  z-index: 20;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 4px;
-  width: 41px;
-  padding: 8px 0;
-  background: #fff;
-  /* 보라 액센트 — 우측 '모듈' 플로팅 툴바와 카드 스타일이 동일해 생기던 혼동 제거 */
-  border: 1px solid rgba(147, 51, 234, 0.35);
-  border-radius: 12px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.07);
+  gap: 16px;
+  width: calc(100% + 2px);
+  padding: 10px 25px;
+  background: #191f28;
+  border-radius: 10px 10px 0 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s ease;
 }
-.group-side-handle {
-  width: 100%;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #8b95a1;
-  cursor: grab;
-  border-radius: 8px;
+.group-wrap:hover > .group-top-toolbar,
+.group-wrap--group-selected > .group-top-toolbar {
+  opacity: 1;
+  pointer-events: auto;
+}
+.gtt-style-btn {
+  height: 30px;
+  padding: 0 16px;
+  margin-right: 4px;
+  border: none;
+  border-radius: 7px;
+  background: #333d4b;
+  color: #d1d6db;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
   transition: background-color 0.12s ease, color 0.12s ease;
 }
-.group-side-handle:hover {
-  background: #faf5ff;
-  color: #9333ea;
+.gtt-style-btn:not(:disabled):hover {
+  background: #4e5968;
+  color: #fff;
 }
-.group-side-handle:active {
-  cursor: grabbing;
+/* 이미 이 그룹 스타일 편집 중이면 비활성 — 다른 모듈/그룹을 선택하면 다시 활성화된다 */
+.gtt-style-btn:disabled {
+  background: #2b323c;
+  color: #6b7684;
+  cursor: not-allowed;
 }
-/* 그룹 자체가 선택된 상태(= 모듈 추가 시 그룹 '아래'로 들어감)를 채움으로 명확히 구분.
-   칩을 없앤 뒤 이 핸들이 그 신호를 대신한다. */
-.group-side-handle.is-selected {
-  color: #9333ea;
-}
-.group-side-divider {
-  width: 24px;
-  height: 1px;
-  background: #e5e8eb;
-}
-.group-action-btn {
-  width: 28px;
-  height: 28px;
+.gtt-btn {
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
   border: none;
   background: none;
-  color: #4e5968;
+  color: #d1d6db;
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: 7px;
+  transition: background-color 0.12s ease, color 0.12s ease;
 }
-.group-action-btn .material-symbols-outlined {
-  font-size: 20px;
+.gtt-btn .material-symbols-outlined {
+  font-size: 19px;
 }
-.group-action-btn:hover {
-  background: #f2f4f6;
+.gtt-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
 }
-.group-action-btn--danger {
-  color: #f04452;
+.gtt-btn--danger {
+  color: #ff6b74;
 }
-.group-action-btn--danger:hover {
-  background: #fff1f1;
+.gtt-btn--danger:hover {
+  background: rgba(240, 68, 82, 0.2);
+  color: #ff6b74;
 }
 
 /*
@@ -560,12 +644,6 @@ const removeColumn = (groupId: string, rowIdx: number, colIdx: number) =>
   position: relative;
 }
 
-/* 선택된 그룹 래퍼 — 기존엔 클래스만 바인딩되고 CSS가 없어 아무 효과도 없었다 */
-.group-wrap--selected .group-side-toolbar {
-  border-color: #9333ea;
-}
-
-
 /* ===== 컬럼 분할 (POC) ===== */
 /* 컬럼 행: font-size:0 으로 inline-block 셀 사이 공백 제거 → 컬럼 폭 정확 균등 분할 */
 .col-row {
@@ -582,72 +660,77 @@ const removeColumn = (groupId: string, rowIdx: number, colIdx: number) =>
   min-height: 40px;
 }
 
-/* 빈 컬럼 placeholder */
+/* 빈 컬럼 placeholder (컬럼 분할 시 방식 선택) — Figma 745-8054 */
 .empty-col {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  min-height: 90px;
-  padding: 12px 8px;
+  gap: 16px;
+  min-height: 100%;
+  padding: 20px 16px;
+  border: 1px dashed #c6ccd4;
+  border-radius: 8px;
+}
+.empty-col--target {
+  border-color: #4083f3;
+  background: #f5f9ff;
+}
+.empty-col__prompt {
+  font-size: 15px;
+  color: #4e5968;
+  letter-spacing: -0.15px;
+  text-align: center;
+  line-height: 1.5;
+}
+/* '직접 구성' 선택 후: 이 컬럼이 추가 대상임을 알리는 활성 상태 */
+.empty-col__icon {
+  font-size: 24px;
+  color: #4083f3;
+}
+.empty-col__cancel {
+  padding: 4px 12px;
   font-size: 12px;
-  color: #64748b;
-  background: repeating-linear-gradient(
-    45deg,
-    #f8fafc,
-    #f8fafc 8px,
-    #f1f5f9 8px,
-    #f1f5f9 16px
-  );
-  border: 1px dashed #cbd5e1;
+  color: #6b7684;
+  background: #fff;
+  border: 1px solid #e5e8eb;
   border-radius: 6px;
   cursor: pointer;
 }
-.empty-col:hover {
-  border-color: #60a5fa;
-  color: #2563eb;
+.empty-col__cancel:hover {
+  background: #f2f4f6;
 }
-.empty-col--target {
-  border-color: #2563eb;
-  border-style: solid;
-  background: #eff6ff;
-  color: #2563eb;
-}
-.empty-col__icon {
-  font-size: 18px;
-}
-.empty-col__title {
-  font-weight: 600;
-}
-.empty-col__actions {
+/* 방식 선택 카드 (컬럼 복제 / 직접 구성) */
+.empty-col__cards {
   display: flex;
-  flex-wrap: wrap;
+  gap: 12px;
+}
+.empty-col__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  gap: 4px;
-}
-.empty-col__btn {
-  padding: 3px 10px;
-  font-size: 11px;
-  color: #2563eb;
-  background: #ffffff;
-  border: 1px solid #bfdbfe;
-  border-radius: 4px;
+  gap: 6px;
+  width: 84px;
+  height: 74px;
+  background: #fff;
+  border: 1px solid #e5e8eb;
+  border-radius: 10px;
+  color: #4e5968;
   cursor: pointer;
+  transition: border-color 0.12s, color 0.12s, background-color 0.12s;
 }
-.empty-col__btn:hover {
-  background: #dbeafe;
+.empty-col__card:hover {
+  border-color: #4083f3;
+  color: #4083f3;
+  background: #f5f9ff;
 }
-.empty-col__btn--danger {
-  color: #dc2626;
-  border-color: #fecaca;
+.empty-col__card .material-symbols-outlined {
+  font-size: 24px;
 }
-.empty-col__btn--danger:hover {
-  background: #fee2e2;
-}
-.empty-col__hint {
-  font-size: 10px;
-  color: #94a3b8;
-  text-align: center;
+.empty-col__card-label {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.13px;
 }
 </style>

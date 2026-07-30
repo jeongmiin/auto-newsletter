@@ -11,7 +11,7 @@
  */
 import type { ModuleGroup, ModuleInstance } from '@/types/module'
 
-export const MAX_COLUMNS = 4
+export const MAX_COLUMNS = 3
 
 export const clampColumns = (n: number | undefined): number =>
   Math.min(Math.max(Math.floor(n ?? 1) || 1, 1), MAX_COLUMNS)
