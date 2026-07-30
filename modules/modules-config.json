@@ -1020,12 +1020,20 @@
           "group": "이미지 타이틀"
         },
         {
+          "key": "showSectionImageLink",
+          "label": "이미지 링크 사용",
+          "type": "boolean",
+          "default": false,
+          "showWhen": "showSectionImage",
+          "group": "이미지 타이틀"
+        },
+        {
           "key": "sectionImageLinkUrl",
           "label": "이미지 링크 URL",
           "type": "url",
           "default": "#",
           "placeholder": "이미지 클릭 시 이동할 URL",
-          "showWhen": "showSectionImage",
+          "showWhen": "showSectionImageLink",
           "group": "이미지 타이틀"
         },
         {
