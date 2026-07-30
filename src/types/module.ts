@@ -9,6 +9,8 @@ export interface ModuleMetadata {
   defaultStyles?: ModuleStyles
   // true이면 모듈 추가 목록(팔레트)에서 숨김 (기존 인스턴스/템플릿 렌더링은 계속 지원)
   hidden?: boolean
+  // 이 모듈이 속한 행을 나눌 수 있는 최대 컬럼 수 (미지정 시 전역 MAX_COLUMNS=3)
+  maxColumns?: number
 }
 
 export interface EditableProp {

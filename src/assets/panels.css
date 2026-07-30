@@ -44,19 +44,14 @@
 .gg-acc-spacer {
   flex: 1;
 }
-/* 섹션 컨테이너: 섹션 사이 얇은 구분선(첫 섹션 제외) */
-.gg-acc-section {
-  border-top: 1px solid #f2f4f6;
-}
 .gg-acc-section:first-child {
-  border-top: none;
+   border-bottom: 1px solid #f2f4f6;
 }
 /* 본문: 세로 스택 + 12px 간격 (하위 필드/블록 공통) */
 .gg-acc-body {
   display: flex;
   flex-direction: column;
-  /* gap: 12px; */
-  padding: 0 0 26px;
+  margin-bottom: 26px;
 }
 
 /* ===== 4방향(상·우·하·좌) 여백 잠금 컨트롤 ===== */
@@ -77,7 +72,7 @@
   height: 24px;
   border: none;
   background: none;
-  color: #8b95a1;
+  color: #1C1B1F;
   cursor: pointer;
   border-radius: 6px;
   flex-shrink: 0;
@@ -85,8 +80,11 @@
 .gg-lock-btn:hover {
   background: #f2f4f6;
 }
-.gg-lock-btn.is-locked {
-  color: #4083f3;
+
+/* 여백 개별/공통 적용 잠금 아이콘 — Material Symbols(채워진 FILL 1) */
+.gg-lock-btn .gg-lock-icon {
+  font-size: 20px;
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 .gg-margin-slider-row {
   display: flex;
@@ -133,6 +131,9 @@
   background: #f2f4f6;
   border-radius: 8px;
   flex-shrink: 0;
+}
+.gg-acc-body--card .gg-margin-value-field{
+  background-color: #ffffff;
 }
 .gg-margin-value-input {
   width: 28px;
@@ -196,4 +197,21 @@
 }
 .gg-margin-cell-input:focus {
   outline: none;
+}
+
+/* 잠금 해제 시 방향별(상단/하단/좌측/우측) 슬라이더 리스트 — Figma 612-4305 */
+.gg-margin-dir-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.gg-margin-dir-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.gg-margin-dir-label {
+  font-size: 14px;
+  color: #4e5968;
+  letter-spacing: -0.14px;
 }

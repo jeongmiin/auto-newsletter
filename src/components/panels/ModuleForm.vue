@@ -3,73 +3,49 @@
        selectedModule가 없으면 아무것도 그리지 않는다(호출부가 보통 이미 selectedModule 존재를 보고 렌더하지만,
        v-if로 한 번 더 방어해 selectedModule 타입도 non-null로 좁힌다). -->
   <div v-if="selectedModule">
-        <!-- 패널 상단 타이틀 (그룹 스타일 패널과 동일 스타일) — 선택한 모듈 이름 -->
-        <div class="p-4 pb-3 flex items-center justify-between gap-2">
+        <!-- 패널 상단 타이틀 (선택한 모듈 이름) — 스크롤 시 상단 고정(sticky) (Figma Frame 80) -->
+        <div class="gg-panel-title-bar p-4 pb-3 flex items-center justify-between gap-2">
           <p class="gg-panel-title truncate">{{ selectedModuleMetadata?.name }}</p>
         </div>
 
-        <!-- 영역 컬럼 분할 -->
-        <div class="px-[25px] py-3 border-b bg-white">
-          <div class="flex items-center justify-between mb-2">
-            <div class="flex items-center gap-1.5">
-              <i class="pi pi-th-large text-gray-500 text-sm"></i>
-              <span class="text-sm font-medium text-gray-700">이 행 컬럼 분할</span>
-            </div>
-            <span
-              v-if="moduleColumnInfo.columns > 1"
-              class="text-xs text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full"
-            >이 행 {{ moduleColumnInfo.columns }}단 중 {{ moduleColumnInfo.columnIndex + 1 }}번</span>
-            <span v-else class="text-xs text-gray-400">이 행 1단 (분할 안 됨)</span>
+        <!-- 영역 컬럼 분할 (Figma Frame 80 · 745:3908) — 1단/2단/3단 세그먼트 -->
+        <div class="px-[25px] pt-4 pb-4 border-b">
+          <p class="gg-field-label !mb-2.5">컬럼</p>
+          <div class="col-seg">
+            <button
+              v-for="n in maxColumns"
+              :key="`colseg-${n}`"
+              type="button"
+              class="col-seg-btn"
+              :class="{ 'is-active': moduleColumnInfo.columns === n }"
+              @click="setColumnsTo(n)"
+              v-tooltip.top="`이 모듈이 있는 행을 ${n}단으로 (모바일은 세로로 쌓임)`"
+            >{{ n }}단</button>
           </div>
-
-          <div class="flex flex-wrap items-center gap-1.5">
-            <div class="gg-segment">
-              <button
-                type="button"
-                class="gg-segment-btn"
-                :disabled="moduleColumnInfo.columns >= 4"
-                @click="splitSelectedModule"
-                v-tooltip.top="'이 모듈이 있는 행만 컬럼으로 분할 (+1단, 최대 4단 · 모바일은 세로로 쌓임)'"
-              >
-                <i class="pi pi-plus"></i>
-                컬럼 추가
-              </button>
-              <button
-                type="button"
-                class="gg-segment-btn gg-segment-btn--ghost"
-                :disabled="moduleColumnInfo.columns <= 1"
-                @click="unsplitSelectedModule"
-                v-tooltip.top="'이 행의 컬럼 분할 되돌리기 (-1단)'"
-              >
-                <i class="pi pi-replay"></i>
-                되돌리기
-              </button>
-            </div>
-            <template v-if="moduleColumnInfo.columns > 1">
-              <span class="w-px h-5 bg-gray-200 mx-0.5"></span>
-              <Button
-                @click="moveSelectedModuleColumn('left')"
-                :disabled="moduleColumnInfo.columnIndex === 0"
-                icon="pi pi-arrow-left"
-                severity="secondary"
-                size="small"
-                text
-                v-tooltip.top="'이 모듈을 왼쪽 컬럼으로 이동'"
-              />
-              <Button
-                @click="moveSelectedModuleColumn('right')"
-                :disabled="moduleColumnInfo.columnIndex >= moduleColumnInfo.columns - 1"
-                icon="pi pi-arrow-right"
-                severity="secondary"
-                size="small"
-                text
-                v-tooltip.top="'이 모듈을 오른쪽 컬럼으로 이동'"
-              />
-            </template>
+          <!-- 다단일 때만: 현재 위치 + 좌/우 컬럼 이동 -->
+          <div v-if="moduleColumnInfo.columns > 1" class="flex items-center gap-1.5 mt-2.5">
+            <span class="gg-field-hint !mt-0 flex-1"
+              >이 행 {{ moduleColumnInfo.columns }}단 중 {{ moduleColumnInfo.columnIndex + 1 }}번</span
+            >
+            <Button
+              @click="moveSelectedModuleColumn('left')"
+              :disabled="moduleColumnInfo.columnIndex === 0"
+              icon="pi pi-arrow-left"
+              severity="secondary"
+              size="small"
+              text
+              v-tooltip.top="'이 모듈을 왼쪽 컬럼으로 이동'"
+            />
+            <Button
+              @click="moveSelectedModuleColumn('right')"
+              :disabled="moduleColumnInfo.columnIndex >= moduleColumnInfo.columns - 1"
+              icon="pi pi-arrow-right"
+              severity="secondary"
+              size="small"
+              text
+              v-tooltip.top="'이 모듈을 오른쪽 컬럼으로 이동'"
+            />
           </div>
-          <p class="text-xs text-gray-400 mt-2">
-            선택한 모듈이 있는 <b>행</b>만 컬럼으로 나뉩니다(행마다 독립). 데스크톱은 가로, 모바일은 세로로 쌓입니다.
-          </p>
         </div>
 
         <!-- 속성 편집 폼 -->
@@ -80,21 +56,22 @@
           class="gg-acc-section"
           :class="{
             'gg-acc-section--flat': !group.name,
-            'gg-acc-section--quad': isQuadSelfLabeledGroup(group),
+            'gg-acc-section--quad': isQuadSelfLabeledGroup(group) && !isImageStyleSection(group),
           }"
         >
         <!-- 이름 있는 prop 그룹(레거시 모듈의 로고/타이틀 등 섹션) — Figma 352-1138의 접이식 헤더 패턴.
              그룹 전체를 켜고 끄는 토글(예: showLogo)이 있으면 헤더로 끌어올려 판넬을 열기 전에도 제어 가능하게 한다. -->
         <div
-          v-if="(group.name && !isQuadSelfLabeledGroup(group)) || (!group.name && flatHeaderLabel)"
+          v-if="hasSectionHeader(group) || (!group.name && flatHeaderLabel && isFullyFlatModule)"
           class="gg-acc-header"
-          :class="{ 'is-static': !group.name || isGroupSelfLabeled(group) }"
-          @click="!group.name || isGroupSelfLabeled(group) || toggleGroupPanel(group, gIdx)"
+          :class="{ 'is-static': !isCollapsibleSection(group), 'is-clickable': isCollapsibleSection(group) }"
+          @click="onSectionHeaderClick(group, gIdx)"
         >
+          <!-- 타이틀 왼쪽 화살표 아이콘: 열림 ⌄ / 닫힘 › (Figma 608-2624) -->
           <i
-            v-if="group.name && !isGroupSelfLabeled(group)"
+            v-if="isCollapsibleSection(group)"
             class="pi gg-acc-chevron"
-            :class="isGroupPanelExpanded(group, gIdx) ? 'pi-chevron-down' : 'pi-chevron-right'"
+            :class="isSectionOpen(group, gIdx) ? 'pi-chevron-down' : 'pi-chevron-right'"
           ></i>
           <span class="gg-acc-label">{{ group.name || flatHeaderLabel }}</span>
           <span class="gg-acc-spacer"></span>
@@ -104,15 +81,31 @@
             @update:modelValue="updateProperty(groupHeaderToggle(group)!.key, $event)"
             @click.stop
           />
+          <!-- 테두리 블록만 있는 섹션(예: 이미지 '테두리')은 블록의 on/off를 헤더 토글로 노출 -->
+          <ToggleSwitch
+            v-else-if="groupBorderToggleProp(group)"
+            :modelValue="borderIsOn(groupBorderToggleProp(group)!)"
+            @update:modelValue="toggleBorderOn(groupBorderToggleProp(group)!, $event)"
+            @click.stop
+          />
+          <!-- 그 외 이미지 스타일 섹션(이미지 크기 조정·모서리 둥글기·여백)은 별도 on/off 속성이 없으므로
+               토글이 섹션 열림/닫힘(UI 펼침 상태)을 제어한다 — '링크 추가'와 동일한 헤더 레이아웃. -->
+          <ToggleSwitch
+            v-else-if="isImageStyleSection(group)"
+            :modelValue="isSectionOpen(group, gIdx)"
+            @update:modelValue="toggleGroupPanel(group, gIdx)"
+            @click.stop
+          />
         </div>
         <div
           class="gg-acc-body"
-          v-show="
-            (!group.name || isGroupSelfLabeled(group) || isGroupPanelExpanded(group, gIdx)) &&
-            (!groupHeaderToggle(group) ||
-              Boolean(selectedModule.properties[groupHeaderToggle(group)!.key]))
-          "
+          :class="{ 'gg-acc-body--card': isCollapsibleSection(group) && isSectionOpen(group, gIdx) }"
+          v-show="isSectionOpen(group, gIdx)"
         >
+        <!-- 섹션 필드 래퍼: 접이식 카드 섹션에서는 이 래퍼가 하나의 회색 카드가 되어
+             한 섹션의 여러 속성(예: 이미지 크기 조정의 최대 너비+정렬)을 한 카드에 담는다.
+             카드가 아닌 섹션에서는 display:contents 로 레이아웃에 영향 없음. -->
+        <div class="gg-acc-fields">
         <div
           v-for="(prop, index) in group.props"
           :key="prop.key"
@@ -131,7 +124,7 @@
             <div class="gg-margin-quad-head">
               <!-- 여백 라벨은 항상 quad-head(잠금 버튼과 한 줄)에 노출. 그룹이 이 quad로만 자기 이름을
                    가지면(예: 그룹"바깥 여백") 섹션 헤더는 생략되고 이 라벨이 그 이름을 대신한다. -->
-              <span class="gg-field-label !mb-0">{{ quadLabel(prop) }}</span>
+              <span class="gg-field-label !mb-0">{{ (isImageStyleSection(group) && quadLabel(prop) === group.name) ? '전체 적용' : quadLabel(prop) }}</span>
               <button
                 type="button"
                 class="gg-lock-btn"
@@ -139,7 +132,7 @@
                 @click="toggleQuadLock(quadPrefixFor(prop))"
                 v-tooltip.top="isQuadLocked(quadPrefixFor(prop)) ? '잠금 해제하면 방향별로 따로 조정할 수 있어요' : '잠그면 4방향이 함께 움직여요'"
               >
-                <i :class="isQuadLocked(quadPrefixFor(prop)) ? 'pi pi-lock' : 'pi pi-lock-open'"></i>
+                <span class="material-symbols-outlined gg-lock-icon">{{ isQuadLocked(quadPrefixFor(prop)) ? 'lock' : 'lock_open_right' }}</span>
               </button>
             </div>
 
@@ -165,46 +158,103 @@
               </div>
             </div>
 
-            <div v-else class="gg-margin-grid">
-              <div class="gg-margin-cell">
-                <span class="gg-margin-cell-label">상</span>
-                <input
-                  type="number"
-                  min="0"
-                  :value="quadPxNumber(prop)"
-                  @input="onQuadDirInput(prop, $event)"
-                  class="gg-margin-cell-input"
-                />
+            <!-- 잠금 해제: 방향별(상단/하단/좌측/우측) 슬라이더 + 값 필드 (GroupPropertiesPanel과 동일 레이아웃) -->
+            <div v-else class="gg-margin-dir-list">
+              <div class="gg-margin-dir-row">
+                <span class="gg-margin-dir-label">상단</span>
+                <div class="gg-margin-slider-row">
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="1"
+                    :value="quadPxNumber(prop)"
+                    @input="onQuadDirInput(prop, $event)"
+                    class="gg-margin-slider"
+                  />
+                  <div class="gg-margin-value-field">
+                    <input
+                      type="number"
+                      min="0"
+                      :value="quadPxNumber(prop)"
+                      @input="onQuadDirInput(prop, $event)"
+                      class="gg-margin-value-input"
+                    />
+                    <span class="gg-margin-value-unit">px</span>
+                  </div>
+                </div>
               </div>
-              <div class="gg-margin-cell">
-                <span class="gg-margin-cell-label">우</span>
-                <input
-                  type="number"
-                  min="0"
-                  :value="quadPxNumber(quadRight(group.props, index))"
-                  @input="onQuadDirInput(quadRight(group.props, index), $event)"
-                  class="gg-margin-cell-input"
-                />
+              <div class="gg-margin-dir-row">
+                <span class="gg-margin-dir-label">하단</span>
+                <div class="gg-margin-slider-row">
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="1"
+                    :value="quadPxNumber(quadBottom(group.props, index))"
+                    @input="onQuadDirInput(quadBottom(group.props, index), $event)"
+                    class="gg-margin-slider"
+                  />
+                  <div class="gg-margin-value-field">
+                    <input
+                      type="number"
+                      min="0"
+                      :value="quadPxNumber(quadBottom(group.props, index))"
+                      @input="onQuadDirInput(quadBottom(group.props, index), $event)"
+                      class="gg-margin-value-input"
+                    />
+                    <span class="gg-margin-value-unit">px</span>
+                  </div>
+                </div>
               </div>
-              <div class="gg-margin-cell">
-                <span class="gg-margin-cell-label">하</span>
-                <input
-                  type="number"
-                  min="0"
-                  :value="quadPxNumber(quadBottom(group.props, index))"
-                  @input="onQuadDirInput(quadBottom(group.props, index), $event)"
-                  class="gg-margin-cell-input"
-                />
+              <div class="gg-margin-dir-row">
+                <span class="gg-margin-dir-label">좌측</span>
+                <div class="gg-margin-slider-row">
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="1"
+                    :value="quadPxNumber(quadLeft(group.props, index))"
+                    @input="onQuadDirInput(quadLeft(group.props, index), $event)"
+                    class="gg-margin-slider"
+                  />
+                  <div class="gg-margin-value-field">
+                    <input
+                      type="number"
+                      min="0"
+                      :value="quadPxNumber(quadLeft(group.props, index))"
+                      @input="onQuadDirInput(quadLeft(group.props, index), $event)"
+                      class="gg-margin-value-input"
+                    />
+                    <span class="gg-margin-value-unit">px</span>
+                  </div>
+                </div>
               </div>
-              <div class="gg-margin-cell">
-                <span class="gg-margin-cell-label">좌</span>
-                <input
-                  type="number"
-                  min="0"
-                  :value="quadPxNumber(quadLeft(group.props, index))"
-                  @input="onQuadDirInput(quadLeft(group.props, index), $event)"
-                  class="gg-margin-cell-input"
-                />
+              <div class="gg-margin-dir-row">
+                <span class="gg-margin-dir-label">우측</span>
+                <div class="gg-margin-slider-row">
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="1"
+                    :value="quadPxNumber(quadRight(group.props, index))"
+                    @input="onQuadDirInput(quadRight(group.props, index), $event)"
+                    class="gg-margin-slider"
+                  />
+                  <div class="gg-margin-value-field">
+                    <input
+                      type="number"
+                      min="0"
+                      :value="quadPxNumber(quadRight(group.props, index))"
+                      @input="onQuadDirInput(quadRight(group.props, index), $event)"
+                      class="gg-margin-value-input"
+                    />
+                    <span class="gg-margin-value-unit">px</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -256,8 +306,63 @@
             <p v-if="prop.hint" class="gg-field-hint" v-html="prop.hint"></p>
           </div>
 
+          <!-- 이미지 최대 너비: 슬라이더 + % 값 (Figma 686-3949) -->
+          <div v-else-if="isMaxWidthField(prop)" class="space-y-1">
+            <div class="gg-margin-slider-row">
+              <input
+                type="range"
+                min="0"
+                max="100"
+                step="1"
+                :value="pctNumber(prop)"
+                @input="onPctInput(prop, $event)"
+                class="gg-margin-slider"
+              />
+              <div class="gg-margin-value-field">
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  :value="pctNumber(prop)"
+                  @change="onPctInput(prop, $event)"
+                  @keydown.enter="blurTarget"
+                  class="gg-margin-value-input"
+                />
+                <span class="gg-margin-value-unit">%</span>
+              </div>
+            </div>
+            <p v-if="prop.hint" class="gg-field-hint" v-html="prop.hint"></p>
+          </div>
+
+          <!-- 모서리 둥글기: 슬라이더 + 값(px) — 여백 슬라이더와 동일 UI -->
+          <div v-else-if="isBorderRadiusField(prop)" class="space-y-1">
+            <div class="gg-margin-slider-row">
+              <input
+                type="range"
+                min="0"
+                max="100"
+                step="1"
+                :value="radiusNumber(prop)"
+                @input="onRadiusInput(prop, $event)"
+                class="gg-margin-slider"
+              />
+              <div class="gg-margin-value-field">
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  :value="radiusNumber(prop)"
+                  @input="onRadiusInput(prop, $event)"
+                  class="gg-margin-value-input"
+                />
+                <span class="gg-margin-value-unit">px</span>
+              </div>
+            </div>
+            <p v-if="prop.hint" class="gg-field-hint" v-html="prop.hint"></p>
+          </div>
+
           <!-- 텍스트 입력 (일반) -->
-          <div v-else-if="prop.type === 'text'" class="space-y-1 gg-text-input">
+          <div v-else-if="prop.type === 'text'" class="space-y-2 gg-text-input">
             <InputText
               :modelValue="String(selectedModule.properties[prop.key] || '')"
               @update:modelValue="updateProperty(prop.key, $event ?? '')"
@@ -372,20 +477,24 @@
           </div>
 
           <!-- URL 입력 -->
-          <div v-else-if="prop.type === 'url'" class="space-y-1 gg-text-input">
+          <div v-else-if="prop.type === 'url'" class="space-y-2 gg-text-input">
             <InputText
               :modelValue="String(selectedModule.properties[prop.key] || '')"
               @update:modelValue="updateProperty(prop.key, $event ?? '')"
               :placeholder="prop.placeholder || 'https://example.com'"
               class="w-full"
             />
-            <p class="gg-field-hint">https:// 로 시작하는 전체 주소를 입력하세요</p>
+            <p v-if="prop.hint" class="gg-field-hint" v-html="prop.hint"></p>
           </div>
 
           <!-- 테두리 스타일 — 전체 스타일(GlobalStylePanel)과 동일한 통합 블록(토글/라디오/색상/두께) -->
           <div v-else-if="isBorderStyleStart(prop)" class="gg-border-block">
-            <!-- 헤더: 'none' 옵션이 있으면 on/off 토글, 없으면 라벨만 -->
-            <div v-if="borderHasNone(prop)" class="gg-color-row">
+            <!-- 헤더: 'none' 옵션이 있으면 on/off 토글, 없으면 라벨만.
+                 단, 섹션 헤더로 토글을 끌어올린 경우(groupBorderToggleProp)는 블록 내부 토글 행을 생략한다. -->
+            <div
+              v-if="borderHasNone(prop) && groupBorderToggleProp(group) !== prop"
+              class="gg-color-row"
+            >
               <!-- 그룹명과 같으면 이름을 한 번만 — 빈 span으로 자리만 유지해 토글은 우측 정렬 -->
               <span class="gg-field-label !mb-0">{{ isDupLabelProp(group, prop) ? '' : prop.label }}</span>
               <ToggleSwitch :modelValue="borderIsOn(prop)" @update:modelValue="toggleBorderOn(prop, $event)" />
@@ -450,6 +559,25 @@
                 </div>
               </div>
             </template>
+          </div>
+
+          <!-- 정렬: 좌측/중앙/우측 세그먼트 (Figma 686-3949) — left/center/right 옵션 select 대체.
+               최대 너비가 100%(전체 폭)면 정렬이 의미 없으므로 비활성화하고, 100% 미만이면 활성화한다. -->
+          <div v-else-if="isAlignSegment(prop)">
+            <div class="align-seg" :class="{ 'is-disabled': alignDisabledByFullWidth }">
+              <button
+                v-for="opt in ALIGN_SEG"
+                :key="opt.value"
+                type="button"
+                class="align-seg-btn"
+                :class="{ 'is-active': String(selectedModule.properties[prop.key] || 'center') === opt.value }"
+                :disabled="alignDisabledByFullWidth"
+                @click="updateProperty(prop.key, opt.value)"
+              >
+                <span class="material-symbols-outlined">{{ opt.icon }}</span>
+                {{ opt.label }}
+              </button>
+            </div>
           </div>
 
           <!-- 셀렉트 -->
@@ -1182,6 +1310,7 @@
         </div>
         </div>
         </div>
+        </div>
       </div>
 
         <!-- 모듈 제거 버튼 -->
@@ -1329,36 +1458,61 @@ const moduleColumnInfo = computed(() => {
   }
 })
 
-const splitSelectedModule = () => {
-  if (selectedModule.value) moduleStore.splitModuleColumns(selectedModule.value.id)
-}
-const unsplitSelectedModule = () => {
-  if (selectedModule.value) moduleStore.unsplitModuleColumns(selectedModule.value.id)
+// 이 모듈이 나눌 수 있는 최대 컬럼 수 — config의 maxColumns(예: 설명 텍스트=2), 없으면 전역 3단.
+const maxColumns = computed(() => selectedModuleMetadata.value?.maxColumns ?? 3)
+
+// 1단/2단/3단 세그먼트: 현재 컬럼 수에서 목표 n단까지 split(+1)/unsplit(-1) 반복.
+// (split/unsplit이 적용된 컬럼 수를 반환하므로 반응성 타이밍과 무관하게 반복 판단)
+const setColumnsTo = (n: number) => {
+  if (!selectedModule.value) return
+  const id = selectedModule.value.id
+  n = Math.min(n, maxColumns.value)
+  let cur = moduleColumnInfo.value.columns
+  let guard = 0
+  while (cur < n && guard++ < 6) {
+    const r = moduleStore.splitModuleColumns(id)
+    if (r == null || r === cur) break
+    cur = r
+  }
+  while (cur > n && guard++ < 6) {
+    const r = moduleStore.unsplitModuleColumns(id)
+    if (r == null || r === cur) break
+    cur = r
+  }
 }
 const moveSelectedModuleColumn = (direction: 'left' | 'right') => {
   if (selectedModule.value) moduleStore.moveModuleColumn(selectedModule.value.id, direction)
 }
 
-// 아코디언 그룹: 모든 prop에 group이 지정되면 그룹별 묶기, 그렇지 않으면 단일 평면 그룹
+// 아코디언 그룹화:
+// - group이 하나도 없으면 단일 평면 그룹(기존 flat 모듈 그대로).
+// - 일부라도 group이 있으면 group 없는 prop은 null 그룹(상단 상시 노출용)으로, 나머지는 이름별 섹션으로 묶는다.
+//   (예: 이미지 모듈 = 이미지 URL/설명은 상단 상시, 크기/링크/모서리/테두리/여백은 접이식 섹션)
 const propGroups = computed(() => {
   const props = editableProps.value
   if (!props.length) return [{ name: null as string | null, props: [] as typeof props }]
-  const allGrouped = props.every((p) => !!p.group)
-  if (!allGrouped) {
+  const anyGrouped = props.some((p) => !!p.group)
+  if (!anyGrouped) {
     return [{ name: null as string | null, props }]
   }
-  const order: string[] = []
-  const map = new Map<string, typeof props>()
+  const order: (string | null)[] = []
+  const map = new Map<string | null, typeof props>()
   for (const p of props) {
-    const g = p.group as string
+    const g = (p.group ?? null) as string | null
     if (!map.has(g)) {
       map.set(g, [])
       order.push(g)
     }
     map.get(g)!.push(p)
   }
-  return order.map((name) => ({ name: name as string | null, props: map.get(name)! }))
+  return order.map((name) => ({ name, props: map.get(name)! }))
 })
+
+// 모듈 전체가 평면(섹션 없음)인지 — flat 카테고리 헤더는 이 경우에만 노출한다.
+// (혼합 모듈의 선두 null 그룹은 헤더 없이 필드만 상단에 상시 노출)
+const isFullyFlatModule = computed(
+  () => propGroups.value.length === 1 && !propGroups.value[0].name,
+)
 
 // 조건부 표시 평가
 const evalShowWhen = (showWhen: unknown): boolean => {
@@ -1400,9 +1554,15 @@ const groupHeaderToggle = (group: PropGroup): EditableProp | null => {
 // 그룹 판넬 펼침 상태 — 그룹명(또는 인덱스)별로 관리. 기본값: 첫 그룹만 펼침(기존 Panel 동작과 동일)
 const groupPanelExpanded = reactive<Record<string, boolean>>({})
 const groupPanelKey = (group: PropGroup, index: number): string => group.name ?? `_flat_${index}`
+// 이미지 스타일 섹션 중 기본값을 '닫힘'(토글 off)으로 둘 섹션 — 이미지 크기 조정·모서리 둥글기.
+const DEFAULT_CLOSED_SECTIONS = new Set(['이미지 크기 조정', '모서리 둥글기'])
 const isGroupPanelExpanded = (group: PropGroup, index: number): boolean => {
   const key = groupPanelKey(group, index)
-  if (!(key in groupPanelExpanded)) groupPanelExpanded[key] = index === 0
+  // 기본값: 펼침(Figma 640-2393에서 섹션은 기본 열린 상태). 단, 위 지정 이미지 섹션은 닫힘으로 시작한다.
+  // 사용자가 열고/접으면 그 상태를 기억한다.
+  if (!(key in groupPanelExpanded)) {
+    groupPanelExpanded[key] = !(isImageStyleSection(group) && DEFAULT_CLOSED_SECTIONS.has(group.name ?? ''))
+  }
   return groupPanelExpanded[key]
 }
 const toggleGroupPanel = (group: PropGroup, index: number): void => {
@@ -1527,6 +1687,51 @@ const normalizePxField = (prop: EditableProp) => {
 const isFontSizeField = (prop: EditableProp): boolean =>
   prop.type === 'text' && /fontsize$/i.test(prop.key)
 
+// ===== 이미지 크기 조정 (Figma 686-3949) =====
+// 최대 너비: 슬라이더 + % 값 필드. (*MaxWidth 키의 text 필드)
+const isMaxWidthField = (prop: EditableProp): boolean =>
+  prop.type === 'text' && /maxwidth$/i.test(prop.key)
+const pctNumber = (prop: EditableProp): number => {
+  const raw = String(selectedModule.value?.properties[prop.key] ?? prop.default ?? '100%')
+  const n = parseInt(raw, 10)
+  return Number.isFinite(n) ? Math.min(Math.max(n, 0), 100) : 100
+}
+const onPctInput = (prop: EditableProp, event: Event) => {
+  const n = Math.min(Math.max(parseInt((event.target as HTMLInputElement).value, 10) || 0, 0), 100)
+  updateProperty(prop.key, `${n}%`)
+}
+// 모서리 둥글기: 슬라이더 + px 값 필드. (*BorderRadius 키의 text 필드)
+const RADIUS_MAX = 100
+const isBorderRadiusField = (prop: EditableProp): boolean =>
+  prop.type === 'text' && /borderradius$/i.test(prop.key)
+const radiusNumber = (prop: EditableProp): number => {
+  const raw = String(selectedModule.value?.properties[prop.key] ?? prop.default ?? '0')
+  const n = parseInt(raw, 10)
+  return Number.isFinite(n) ? Math.min(Math.max(n, 0), RADIUS_MAX) : 0
+}
+const onRadiusInput = (prop: EditableProp, event: Event) => {
+  const n = Math.min(Math.max(parseInt((event.target as HTMLInputElement).value, 10) || 0, 0), RADIUS_MAX)
+  updateProperty(prop.key, `${n}px`)
+}
+// 정렬: 좌측/중앙/우측 세그먼트 — left/center/right 옵션을 가진 select 필드.
+const ALIGN_SEG = [
+  { value: 'left', label: '좌측', icon: 'align_justify_flex_start' },
+  { value: 'center', label: '중앙', icon: 'align_justify_center' },
+  { value: 'right', label: '우측', icon: 'align_justify_flex_end' },
+] as const
+// 같은 모듈에 최대 너비(*MaxWidth) 속성이 있고 그 값이 100%(전체 폭)면 정렬 세그먼트를 비활성화한다.
+// (전체 폭에서는 좌/중/우 정렬이 시각적으로 동일하므로 불필요) — 100% 미만이면 활성화.
+const alignDisabledByFullWidth = computed(() => {
+  const maxProp = editableProps.value.find((p) => isMaxWidthField(p))
+  if (!maxProp) return false
+  return pctNumber(maxProp) >= 100
+})
+const isAlignSegment = (prop: EditableProp): boolean => {
+  if (prop.type !== 'select' || !prop.options) return false
+  const vals = prop.options.map((o) => o.value)
+  return vals.includes('left') && vals.includes('center') && vals.includes('right')
+}
+
 const FONT_SIZE_MIN = 8
 const FONT_SIZE_MAX = 28
 
@@ -1645,8 +1850,6 @@ const groupSelfLabeledProp = (group: { name?: string | null; props: EditableProp
 // 이름 있는 속성 그룹은 모두 아코디언 없이 항상 정적 헤더로 노출한다(chevron·접기 제거).
 // 헤더는 그룹 라벨(+그룹 토글)만 두고, 하위 속성은 토글/showWhen으로 노출된다.
 // (내용·배경 박스: 속성 바로 노출 / 테두리 등 토글 그룹: 토글 ON일 때 하위 속성 노출)
-const isGroupSelfLabeled = (group: { name?: string | null; props: EditableProp[] }): boolean =>
-  !!group.name
 const isDupLabelProp = (group: { name?: string | null; props: EditableProp[] }, prop: EditableProp): boolean =>
   groupSelfLabeledProp(group) === prop
 
@@ -1656,6 +1859,49 @@ const isDupLabelProp = (group: { name?: string | null; props: EditableProp[] }, 
 const isQuadSelfLabeledGroup = (group: { name?: string | null; props: EditableProp[] }): boolean => {
   const p = groupSelfLabeledProp(group)
   return !!p && isQuadStart(p, group.props, group.props.indexOf(p))
+}
+
+// ===== 접이식 섹션 (Figma 608-2624 / 640-2393) =====
+// 타이틀 옆 화살표(chevron) + 열릴 때 본문에 배경 카드. 헤더(화살표+타이틀)를 클릭하면 열고/닫는다.
+// 섹션 헤더(타이틀 행)를 갖는 그룹 — 이름 있고 quad-self-labeled(헤더 없음)가 아닌 그룹.
+// 이미지 모듈의 스타일 섹션(이미지 파일 제외) — '링크 추가'처럼 접이식 카드로 통일한다(Figma 요청).
+// 이미지 크기 조정·모서리 둥글기·여백은 별도 on/off 속성이 없어 토글이 UI 펼침 상태를 제어한다.
+// (링크 추가=showImageLink, 테두리=borderStyle 토글은 기존 그대로 실제 속성이 토글을 담당한다.)
+const isImageStyleSection = (group: PropGroup): boolean =>
+  selectedModule.value?.moduleId === 'ModuleImg' && !!group.name && group.name !== '이미지 파일'
+
+const hasSectionHeader = (group: PropGroup): boolean =>
+  !!group.name && (!isQuadSelfLabeledGroup(group) || isImageStyleSection(group))
+// 헤더 우측에 on/off 토글이 있는 그룹인지 — boolean 토글 또는 테두리 블록(on/off) 토글.
+const groupHasHeaderToggle = (group: PropGroup): boolean =>
+  !!groupHeaderToggle(group) || !!groupBorderToggleProp(group)
+// 접이식(화살표+배경카드+아코디언)으로 만들 섹션 — 헤더 토글이 있거나, 이미지 스타일 섹션.
+// 그 외 토글 없는 섹션(예: '버튼')은 기존처럼 평면 나열(화살표·카드·접기 없음).
+const isCollapsibleSection = (group: PropGroup): boolean =>
+  hasSectionHeader(group) && (groupHasHeaderToggle(group) || isImageStyleSection(group))
+// 섹션이 "열림"인지: 토글 그룹은 토글 값에, 그 외 이름 그룹은 펼침 상태에 따른다. flat/헤더없는 quad는 항상 열림.
+const isSectionOpen = (group: PropGroup, index: number): boolean => {
+  if (!isCollapsibleSection(group)) return true
+  const t = groupHeaderToggle(group)
+  if (t) return Boolean(selectedModule.value?.properties[t.key])
+  const b = groupBorderToggleProp(group)
+  if (b) return borderIsOn(b)
+  return isGroupPanelExpanded(group, index)
+}
+// 헤더 클릭: 토글 그룹은 스위치를 on/off, 테두리 토글 그룹은 테두리 on/off, 그 외는 펼침 상태 토글.
+const onSectionHeaderClick = (group: PropGroup, index: number): void => {
+  if (!isCollapsibleSection(group)) return
+  const t = groupHeaderToggle(group)
+  if (t) {
+    updateProperty(t.key, !selectedModule.value?.properties[t.key])
+    return
+  }
+  const b = groupBorderToggleProp(group)
+  if (b) {
+    toggleBorderOn(b, !borderIsOn(b))
+    return
+  }
+  toggleGroupPanel(group, index)
 }
 
 // ===== 테두리 "전체 블록" (전체 스타일 GlobalStylePanel과 동일 UI) =====
@@ -1710,6 +1956,14 @@ const toggleBorderOn = (prop: EditableProp, on: boolean): void => {
   } else {
     updateProperty(prop.key, 'none')
   }
+}
+
+// 섹션이 '테두리 블록(on/off none 토글)'만으로 자기 이름을 갖는 경우(예: 이미지 '테두리'),
+// 그 블록의 on/off 토글을 섹션 헤더로 끌어올린다 → '링크 추가'처럼 헤더 우측에 토글이 위치.
+// (블록 내부의 자체 토글 행은 렌더하지 않는다)
+const groupBorderToggleProp = (group: PropGroup): EditableProp | null => {
+  const p = groupSelfLabeledProp(group)
+  return p && isBorderStyleStart(p) && borderHasNone(p) ? p : null
 }
 
 const borderWidthNum = (prop: EditableProp): number => {
@@ -2436,6 +2690,86 @@ const onSelectPointColor = (key: string, index: number): void => {
   color: #191f28;
   letter-spacing: -0.2px;
 }
+/* 패널 상단 타이틀 바 — 스크롤 시 상단 고정(sticky). 흰 배경으로 아래 콘텐츠를 덮는다. */
+.gg-panel-title-bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #fff;
+}
+
+/* 컬럼 세그먼트 (1단/2단/3단) — Figma Frame 80(745:3908) */
+.col-seg {
+  display: flex;
+  gap: 10px;
+}
+.col-seg-btn {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e5e8eb;
+  border-radius: 8px;
+  background: #fff;
+  color: #8b95a1;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+.col-seg-btn:hover {
+  border-color: #d1d6db;
+}
+.col-seg-btn.is-active {
+  background: #4e5968;
+  border-color: #4e5968;
+  color: #fff;
+}
+
+/* 정렬 세그먼트 (좌측/중앙/우측) — Figma 686-3949 */
+.align-seg {
+  display: flex;
+  gap: 12px;
+}
+.align-seg-btn {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 1px solid #e5e8eb;
+  border-radius: 8px;
+  background: #fff;
+  color: #6b7684;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+.align-seg-btn .material-symbols-outlined {
+  font-size: 18px;
+}
+.align-seg-btn:hover {
+  border-color: #d1d6db;
+}
+.align-seg-btn.is-active {
+  background: #4083f3;
+  border-color: #4083f3;
+  color: #fff;
+}
+/* 최대 너비 100%일 때: 정렬 세그먼트 비활성 — 활성/선택 여부와 무관하게 톤 통일(클릭 불가) */
+.align-seg.is-disabled .align-seg-btn,
+.align-seg.is-disabled .align-seg-btn.is-active,
+.align-seg.is-disabled .align-seg-btn:hover {
+  background: #ECEEF1;
+  border-color: #D1D6DC;
+  color: #B0B8C1;
+  cursor: not-allowed;
+}
 
 /* Quill 에디터를 이메일 기본 폰트로 통일 (입력 시 결과물과 동일하게 보이도록) */
 :deep(.ql-editor) {
@@ -2759,7 +3093,7 @@ const onSelectPointColor = (key: string, index: number): void => {
   font-weight: 500;
   color: #333d4b;
   letter-spacing: -0.13px;
-  width: 40px;
+  width: 60px;
   cursor: pointer;
 }
 .gg-brd-radio-preview {
@@ -2770,7 +3104,7 @@ const onSelectPointColor = (key: string, index: number): void => {
 /* 텍스트/URL 인풋 — TextField/Small/Filled */
 .gg-text-input :deep(.p-inputtext) {
   width: 100%;
-  height: 40px;
+  height: 32px;
   padding: 0 12px;
   background: #f2f4f6;
   border: 1px solid transparent;
@@ -2787,7 +3121,9 @@ const onSelectPointColor = (key: string, index: number): void => {
   background: #fff;
   box-shadow: none;
 }
-
+.gg-acc-body--card .gg-text-input :deep(.p-inputtext) {
+  background-color: #ffffff;
+}
 /* 셀렉트 — Dropdown/Small */
 .gg-select :deep(.p-select) {
   height: 40px;
@@ -2825,6 +3161,31 @@ const onSelectPointColor = (key: string, index: number): void => {
   font-size: 12px;
   color: #8b95a1;
   flex-shrink: 0;
+}
+/* 접이식 섹션 헤더(화살표+타이틀)는 클릭으로 열고/닫는다 */
+.gg-acc-header.is-clickable {
+  cursor: pointer;
+}
+/* 열린 섹션 본문 (Figma 608-2624 / 640-2393) — 본문은 하단 구분선만 두고,
+   실제 배경 카드는 내부 각 속성 블록(> div)에 적용한다. */
+.gg-acc-body--card {
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f2f4f6;
+  margin-bottom: 0;
+}
+/* 섹션 필드 래퍼: 기본은 레이아웃에 투명(카드 아닌 섹션은 기존 그대로 26px 간격) */
+.gg-acc-fields {
+  display: contents;
+}
+/* 접이식 카드 섹션: 래퍼가 하나의 회색 카드가 되어 그 안 속성들을 함께 담는다
+   (예: 이미지 크기 조정의 최대 너비 + 정렬이 같은 카드에) */
+.gg-acc-body--card > .gg-acc-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background-color: #F2F4F6;
+  border-radius: 10px;
+  padding: 16px;
 }
 /* 이름 없는(flat) 그룹은 구분선 제거 (ModuleForm 전용) */
 .gg-acc-section--flat {
