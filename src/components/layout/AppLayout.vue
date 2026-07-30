@@ -11,7 +11,9 @@
       <!-- 좌측 컨텍스트 패널: 캔버스에서 모듈/그룹을 선택 중이면 그게 최우선, 아니면 활성 레일 메뉴에 따라 전환.
            오른쪽 가장자리 리사이즈 핸들로 너비 조절(모든 좌측 패널이 --left-panel-width를 공유). -->
       <div class="flex flex-shrink-0 min-h-0" :style="{ '--left-panel-width': `${leftPanelWidth}px` }">
-        <GlobalStylePanel v-if="!hasSelection && editorStore.activeMenu === 'style'" />
+        <!-- 캔버스 빈 컬럼에서 '직접 구성'을 누른 상태 — 그 컬럼의 구성 요소를 고르는 패널이 최우선 -->
+        <ColumnComposePanel v-if="showComposePanel" />
+        <GlobalStylePanel v-else-if="!hasSelection && editorStore.activeMenu === 'style'" />
         <PointColorPanel v-else-if="!hasSelection && editorStore.activeMenu === 'point'" />
         <CategoryModulePanel
           v-else-if="!hasSelection && activeCategory"
@@ -74,6 +76,7 @@ import GlobalStylePanel from '@/components/panels/GlobalStylePanel.vue'
 import PointColorPanel from '@/components/panels/PointColorPanel.vue'
 import CategoryModulePanel from '@/components/panels/CategoryModulePanel.vue'
 import SelectedItemPanel from '@/components/panels/SelectedItemPanel.vue'
+import ColumnComposePanel from '@/components/panels/ColumnComposePanel.vue'
 import ComingSoonPanel from '@/components/panels/ComingSoonPanel.vue'
 import { useEditorStore } from '@/stores/editorStore'
 import { useModuleStore } from '@/stores/moduleStore'
@@ -86,6 +89,13 @@ const moduleStore = useModuleStore()
 // — 그룹 멤버를 선택한 채로 카테고리 메뉴에서 원소 모듈을 추가하면 그 그룹에 삽입되는 흐름을 유지하기 위함.
 const hasSelection = computed(
   () => (!!moduleStore.selectedModuleId || !!moduleStore.selectedGroupId) && !editorStore.forceRailPanel,
+)
+
+// 캔버스 빈 컬럼의 '직접 구성'으로 대상 컬럼이 지정된 상태 → 그 컬럼의 '구성 요소' 패널을 보여준다.
+// (대상 컬럼에 요소가 추가되면 그 모듈이 선택되어 아래 SelectedItemPanel의 속성 폼으로 자연히 전환된다.
+//  단, 레일 메뉴를 명시적으로 클릭했으면 그 메뉴가 우선 — 거기서 추가하는 모듈도 이 컬럼으로 들어간다.)
+const showComposePanel = computed(
+  () => !!moduleStore.columnTarget && !hasSelection.value && !editorStore.forceRailPanel,
 )
 
 const CATEGORY_MENUS = ['text', 'image', 'button', 'table'] as const

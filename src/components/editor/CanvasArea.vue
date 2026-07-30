@@ -202,7 +202,7 @@
                       >
                         <template v-if="isColTarget(item.id, rowIdx, col - 1)">
                           <span class="material-symbols-outlined empty-col__icon">arrow_downward</span>
-                          <div class="empty-col__prompt">왼쪽 패널에서 모듈을 선택하면<br />이 컬럼에 추가됩니다</div>
+                          <div class="empty-col__prompt">왼쪽 '구성 요소'에서 넣을 요소를<br />체크하면 이 컬럼에 추가됩니다</div>
                           <button
                             type="button"
                             class="empty-col__cancel"

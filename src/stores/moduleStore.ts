@@ -61,7 +61,7 @@ import { resolveWrapBorderCss } from '@/utils/wrapBorder'
 import { computeGroupLayout, resolveGroupRows, clampColumns, type GroupRowLayout } from '@/utils/groupLayout'
 
 // 나눈 컬럼의 '구성 요소' 종류 (Figma 717-9607)
-export type ComposedKind = 'image' | 'title' | 'text' | 'button'
+export type ComposedKind = 'image' | 'title' | 'text' | 'button' | 'smallButton'
 
 export const useModuleStore = defineStore('module', () => {
   // ============= State =============
@@ -92,6 +92,27 @@ export const useModuleStore = defineStore('module', () => {
       useEditorStore().forceRailPanel = selectedByAdd
     }
     selectedByAdd = false
+  })
+
+  // [컬럼 분할] '직접 구성' 대상 컬럼 밖의 모듈/그룹을 선택하면 대상 지정을 해제한다.
+  // (대상 컬럼 안의 모듈을 선택하는 건 구성 요소 편집의 연장이므로 지정을 유지 —
+  //  구성 요소를 체크해 추가된 모듈이 자동 선택되는 경우가 이에 해당.)
+  watch([selectedModuleId, selectedGroupId], () => {
+    const target = columnTarget.value
+    if (!target) return
+    if (selectedGroupId.value) {
+      columnTarget.value = null
+      return
+    }
+    const id = selectedModuleId.value
+    if (!id) return
+    const mod = modules.value.find((m) => m.id === id)
+    const inTargetCell =
+      mod &&
+      mod.groupId === target.groupId &&
+      (mod.rowIndex ?? 0) === target.rowIndex &&
+      (mod.columnIndex ?? 0) === target.columnIndex
+    if (!inTargetCell) columnTarget.value = null
   })
 
   // 모듈 추가 시 새 모듈을 선택 상태로 두되(캔버스 하이라이트 유지), 좌측 팔레트는 그대로 유지한다.
@@ -1380,9 +1401,16 @@ export const useModuleStore = defineStore('module', () => {
     return next
   }
 
-  /** [행별 컬럼] 빈 컬럼을 '추가 대상'으로 지정 (다음에 추가되는 모듈이 이 행/컬럼으로) */
+  /**
+   * [행별 컬럼] 빈 컬럼을 '추가 대상'으로 지정 (다음에 추가되는 모듈이 이 행/컬럼으로).
+   * 캔버스 '직접 구성' 버튼이 호출한다 — 좌측 패널을 이 컬럼의 '구성 요소' 패널로 전환하기 위해
+   * 기존 선택(다른 컬럼의 모듈 등)과 레일 패널 고정을 함께 해제한다.
+   */
   const setColumnTarget = (groupId: string, rowIndex: number, columnIndex: number): void => {
     columnTarget.value = { groupId, rowIndex, columnIndex }
+    selectedModuleId.value = null
+    selectedGroupId.value = null
+    useEditorStore().forceRailPanel = false
   }
   /** [행별 컬럼] 추가 대상 컬럼 지정 해제 */
   const clearColumnTarget = (): void => {
@@ -1440,6 +1468,8 @@ export const useModuleStore = defineStore('module', () => {
       },
     },
     button: { moduleId: 'ModuleOneButton', overrides: { buttonText: '자세히 보기 →' } },
+    // 작은 버튼(옆으로 나열, 최대 4개) — 모듈 기본값(버튼 1개 노출)을 그대로 쓴다
+    smallButton: { moduleId: 'ModuleSmallButton', overrides: {} },
   }
 
   // 셀(그룹/행/컬럼) 멤버 — order 기준 정렬
@@ -1455,9 +1485,59 @@ export const useModuleStore = defineStore('module', () => {
   const moduleComposedKind = (m: ModuleInstance): ComposedKind | null => {
     if (m.moduleId === 'ModuleImg') return 'image'
     if (m.moduleId === 'ModuleOneButton') return 'button'
+    if (m.moduleId === 'ModuleSmallButton') return 'smallButton'
     if (m.moduleId === 'ModuleDescText')
       return m.properties.__composedKind === 'title' ? 'title' : 'text'
     return null
+  }
+
+  /**
+   * 셀 안의 구성 요소 목록 — 실제 배치 순서(위→아래)대로, 종류당 하나(첫 번째)만.
+   * 구성 요소 4종에 해당하지 않는 모듈(구분선 등)과 같은 종류의 중복 모듈은 제외된다.
+   */
+  const columnElements = (
+    groupId: string,
+    rowIndex: number,
+    columnIndex: number,
+  ): { kind: ComposedKind; moduleId: string }[] => {
+    const seen = new Set<ComposedKind>()
+    const result: { kind: ComposedKind; moduleId: string }[] = []
+    cellMembers(groupId, rowIndex, columnIndex).forEach((m) => {
+      const kind = moduleComposedKind(m)
+      if (!kind || seen.has(kind)) return
+      seen.add(kind)
+      result.push({ kind, moduleId: m.id })
+    })
+    return result
+  }
+
+  /**
+   * 셀 안의 구성 요소 순서 변경 (좌측 '구성 요소' 리스트 드래그).
+   * orderedModuleIds에 준 모듈들이 modules 배열에서 이미 차지하고 있던 자리들에 새 순서로 재배치한다
+   * → 같은 셀의 다른 모듈(구성 요소 아닌 것)·다른 셀/그룹의 순서는 건드리지 않는다.
+   */
+  const reorderColumnElements = (
+    groupId: string,
+    rowIndex: number,
+    columnIndex: number,
+    orderedModuleIds: string[],
+  ): void => {
+    if (orderedModuleIds.length < 2) return
+    const members = cellMembers(groupId, rowIndex, columnIndex).filter((m) =>
+      orderedModuleIds.includes(m.id),
+    )
+    if (members.length !== orderedModuleIds.length) return
+    const slots = members.map((m) => modules.value.indexOf(m)).sort((a, b) => a - b)
+    const next = orderedModuleIds
+      .map((id) => members.find((m) => m.id === id))
+      .filter((m): m is ModuleInstance => !!m)
+    if (next.length !== slots.length) return
+    slots.forEach((slot, i) => {
+      modules.value[slot] = next[i]
+    })
+    reorderModules()
+    triggerRef(modules)
+    isDirty.value = true
   }
 
   // 셀에 특정 구성 요소가 존재하는지
@@ -3472,6 +3552,8 @@ ${fullHtml}
     duplicateIntoColumn,
     hasColumnElement,
     setColumnElement,
+    columnElements,
+    reorderColumnElements,
     moveModuleColumn,
     setDisplayOrder,
     moveGroup,
