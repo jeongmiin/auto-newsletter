@@ -16,7 +16,7 @@
       ref="triggerEl"
       type="button"
       class="color-swatch-trigger"
-      :style="{ backgroundColor: displayColor }"
+      :style="swatchTriggerStyle"
       @click="toggleOpen"
     ></button>
 
@@ -392,6 +392,27 @@ const alphaTrackStyle = computed(() => {
       `linear-gradient(-45deg, ${checker} 25%, transparent 25%)`,
       `linear-gradient(45deg, transparent 75%, ${checker} 75%)`,
       `linear-gradient(-45deg, transparent 75%, ${checker} 75%)`,
+    ].join(', '),
+    backgroundSize: '100% 100%, 8px 8px, 8px 8px, 8px 8px, 8px 8px',
+    backgroundPosition: '0 0, 0 0, 0 4px, 4px -4px, -4px 0',
+    backgroundRepeat: 'no-repeat, repeat, repeat, repeat, repeat',
+  }
+})
+
+// 스와치 버튼 배경 — 투명/반투명 색(예: 배경색 기본값 'transparent')이면 불투명도 슬라이더와 같은
+// 체크무늬가 비쳐 "투명"임이 드러나도록, 체크무늬 위에 현재 색을 얹는다.
+// (완전 불투명한 색이면 색이 체크무늬를 완전히 덮으므로 겉모습은 종전과 같다)
+const CHECKER_COLOR = '#dcdfe3'
+const swatchTriggerStyle = computed(() => {
+  const color = displayColor.value
+  return {
+    backgroundColor: '#ffffff',
+    backgroundImage: [
+      `linear-gradient(${color}, ${color})`,
+      `linear-gradient(45deg, ${CHECKER_COLOR} 25%, transparent 25%)`,
+      `linear-gradient(-45deg, ${CHECKER_COLOR} 25%, transparent 25%)`,
+      `linear-gradient(45deg, transparent 75%, ${CHECKER_COLOR} 75%)`,
+      `linear-gradient(-45deg, transparent 75%, ${CHECKER_COLOR} 75%)`,
     ].join(', '),
     backgroundSize: '100% 100%, 8px 8px, 8px 8px, 8px 8px, 8px 8px',
     backgroundPosition: '0 0, 0 0, 0 4px, 4px -4px, -4px 0',

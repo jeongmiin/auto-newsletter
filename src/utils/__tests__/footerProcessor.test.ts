@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { footerSnsProcessor } from '../processors'
+import { footerSnsProcessor, footerContactProcessor } from '../processors'
 
 // 실제 ModuleFooter.html 템플릿을 읽어 마커 기반 처리 통합 검증
 // (vitest root = 프로젝트 루트이므로 cwd 기준 상대경로 사용)
@@ -13,80 +13,63 @@ const footerHtml = readFileSync(
 // 프로세서는 동기 실행되므로 캐스팅하여 string 반환을 기대
 const run = (props: Record<string, unknown>) => footerSnsProcessor(footerHtml, props) as string
 
-describe('footerSnsProcessor - 회사 정보 H/T/E 토글', () => {
-  it('템플릿이 H/T/E 마커를 포함해야 함 (사전 조건)', () => {
-    expect(footerHtml).toContain('<!-- 홈페이지 -->')
-    expect(footerHtml).toContain('<!-- 전화 -->')
-    expect(footerHtml).toContain('<!-- 이메일 -->')
-    expect(footerHtml).toContain('<strong>H</strong>')
-    expect(footerHtml).toContain('<strong>T</strong>')
-    expect(footerHtml).toContain('<strong>E</strong>')
+describe('footerContactProcessor - 연락처(H·T·E·F) 항목', () => {
+  const runContact = (props: Record<string, unknown>) =>
+    footerContactProcessor(footerHtml, props) as string
+
+  it('템플릿이 연락처 마커를 포함해야 함 (사전 조건)', () => {
+    expect(footerHtml).toContain('<!--CONTACT_ROW-->')
   })
 
-  it('미설정 시 H/T/E가 모두 표시되어야 함 (기존 동작 유지)', () => {
-    const result = run({})
-    expect(result).toContain('<strong>H</strong>')
-    expect(result).toContain('<strong>T</strong>')
-    expect(result).toContain('<strong>E</strong>')
+  it('미설정 시 H/T/E는 표시되고 팩스는 숨김 (기존 동작 유지)', () => {
+    const result = runContact({
+      websiteUrl: 'www.a.com',
+      phone: '02-1111-2222',
+      email: 'a@b.com',
+      fax: '02-3333-4444',
+    })
+    expect(result).toContain('<strong>H</strong> www.a.com')
+    expect(result).toContain('<strong>T</strong> 02-1111-2222')
+    expect(result).toContain('<strong>E</strong> a@b.com')
+    expect(result).not.toContain('<strong>F</strong>')
   })
 
-  it('showWebsite=false 이면 H만 제거됨', () => {
-    const result = run({ showWebsite: false })
-    expect(result).not.toContain('<strong>H</strong>')
-    expect(result).toContain('<strong>T</strong>')
-    expect(result).toContain('<strong>E</strong>')
-  })
-
-  it('showPhone=false 이면 T만 제거됨', () => {
-    const result = run({ showPhone: false })
+  it('구버전 show 플래그가 false면 그 항목만 빠짐', () => {
+    const result = runContact({ websiteUrl: 'www.a.com', phone: '02-1', email: 'a@b.com', showPhone: false })
     expect(result).toContain('<strong>H</strong>')
     expect(result).not.toContain('<strong>T</strong>')
     expect(result).toContain('<strong>E</strong>')
   })
 
-  it('showWebsite=false + showPhone=false 이면 H/T가 모두 제거됨', () => {
-    const result = run({ showWebsite: false, showPhone: false })
+  it('contactItems 배열의 순서·노출을 그대로 따른다', () => {
+    const result = runContact({
+      contactItems: [
+        { key: 'email', show: true, value: 'a@b.com' },
+        { key: 'fax', show: true, value: '02-3333' },
+        { key: 'website', show: false, value: 'www.a.com' },
+        { key: 'phone', show: false, value: '02-1111' },
+      ],
+    })
+    expect(result.indexOf('<strong>E</strong>')).toBeLessThan(result.indexOf('<strong>F</strong>'))
     expect(result).not.toContain('<strong>H</strong>')
     expect(result).not.toContain('<strong>T</strong>')
-    expect(result).toContain('<strong>E</strong>')
   })
 
-  it('showEmail=false 이면 E가 제거됨', () => {
-    const result = run({ showEmail: false })
-    expect(result).toContain('<strong>H</strong>')
-    expect(result).toContain('<strong>T</strong>')
+  it('모두 숨기면 연락처 줄이 비어 있다', () => {
+    const result = runContact({
+      contactItems: [
+        { key: 'website', show: false, value: 'www.a.com' },
+        { key: 'phone', show: false, value: '02-1111' },
+        { key: 'email', show: false, value: 'a@b.com' },
+        { key: 'fax', show: false, value: '02-3333' },
+      ],
+    })
+    expect(result).not.toContain('<strong>H</strong>')
     expect(result).not.toContain('<strong>E</strong>')
   })
+})
 
-  it('템플릿이 팩스(F) 마커를 포함해야 함 (사전 조건)', () => {
-    expect(footerHtml).toContain('<!-- 팩스 -->')
-    expect(footerHtml).toContain('<strong>F</strong>')
-  })
-
-  it('미설정 시 팩스(F)는 숨김 — E는 표시됨', () => {
-    const result = run({})
-    expect(result).toContain('<strong>E</strong>')
-    expect(result).not.toContain('<strong>F</strong>')
-  })
-
-  it('showFax=true 이면 F가 표시됨', () => {
-    const result = run({ showFax: true })
-    expect(result).toContain('<strong>E</strong>')
-    expect(result).toContain('<strong>F</strong>')
-  })
-
-  it('showEmail=false + showFax=true 이면 E만 제거되고 F는 유지됨', () => {
-    const result = run({ showEmail: false, showFax: true })
-    expect(result).not.toContain('<strong>E</strong>')
-    expect(result).toContain('<strong>F</strong>')
-  })
-
-  it('showEmail=false + showFax=false 이면 E/F가 모두 제거됨', () => {
-    const result = run({ showEmail: false, showFax: false })
-    expect(result).not.toContain('<strong>E</strong>')
-    expect(result).not.toContain('<strong>F</strong>')
-  })
-
+describe('footerSnsProcessor - 문의/수신거부 문구', () => {
   it('문의 이메일 줄은 미설정 시 표시됨 (기본 노출)', () => {
     const result = run({})
     expect(result).toContain('문의 바랍니다')
@@ -105,8 +88,7 @@ describe('footerSnsProcessor - 회사 정보 H/T/E 토글', () => {
     expect(result).not.toContain('<strong>H</strong>')
     expect(result).not.toContain('<strong>T</strong>')
     expect(result).not.toContain('<strong>E</strong>')
-  })
-})
+  })})
 
 describe('footerSnsProcessor - SNS 아이콘 토글 (쭈쭈쭈 포함)', () => {
   it('미설정 시 모든 SNS 아이콘이 제거됨 (기본 숨김)', () => {
@@ -204,8 +186,9 @@ describe('footerSnsProcessor - 마커 잔여 검증', () => {
       showX: true,
       showZuzuzu: true,
     })
-    // 모두 표시이므로 어떤 마커 블록도 제거되지 않지만, 콘텐츠는 모두 존재해야 함
-    expect(result).toContain('<strong>H</strong>')
+    // 연락처 줄은 footerContactProcessor가 생성하므로 함께 적용해 검증한다
+    const withContact = footerContactProcessor(result, { websiteUrl: 'www.a.com' }) as string
+    expect(withContact).toContain('<strong>H</strong>')
     expect(result).toContain('icon_zuzuzu.png')
     expect(result).toContain('icon_home.png')
   })

@@ -41,12 +41,15 @@ const DEFAULT_ORDER = [
   'linkedin', 'zuzuzu', 'en', 'jp', 'th',
 ]
 
-/** 기본 아이콘 배열(순서 포함). 새 인스턴스/렌더 폴백용 — 항상 새 복사본을 반환 */
+/**
+ * 기본 아이콘 배열(순서 포함). 새 인스턴스/렌더 폴백용 — 항상 새 복사본을 반환.
+ * 쭈쭈쭈만 실제 주소를 갖고 나머지는 빈 값이다(입력 전 '#'이 채워져 보이지 않도록).
+ */
 export const defaultSnsIcons = (): SnsIconItem[] =>
   DEFAULT_ORDER.map((key) => ({
     key,
     show: DEFAULT_SHOWN.has(key),
-    url: key === 'zuzuzu' ? 'https://kcoupet.com/' : '#',
+    url: key === 'zuzuzu' ? 'https://kcoupet.com/' : '',
   }))
 
 /** 원형 배경 + 아이콘 하나의 앵커 HTML */

@@ -11,6 +11,7 @@ import {
   groupBoxSide,
   groupBoxShorthand,
 } from '@/utils/groupStyle'
+import { parseBorderSides, serializeBorderSides } from '@/utils/borderSides'
 
 describe('groupStyle', () => {
   describe('groupBorderShorthand', () => {
@@ -266,5 +267,29 @@ describe('groupStyle', () => {
       const html = buildColumnLayoutHtml(['<p>A</p>', ''])
       expect(html).toContain('&nbsp;')
     })
+  })
+})
+
+describe('parseBorderSides / serializeBorderSides (모듈 속성 테두리 위치)', () => {
+  it('쉼표로 이어 붙인 값을 변 배열로 파싱함 (순서는 상·우·하·좌)', () => {
+    expect(parseBorderSides('bottom,top')).toEqual(['top', 'bottom'])
+    expect(parseBorderSides('left,right,top,bottom')).toEqual(['top', 'right', 'bottom', 'left'])
+  })
+
+  it("구버전 값('both'/'top'/'bottom')도 그대로 해석함", () => {
+    expect(parseBorderSides('both')).toEqual(['top', 'bottom'])
+    expect(parseBorderSides('top')).toEqual(['top'])
+    expect(parseBorderSides('bottom')).toEqual(['bottom'])
+  })
+
+  it('빈 값·알 수 없는 값은 빈 배열', () => {
+    expect(parseBorderSides('')).toEqual([])
+    expect(parseBorderSides(undefined)).toEqual([])
+    expect(parseBorderSides('diagonal')).toEqual([])
+  })
+
+  it('배열 → 저장 문자열로 직렬화 (빈 배열이면 빈 문자열)', () => {
+    expect(serializeBorderSides(['bottom', 'top'])).toBe('top,bottom')
+    expect(serializeBorderSides([])).toBe('')
   })
 })

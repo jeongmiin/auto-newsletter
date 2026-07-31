@@ -24,6 +24,7 @@ import {
   replaceModuleDescTextContent,
   replaceModuleImgContent,
   replaceModuleSnsIconsContent,
+  replaceModuleContactInfoContent,
   replaceModuleOneButtonContent,
   replaceModuleTwoButtonContent,
   replaceModuleSmallButtonContent,
@@ -55,6 +56,7 @@ import { flattenAlphaColorsInHtml } from '@/utils/colorFlatten'
 import { resolvePointColors, resolvePointColorVars } from '@/utils/pointColor'
 import { applyFontFamily } from '@/utils/fontFamily'
 import { migrateModuleProperties } from '@/utils/moduleMigrations'
+import { defaultContactItems } from '@/constants/contactItems'
 import { sanitizeHtml } from '@/utils/sanitize'
 import { DEFAULT_GROUP_STYLES, wrapGroupHtmlForEmail, resolveGroupStyles, buildColumnLayoutHtml } from '@/utils/groupStyle'
 import { resolveWrapBorderCss } from '@/utils/wrapBorder'
@@ -1156,7 +1158,7 @@ export const useModuleStore = defineStore('module', () => {
     return buildComposedGroup(
       [
         {
-          // 회사 정보 + 연락처 (가운데)
+          // 회사 정보 (가운데)
           id: 'ModuleDescText',
           row: 0,
           col: 0,
@@ -1164,15 +1166,32 @@ export const useModuleStore = defineStore('module', () => {
             descriptionText:
               '<p style="margin:0; padding:0; line-height:1.7;"><strong>코리아빌드 사무국</strong></p>' +
               '<p style="margin:0; padding:0; line-height:1.7;">(주)메쎄이상</p>' +
-              '<p style="margin:0; padding:0; line-height:1.7; font-size:13px;">서울시 마포구 월드컵북로 58길 9 ES타워 (03922)</p>' +
-              '<p style="margin:8px 0 0; padding:0; line-height:1.7; font-size:13px;">' +
-              '<span style="padding:0 10px;"><strong>H</strong> www.koreabuild.co.kr</span>' +
-              '<span style="padding:0 10px;"><strong>T</strong> 02-6121-6362</span>' +
-              '<span style="padding:0 10px;"><strong>E</strong> hvackorea@esgroup.net</span></p>',
+              '<p style="margin:0; padding:0; line-height:1.7; font-size:13px;">서울시 마포구 월드컵북로 58길 9 ES타워 (03922)</p>',
             textColor: '#333333',
             fontSize: '16px',
             textAlign: 'center',
             paddingTop: '30px',
+            paddingRight: '0px',
+            paddingBottom: '0px',
+            paddingLeft: '0px',
+          },
+        },
+        {
+          // 연락처 (H·T·E·F) — 항목별 노출/순서를 속성 패널에서 직접 조절한다
+          id: 'ModuleContactInfo',
+          row: 0,
+          col: 0,
+          overrides: {
+            contactItems: defaultContactItems({
+              websiteUrl: 'www.koreabuild.co.kr',
+              phone: '02-6121-6362',
+              email: 'hvackorea@esgroup.net',
+              fax: '02-6121-6363',
+            }),
+            contactFontSize: '13px',
+            contactTextColor: '#333333',
+            contactAlign: 'center',
+            paddingTop: '8px',
             paddingRight: '0px',
             paddingBottom: '10px',
             paddingLeft: '0px',
@@ -3140,6 +3159,9 @@ export const useModuleStore = defineStore('module', () => {
 
       case 'ModuleSnsIcons':
         return replaceModuleSnsIconsContent(html, properties)
+
+      case 'ModuleContactInfo':
+        return replaceModuleContactInfoContent(html, properties)
 
       case 'ModuleOneButton':
         return replaceModuleOneButtonContent(html, properties)

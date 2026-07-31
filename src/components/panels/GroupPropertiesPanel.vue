@@ -153,39 +153,48 @@
         </div>
       </div>
 
-      <!-- 배경색 — 아코디언 헤더 + 우측 노출 토글 (Figma "배경색" 행) -->
+      <!-- 배경색 — 모듈 속성과 같은 접이식 카드 (chevron + 헤더 토글 + gg-acc-body--card) -->
       <div class="gg-acc-section">
-        <div class="gg-acc-header gg-acc-header--static">
-          <span class="gg-acc-label">배경색</span>
+        <div class="gg-acc-header">
+          <span class="gg-acc-title" @click="expanded.background = !expanded.background">
+            <i class="pi gg-acc-chevron" :class="expanded.background ? 'pi-chevron-down' : 'pi-chevron-right'"></i>
+            <span class="gg-acc-label">배경색</span>
+          </span>
           <span class="gg-acc-spacer"></span>
-          <ToggleSwitch :modelValue="hasBackground" @update:modelValue="toggleBackground" />
+          <ToggleSwitch :modelValue="hasBackground" @update:modelValue="onSwitch('background', $event)" @click.stop />
         </div>
-        <div class="gg-acc-body" v-if="hasBackground">
-          <div class="flex items-center justify-between gap-3">
-            <span class="gg-sub-label">색상</span>
-            <ColorPopoverPicker
-              title="배경색"
-              :modelValue="isUsingPoint('backgroundColor') ? pointColorForKey('backgroundColor') : bgValue"
-              :pointColors="wrapPointColors"
-              pointFollow
-              :activeIndex="isUsingPoint('backgroundColor') ? pointIndexFor('backgroundColor') : null"
-              @update:modelValue="setStyle('backgroundColor', $event)"
-              @select-point="onSelectPoint('backgroundColor', $event)"
-              @add-point-color="editorStore.addPointColor($event)"
-              @remove-point-color="editorStore.removePointColor($event)"
-            />
+        <div class="gg-acc-body gg-acc-body--card" v-if="expanded.background">
+          <div class="gg-acc-fields" :class="{ 'is-disabled': !hasBackground }">
+            <div class="flex items-center justify-between gap-3">
+              <span class="gg-sub-label">색상</span>
+              <ColorPopoverPicker
+                title="배경색"
+                :modelValue="isUsingPoint('backgroundColor') ? pointColorForKey('backgroundColor') : bgValue"
+                :pointColors="wrapPointColors"
+                pointFollow
+                :activeIndex="isUsingPoint('backgroundColor') ? pointIndexFor('backgroundColor') : null"
+                @update:modelValue="setStyle('backgroundColor', $event)"
+                @select-point="onSelectPoint('backgroundColor', $event)"
+                @add-point-color="editorStore.addPointColor($event)"
+                @remove-point-color="editorStore.removePointColor($event)"
+              />
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- 테두리 — 아코디언 헤더 + 우측 노출 토글, 상세 필드는 전체 스타일(GlobalStylePanel)의 테두리 UI 참고 -->
+      <!-- 테두리 — 모듈 속성과 같은 접이식 카드. 상세 필드는 전체 스타일(GlobalStylePanel)의 테두리 UI 참고 -->
       <div class="gg-acc-section">
-        <div class="gg-acc-header gg-acc-header--static">
-          <span class="gg-acc-label">테두리</span>
+        <div class="gg-acc-header">
+          <span class="gg-acc-title" @click="expanded.border = !expanded.border">
+            <i class="pi gg-acc-chevron" :class="expanded.border ? 'pi-chevron-down' : 'pi-chevron-right'"></i>
+            <span class="gg-acc-label">테두리</span>
+          </span>
           <span class="gg-acc-spacer"></span>
-          <ToggleSwitch :modelValue="hasBorder" @update:modelValue="toggleBorder" />
+          <ToggleSwitch :modelValue="hasBorder" @update:modelValue="onSwitch('border', $event)" @click.stop />
         </div>
-        <div class="gg-acc-body" v-if="hasBorder">
+        <div class="gg-acc-body gg-acc-body--card" v-if="expanded.border">
+          <div class="gg-acc-fields" :class="{ 'is-disabled': !hasBorder }">
             <!-- 스타일 라디오 (GlobalStylePanel과 동일한 radio-dot 리스트) -->
             <div class="flex flex-col gap-[10px]">
               <span class="gg-sub-label">스타일</span>
@@ -244,30 +253,12 @@
               </div>
             </div>
 
-            <!-- 적용 변 (그룹 전용 기능 — 전체 스타일에는 없음) -->
+            <!-- 테두리 위치 (그룹 전용 기능 — 전체 스타일에는 없음). 모듈 속성과 같은 공용 아이콘 선택기. -->
             <div class="flex flex-col gap-[10px]">
-              <span class="gg-sub-label">적용할 변</span>
-              <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
-                <label class="flex items-center gap-1.5 cursor-pointer select-none">
-                  <Checkbox :modelValue="allSidesSelected" :binary="true" @update:modelValue="toggleAllSides" />
-                  <span class="text-sm text-gray-700 font-medium">전체</span>
-                </label>
-                <span class="w-px h-4 bg-gray-200"></span>
-                <label
-                  v-for="opt in sideOptions"
-                  :key="opt.key"
-                  class="flex items-center gap-1.5 cursor-pointer select-none"
-                >
-                  <Checkbox
-                    :modelValue="isSideOn(opt.key)"
-                    :binary="true"
-                    @update:modelValue="toggleSide(opt.key)"
-                  />
-                  <span class="text-sm text-gray-700">{{ opt.label }}</span>
-                </label>
-              </div>
-              <p class="gg-field-hint">'전체'는 위·아래·좌·우 모두 적용합니다.</p>
+              <span class="gg-sub-label">테두리 위치</span>
+              <BorderSideSelector :modelValue="currentSides" @update:modelValue="setSides" />
             </div>
+          </div>
         </div>
       </div>
     </div>
@@ -279,9 +270,10 @@ import { computed, reactive } from 'vue'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
 import type { ModuleGroupStyles, BorderSide } from '@/types'
-import { ALL_BORDER_SIDES, groupBorderSides, groupBoxSide } from '@/utils/groupStyle'
+import { groupBorderSides, groupBoxSide } from '@/utils/groupStyle'
 import { normalizePxLength } from '@/utils/cssUnit'
 import ColorPopoverPicker from './ColorPopoverPicker.vue'
+import BorderSideSelector from './BorderSideSelector.vue'
 import { pointColorAt } from '@/utils/pointColor'
 
 const moduleStore = useModuleStore()
@@ -403,34 +395,31 @@ const onQuadDirInput = (kind: 'padding' | 'margin', side: BorderSide, event: Eve
   setBoxSide(kind, side, `${n}px`)
 }
 
-// ===== 테두리 적용 변 (다중 선택) =====
-const sideOptions: { key: BorderSide; label: string }[] = [
-  { key: 'top', label: '위' },
-  { key: 'bottom', label: '아래' },
-  { key: 'left', label: '좌' },
-  { key: 'right', label: '우' },
-]
-
+// ===== 테두리 적용 변 (다중 선택) — UI는 공용 BorderSideSelector =====
 const currentSides = computed<BorderSide[]>(() =>
   group.value ? groupBorderSides(group.value.styles) : [],
 )
-const allSidesSelected = computed(() => currentSides.value.length === 4)
-const isSideOn = (side: BorderSide): boolean => currentSides.value.includes(side)
 
 const setSides = (sides: BorderSide[]): void => {
   if (!group.value) return
   moduleStore.updateGroupStyle(group.value.id, 'borderSides', sides)
 }
 
-const toggleSide = (side: BorderSide): void => {
-  const set = new Set(currentSides.value)
-  if (set.has(side)) set.delete(side)
-  else set.add(side)
-  setSides(ALL_BORDER_SIDES.filter((s) => set.has(s)))
-}
+// 섹션 펼침 상태 — 스위치와 무관한 UI 상태(기본 닫힘). chevron/라벨 클릭으로만 바뀐다.
+const expanded = reactive<{ background: boolean; border: boolean }>({
+  background: false,
+  border: false,
+})
 
-const toggleAllSides = (): void => {
-  setSides(allSidesSelected.value ? [] : [...ALL_BORDER_SIDES])
+/**
+ * 헤더 스위치 변경.
+ * - 켤 때: 값을 켜면서 섹션도 펼친다
+ * - 끌 때: 펼침 상태는 그대로, 내용만 흐리게(.gg-acc-fields.is-disabled)
+ */
+const onSwitch = (section: 'background' | 'border', on: boolean): void => {
+  if (section === 'background') toggleBackground(on)
+  else toggleBorder(on)
+  if (on) expanded[section] = true
 }
 
 const toggleBackground = (on: boolean): void => {
@@ -549,4 +538,5 @@ const ungroup = (): void => {
   font-size: 13px;
   color: #333d4b;
 }
+
 </style>

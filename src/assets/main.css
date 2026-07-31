@@ -8,8 +8,8 @@ html, body{
 
 /* common setting — 전역 스크롤바 */
 *::-webkit-scrollbar { width: 8px; height: 8px; }
-*::-webkit-scrollbar-thumb { background-color: var(--p-slate-300);  background-clip: padding-box; }
-*::-webkit-scrollbar-thumb:hover{background-color: var(--p-slate-300);}
+*::-webkit-scrollbar-thumb { background-color: var(--p-slate-300);  background-clip: padding-box; cursor: pointer;}
+*::-webkit-scrollbar-thumb:hover{background-color: var(--p-slate-400);}
 *::-webkit-scrollbar-track { background-color: var(--p-slate-100); }
 
 /* 모듈 카드 그리드 — ModulePanel(카테고리 아코디언)·CategoryModulePanel(갤러리) 공용 레이아웃.

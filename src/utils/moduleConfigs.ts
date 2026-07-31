@@ -6,6 +6,7 @@
 import type { ModuleConfig } from './moduleContentProcessor'
 import * as processors from './processors'
 import { defaultSnsIcons } from '../constants/snsIcons'
+import { defaultContactItems } from '../constants/contactItems'
 
 /**
  * ModuleNewsHeader 설정
@@ -180,8 +181,11 @@ export const moduleOneButtonConfig: ModuleConfig = {
     buttonUrl: '#',
     buttonBgColor: '#111111',
     buttonTextColor: '#ffffff',
-    // 버튼 <a> 안쪽 상하 여백 (기존 인스턴스 폴백 = 기존 하드코딩 값)
-    buttonPaddingV: '15px',
+    // 버튼 <a> 안쪽 여백 4방향 (기존 인스턴스 폴백 = 상하 15px / 좌우 0 — 기존 겉모습과 동일)
+    buttonPaddingTop: '15px',
+    buttonPaddingBottom: '15px',
+    buttonPaddingRight: '0px',
+    buttonPaddingLeft: '0px',
   },
 }
 
@@ -198,9 +202,15 @@ export const moduleTwoButtonConfig: ModuleConfig = {
     button2Url: '#',
     button2BgColor: '#111111',
     button2TextColor: '#ffffff',
-    // 각 버튼 <a> 안쪽 상하 여백 (기존 인스턴스 폴백 = 기존 하드코딩 값)
-    button1PaddingV: '15px',
-    button2PaddingV: '15px',
+    // 각 버튼 <a> 안쪽 여백 4방향 (기존 인스턴스 폴백 = 상하 15px / 좌우 0 — 기존 겉모습과 동일)
+    button1PaddingTop: '15px',
+    button1PaddingBottom: '15px',
+    button1PaddingRight: '0px',
+    button1PaddingLeft: '0px',
+    button2PaddingTop: '15px',
+    button2PaddingBottom: '15px',
+    button2PaddingRight: '0px',
+    button2PaddingLeft: '0px',
     paddingTop: '10px',
     paddingRight: '15px',
     paddingBottom: '15px',
@@ -218,6 +228,11 @@ export const moduleSmallButtonConfig: ModuleConfig = {
     btnWidth: 'auto',
     btnBorderRadius: '30px',
     btnFontSize: '13px',
+    // 버튼 <a> 안쪽 여백 (기존 인스턴스 폴백 = 템플릿에 하드코딩돼 있던 5px 20px)
+    btnPaddingTop: '5px',
+    btnPaddingRight: '20px',
+    btnPaddingBottom: '5px',
+    btnPaddingLeft: '20px',
     paddingTop: '10px',
     paddingRight: '0px',
     paddingBottom: '10px',
@@ -594,6 +609,30 @@ export const moduleSnsIconsConfig: ModuleConfig = {
   processors: [processors.snsIconsProcessor],
 }
 
+/**
+ * ModuleContactInfo 설정 (연락처 원소 모듈 — H·T·E·F)
+ * 항목별 노출·순서·값은 순서 있는 배열(contactItems)로 관리하고, 렌더는 footerContactProcessor가 담당한다.
+ */
+export const moduleContactInfoConfig: ModuleConfig = {
+  defaults: {
+    contactFontSize: '13px',
+    contactTextColor: '#333333',
+    contactAlign: 'center',
+    paddingTop: '0px',
+    paddingRight: '0px',
+    paddingBottom: '10px',
+    paddingLeft: '0px',
+    // 순서 있는 연락처 배열 — 렌더 폴백(기본값은 코리아빌드 정보)
+    contactItems: defaultContactItems({
+      websiteUrl: 'www.koreabuild.co.kr',
+      phone: '02-6121-6362',
+      email: 'hvackorea@esgroup.net',
+      fax: '02-6121-6363',
+    }),
+  },
+  processors: [processors.footerContactProcessor],
+}
+
 export const moduleFooterConfig: ModuleConfig = {
   quillFields: ['companyInfo'],
   defaults: {
@@ -627,7 +666,7 @@ export const moduleFooterConfig: ModuleConfig = {
     jpUrl: '#',
     thUrl: '#',
   },
-  processors: [processors.footerSnsProcessor],
+  processors: [processors.footerContactProcessor, processors.footerSnsProcessor],
 }
 
 /**
@@ -833,6 +872,7 @@ export const MODULE_CONFIG_REGISTRY: Record<string, ModuleConfig> = {
   Module07_reverse: module07Config, // 동일한 설정 사용
   ModuleFooter: moduleFooterConfig,
   ModuleSnsIcons: moduleSnsIconsConfig,
+  ModuleContactInfo: moduleContactInfoConfig,
   Module10: module10Config,
   'Module10-1': module101Config,
   Module11: module11Config,

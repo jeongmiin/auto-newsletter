@@ -16,7 +16,7 @@ export interface ModuleMetadata {
 export interface EditableProp {
   key: string
   label: string
-  type: 'text' | 'textarea' | 'color' | 'number' | 'url' | 'image' | 'select' | 'boolean' | 'checkbox' | 'table-rows' | 'content-titles' | 'content-texts' | 'additional-contents' | 'table-editor' | 'sns-icons'
+  type: 'text' | 'textarea' | 'color' | 'number' | 'url' | 'image' | 'select' | 'boolean' | 'checkbox' | 'table-rows' | 'content-titles' | 'content-texts' | 'additional-contents' | 'table-editor' | 'sns-icons' | 'contact-items'
   options?: { label: string; value: string }[]
   placeholder?: string
   // 입력 필드 아래 표시할 안내 문구 (text 타입 한정)

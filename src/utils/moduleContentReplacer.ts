@@ -64,6 +64,16 @@ export function replaceModuleSnsIconsContent(html: string, properties: Record<st
 }
 
 /**
+ * ModuleContactInfo(연락처 H·T·E·F) 콘텐츠 교체
+ */
+export function replaceModuleContactInfoContent(
+  html: string,
+  properties: Record<string, unknown>,
+): string {
+  return replaceModuleContentSync(html, properties, MODULE_CONFIG_REGISTRY.ModuleContactInfo)
+}
+
+/**
  * ModuleOneButton 콘텐츠 교체
  */
 export function replaceModuleOneButtonContent(

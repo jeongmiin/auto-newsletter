@@ -5,23 +5,30 @@
   <div v-if="selectedModule">
         <!-- 패널 상단 타이틀 (선택한 모듈 이름) — 스크롤 시 상단 고정(sticky) (Figma Frame 80) -->
         <div class="gg-panel-title-bar p-4 pb-3 flex items-center justify-between gap-2">
-          <p class="gg-panel-title truncate">{{ selectedModuleMetadata?.name }}</p>
+          <p class="gg-panel-title truncate">{{ panelTitle }}</p>
         </div>
 
-        <!-- 영역 컬럼 분할 (Figma Frame 80 · 745:3908) — 1단/2단/3단 세그먼트 -->
-        <div class="px-[25px] pt-4 pb-4 border-b">
-          <p class="gg-field-label !mb-2.5">컬럼</p>
-          <div class="col-seg">
-            <button
-              v-for="n in maxColumns"
-              :key="`colseg-${n}`"
-              type="button"
-              class="col-seg-btn"
-              :class="{ 'is-active': moduleColumnInfo.columns === n }"
-              @click="setColumnsTo(n)"
-              v-tooltip.top="`이 모듈이 있는 행을 ${n}단으로 (모바일은 세로로 쌓임)`"
-            >{{ n }}단</button>
-          </div>
+        <!-- 영역 컬럼 분할 (Figma Frame 80 · 745:3908) — 1단/2단/3단 세그먼트.
+             나눌 수 없는 모듈(config의 maxColumns=1, 예: 구분선·여백)은 컬럼 컨트롤 자체를 숨긴다.
+             단, 그런 모듈이 다단 행 안에 들어가 있으면 위치/이동 행은 계속 보여준다. -->
+        <div
+          v-if="maxColumns > 1 || moduleColumnInfo.columns > 1"
+          class="px-[25px] pt-4 pb-4 border-b"
+        >
+          <template v-if="maxColumns > 1">
+            <p class="gg-field-label !mb-2.5">컬럼</p>
+            <div class="col-seg">
+              <button
+                v-for="n in maxColumns"
+                :key="`colseg-${n}`"
+                type="button"
+                class="col-seg-btn"
+                :class="{ 'is-active': moduleColumnInfo.columns === n }"
+                @click="setColumnsTo(n)"
+                v-tooltip.top="`이 모듈이 있는 행을 ${n}단으로 (모바일은 세로로 쌓임)`"
+              >{{ n }}단</button>
+            </div>
+          </template>
           <!-- 다단일 때만: 현재 위치 + 좌/우 컬럼 이동 -->
           <div v-if="moduleColumnInfo.columns > 1" class="flex items-center gap-1.5 mt-2.5">
             <span class="gg-field-hint !mt-0 flex-1"
@@ -67,46 +74,48 @@
           class="gg-acc-section"
           :class="{
             'gg-acc-section--flat': !group.name,
-            'gg-acc-section--quad': isQuadSelfLabeledGroup(group) && !isImageStyleSection(group),
+            'gg-acc-section--quad': isQuadSelfLabeledGroup(group) && !isStyleSection(group),
           }"
         >
         <!-- 이름 있는 prop 그룹(레거시 모듈의 로고/타이틀 등 섹션) — Figma 352-1138의 접이식 헤더 패턴.
              그룹 전체를 켜고 끄는 토글(예: showLogo)이 있으면 헤더로 끌어올려 판넬을 열기 전에도 제어 가능하게 한다. -->
+        <!-- 헤더 = [chevron + 라벨](열기/닫기) + [스위치](속성 on/off).
+             · 스위치 off→on: 속성을 켜면서 섹션도 자동으로 펼친다
+             · 스위치 on→off: 펼침 상태는 그대로 두고 내용만 흐리게(조작 불가)
+             · chevron/라벨 클릭: 스위치와 무관하게 열고 닫는다 (기본 닫힘) -->
         <div
           v-if="hasSectionHeader(group) || (!group.name && flatHeaderLabel && isFullyFlatModule)"
           class="gg-acc-header"
-          :class="{ 'is-static': !isCollapsibleSection(group), 'is-clickable': isCollapsibleSection(group) }"
-          @click="onSectionHeaderClick(group, gIdx)"
+          :class="{ 'is-static': !isCollapsibleSection(group) }"
         >
-          <!-- 타이틀 왼쪽 화살표 아이콘: 열림 ⌄ / 닫힘 › (Figma 608-2624) -->
-          <i
-            v-if="isCollapsibleSection(group)"
-            class="pi gg-acc-chevron"
-            :class="isSectionOpen(group, gIdx) ? 'pi-chevron-down' : 'pi-chevron-right'"
-          ></i>
-          <span class="gg-acc-label">{{ group.name || flatHeaderLabel }}</span>
+          <span
+            :class="{ 'gg-acc-title': isCollapsibleSection(group) }"
+            @click="isCollapsibleSection(group) && toggleGroupPanel(group, gIdx)"
+          >
+            <!-- 타이틀 왼쪽 화살표 아이콘: 열림 ⌄ / 닫힘 › (Figma 608-2624) -->
+            <i
+              v-if="isCollapsibleSection(group)"
+              class="pi gg-acc-chevron"
+              :class="isSectionOpen(group, gIdx) ? 'pi-chevron-down' : 'pi-chevron-right'"
+            ></i>
+            <span class="gg-acc-label">{{ group.name || flatHeaderLabel }}</span>
+          </span>
           <span class="gg-acc-spacer"></span>
           <ToggleSwitch
             v-if="groupHeaderToggle(group)"
             :modelValue="Boolean(selectedModule.properties[groupHeaderToggle(group)!.key])"
-            @update:modelValue="updateProperty(groupHeaderToggle(group)!.key, $event)"
+            @update:modelValue="onSectionSwitch(group, gIdx, $event)"
             @click.stop
           />
           <!-- 테두리 블록만 있는 섹션(예: 이미지 '테두리')은 블록의 on/off를 헤더 토글로 노출 -->
           <ToggleSwitch
             v-else-if="groupBorderToggleProp(group)"
             :modelValue="borderIsOn(groupBorderToggleProp(group)!)"
-            @update:modelValue="toggleBorderOn(groupBorderToggleProp(group)!, $event)"
+            @update:modelValue="onSectionSwitch(group, gIdx, $event)"
             @click.stop
           />
-          <!-- 그 외 이미지 스타일 섹션(이미지 크기 조정·모서리 둥글기·여백)은 별도 on/off 속성이 없으므로
-               토글이 섹션 열림/닫힘(UI 펼침 상태)을 제어한다 — '링크 추가'와 동일한 헤더 레이아웃. -->
-          <ToggleSwitch
-            v-else-if="isImageStyleSection(group)"
-            :modelValue="isSectionOpen(group, gIdx)"
-            @update:modelValue="toggleGroupPanel(group, gIdx)"
-            @click.stop
-          />
+          <!-- 그 외 스타일 섹션(이미지 크기 조정·모서리 둥글기·여백)은 켜고 끌 속성이 없다.
+               스위치를 두면 아코디언 상태와 뒤엉키므로 chevron/라벨만으로 열고 닫는다. -->
         </div>
         <div
           class="gg-acc-body"
@@ -115,19 +124,43 @@
         >
         <!-- 섹션 필드 래퍼: 접이식 카드 섹션에서는 이 래퍼가 하나의 회색 카드가 되어
              한 섹션의 여러 속성(예: 이미지 크기 조정의 최대 너비+정렬)을 한 카드에 담는다.
+             4방향 여백(quad)은 블록마다 자기 카드를 갖는다 — 텍스트 '여백' 섹션의 안쪽/바깥 여백이 각각 한 카드.
              카드가 아닌 섹션에서는 display:contents 로 레이아웃에 영향 없음. -->
-        <div class="gg-acc-fields">
         <div
-          v-for="(prop, index) in group.props"
+          v-for="(chunk, cIdx) in fieldChunks(group)"
+          :key="`fields-${cIdx}`"
+          class="gg-acc-fields"
+          :class="{ 'is-disabled': !isSectionEnabled(group) }"
+        >
+        <div
+          v-for="{ prop, index } in chunk"
           :key="prop.key"
           :class="{ 'mf-toggle-divider': !group.name && index > 0 && isTogglePropStart(prop, group.props) }"
-          v-show="evalShowWhen(prop.showWhen) && !isQuadMember(prop, group.props, index) && !isBorderMember(prop, group.props) && groupHeaderToggle(group) !== prop"
+          v-show="isFieldVisible(group, prop) && !isQuadMember(prop, group.props, index) && !isBorderMember(prop, group.props) && groupHeaderToggle(group) !== prop"
         >
+          <!-- 리치텍스트(textarea)는 위에 '폰트 크기'와 서식 툴바가 바로 붙으므로 별도 라벨을 두지 않는다(Figma 640-3689) -->
           <label
-            v-show="prop.type !== 'boolean' && prop.type !== 'checkbox' && !isColorBlock(prop) && !isQuadStart(prop, group.props, index) && !isBorderStyleStart(prop)"
+            v-show="prop.type !== 'boolean' && prop.type !== 'checkbox' && prop.type !== 'textarea' && !isColorBlock(prop) && !isQuadStart(prop, group.props, index) && !isSingleSpacingField(prop) && !isBorderStyleStart(prop)"
             class="gg-field-label"
+            :class="{ 'fs-label-row': isFontSizeField(prop) }"
           >
-            {{ prop.label }}
+            <span>
+              {{ prop.label }}
+              <!-- 폰트 크기: 지금 이 컨트롤이 무엇을 바꾸는지(모듈 전체 / 드래그한 부분) 배지로 표시 -->
+              <span v-if="isFontSizeField(prop) && isFontSizeSelectionTarget(prop)" class="fs-target-badge">
+                선택 영역
+              </span>
+            </span>
+            <!-- 개별(인라인) 크기가 걸려 있으면 '전체 값이 안 먹는' 이유를 그 자리에서 풀 수 있게 한다 -->
+            <button
+              v-if="isFontSizeField(prop) && fontSizeHasInline(prop)"
+              type="button"
+              class="fs-reset-btn"
+              @click.prevent="resetFontSizeToBase(prop)"
+            >
+              <span class="material-symbols-outlined">restart_alt</span>
+              {{ isFontSizeSelectionTarget(prop) ? '선택 영역을 기본 크기로' : '개별 크기 모두 지우기' }}
+            </button>
           </label>
 
           <!-- 여백/패딩 등 4방향(Top/Right/Bottom/Left) 세트 — 잠금 슬라이더 UI (Figma 365-2691) -->
@@ -135,7 +168,7 @@
             <div class="gg-margin-quad-head">
               <!-- 여백 라벨은 항상 quad-head(잠금 버튼과 한 줄)에 노출. 그룹이 이 quad로만 자기 이름을
                    가지면(예: 그룹"바깥 여백") 섹션 헤더는 생략되고 이 라벨이 그 이름을 대신한다. -->
-              <span class="gg-field-label !mb-0">{{ (isImageStyleSection(group) && quadLabel(prop) === group.name) ? '전체 적용' : quadLabel(prop) }}</span>
+              <span class="gg-field-label !mb-0">{{ (isStyleSection(group) && quadLabel(prop) === group.name) ? '전체 적용' : quadLabel(prop) }}</span>
               <button
                 type="button"
                 class="gg-lock-btn"
@@ -289,7 +322,9 @@
             />
           </div>
 
-          <!-- 폰트 크기 필드: 슬라이더 + 값(px) — 여백 슬라이더와 동일 UI (최소 8 ~ 최대 28px) -->
+          <!-- 폰트 크기 필드 (Figma 640-3689) — 모듈 기본값과 선택 영역 크기를 컨트롤 하나로 통합.
+               드래그로 텍스트를 선택하면 그 부분의 크기를 보여주고 그 부분만 바꾼다(배지 '선택 영역').
+               선택 영역에 크기가 섞여 있으면 값 자리에 '--'를 보여준다. -->
           <div v-else-if="isFontSizeField(prop)" class="space-y-1">
             <div class="gg-margin-slider-row">
               <input
@@ -302,13 +337,63 @@
                 class="gg-margin-slider"
               />
               <div class="gg-margin-value-field">
+                <!-- 혼합 상태는 숫자 입력이 '--'를 표현할 수 없어 텍스트 입력으로 렌더 -->
                 <input
+                  v-if="isFontSizeMixed(prop)"
+                  type="text"
+                  value="--"
+                  @focus="($event.target as HTMLInputElement).select()"
+                  @change="onFontSizeInput(prop, $event)"
+                  @keydown.enter="blurTarget"
+                  class="gg-margin-value-input"
+                />
+                <input
+                  v-else
                   type="number"
                   :min="FONT_SIZE_MIN"
                   :max="FONT_SIZE_MAX"
                   :value="fontSizeNumber(prop)"
                   @change="onFontSizeInput(prop, $event)"
                   @keydown.enter="blurTarget"
+                  class="gg-margin-value-input"
+                />
+                <span class="gg-margin-value-unit">px</span>
+              </div>
+            </div>
+            <p v-if="prop.hint" class="gg-field-hint" v-html="prop.hint"></p>
+          </div>
+
+          <!-- 테두리 위치 — 그룹 스타일과 같은 아이콘 다중 선택 (전체/상단/하단/좌측/우측) -->
+          <div v-else-if="isBorderPositionField(prop)">
+            <BorderSideSelector
+              :modelValue="borderSidesOf(prop)"
+              @update:modelValue="onBorderSidesChange(prop, $event)"
+            />
+          </div>
+
+          <!-- 4방향 세트가 아닌 단일 여백 값(예: 버튼 안쪽 상하 여백) —
+               4방향 여백(quad)의 '잠금' 상태와 완전히 같은 UI(헤드 라벨 + gg-margin-slider-row).
+               잠글 대상이 하나뿐이라 잠금 버튼만 없다. -->
+          <div v-else-if="isSingleSpacingField(prop)" class="gg-margin-quad">
+            <div class="gg-margin-quad-head">
+              <span class="gg-field-label !mb-0">{{ prop.label }}</span>
+            </div>
+            <div class="gg-margin-slider-row">
+              <input
+                type="range"
+                min="0"
+                max="100"
+                step="1"
+                :value="quadPxNumber(prop)"
+                @input="onSingleSpacingInput(prop, $event)"
+                class="gg-margin-slider"
+              />
+              <div class="gg-margin-value-field">
+                <input
+                  type="number"
+                  min="0"
+                  :value="quadPxNumber(prop)"
+                  @input="onSingleSpacingInput(prop, $event)"
                   class="gg-margin-value-input"
                 />
                 <span class="gg-margin-value-unit">px</span>
@@ -386,103 +471,76 @@
             <p v-if="prop.hint" class="gg-field-hint" v-html="prop.hint"></p>
           </div>
 
-          <!-- 리치 텍스트 에디터: 행간/자간은 툴바 밖 전용 드롭다운(Figma 378-1704)으로 분리.
-               내부적으로는 기존과 동일하게 activeQuill(=quillByKey)/format('lineHeight'|'letterSpacing', ...)를 사용한다. -->
-          <div v-else-if="prop.type === 'textarea'" class="rte-field">
-            <div class="rte-ext-row">
-              <div class="rte-ext-field">
-                <span class="rte-ext-label">
-                  <i class="pi pi-arrows-v"></i>
-                  행간
-                </span>
-                <Select
-                  :modelValue="editorFormatState[prop.key]?.lineHeight || null"
-                  @update:modelValue="applyLineHeight(prop.key, $event)"
-                  :options="LINE_HEIGHT_FIELD_OPTIONS"
-                  optionLabel="label"
-                  optionValue="value"
-                  showClear
-                  placeholder="보통"
-                  class="rte-ext-select"
-                />
-              </div>
-              <div class="rte-ext-field">
-                <span class="rte-ext-label">
-                  <i class="pi pi-arrows-h"></i>
-                  자간
-                </span>
-                <Select
-                  :modelValue="editorFormatState[prop.key]?.letterSpacing || null"
-                  @update:modelValue="applyLetterSpacing(prop.key, $event)"
-                  :options="LETTER_SPACING_FIELD_OPTIONS"
-                  optionLabel="label"
-                  optionValue="value"
-                  showClear
-                  placeholder="보통"
-                  class="rte-ext-select"
-                />
-              </div>
-            </div>
+          <!-- 리치 텍스트 에디터 (Figma 640-3235) — 툴바는 두 줄 그룹 + 세로 구분선 구성.
+               행간/자간은 툴바 밖 드롭다운이 아니라 1줄 오른쪽 끝의 format_line_spacing 팝오버로 통합했다.
+               내부적으로는 기존과 동일하게 quillByKey/format('lineHeight'|'letterSpacing', ...)를 사용한다. -->
+          <div
+            v-else-if="prop.type === 'textarea'"
+            class="rte-field"
+            :style="{ '--rte-base-size': editorBaseFontSize(prop, group) }"
+          >
+            <!-- 높이는 CSS(min-height 169px + resize:vertical)가 담당한다 —
+                 editorStyle로 인라인 고정 높이를 주면 그립을 끌어도 회색 박스가 따라 커지지 않는다 -->
             <Editor
               :model-value="String(selectedModule.properties[prop.key] || '')"
               @update:model-value="handleEditorUpdate(prop.key, $event)"
               @load="(e) => onEditorLoad(e, prop.key)"
               :placeholder="prop.placeholder"
-              editorStyle="height: 200px"
             >
               <template #toolbar>
-                <span class="ql-formats">
-                  <button class="ql-bold" title="굵게"></button>
-                  <button class="ql-italic" title="기울임"></button>
-                  <button class="ql-underline" title="밑줄"></button>
-                  <button class="ql-strike" title="취소선"></button>
-                </span>
-                <span class="ql-formats">
-                  <select class="ql-fontSize" title="글자 크기">
-                    <option value="28px">28px</option>
-                    <option value="26px">26px</option>
-                    <option value="24px">24px</option>
-                    <option value="22px">22px</option>
-                    <option value="20px">20px</option>
-                    <option value="18px">18px</option>
-                    <option value="16px">16px</option>
-                    <option value="14px">14px</option>
-                    <option value="12px">12px</option>
-                    <option selected>본문</option>
-                  </select>
-                </span>
-                <span class="ql-formats">
-                  <button class="ql-list" value="ordered" title="번호 목록"></button>
-                  <button class="ql-list" value="bullet" title="글머리 기호"></button>
-                </span>
-                <span class="ql-formats">
-                  <select class="ql-align" title="정렬"></select>
-                  <select class="ql-wordBreak" title="줄바꿈 규칙(문단 단위)">
-                    <option value="keep-all">단어기준</option>
-                    <option value="break-all">글자기준</option>
-                    <option selected>줄바꿈</option>
-                  </select>
-                </span>
-                <span class="ql-formats">
-                  <select class="ql-color" title="글자 색상"></select>
-                  <select class="ql-background" title="배경 색상"></select>
-                  <select class="ql-highlightMarker" title="형광펜">
-                    <option selected></option>
-                    <option value="#fff555"></option>
-                    <option value="#ffd1d1"></option>
-                    <option value="#c7f0c7"></option>
-                    <option value="#cce4ff"></option>
-                    <option value="#ffd9b3"></option>
-                    <option value="#e0c7ff"></option>
-                    <option value="#13ecff"></option>
-                  </select>
-                </span>
-                <span class="ql-formats">
-                  <button class="ql-link" title="링크"></button>
-                </span>
-                <span class="ql-formats">
-                  <button class="ql-clean" title="서식 제거"></button>
-                </span>
+                <!-- 1줄: 굵게·기울임·밑줄·취소선 │ 정렬·목록·행간/자간 -->
+                <div class="rte-tb-row">
+                  <span class="ql-formats rte-tb-grp">
+                    <button class="ql-bold" title="굵게"></button>
+                    <button class="ql-italic" title="기울임"></button>
+                    <button class="ql-underline" title="밑줄"></button>
+                    <button class="ql-strike" title="취소선"></button>
+                  </span>
+                  <span class="rte-tb-div"></span>
+                  <span class="ql-formats rte-tb-grp">
+                    <select class="ql-align" title="정렬"></select>
+                    <!-- 목록: 버튼 2개 → 드롭다운 1개 (Figma 640-3235의 목록 드롭다운) -->
+                    <select class="ql-list" title="목록">
+                      <option value="ordered">번호 목록</option>
+                      <option value="bullet">글머리 기호</option>
+                      <option selected>목록 없음</option>
+                    </select>
+                    <!-- 행간·자간 팝오버 (ql- 클래스가 없으므로 Quill이 건드리지 않는 일반 버튼).
+                         mousedown 기본동작을 막아 에디터 선택 영역이 유지되도록 한다. -->
+                    <button
+                      type="button"
+                      class="rte-tb-btn"
+                      :class="{ 'is-active': spacingPopover.visible && spacingPopover.key === prop.key }"
+                      title="행간 · 자간"
+                      @mousedown.prevent
+                      @click="toggleSpacingPopover(prop.key, $event)"
+                    >
+                      <span class="material-symbols-outlined">format_line_spacing</span>
+                    </button>
+                  </span>
+                </div>
+                <!-- 2줄: 글자색·배경색·형광펜 │ 링크·서식 제거 -->
+                <div class="rte-tb-row">
+                  <span class="ql-formats rte-tb-grp">
+                    <select class="ql-color" title="글자 색상"></select>
+                    <select class="ql-background" title="배경 색상"></select>
+                    <select class="ql-highlightMarker" title="형광펜">
+                      <option selected></option>
+                      <option value="#fff555"></option>
+                      <option value="#ffd1d1"></option>
+                      <option value="#c7f0c7"></option>
+                      <option value="#cce4ff"></option>
+                      <option value="#ffd9b3"></option>
+                      <option value="#e0c7ff"></option>
+                      <option value="#13ecff"></option>
+                    </select>
+                  </span>
+                  <span class="rte-tb-div"></span>
+                  <span class="ql-formats rte-tb-grp">
+                    <button class="ql-link" title="링크"></button>
+                    <button class="ql-clean" title="서식 제거"></button>
+                  </span>
+                </div>
               </template>
             </Editor>
           </div>
@@ -512,7 +570,9 @@
             </div>
             <span v-else-if="!isDupLabelProp(group, prop)" class="gg-field-label">{{ prop.label }}</span>
 
-            <template v-if="borderIsOn(prop)">
+            <!-- 섹션 헤더 스위치가 이 블록의 on/off를 담당하면, 꺼져 있어도 내용은 그대로 보여준다
+                 (아코디언을 열었을 때 빈 카드가 되지 않도록. 조작은 .gg-acc-fields.is-disabled가 막는다) -->
+            <template v-if="borderIsOn(prop) || groupBorderToggleProp(group) === prop">
               <!-- 스타일 라디오 -->
               <div class="flex flex-col gap-[10px]">
                 <span class="gg-sub-label">스타일</span>
@@ -617,58 +677,89 @@
           </div>
 
           <!-- SNS 아이콘 (노출 토글 · 링크 · 순서 변경) -->
-          <div v-else-if="prop.type === 'sns-icons'" class="space-y-2">
-            <div
-              v-for="(icon, index) in getSnsIcons(prop.key)"
-              :key="icon.key"
-              class="p-2.5 border border-gray-200 rounded-md bg-gray-50"
+          <!-- 연락처(H·T·E·F) — 구성 요소 리스트와 같은 방식: 체크로 넣고 빼고, 손잡이를 끌어 순서 변경 -->
+          <div v-else-if="prop.type === 'contact-items'" class="cmp-list">
+            <draggable
+              :model-value="getContactItems(prop.key)"
+              item-key="key"
+              handle=".cmp-drag"
+              ghost-class="cmp-row--ghost"
+              animation="180"
+              class="cmp-list"
+              @update:model-value="setContactItems(prop.key, $event)"
             >
-              <div class="flex items-center gap-2">
-                <img
-                  :src="snsIconMeta[icon.key]?.img"
-                  :alt="snsIconMeta[icon.key]?.label"
-                  class="w-6 h-6 object-contain rounded-full bg-gray-700 p-1 shrink-0"
-                />
-                <span class="text-sm font-medium text-gray-700 flex-1 truncate">
-                  {{ snsIconMeta[icon.key]?.label || icon.key }}
-                </span>
-                <Button
-                  @click="moveSnsIcon(prop.key, index, 'up')"
-                  :disabled="index === 0"
-                  icon="pi pi-arrow-up"
-                  severity="secondary"
-                  text
-                  size="small"
-                  class="!w-6 !h-6 !p-0"
-                  v-tooltip.top="'위로 이동'"
-                />
-                <Button
-                  @click="moveSnsIcon(prop.key, index, 'down')"
-                  :disabled="index === getSnsIcons(prop.key).length - 1"
-                  icon="pi pi-arrow-down"
-                  severity="secondary"
-                  text
-                  size="small"
-                  class="!w-6 !h-6 !p-0"
-                  v-tooltip.top="'아래로 이동'"
-                />
-                <ToggleSwitch
-                  :modelValue="icon.show"
-                  @update:modelValue="setSnsIconShow(prop.key, index, $event)"
-                />
-              </div>
-              <div v-if="icon.show" class="mt-2 flex items-center gap-1.5">
-                <label class="text-xs text-gray-500 w-8 shrink-0">링크</label>
-                <InputText
-                  :modelValue="icon.url"
-                  @update:modelValue="setSnsIconUrl(prop.key, index, $event ?? '')"
-                  placeholder="링크 URL"
-                  class="flex-1 !text-sm"
-                  size="small"
-                />
-              </div>
-            </div>
-            <p class="text-xs text-gray-400">스위치로 노출을 켜고 끄고, 화살표로 순서를 바꿉니다.</p>
+              <template #item="{ element: item, index }">
+                <div class="cmp-row ct-row">
+                  <span
+                    class="cmp-drag material-symbols-outlined"
+                    title="마우스로 끌어서 순서를 변경하세요"
+                    >drag_indicator</span
+                  >
+                  <label class="ct-check">
+                    <Checkbox
+                      :modelValue="item.show"
+                      :binary="true"
+                      @update:modelValue="setContactShow(prop.key, index, $event)"
+                    />
+                    <span class="cmp-label">{{ contactMeta[item.key]?.prefix }} {{ contactMeta[item.key]?.label }}</span>
+                  </label>
+                  <InputText
+                    :modelValue="item.value"
+                    @update:modelValue="setContactValue(prop.key, index, $event ?? '')"
+                    :placeholder="contactMeta[item.key]?.placeholder"
+                    class="ct-input"
+                    size="small"
+                  />
+                </div>
+              </template>
+            </draggable>
+            <p v-if="prop.hint" class="gg-field-hint" v-html="prop.hint"></p>
+          </div>
+
+          <!-- SNS 아이콘 — 연락처와 같은 리스트(체크로 노출, 손잡이를 끌어 순서 변경, 옆에 링크 입력) -->
+          <div v-else-if="prop.type === 'sns-icons'" class="cmp-list">
+            <draggable
+              :model-value="getSnsIcons(prop.key)"
+              item-key="key"
+              handle=".cmp-drag"
+              ghost-class="cmp-row--ghost"
+              animation="180"
+              class="cmp-list"
+              @update:model-value="setSnsIcons(prop.key, $event)"
+            >
+              <template #item="{ element: icon, index }">
+                <div class="cmp-row ct-row">
+                  <span
+                    class="cmp-drag material-symbols-outlined"
+                    title="마우스로 끌어서 순서를 변경하세요"
+                    >drag_indicator</span
+                  >
+                  <label class="ct-check sns-check">
+                    <Checkbox
+                      :modelValue="icon.show"
+                      :binary="true"
+                      @update:modelValue="setSnsIconShow(prop.key, index, $event)"
+                    />
+                    <img
+                      :src="snsIconMeta[icon.key]?.img"
+                      :alt="snsIconMeta[icon.key]?.label"
+                      class="sns-thumb"
+                    />
+                    <span class="cmp-label sns-label" :title="snsIconMeta[icon.key]?.label || icon.key">
+                      {{ snsIconMeta[icon.key]?.label || icon.key }}
+                    </span>
+                  </label>
+                  <InputText
+                    :modelValue="icon.url"
+                    @update:modelValue="setSnsIconUrl(prop.key, index, $event ?? '')"
+                    placeholder="https://"
+                    class="ct-input"
+                    size="small"
+                  />
+                </div>
+              </template>
+            </draggable>
+            <p v-if="prop.hint" class="gg-field-hint" v-html="prop.hint"></p>
           </div>
 
           <!-- 동적 테이블 행 편집 -->
@@ -1337,6 +1428,96 @@
         </div>
       </div>
 
+  <!-- 행간 · 자간 팝오버 (Figma 640-3235: 툴바의 format_line_spacing) -->
+  <Teleport to="body">
+    <div
+      v-if="spacingPopover.visible"
+      ref="spacingPopoverEl"
+      class="rte-spacing-popover"
+      :style="{ top: `${spacingPopover.top}px`, left: `${spacingPopover.left}px` }"
+    >
+      <!-- 행간 (문단 단위) -->
+      <div class="rte-sp-section">
+        <div class="rte-sp-head">
+          <span class="material-symbols-outlined rte-sp-icon">format_line_spacing</span>
+          <span class="rte-sp-label">행간</span>
+        </div>
+        <div class="rte-sp-row">
+          <input
+            type="range"
+            class="gg-margin-slider"
+            :min="LINE_HEIGHT_MIN"
+            :max="LINE_HEIGHT_MAX"
+            :step="LINE_HEIGHT_STEP"
+            :value="lineHeightNumber"
+            @input="onLineHeightSlide($event)"
+          />
+          <div class="rte-sp-value" :class="{ 'is-unset': !isLineHeightSet }">
+            <input
+              type="number"
+              :min="LINE_HEIGHT_MIN"
+              :max="LINE_HEIGHT_MAX"
+              :step="LINE_HEIGHT_STEP"
+              :value="lineHeightNumber"
+              @change="onLineHeightSlide($event)"
+              @keydown.enter="blurTarget"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- 자간 (선택 범위 단위) -->
+      <div class="rte-sp-section">
+        <div class="rte-sp-head">
+          <span class="material-symbols-outlined rte-sp-icon">format_letter_spacing_2</span>
+          <span class="rte-sp-label">자간</span>
+        </div>
+        <div class="rte-sp-row">
+          <input
+            type="range"
+            class="gg-margin-slider"
+            :min="LETTER_SPACING_MIN"
+            :max="LETTER_SPACING_MAX"
+            :step="LETTER_SPACING_STEP"
+            :value="letterSpacingNumber"
+            @input="onLetterSpacingSlide($event)"
+          />
+          <div class="rte-sp-value" :class="{ 'is-unset': !isLetterSpacingSet }">
+            <input
+              type="number"
+              :min="LETTER_SPACING_MIN"
+              :max="LETTER_SPACING_MAX"
+              :step="LETTER_SPACING_STEP"
+              :value="letterSpacingNumber"
+              @change="onLetterSpacingSlide($event)"
+              @keydown.enter="blurTarget"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- 줄바꿈 규칙 (문단 단위) — 툴바에 홀로 남던 드롭다운을 같은 '텍스트 흐름' 팝오버로 합침 -->
+      <div class="rte-sp-section">
+        <div class="rte-sp-head">
+          <span class="material-symbols-outlined rte-sp-icon">wrap_text</span>
+          <span class="rte-sp-label">줄바꿈</span>
+        </div>
+        <div class="rte-sp-seg">
+          <button
+            v-for="opt in WORD_BREAK_SEG"
+            :key="opt.value ?? 'default'"
+            type="button"
+            class="rte-sp-seg-btn"
+            :class="{ 'is-active': currentWordBreak === opt.value }"
+            @click="applyWordBreak(spacingPopover.key, opt.value)"
+          >
+            {{ opt.label }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </Teleport>
+
   <!-- Quill 색상 "직접 선택" 팝오버 (팔레트 · 헥사코드 · 포인트 색상) -->
   <Teleport to="body">
     <div
@@ -1409,12 +1590,38 @@ import { computed, reactive, ref, watch, nextTick, onMounted, onBeforeUnmount } 
 import { useModuleStore } from '@/stores/moduleStore'
 import { resolveGroupRows } from '@/utils/groupLayout'
 import { SNS_ICON_META, defaultSnsIcons, type SnsIconItem } from '@/constants/snsIcons'
+import {
+  CONTACT_ITEM_META,
+  readContactItems,
+  type ContactItem,
+  type ContactItemKey,
+} from '@/constants/contactItems'
 import { useEditorStore } from '@/stores/editorStore'
-import type { TableRow, ContentTitle, ContentText, AdditionalContent, TableCell, EditableProp } from '@/types'
+import type { TableRow, ContentTitle, ContentText, AdditionalContent, TableCell, EditableProp, BorderSide } from '@/types'
 import { normalizeColorInput, isValidHexColor } from '@/utils/colorHelper'
 import { normalizePxLength } from '@/utils/cssUnit'
-import { LINE_HEIGHT_OPTIONS } from '@/utils/quillLineHeight'
-import { LETTER_SPACING_OPTIONS } from '@/utils/quillLetterSpacing'
+import {
+  LINE_HEIGHT_MIN,
+  LINE_HEIGHT_MAX,
+  LINE_HEIGHT_STEP,
+  LINE_HEIGHT_FALLBACK,
+  toLineHeightValue,
+  parseLineHeight,
+} from '@/utils/quillLineHeight'
+import {
+  FONT_SIZE_MIN,
+  FONT_SIZE_MAX,
+  toFontSizeValue,
+  parseFontSize,
+} from '@/utils/quillFontSize'
+import {
+  LETTER_SPACING_MIN,
+  LETTER_SPACING_MAX,
+  LETTER_SPACING_STEP,
+  LETTER_SPACING_FALLBACK,
+  toLetterSpacingValue,
+  parseLetterSpacing,
+} from '@/utils/quillLetterSpacing'
 import { POINT_COLOR_SUFFIX, POINT_COLOR_INDEX_SUFFIX, POINT_COLOR_CSS_VAR, pointColorCssVar, getPointColorIndex, pointColorAt } from '@/utils/pointColor'
 import { processQuillHtml } from '@/utils/quillHtmlProcessor'
 import TableCellEditor from './TableCellEditor.vue'
@@ -1423,6 +1630,9 @@ import HexColorInput from '@/components/HexColorInput.vue'
 import PointColorSwatchRow from '@/components/PointColorSwatchRow.vue'
 import ColorPopoverPicker from './ColorPopoverPicker.vue'
 import ColumnElementsField from './ColumnElementsField.vue'
+import BorderSideSelector from './BorderSideSelector.vue'
+import draggable from 'vuedraggable'
+import { parseBorderSides, serializeBorderSides } from '@/utils/borderSides'
 import type Quill from 'quill'
 
 const moduleStore = useModuleStore()
@@ -1444,6 +1654,18 @@ const FLAT_HEADER_LABELS: Record<string, string> = {
   social: 'SNS',
   common: '모듈',
 }
+// 패널 상단 제목 — Figma(640-3235 '텍스트', 717-9607 '이미지')는 원소 모듈을 카테고리 이름으로 부른다.
+// 팔레트/갤러리 카드 이름(모듈 name)은 그대로 두고 이 패널 제목만 바꾼다.
+const PANEL_TITLE_OVERRIDES: Record<string, string> = {
+  ModuleDescText: '텍스트',
+  ModuleImg: '이미지',
+}
+const panelTitle = computed(() => {
+  const meta = selectedModuleMetadata.value
+  if (!meta) return ''
+  return PANEL_TITLE_OVERRIDES[meta.id] ?? meta.name
+})
+
 const flatHeaderLabel = computed(() => {
   const cat = selectedModuleMetadata.value?.category
   return cat ? (FLAT_HEADER_LABELS[cat] ?? null) : null
@@ -1513,12 +1735,36 @@ const moveSelectedModuleColumn = (direction: 'left' | 'right') => {
 // - group이 하나도 없으면 단일 평면 그룹(기존 flat 모듈 그대로).
 // - 일부라도 group이 있으면 group 없는 prop은 null 그룹(상단 상시 노출용)으로, 나머지는 이름별 섹션으로 묶는다.
 //   (예: 이미지 모듈 = 이미지 URL/설명은 상단 상시, 크기/링크/모서리/테두리/여백은 접이식 섹션)
+// 리치텍스트(textarea) 바로 앞에 그 텍스트의 '폰트 크기' 필드를 올린다 — Figma 640-3235:
+// 폰트 크기 슬라이더 → 서식 툴바 → 텍스트 입력 순서. (설정 파일은 그대로 두고 표시 순서만 바꾼다)
+// 짝짓기: `${textareaKey}FontSize` 키 우선, 없으면 그룹에 textarea·폰트크기가 하나씩일 때만 그 둘을 짝으로 본다.
+const hoistFontSizeBeforeTextarea = (props: EditableProp[]): EditableProp[] => {
+  const textareas = props.filter((p) => p.type === 'textarea')
+  if (!textareas.length) return props
+  const fontSizes = props.filter(isFontSizeField)
+  if (!fontSizes.length) return props
+
+  const result = [...props]
+  for (const ta of textareas) {
+    const exact = fontSizes.find((p) => p.key.toLowerCase() === `${ta.key}fontsize`.toLowerCase())
+    const partner =
+      exact ?? (textareas.length === 1 && fontSizes.length === 1 ? fontSizes[0] : undefined)
+    if (!partner) continue
+    const from = result.indexOf(partner)
+    const to = result.indexOf(ta)
+    if (from === -1 || to === -1 || from < to) continue // 이미 앞에 있으면 그대로
+    result.splice(from, 1)
+    result.splice(result.indexOf(ta), 0, partner)
+  }
+  return result
+}
+
 const propGroups = computed(() => {
   const props = editableProps.value
   if (!props.length) return [{ name: null as string | null, props: [] as typeof props }]
   const anyGrouped = props.some((p) => !!p.group)
   if (!anyGrouped) {
-    return [{ name: null as string | null, props }]
+    return [{ name: null as string | null, props: hoistFontSizeBeforeTextarea(props) }]
   }
   const order: (string | null)[] = []
   const map = new Map<string | null, typeof props>()
@@ -1530,7 +1776,7 @@ const propGroups = computed(() => {
     }
     map.get(g)!.push(p)
   }
-  return order.map((name) => ({ name, props: map.get(name)! }))
+  return order.map((name) => ({ name, props: hoistFontSizeBeforeTextarea(map.get(name)!) }))
 })
 
 // 모듈 전체가 평면(섹션 없음)인지 — flat 카테고리 헤더는 이 경우에만 노출한다.
@@ -1566,6 +1812,17 @@ const showWhenKey = (prop: EditableProp): string | null => {
   return null
 }
 
+/**
+ * 필드 노출 여부.
+ * 섹션 스위치(헤더로 끌어올린 on/off 속성)가 가리는 필드는 **숨기지 않고** 그대로 보여준다 —
+ * 아코디언을 열면 꺼져 있어도 어떤 옵션이 있는지 보이고, 조작만 `.gg-acc-fields.is-disabled`가 막는다.
+ */
+const isFieldVisible = (group: PropGroup, prop: EditableProp): boolean => {
+  const t = groupHeaderToggle(group)
+  if (t && showWhenKey(prop) === t.key) return true
+  return evalShowWhen(prop.showWhen)
+}
+
 // ===== 이름 있는 prop 그룹(레거시 모듈의 로고/타이틀 등 섹션) 헤더 — Figma 352-1138 패턴 =====
 // 그룹의 첫 prop이 boolean이고 나머지 전부가 그 prop을 참조하는 showWhen이면
 // "그룹 전체를 켜고 끄는 토글"로 보고 판넬 헤더로 끌어올린다(판넬을 열기 전에도 제어 가능하도록).
@@ -1579,20 +1836,16 @@ const groupHeaderToggle = (group: PropGroup): EditableProp | null => {
 // 그룹 판넬 펼침 상태 — 그룹명(또는 인덱스)별로 관리. 기본값: 첫 그룹만 펼침(기존 Panel 동작과 동일)
 const groupPanelExpanded = reactive<Record<string, boolean>>({})
 const groupPanelKey = (group: PropGroup, index: number): string => group.name ?? `_flat_${index}`
-// 이미지 스타일 섹션 중 기본값을 '닫힘'(토글 off)으로 둘 섹션 — 이미지 크기 조정·모서리 둥글기.
-const DEFAULT_CLOSED_SECTIONS = new Set(['이미지 크기 조정', '모서리 둥글기'])
-const isGroupPanelExpanded = (group: PropGroup, index: number): boolean => {
-  const key = groupPanelKey(group, index)
-  // 기본값: 펼침(Figma 640-2393에서 섹션은 기본 열린 상태). 단, 위 지정 이미지 섹션은 닫힘으로 시작한다.
-  // 사용자가 열고/접으면 그 상태를 기억한다.
-  if (!(key in groupPanelExpanded)) {
-    groupPanelExpanded[key] = !(isImageStyleSection(group) && DEFAULT_CLOSED_SECTIONS.has(group.name ?? ''))
-  }
-  return groupPanelExpanded[key]
+// 접이식 섹션은 항상 '닫힘'으로 시작하고, 사용자가 열고/접은 상태만 기억한다.
+const isGroupPanelExpanded = (group: PropGroup, index: number): boolean =>
+  groupPanelExpanded[groupPanelKey(group, index)] === true
+
+const setGroupPanelExpanded = (group: PropGroup, index: number, open: boolean): void => {
+  groupPanelExpanded[groupPanelKey(group, index)] = open
 }
+
 const toggleGroupPanel = (group: PropGroup, index: number): void => {
-  const key = groupPanelKey(group, index)
-  groupPanelExpanded[key] = !isGroupPanelExpanded(group, index)
+  setGroupPanelExpanded(group, index, !isGroupPanelExpanded(group, index))
 }
 
 // wrap 설정 (전체 스타일 패널의 "포인트 색상으로 사용" 기본값 계산용으로만 참조)
@@ -1668,6 +1921,31 @@ const updateProperty = (key: string, value: unknown) => {
 
 // ===== SNS 아이콘 (노출/링크/순서) =====
 const snsIconMeta = SNS_ICON_META
+// ===== 푸터 연락처(H·T·E·F) — 체크로 노출, 드래그로 순서 변경 =====
+// 값은 배열(contactItems)에 저장하되, 구버전 키(websiteUrl/phone/email/fax + show*)에도 함께 기록해
+// 영문 안내문구의 {{phone}} 같은 기존 참조가 그대로 동작하게 한다.
+// 템플릿에서 item.key(any)로 조회하므로 인덱스 시그니처를 느슨하게 둔다
+const contactMeta: Record<string, (typeof CONTACT_ITEM_META)[ContactItemKey]> = CONTACT_ITEM_META
+
+const getContactItems = (key: string): ContactItem[] =>
+  readContactItems({ ...(selectedModule.value?.properties ?? {}), contactItems: selectedModule.value?.properties[key] })
+
+const saveContactItems = (key: string, items: ContactItem[]) => {
+  updateProperty(key, items.map((i) => ({ ...i })))
+  items.forEach((i) => {
+    const meta = CONTACT_ITEM_META[i.key]
+    if (!meta) return
+    updateProperty(meta.legacyKey, i.value)
+    updateProperty(meta.legacyShowKey, i.show)
+  })
+}
+
+const setContactItems = (key: string, items: ContactItem[]) => saveContactItems(key, items)
+const setContactShow = (key: string, index: number, show: boolean) =>
+  saveContactItems(key, getContactItems(key).map((i, idx) => (idx === index ? { ...i, show } : i)))
+const setContactValue = (key: string, index: number, value: string) =>
+  saveContactItems(key, getContactItems(key).map((i, idx) => (idx === index ? { ...i, value } : i)))
+
 const getSnsIcons = (key: string): SnsIconItem[] => {
   const v = selectedModule.value?.properties[key]
   return Array.isArray(v) ? (v as SnsIconItem[]) : defaultSnsIcons()
@@ -1680,15 +1958,9 @@ const setSnsIconUrl = (key: string, index: number, url: string) => {
   const icons = getSnsIcons(key).map((i, idx) => (idx === index ? { ...i, url } : { ...i }))
   updateProperty(key, icons)
 }
-const moveSnsIcon = (key: string, index: number, dir: 'up' | 'down') => {
-  const icons = getSnsIcons(key).map((i) => ({ ...i }))
-  const target = dir === 'up' ? index - 1 : index + 1
-  if (target < 0 || target >= icons.length) return
-  const tmp = icons[index]
-  icons[index] = icons[target]
-  icons[target] = tmp
-  updateProperty(key, icons)
-}
+// 드래그로 순서 변경
+const setSnsIcons = (key: string, icons: SnsIconItem[]) =>
+  updateProperty(key, icons.map((i) => ({ ...i })))
 
 // px 전용 길이 필드 판별: placeholder가 px 예시를 담고 %를 포함하지 않을 때.
 // (%·px 혼용 필드 — 커스텀 테이블 열 너비, 이미지 너비 등 — 은 자동 보정 제외)
@@ -1714,8 +1986,20 @@ const isFontSizeField = (prop: EditableProp): boolean =>
 
 // ===== 이미지 크기 조정 (Figma 686-3949) =====
 // 최대 너비: 슬라이더 + % 값 필드. (*MaxWidth 키의 text 필드)
+// 테두리 위치 — 그룹 스타일과 동일한 아이콘 다중 선택으로 렌더한다.
+// 값은 properties에 문자열 하나로만 저장할 수 있어 'top,bottom'처럼 이어 붙인다(구버전 'both'도 해석).
+const isBorderPositionField = (prop: EditableProp): boolean => /borderposition$/i.test(prop.key)
+const borderSidesOf = (prop: EditableProp): BorderSide[] =>
+  parseBorderSides(selectedModule.value?.properties[prop.key] ?? prop.default)
+const onBorderSidesChange = (prop: EditableProp, sides: BorderSide[]): void =>
+  updateProperty(prop.key, serializeBorderSides(sides))
+
+// 퍼센트 너비 필드(이미지 최대 너비 · 구분선 선 너비 등) — 슬라이더 + % 값 필드로 렌더한다.
+// (키가 ...Width 로 끝나면서 기본값이 %인 필드. px 두께 필드(borderWidth 등)는 해당 없음)
 const isMaxWidthField = (prop: EditableProp): boolean =>
-  prop.type === 'text' && /maxwidth$/i.test(prop.key)
+  prop.type === 'text' &&
+  /width$/i.test(prop.key) &&
+  (/maxwidth$/i.test(prop.key) || String(prop.default ?? '').includes('%'))
 const pctNumber = (prop: EditableProp): number => {
   const raw = String(selectedModule.value?.properties[prop.key] ?? prop.default ?? '100%')
   const n = parseInt(raw, 10)
@@ -1757,13 +2041,75 @@ const isAlignSegment = (prop: EditableProp): boolean => {
   return vals.includes('left') && vals.includes('center') && vals.includes('right')
 }
 
-const FONT_SIZE_MIN = 8
-const FONT_SIZE_MAX = 28
+// ===== 폰트 크기: 모듈 기본값 ↔ 선택 영역 크기 통합 컨트롤 (Figma 640-3689) =====
+// 드래그 선택이 있으면 그 범위의 인라인 크기를, 없으면 모듈 기본값(prop)을 대상으로 한다.
+// 어느 쪽을 바꾸는지는 라벨 옆 '선택 영역' 배지로 드러낸다.
 
+/** 이 폰트 크기 필드가 조작할 리치텍스트 에디터 키(같은 그룹의 짝 textarea) */
+const fontSizeEditorKey = (prop: EditableProp): string | null => {
+  const group = propGroups.value.find((g) => g.props.includes(prop))
+  if (!group) return null
+  const textareas = group.props.filter((p) => p.type === 'textarea')
+  if (!textareas.length) return null
+  // 'mainTitle' + 'mainTitleFontSize' 처럼 키 접두사가 맞는 짝을 먼저 찾고,
+  // 없으면 그룹에 textarea·폰트크기가 하나씩일 때만 그 둘을 짝으로 본다.
+  const exact = textareas.find((t) => `${t.key}fontsize`.toLowerCase() === prop.key.toLowerCase())
+  if (exact) return exact.key
+  const fontSizes = group.props.filter(isFontSizeField)
+  return textareas.length === 1 && fontSizes.length === 1 ? textareas[0].key : null
+}
+
+/**
+ * 에디터 본문에 적용할 기본 글자 크기 — 같은 그룹의 짝 '폰트 크기' prop 값.
+ * (에디터가 고정 크기로 그려지면 캔버스와 크기가 달라 보여 '연동이 안 된다'고 느껴진다)
+ */
+const editorBaseFontSize = (textareaProp: EditableProp, group: PropGroup): string | undefined => {
+  const fontSizes = group.props.filter(isFontSizeField)
+  if (!fontSizes.length) return undefined
+  const exact = fontSizes.find(
+    (f) => f.key.toLowerCase() === `${textareaProp.key}fontsize`.toLowerCase(),
+  )
+  const textareas = group.props.filter((p) => p.type === 'textarea')
+  const partner =
+    exact ?? (textareas.length === 1 && fontSizes.length === 1 ? fontSizes[0] : undefined)
+  if (!partner) return undefined
+  const n = parseFontSize(selectedModule.value?.properties[partner.key] ?? partner.default)
+  return n ? `${n}px` : undefined
+}
+
+/** 지금 이 필드가 '선택 영역'을 대상으로 하는지 (드래그 선택이 살아 있는지) */
+const isFontSizeSelectionTarget = (prop: EditableProp): boolean => {
+  const key = fontSizeEditorKey(prop)
+  return !!key && !!editorFormatState[key]?.hasSelection
+}
+
+/** 선택 영역에 크기가 섞여 있는지 (값 자리에 '--' 표시) */
+const isFontSizeMixed = (prop: EditableProp): boolean => {
+  const key = fontSizeEditorKey(prop)
+  return isFontSizeSelectionTarget(prop) && !!key && !!editorFormatState[key]?.fontSizeMixed
+}
+
+/** 개별(인라인) 크기가 걸려 있는지 — 선택 중이면 그 범위, 아니면 본문 전체 기준 */
+const fontSizeHasInline = (prop: EditableProp): boolean => {
+  const key = fontSizeEditorKey(prop)
+  if (!key) return false
+  return isFontSizeSelectionTarget(prop)
+    ? !!editorFormatState[key]?.fontSizeInSelection
+    : !!editorFormatState[key]?.fontSizeAnywhere
+}
+
+/** 모듈 기본값(px) */
+const baseFontSizeNumber = (prop: EditableProp): number =>
+  parseFontSize(selectedModule.value?.properties[prop.key] ?? prop.default) ?? 16
+
+/** 표시 값 — 선택 영역이 있으면 그 크기(없으면 기본값), 혼합이면 슬라이더는 기본값 위치 */
 const fontSizeNumber = (prop: EditableProp): number => {
-  const raw = String(selectedModule.value?.properties[prop.key] ?? prop.default ?? '16px')
-  const n = parseInt(raw, 10)
-  return Number.isFinite(n) ? n : 16
+  const key = fontSizeEditorKey(prop)
+  if (isFontSizeSelectionTarget(prop) && key) {
+    const sel = parseFontSize(editorFormatState[key]?.fontSize)
+    if (sel !== null) return sel
+  }
+  return baseFontSizeNumber(prop)
 }
 
 // Enter 입력 시 blur시켜 change 이벤트(값 확정)를 발생시킴
@@ -1771,15 +2117,37 @@ const blurTarget = (event: Event) => {
   ;(event.target as HTMLElement).blur()
 }
 
-// 가운데 숫자를 직접 타이핑해서 수정 (blur/Enter 시 확정 — 입력 중엔 스토어를 건드리지 않음)
+// 슬라이더/숫자 입력 — 선택 영역이 있으면 그 범위에만, 없으면 모듈 기본값에 적용
 const onFontSizeInput = (prop: EditableProp, event: Event) => {
   const raw = (event.target as HTMLInputElement).value
-  const parsed = parseInt(raw, 10)
+  const parsed = Number.parseInt(raw, 10)
   const next = Math.min(
     FONT_SIZE_MAX,
     Math.max(FONT_SIZE_MIN, Number.isFinite(parsed) ? parsed : fontSizeNumber(prop)),
   )
-  updateProperty(prop.key, `${next}px`)
+  const key = fontSizeEditorKey(prop)
+  const quill = key ? quillByKey[key] : null
+  const range = key ? quillRangeByKey[key] : null
+  if (isFontSizeSelectionTarget(prop) && quill && range && range.length > 0) {
+    quill.formatText(range.index, range.length, 'fontSize', toFontSizeValue(next), 'user')
+    syncEditorFormatState(key!, quill, range)
+    return
+  }
+  updateProperty(prop.key, toFontSizeValue(next))
+}
+
+/** 개별 크기 지우기 — 선택 중이면 그 범위만, 아니면 본문 전체의 인라인 크기를 제거해 기본값을 따르게 한다 */
+const resetFontSizeToBase = (prop: EditableProp) => {
+  const key = fontSizeEditorKey(prop)
+  const quill = key ? quillByKey[key] : null
+  if (!key || !quill) return
+  const range = quillRangeByKey[key]
+  if (isFontSizeSelectionTarget(prop) && range && range.length > 0) {
+    quill.formatText(range.index, range.length, 'fontSize', false, 'user')
+  } else {
+    quill.formatText(0, quill.getLength(), 'fontSize', false, 'user')
+  }
+  syncEditorFormatState(key, quill, quillRangeByKey[key])
 }
 
 // ===== 여백/패딩 4방향(...Top/Right/Bottom/Left) 세트 — 방향별 그리드 + 잠금 슬라이더 UI (Figma 365-2691) =====
@@ -1833,6 +2201,19 @@ const isQuadLocked = (prefix: string | null): boolean => !!prefix && quadLockSta
 const toggleQuadLock = (prefix: string | null): void => {
   if (!prefix) return
   quadLockState[prefix] = !isQuadLocked(prefix)
+}
+
+// 4방향(quad) 세트에 속하지 않는 단일 여백 값(예: 버튼 안쪽 상하 여백 buttonPaddingV) —
+// 여백 슬라이더와 같은 UI로 그려 4방향 여백과 조작감을 맞춘다.
+const isSingleSpacingField = (prop: EditableProp): boolean =>
+  prop.type === 'text' &&
+  /padding|margin/i.test(prop.key) &&
+  !isQuadStart(prop, editableProps.value) &&
+  !isQuadMember(prop, editableProps.value)
+
+const onSingleSpacingInput = (prop: EditableProp, event: Event) => {
+  const n = Math.max(0, Number.parseInt((event.target as HTMLInputElement).value, 10) || 0)
+  updateProperty(prop.key, `${n}px`)
 }
 
 const quadPxNumber = (prop: EditableProp): number => {
@@ -1889,44 +2270,95 @@ const isQuadSelfLabeledGroup = (group: { name?: string | null; props: EditablePr
 // ===== 접이식 섹션 (Figma 608-2624 / 640-2393) =====
 // 타이틀 옆 화살표(chevron) + 열릴 때 본문에 배경 카드. 헤더(화살표+타이틀)를 클릭하면 열고/닫는다.
 // 섹션 헤더(타이틀 행)를 갖는 그룹 — 이름 있고 quad-self-labeled(헤더 없음)가 아닌 그룹.
-// 이미지 모듈의 스타일 섹션(이미지 파일 제외) — '링크 추가'처럼 접이식 카드로 통일한다(Figma 요청).
-// 이미지 크기 조정·모서리 둥글기·여백은 별도 on/off 속성이 없어 토글이 UI 펼침 상태를 제어한다.
-// (링크 추가=showImageLink, 테두리=borderStyle 토글은 기존 그대로 실제 속성이 토글을 담당한다.)
-const isImageStyleSection = (group: PropGroup): boolean =>
-  selectedModule.value?.moduleId === 'ModuleImg' && !!group.name && group.name !== '이미지 파일'
+// 스타일 섹션 — '링크 추가'처럼 접이식 카드(화살표 + 헤더 토글 + 회색 본문 카드)로 통일한다(Figma 요청).
+// 별도 on/off 속성이 없는 섹션(이미지 크기 조정·모서리 둥글기·여백·배경색)은 토글이 UI 펼침 상태를 제어하고,
+// 실제 on/off 속성이 있는 섹션(링크 추가=showImageLink, 테두리=showBorder/borderStyle)은 그 속성이 토글을 담당한다.
+// - 이미지 모듈: '이미지 파일'(핵심 필드)을 뺀 전 섹션
+// - 텍스트 모듈: 여백 · 배경색 · 모서리 둥글기 · 테두리 (내용 섹션은 핵심 필드라 제외)
+// 모듈별 스타일 섹션 규칙 — '*'는 이름 있는 전 섹션, Set은 그 이름들만, exclude는 그 섹션만 제외.
+// (제외 대상은 '이미지 파일'·'내용'처럼 항상 펼쳐 두는 핵심 입력 섹션)
+const STYLE_SECTION_RULES: Record<string, '*' | { exclude: string } | Set<string>> = {
+  ModuleImg: { exclude: '이미지 파일' },
+  ModuleDescText: new Set(['여백', '배경색', '모서리 둥글기', '테두리']),
+  ModuleDivider: '*', // 선 스타일 · 여백
+  // 버튼: 핵심 입력(텍스트·링크·폰트·배경색·글자색)은 항상 펼친 채 두고 스타일만 접이식 카드로
+  ModuleOneButton: { exclude: '버튼' },
+  ModuleTwoButton: new Set(['테두리', '모서리 둥글기', '여백']),
+  ModuleSmallButton: { exclude: '공통' },
+  // 연락처: 핵심 입력('연락처')은 항상 펼친 채 두고 여백만 접이식 카드로
+  ModuleContactInfo: new Set(['여백']),
+  // SNS 아이콘: 핵심 입력(배경색·정렬·구성 요소)은 항상 펼친 채 두고 여백만 접이식 카드로
+  ModuleSnsIcons: new Set(['여백']),
+}
+const isStyleSection = (group: PropGroup): boolean => {
+  if (!group.name) return false
+  const rule = STYLE_SECTION_RULES[selectedModule.value?.moduleId ?? '']
+  if (!rule) return false
+  if (rule === '*') return true
+  if (rule instanceof Set) return rule.has(group.name)
+  return group.name !== rule.exclude
+}
+
+// 섹션 본문을 카드(gg-acc-fields) 단위로 나눈다.
+// 4방향 여백(quad)은 블록마다 자기 카드를 갖고(예: 텍스트 '여백' 섹션의 안쪽 여백 / 바깥 여백),
+// 그 외 속성들은 종전처럼 한 카드에 모인다. (카드가 아닌 섹션은 display:contents 라 결과가 동일)
+type FieldChunk = { prop: EditableProp; index: number }[]
+const fieldChunks = (group: PropGroup): FieldChunk[] => {
+  const chunks: FieldChunk[] = []
+  let current: FieldChunk = []
+  let currentIsQuad = false
+  group.props.forEach((prop, index) => {
+    const startsQuad = isQuadStart(prop, group.props, index)
+    const inQuad = isQuadMember(prop, group.props, index)
+    // quad가 새로 시작하거나, quad 카드가 끝나고 다른 속성이 오면 카드를 끊는다
+    if (current.length > 0 && (startsQuad || (currentIsQuad && !inQuad))) {
+      chunks.push(current)
+      current = []
+      currentIsQuad = false
+    }
+    if (startsQuad) currentIsQuad = true
+    current.push({ prop, index })
+  })
+  if (current.length > 0) chunks.push(current)
+  return chunks
+}
 
 const hasSectionHeader = (group: PropGroup): boolean =>
-  !!group.name && (!isQuadSelfLabeledGroup(group) || isImageStyleSection(group))
+  !!group.name && (!isQuadSelfLabeledGroup(group) || isStyleSection(group))
 // 헤더 우측에 on/off 토글이 있는 그룹인지 — boolean 토글 또는 테두리 블록(on/off) 토글.
 const groupHasHeaderToggle = (group: PropGroup): boolean =>
   !!groupHeaderToggle(group) || !!groupBorderToggleProp(group)
 // 접이식(화살표+배경카드+아코디언)으로 만들 섹션 — 헤더 토글이 있거나, 이미지 스타일 섹션.
 // 그 외 토글 없는 섹션(예: '버튼')은 기존처럼 평면 나열(화살표·카드·접기 없음).
 const isCollapsibleSection = (group: PropGroup): boolean =>
-  hasSectionHeader(group) && (groupHasHeaderToggle(group) || isImageStyleSection(group))
+  hasSectionHeader(group) && (groupHasHeaderToggle(group) || isStyleSection(group))
 // 섹션이 "열림"인지: 토글 그룹은 토글 값에, 그 외 이름 그룹은 펼침 상태에 따른다. flat/헤더없는 quad는 항상 열림.
-const isSectionOpen = (group: PropGroup, index: number): boolean => {
-  if (!isCollapsibleSection(group)) return true
+// 펼침 여부는 스위치와 무관한 UI 상태다(기본 닫힘). chevron/라벨 클릭으로만 바뀐다.
+const isSectionOpen = (group: PropGroup, index: number): boolean =>
+  !isCollapsibleSection(group) || isGroupPanelExpanded(group, index)
+
+/** 섹션 스위치 상태 — 별도 on/off 속성이 없는 섹션(여백·모서리 둥글기 등)은 항상 '켜짐'으로 본다 */
+const isSectionEnabled = (group: PropGroup): boolean => {
   const t = groupHeaderToggle(group)
   if (t) return Boolean(selectedModule.value?.properties[t.key])
   const b = groupBorderToggleProp(group)
   if (b) return borderIsOn(b)
-  return isGroupPanelExpanded(group, index)
+  return true
 }
-// 헤더 클릭: 토글 그룹은 스위치를 on/off, 테두리 토글 그룹은 테두리 on/off, 그 외는 펼침 상태 토글.
-const onSectionHeaderClick = (group: PropGroup, index: number): void => {
-  if (!isCollapsibleSection(group)) return
+
+/**
+ * 헤더 스위치 변경.
+ * - 켤 때: 속성을 켜면서 섹션도 펼친다(바로 편집할 수 있게)
+ * - 끌 때: 펼침 상태는 그대로 두고 내용만 흐리게(.gg-acc-fields.is-disabled) 만든다
+ */
+const onSectionSwitch = (group: PropGroup, index: number, on: boolean): void => {
   const t = groupHeaderToggle(group)
-  if (t) {
-    updateProperty(t.key, !selectedModule.value?.properties[t.key])
-    return
+  if (t) updateProperty(t.key, on)
+  else {
+    const b = groupBorderToggleProp(group)
+    if (b) toggleBorderOn(b, on)
   }
-  const b = groupBorderToggleProp(group)
-  if (b) {
-    toggleBorderOn(b, !borderIsOn(b))
-    return
-  }
-  toggleGroupPanel(group, index)
+  if (on) setGroupPanelExpanded(group, index, true)
 }
 
 // ===== 테두리 "전체 블록" (전체 스타일 GlobalStylePanel과 동일 UI) =====
@@ -2014,12 +2446,46 @@ let activeRange: { index: number; length: number } | null = null
 // 각 리치텍스트 필드(prop.key)별 Quill 인스턴스/선택영역을 별도로 추적해,
 // 필드 옆 드롭다운이 그 필드의 에디터에만 적용되도록 한다(색상 팝오버와 동일한
 // activeQuill/activeRange 원리를, 필드별로 나눠 재사용).
-const LINE_HEIGHT_FIELD_OPTIONS = LINE_HEIGHT_OPTIONS.map((v) => ({ label: v, value: v }))
-const LETTER_SPACING_FIELD_OPTIONS = LETTER_SPACING_OPTIONS.map((v: string) => ({ label: v, value: v }))
 
 const quillByKey: Record<string, Quill> = {}
 const quillRangeByKey: Record<string, { index: number; length: number } | null> = {}
-const editorFormatState = reactive<Record<string, { lineHeight: string; letterSpacing: string }>>({})
+type EditorFormatState = {
+  lineHeight: string
+  letterSpacing: string
+  /** 줄바꿈 규칙(문단 단위) — '' | 'keep-all' | 'break-all' */
+  wordBreak: string
+  /** 드래그 선택(길이>0)이 살아 있는지 — 폰트 크기 컨트롤의 대상 판정 */
+  hasSelection: boolean
+  /** 선택 영역의 인라인 폰트 크기(균일할 때만, 없으면 '') */
+  fontSize: string
+  /** 선택 영역에 크기가 섞여 있는지 (지정+미지정 혼합 포함) */
+  fontSizeMixed: boolean
+  /** 선택 영역 안에 인라인 크기가 하나라도 있는지 */
+  fontSizeInSelection: boolean
+  /** 본문 전체에 인라인 크기가 하나라도 있는지 */
+  fontSizeAnywhere: boolean
+}
+const editorFormatState = reactive<Record<string, EditorFormatState>>({})
+
+/**
+ * 범위 안의 인라인 폰트 크기 집합. 크기가 없는 텍스트는 null(=모듈 기본값)로 센다.
+ * (Quill의 getFormat은 '일부만 지정'이면 키 자체를 지워버려 혼합 여부를 알 수 없다)
+ */
+const collectFontSizes = (
+  quill: Quill,
+  range: { index: number; length: number },
+): Set<string | null> => {
+  const sizes = new Set<string | null>()
+  if (range.length <= 0) return sizes
+  const delta = quill.getContents(range.index, range.length)
+  delta.ops.forEach((op) => {
+    if (typeof op.insert !== 'string') return
+    if (!op.insert.replace(/\n/g, '')) return // 문단 구분용 개행만 있는 조각은 제외
+    const size = (op.attributes?.fontSize as string | undefined) ?? null
+    sizes.add(size)
+  })
+  return sizes
+}
 
 const syncEditorFormatState = (
   key: string,
@@ -2028,9 +2494,19 @@ const syncEditorFormatState = (
 ) => {
   const r = range ?? { index: 0, length: quill.getLength() }
   const fmt = quill.getFormat(r.index, r.length) as Record<string, unknown>
+  const hasSelection = !!range && range.length > 0
+  const selSizes = hasSelection ? collectFontSizes(quill, r) : new Set<string | null>()
+  const allSizes = collectFontSizes(quill, { index: 0, length: quill.getLength() })
+  const onlySize = selSizes.size === 1 ? [...selSizes][0] : null
   editorFormatState[key] = {
     lineHeight: typeof fmt.lineHeight === 'string' ? fmt.lineHeight : '',
     letterSpacing: typeof fmt.letterSpacing === 'string' ? fmt.letterSpacing : '',
+    wordBreak: typeof fmt.wordBreak === 'string' ? fmt.wordBreak : '',
+    hasSelection,
+    fontSize: onlySize ?? '',
+    fontSizeMixed: selSizes.size > 1,
+    fontSizeInSelection: [...selSizes].some((s) => s !== null),
+    fontSizeAnywhere: [...allSizes].some((s) => s !== null),
   }
 }
 
@@ -2044,7 +2520,9 @@ const applyLineHeight = (key: string, value: string | null) => {
   editorFormatState[key] = { ...editorFormatState[key], lineHeight: value || '' }
 }
 
-// 자간(인라인 스코프) 적용 — 선택 범위가 있으면 그 범위에, 없으면 커서 다음 입력에 적용
+// 자간(인라인 스코프) 적용 — 선택 범위가 있으면 그 범위에 적용.
+// 선택 없이 커서만 있으면 커서 자리(빈 span)에만 걸려 화면에 아무 변화가 없으므로,
+// 행간과 같은 감각이 되도록 '커서가 있는 문단 전체'에 적용한다.
 const applyLetterSpacing = (key: string, value: string | null) => {
   const q = quillByKey[key]
   const r = quillRangeByKey[key]
@@ -2052,10 +2530,102 @@ const applyLetterSpacing = (key: string, value: string | null) => {
   if (r.length > 0) {
     q.formatText(r.index, r.length, 'letterSpacing', value || false, 'user')
   } else {
-    q.setSelection(r.index, 0, 'silent')
-    q.format('letterSpacing', value || false, 'user')
+    const [line] = q.getLine(r.index)
+    if (line) {
+      q.formatText(q.getIndex(line), line.length(), 'letterSpacing', value || false, 'user')
+    } else {
+      q.setSelection(r.index, 0, 'silent')
+      q.format('letterSpacing', value || false, 'user')
+    }
   }
   editorFormatState[key] = { ...editorFormatState[key], letterSpacing: value || '' }
+}
+
+// ===== 행간 · 자간 팝오버 (툴바의 format_line_spacing) =====
+const spacingPopover = ref<{ visible: boolean; key: string; top: number; left: number }>({
+  visible: false,
+  key: '',
+  top: 0,
+  left: 0,
+})
+const spacingPopoverEl = ref<HTMLElement | null>(null)
+const SPACING_POPOVER_WIDTH = 318 // .rte-spacing-popover 의 width 와 일치
+
+const closeSpacingPopover = () => {
+  spacingPopover.value = { ...spacingPopover.value, visible: false }
+}
+
+// 현재 선택 영역의 행간/자간 값 — 지정 전이면 슬라이더는 기본 위치에 서고 값은 흐리게 표시한다
+// (실제 적용은 사용자가 슬라이더를 움직이거나 값을 입력했을 때만 일어난다)
+const lineHeightNumber = computed(
+  () =>
+    parseLineHeight(editorFormatState[spacingPopover.value.key]?.lineHeight) ??
+    LINE_HEIGHT_FALLBACK,
+)
+const isLineHeightSet = computed(
+  () => parseLineHeight(editorFormatState[spacingPopover.value.key]?.lineHeight) !== null,
+)
+const letterSpacingNumber = computed(
+  () =>
+    parseLetterSpacing(editorFormatState[spacingPopover.value.key]?.letterSpacing) ??
+    LETTER_SPACING_FALLBACK,
+)
+const isLetterSpacingSet = computed(
+  () => parseLetterSpacing(editorFormatState[spacingPopover.value.key]?.letterSpacing) !== null,
+)
+
+const clamp = (n: number, min: number, max: number) => Math.min(Math.max(n, min), max)
+
+// 줄바꿈 규칙(문단 단위) — 툴바 드롭다운을 이 팝오버로 옮겼다
+const WORD_BREAK_SEG: { label: string; value: string | null }[] = [
+  { label: '기본', value: null },
+  { label: '단어 기준', value: 'keep-all' },
+  { label: '글자 기준', value: 'break-all' },
+]
+const currentWordBreak = computed<string | null>(
+  () => editorFormatState[spacingPopover.value.key]?.wordBreak || null,
+)
+const applyWordBreak = (key: string, value: string | null) => {
+  const q = quillByKey[key]
+  const r = quillRangeByKey[key]
+  if (!q || !r) return
+  q.setSelection(r.index, r.length, 'silent')
+  q.format('wordBreak', value ?? false, 'user')
+  editorFormatState[key] = { ...editorFormatState[key], wordBreak: value ?? '' }
+}
+
+const onLineHeightSlide = (event: Event) => {
+  const raw = Number.parseFloat((event.target as HTMLInputElement).value)
+  if (!Number.isFinite(raw)) return
+  const n = clamp(raw, LINE_HEIGHT_MIN, LINE_HEIGHT_MAX)
+  applyLineHeight(spacingPopover.value.key, toLineHeightValue(n))
+}
+
+const onLetterSpacingSlide = (event: Event) => {
+  const raw = Number.parseFloat((event.target as HTMLInputElement).value)
+  if (!Number.isFinite(raw)) return
+  const n = clamp(raw, LETTER_SPACING_MIN, LETTER_SPACING_MAX)
+  applyLetterSpacing(spacingPopover.value.key, toLetterSpacingValue(n))
+}
+
+const toggleSpacingPopover = (key: string, event: MouseEvent) => {
+  if (spacingPopover.value.visible && spacingPopover.value.key === key) {
+    closeSpacingPopover()
+    return
+  }
+  const quill = quillByKey[key]
+  if (!quill) return
+  // 에디터를 한 번도 클릭하지 않았으면 본문 전체를 대상으로 삼는다
+  // (드롭다운이 표시하는 값도 선택 영역이 없을 때 본문 전체 서식이므로 동작이 일치한다)
+  if (!quillRangeByKey[key]) quillRangeByKey[key] = { index: 0, length: quill.getLength() }
+
+  // Figma 640-3517처럼 카드를 텍스트 필드 열에 맞춰 건다(버튼 기준이면 패널 왼쪽으로 밀려난다).
+  const btnEl = event.currentTarget as HTMLElement
+  const btn = btnEl.getBoundingClientRect()
+  const field = btnEl.closest('.rte-field')?.getBoundingClientRect()
+  const anchorLeft = field ? field.left - 5 : btn.right - SPACING_POPOVER_WIDTH
+  const left = Math.max(8, Math.min(anchorLeft, window.innerWidth - SPACING_POPOVER_WIDTH - 8))
+  spacingPopover.value = { visible: true, key, top: btn.bottom + 6, left }
 }
 
 // 팝오버 상태
@@ -2208,19 +2778,36 @@ const addCustomColorItem = (quill: Quill, format: 'color' | 'background') => {
 
 // 팝오버 바깥 클릭 / Esc 시 닫기 (PrimeVue ColorPicker 오버레이 클릭은 예외)
 const onDocPointerDown = (e: MouseEvent) => {
-  if (!colorPopover.value.visible) return
   const target = e.target as HTMLElement
+  if (spacingPopover.value.visible) {
+    // 행간·자간 팝오버: 팝오버 내부·Select 오버레이·토글 버튼 클릭은 유지
+    if (
+      !spacingPopoverEl.value?.contains(target) &&
+      !target.closest('.p-select-overlay') &&
+      !target.closest('.rte-tb-btn')
+    ) {
+      closeSpacingPopover()
+    }
+  }
+  if (!colorPopover.value.visible) return
   if (colorPopoverEl.value?.contains(target)) return
   if (target.closest('.p-colorpicker-panel')) return // 컬러피커 그라데이션 패널
   if (target.closest('.ql-custom-color')) return // 다시 여는 토글 항목
   closeColorPopover()
 }
 const onDocKeydown = (e: KeyboardEvent) => {
-  if (e.key === 'Escape' && colorPopover.value.visible) closeColorPopover()
+  if (e.key !== 'Escape') return
+  const hadPopover = spacingPopover.value.visible || colorPopover.value.visible
+  if (spacingPopover.value.visible) closeSpacingPopover()
+  if (colorPopover.value.visible) closeColorPopover()
+  // 팝오버를 닫는 Esc는 여기서 소비한다 — 전역 단축키(useKeyboardShortcuts)의 '선택 해제'까지
+  // 함께 실행돼 편집 중인 모듈이 선택 해제되는 것을 막는다.
+  if (hadPopover) e.stopPropagation()
 }
 onMounted(() => {
   document.addEventListener('mousedown', onDocPointerDown, true)
-  document.addEventListener('keydown', onDocKeydown)
+  // 캡처 단계 — PrimeVue Select/ColorPicker 오버레이가 Esc를 소비해도 팝오버가 닫히도록
+  document.addEventListener('keydown', onDocKeydown, true)
 })
 onBeforeUnmount(() => {
   document.removeEventListener('mousedown', onDocPointerDown, true)
@@ -2273,6 +2860,14 @@ const onEditorLoad = (event: { instance: Quill }, key: string) => {
   // 타이핑으로 커서가 다른 서식 영역으로 이동하는 경우도 드롭다운 표시값에 반영
   quill.on('text-change', () => {
     syncEditorFormatState(key, quill, quill.getSelection())
+  })
+
+  // 드롭다운(정렬·목록·글자크기·줄바꿈)을 열 때 에디터 선택이 풀리지 않게 한다.
+  // 선택이 풀리면 Quill이 서식을 빈 값으로 갱신해 '현재 값' 표시(.ql-selected 하이라이트)가 사라진다.
+  // (Quill Picker는 mousedown에서 열고 닫으므로 기본동작만 막아도 여닫기는 그대로 동작한다)
+  const toolbarEl = quill.container.parentElement?.querySelector('.ql-toolbar')
+  toolbarEl?.addEventListener('mousedown', (e) => {
+    if ((e.target as HTMLElement).closest('.ql-picker-label')) e.preventDefault()
   })
 
   // 글자 색상 · 배경 색상 피커에 직접 선택 항목 추가
@@ -2877,22 +3472,20 @@ const onSelectPointColor = (key: string, index: number): void => {
   white-space: nowrap;
 }
 
-/* 형광펜(반투명 마커) 드롭다운 픽커 */
-:deep(.ql-snow .ql-picker.ql-highlightMarker) {
-  width: 32px;
-}
+/* 형광펜(반투명 마커) 드롭다운 픽커 — 라벨은 Material 마커 아이콘(Figma 753-9174의 ink_marker) */
 :deep(.ql-snow .ql-picker.ql-highlightMarker .ql-picker-label) {
-  padding-left: 2px;
-  padding-right: 12px;
+  font-size: 0;
 }
-/* 라벨(툴바 버튼)에 형광펜 식별 아이콘 표시 */
 :deep(.ql-snow .ql-picker.ql-highlightMarker .ql-picker-label::before) {
-  content: 'ab';
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1.2;
-  background: linear-gradient(transparent 50%, #fff555 50%);
-  padding: 0 2px;
+  content: 'ink_marker';
+  font-family: 'Material Symbols Outlined';
+  font-size: 20px;
+  line-height: 1;
+  color: #444;
+}
+/* 팔레트를 여는 픽커라 캐럿은 두지 않는다(글자색·배경색 픽커와 동일) */
+:deep(.ql-snow .ql-picker.ql-highlightMarker .ql-picker-label svg) {
+  display: none;
 }
 :deep(.ql-snow .ql-picker.ql-highlightMarker .ql-picker-options) {
   padding: 4px;
@@ -3182,36 +3775,9 @@ const onSelectPointColor = (key: string, index: number): void => {
   color: #333d4b;
 }
 
-.gg-acc-chevron {
-  font-size: 12px;
-  color: #8b95a1;
-  flex-shrink: 0;
-}
 /* 접이식 섹션 헤더(화살표+타이틀)는 클릭으로 열고/닫는다 */
-.gg-acc-header.is-clickable {
-  cursor: pointer;
-}
 /* 열린 섹션 본문 (Figma 608-2624 / 640-2393) — 본문은 하단 구분선만 두고,
    실제 배경 카드는 내부 각 속성 블록(> div)에 적용한다. */
-.gg-acc-body--card {
-  padding-bottom: 16px;
-  border-bottom: 1px solid #f2f4f6;
-  margin-bottom: 0;
-}
-/* 섹션 필드 래퍼: 기본은 레이아웃에 투명(카드 아닌 섹션은 기존 그대로 26px 간격) */
-.gg-acc-fields {
-  display: contents;
-}
-/* 접이식 카드 섹션: 래퍼가 하나의 회색 카드가 되어 그 안 속성들을 함께 담는다
-   (예: 이미지 크기 조정의 최대 너비 + 정렬이 같은 카드에) */
-.gg-acc-body--card > .gg-acc-fields {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  background-color: #F2F4F6;
-  border-radius: 10px;
-  padding: 16px;
-}
 /* 이름 없는(flat) 그룹은 구분선 제거 (ModuleForm 전용) */
 .gg-acc-section--flat {
   border-top: none;
@@ -3276,62 +3842,421 @@ const onSelectPointColor = (key: string, index: number): void => {
   border-color: #e5e8eb;
 }
 
-/* 리치텍스트 필드 — 행간/자간 외부 드롭다운 + 툴바 다듬기 (Figma 378-1704) */
-.rte-field {
-  width: 100%;
-}
-.rte-ext-row {
-  display: flex;
-  gap: 18px;
-  margin-bottom: 12px;
-}
-.rte-ext-field {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-}
-.rte-ext-label {
+/* 푸터 연락처 행 — 리스트 톤(.cmp-row)은 공용 정의를 그대로 쓰고 값 입력만 덧붙인다 */
+.ct-check {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 15px;
-  color: #4e5968;
-  letter-spacing: -0.15px;
+  flex-shrink: 0;
+  height: 100%;
+  cursor: pointer;
 }
-.rte-ext-label i{font-size: 12px;}
-.rte-ext-select :deep(.p-select) {
+/* 라벨 폭을 고정해 항목마다 입력창 시작 위치를 맞춘다 (H 홈페이지 / T 전화 / E 이메일 / F 팩스) */
+.ct-check .cmp-label {
+  width: 72px;
+  flex-shrink: 0;
+}
+/* SNS는 라벨 앞에 아이콘 썸네일이 하나 더 들어가므로 간격·라벨 폭을 따로 잡는다 */
+.sns-check {
+  gap: 8px;
+}
+.sns-thumb {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  object-fit: contain;
+  padding: 3px;
+  border-radius: 50%;
+  background: #4b5563;
+}
+.ct-check .sns-label {
+  width: 56px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* InputText의 루트가 곧 <input> 이라 클래스는 input 자신에게 붙는다 */
+.ct-input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
   height: 32px;
+  background: #fff;
   border: 1px solid #e5e8eb;
   border-radius: 8px;
-  box-shadow: none;
+  font-size: 13px;
 }
-.rte-ext-select :deep(.p-select-label) {
+
+/* 폰트 크기 대상 배지 / 개별 크기 되돌리기 (Figma 640-3689) */
+.fs-target-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  margin-left: 6px;
+  padding: 0 8px;
+  border-radius: 10px;
+  background: #ebf3ff;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: -0.12px;
+  color: #4083f3;
+  vertical-align: middle;
+}
+/* 라벨 행: 왼쪽 라벨(+배지) / 오른쪽 되돌리기 버튼 */
+.fs-label-row {
   display: flex;
   align-items: center;
-  padding: 5px 10px;
-  font-size: 15px;
+  justify-content: space-between;
+  gap: 8px;
+}
+.fs-reset-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 13px;
+  color: #6b7684;
+  cursor: pointer;
+}
+.fs-reset-btn:hover {
+  color: #4083f3;
+}
+.fs-reset-btn .material-symbols-outlined {
+  font-size: 16px;
+}
+
+/* 리치텍스트 필드 (Figma 640-3235) — 툴바는 테두리 없는 2줄 그룹, 본문은 회색 채움 박스 */
+.rte-field {
+  width: 100%;
+}
+
+/* 툴바: 테두리/배경 없이 줄 사이 20px, 본문과는 16px 간격 */
+.rte-field :deep(.ql-toolbar.ql-snow) {
+  border: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+/* 줄: 그룹 │ 구분선 │ 그룹. 패널 폭(≈277px)이 Figma(310px)보다 좁아 간격만 10/5px로 좁혔다
+   (Figma 스펙은 15/8px). 그래도 안 들어가면 줄바꿈되도록 wrap은 유지. */
+.rte-field :deep(.rte-tb-row) {
+  position: relative; /* 정렬 메뉴가 이 줄의 왼쪽 모서리를 기준으로 열린다 */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.rte-field :deep(.ql-toolbar.ql-snow .ql-formats.rte-tb-grp) {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-right: 0;
+}
+/* 그룹 사이 세로 구분선 (1px × 21px) */
+.rte-field :deep(.rte-tb-div) {
+  width: 1px;
+  height: 21px;
+  background: #e5e8eb;
+  flex-shrink: 0;
+}
+
+/* ===== 툴바 컨트롤 정렬 통일 (Figma 753-9174) =====
+   Quill 기본 스타일은 버튼 24×28(float:left)·피커 라벨 좌우 비대칭 패딩·캐럿 absolute 라서
+   아이콘 크기와 세로 위치가 제각각이다. 버튼·피커를 모두 같은 정사각 박스로 만들고
+   내부 글리프를 flex 중앙 정렬해 한 줄에 정확히 맞춘다. (박스 30px = Figma 32px에서 2px 축소) */
+.rte-field :deep(.ql-snow.ql-toolbar button),
+.rte-field :deep(.rte-tb-btn),
+.rte-field :deep(.ql-snow.ql-toolbar .ql-picker) {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  margin: 0;
+  float: none;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+/* 캐럿이 붙는 피커(정렬·목록·글자 크기·줄바꿈)는 아이콘+캐럿이 들어가도록 조금 넓게 */
+.rte-field :deep(.ql-snow.ql-toolbar .ql-picker.ql-align),
+.rte-field :deep(.ql-snow.ql-toolbar .ql-picker.ql-list) {
+  width: 38px;
+}
+.rte-field :deep(.ql-snow.ql-toolbar .ql-picker.ql-fontSize),
+.rte-field :deep(.ql-snow.ql-toolbar .ql-picker.ql-wordBreak) {
+  width: auto;
+}
+.rte-field :deep(.ql-snow.ql-toolbar button svg) {
+  width: 20px;
+  height: 20px;
+  float: none;
+}
+/* 피커 라벨: 박스를 꽉 채우고 아이콘·캐럿을 가운데로 (Quill의 좌우 비대칭 패딩 제거) */
+.rte-field :deep(.ql-snow.ql-toolbar .ql-picker-label) {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 0 4px;
+  border: none;
+}
+.rte-field :deep(.ql-snow.ql-toolbar .ql-picker-label svg) {
+  position: static;
+  margin: 0;
+  right: auto;
+  top: auto;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+/* 캐럿(∨)만 있는 svg는 작게 — 아이콘 뒤에 붙는 화살표 */
+.rte-field :deep(.ql-snow.ql-toolbar .ql-picker:not(.ql-color-picker):not(.ql-icon-picker) .ql-picker-label svg) {
+  width: 12px;
+  height: 12px;
+}
+.rte-field :deep(.ql-snow.ql-toolbar button:hover),
+.rte-field :deep(.rte-tb-btn:hover),
+.rte-field :deep(.ql-snow.ql-toolbar .ql-picker-label:hover) {
+  background: #f2f4f6;
+  border-radius: 8px;
+}
+.rte-field :deep(.rte-tb-btn) {
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #444;
+}
+.rte-field :deep(.rte-tb-btn.is-active) {
+  background: #ebf3ff;
+  color: #4083f3;
+}
+.rte-field :deep(.rte-tb-btn .material-symbols-outlined) {
+  font-size: 20px;
+  line-height: 1;
+}
+/* 드롭다운 메뉴 공통 카드 (Figma 640-4087 Dropdown/Menu) — 정렬·목록·글자크기·줄바꿈 공용.
+   PrimeVue 테마의 `.p-editor .p-editor-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-options`(0,5,0)를
+   이겨야 해서 선택자를 그보다 길게 잡는다. */
+.rte-field :deep(.p-editor .p-editor-toolbar .ql-picker.ql-expanded .ql-picker-options) {
+  background: #fff;
+  border: 1px solid #e5e8eb;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  margin-top: 6px;
+  padding: 4px 0;
+  /* 픽커를 flex(justify-content:center) 박스로 만들면 절대배치 자식의 기준 위치까지 가운데로
+     밀려 메뉴가 패널 왼쪽 밖으로 튀어나간다 → 기준을 왼쪽 모서리로 고정한다. */
+  left: 0;
+  right: auto;
+}
+.rte-field :deep(.ql-snow.ql-toolbar .ql-picker:not(.ql-align) .ql-picker-item) {
+  padding: 6px 12px;
+}
+.rte-field :deep(.ql-snow.ql-toolbar .ql-picker:not(.ql-align) .ql-picker-item:hover) {
+  background: #f2f4f6;
+}
+
+/* 정렬 드롭다운: 아이콘 3(+양쪽정렬)칸을 가로로 나열한 메뉴 (Figma 640-4087).
+   버튼 아래 가운데 정렬 — 패널 오른쪽으로 넘치지 않도록 좌우 중앙에 건다. */
+/* 정렬 메뉴(가로 210px)는 버튼 기준으로 놓으면 좁은 패널(≈277px) 밖으로 나간다 →
+   픽커의 position을 풀고 줄(.rte-tb-row) 왼쪽 모서리에 맞춘다(Figma 640-4087도 버튼 중앙이 아니라
+   줄 왼쪽 가까이에 걸려 있다). */
+.rte-field :deep(.ql-snow.ql-toolbar .ql-picker.ql-align) {
+  position: static;
+}
+.rte-field :deep(.p-editor .p-editor-toolbar .ql-picker.ql-align.ql-expanded .ql-picker-options) {
+  display: flex;
+  flex-direction: row;
+  padding: 0;
+  left: 0;
+  transform: none;
+  white-space: nowrap;
+  /* Quill 기본값 min-width:100% 는 기준 박스(=이 줄)의 폭을 따라가므로 패널을 넓히면 메뉴도 늘어난다
+     → 항상 아이콘 칸(52px×N) 크기로 고정한다. */
+  min-width: 0;
+  width: max-content;
+}
+.rte-field :deep(.ql-picker.ql-align .ql-picker-item) {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  float: none;
+  color: #333d4b;
+}
+.rte-field :deep(.ql-picker.ql-align .ql-picker-item:hover) {
+  background: #f2f4f6;
+}
+.rte-field :deep(.ql-picker.ql-align .ql-picker-item.ql-selected) {
+  background: #ebf3ff;
+  color: #4083f3;
+}
+.rte-field :deep(.ql-picker.ql-align .ql-picker-item svg) {
+  width: 24px;
+  height: 24px;
+}
+
+/* 정렬 픽커: Quill 아이콘 픽커는 캐럿이 없어 목록 픽커와 모양이 어긋난다 →
+   Figma(753-9174)처럼 아이콘 옆에 캐럿을 붙인다. */
+.rte-field :deep(.ql-snow.ql-toolbar .ql-picker.ql-align .ql-picker-label::after) {
+  content: 'expand_more';
+  font-family: 'Material Symbols Outlined';
+  font-size: 12px;
+  line-height: 1;
+  color: #444;
+  flex-shrink: 0;
+}
+
+/* 목록 드롭다운: 라벨 텍스트 대신 아이콘 + 캐럿 (드롭다운 항목은 한글 라벨 그대로) */
+.rte-field :deep(.ql-snow.ql-toolbar .ql-picker.ql-list .ql-picker-label) {
+  font-size: 0;
+}
+.rte-field :deep(.ql-snow.ql-toolbar .ql-picker.ql-list .ql-picker-label::before) {
+  content: 'format_list_bulleted';
+  font-family: 'Material Symbols Outlined';
+  font-size: 20px;
+  line-height: 1;
+  color: #444;
+}
+/* 드롭다운 항목 텍스트 — Quill은 header/font/size 픽커에만 data-label 노출 규칙이 있어
+   커스텀 픽커(ql-list)는 이 규칙이 없으면 항목이 빈 칸으로 보인다. */
+.rte-field :deep(.ql-snow .ql-picker.ql-list .ql-picker-item[data-label]:not([data-label=''])::before) {
+  content: attr(data-label);
+}
+.rte-field :deep(.ql-snow.ql-toolbar .ql-picker.ql-list .ql-picker-options) {
+  font-size: 14px;
+  white-space: nowrap;
+  min-width: 0;
+  width: max-content;
+}
+/* 본문: 회색 채움 박스 (TextField/Small/Default).
+   높이는 콘텐츠/사용자 리사이즈에 따라가도록 auto — 고정 높이면 리사이즈 그립이 먹지 않는다. */
+.rte-field :deep(.ql-container.ql-snow) {
+  border: none;
+  background: #f2f4f6;
+  border-radius: 8px;
+  height: auto;
+}
+/* 우하단 그립을 끌어 입력란 높이를 조절할 수 있다(세로만) */
+.rte-field :deep(.ql-container.ql-snow .ql-editor) {
+  background: transparent; /* 컨테이너의 회색 채움이 보이도록 */
+  padding: 20px 12px;
+  min-height: 169px;
+  resize: vertical;
+  overflow: auto;
+  /* 본문 기본 크기는 '폰트 크기' 값을 그대로 따라간다(캔버스와 같은 크기로 보이도록).
+     부분 지정된 텍스트는 인라인 font-size가 그대로 우선한다. */
+  font-size: var(--rte-base-size, 15px);
   color: #333d4b;
 }
 
-/* Quill 툴바 — 아이콘 간격을 넓히고 테두리를 가볍게 (기존 기능/버튼 구성은 불변) */
-.rte-field :deep(.ql-toolbar.ql-snow) {
+/* 행간 · 자간 팝오버 (Figma 640-3517) — 아이콘+라벨 헤더 + 슬라이더 + 값 필드 */
+.rte-spacing-popover {
+  position: fixed;
+  z-index: 900;
+  width: 318px;
+  padding: 25px 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+.rte-sp-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.rte-sp-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.rte-sp-icon {
+  font-size: 24px;
+  color: #333d4b;
+}
+.rte-sp-label {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #4e5968;
+}
+.rte-sp-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+  height: 32px;
+}
+/* 줄바꿈 세그먼트 (기본 / 단어 기준 / 글자 기준) */
+.rte-sp-seg {
+  display: flex;
+  gap: 6px;
+}
+.rte-sp-seg-btn {
+  flex: 1;
+  height: 32px;
   border: 1px solid #e5e8eb;
-  border-bottom: none;
-  border-radius: 8px 8px 0 0;
-  padding: 10px 12px;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 13px;
+  color: #4e5968;
+  cursor: pointer;
 }
-.rte-field :deep(.ql-container.ql-snow) {
-  border: 1px solid #e5e8eb;
-  border-radius: 0 0 8px 8px;
+.rte-sp-seg-btn:hover {
+  background: #f7f8fa;
 }
-.rte-field :deep(.ql-toolbar.ql-snow .ql-formats) {
-  margin-right: 12px;
+.rte-sp-seg-btn.is-active {
+  background: #ebf3ff;
+  border-color: #4083f3;
+  color: #4083f3;
+  font-weight: 500;
 }
-.rte-field :deep(.ql-snow.ql-toolbar button) {
-  width: 24px;
-  height: 24px;
+.rte-sp-value {
+  width: 50px;
+  height: 32px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  background: #f2f4f6;
+  border-radius: 8px;
+}
+.rte-sp-value input {
+  width: 100%;
+  border: none;
+  background: none;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.13px;
+  color: #191f28;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+.rte-sp-value input::-webkit-outer-spin-button,
+.rte-sp-value input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.rte-sp-value input:focus {
+  outline: none;
+}
+/* 아직 지정되지 않은 값 — 슬라이더 기본 위치를 보여주되 적용 전임을 흐리게 표시 */
+.rte-sp-value.is-unset input {
+  color: #8b95a1;
 }
 
 </style>

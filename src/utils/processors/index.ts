@@ -4,6 +4,9 @@
  */
 
 import type { ContentProcessor } from '../moduleContentProcessor'
+import type { BorderSide } from '@/types'
+import { parseBorderSides } from '@/utils/borderSides'
+import { readContactItems, buildContactRowHtml } from '@/constants/contactItems'
 import {
   removeSubTitleDiv,
   removeButtonFromHtml,
@@ -510,14 +513,19 @@ export const snsIconsProcessor: ContentProcessor = (html, properties) => {
 }
 
 /**
+ * ModuleFooter 연락처 줄(H 홈페이지 · T 전화 · E 이메일 · F 팩스) 렌더 프로세서.
+ * properties.contactItems(순서 있는 배열)에서 show=true 항목만 순서대로 만들어 <!--CONTACT_ROW-->에 주입한다.
+ * 배열이 없으면 구버전 속성(show 플래그와 값)에서 생성 → 기존 인스턴스도 그대로 렌더된다.
+ */
+export const footerContactProcessor: ContentProcessor = (html, properties) => {
+  const items = readContactItems(properties as Record<string, unknown>)
+  return html.replace('<!--CONTACT_ROW-->', buildContactRowHtml(items))
+}
+
+/**
  * ModuleFooter SNS 아이콘 조건부 제거 프로세서
  */
 export const footerSnsProcessor: ContentProcessor = (html, properties) => {
-  // 회사 정보 H/T/E 조건부 표시 (미설정 시 표시 = 기존 동작 유지)
-  const showWebsite = properties.showWebsite !== false
-  const showPhone = properties.showPhone !== false
-  const showEmail = properties.showEmail !== false
-  const showFax = properties.showFax === true // 신규 항목 — 미설정 시 숨김
   // 안내문구 국문/영문 — 각각 독립 토글.
   //  · 국문: 미설정 시 표시(기본 노출). 숨기려면 showKoreanFooter=false.
   //  · 영문: 미설정 시 숨김(옵트인). 표시하려면 showEnglishFooter=true.
@@ -527,11 +535,6 @@ export const footerSnsProcessor: ContentProcessor = (html, properties) => {
 
   // [제거 조건, 마커 라벨] 목록 — 조건이 true이면 해당 마커 블록 제거
   const removals: Array<[boolean, string]> = [
-    // 회사 정보
-    [!showWebsite, '홈페이지'],
-    [!showPhone, '전화'],
-    [!showEmail, '이메일'],
-    [!showFax, '팩스'],
     // SNS 아이콘 (미설정 시 숨김)
     [properties.showHome !== true, '홈'],
     [properties.showFacebook !== true, '페이스북'],
@@ -787,10 +790,12 @@ export const descTextBorderProcessor: ContentProcessor = (html, properties) => {
     const style = str(properties.borderStyle, 'solid')
     const color = str(properties.borderColor, '#999999')
     const line = `${width} ${style} ${color}`
-    const pos = properties.borderPosition
-    if (pos === 'top') css = ` border-top:${line};`
-    else if (pos === 'both') css = ` border-top:${line}; border-bottom:${line};`
-    else css = ` border-bottom:${line};` // 기본: 아래
+    // 'top,bottom'처럼 여러 변을 이어 붙인 값 · 구버전 단일 값('bottom'/'top'/'both') 모두 해석.
+    // 값이 아예 없으면(구버전 기본) 아래쪽 한 줄.
+    const raw = properties.borderPosition
+    const sides =
+      raw == null || raw === '' ? (['bottom'] as BorderSide[]) : parseBorderSides(raw)
+    css = sides.map((side) => ` border-${side}:${line};`).join('')
   }
   return html.replace(/\{\{\s*borderCss\s*\}\}/g, css)
 }
