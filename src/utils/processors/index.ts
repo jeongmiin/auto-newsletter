@@ -618,6 +618,53 @@ export const module12TitleProcessor: ContentProcessor = (html, properties) => {
 }
 
 /**
+ * Module01-2 카테고리 조건부 제거 프로세서
+ * showCategory가 false이면 카테고리 배지 영역(감싸는 마커 블록)을 통째로 제거 (미설정 시 표시)
+ */
+export const module012CategoryProcessor: ContentProcessor = (html, properties) => {
+  if (properties.showCategory === false) {
+    return html.replace(/<!-- 카테고리 -->[\s\S]*?<!-- \/\/카테고리 -->/g, '')
+  }
+  return html
+}
+
+/**
+ * 박스 테두리 프로세서(공용) — showBorder가 true이면 4방향 전체 테두리 CSS를 {{borderCss}}에 주입한다.
+ * (설명 텍스트의 변별 테두리와 달리 박스 전체를 두르므로 위치 선택 없이 border 단축 속성을 쓴다)
+ * Module01-2 · Module11 등 '박스형' 모듈이 공용으로 쓴다.
+ */
+export const boxBorderProcessor: ContentProcessor = (html, properties) => {
+  const str = (value: unknown, fallback: string): string => {
+    const s = typeof value === 'string' ? value.trim() : ''
+    return s === '' ? fallback : s
+  }
+  let css = ''
+  if (properties.showBorder === true) {
+    const width = str(properties.borderWidth, '1px')
+    const style = str(properties.borderStyle, 'solid')
+    const color = str(properties.borderColor, '#cccccc')
+    css = ` border:${width} ${style} ${color};`
+  }
+  return html.replace(/\{\{\s*borderCss\s*\}\}/g, css)
+}
+
+/**
+ * 모서리 둥글기 프로세서(공용) — 모서리 둥글기 사용(showBorderRadius) 토글을 반영한다.
+ * HTML의 `{{<key>Css}}`(예: borderRadiusCss, imageBorderRadiusCss, button1BorderRadiusCss)를
+ * 짝이 되는 속성 `<key>`(borderRadius/imageBorderRadius/…) 값으로 채우되,
+ * showBorderRadius가 명시적으로 false면 0(적용 안 함)으로, 미설정(레거시)이면 저장값 그대로 쓴다.
+ * 하나의 토글이 그 모듈의 모든 모서리 값을 함께 제어한다.
+ */
+export const boxBorderRadiusProcessor: ContentProcessor = (html, properties) => {
+  const off = properties.showBorderRadius === false
+  return html.replace(/\{\{\s*(\w*[Bb]orderRadius)Css\s*\}\}/g, (_m, key) => {
+    if (off) return '0px'
+    const v = properties[key]
+    return typeof v === 'string' && v.trim() ? v.trim() : '0px'
+  })
+}
+
+/**
  * Module10 라벨 조건부 제거 프로세서
  */
 export const module10LabelProcessor: ContentProcessor = (html, properties) => {
@@ -642,6 +689,20 @@ export const module11LabelProcessor: ContentProcessor = (html, properties) => {
     result = result.replace(/<!-- 버튼 -->[\s\S]*?<!-- \/\/버튼 -->/g, '')
   }
   return result
+}
+
+/**
+ * Module11 링크 프로세서 — 링크 사용(showLink)이 꺼져 있거나 URL이 비어 있으면
+ * 박스를 감싼 <a> 링크 래퍼를 <div>로 바꿔 클릭 링크를 제거한다.
+ * (마커에 인접한 래퍼 <a>만 대상 — 콘텐츠 에디터 본문 속 <a>는 건드리지 않는다)
+ */
+export const module11LinkProcessor: ContentProcessor = (html, properties) => {
+  const url = typeof properties.linkUrl === 'string' ? properties.linkUrl.trim() : ''
+  const linkOn = properties.showLink !== false && url !== ''
+  if (linkOn) return html
+  return html
+    .replace(/(<!-- 링크 박스 -->)<a\b[^>]*>/, '$1<div style="display:block;">')
+    .replace(/<\/a>(<!-- \/\/링크 박스 -->)/, '</div>$1')
 }
 
 /**

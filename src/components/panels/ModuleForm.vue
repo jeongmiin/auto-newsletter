@@ -55,17 +55,6 @@
           </div>
         </div>
 
-        <!-- 구성 요소 (Figma 717-9607) — 나눈 컬럼(직접 구성)의 멤버를 선택하면 노출.
-             이미지·타이틀·텍스트·버튼 체크로 이 컬럼의 원소를 추가/제거한다. 캔버스에서 삭제하면 체크가 풀리고,
-             다시 체크하면 기본값으로 재생성된다. 선택한 모듈의 속성은 이 아래에 표시된다. -->
-        <div v-if="composedCtx" class="px-[25px] pt-4 pb-4 border-b">
-          <ColumnElementsField
-            :group-id="composedCtx.groupId"
-            :row-index="composedCtx.rowIndex"
-            :column-index="composedCtx.columnIndex"
-          />
-        </div>
-
         <!-- 속성 편집 폼 -->
       <div class="px-[25px] pb-7">
         <div
@@ -84,7 +73,7 @@
              · 스위치 on→off: 펼침 상태는 그대로 두고 내용만 흐리게(조작 불가)
              · chevron/라벨 클릭: 스위치와 무관하게 열고 닫는다 (기본 닫힘) -->
         <div
-          v-if="hasSectionHeader(group) || (!group.name && flatHeaderLabel && isFullyFlatModule)"
+          v-if="hasSectionHeader(group) || gIdx === 0"
           class="gg-acc-header"
           :class="{ 'is-static': !isCollapsibleSection(group) }"
         >
@@ -98,7 +87,7 @@
               class="pi gg-acc-chevron"
               :class="isSectionOpen(group, gIdx) ? 'pi-chevron-down' : 'pi-chevron-right'"
             ></i>
-            <span class="gg-acc-label">{{ group.name || flatHeaderLabel }}</span>
+            <span class="gg-acc-label">{{ sectionHeaderLabel(group, gIdx) }}</span>
           </span>
           <span class="gg-acc-spacer"></span>
           <ToggleSwitch
@@ -140,7 +129,7 @@
         >
           <!-- 리치텍스트(textarea)는 위에 '폰트 크기'와 서식 툴바가 바로 붙으므로 별도 라벨을 두지 않는다(Figma 640-3689) -->
           <label
-            v-show="prop.type !== 'boolean' && prop.type !== 'checkbox' && prop.type !== 'textarea' && !isColorBlock(prop) && !isQuadStart(prop, group.props, index) && !isSingleSpacingField(prop) && !isBorderStyleStart(prop)"
+            v-show="prop.type !== 'boolean' && prop.type !== 'checkbox' && prop.type !== 'textarea' && !isColorBlock(prop) && !isQuadStart(prop, group.props, index) && !isSingleSpacingField(prop) && !isBorderWidthField(prop) && !isBorderStyleStart(prop)"
             class="gg-field-label"
             :class="{ 'fs-label-row': isFontSizeField(prop) }"
           >
@@ -402,6 +391,35 @@
             <p v-if="prop.hint" class="gg-field-hint" v-html="prop.hint"></p>
           </div>
 
+          <!-- 독립 테두리 두께(예: 섹션 타이틀 상단 테두리 두께) — 여백 슬라이더와 동일한 헤드 라벨 + 슬라이더(px) UI -->
+          <div v-else-if="isBorderWidthField(prop)" class="gg-margin-quad">
+            <div class="gg-margin-quad-head">
+              <span class="gg-field-label !mb-0">{{ prop.label }}</span>
+            </div>
+            <div class="gg-margin-slider-row">
+              <input
+                type="range"
+                min="0"
+                max="20"
+                step="1"
+                :value="quadPxNumber(prop)"
+                @input="onSingleSpacingInput(prop, $event)"
+                class="gg-margin-slider"
+              />
+              <div class="gg-margin-value-field">
+                <input
+                  type="number"
+                  min="0"
+                  :value="quadPxNumber(prop)"
+                  @input="onSingleSpacingInput(prop, $event)"
+                  class="gg-margin-value-input"
+                />
+                <span class="gg-margin-value-unit">px</span>
+              </div>
+            </div>
+            <p v-if="prop.hint" class="gg-field-hint" v-html="prop.hint"></p>
+          </div>
+
           <!-- 이미지 최대 너비: 슬라이더 + % 값 (Figma 686-3949) -->
           <div v-else-if="isMaxWidthField(prop)" class="space-y-1">
             <div class="gg-margin-slider-row">
@@ -522,8 +540,45 @@
                 <!-- 2줄: 글자색·배경색·형광펜 │ 링크·서식 제거 -->
                 <div class="rte-tb-row">
                   <span class="ql-formats rte-tb-grp">
-                    <select class="ql-color" title="글자 색상"></select>
-                    <select class="ql-background" title="배경 색상"></select>
+                    <!-- 글자색·배경색: Quill 기본 스와치 드롭다운 대신 공용 color-popover(포인트 색상·기본 팔레트·HEX·불투명도)를 연다.
+                         트리거는 아이콘 버튼(#trigger 슬롯), 선택 색상은 그 에디터의 선택 영역(Quill)에 적용한다.
+                         @mousedown.prevent로 에디터 선택 영역을 유지한다. -->
+                    <ColorPopoverPicker
+                      title="글자 색상"
+                      :modelValue="editorColorModel(prop.key, 'color')"
+                      :pointColors="wrapPointColors"
+                      pointFollow
+                      :activeIndex="editorColorActiveIndex(prop.key, 'color')"
+                      @open="onEditorColorOpen(prop.key, 'color')"
+                      @update:modelValue="onEditorColorInput(prop.key, 'color', $event)"
+                      @select-point="onEditorColorSelectPoint(prop.key, 'color', $event)"
+                      @add-point-color="editorStore.addPointColor($event)"
+                      @remove-point-color="editorStore.removePointColor($event)"
+                    >
+                      <template #trigger>
+                        <button type="button" class="rte-tb-btn" title="글자 색상" @mousedown.prevent>
+                          <span class="material-symbols-outlined">format_color_text</span>
+                        </button>
+                      </template>
+                    </ColorPopoverPicker>
+                    <ColorPopoverPicker
+                      title="배경 색상"
+                      :modelValue="editorColorModel(prop.key, 'background')"
+                      :pointColors="wrapPointColors"
+                      pointFollow
+                      :activeIndex="editorColorActiveIndex(prop.key, 'background')"
+                      @open="onEditorColorOpen(prop.key, 'background')"
+                      @update:modelValue="onEditorColorInput(prop.key, 'background', $event)"
+                      @select-point="onEditorColorSelectPoint(prop.key, 'background', $event)"
+                      @add-point-color="editorStore.addPointColor($event)"
+                      @remove-point-color="editorStore.removePointColor($event)"
+                    >
+                      <template #trigger>
+                        <button type="button" class="rte-tb-btn" title="배경 색상" @mousedown.prevent>
+                          <span class="material-symbols-outlined">format_color_fill</span>
+                        </button>
+                      </template>
+                    </ColorPopoverPicker>
                     <select class="ql-highlightMarker" title="형광펜">
                       <option selected></option>
                       <option value="#fff555"></option>
@@ -568,7 +623,7 @@
               <span class="gg-field-label !mb-0">{{ isDupLabelProp(group, prop) ? '' : prop.label }}</span>
               <ToggleSwitch :modelValue="borderIsOn(prop)" @update:modelValue="toggleBorderOn(prop, $event)" />
             </div>
-            <span v-else-if="!isDupLabelProp(group, prop)" class="gg-field-label">{{ prop.label }}</span>
+            <span v-else-if="!isDupLabelProp(group, prop) && prop.label" class="gg-field-label">{{ prop.label }}</span>
 
             <!-- 섹션 헤더 스위치가 이 블록의 on/off를 담당하면, 꺼져 있어도 내용은 그대로 보여준다
                  (아코디언을 열었을 때 빈 카드가 되지 않도록. 조작은 .gg-acc-fields.is-disabled가 막는다) -->
@@ -1629,7 +1684,6 @@ import ColorAlphaPicker from '@/components/ColorAlphaPicker.vue'
 import HexColorInput from '@/components/HexColorInput.vue'
 import PointColorSwatchRow from '@/components/PointColorSwatchRow.vue'
 import ColorPopoverPicker from './ColorPopoverPicker.vue'
-import ColumnElementsField from './ColumnElementsField.vue'
 import BorderSideSelector from './BorderSideSelector.vue'
 import draggable from 'vuedraggable'
 import { parseBorderSides, serializeBorderSides } from '@/utils/borderSides'
@@ -1642,9 +1696,9 @@ const selectedModule = computed(() => moduleStore.selectedModule)
 const selectedModuleMetadata = computed(() => moduleStore.selectedModuleMetadata)
 const editableProps = computed(() => selectedModuleMetadata.value?.editableProps || [])
 
-// flat(그룹 없는) 모듈도 상단 섹션 헤더(gg-acc-header)를 그려 이름 있는 모듈과 상단 여백을 맞춘다.
-// 라벨은 모듈 카테고리 기준(이미지/텍스트/버튼/…) — 예: 이미지 모듈 → "이미지"
-const FLAT_HEADER_LABELS: Record<string, string> = {
+// 모듈 '종류' 라벨 — 첫 gg-acc-section 헤더에 노출한다(예: 텍스트/이미지/구분선/버튼).
+// 대부분 카테고리 기준이지만, 카테고리가 'common'인 모듈(구분선·SNS)은 개별 지정한다.
+const CATEGORY_TYPE_LABELS: Record<string, string> = {
   image: '이미지',
   text: '텍스트',
   button: '버튼',
@@ -1654,22 +1708,33 @@ const FLAT_HEADER_LABELS: Record<string, string> = {
   social: 'SNS',
   common: '모듈',
 }
-// 패널 상단 제목 — Figma(640-3235 '텍스트', 717-9607 '이미지')는 원소 모듈을 카테고리 이름으로 부른다.
-// 팔레트/갤러리 카드 이름(모듈 name)은 그대로 두고 이 패널 제목만 바꾼다.
-const PANEL_TITLE_OVERRIDES: Record<string, string> = {
-  ModuleDescText: '텍스트',
-  ModuleImg: '이미지',
+const TYPE_LABEL_BY_ID: Record<string, string> = {
+  ModuleDivider: '구분선',
+  ModuleSnsIcons: 'SNS',
 }
+// 선택 모듈의 종류 라벨(첫 섹션 헤더용)
+const typeLabel = computed<string | null>(() => {
+  const meta = selectedModuleMetadata.value
+  if (!meta) return null
+  return TYPE_LABEL_BY_ID[meta.id] ?? CATEGORY_TYPE_LABELS[meta.category] ?? '모듈'
+})
+
+// 패널 상단 제목 — 그룹 멤버면 그룹(=카드) 이름, 단독이면 인스턴스에 붙은 표시 라벨(__moduleLabel),
+// 그것도 없으면 모듈 카드 이름. (그룹으로 묶지 않은 조립 모듈도 카드 이름을 노출하기 위한 경로)
 const panelTitle = computed(() => {
   const meta = selectedModuleMetadata.value
   if (!meta) return ''
-  return PANEL_TITLE_OVERRIDES[meta.id] ?? meta.name
+  const custom = selectedModule.value?.properties?.__moduleLabel
+  return moduleStore.activeGroup?.name || (typeof custom === 'string' ? custom : '') || meta.name
 })
 
-const flatHeaderLabel = computed(() => {
-  const cat = selectedModuleMetadata.value?.category
-  return cat ? (FLAT_HEADER_LABELS[cat] ?? null) : null
-})
+// 섹션 헤더 라벨 — 첫 섹션(gIdx 0)은 모듈 종류 라벨로 대체한다.
+// 단, 첫 섹션이 자체 on/off 토글을 가진 이름 섹션(예: 라벨·링크)이면 그 이름을 그대로 쓴다
+// (핵심 '내용' 섹션만 종류 라벨로 바꾸고, 의미 있는 토글 섹션 이름은 보존).
+const sectionHeaderLabel = (group: PropGroup, gIdx: number): string =>
+  gIdx === 0 && !groupHasHeaderToggle(group)
+    ? (typeLabel.value ?? group.name ?? '')
+    : (group.name ?? '')
 
 // ===== 영역 컬럼 분할 =====
 // 선택 모듈이 속한 그룹의 컬럼 수와, 그 안에서의 컬럼 위치(0-based)
@@ -1695,18 +1760,9 @@ const moduleColumnInfo = computed(() => {
 // 이 모듈이 나눌 수 있는 최대 컬럼 수 — config의 maxColumns(예: 설명 텍스트=2), 없으면 전역 3단.
 const maxColumns = computed(() => selectedModuleMetadata.value?.maxColumns ?? 3)
 
-// ===== 구성 요소 (Figma 717-9607) — 나눈 컬럼(직접 구성)의 원소 토글 =====
-// 다단 컬럼의 멤버를 선택했을 때만 노출(그 컬럼 = 선택 모듈이 속한 셀).
-// 체크/해제 동작은 ColumnElementsField가 담당한다(빈 컬럼용 ColumnComposePanel과 공용).
-const composedCtx = computed(() => {
-  const m = selectedModule.value
-  if (!m?.groupId || moduleColumnInfo.value.columns <= 1) return null
-  return {
-    groupId: m.groupId,
-    rowIndex: moduleColumnInfo.value.rowIndex,
-    columnIndex: moduleColumnInfo.value.columnIndex,
-  }
-})
+// 구성 요소(ColumnElementsField)는 빈 컬럼에서 '직접 구성'을 눌렀을 때 뜨는 ColumnComposePanel에서만 노출한다.
+// 요소를 체크해 모듈이 추가·선택되면 여기(ModuleForm)에는 그 모듈의 속성만 보이고 구성 요소는 다시 띄우지 않는다.
+// (같은 컬럼에 요소를 더 넣으려면 선택을 해제해 ColumnComposePanel을 다시 띄우거나 팔레트로 추가한다.)
 
 // 1단/2단/3단 세그먼트: 현재 컬럼 수에서 목표 n단까지 split(+1)/unsplit(-1) 반복.
 // (split/unsplit이 적용된 컬럼 수를 반환하므로 반응성 타이밍과 무관하게 반복 판단)
@@ -1778,12 +1834,6 @@ const propGroups = computed(() => {
   }
   return order.map((name) => ({ name, props: hoistFontSizeBeforeTextarea(map.get(name)!) }))
 })
-
-// 모듈 전체가 평면(섹션 없음)인지 — flat 카테고리 헤더는 이 경우에만 노출한다.
-// (혼합 모듈의 선두 null 그룹은 헤더 없이 필드만 상단에 상시 노출)
-const isFullyFlatModule = computed(
-  () => propGroups.value.length === 1 && !propGroups.value[0].name,
-)
 
 // 조건부 표시 평가
 const evalShowWhen = (showWhen: unknown): boolean => {
@@ -2216,6 +2266,13 @@ const onSingleSpacingInput = (prop: EditableProp, event: Event) => {
   updateProperty(prop.key, `${n}px`)
 }
 
+// 테두리 블록(borderStyle)에 흡수되지 않은 독립 테두리 두께 텍스트 필드(예: 섹션 타이틀 상단 테두리 두께 topBorderWidth) —
+// 여백 슬라이더와 같은 UI(헤드 라벨 + gg-margin-slider-row)로 그린다. 값 파싱/입력은 단일 여백과 공용.
+const isBorderWidthField = (prop: EditableProp): boolean =>
+  prop.type === 'text' &&
+  /borderwidth$/i.test(prop.key) &&
+  !isBorderMember(prop, editableProps.value)
+
 const quadPxNumber = (prop: EditableProp): number => {
   const raw = String(selectedModule.value?.properties[prop.key] ?? prop.default ?? '0')
   const n = parseInt(raw, 10)
@@ -2279,8 +2336,10 @@ const isQuadSelfLabeledGroup = (group: { name?: string | null; props: EditablePr
 // (제외 대상은 '이미지 파일'·'내용'처럼 항상 펼쳐 두는 핵심 입력 섹션)
 const STYLE_SECTION_RULES: Record<string, '*' | { exclude: string } | Set<string>> = {
   ModuleImg: { exclude: '이미지 파일' },
-  ModuleDescText: new Set(['여백', '배경색', '모서리 둥글기', '테두리']),
-  ModuleDivider: '*', // 선 스타일 · 여백
+  ModuleDescText: new Set(['여백', '모서리 둥글기', '테두리']),
+  'Module01-2': new Set(['카테고리', '여백', '모서리 둥글기', '테두리']),
+  Module11: new Set(['여백', '모서리 둥글기', '테두리']),
+  ModuleDivider: '*', // 여백 (선 스타일은 그룹 없이 상단 flat 노출)
   // 버튼: 핵심 입력(텍스트·링크·폰트·배경색·글자색)은 항상 펼친 채 두고 스타일만 접이식 카드로
   ModuleOneButton: { exclude: '버튼' },
   ModuleTwoButton: new Set(['테두리', '모서리 둥글기', '여백']),
@@ -2750,6 +2809,76 @@ const openQuillColorPopover = (quill: Quill, format: 'color' | 'background') => 
   nextTick(computePopoverPosition)
   window.addEventListener('scroll', onPopoverReposition, true)
   window.addEventListener('resize', onPopoverReposition)
+}
+
+// ===== 에디터 툴바 색상(글자/배경) — 공용 ColorPopoverPicker로 선택, Quill 선택 영역에 적용 =====
+// key = 에디터 prop.key, format = 'color' | 'background'. 픽 상태는 팝오버가 열려 있는 동안
+// 표시값(스와치·팔레트 하이라이트)이 흔들리지 않도록 (key:format)별 맵에 따로 보관한다.
+const editorColorPick = reactive<Record<string, { value: string; index: number | null }>>({})
+const editorColorKey = (key: string, format: 'color' | 'background') => `${key}:${format}`
+// 팝오버 대상 에디터/선택 영역 (열 때 캡처 — 이후 blur 돼도 이 범위에 적용)
+let editorColorQuill: Quill | null = null
+let editorColorRange: { index: number; length: number } | null = null
+
+const editorColorModel = (key: string, format: 'color' | 'background'): string =>
+  editorColorPick[editorColorKey(key, format)]?.value ?? (format === 'color' ? '#333333' : '#ffffff')
+const editorColorActiveIndex = (key: string, format: 'color' | 'background'): number | null =>
+  editorColorPick[editorColorKey(key, format)]?.index ?? null
+
+// 팝오버가 열릴 때: 대상 Quill/선택 영역을 캡처하고, 그 영역의 현재 색을 초기 표시값으로 세팅
+const onEditorColorOpen = (key: string, format: 'color' | 'background') => {
+  const q = quillByKey[key]
+  if (!q) return
+  editorColorQuill = q
+  editorColorRange = quillRangeByKey[key] ?? q.getSelection()
+  const r = editorColorRange
+  const cur = r
+    ? (q.getFormat(r.index, Math.max(r.length, 1)) as Record<string, unknown>)[format]
+    : null
+  const usingPoint = typeof cur === 'string' && cur.includes(POINT_COLOR_CSS_VAR)
+  const m = typeof cur === 'string' ? cur.match(/--point-color-(\d)/) : null
+  const idx = usingPoint ? (m ? parseInt(m[1], 10) : 0) : null
+  editorColorPick[editorColorKey(key, format)] = {
+    value: usingPoint
+      ? pointColorAt(wrapPointColors.value, idx ?? 0)
+      : typeof cur === 'string' && cur
+        ? cur
+        : format === 'color'
+          ? '#333333'
+          : '#ffffff',
+    index: idx,
+  }
+}
+
+// 캡처한 선택 영역(또는 커서 이후 입력)에 색상 적용
+const applyEditorColor = (format: 'color' | 'background', value: string | false) => {
+  const q = editorColorQuill
+  const r = editorColorRange
+  if (!q || !r) return
+  if (r.length > 0) q.formatText(r.index, r.length, format, value, 'user')
+  else {
+    q.setSelection(r.index, 0, 'silent')
+    q.format(format, value, 'user')
+  }
+}
+
+// 팔레트/HEX/불투명도로 직접 색상 지정 → 리터럴 적용(포인트 추종 해제)
+const onEditorColorInput = (key: string, format: 'color' | 'background', value: string) => {
+  applyEditorColor(format, value || false)
+  editorColorPick[editorColorKey(key, format)] = { value, index: null }
+}
+
+// 포인트 색상 스와치 클릭 → 같은 인덱스면 리터럴로 고정(해제), 아니면 var(--point-color-N)로 추종
+// (추종값은 :root 변수를 따라 실시간 반영되고 이메일 내보내기 때 실제 색으로 치환된다)
+const onEditorColorSelectPoint = (key: string, format: 'color' | 'background', index: number) => {
+  const resolved = pointColorAt(wrapPointColors.value, index)
+  if (editorColorActiveIndex(key, format) === index) {
+    applyEditorColor(format, resolved || false)
+    editorColorPick[editorColorKey(key, format)] = { value: resolved, index: null }
+  } else {
+    applyEditorColor(format, `var(${pointColorCssVar(index)}, ${resolved})`)
+    editorColorPick[editorColorKey(key, format)] = { value: resolved, index }
+  }
 }
 
 const addCustomColorItem = (quill: Quill, format: 'color' | 'background') => {

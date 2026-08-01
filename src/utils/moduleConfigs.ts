@@ -149,7 +149,7 @@ export const moduleDescTextConfig: ModuleConfig = {
     borderWidth: '1px',
     borderColor: '#999999',
   },
-  processors: [processors.descTextBorderProcessor],
+  processors: [processors.descTextBorderProcessor, processors.boxBorderRadiusProcessor],
 }
 
 /**
@@ -169,7 +169,7 @@ export const moduleImgConfig: ModuleConfig = {
     imageBorderWidth: '1px',
     imageBorderColor: '#000000',
   },
-  processors: [processors.imageLinkProcessor],
+  processors: [processors.imageLinkProcessor, processors.boxBorderRadiusProcessor],
 }
 
 /**
@@ -187,6 +187,7 @@ export const moduleOneButtonConfig: ModuleConfig = {
     buttonPaddingRight: '0px',
     buttonPaddingLeft: '0px',
   },
+  processors: [processors.boxBorderRadiusProcessor],
 }
 
 /**
@@ -216,6 +217,7 @@ export const moduleTwoButtonConfig: ModuleConfig = {
     paddingBottom: '15px',
     paddingLeft: '15px',
   },
+  processors: [processors.boxBorderRadiusProcessor],
 }
 
 /**
@@ -258,7 +260,7 @@ export const moduleSmallButtonConfig: ModuleConfig = {
     btn4BgColor: '#e5e5e5',
     btn4TextColor: '#333333',
   },
-  processors: [processors.removeSmallButtonsProcessor],
+  processors: [processors.removeSmallButtonsProcessor, processors.boxBorderRadiusProcessor],
 }
 
 /**
@@ -443,9 +445,36 @@ export const module011Config: ModuleConfig = {
 export const module012Config: ModuleConfig = {
   quillFields: ['contentText'],
   defaults: {
+    // 카테고리 배지 (기본 표시 = 기존 인스턴스 폴백)
+    showCategory: true,
     categoryBgColor: '#666666',
     categoryTextColor: '#ffffff',
+    categoryTextFontSize: '14px',
+    categoryBorderRadius: '30px',
+    contentTextFontSize: '14px',
+    textColor: '#333333',
+    // 박스 배경/안쪽 여백/바깥 여백/모서리 (기존 하드코딩 값과 동일한 폴백)
+    bgColor: '#fcfcfc',
+    paddingTop: '20px',
+    paddingRight: '20px',
+    paddingBottom: '20px',
+    paddingLeft: '20px',
+    marginTop: '0px',
+    marginRight: '20px',
+    marginBottom: '20px',
+    marginLeft: '20px',
+    borderRadius: '0px',
+    // 박스 테두리 (기본 on = 기존 인스턴스의 1px solid #cccccc)
+    showBorder: true,
+    borderStyle: 'solid',
+    borderWidth: '1px',
+    borderColor: '#cccccc',
   },
+  processors: [
+    processors.module012CategoryProcessor,
+    processors.boxBorderProcessor,
+    processors.boxBorderRadiusProcessor,
+  ],
 }
 
 /**
@@ -710,22 +739,44 @@ export const module101Config: ModuleConfig = {
  * Module11 설정
  */
 export const module11Config: ModuleConfig = {
+  quillFields: ['contentText'],
   defaults: {
-    linkUrl: '#',
-    bgColor: '#eaeaea',
+    // 링크 사용 토글 — 기본 on(기존 인스턴스의 링크 유지), URL 미입력 시 링크는 자동으로 걸리지 않는다
+    showLink: true,
+    linkUrl: '',
     textColor: '#111111',
     showLabel: true,
     labelText: '중랑구',
     labelColor: '#111111',
-    labelTextLineHeight: '1.7',
+    labelTextFontSize: '14px',
     contentText: '2022년 국내전시회 참가기업 지원사업(~2/25)',
-    contentTextLineHeight: '1.7',
+    contentTextFontSize: '14px',
     showButton: true,
     buttonText: 'GO →',
     buttonBgColor: '#999999',
     buttonTextColor: '#ffffff',
+    // 박스 배경/안쪽 여백/바깥 여백/모서리/테두리 (기존 하드코딩 값과 동일한 폴백)
+    bgColor: '#eaeaea',
+    paddingTop: '10px',
+    paddingRight: '10px',
+    paddingBottom: '10px',
+    paddingLeft: '10px',
+    marginTop: '2px',
+    marginRight: '20px',
+    marginBottom: '2px',
+    marginLeft: '20px',
+    borderRadius: '0px',
+    showBorder: false,
+    borderStyle: 'solid',
+    borderWidth: '1px',
+    borderColor: '#cccccc',
   },
-  processors: [processors.module11LabelProcessor],
+  processors: [
+    processors.module11LabelProcessor,
+    processors.module11LinkProcessor,
+    processors.boxBorderProcessor,
+    processors.boxBorderRadiusProcessor,
+  ],
 }
 
 /**

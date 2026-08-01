@@ -3519,12 +3519,97 @@ ${fullHtml}
     return props
   }
 
+  // 조립형 헬퍼: 폰트 크기·굵기를 지정한 한 줄 DescText 내용 HTML
+  const weightedTextHtml = (text: string, fontSize: string, weight: number, align = 'left'): string =>
+    `<p style="margin:0; padding:0; line-height:1.7; text-align:${align};"><span style="font-size:${fontSize}; font-weight:${weight};">${text}</span></p>`
+
+  /**
+   * 조립형 '타이틀 추가' — 구분선(여백) + 강조 타이틀 텍스트(18px/700) + 본문 텍스트(16px/500)를
+   * 하나의 세로 스택 그룹으로 조립한다. (섹션 도입부: 구분선 아래 제목 + 설명 패턴)
+   */
+  const addComposedTitleSection = (): string | null =>
+    buildComposedGroup([
+      {
+        id: 'ModuleDivider',
+        row: 0,
+        col: 0,
+        overrides: {
+          borderWidth: '2px',
+          borderStyle: 'solid',
+          borderColor: '#000000',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '0px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        id: 'ModuleDescText',
+        row: 1,
+        col: 0,
+        overrides: {
+          descriptionText: weightedTextHtml('타이틀을 입력하세요', '18px', 700),
+          fontSize: '18px',
+          paddingTop: '15px',
+          paddingRight: '20px',
+          paddingBottom: '15px',
+          paddingLeft: '20px',
+        },
+      },
+      {
+        id: 'ModuleDescText',
+        row: 2,
+        col: 0,
+        overrides: {
+          descriptionText: weightedTextHtml('내용을 입력하세요', '16px', 500),
+          fontSize: '16px',
+          paddingTop: '0px',
+          paddingRight: '20px',
+          paddingBottom: '0px',
+          paddingLeft: '20px',
+        },
+      },
+    ])
+
+  /**
+   * 모듈 01번 — 회색 배경 박스 텍스트 모듈(설명 텍스트 재사용).
+   * 배경 #f5f5f5 / 안쪽 여백 15·20 / 바깥 하단 10, 내용은 강조 타이틀(700, #eb2a25) + 본문(#333333).
+   * 그룹으로 묶지 않고 단일 모듈로 추가한 뒤 기본값을 그 모듈에 직접 적용하고 null을 반환한다.
+   */
+  const addComposedModule01 = (): string | null => {
+    const meta = availableModules.value.find((m) => m.id === 'ModuleDescText')
+    if (!meta) return null
+    addModule(meta) // 추가 직후 새 모듈이 선택됨 → updateModuleProperty가 이 모듈에 적용된다
+    const titleP =
+      '<p style="margin:0; padding:0; line-height:1.7; text-align:left;"><span style="font-weight:700; color:#eb2a25;">콘텐츠 타이틀</span></p>'
+    const bodyP =
+      '<p style="margin:0; padding:0; line-height:1.7; text-align:left;"><span style="color:#333333;">콘텐츠 텍스트</span></p>'
+    const overrides: Record<string, unknown> = {
+      descriptionText: titleP + bodyP,
+      textColor: '#333333',
+      bgColor: '#f5f5f5',
+      paddingTop: '15px',
+      paddingRight: '20px',
+      paddingBottom: '15px',
+      paddingLeft: '20px',
+      marginBottom: '10px',
+      // 패널 타이틀바에 카드 이름을 노출하기 위한 표시 라벨(HTML 플레이스홀더가 없어 렌더에는 영향 없음)
+      __moduleLabel: '모듈 01번',
+    }
+    for (const [k, v] of Object.entries(overrides)) updateModuleProperty(k, v)
+    return null // 단일 모듈 → 그룹 생성·이름 지정 없음
+  }
+
   // 카테고리 갤러리(텍스트/이미지/버튼 레일 메뉴)에서 레거시 번호 모듈 카드를 클릭했을 때,
   // v2 조립형 템플릿이 있으면 그걸 우선 사용한다("모듈 v2를 새 UI의 기본으로" 방침).
-  // 여기 없는 항목(Module01/01-2/05-3/10/10-1/11/12/ModuleTable/ModuleSnsIcons/ModuleDivider/
+  // 여기 없는 항목(01-2/05-3/10/10-1/11/12/ModuleTable/ModuleSnsIcons/ModuleDivider/
   // TopLanguageButton 등)은 v2 템플릿이 아직 없어 폴백으로 기존 addModule(metadata)를 그대로 쓴다
   // (레거시 유지 — figma-builder 스킬 6-1 참고).
+  // ComposedTitleSection은 실제 모듈 id가 아니라 '타이틀 추가' 빠른추가 전용 조립 키다
+  // (같은 SectionTitle을 쓰는 '서브타이틀 추가'는 이 빌더를 타지 않도록 별도 키로 분리).
   const composedBuilderMap: Record<string, () => string | null> = {
+    ComposedTitleSection: addComposedTitleSection,
+    Module01: addComposedModule01,
     Module02: addComposedModule02,
     Module04: addComposedModule04,
     'Module01-1': addComposedModule011,

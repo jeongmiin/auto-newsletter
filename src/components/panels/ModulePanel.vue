@@ -461,7 +461,11 @@ const addModule = (module: ModuleMetadata) => {
   const builder = moduleStore.composedBuilderMap[module.id]
   if (builder) {
     const groupId = builder()
-    if (groupId) moduleStore.setGroupName(groupId, module.name)
+    if (groupId) {
+      moduleStore.setGroupName(groupId, module.name)
+      // 그룹은 선택 없이 추가 — 첫 멤버가 선택된 채면 다음 개별 모듈이 그룹 안으로 들어간다.
+      moduleStore.clearSelection()
+    }
   } else {
     moduleStore.addModule(module)
   }
@@ -477,7 +481,10 @@ const addModule = (module: ModuleMetadata) => {
 const addComposedModule02 = () => {
   onModuleLeave()
   const groupId = moduleStore.addComposedModule02()
-  if (groupId) moduleStore.setGroupName(groupId, '모듈 02')
+  if (groupId) {
+    moduleStore.setGroupName(groupId, '모듈 02')
+    moduleStore.clearSelection()
+  }
   toast.add({
     severity: groupId ? 'success' : 'error',
     summary: groupId ? '조립형 모듈 추가됨' : '조립 실패',
@@ -492,7 +499,10 @@ const addComposedModule02 = () => {
 const addComposedModule04 = () => {
   onModuleLeave()
   const groupId = moduleStore.addComposedModule04()
-  if (groupId) moduleStore.setGroupName(groupId, '모듈 04')
+  if (groupId) {
+    moduleStore.setGroupName(groupId, '모듈 04')
+    moduleStore.clearSelection()
+  }
   toast.add({
     severity: groupId ? 'success' : 'error',
     summary: groupId ? '조립형 모듈 추가됨' : '조립 실패',
@@ -507,7 +517,10 @@ const addComposedModule04 = () => {
 const addComposedModule011 = () => {
   onModuleLeave()
   const groupId = moduleStore.addComposedModule011()
-  if (groupId) moduleStore.setGroupName(groupId, '모듈 01-1')
+  if (groupId) {
+    moduleStore.setGroupName(groupId, '모듈 01-1')
+    moduleStore.clearSelection()
+  }
   toast.add({
     severity: groupId ? 'success' : 'error',
     summary: groupId ? '조립형 모듈 추가됨' : '조립 실패',
@@ -522,7 +535,10 @@ const addComposedModule011 = () => {
 const addComposedModule05 = () => {
   onModuleLeave()
   const groupId = moduleStore.addComposedModule05()
-  if (groupId) moduleStore.setGroupName(groupId, '모듈 05')
+  if (groupId) {
+    moduleStore.setGroupName(groupId, '모듈 05')
+    moduleStore.clearSelection()
+  }
   toast.add({
     severity: groupId ? 'success' : 'error',
     summary: groupId ? '조립형 모듈 추가됨' : '조립 실패',
@@ -534,7 +550,11 @@ const addComposedModule05 = () => {
 }
 
 const composedToast = (groupId: string | null, name: string) => {
-  if (groupId) moduleStore.setGroupName(groupId, name)
+  if (groupId) {
+    moduleStore.setGroupName(groupId, name)
+    // 그룹은 선택 없이 추가 — 첫 멤버가 선택된 채면 다음 개별 모듈이 그룹 안으로 들어간다.
+    moduleStore.clearSelection()
+  }
   toast.add({
     severity: groupId ? 'success' : 'error',
     summary: groupId ? '조립형 모듈 추가됨' : '조립 실패',

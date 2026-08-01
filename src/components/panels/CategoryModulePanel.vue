@@ -106,8 +106,12 @@ const categoryLabel = computed(() => CATEGORY_LABELS[props.category])
 interface QuickAddItem {
   label: string
   moduleId: string
-  /** 추가 직후 덮어쓸 속성(선택) — 예: "서브타이틀"은 전용 모듈이 없어 SectionTitle을 작은 폰트로 재사용 */
-  overrideProperty?: { key: string; value: unknown }
+  /** 조립형 빌더 키(선택) — moduleId와 다른 조립 템플릿을 쓸 때 지정. 예: '타이틀 추가'는
+   *  SectionTitle 대신 구분선+텍스트 2개 조립 그룹(ComposedTitleSection)을 만든다.
+   *  (같은 SectionTitle을 쓰는 '서브타이틀 추가'가 이 빌더에 휩쓸리지 않도록 분리) */
+  composedBuilderId?: string
+  /** 추가 직후 덮어쓸 속성 묶음(선택) — 예: "서브타이틀"·"텍스트"는 ModuleDescText에 폰트/여백 기본값을 얹어 재사용 */
+  overrides?: Record<string, unknown>
   /** 미리보기 카드 표시(선택) — 이미지: 플레이스홀더, 버튼: 스타일 버튼 미리보기 */
   preview?: 'single-image' | 'double-image' | 'single-button' | 'double-button' | 'small-button'
 }
@@ -124,15 +128,28 @@ const buttonPreviewLabels = (p?: string): string[] => {
 
 // 원소 모듈 "빠른추가" — 항상 moduleStore.addModule()로 삽입한다.
 // (선택된 모듈이 v2 그룹 멤버면 addModule이 이미 그 그룹에 이어붙이므로 별도 배선 불필요)
+// 폰트 크기·굵기를 지정한 한 줄 DescText 내용 HTML (moduleStore.weightedTextHtml과 동일 포맷)
+const weightedTextHtml = (text: string, fontSize: string, weight: number, align = 'left'): string =>
+  `<p style="margin:0; padding:0; line-height:1.7; text-align:${align};"><span style="font-size:${fontSize}; font-weight:${weight};">${text}</span></p>`
+
 const QUICK_ADD_ITEMS: Record<Category, QuickAddItem[]> = {
   text: [
-    { label: '타이틀 추가', moduleId: 'SectionTitle' },
+    { label: '타이틀 추가', moduleId: 'SectionTitle', composedBuilderId: 'ComposedTitleSection' },
     {
+      // 서브타이틀 = '타이틀 추가' 그룹의 타이틀 텍스트와 같은 속성(18px/700, 여백 15/20/15/20)을 가진 단일 텍스트 모듈
       label: '서브타이틀 추가',
-      moduleId: 'SectionTitle',
-      overrideProperty: { key: 'mainTitleFontSize', value: '18px' },
+      moduleId: 'ModuleDescText',
+      overrides: {
+        descriptionText: weightedTextHtml('서브 타이틀을 입력하세요', '18px', 700),
+        fontSize: '18px',
+        paddingTop: '15px',
+        paddingRight: '20px',
+        paddingBottom: '15px',
+        paddingLeft: '20px',
+      },
     },
-    { label: '텍스트 추가', moduleId: 'ModuleDescText' },
+    // 텍스트 = 좌우 20px 여백을 기본으로 얹은 설명 텍스트 모듈
+    { label: '텍스트 추가', moduleId: 'ModuleDescText', overrides: { paddingLeft: '20px', paddingRight: '20px' } },
   ],
   image: [
     { label: '단일 이미지 추가', moduleId: 'ModuleImg', preview: 'single-image' },
@@ -176,15 +193,23 @@ const notifyAdded = (name: string) => {
 const onQuickAdd = (item: QuickAddItem) => {
   const meta = moduleStore.availableModules.find((m) => m.id === item.moduleId)
   if (!meta) return
-  // 조립형 빌더가 있으면(예: 2단 이미지=단일 이미지 2개, 2단 버튼=단일 버튼 2개) 2컬럼 그룹으로 추가
-  const builder = moduleStore.composedBuilderMap[item.moduleId]
+  // 조립형 빌더가 있으면(예: 2단 이미지=단일 이미지 2개, 2단 버튼=단일 버튼 2개) 2컬럼 그룹으로 추가.
+  // composedBuilderId가 지정되면 moduleId 대신 그 키로 빌더를 찾는다('타이틀 추가' 등).
+  const builder = moduleStore.composedBuilderMap[item.composedBuilderId ?? item.moduleId]
   if (builder) {
     const groupId = builder()
-    if (groupId) moduleStore.setGroupName(groupId, meta.name)
+    if (groupId) {
+      moduleStore.setGroupName(groupId, meta.name)
+      // 그룹은 선택 없이 추가한다 — 첫 멤버가 선택된 채면 이어서 개별 모듈을 추가할 때
+      // 그 그룹 안으로 들어가 버리기 때문(그룹 밖 맨 끝에 붙도록 선택을 비운다).
+      moduleStore.clearSelection()
+    }
   } else {
     moduleStore.addModule(meta)
-    if (item.overrideProperty) {
-      moduleStore.updateModuleProperty(item.overrideProperty.key, item.overrideProperty.value)
+    if (item.overrides) {
+      for (const [key, value] of Object.entries(item.overrides)) {
+        moduleStore.updateModuleProperty(key, value)
+      }
     }
   }
   notifyAdded(item.label.replace(/\s*추가$/, ''))
@@ -194,7 +219,11 @@ const onGalleryAdd = (module: ModuleMetadata) => {
   const builder = moduleStore.composedBuilderMap[module.id]
   if (builder) {
     const groupId = builder()
-    if (groupId) moduleStore.setGroupName(groupId, module.name)
+    if (groupId) {
+      moduleStore.setGroupName(groupId, module.name)
+      // 그룹은 선택 없이 추가 — 첫 멤버가 선택된 채면 다음 개별 모듈이 그룹 안으로 들어간다.
+      moduleStore.clearSelection()
+    }
   } else {
     moduleStore.addModule(module)
   }

@@ -1,8 +1,17 @@
 <template>
   <div class="inline-block">
+    <!-- 커스텀 트리거(선택) — 툴바 아이콘 버튼 등. 스와치/‘+’ 대신 임의 요소로 팝오버를 연다. -->
+    <span
+      v-if="$slots.trigger"
+      ref="triggerEl"
+      class="inline-block"
+      @click="toggleOpen"
+    >
+      <slot name="trigger" :open="open"></slot>
+    </span>
     <!-- 스와치 버튼 -->
     <button
-      v-if="triggerVariant === 'add'"
+      v-else-if="triggerVariant === 'add'"
       ref="triggerEl"
       type="button"
       class="color-add-trigger"
