@@ -266,7 +266,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive } from 'vue'
+import { computed, reactive, watch } from 'vue'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
 import type { ModuleGroupStyles, BorderSide } from '@/types'
@@ -366,12 +366,27 @@ const setBoxSide = (kind: 'padding' | 'margin', side: BorderSide, value: string)
 }
 
 // ===== 여백 4방향 잠금 슬라이더 UI (ModuleForm.vue의 모듈 여백 컨트롤과 동일 패턴) =====
-// 그룹 스타일 기본값 = 잠금(4방향 공통 슬라이더). 락을 열면 방향별(상단/하단/좌측/우측) 개별 조정으로 바뀐다.
-const quadLockState = reactive<Record<'padding' | 'margin', boolean>>({ padding: true, margin: true })
-const isQuadLocked = (kind: 'padding' | 'margin'): boolean => quadLockState[kind]
+// 잠금 기본값: 바깥 여백(margin)=잠금(공통 적용 단일 슬라이더), 안쪽 여백(padding)=잠금 해제(방향별 개별 조정).
+// 안쪽 여백은 보통 좌우만 다르게 주므로(배경이 채워지도록) 개별 조정을 먼저 보여준다.
+// 사용자가 락을 누르면 그 값으로 고정, 다른 그룹으로 바뀌면 기본값으로 복귀.
+const LOCK_DEFAULT: Record<'padding' | 'margin', boolean> = { padding: false, margin: true }
+const quadLockState = reactive<Record<'padding' | 'margin', boolean | undefined>>({
+  padding: undefined,
+  margin: undefined,
+})
+const isQuadLocked = (kind: 'padding' | 'margin'): boolean =>
+  quadLockState[kind] !== undefined ? (quadLockState[kind] as boolean) : LOCK_DEFAULT[kind]
 const toggleQuadLock = (kind: 'padding' | 'margin'): void => {
-  quadLockState[kind] = !quadLockState[kind]
+  quadLockState[kind] = !isQuadLocked(kind)
 }
+// 다른 그룹으로 바뀌면 잠금 상태를 기본값으로 되돌린다
+watch(
+  () => group.value?.id,
+  () => {
+    quadLockState.padding = undefined
+    quadLockState.margin = undefined
+  },
+)
 
 const MARGIN_QUAD_MAX = 100
 

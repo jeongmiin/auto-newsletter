@@ -82,6 +82,8 @@ export interface GroupRowLayout<T> {
   columns: number
   /** cells[colIdx] = 그 컬럼에 세로로 쌓인 멤버들(순서 유지) */
   cells: T[][]
+  /** 컬럼별 너비(%) — 지정 시 균등 분할 대신 이 비율로 그린다(합계 100). 미지정이면 균등. */
+  widths?: number[]
 }
 
 /**
@@ -108,8 +110,20 @@ export function layoutGroupRows<T extends ModuleInstance>(
  * 편의: 그룹 + 멤버 → 바로 행 레이아웃.
  */
 export function computeGroupLayout<T extends ModuleInstance>(
-  group: Pick<ModuleGroup, 'rows' | 'columns'>,
+  group: Pick<ModuleGroup, 'rows' | 'columns' | 'colWidths'>,
   orderedMembers: T[],
 ): GroupRowLayout<T>[] {
-  return layoutGroupRows(orderedMembers, resolveGroupRows(group, orderedMembers))
+  const rows = layoutGroupRows(orderedMembers, resolveGroupRows(group, orderedMembers))
+  // 행별 컬럼 너비(%) 적용 — 길이가 그 행 컬럼 수와 정확히 일치하고 합계가 유효할 때만
+  const cw = group.colWidths
+  if (cw) {
+    rows.forEach((row, r) => {
+      const w = cw[r]
+      if (row.columns > 1 && Array.isArray(w) && w.length === row.columns) {
+        const sum = w.reduce((a, b) => a + (Number(b) || 0), 0)
+        if (sum > 0) row.widths = w.map((v) => (Number(v) || 0))
+      }
+    })
+  }
+  return rows
 }

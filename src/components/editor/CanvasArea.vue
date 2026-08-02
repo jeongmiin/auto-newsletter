@@ -163,7 +163,7 @@
                       v-for="col in row.columns"
                       :key="`col-${rowIdx}-${col}`"
                       class="col-cell"
-                      :style="colCellStyle(row.columns)"
+                      :style="colCellStyle(row.columns, row.widths?.[col - 1])"
                     >
                       <div
                         v-for="member in row.cells[col - 1]"
@@ -476,7 +476,8 @@ const onGroupRowDrop = (
 }
 
 // 컬럼 셀 인라인 스타일 (캔버스·이메일 공용 fluid-hybrid)
-const colCellStyle = (columns: number): string => columnCellStyle(columns)
+const colCellStyle = (columns: number, widthPct?: number): string =>
+  columnCellStyle(columns, widthPct)
 
 // 이웃 컬럼 복제로 빈 컬럼 채우기 (같은 행)
 const dupIntoColumn = (groupId: string, rowIdx: number, colIdx: number) =>

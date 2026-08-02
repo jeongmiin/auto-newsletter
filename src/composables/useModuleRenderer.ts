@@ -12,6 +12,7 @@ import {
   replaceModuleBasicHeaderContent,
   replaceModuleImageHeaderContent,
   replaceModuleDescTextContent,
+  replaceModuleInlineTextContent,
   replaceModuleImgContent,
   replaceModuleSnsIconsContent,
   replaceModuleContactInfoContent,
@@ -82,6 +83,9 @@ export function useModuleRenderer(moduleId: string) {
 
       case 'ModuleDescText':
         return replaceModuleDescTextContent(html, properties)
+
+      case 'ModuleInlineText':
+        return replaceModuleInlineTextContent(html, properties)
 
       case 'ModuleImg':
         return replaceModuleImgContent(html, properties)

@@ -50,6 +50,16 @@ export function replaceModuleDescTextContent(
 }
 
 /**
+ * ModuleInlineText 콘텐츠 교체
+ */
+export function replaceModuleInlineTextContent(
+  html: string,
+  properties: Record<string, unknown>,
+): string {
+  return replaceModuleContentSync(html, properties, MODULE_CONFIG_REGISTRY.ModuleInlineText)
+}
+
+/**
  * ModuleImg 콘텐츠 교체
  */
 export function replaceModuleImgContent(html: string, properties: Record<string, unknown>): string {

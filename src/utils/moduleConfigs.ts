@@ -153,6 +153,55 @@ export const moduleDescTextConfig: ModuleConfig = {
 }
 
 /**
+ * ModuleInlineText 설정 — 텍스트를 옆으로(인라인) 최대 4개까지. 라벨·시간 배지 용도.
+ */
+export const moduleInlineTextConfig: ModuleConfig = {
+  quillFields: ['text1', 'text2', 'text3', 'text4'],
+  defaults: {
+    align: 'left',
+    text1: '라벨',
+    text1FontSize: '14px',
+    text1TextColor: '#ffffff',
+    text1BgColor: '#fe5f0d',
+    text1PaddingTop: '4px',
+    text1PaddingRight: '14px',
+    text1PaddingBottom: '3px',
+    text1PaddingLeft: '14px',
+    showText2: false,
+    text2FontSize: '14px',
+    text2TextColor: '#111111',
+    text2BgColor: 'transparent',
+    text2PaddingTop: '4px',
+    text2PaddingRight: '14px',
+    text2PaddingBottom: '3px',
+    text2PaddingLeft: '14px',
+    showText3: false,
+    text3FontSize: '14px',
+    text3TextColor: '#111111',
+    text3BgColor: 'transparent',
+    text3PaddingTop: '4px',
+    text3PaddingRight: '14px',
+    text3PaddingBottom: '3px',
+    text3PaddingLeft: '14px',
+    showText4: false,
+    text4FontSize: '14px',
+    text4TextColor: '#111111',
+    text4BgColor: 'transparent',
+    text4PaddingTop: '4px',
+    text4PaddingRight: '14px',
+    text4PaddingBottom: '3px',
+    text4PaddingLeft: '14px',
+    paddingTop: '0px',
+    paddingRight: '0px',
+    paddingBottom: '0px',
+    paddingLeft: '0px',
+    showBorderRadius: true,
+    borderRadius: '30px',
+  },
+  processors: [processors.removeInlineTextsProcessor, processors.boxBorderRadiusProcessor],
+}
+
+/**
  * ModuleImg 설정
  */
 export const moduleImgConfig: ModuleConfig = {
@@ -904,6 +953,7 @@ export const MODULE_CONFIG_REGISTRY: Record<string, ModuleConfig> = {
   ModuleBasicHeader: moduleBasicHeaderConfig,
   ModuleImageHeader: moduleImageHeaderConfig,
   ModuleDescText: moduleDescTextConfig,
+  ModuleInlineText: moduleInlineTextConfig,
   ModuleImg: moduleImgConfig,
   ModuleOneButton: moduleOneButtonConfig,
   ModuleTwoButton: moduleTwoButtonConfig,

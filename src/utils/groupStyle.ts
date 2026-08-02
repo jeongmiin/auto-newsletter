@@ -158,9 +158,10 @@ export const COLUMN_GAP_PX = 5
  *  buildColumnLayoutHtml / 캔버스 .col-row 가 이를 처리)
  * 컬럼 간 간격은 각 셀 안쪽 padding(box-sizing:border-box라 폭에 포함)으로 준다.
  */
-export function columnCellStyle(columns: number): string {
+export function columnCellStyle(columns: number, widthPct?: number): string {
   const n = Math.min(Math.max(columns, 1), 4)
-  const pct = (100 / n).toFixed(4)
+  // widthPct(그 컬럼의 지정 너비 %)가 있으면 균등(100/n) 대신 그 값을 데스크톱 폭으로 쓴다.
+  const pct = (widthPct != null && widthPct > 0 ? widthPct : 100 / n).toFixed(4)
   return [
     'display:inline-block',
     'vertical-align:top',
@@ -176,11 +177,11 @@ export function columnCellStyle(columns: number): string {
  * 컬럼별 내부 HTML 배열을 fluid-hybrid 컬럼 레이아웃으로 감싼다.
  * @param columnHtml columnHtml[i] = i번 컬럼에 들어갈 결합 HTML(빈 문자열 허용)
  */
-export function buildColumnLayoutHtml(columnHtml: string[]): string {
+export function buildColumnLayoutHtml(columnHtml: string[], widths?: number[]): string {
   const n = Math.min(Math.max(columnHtml.length, 1), 4)
   const cells = columnHtml
     .slice(0, n)
-    .map((inner) => `<div style="${columnCellStyle(n)}">${inner || '&nbsp;'}</div>`)
+    .map((inner, i) => `<div style="${columnCellStyle(n, widths?.[i])}">${inner || '&nbsp;'}</div>`)
     .join('')
   // font-size:0 로 inline-block 사이 공백(gap) 제거, letter-spacing:0 보정
   return `<div style="font-size:0; letter-spacing:0;">${cells}</div>`

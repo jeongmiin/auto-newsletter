@@ -53,6 +53,36 @@
               v-tooltip.top="'이 모듈을 오른쪽 컬럼으로 이동'"
             />
           </div>
+          <!-- 컬럼 너비 지정(2단 이상) — 선택 컬럼의 너비(%)를 정하면 나머지 컬럼이 남은 폭을 균등 분배.
+               데스크톱에만 적용되고 모바일에서는 세로 100% 스택된다. -->
+          <div v-if="moduleColumnInfo.columns > 1" class="mt-2.5">
+            <p class="gg-field-label !mb-1.5">
+              '{{ moduleColumnInfo.columns }}단 중 {{ moduleColumnInfo.columnIndex + 1 }}번' 너비
+            </p>
+            <div class="gg-margin-slider-row">
+              <input
+                type="range"
+                min="10"
+                max="90"
+                step="1"
+                :value="columnWidthValue"
+                @input="onColumnWidthInput($event)"
+                class="gg-margin-slider"
+              />
+              <div class="gg-margin-value-field">
+                <input
+                  type="number"
+                  min="10"
+                  max="90"
+                  :value="columnWidthValue"
+                  @change="onColumnWidthInput($event)"
+                  @keydown.enter="blurTarget"
+                  class="gg-margin-value-input"
+                />
+                <span class="gg-margin-value-unit">%</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- 속성 편집 폼 -->
@@ -1787,6 +1817,29 @@ const moveSelectedModuleColumn = (direction: 'left' | 'right') => {
   if (selectedModule.value) moduleStore.moveModuleColumn(selectedModule.value.id, direction)
 }
 
+// ===== 컬럼 너비(%) — 2단 이상일 때 선택 컬럼의 너비 지정 =====
+const columnWidthValue = computed<number>(() => {
+  const gid = selectedModule.value?.groupId
+  if (!gid) return Math.round(100 / Math.max(moduleColumnInfo.value.columns, 1))
+  return moduleStore.columnWidthOf(
+    gid,
+    moduleColumnInfo.value.rowIndex,
+    moduleColumnInfo.value.columnIndex,
+  )
+})
+const onColumnWidthInput = (event: Event) => {
+  const gid = selectedModule.value?.groupId
+  if (!gid) return
+  const n = Number.parseInt((event.target as HTMLInputElement).value, 10)
+  if (!Number.isFinite(n)) return
+  moduleStore.setColumnWidth(
+    gid,
+    moduleColumnInfo.value.rowIndex,
+    moduleColumnInfo.value.columnIndex,
+    n,
+  )
+}
+
 // 아코디언 그룹화:
 // - group이 하나도 없으면 단일 평면 그룹(기존 flat 모듈 그대로).
 // - 일부라도 group이 있으면 group 없는 prop은 null 그룹(상단 상시 노출용)으로, 나머지는 이름별 섹션으로 묶는다.
@@ -2337,6 +2390,7 @@ const isQuadSelfLabeledGroup = (group: { name?: string | null; props: EditablePr
 const STYLE_SECTION_RULES: Record<string, '*' | { exclude: string } | Set<string>> = {
   ModuleImg: { exclude: '이미지 파일' },
   ModuleDescText: new Set(['여백', '모서리 둥글기', '테두리']),
+  ModuleInlineText: new Set(['텍스트 1', '텍스트 2', '텍스트 3', '텍스트 4', '바깥 여백', '모서리 둥글기']),
   'Module01-2': new Set(['카테고리', '여백', '모서리 둥글기', '테두리']),
   Module11: new Set(['여백', '모서리 둥글기', '테두리']),
   ModuleDivider: '*', // 여백 (선 스타일은 그룹 없이 상단 flat 노출)
@@ -4287,6 +4341,20 @@ const onSelectPointColor = (key: string, index: number): void => {
      부분 지정된 텍스트는 인라인 font-size가 그대로 우선한다. */
   font-size: var(--rte-base-size, 15px);
   color: #333d4b;
+}
+
+/* 접이식 카드(gg-acc-body--card > .gg-acc-fields) 안의 텍스트 에디터는
+   회색 카드 위에서 구분되도록 툴바를 회색(#f2f4f6), 작성란을 흰색(#fff)으로 뒤집는다. */
+.gg-acc-body--card > .gg-acc-fields .rte-field {
+  --p-editor-toolbar-background: #f2f4f6;
+}
+.gg-acc-body--card > .gg-acc-fields .rte-field :deep(.ql-toolbar.ql-snow) {
+  background: #f2f4f6;
+  border-radius: 8px;
+  padding: 12px;
+}
+.gg-acc-body--card > .gg-acc-fields .rte-field :deep(.ql-container.ql-snow) {
+  background: #fff;
 }
 
 /* 행간 · 자간 팝오버 (Figma 640-3517) — 아이콘+라벨 헤더 + 슬라이더 + 값 필드 */

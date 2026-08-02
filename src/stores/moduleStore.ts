@@ -22,6 +22,7 @@ import {
   replaceModuleBasicHeaderContent,
   replaceModuleImageHeaderContent,
   replaceModuleDescTextContent,
+  replaceModuleInlineTextContent,
   replaceModuleImgContent,
   replaceModuleSnsIconsContent,
   replaceModuleContactInfoContent,
@@ -377,7 +378,13 @@ export const useModuleStore = defineStore('module', () => {
     const columnSpec: Array<{ id: string; overrides: Record<string, unknown> }> = [
       {
         id: 'ModuleImg',
-        overrides: { paddingTop: '0px', paddingRight: '0px', paddingBottom: '8px', paddingLeft: '0px' },
+        overrides: {
+          imageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-2column.png',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '8px',
+          paddingLeft: '0px',
+        },
       },
       {
         id: 'ModuleDescText',
@@ -707,6 +714,17 @@ export const useModuleStore = defineStore('module', () => {
     return groupId
   }
 
+  /** 그룹의 좌·우 '안쪽' 여백(그룹 스타일 padding)을 지정한다. 조립형 모듈 추가 시 기본 좌우 여백 부여용.
+   *  그룹 배경색을 줬을 때 이 여백까지 색이 채워지도록 바깥 여백(margin)이 아닌 안쪽 여백을 쓴다. 바깥은 0으로. */
+  const setGroupSidePadding = (groupId: string | null | undefined, lr: string): void => {
+    if (!groupId) return
+    const g = groups.value.find((x) => x.id === groupId)
+    if (!g) return
+    g.styles = { ...g.styles, paddingLeft: lr, paddingRight: lr, marginLeft: '0px', marginRight: '0px' }
+    triggerRef(groups)
+    isDirty.value = true
+  }
+
   // 조립형 헬퍼: 굵은 타이틀 DescText 내용 HTML
   const boldTitleHtml = (text: string, fontSize: string, align = 'left'): string =>
     `<p style="margin:0; padding:0; line-height:1.7; text-align:${align};"><strong style="font-size:${fontSize};">${text}</strong></p>`
@@ -786,7 +804,13 @@ export const useModuleStore = defineStore('module', () => {
         id: 'ModuleImg',
         row: 0,
         col,
-        overrides: { paddingTop: '10px', paddingRight: '0px', paddingBottom: '8px', paddingLeft: '0px' },
+        overrides: {
+          imageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-2column.png',
+          paddingTop: '10px',
+          paddingRight: '0px',
+          paddingBottom: '8px',
+          paddingLeft: '0px',
+        },
       },
       {
         id: 'ModuleDescText',
@@ -824,7 +848,13 @@ export const useModuleStore = defineStore('module', () => {
         id: 'ModuleImg',
         row: 0,
         col: imgCol,
-        overrides: { paddingTop: '0px', paddingRight: '0px', paddingBottom: '8px', paddingLeft: '0px' },
+        overrides: {
+          imageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-2column.png',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '8px',
+          paddingLeft: '0px',
+        },
       },
       {
         id: 'ModuleDescText',
@@ -864,41 +894,119 @@ export const useModuleStore = defineStore('module', () => {
   }
 
   /**
-   * [POC/실험] 모듈 10번 조립형 — 위: 서브타이틀(모듈 10번 타이틀), 아래: 모듈 10번 본체.
-   * 세로 스택(1컬럼)이라 컬럼 분할 없음. 타이틀은 굵은 설명텍스트 + 하단 구분선(설명텍스트의
-   * '테두리 사용' 토글)으로 기존 ModuleSubTitle 모양을 재현한다.
+   * 모듈 10번 조립형(v2) — 2단: 좌 이미지(25%) · 우 [라벨(작은버튼 배지) + 타이틀](75%).
+   * 원본 모듈 10번(이미지 좌 · 라벨/시간/타이틀 우)의 좌우 배치를 원소 모듈로 재현한다.
    */
-  const addComposedModule10 = (): string | null =>
-    buildComposedGroup([
+  const addComposedModule10 = (): string | null => {
+    const groupId = buildComposedGroup([
       {
-        // 모듈 10번 타이틀 → 설명텍스트로 (굵게 + 하단 구분선: showBorder)
-        id: 'ModuleDescText',
+        id: 'ModuleImg',
         row: 0,
         col: 0,
         overrides: {
-          descriptionText: boldTitleHtml('서브타이틀 (14:20~14:40)', '16px'),
-          textColor: '#111111',
-          fontSize: '16px',
-          textAlign: 'left',
-          showBorder: true,
-          borderPosition: 'bottom',
-          borderStyle: 'solid',
-          borderWidth: '1px',
-          borderColor: '#999999',
-          paddingTop: '20px',
-          paddingRight: '20px',
-          paddingBottom: '10px',
-          paddingLeft: '20px',
+          imageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-speaker.png',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '8px',
+          paddingLeft: '0px',
         },
       },
       {
-        // 모듈 10번 본체 (이미지 + 라벨 + 타이틀 + 부제목, 1열) — 기본값 그대로
-        id: 'Module10',
-        row: 1,
-        col: 0,
-        overrides: {},
+        // 라벨 + 시간 — 인라인 텍스트(배지 + 옆 시간 텍스트)
+        id: 'ModuleInlineText',
+        row: 0,
+        col: 1,
+        overrides: {
+          align: 'left',
+          text1: '라벨',
+          showText2: true,
+          text2: '14:20~14:40',
+          text2BgColor: 'transparent',
+          text2TextColor: '#666666',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '4px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        // 타이틀
+        id: 'ModuleDescText',
+        row: 0,
+        col: 1,
+        overrides: {
+          descriptionText: boldTitleHtml('콘텐츠 타이틀', '15px'),
+          textColor: '#111111',
+          fontSize: '15px',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '8px',
+          paddingLeft: '0px',
+        },
       },
     ])
+    // 이미지 컬럼 25% / 텍스트 컬럼 75%
+    if (groupId) {
+      const g = groups.value.find((x) => x.id === groupId)
+      if (g) g.colWidths = [[25, 75]]
+    }
+    return groupId
+  }
+
+  /**
+   * 모듈 10-1번 조립형(v2) — 2단 컬럼. 각 컬럼 = 이미지 → 라벨(작은버튼 배지) → 타이틀(설명텍스트).
+   * 원본 모듈 10-1번처럼 각 컬럼을 가운데 정렬한다.
+   */
+  const addComposedModule101 = (): string | null => {
+    const column = (
+      col: number,
+    ): Array<{ id: string; row: number; col: number; overrides: Record<string, unknown> }> => [
+      {
+        id: 'ModuleImg',
+        row: 0,
+        col,
+        overrides: {
+          imageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-speaker.png',
+          imageAlign: 'center',
+          imageMaxWidth: '50%',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '8px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        // 라벨 — 인라인 텍스트(배지), 가운데 정렬
+        id: 'ModuleInlineText',
+        row: 0,
+        col,
+        overrides: {
+          align: 'center',
+          text1: '라벨',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '6px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        id: 'ModuleDescText',
+        row: 0,
+        col,
+        overrides: {
+          descriptionText: boldTitleHtml(col === 0 ? '왼쪽 타이틀' : '오른쪽 타이틀', '15px', 'center'),
+          textColor: '#111111',
+          fontSize: '15px',
+          textAlign: 'center',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '8px',
+          paddingLeft: '0px',
+        },
+      },
+    ]
+    return buildComposedGroup([...column(0), ...column(1)])
+  }
 
   /**
    * [POC/실험] 뉴스 헤드라인 헤더 조립형 —
@@ -1634,6 +1742,53 @@ export const useModuleStore = defineStore('module', () => {
     isDirty.value = true
   }
 
+  /** [행별 컬럼] 특정 행/컬럼의 현재 너비(%) — 미지정이면 균등(100/컬럼수) */
+  const columnWidthOf = (groupId: string, rowIndex: number, columnIndex: number): number => {
+    const group = groups.value.find((g) => g.id === groupId)
+    const rows = group?.rows
+    const cols = clampColumns(rows?.[rowIndex] ?? 1)
+    const w = group?.colWidths?.[rowIndex]
+    if (cols > 1 && Array.isArray(w) && w.length === cols && w[columnIndex] != null) {
+      return Math.round(w[columnIndex])
+    }
+    return Math.round(100 / cols)
+  }
+
+  /**
+   * [행별 컬럼] 특정 행/컬럼의 너비(%)를 지정한다. 나머지 컬럼은 남은 %(100-지정값)를 균등 분배.
+   * 데스크톱에만 적용되고 모바일에서는 기존처럼 세로 100% 스택된다.
+   */
+  const setColumnWidth = (
+    groupId: string,
+    rowIndex: number,
+    columnIndex: number,
+    pct: number,
+  ): void => {
+    const group = groups.value.find((g) => g.id === groupId)
+    if (!group) return
+    ensureGroupRows(group)
+    const rows = group.rows as number[]
+    const cols = clampColumns(rows[rowIndex] ?? 1)
+    if (cols <= 1 || columnIndex < 0 || columnIndex >= cols) return
+    const p = Math.max(10, Math.min(90, Math.round(pct)))
+    const widths = new Array<number>(cols).fill(0)
+    widths[columnIndex] = p
+    // 나머지 컬럼에 (100-p)% 균등 분배(정수 보정: 나머지를 앞쪽부터 1씩 얹는다)
+    const others = cols - 1
+    const rest = 100 - p
+    const each = Math.floor(rest / others)
+    let remainder = rest - each * others
+    for (let i = 0; i < cols; i++) {
+      if (i === columnIndex) continue
+      widths[i] = each + (remainder > 0 ? 1 : 0)
+      if (remainder > 0) remainder--
+    }
+    if (!group.colWidths) group.colWidths = []
+    group.colWidths[rowIndex] = widths
+    triggerRef(groups)
+    isDirty.value = true
+  }
+
   /**
    * 모듈 선택
    */
@@ -2021,6 +2176,10 @@ export const useModuleStore = defineStore('module', () => {
   const selectGroup = (groupId: string): void => {
     selectedGroupId.value = groupId
     selectedModuleId.value = null
+    // 사용자가 직접 선택한 것이므로 즉시 속성(그룹 스타일) 패널로 전환한다.
+    // (selectModule과 동일 — 이미 선택된 그룹을 레일 메뉴 상태에서 다시 눌러도 한 번에 전환되도록 명시.
+    //  이게 없으면 forceRailPanel 해제를 watch에만 의존해 두 번 눌러야 바뀌는 경우가 생긴다.)
+    useEditorStore().forceRailPanel = false
   }
 
   /** 모듈/그룹 선택 해제 — 좌측 레일 메뉴로 이동할 때 캔버스 선택 상태를 비운다 */
@@ -3154,6 +3313,9 @@ export const useModuleStore = defineStore('module', () => {
       case 'ModuleDescText':
         return replaceModuleDescTextContent(html, properties)
 
+      case 'ModuleInlineText':
+        return replaceModuleInlineTextContent(html, properties)
+
       case 'ModuleImg':
         return replaceModuleImgContent(html, properties)
 
@@ -3349,7 +3511,7 @@ export const useModuleStore = defineStore('module', () => {
           } else {
             // 다단 행: 컬럼별 HTML로 fluid-hybrid 레이아웃(모바일 100% 세로 스택)
             const columnHtml = row.cells.map((cell) => cell.map((m) => htmlById[m.id]).join('\n') + '\n')
-            inner += buildColumnLayoutHtml(columnHtml)
+            inner += buildColumnLayoutHtml(columnHtml, row.widths)
           }
         }
         const resolvedGroupStyles = resolveGroupStyles(group.styles, wrapSettings.pointColors)
@@ -3593,6 +3755,9 @@ ${fullHtml}
       paddingBottom: '15px',
       paddingLeft: '20px',
       marginBottom: '10px',
+      // 바깥 좌우 여백 20px
+      marginLeft: '20px',
+      marginRight: '20px',
       // 패널 타이틀바에 카드 이름을 노출하기 위한 표시 라벨(HTML 플레이스홀더가 없어 렌더에는 영향 없음)
       __moduleLabel: '모듈 01번',
     }
@@ -3602,11 +3767,12 @@ ${fullHtml}
 
   // 카테고리 갤러리(텍스트/이미지/버튼 레일 메뉴)에서 레거시 번호 모듈 카드를 클릭했을 때,
   // v2 조립형 템플릿이 있으면 그걸 우선 사용한다("모듈 v2를 새 UI의 기본으로" 방침).
-  // 여기 없는 항목(01-2/05-3/10/10-1/11/12/ModuleTable/ModuleSnsIcons/ModuleDivider/
+  // 여기 없는 항목(01-2/11/12/ModuleTable/ModuleSnsIcons/ModuleDivider/
   // TopLanguageButton 등)은 v2 템플릿이 아직 없어 폴백으로 기존 addModule(metadata)를 그대로 쓴다
   // (레거시 유지 — figma-builder 스킬 6-1 참고).
   // ComposedTitleSection은 실제 모듈 id가 아니라 '타이틀 추가' 빠른추가 전용 조립 키다
   // (같은 SectionTitle을 쓰는 '서브타이틀 추가'는 이 빌더를 타지 않도록 별도 키로 분리).
+  // 갤러리에 노출되는 '모듈 05번'은 Module05-3(레거시 Module05는 hidden)이므로 v2 빌더를 이 id에도 매핑한다.
   const composedBuilderMap: Record<string, () => string | null> = {
     ComposedTitleSection: addComposedTitleSection,
     Module01: addComposedModule01,
@@ -3614,11 +3780,13 @@ ${fullHtml}
     Module04: addComposedModule04,
     'Module01-1': addComposedModule011,
     Module05: addComposedModule05,
+    'Module05-3': addComposedModule05,
     'Module05-1': addComposedModule051,
     Module06: addComposedModule06,
     Module07: () => addComposedModule07(false),
     Module07_reverse: () => addComposedModule07(true),
     Module10: addComposedModule10,
+    'Module10-1': addComposedModule101,
     ModuleNewsHeader: addComposedNewsHeader,
     ModuleBasicHeader: addComposedBasicHeader,
     ModuleImageHeader: addComposedImageHeader,
@@ -3662,6 +3830,9 @@ ${fullHtml}
     columnElements,
     reorderColumnElements,
     moveModuleColumn,
+    columnWidthOf,
+    setColumnWidth,
+    setGroupSidePadding,
     setDisplayOrder,
     moveGroup,
     reorderGroupRows,
@@ -3679,6 +3850,7 @@ ${fullHtml}
     addComposedModule06,
     addComposedModule07,
     addComposedModule10,
+    addComposedModule101,
     addComposedNewsHeader,
     addComposedBasicHeader,
     addComposedImageHeader,

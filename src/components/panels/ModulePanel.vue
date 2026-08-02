@@ -456,6 +456,32 @@ const goToCategory = (id: string) => {
 
 // 모듈 v2(조립형) 템플릿이 있으면 그걸 추가하고, 없으면 레거시 단일 모듈로 폴백한다
 // (CategoryModulePanel.vue의 onGalleryAdd와 동일한 규칙 — "모듈" 탭에서도 v2로 갈아끼울 수 있는 것은 v2로)
+// 단일(그룹 아님) 모듈의 기본 좌·우 여백 오버라이드.
+// 이미지는 컨테이너 여백, 버튼은 배경이 채워지도록 '안쪽' 여백(바깥은 0).
+const SINGLE_SIDE_OVERRIDES: Record<string, Record<string, string>> = {
+  ModuleImg: { paddingLeft: '20px', paddingRight: '20px' },
+  ModuleOneButton: { buttonPaddingLeft: '20px', buttonPaddingRight: '20px', paddingLeft: '20px', paddingRight: '20px' },
+  ModuleSmallButton: { btnPaddingLeft: '20px', btnPaddingRight: '20px', paddingLeft: '20px', paddingRight: '20px' },
+  ModuleInlineText: { paddingLeft: '20px', paddingRight: '20px' },
+}
+
+// 조립형 그룹 모듈의 기본 좌·우 '안쪽' 여백(그룹 스타일 padding). 배경색이 이 여백까지 채워지도록.
+const GROUP_SIDE_PADDING: Record<string, string> = {
+  ModuleImageHeader: '20px',
+  Module02: '20px',
+  ModuleMultiImage: '15px',
+  ModuleTwoButton: '15px',
+  'Module01-1': '15px',
+  Module04: '15px',
+  Module05: '15px',
+  'Module05-3': '15px',
+  Module06: '15px',
+  Module07: '15px',
+  Module07_reverse: '15px',
+  Module10: '15px',
+  'Module10-1': '15px',
+}
+
 const addModule = (module: ModuleMetadata) => {
   onModuleLeave() // 추가 시 미리보기 닫기
   const builder = moduleStore.composedBuilderMap[module.id]
@@ -465,9 +491,16 @@ const addModule = (module: ModuleMetadata) => {
       moduleStore.setGroupName(groupId, module.name)
       // 그룹은 선택 없이 추가 — 첫 멤버가 선택된 채면 다음 개별 모듈이 그룹 안으로 들어간다.
       moduleStore.clearSelection()
+      const sp = GROUP_SIDE_PADDING[module.id]
+      if (sp) moduleStore.setGroupSidePadding(groupId, sp)
     }
   } else {
     moduleStore.addModule(module)
+    // 단일 모듈의 기본 좌·우 여백 오버라이드
+    const ov = SINGLE_SIDE_OVERRIDES[module.id]
+    if (ov) {
+      for (const [key, value] of Object.entries(ov)) moduleStore.updateModuleProperty(key, value)
+    }
   }
   toast.add({
     severity: 'success',

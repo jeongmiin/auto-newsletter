@@ -150,20 +150,41 @@ const QUICK_ADD_ITEMS: Record<Category, QuickAddItem[]> = {
     },
     // 텍스트 = 좌우 20px 여백을 기본으로 얹은 설명 텍스트 모듈
     { label: '텍스트 추가', moduleId: 'ModuleDescText', overrides: { paddingLeft: '20px', paddingRight: '20px' } },
+    { label: '인라인 텍스트 추가', moduleId: 'ModuleInlineText', overrides: { paddingLeft: '20px', paddingRight: '20px' } },
   ],
   image: [
-    { label: '단일 이미지 추가', moduleId: 'ModuleImg', preview: 'single-image' },
+    // 단일 이미지 = 모듈 자체의 좌우 바깥 여백 20px 기본
+    { label: '단일 이미지 추가', moduleId: 'ModuleImg', preview: 'single-image', overrides: { paddingLeft: '20px', paddingRight: '20px' } },
     { label: '2단 이미지 추가', moduleId: 'ModuleMultiImage', preview: 'double-image' },
   ],
   button: [
-    { label: '단일 버튼 추가', moduleId: 'ModuleOneButton', preview: 'single-button' },
+    // 단일/작은 버튼 = 배경이 채워지도록 '안쪽' 좌우 20px + 바깥 좌우 20px
+    { label: '단일 버튼 추가', moduleId: 'ModuleOneButton', preview: 'single-button', overrides: { buttonPaddingLeft: '20px', buttonPaddingRight: '20px', paddingLeft: '20px', paddingRight: '20px' } },
     { label: '2단 버튼 추가', moduleId: 'ModuleTwoButton', preview: 'double-button' },
-    { label: '작은 버튼 추가 (최대 4단)', moduleId: 'ModuleSmallButton', preview: 'small-button' },
+    { label: '작은 버튼 추가 (최대 4단)', moduleId: 'ModuleSmallButton', preview: 'small-button', overrides: { btnPaddingLeft: '20px', btnPaddingRight: '20px', paddingLeft: '20px', paddingRight: '20px' } },
   ],
   // 테이블은 v2 조립 템플릿이 아직 없어 레거시 '커스텀 테이블'(ModuleTable)을 그대로 쓴다.
   table: [{ label: '테이블 추가', moduleId: 'ModuleTable' }],
 }
 const quickAddItems = computed(() => QUICK_ADD_ITEMS[props.category])
+
+// 조립형 그룹 모듈의 기본 좌·우 '안쪽' 여백(그룹 스타일 padding). 배경색이 이 여백까지 채워지도록.
+// 키 = 갤러리 모듈 id 또는 빠른추가 빌더 키.
+const GROUP_SIDE_PADDING: Record<string, string> = {
+  ModuleImageHeader: '20px',
+  Module02: '20px',
+  ModuleMultiImage: '15px',
+  ModuleTwoButton: '15px',
+  'Module01-1': '15px',
+  Module04: '15px',
+  Module05: '15px',
+  'Module05-3': '15px',
+  Module06: '15px',
+  Module07: '15px',
+  Module07_reverse: '15px',
+  Module10: '15px',
+  'Module10-1': '15px',
+}
 
 // 갤러리: 이 카테고리에 속하는 완성형 모듈. 클릭 시 v2 조립 템플릿이 있으면 그걸(onGalleryAdd),
 // 없으면 레거시 addModule로 폴백한다(moduleStore.composedBuilderMap 참고).
@@ -203,6 +224,8 @@ const onQuickAdd = (item: QuickAddItem) => {
       // 그룹은 선택 없이 추가한다 — 첫 멤버가 선택된 채면 이어서 개별 모듈을 추가할 때
       // 그 그룹 안으로 들어가 버리기 때문(그룹 밖 맨 끝에 붙도록 선택을 비운다).
       moduleStore.clearSelection()
+      const sp = GROUP_SIDE_PADDING[item.composedBuilderId ?? item.moduleId]
+      if (sp) moduleStore.setGroupSidePadding(groupId, sp)
     }
   } else {
     moduleStore.addModule(meta)
@@ -223,6 +246,8 @@ const onGalleryAdd = (module: ModuleMetadata) => {
       moduleStore.setGroupName(groupId, module.name)
       // 그룹은 선택 없이 추가 — 첫 멤버가 선택된 채면 다음 개별 모듈이 그룹 안으로 들어간다.
       moduleStore.clearSelection()
+      const sp = GROUP_SIDE_PADDING[module.id]
+      if (sp) moduleStore.setGroupSidePadding(groupId, sp)
     }
   } else {
     moduleStore.addModule(module)

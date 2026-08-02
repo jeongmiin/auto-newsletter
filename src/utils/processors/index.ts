@@ -113,6 +113,24 @@ export const removeSmallButtonsProcessor: ContentProcessor = (html, properties) 
 }
 
 /**
+ * 인라인 텍스트 제거 프로세서 (ModuleInlineText 전용)
+ * showText2/3/4가 true가 아니면 해당 인라인 텍스트(감싸는 마커 블록)를 제거한다. (미설정 시 숨김)
+ */
+export const removeInlineTextsProcessor: ContentProcessor = (html, properties) => {
+  let result = html
+  if (properties.showText2 !== true) {
+    result = result.replace(/<!-- 인라인 텍스트 2 -->[\s\S]*?<!-- \/\/인라인 텍스트 2 -->/g, '')
+  }
+  if (properties.showText3 !== true) {
+    result = result.replace(/<!-- 인라인 텍스트 3 -->[\s\S]*?<!-- \/\/인라인 텍스트 3 -->/g, '')
+  }
+  if (properties.showText4 !== true) {
+    result = result.replace(/<!-- 인라인 텍스트 4 -->[\s\S]*?<!-- \/\/인라인 텍스트 4 -->/g, '')
+  }
+  return result
+}
+
+/**
  * 로고 제거 프로세서 (ModuleNewsHeader 전용)
  * showLogo가 false이면 로고 <tr>(감싸는 마커 블록)을 통째로 제거한다. (미설정 시 표시)
  */
