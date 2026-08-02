@@ -3155,6 +3155,371 @@
       "maxColumns": 1
     },
     {
+      "id": "ModuleInlineText",
+      "name": "인라인 텍스트",
+      "description": "라벨·시간처럼 텍스트를 옆으로(인라인) 최대 4개까지 나열",
+      "category": "text",
+      "icon": "pi pi-tags",
+      "htmlFile": "ModuleInlineText.html",
+      "maxColumns": 1,
+      "editableProps": [
+        {
+          "key": "align",
+          "label": "정렬",
+          "type": "select",
+          "default": "left",
+          "options": [
+            { "label": "왼쪽", "value": "left" },
+            { "label": "가운데", "value": "center" },
+            { "label": "오른쪽", "value": "right" }
+          ],
+          "group": "공통"
+        },
+        {
+          "key": "text1",
+          "label": "텍스트",
+          "type": "textarea",
+          "default": "라벨",
+          "placeholder": "텍스트를 입력하세요",
+          "group": "텍스트 1"
+        },
+        {
+          "key": "text1FontSize",
+          "label": "글자 크기",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px",
+          "group": "텍스트 1"
+        },
+        {
+          "key": "text1TextColor",
+          "label": "글자색",
+          "type": "color",
+          "default": "#ffffff",
+          "group": "텍스트 1"
+        },
+        {
+          "key": "text1BgColor",
+          "label": "배경색",
+          "type": "color",
+          "default": "#fe5f0d",
+          "placeholder": "비우면 투명",
+          "group": "텍스트 1"
+        },
+        {
+          "key": "text1PaddingTop",
+          "label": "안쪽 상단 여백",
+          "type": "text",
+          "default": "4px",
+          "placeholder": "예: 4px, 0",
+          "group": "텍스트 1"
+        },
+        {
+          "key": "text1PaddingRight",
+          "label": "안쪽 우측 여백",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 0",
+          "group": "텍스트 1"
+        },
+        {
+          "key": "text1PaddingBottom",
+          "label": "안쪽 하단 여백",
+          "type": "text",
+          "default": "3px",
+          "placeholder": "예: 3px, 0",
+          "group": "텍스트 1"
+        },
+        {
+          "key": "text1PaddingLeft",
+          "label": "안쪽 좌측 여백",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 0",
+          "group": "텍스트 1"
+        },
+        {
+          "key": "showText2",
+          "label": "텍스트 2 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "텍스트 2"
+        },
+        {
+          "key": "text2",
+          "label": "텍스트",
+          "type": "textarea",
+          "default": "14:20~14:40",
+          "showWhen": "showText2",
+          "group": "텍스트 2"
+        },
+        {
+          "key": "text2FontSize",
+          "label": "글자 크기",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px",
+          "showWhen": "showText2",
+          "group": "텍스트 2"
+        },
+        {
+          "key": "text2TextColor",
+          "label": "글자색",
+          "type": "color",
+          "default": "#111111",
+          "showWhen": "showText2",
+          "group": "텍스트 2"
+        },
+        {
+          "key": "text2BgColor",
+          "label": "배경색",
+          "type": "color",
+          "default": "transparent",
+          "placeholder": "비우면 투명",
+          "showWhen": "showText2",
+          "group": "텍스트 2"
+        },
+        {
+          "key": "text2PaddingTop",
+          "label": "안쪽 상단 여백",
+          "type": "text",
+          "default": "4px",
+          "placeholder": "예: 4px, 0",
+          "showWhen": "showText2",
+          "group": "텍스트 2"
+        },
+        {
+          "key": "text2PaddingRight",
+          "label": "안쪽 우측 여백",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 0",
+          "showWhen": "showText2",
+          "group": "텍스트 2"
+        },
+        {
+          "key": "text2PaddingBottom",
+          "label": "안쪽 하단 여백",
+          "type": "text",
+          "default": "3px",
+          "placeholder": "예: 3px, 0",
+          "showWhen": "showText2",
+          "group": "텍스트 2"
+        },
+        {
+          "key": "text2PaddingLeft",
+          "label": "안쪽 좌측 여백",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 0",
+          "showWhen": "showText2",
+          "group": "텍스트 2"
+        },
+        {
+          "key": "showText3",
+          "label": "텍스트 3 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "텍스트 3"
+        },
+        {
+          "key": "text3",
+          "label": "텍스트",
+          "type": "textarea",
+          "default": "텍스트",
+          "showWhen": "showText3",
+          "group": "텍스트 3"
+        },
+        {
+          "key": "text3FontSize",
+          "label": "글자 크기",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px",
+          "showWhen": "showText3",
+          "group": "텍스트 3"
+        },
+        {
+          "key": "text3TextColor",
+          "label": "글자색",
+          "type": "color",
+          "default": "#111111",
+          "showWhen": "showText3",
+          "group": "텍스트 3"
+        },
+        {
+          "key": "text3BgColor",
+          "label": "배경색",
+          "type": "color",
+          "default": "transparent",
+          "placeholder": "비우면 투명",
+          "showWhen": "showText3",
+          "group": "텍스트 3"
+        },
+        {
+          "key": "text3PaddingTop",
+          "label": "안쪽 상단 여백",
+          "type": "text",
+          "default": "4px",
+          "placeholder": "예: 4px, 0",
+          "showWhen": "showText3",
+          "group": "텍스트 3"
+        },
+        {
+          "key": "text3PaddingRight",
+          "label": "안쪽 우측 여백",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 0",
+          "showWhen": "showText3",
+          "group": "텍스트 3"
+        },
+        {
+          "key": "text3PaddingBottom",
+          "label": "안쪽 하단 여백",
+          "type": "text",
+          "default": "3px",
+          "placeholder": "예: 3px, 0",
+          "showWhen": "showText3",
+          "group": "텍스트 3"
+        },
+        {
+          "key": "text3PaddingLeft",
+          "label": "안쪽 좌측 여백",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 0",
+          "showWhen": "showText3",
+          "group": "텍스트 3"
+        },
+        {
+          "key": "showText4",
+          "label": "텍스트 4 표시",
+          "type": "boolean",
+          "default": false,
+          "group": "텍스트 4"
+        },
+        {
+          "key": "text4",
+          "label": "텍스트",
+          "type": "textarea",
+          "default": "텍스트",
+          "showWhen": "showText4",
+          "group": "텍스트 4"
+        },
+        {
+          "key": "text4FontSize",
+          "label": "글자 크기",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 16px",
+          "showWhen": "showText4",
+          "group": "텍스트 4"
+        },
+        {
+          "key": "text4TextColor",
+          "label": "글자색",
+          "type": "color",
+          "default": "#111111",
+          "showWhen": "showText4",
+          "group": "텍스트 4"
+        },
+        {
+          "key": "text4BgColor",
+          "label": "배경색",
+          "type": "color",
+          "default": "transparent",
+          "placeholder": "비우면 투명",
+          "showWhen": "showText4",
+          "group": "텍스트 4"
+        },
+        {
+          "key": "text4PaddingTop",
+          "label": "안쪽 상단 여백",
+          "type": "text",
+          "default": "4px",
+          "placeholder": "예: 4px, 0",
+          "showWhen": "showText4",
+          "group": "텍스트 4"
+        },
+        {
+          "key": "text4PaddingRight",
+          "label": "안쪽 우측 여백",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 0",
+          "showWhen": "showText4",
+          "group": "텍스트 4"
+        },
+        {
+          "key": "text4PaddingBottom",
+          "label": "안쪽 하단 여백",
+          "type": "text",
+          "default": "3px",
+          "placeholder": "예: 3px, 0",
+          "showWhen": "showText4",
+          "group": "텍스트 4"
+        },
+        {
+          "key": "text4PaddingLeft",
+          "label": "안쪽 좌측 여백",
+          "type": "text",
+          "default": "14px",
+          "placeholder": "예: 14px, 0",
+          "showWhen": "showText4",
+          "group": "텍스트 4"
+        },
+        {
+          "key": "paddingTop",
+          "label": "바깥 상단 여백",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 10px",
+          "group": "바깥 여백"
+        },
+        {
+          "key": "paddingRight",
+          "label": "바깥 우측 여백",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 10px",
+          "group": "바깥 여백"
+        },
+        {
+          "key": "paddingBottom",
+          "label": "바깥 하단 여백",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 10px",
+          "group": "바깥 여백"
+        },
+        {
+          "key": "paddingLeft",
+          "label": "바깥 좌측 여백",
+          "type": "text",
+          "default": "0px",
+          "placeholder": "예: 0px, 10px",
+          "group": "바깥 여백"
+        },
+        {
+          "key": "showBorderRadius",
+          "label": "모서리 둥글기 사용",
+          "type": "boolean",
+          "default": true,
+          "group": "모서리 둥글기"
+        },
+        {
+          "key": "borderRadius",
+          "label": "모서리 둥글기",
+          "type": "text",
+          "default": "30px",
+          "placeholder": "예: 30px, 5px",
+          "showWhen": "showBorderRadius",
+          "group": "모서리 둥글기"
+        }
+      ]
+    },
+    {
       "id": "Module01",
       "name": "모듈 01번",
       "description": "강조 타이틀과 텍스트가 있는 박스",
@@ -7240,6 +7605,7 @@
       "category": "image",
       "icon": "pi pi-align-left",
       "htmlFile": "ModuleSubTitle.html",
+      "hidden": true,
       "editableProps": [
         {
           "key": "subtitleText",
