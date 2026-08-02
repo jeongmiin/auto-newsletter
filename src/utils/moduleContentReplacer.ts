@@ -318,6 +318,10 @@ interface TableCellType {
   bgColor?: string
   textColor?: string
   hidden?: boolean
+  contentType?: 'text' | 'image'
+  imageUrl?: string
+  imageAlt?: string
+  imageLink?: string
 }
 
 /**
@@ -327,6 +331,8 @@ interface TableCellType {
 export function replaceModuleTableContent(
   html: string,
   properties: Record<string, unknown>,
+  /** true면 각 셀에 data-row/data-col을 붙인다(캔버스 셀 선택용). 내보내기는 false(기본). */
+  interactive = false,
 ): string {
   const cells = (properties.tableCells as TableCellType[][] | undefined) || []
   const colWidths = (properties.tableColWidths as string[] | undefined) || []
@@ -339,11 +345,11 @@ export function replaceModuleTableContent(
   const headerTextColor = String(properties.headerTextColor || '#333333')
   const cellTextColor = String(properties.cellTextColor || '#333333')
 
-  // 바깥 td 여백 (미설정 시: 상/하 20px 유지, 좌/우 0px)
+  // 바깥 td 여백 (미설정 시: 상/하/좌/우 20px)
   const paddingTop = String(properties.paddingTop ?? '20px')
-  const paddingRight = String(properties.paddingRight ?? '0px')
+  const paddingRight = String(properties.paddingRight ?? '20px')
   const paddingBottom = String(properties.paddingBottom ?? '20px')
-  const paddingLeft = String(properties.paddingLeft ?? '0px')
+  const paddingLeft = String(properties.paddingLeft ?? '20px')
   html = html
     .replace(/\{\{\s*paddingTop\s*\}\}/g, paddingTop)
     .replace(/\{\{\s*paddingRight\s*\}\}/g, paddingRight)
@@ -386,7 +392,7 @@ export function replaceModuleTableContent(
   }
 
   // 테이블 셀들을 HTML로 변환
-  const tableRowsHtml = cells.map((row) => {
+  const tableRowsHtml = cells.map((row, rowIndex) => {
     const cellsHtml = row
       .map((cell, colIndex) => ({ cell, colIndex })) // 원래 열 인덱스 보존 (열 공통 정렬용)
       .filter(({ cell }) => !cell.hidden) // hidden 셀 제외
@@ -400,6 +406,9 @@ export function replaceModuleTableContent(
         const textAlign =
           cell.align || colAligns[colIndex] || (cell.type === 'th' ? 'center' : 'left')
 
+        // 이미지 셀은 이미지가 셀을 꽉 채우도록 안쪽 여백 제거
+        const cellPadding = cell.contentType === 'image' ? '0' : '5px 10px'
+
         // 인라인 스타일 (이메일 호환성)
         const style = [
           `font-size:14px`,
@@ -409,7 +418,7 @@ export function replaceModuleTableContent(
           `bgcolor:${bgColor}`,
           `text-align:${textAlign}`,
           `color:${textColor}`,
-          `padding:5px 10px`,
+          `padding:${cellPadding}`,
           `letter-spacing:-0.03em`,
           `line-height:1.8em`,
           `font-family:AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif`,
@@ -421,14 +430,30 @@ export function replaceModuleTableContent(
         // colspan, rowspan 속성 (열 너비는 colgroup>col로 일괄 관리)
         const colspanAttr = cell.colspan > 1 ? ` colspan="${cell.colspan}"` : ''
         const rowspanAttr = cell.rowspan > 1 ? ` rowspan="${cell.rowspan}"` : ''
+        // 캔버스 셀 선택용 좌표(내보내기에는 미포함)
+        const dataAttr = interactive ? ` data-row="${rowIndex}" data-col="${colIndex}"` : ''
 
-        // & < > " → HTML 엔티티로 변환(&부터 처리해 이중 이스케이프 방지) 후
-        // 줄바꿈/굵게 마커만 태그로 복원
-        const safeContent = escapeForHtml(cell.content || '')
-          .replace(/\r?\n/g, '<br>')
-          // **드래그 선택 텍스트** → 굵게 (escape 이후 마커만 변환, 이메일 호환 inline style)
-          .replace(/\*\*([^*]+?)\*\*/g, '<strong style="font-weight:700;">$1</strong>')
-        return `<${tag}${colspanAttr}${rowspanAttr} style="${style}">${safeContent}</${tag}>`
+        // 이미지 셀: <img> 렌더 (없으면 안내 플레이스홀더)
+        let inner: string
+        if (cell.contentType === 'image') {
+          const url = escapeForHtml(cell.imageUrl || '')
+          const alt = escapeForHtml(cell.imageAlt || '')
+          if (url) {
+            const imgTag = `<img src="${url}" alt="${alt}" style="display:block; width:100%; max-width:100%; height:auto; border:0;" />`
+            const link = (cell.imageLink || '').trim()
+            // 링크가 있으면 <a>로 감싼다(이미지 모듈과 동일)
+            inner = link
+              ? `<a href="${escapeForHtml(link)}" target="_blank" style="display:block; text-decoration:none;">${imgTag}</a>`
+              : imgTag
+          } else {
+            inner = `<span style="display:block; padding:16px 0; text-align:center; color:#8b95a1; font-size:13px;">이미지 URL을 입력하세요</span>`
+          }
+        } else {
+          // 텍스트 셀: Quill 리치 에디터 HTML을 그대로 사용(텍스트 모듈과 동일).
+          // 정제(sanitize)·리스트 변환·포인트색은 렌더/내보내기 공통 파이프라인이 처리한다.
+          inner = cell.content || ''
+        }
+        return `<${tag}${colspanAttr}${rowspanAttr}${dataAttr} style="${style}">${inner}</${tag}>`
       })
       .join('\n              ')
 

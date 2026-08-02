@@ -85,10 +85,139 @@
           </div>
         </div>
 
+        <!-- 테이블: 내용 / 스타일 탭 (Figma 686-4239) -->
+        <div v-if="isTableModule" class="tbl-tabs">
+          <button
+            type="button"
+            class="tbl-tab"
+            :class="{ 'is-active': activeTableTab === 'content' }"
+            @click="activeTableTab = 'content'"
+          >테이블 내용</button>
+          <button
+            type="button"
+            class="tbl-tab"
+            :class="{ 'is-active': activeTableTab === 'style' }"
+            @click="activeTableTab = 'style'"
+          >테이블 스타일</button>
+        </div>
+
         <!-- 속성 편집 폼 -->
       <div class="px-[25px] pb-7">
+        <!-- 테이블 스타일 탭 상단: 행 열 관리 + 열 너비 직접 설정 (Figma 715-2843 / 717-3366) -->
+        <template v-if="isTableModule && activeTableTab === 'style'">
+          <!-- 행 열 관리 -->
+          <div class="tbl-rowcol">
+            <label class="tbl-sec-label">행 열 관리</label>
+            <div class="tbl-rc-row">
+              <span class="tbl-rc-name"><span class="material-symbols-outlined">table_rows</span>행</span>
+              <div class="tbl-rc-btns">
+                <div class="tbl-rc-add">
+                  <button type="button" class="tbl-rc-btn tbl-rc-btn--add" @click.stop="toggleInsertMenu('row')">
+                    <span class="material-symbols-outlined">add</span>추가
+                    <span class="material-symbols-outlined tbl-rc-caret">expand_more</span>
+                  </button>
+                  <div v-if="insertMenu === 'row'" class="tbl-insert-menu">
+                    <button type="button" :disabled="!firstSelCoord" @click="insertRow('above')">선택 행 위에 삽입</button>
+                    <button type="button" :disabled="!firstSelCoord" @click="insertRow('below')">선택 행 아래에 삽입</button>
+                    <button type="button" @click="insertRow('end')">맨 아래에 추가</button>
+                    <p v-if="!firstSelCoord" class="tbl-insert-hint">셀을 선택하면 사이에 삽입할 수 있어요</p>
+                  </div>
+                </div>
+                <button type="button" class="tbl-rc-btn" @click="deleteTableRow"><span class="material-symbols-outlined">remove</span>삭제</button>
+              </div>
+            </div>
+            <div class="tbl-rc-row">
+              <span class="tbl-rc-name"><span class="material-symbols-outlined">view_column</span>열</span>
+              <div class="tbl-rc-btns">
+                <div class="tbl-rc-add">
+                  <button type="button" class="tbl-rc-btn tbl-rc-btn--add" @click.stop="toggleInsertMenu('col')">
+                    <span class="material-symbols-outlined">add</span>추가
+                    <span class="material-symbols-outlined tbl-rc-caret">expand_more</span>
+                  </button>
+                  <div v-if="insertMenu === 'col'" class="tbl-insert-menu">
+                    <button type="button" :disabled="!firstSelCoord" @click="insertCol('left')">선택 열 왼쪽에 삽입</button>
+                    <button type="button" :disabled="!firstSelCoord" @click="insertCol('right')">선택 열 오른쪽에 삽입</button>
+                    <button type="button" @click="insertCol('end')">맨 오른쪽에 추가</button>
+                    <p v-if="!firstSelCoord" class="tbl-insert-hint">셀을 선택하면 사이에 삽입할 수 있어요</p>
+                  </div>
+                </div>
+                <button type="button" class="tbl-rc-btn" @click="deleteTableColumn"><span class="material-symbols-outlined">remove</span>삭제</button>
+              </div>
+            </div>
+
+            <!-- 삽입 메뉴 바깥 클릭 닫기 -->
+            <div v-if="insertMenu" class="tbl-menu-backdrop" @click="insertMenu = null"></div>
+            <div class="tbl-rc-row">
+              <span class="tbl-rc-name"><span class="material-symbols-outlined">table_chart</span>셀 병합</span>
+              <button type="button" class="tbl-rc-merge" :disabled="!canMergeSelection" @click="mergeSelection">셀 병합</button>
+            </div>
+            <p class="tbl-sec-hint">*2개 이상 셀 선택 시, 셀 병합이 가능해요</p>
+          </div>
+
+          <div class="tbl-divider tbl-divider--wide"></div>
+
+          <!-- 열 너비 직접 설정 (gg-acc-section 토글 아코디언) -->
+          <div class="gg-acc-section">
+            <div class="gg-acc-header is-static">
+              <span><span class="gg-acc-label">열 너비 직접 설정</span></span>
+              <span class="gg-acc-spacer"></span>
+              <ToggleSwitch :modelValue="colWidthOn" @update:modelValue="onColWidthToggle" />
+            </div>
+            <div v-if="colWidthOn" class="gg-acc-body gg-acc-body--card">
+              <div class="gg-acc-fields">
+                <div v-for="(w, ci) in colWidthValues" :key="ci" class="tbl-colw">
+                  <div class="tbl-colw-head">
+                    <label class="gg-field-label">{{ ci + 1 }}열 너비</label>
+                    <!-- 자동 열: '자동' 표시 / 수동 열: '자동으로' 되돌리기 -->
+                    <span v-if="!colWidthManual[ci]" class="tbl-colw-auto">자동</span>
+                    <button
+                      v-else
+                      type="button"
+                      class="tbl-colw-reset"
+                      @click="resetColWidth(ci)"
+                      v-tooltip.top="'자동으로 되돌리기'"
+                    >자동으로</button>
+                  </div>
+                  <div class="gg-margin-slider-row">
+                    <input
+                      type="range"
+                      min="5"
+                      max="95"
+                      step="0.5"
+                      :value="w"
+                      @input="onColWidthInput(ci, $event)"
+                      class="gg-margin-slider"
+                    />
+                    <div class="gg-margin-value-field">
+                      <input
+                        type="number"
+                        min="5"
+                        max="95"
+                        :value="w"
+                        @change="onColWidthInput(ci, $event)"
+                        @keydown.enter="blurTarget"
+                        class="gg-margin-value-input"
+                      />
+                      <span class="gg-margin-value-unit">%</span>
+                    </div>
+                  </div>
+                </div>
+                <!-- 100% 초과 경고 -->
+                <p v-if="colWidthOverflow" class="tbl-colw-warn">
+                  <span class="material-symbols-outlined">error</span>
+                  열 너비 합이 100%를 초과했어요 (현재 {{ colWidthTotal }}%)
+                </p>
+              </div>
+            </div>
+            <p class="tbl-sec-hint tbl-colw-hint">*OFF시, 각 열의 너비가 동일하게 자동 설정돼요</p>
+          </div>
+
+          <div class="tbl-divider tbl-divider--wide"></div>
+        </template>
+
         <div
           v-for="(group, gIdx) in propGroups"
+          v-show="isGroupInActiveTab(group)"
           :key="`grp-${gIdx}-${group.name || 'flat'}`"
           class="gg-acc-section"
           :class="{
@@ -103,7 +232,7 @@
              · 스위치 on→off: 펼침 상태는 그대로 두고 내용만 흐리게(조작 불가)
              · chevron/라벨 클릭: 스위치와 무관하게 열고 닫는다 (기본 닫힘) -->
         <div
-          v-if="hasSectionHeader(group) || gIdx === 0"
+          v-if="hasSectionHeader(group) || (gIdx === 0 && !isTableModule)"
           class="gg-acc-header"
           :class="{ 'is-static': !isCollapsibleSection(group) }"
         >
@@ -159,7 +288,7 @@
         >
           <!-- 리치텍스트(textarea)는 위에 '폰트 크기'와 서식 툴바가 바로 붙으므로 별도 라벨을 두지 않는다(Figma 640-3689) -->
           <label
-            v-show="prop.type !== 'boolean' && prop.type !== 'checkbox' && prop.type !== 'textarea' && !isColorBlock(prop) && !isQuadStart(prop, group.props, index) && !isSingleSpacingField(prop) && !isBorderWidthField(prop) && !isBorderStyleStart(prop)"
+            v-show="prop.type !== 'boolean' && prop.type !== 'checkbox' && prop.type !== 'textarea' && prop.type !== 'table-editor' && !isColorBlock(prop) && !isQuadStart(prop, group.props, index) && !isSingleSpacingField(prop) && !isBorderWidthField(prop) && !isBorderStyleStart(prop)"
             class="gg-field-label"
             :class="{ 'fs-label-row': isFontSizeField(prop) }"
           >
@@ -1139,359 +1268,214 @@
             </div>
           </div>
 
-          <!-- 커스텀 테이블 편집기 -->
-          <div v-else-if="prop.type === 'table-editor'" class="space-y-3">
-            <!-- 테이블 내용 편집 -->
-            <div v-if="tableCells.length > 0" class="space-y-3">
-              <!-- 상단 컨트롤 바 -->
-              <div class="flex items-center justify-between bg-gray-100 rounded-lg px-3 py-2">
-                <div class="flex items-center gap-2">
-                  <i class="pi pi-table text-gray-500"></i>
-                  <span class="text-sm font-medium text-gray-700">
-                    {{ tableCells.length }}행 × {{ tableCells[0]?.length || 0 }}열
+          <!-- 커스텀 테이블 편집기 (Figma 686-4239): 캔버스 셀 선택 → 내용 편집 -->
+          <div v-else-if="prop.type === 'table-editor'" class="tbl-content">
+            <template v-if="tableCells.length > 0">
+              <!-- 행/열 툴바 -->
+              <!-- 선택 없음: 빈 안내 -->
+              <div v-if="tableSelectedCells.length === 0" class="tbl-empty">
+                <span class="material-symbols-outlined tbl-empty-icon">border_all</span>
+                <p class="tbl-empty-text">셀을 클릭하면<br />내용을 편집하실 수 있어요</p>
+              </div>
+
+              <!-- 선택 있음: 셀 편집 -->
+              <div v-else class="tbl-cell-edit">
+                <!-- 선택 셀 라벨 pill -->
+                <div class="tbl-cellbar">
+                  <span class="tbl-cellchip">
+                    <span class="material-symbols-outlined">apps</span>
+                    {{ tableSelectedCells.length === 1
+                      ? `${(firstSelCoord?.row ?? 0) + 1}행 ${(firstSelCoord?.col ?? 0) + 1}열`
+                      : `${tableSelectedCells.length}개 셀 선택됨` }}
                   </span>
-                </div>
-                <div class="flex gap-1">
-                  <Button
-                    @click="addTableColumn"
-                    icon="pi pi-plus"
-                    label="열 추가"
-                    severity="contrast"
-                    text
-                    size="small"
-                  />
-                  <Button
-                    @click="addTableRow"
-                    icon="pi pi-plus"
-                    label="행 추가"
-                    severity="contrast"
-                    text
-                    size="small"
-                  />
-                </div>
-              </div>
-
-              <!-- 테이블 그리드 형태 편집기 (열이 많아지면 페이지가 아니라 이 영역 안에서 가로 스크롤) -->
-              <div class="table-editor-grid border border-gray-300 rounded-lg overflow-x-auto">
-                <!-- 열 헤더 (열 번호/삭제 + 열 너비 입력) -->
-                <div class="flex min-w-full bg-gray-50 border-b border-gray-300">
-                  <!-- 왼쪽 상단 빈 셀 (행 컨트롤 공간) -->
-                  <div class="w-8 flex-shrink-0 bg-gray-50 border-r border-gray-200"></div>
-                  <!-- 열 헤더들 (열이 적으면 grow로 채우고, 많으면 기준 너비로 고정되어 스크롤) -->
-                  <div
-                    v-for="(_, colIndex) in tableCells[0]"
-                    :key="`col-header-${colIndex}`"
-                    class="flex flex-col px-2 bg-gray-50 border-r border-r-gray-200 border-b border-b-gray-300 last:border-r-0"
-                    :style="{ flexGrow: 1, flexShrink: 0, flexBasis: tableColWidth + 'px' }"
+                  <button
+                    v-if="canUnmergeSelection"
+                    type="button"
+                    class="tbl-icbtn"
+                    @click="unmergeSelection"
+                    v-tooltip.top="'병합 해제'"
                   >
-                    <!-- 상단: 열 삽입 + 열 번호 + 삭제 -->
-                    <div class="flex items-center justify-center gap-1 py-1.5">
-                      <button
-                        @click="insertTableColumn(colIndex)"
-                        class="tbl-insert-btn"
-                        v-tooltip.top="'이 열 왼쪽에 열 삽입'"
-                      >
-                        <i class="pi pi-plus" style="font-size: 0.6rem"></i>
-                      </button>
-                      <span class="text-xs font-semibold text-gray-700">{{ colIndex + 1 }}열</span>
-                      <Button
-                        v-if="tableCells[0].length > 1"
-                        @click="removeTableColumn(colIndex)"
-                        icon="pi pi-times"
-                        severity="secondary"
-                        text
-                        size="small"
-                        class="!p-0 !w-5 !h-5"
-                        v-tooltip.top="'열 삭제'"
-                      />
-                    </div>
-                    <!-- 구분선 -->
-                    <div class="border-t border-gray-200"></div>
-                    <!-- 중단: 너비 라벨 + 입력 -->
-                    <div class="flex items-center gap-1.5 pt-1.5">
-                      <label
-                        :for="`col-width-${colIndex}`"
-                        class="text-xs font-medium text-gray-500 shrink-0 w-7"
-                      >넓이</label>
-                      <div
-                        class="col-width-field flex-1 min-w-0 flex items-center bg-white border border-gray-300 rounded focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-200 transition-colors"
-                        v-tooltip.top="'예: 30%, 120px — 비우면 자동'"
-                      >
-                        <InputText
-                          :id="`col-width-${colIndex}`"
-                          :modelValue="getColWidth(colIndex)"
-                          @update:modelValue="updateColWidth(colIndex, $event ?? '')"
-                          placeholder="자동"
-                          class="flex-1 min-w-0 !border-0 !shadow-none !bg-transparent !text-xs !py-1 !px-1.5"
-                        />
-                      </div>
-                    </div>
-                    <!-- 하단: 열 공통 정렬 (셀별 정렬이 없으면 이 값 사용) -->
-                    <div class="flex items-center gap-1.5 py-1.5">
-                      <label
-                        :for="`col-align-${colIndex}`"
-                        class="text-xs font-medium text-gray-500 shrink-0 w-7"
-                      >정렬</label>
-                      <Select
-                        :inputId="`col-align-${colIndex}`"
-                        :modelValue="getColAlign(colIndex)"
-                        @update:modelValue="updateColAlign(colIndex, $event ?? 'left')"
-                        :options="colAlignOptions"
-                        optionLabel="label"
-                        optionValue="value"
-                        class="flex-1 min-w-0 col-align-select"
-                        v-tooltip.top="'열 공통 정렬 — 셀별 정렬이 더 우선합니다'"
-                      />
-                    </div>
-                  </div>
+                    <span class="material-symbols-outlined">splitscreen</span>
+                  </button>
                 </div>
 
-                <!-- 테이블 본문 (행들) -->
-                <div
-                  v-for="(row, rowIndex) in tableCells"
-                  :key="`row-${rowIndex}`"
-                  class="flex min-w-full border-b border-gray-200 last:border-b-0"
-                >
-                  <!-- 행 컨트롤 (행 삽입 + 행 번호 + 삭제) -->
-                  <div class="w-8 flex-shrink-0 flex flex-col items-center justify-center gap-0.5 bg-gray-50 border-r border-gray-200 py-1">
-                    <button
-                      @click="insertTableRow(rowIndex)"
-                      class="tbl-insert-btn"
-                      v-tooltip.right="'이 행 위에 행 삽입'"
-                    >
-                      <i class="pi pi-plus" style="font-size: 0.6rem"></i>
+                <!-- 콘텐츠 타입 (텍스트 / 이미지) -->
+                <div class="gg-field">
+                  <label class="tbl-sec-label">콘텐츠 타입</label>
+                  <div class="tbl-ctype">
+                    <button type="button" class="tbl-ctype-btn" :class="{ 'is-active': selContentType === 'text' }" @click="setSelContentType('text')">
+                      <span class="material-symbols-outlined">match_case</span>텍스트
                     </button>
-                    <span class="text-xs text-gray-500">{{ rowIndex + 1 }}</span>
-                    <Button
-                      v-if="tableCells.length > 1"
-                      @click="removeTableRow(rowIndex)"
-                      icon="pi pi-times"
-                      severity="secondary"
-                      text
-                      size="small"
-                      class="!p-0 !w-5 !h-5"
-                      v-tooltip.right="'행 삭제'"
-                    />
-                  </div>
-
-                  <!-- 셀들 -->
-                  <div
-                    v-for="(cell, colIndex) in row"
-                    :key="cell.id"
-                    v-show="!cell.hidden"
-                    class="p-2 border-r border-gray-200 last:border-r-0 min-w-0 overflow-hidden"
-                    :class="cell.type === 'th' ? 'bg-blue-50' : 'bg-white'"
-                    :style="{
-                      flexGrow: cell.colspan,
-                      flexShrink: 0,
-                      flexBasis: (cell.colspan > 1 ? cell.colspan * tableColWidth : tableColWidth) + 'px',
-                    }"
-                  >
-                    <!-- 셀 컨트롤 (타입 + 정렬 + 병합) -->
-                    <div class="flex flex-wrap items-center justify-between mb-1.5 gap-1">
-                      <!-- 왼쪽: 타입 토글 + 정렬 -->
-                      <div class="flex flex-wrap items-center gap-1">
-                        <!-- 셀 타입 토글 -->
-                        <button
-                          @click="toggleCellType(rowIndex, colIndex)"
-                          class="text-xs px-2 py-0.5 rounded-full transition-colors font-medium"
-                          :class="cell.type === 'th'
-                            ? 'bg-blue-500 text-white hover:bg-blue-600'
-                            : 'bg-gray-200 text-gray-600 hover:bg-gray-300'"
-                          v-tooltip.top="'클릭하여 제목/내용 전환'"
-                        >
-                          {{ cell.type === 'th' ? '제목' : '내용' }}
-                        </button>
-
-                        <!-- 셀 색상 스와치 (클릭 시 색상 편집기 펼침) -->
-                        <button
-                          @click="toggleCellColorEditor(rowIndex, colIndex)"
-                          class="flex items-center justify-center w-6 h-6 rounded border text-xs font-bold leading-none transition-colors"
-                          :class="isCellColorOpen(rowIndex, colIndex)
-                            ? 'border-blue-500 ring-1 ring-blue-200'
-                            : 'border-gray-300 hover:border-gray-400'"
-                          :style="{ backgroundColor: getCellEffectiveBg(cell), color: getCellEffectiveText(cell) }"
-                          v-tooltip.top="'셀 정렬·배경색·글자색·굵게'"
-                        >가</button>
-                      </div>
-
-                      <!-- 오른쪽: 병합 컨트롤 -->
-                      <div class="flex items-center gap-0.5">
-                        <div class="flex items-center">
-                          <i class="pi pi-arrows-h text-xs text-gray-400 mr-0.5"></i>
-                          <select
-                            :value="cell.colspan"
-                            @change="updateCellColspan(rowIndex, colIndex, ($event.target as HTMLSelectElement).value)"
-                            class="text-xs border border-gray-200 rounded w-8 py-0.5 bg-white cursor-pointer"
-                            v-tooltip.top="'열 병합'"
-                          >
-                            <option
-                              v-for="n in getMaxColspan(rowIndex, colIndex)"
-                              :key="n"
-                              :value="n"
-                            >{{ n }}</option>
-                          </select>
-                        </div>
-                        <div class="flex items-center">
-                          <i class="pi pi-arrows-v text-xs text-gray-400 mr-0.5"></i>
-                          <select
-                            :value="cell.rowspan"
-                            @change="updateCellRowspan(rowIndex, colIndex, ($event.target as HTMLSelectElement).value)"
-                            class="text-xs border border-gray-200 rounded w-8 py-0.5 bg-white cursor-pointer"
-                            v-tooltip.top="'행 병합'"
-                          >
-                            <option
-                              v-for="n in getMaxRowspan(rowIndex)"
-                              :key="n"
-                              :value="n"
-                            >{{ n }}</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- 셀 색상 편집기 (펼침) -->
-                    <div
-                      v-if="isCellColorOpen(rowIndex, colIndex)"
-                      class="cell-color-editor mb-1.5 p-2 bg-gray-50 border border-gray-200 rounded space-y-1.5"
-                    >
-                      <!-- 셀 정렬 (지정 시 열 공통 정렬보다 우선) -->
-                      <div class="flex flex-wrap items-center gap-1.5">
-                        <label class="text-xs text-gray-500 w-7 shrink-0">정렬</label>
-                        <div class="flex items-center border border-gray-300 rounded overflow-hidden">
-                          <button
-                            @click="updateCellAlign(rowIndex, colIndex, 'left')"
-                            class="p-1 transition-colors"
-                            :class="getCellAlign(cell, colIndex) === 'left'
-                              ? 'bg-blue-500 text-white'
-                              : 'bg-white text-gray-500 hover:bg-gray-100'"
-                            v-tooltip.top="'왼쪽 정렬'"
-                          >
-                            <i class="pi pi-align-left text-xs"></i>
-                          </button>
-                          <button
-                            @click="updateCellAlign(rowIndex, colIndex, 'center')"
-                            class="p-1 border-x border-gray-300 transition-colors"
-                            :class="getCellAlign(cell, colIndex) === 'center'
-                              ? 'bg-blue-500 text-white'
-                              : 'bg-white text-gray-500 hover:bg-gray-100'"
-                            v-tooltip.top="'가운데 정렬'"
-                          >
-                            <i class="pi pi-align-center text-xs"></i>
-                          </button>
-                          <button
-                            @click="updateCellAlign(rowIndex, colIndex, 'right')"
-                            class="p-1 transition-colors"
-                            :class="getCellAlign(cell, colIndex) === 'right'
-                              ? 'bg-blue-500 text-white'
-                              : 'bg-white text-gray-500 hover:bg-gray-100'"
-                            v-tooltip.top="'오른쪽 정렬'"
-                          >
-                            <i class="pi pi-align-right text-xs"></i>
-                          </button>
-                        </div>
-                        <button
-                          v-if="cell.align"
-                          @click="resetCellAlign(rowIndex, colIndex)"
-                          class="text-xs text-gray-500 hover:text-blue-600 underline shrink-0"
-                          v-tooltip.top="'이 셀의 정렬을 지우고 열 공통 정렬을 사용'"
-                        >공통 정렬 적용하기</button>
-                        <span v-else class="text-xs text-gray-400 shrink-0">공통 정렬 적용 중</span>
-                      </div>
-                      <!-- 배경색 -->
-                      <div class="flex flex-wrap items-center gap-1.5">
-                        <label class="text-xs text-gray-500 w-7 shrink-0">배경</label>
-                        <ColorAlphaPicker
-                          :modelValue="getCellEffectiveBg(cell)"
-                          @update:modelValue="updateCellBgColor(rowIndex, colIndex, $event)"
-                        />
-                        <HexColorInput
-                          :modelValue="cell.bgColor || ''"
-                          @update:modelValue="updateCellBgColorInput(rowIndex, colIndex, $event ?? '')"
-                          :placeholder="getCellEffectiveBg(cell)"
-                          class="flex-1 min-w-[5rem] font-mono !text-xs"
-                          size="small"
-                          spellcheck="false"
-                        />
-                      </div>
-                      <!-- 글자색 -->
-                      <div class="flex flex-wrap items-center gap-1.5">
-                        <label class="text-xs text-gray-500 w-7 shrink-0">글자</label>
-                        <ColorAlphaPicker
-                          :modelValue="getCellEffectiveText(cell)"
-                          @update:modelValue="updateCellTextColor(rowIndex, colIndex, $event)"
-                        />
-                        <HexColorInput
-                          :modelValue="cell.textColor || ''"
-                          @update:modelValue="updateCellTextColorInput(rowIndex, colIndex, $event ?? '')"
-                          :placeholder="getCellEffectiveText(cell)"
-                          class="flex-1 min-w-[5rem] font-mono !text-xs"
-                          size="small"
-                          spellcheck="false"
-                        />
-                      </div>
-                      <!-- 굵게 (아래 내용에서 드래그 선택한 부분만) -->
-                      <div class="flex items-center gap-1.5 pt-1.5 border-t border-gray-200">
-                        <label class="text-xs text-gray-500 w-7 shrink-0">굵게</label>
-                        <button
-                          @mousedown.prevent="applyCellBold(cell)"
-                          class="flex items-center justify-center w-6 h-6 rounded border border-gray-300 hover:border-gray-400 text-xs font-bold leading-none transition-colors bg-white text-gray-700"
-                          v-tooltip.top="'드래그한 부분을 굵게 (다시 누르면 해제)'"
-                        >B</button>
-                        <span class="text-xs text-gray-400">아래 내용에서 드래그 후 클릭</span>
-                      </div>
-                      <!-- 기본값으로 초기화 -->
-                      <button
-                        @click="resetCellColors(rowIndex, colIndex)"
-                        class="text-xs text-gray-500 hover:text-blue-600 underline"
-                      >기본값으로</button>
-                    </div>
-
-                    <!-- 셀 내용 입력 (굵게는 화면에 실제 굵게로 표시, ** 마커는 숨김) -->
-                    <TableCellEditor
-                      :ref="(el) => setCellEditorRef(cell.id, el)"
-                      :el-id="`tcell-${cell.id}`"
-                      :modelValue="cell.content"
-                      @update:modelValue="updateCellContent(rowIndex, colIndex, $event ?? '')"
-                      :placeholder="cell.type === 'th' ? '제목' : '내용'"
-                      :is-header="cell.type === 'th'"
-                    />
-
-                    <!-- 병합 표시 배지 -->
-                    <div
-                      v-if="cell.colspan > 1 || cell.rowspan > 1"
-                      class="mt-1 flex gap-1"
-                    >
-                      <span
-                        v-if="cell.colspan > 1"
-                        class="text-xs text-blue-600 bg-blue-100 px-1.5 py-0.5 rounded-full"
-                      >
-                        ↔{{ cell.colspan }}
-                      </span>
-                      <span
-                        v-if="cell.rowspan > 1"
-                        class="text-xs text-purple-600 bg-purple-100 px-1.5 py-0.5 rounded-full"
-                      >
-                        ↕{{ cell.rowspan }}
-                      </span>
-                    </div>
+                    <button type="button" class="tbl-ctype-btn" :class="{ 'is-active': selContentType === 'image' }" @click="setSelContentType('image')">
+                      <span class="material-symbols-outlined">image</span>이미지
+                    </button>
                   </div>
                 </div>
-              </div>
 
-            </div>
+                <!-- ── 텍스트 타입 ── -->
+                <template v-if="selContentType === 'text'">
+                  <div class="tbl-divider"></div>
+                  <!-- 제목 지정 (th/td) -->
+                  <div class="gg-field">
+                    <div class="tbl-toggle-row">
+                      <label class="tbl-sec-label">제목 지정</label>
+                      <ToggleSwitch :modelValue="selCommonType === 'th'" @update:modelValue="onHeaderToggle($event)" />
+                    </div>
+                    <p class="tbl-sec-hint">*OFF시, 내용으로 전환됩니다</p>
+                  </div>
+
+                  <div class="tbl-divider"></div>
+                  <!-- 내용 (단일 선택만 편집) — 텍스트 모듈과 동일한 Quill 리치 에디터 -->
+                  <div class="gg-field">
+                    <label class="tbl-sec-label">내용</label>
+                    <div v-if="tableSelectedCells.length === 1 && firstSelCell" class="rte-field">
+                      <Editor
+                        :model-value="firstSelCell.content"
+                        @update:model-value="updateSelCellContent($event)"
+                        @load="(e) => onEditorLoad(e, TABLE_CELL_KEY)"
+                        placeholder="내용을 입력하세요"
+                      >
+                        <template #toolbar>
+                          <!-- 테이블 셀 에디터는 정렬·목록·행간/자간 제외 (텍스트 모듈 에디터와 다름) -->
+                          <!-- 1줄: 굵게·기울임·밑줄·취소선 -->
+                          <div class="rte-tb-row">
+                            <span class="ql-formats rte-tb-grp">
+                              <button class="ql-bold" title="굵게"></button>
+                              <button class="ql-italic" title="기울임"></button>
+                              <button class="ql-underline" title="밑줄"></button>
+                              <button class="ql-strike" title="취소선"></button>
+                            </span>
+                          </div>
+                          <!-- 2줄: 글자색·배경색·형광펜 │ 링크·서식 제거 -->
+                          <div class="rte-tb-row">
+                            <span class="ql-formats rte-tb-grp">
+                              <ColorPopoverPicker
+                                title="글자 색상"
+                                :modelValue="editorColorModel(TABLE_CELL_KEY, 'color')"
+                                :pointColors="wrapPointColors"
+                                pointFollow
+                                :activeIndex="editorColorActiveIndex(TABLE_CELL_KEY, 'color')"
+                                @open="onEditorColorOpen(TABLE_CELL_KEY, 'color')"
+                                @update:modelValue="onEditorColorInput(TABLE_CELL_KEY, 'color', $event)"
+                                @select-point="onEditorColorSelectPoint(TABLE_CELL_KEY, 'color', $event)"
+                                @add-point-color="editorStore.addPointColor($event)"
+                                @remove-point-color="editorStore.removePointColor($event)"
+                              >
+                                <template #trigger>
+                                  <button type="button" class="rte-tb-btn" title="글자 색상" @mousedown.prevent>
+                                    <span class="material-symbols-outlined">format_color_text</span>
+                                  </button>
+                                </template>
+                              </ColorPopoverPicker>
+                              <ColorPopoverPicker
+                                title="배경 색상"
+                                :modelValue="editorColorModel(TABLE_CELL_KEY, 'background')"
+                                :pointColors="wrapPointColors"
+                                pointFollow
+                                :activeIndex="editorColorActiveIndex(TABLE_CELL_KEY, 'background')"
+                                @open="onEditorColorOpen(TABLE_CELL_KEY, 'background')"
+                                @update:modelValue="onEditorColorInput(TABLE_CELL_KEY, 'background', $event)"
+                                @select-point="onEditorColorSelectPoint(TABLE_CELL_KEY, 'background', $event)"
+                                @add-point-color="editorStore.addPointColor($event)"
+                                @remove-point-color="editorStore.removePointColor($event)"
+                              >
+                                <template #trigger>
+                                  <button type="button" class="rte-tb-btn" title="배경 색상" @mousedown.prevent>
+                                    <span class="material-symbols-outlined">format_color_fill</span>
+                                  </button>
+                                </template>
+                              </ColorPopoverPicker>
+                              <select class="ql-highlightMarker" title="형광펜">
+                                <option selected></option>
+                                <option value="#fff555"></option>
+                                <option value="#ffd1d1"></option>
+                                <option value="#c7f0c7"></option>
+                                <option value="#cce4ff"></option>
+                                <option value="#ffd9b3"></option>
+                                <option value="#e0c7ff"></option>
+                                <option value="#13ecff"></option>
+                              </select>
+                            </span>
+                            <span class="rte-tb-div"></span>
+                            <span class="ql-formats rte-tb-grp">
+                              <button class="ql-link" title="링크"></button>
+                              <button class="ql-clean" title="서식 제거"></button>
+                            </span>
+                          </div>
+                        </template>
+                      </Editor>
+                    </div>
+                    <p v-else class="tbl-multi-hint">여러 셀이 선택됐습니다. 내용은 셀 하나만 선택해 편집하세요.</p>
+                  </div>
+
+                  <div class="tbl-divider"></div>
+                  <!-- 텍스트 정렬 -->
+                  <div class="gg-field">
+                    <label class="tbl-sec-label">텍스트 정렬</label>
+                    <div class="tbl-align">
+                      <button
+                        v-for="a in ALIGN_KEYS"
+                        :key="a"
+                        type="button"
+                        class="tbl-align-btn"
+                        :class="{ 'is-active': selCommonAlign === a }"
+                        @click="setSelAlign(a)"
+                      >
+                        <span class="material-symbols-outlined">{{ ALIGN_ICON[a] }}</span>
+                      </button>
+                    </div>
+                  </div>
+                </template>
+
+                <!-- ── 이미지 타입 ── -->
+                <template v-else>
+                  <div class="tbl-divider"></div>
+                  <div class="gg-field">
+                    <label class="tbl-sec-label">이미지 파일</label>
+                    <div class="gg-text-input space-y-2">
+                      <label class="gg-field-label">이미지 파일 URL</label>
+                      <InputText
+                        :modelValue="selImageUrl"
+                        @update:modelValue="setSelImageUrl"
+                        placeholder="https://..."
+                      />
+                    </div>
+                    <div class="gg-text-input space-y-2 !mt-3">
+                      <label class="gg-field-label">이미지 설명</label>
+                      <InputText
+                        :modelValue="selImageAlt"
+                        @update:modelValue="setSelImageAlt"
+                        placeholder="이미지를 설명하는 문구"
+                      />
+                    </div>
+                    <p class="tbl-sec-hint">*검색엔진과 스크린리더를 위한 뉴스레터 한 줄 설명이에요</p>
+                  </div>
+
+                  <!-- 링크 추가 (이미지 모듈의 링크 섹션과 동일) -->
+                  <div class="tbl-divider"></div>
+                  <div class="gg-field">
+                    <div class="tbl-toggle-row">
+                      <label class="tbl-sec-label">링크 추가</label>
+                      <ToggleSwitch :modelValue="selImageLinkOn" @update:modelValue="onImageLinkToggle" />
+                    </div>
+                    <div v-if="selImageLinkOn" class="gg-text-input space-y-2">
+                      <label class="gg-field-label">링크 URL</label>
+                      <InputText
+                        :modelValue="selImageLink"
+                        @update:modelValue="setSelImageLink"
+                        placeholder="https://..."
+                      />
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </template>
 
             <!-- 테이블이 비어있을 때 -->
             <div v-else class="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
               <i class="pi pi-table text-3xl text-gray-300 mb-3 block"></i>
               <div class="text-gray-500 mb-4">테이블이 비어있습니다</div>
-              <Button
-                @click="initializeDefaultTable"
-                label="기본 2열 표 생성"
-                icon="pi pi-plus"
-                severity="primary"
-                size="small"
-              />
+              <Button @click="initializeDefaultTable" label="기본 2열 표 생성" icon="pi pi-plus" severity="primary" size="small" />
             </div>
           </div>
         </div>
@@ -1754,6 +1738,8 @@ const typeLabel = computed<string | null>(() => {
 const panelTitle = computed(() => {
   const meta = selectedModuleMetadata.value
   if (!meta) return ''
+  // 테이블은 Figma 686-4239대로 '테이블'로 표기(그룹에 안 묶인 단독일 때)
+  if (meta.id === 'ModuleTable' && !moduleStore.activeGroup) return '테이블'
   const custom = selectedModule.value?.properties?.__moduleLabel
   return moduleStore.activeGroup?.name || (typeof custom === 'string' ? custom : '') || meta.name
 })
@@ -1788,7 +1774,10 @@ const moduleColumnInfo = computed(() => {
 })
 
 // 이 모듈이 나눌 수 있는 최대 컬럼 수 — config의 maxColumns(예: 설명 텍스트=2), 없으면 전역 3단.
-const maxColumns = computed(() => selectedModuleMetadata.value?.maxColumns ?? 3)
+// 테이블은 컬럼 분할 대상이 아니므로 1(디자인 686-4239에 컬럼 세그먼트 없음).
+const maxColumns = computed(() =>
+  selectedModuleMetadata.value?.id === 'ModuleTable' ? 1 : (selectedModuleMetadata.value?.maxColumns ?? 3),
+)
 
 // 구성 요소(ColumnElementsField)는 빈 컬럼에서 '직접 구성'을 눌렀을 때 뜨는 ColumnComposePanel에서만 노출한다.
 // 요소를 체크해 모듈이 추가·선택되면 여기(ModuleForm)에는 그 모듈의 속성만 보이고 구성 요소는 다시 띄우지 않는다.
@@ -1993,6 +1982,240 @@ const tableCells = computed(() => {
   if (!selectedModule.value?.properties.tableCells) return []
   return selectedModule.value.properties.tableCells as TableCell[][]
 })
+
+// ===== 테이블 패널: 내용/스타일 탭 + 캔버스 셀 선택 편집 (Figma 686-4239) =====
+const isTableModule = computed(() => selectedModule.value?.moduleId === 'ModuleTable')
+const activeTableTab = ref<'content' | 'style'>('content')
+// 테이블 셀 내용 Quill 에디터의 고정 키(한 번에 셀 하나만 편집하므로 단일 키 사용)
+const TABLE_CELL_KEY = '__tblCellContent'
+// 모듈이 바뀌면 탭을 '내용'으로 초기화 (셀 선택은 스토어 watcher가 해제)
+watch(() => selectedModule.value?.id, () => { activeTableTab.value = 'content' })
+
+// 탭에 따라 어떤 prop 그룹을 노출할지 — 내용 탭=테이블 편집기 그룹, 스타일 탭=나머지 스타일 그룹
+const isGroupInActiveTab = (group: PropGroup): boolean => {
+  if (!isTableModule.value) return true
+  const isContentGroup = group.props.some((p) => p.type === 'table-editor')
+  return activeTableTab.value === 'content' ? isContentGroup : !isContentGroup
+}
+
+// ── 행 열 관리 (스타일 탭) ──
+// 행/열 [추가] 드롭다운 — 선택 셀 기준 위/아래(왼쪽/오른쪽) '사이 삽입' 또는 맨 끝 추가
+const insertMenu = ref<'row' | 'col' | null>(null)
+const toggleInsertMenu = (axis: 'row' | 'col') => {
+  insertMenu.value = insertMenu.value === axis ? null : axis
+}
+const insertRow = (where: 'above' | 'below' | 'end') => {
+  const id = selectedModule.value?.id
+  if (!id) return
+  const sel = firstSelCoord.value
+  if (where === 'end' || !sel) moduleStore.addTableCellRow(id)
+  else moduleStore.insertTableCellRow(id, where === 'above' ? sel.row : sel.row + 1)
+  moduleStore.clearTableCellSelection() // 인덱스가 밀리므로 선택 해제
+  insertMenu.value = null
+}
+const insertCol = (where: 'left' | 'right' | 'end') => {
+  const id = selectedModule.value?.id
+  if (!id) return
+  const sel = firstSelCoord.value
+  if (where === 'end' || !sel) moduleStore.addTableCellColumn(id)
+  else moduleStore.insertTableCellColumn(id, where === 'left' ? sel.col : sel.col + 1)
+  moduleStore.clearTableCellSelection()
+  insertMenu.value = null
+}
+const deleteTableRow = () => {
+  const id = selectedModule.value?.id
+  if (!id) return
+  if (tableSelectedCells.value.length) removeSelectedTableRows()
+  else moduleStore.removeTableCellRow(id, tableCells.value.length - 1)
+}
+const deleteTableColumn = () => {
+  const id = selectedModule.value?.id
+  if (!id) return
+  if (tableSelectedCells.value.length) removeSelectedTableCols()
+  else moduleStore.removeTableCellColumn(id, (tableCells.value[0]?.length ?? 1) - 1)
+}
+
+// ── 열 너비 직접 설정 (토글 아코디언) ──
+const tableColCount = computed(() => tableCells.value[0]?.length ?? 0)
+// 열별 '수동 지정' 여부 — tableColWidths[i]가 비어있지 않으면 수동, 비면 자동
+const colWidthManual = computed<boolean[]>(() => {
+  const n = tableColCount.value
+  const w = (selectedModule.value?.properties.tableColWidths as string[] | undefined) || []
+  return Array.from({ length: n }, (_, i) => String(w[i] ?? '').trim() !== '')
+})
+// '직접 설정' ON — 명시적 토글 플래그 또는 수동 지정된 열이 하나라도 있으면(레거시 호환) ON
+const colWidthOn = computed(
+  () =>
+    !!selectedModule.value?.properties.tableColWidthOn || colWidthManual.value.some(Boolean),
+)
+// 각 열의 표시 너비(%) — 수동 지정 열은 그 값, 자동 열은 (100 - 수동 합) / 자동 열 수
+const colWidthValues = computed<number[]>(() => {
+  const n = tableColCount.value
+  if (n === 0) return []
+  const w = (selectedModule.value?.properties.tableColWidths as string[] | undefined) || []
+  const parsed = Array.from({ length: n }, (_, i) => {
+    const num = parseFloat(String(w[i] ?? '').replace('%', ''))
+    return Number.isFinite(num) && num > 0 ? num : null // null = 자동
+  })
+  const manualSum = parsed.reduce<number>((s, v) => s + (v ?? 0), 0)
+  const autoCount = parsed.filter((v) => v === null).length
+  const autoVal = autoCount > 0 ? Math.max(0, Math.round(((100 - manualSum) / autoCount) * 10) / 10) : 0
+  return parsed.map((v) => (v === null ? autoVal : v))
+})
+// 전체 합(%) 및 100% 초과 여부
+const colWidthTotal = computed(
+  () => Math.round(colWidthValues.value.reduce((s, v) => s + v, 0) * 10) / 10,
+)
+const colWidthOverflow = computed(() => colWidthTotal.value > 100.05)
+
+const onColWidthToggle = (on: boolean) => {
+  updateProperty('tableColWidthOn', on)
+  // OFF: 지정값 모두 지워 균등 자동으로 되돌린다
+  if (!on) {
+    const n = tableColCount.value
+    for (let i = 0; i < n; i++) updateColWidth(i, '')
+  }
+}
+// 특정 열을 편집 = 그 열만 '수동'으로 고정(나머지 자동 열은 콜그룹에서 남은 폭을 브라우저가 배분)
+const onColWidthInput = (colIndex: number, e: Event) => {
+  const raw = parseFloat((e.target as HTMLInputElement).value)
+  if (!Number.isFinite(raw)) return
+  const v = Math.min(95, Math.max(5, Math.round(raw * 10) / 10))
+  updateColWidth(colIndex, `${v}%`)
+}
+// 열을 다시 '자동'으로
+const resetColWidth = (colIndex: number) => updateColWidth(colIndex, '')
+
+// 이 테이블에서 현재 선택된 셀 좌표들 (moduleId 일치 시)
+const tableSelectedCells = computed<{ row: number; col: number }[]>(() => {
+  const sel = moduleStore.tableCellSelection
+  const id = selectedModule.value?.id
+  return sel && id && sel.moduleId === id ? sel.cells : []
+})
+const firstSelCoord = computed(() => tableSelectedCells.value[0] ?? null)
+const firstSelCell = computed<TableCell | null>(() => {
+  const s = firstSelCoord.value
+  return s ? (tableCells.value[s.row]?.[s.col] ?? null) : null
+})
+// 선택 셀들의 공통 유형/정렬 (섞여 있으면 빈 문자열 = 활성 표시 없음)
+const selCommonType = computed<'th' | 'td' | ''>(() => {
+  const cells = tableSelectedCells.value
+  if (!cells.length) return ''
+  const types = cells.map(({ row, col }) => tableCells.value[row]?.[col]?.type)
+  return types.every((t) => t && t === types[0]) ? (types[0] as 'th' | 'td') : ''
+})
+const selCommonAlign = computed<'left' | 'center' | 'right' | ''>(() => {
+  const cells = tableSelectedCells.value
+  if (!cells.length) return ''
+  const aligns = cells.map(({ row, col }) => {
+    const c = tableCells.value[row]?.[col]
+    return c ? getCellAlign(c, col) : undefined
+  })
+  return aligns.every((a) => a && a === aligns[0]) ? (aligns[0] as 'left' | 'center' | 'right') : ''
+})
+// 색상 피커 표시값 = 첫 선택 셀의 실제 적용 색상
+const selEffectiveBg = computed(() => (firstSelCell.value ? getCellEffectiveBg(firstSelCell.value) : '#ffffff'))
+const selEffectiveText = computed(() => (firstSelCell.value ? getCellEffectiveText(firstSelCell.value) : '#333333'))
+
+// 선택 전체에 일괄 적용
+const applyToSelected = (updates: Partial<TableCell>) => {
+  const id = selectedModule.value?.id
+  if (id) moduleStore.applyToTableCells(id, tableSelectedCells.value, updates)
+}
+const setSelType = (type: 'th' | 'td') => applyToSelected({ type })
+const setSelAlign = (align: 'left' | 'center' | 'right') => applyToSelected({ align })
+const setSelBgColor = (value: string) => applyToSelected({ bgColor: value.startsWith('#') ? value : `#${value}` })
+const setSelBgColorInput = (value: string) => applyToSelected({ bgColor: normalizeColorInput(value) || undefined })
+const setSelTextColor = (value: string) => applyToSelected({ textColor: value.startsWith('#') ? value : `#${value}` })
+const setSelTextColorInput = (value: string) => applyToSelected({ textColor: normalizeColorInput(value) || undefined })
+const resetSelColors = () => applyToSelected({ bgColor: undefined, textColor: undefined })
+
+// 병합 / 병합 해제
+const canMergeSelection = computed(() => {
+  const cells = tableSelectedCells.value
+  if (cells.length < 2) return false
+  const rows = cells.map((c) => c.row)
+  const cols = cells.map((c) => c.col)
+  const r0 = Math.min(...rows), r1 = Math.max(...rows)
+  const c0 = Math.min(...cols), c1 = Math.max(...cols)
+  return cells.length === (r1 - r0 + 1) * (c1 - c0 + 1)
+})
+const canUnmergeSelection = computed(() => {
+  const cells = tableSelectedCells.value
+  if (cells.length !== 1) return false
+  const c = tableCells.value[cells[0].row]?.[cells[0].col]
+  return !!c && (c.colspan > 1 || c.rowspan > 1)
+})
+const mergeSelection = () => {
+  const id = selectedModule.value?.id
+  if (id) moduleStore.mergeSelectedTableCells(id)
+}
+const unmergeSelection = () => {
+  const id = selectedModule.value?.id
+  if (id) moduleStore.unmergeSelectedTableCell(id)
+}
+// 선택된 셀이 걸친 행/열 삭제 (인덱스 큰 것부터 — 삭제 시 시프트 방지)
+const removeSelectedTableRows = () => {
+  const id = selectedModule.value?.id
+  if (!id) return
+  ;[...new Set(tableSelectedCells.value.map((c) => c.row))]
+    .sort((a, b) => b - a)
+    .forEach((r) => moduleStore.removeTableCellRow(id, r))
+  moduleStore.clearTableCellSelection()
+}
+const removeSelectedTableCols = () => {
+  const id = selectedModule.value?.id
+  if (!id) return
+  ;[...new Set(tableSelectedCells.value.map((c) => c.col))]
+    .sort((a, b) => b - a)
+    .forEach((c) => moduleStore.removeTableCellColumn(id, c))
+  moduleStore.clearTableCellSelection()
+}
+// 정렬 아이콘(Material Symbols)
+const ALIGN_KEYS = ['left', 'center', 'right'] as const
+const ALIGN_ICON: Record<string, string> = {
+  left: 'format_align_left',
+  center: 'format_align_center',
+  right: 'format_align_right',
+}
+// 단일 선택 셀 내용 편집(템플릿 null 내로우잉 회피용 래퍼)
+const registerSelCellEditor = (el: unknown) => {
+  const c = firstSelCell.value
+  if (c) setCellEditorRef(c.id, el)
+}
+const updateSelCellContent = (content: string) => {
+  const s = firstSelCoord.value
+  if (s) updateCellContent(s.row, s.col, content)
+}
+const applySelBold = () => {
+  const c = firstSelCell.value
+  if (c) applyCellBold(c)
+}
+// 콘텐츠 타입(텍스트/이미지) — 선택 셀 공통값(섞이면 text)
+const selContentType = computed<'text' | 'image'>(() => {
+  const cells = tableSelectedCells.value
+  if (!cells.length) return 'text'
+  const types = cells.map(({ row, col }) => tableCells.value[row]?.[col]?.contentType ?? 'text')
+  return types.every((t) => t === types[0]) ? (types[0] as 'text' | 'image') : 'text'
+})
+const setSelContentType = (t: 'text' | 'image') => {
+  // 이미지 셀은 제목(th) 개념이 없으므로 내용(td)으로 고정
+  if (t === 'image') applyToSelected({ contentType: 'image', type: 'td' })
+  else applyToSelected({ contentType: 'text' })
+}
+// 제목 지정 토글: ON=th(제목), OFF=td(내용)
+const onHeaderToggle = (val: boolean) => setSelType(val ? 'th' : 'td')
+// 이미지 셀 URL/설명 — 첫 선택 셀 기준, 편집은 선택 전체에 적용
+const selImageUrl = computed(() => firstSelCell.value?.imageUrl ?? '')
+const selImageAlt = computed(() => firstSelCell.value?.imageAlt ?? '')
+const setSelImageUrl = (v: string | undefined) => applyToSelected({ imageUrl: v ?? '' })
+const setSelImageAlt = (v: string | undefined) => applyToSelected({ imageAlt: v ?? '' })
+// 이미지 링크(이미지 모듈의 '링크 추가' 섹션과 동일) — imageLink undefined=OFF
+const selImageLink = computed(() => firstSelCell.value?.imageLink ?? '')
+const selImageLinkOn = computed(() => firstSelCell.value?.imageLink !== undefined)
+const onImageLinkToggle = (val: boolean) =>
+  applyToSelected({ imageLink: val ? (firstSelCell.value?.imageLink ?? '') : undefined })
+const setSelImageLink = (v: string | undefined) => applyToSelected({ imageLink: v ?? '' })
 
 // 테이블 프리셋 정의
 interface TablePreset {
@@ -2323,7 +2546,8 @@ const onSingleSpacingInput = (prop: EditableProp, event: Event) => {
 // 여백 슬라이더와 같은 UI(헤드 라벨 + gg-margin-slider-row)로 그린다. 값 파싱/입력은 단일 여백과 공용.
 const isBorderWidthField = (prop: EditableProp): boolean =>
   prop.type === 'text' &&
-  /borderwidth$/i.test(prop.key) &&
+  // borderWidth·topBorderWidth·borderTopWidth(테이블) 등 '...테두리 두께' 키를 모두 슬라이더로
+  /border\w*width$/i.test(prop.key) &&
   !isBorderMember(prop, editableProps.value)
 
 const quadPxNumber = (prop: EditableProp): number => {
@@ -2394,6 +2618,8 @@ const STYLE_SECTION_RULES: Record<string, '*' | { exclude: string } | Set<string
   'Module01-2': new Set(['카테고리', '여백', '모서리 둥글기', '테두리']),
   Module11: new Set(['여백', '모서리 둥글기', '테두리']),
   ModuleDivider: '*', // 여백 (선 스타일은 그룹 없이 상단 flat 노출)
+  // 테이블 스타일 탭: 테두리/제목·내용 스타일/여백을 접이식 아코디언으로
+  ModuleTable: new Set(['테두리', '제목 스타일', '내용 스타일', '여백']),
   // 버튼: 핵심 입력(텍스트·링크·폰트·배경색·글자색)은 항상 펼친 채 두고 스타일만 접이식 카드로
   ModuleOneButton: { exclude: '버튼' },
   ModuleTwoButton: new Set(['테두리', '모서리 둥글기', '여백']),
@@ -4454,6 +4680,580 @@ const onSelectPointColor = (key: string, index: number): void => {
 /* 아직 지정되지 않은 값 — 슬라이더 기본 위치를 보여주되 적용 전임을 흐리게 표시 */
 .rte-sp-value.is-unset input {
   color: #8b95a1;
+}
+
+/* ===== 테이블 편집 패널 (Figma 686-4239) ===== */
+.tbl-tabs {
+  display: flex;
+  margin-top: 8px;
+  border-bottom: 1px solid #e5e8eb;
+}
+.tbl-tab {
+  flex: 1;
+  padding: 8px 0 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b7684;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  cursor: pointer;
+  letter-spacing: -0.14px;
+}
+.tbl-tab.is-active {
+  color: #4083f3;
+  border-bottom-color: #4083f3;
+}
+
+.tbl-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.tbl-content .gg-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.tbl-content .gg-field-label {
+  margin-bottom: 0;
+}
+.tbl-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.tbl-size {
+  font-size: 14px;
+  font-weight: 500;
+  color: #4e5968;
+}
+.tbl-toolbar-actions {
+  display: flex;
+  gap: 6px;
+}
+.tbl-tbtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid #e5e8eb;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 13px;
+  color: #4e5968;
+  cursor: pointer;
+}
+.tbl-tbtn:hover {
+  border-color: #4083f3;
+  color: #4083f3;
+}
+.tbl-tbtn .material-symbols-outlined {
+  font-size: 18px;
+}
+
+/* 빈 안내 */
+.tbl-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 56px 0;
+}
+.tbl-empty-icon {
+  font-size: 60px;
+  color: #c4cad1;
+}
+.tbl-empty-text {
+  font-size: 16px;
+  font-weight: 500;
+  color: #8b95a1;
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* 셀 편집 */
+.tbl-cell-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.tbl-sel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.tbl-sel-count {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333d4b;
+}
+.tbl-sel-actions {
+  display: flex;
+  gap: 6px;
+}
+.tbl-mini {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid #e5e8eb;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 12px;
+  color: #6b7684;
+  cursor: pointer;
+}
+.tbl-mini:hover {
+  border-color: #f04452;
+  color: #f04452;
+}
+.tbl-mini .material-symbols-outlined {
+  font-size: 16px;
+}
+.tbl-content-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+.tbl-bold {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e5e8eb;
+  border-radius: 8px;
+  background: #fff;
+  color: #4e5968;
+  cursor: pointer;
+}
+.tbl-bold:hover {
+  border-color: #4083f3;
+  color: #4083f3;
+}
+.tbl-multi-hint {
+  font-size: 13px;
+  color: #6b7684;
+  line-height: 1.5;
+  background: #f2f4f6;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.tbl-seg {
+  display: flex;
+  gap: 6px;
+}
+.tbl-seg-btn {
+  flex: 1;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e5e8eb;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 14px;
+  color: #4e5968;
+  cursor: pointer;
+}
+.tbl-seg-btn.is-active {
+  background: #ebf3ff;
+  border-color: #4083f3;
+  color: #4083f3;
+}
+.tbl-seg-icon .material-symbols-outlined {
+  font-size: 20px;
+}
+.tbl-reset {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e5e8eb;
+  border-radius: 8px;
+  background: #fff;
+  color: #8b95a1;
+  cursor: pointer;
+}
+.tbl-reset:hover {
+  color: #4e5968;
+}
+.tbl-merge-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 40px;
+  border: 1px solid #e5e8eb;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  color: #4e5968;
+  cursor: pointer;
+}
+.tbl-merge-btn:hover {
+  border-color: #4083f3;
+  color: #4083f3;
+}
+.tbl-merge-btn .material-symbols-outlined {
+  font-size: 18px;
+}
+
+/* ── 셀 편집 재설계 (Figma 694-4798 / 757-6257) ── */
+.tbl-cell-edit {
+  gap: 26px;
+}
+.tbl-cell-edit .gg-field {
+  gap: 14px;
+}
+.tbl-cellbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.tbl-cellchip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 29px;
+  padding: 4px 10px;
+  background: #ebf3ff;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #4083f3;
+  letter-spacing: -0.14px;
+  white-space: nowrap;
+}
+.tbl-cellchip .material-symbols-outlined {
+  font-size: 20px;
+}
+.tbl-cellbar-actions {
+  display: flex;
+  gap: 4px;
+}
+.tbl-icbtn {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e5e8eb;
+  border-radius: 6px;
+  background: #fff;
+  color: #6b7684;
+  cursor: pointer;
+}
+.tbl-icbtn:hover {
+  border-color: #4083f3;
+  color: #4083f3;
+}
+.tbl-icbtn .material-symbols-outlined {
+  font-size: 18px;
+}
+.tbl-sec-label {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333d4b;
+  letter-spacing: -0.16px;
+}
+.tbl-divider {
+  height: 1px;
+  background: #e5e8eb;
+}
+.tbl-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.tbl-sec-hint {
+  font-size: 14px;
+  color: #6b7684;
+  line-height: 1.5;
+  letter-spacing: -0.3px;
+}
+.tbl-ctype {
+  display: flex;
+  gap: 12px;
+}
+.tbl-ctype-btn {
+  flex: 1;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid #e5e8eb;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b7684;
+  cursor: pointer;
+}
+.tbl-ctype-btn.is-active {
+  background: #4e5968;
+  border-color: #4e5968;
+  color: #fff;
+}
+.tbl-ctype-btn .material-symbols-outlined {
+  font-size: 20px;
+}
+.tbl-align {
+  display: flex;
+  gap: 12px;
+}
+.tbl-align-btn {
+  flex: 1;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e5e8eb;
+  border-radius: 8px;
+  background: #fff;
+  color: #4e5968;
+  cursor: pointer;
+}
+.tbl-align-btn.is-active {
+  background: #333d4b;
+  border-color: #333d4b;
+  color: #fff;
+}
+.tbl-align-btn .material-symbols-outlined {
+  font-size: 22px;
+}
+.tbl-input {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #e5e8eb;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 14px;
+  color: #191f28;
+}
+.tbl-input::placeholder {
+  color: #b0b8c1;
+}
+.tbl-input:focus {
+  outline: none;
+  border-color: #4083f3;
+}
+/* ── 테이블 스타일 탭: 커스텀 블록만 27px 여백(아코디언은 gg-acc-section 공통 스타일에 맡김) ── */
+/* 탭 밑줄 → 행 열 관리 */
+.tbl-rowcol {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 26px;
+}
+/* 행 열 관리 ↔ 열 너비, 열 너비 ↔ 첫 아코디언 사이 구분선(위·아래 27px) */
+.tbl-divider--wide {
+  margin-top: 26px;
+}
+/* 내용 탭: 탭 밑줄 → 첫 콘텐츠(1행1열 chip / 빈 안내) */
+.tbl-content {
+  margin-top: 26px;
+}
+.tbl-rowcol .tbl-sec-label {
+  margin-bottom: 10px;
+}
+.tbl-rc-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.tbl-rc-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  color: #4e5968;
+  white-space: nowrap;
+}
+.tbl-rc-name .material-symbols-outlined {
+  font-size: 24px;
+  color: #4e5968;
+}
+.tbl-rc-btns {
+  display: flex;
+  gap: 12px;
+  width: 201px;
+}
+.tbl-rc-btn {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid #e5e8eb;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 15px;
+  font-weight: 500;
+  color: #6b7684;
+  cursor: pointer;
+}
+.tbl-rc-btn:hover {
+  border-color: #4083f3;
+  color: #4083f3;
+}
+.tbl-rc-btn .material-symbols-outlined {
+  font-size: 20px;
+}
+/* 행/열 추가 드롭다운 */
+.tbl-rc-add {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+}
+.tbl-rc-btn--add {
+  gap: 2px;
+}
+.tbl-insert-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 30;
+  min-width: 170px;
+  padding: 4px;
+  background: #fff;
+  border: 1px solid #e5e8eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+}
+.tbl-insert-menu button {
+  text-align: left;
+  padding: 9px 12px;
+  border: none;
+  background: none;
+  font-size: 14px;
+  color: #333d4b;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.tbl-insert-menu button:hover:not(:disabled) {
+  background: #f2f4f6;
+}
+.tbl-insert-menu button:disabled {
+  color: #c4cad1;
+  cursor: not-allowed;
+}
+.tbl-insert-hint {
+  padding: 4px 12px 6px;
+  font-size: 12px;
+  color: #8b95a1;
+  line-height: 1.4;
+  white-space: normal;
+}
+.tbl-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+}
+.tbl-rc-merge {
+  width: 201px;
+  height: 40px;
+  border: 1px solid #d1d6db;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 15px;
+  font-weight: 500;
+  color: #4e5968;
+  cursor: pointer;
+}
+/* 병합 가능(2개 이상 선택) 시 파란 버튼 */
+.tbl-rc-merge:not(:disabled) {
+  background: #4083f3;
+  border-color: #4083f3;
+  color: #ffffff;
+}
+.tbl-rc-merge:not(:disabled):hover {
+  background: #3b78e0;
+  border-color: #3b78e0;
+}
+.tbl-rc-merge:disabled {
+  opacity: 0.5;
+  color: #b0b8c1;
+  cursor: not-allowed;
+}
+
+/* 열 너비 직접 설정 */
+.tbl-colw {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.tbl-colw + .tbl-colw {
+  margin-top: 22px;
+}
+.tbl-colw-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.tbl-colw-head .gg-field-label {
+  margin-bottom: 0;
+}
+.tbl-colw-auto {
+  font-size: 12px;
+  color: #8b95a1;
+}
+.tbl-colw-reset {
+  font-size: 12px;
+  color: #4083f3;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+.tbl-colw-reset:hover {
+  text-decoration: underline;
+}
+/* 100% 초과 경고 */
+.tbl-colw-warn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 14px;
+  font-size: 13px;
+  color: #f04452;
+  line-height: 1.4;
+}
+.tbl-colw-warn .material-symbols-outlined {
+  font-size: 18px;
+}
+
+/* 내용 편집기 — 디자인의 filled 텍스트 에디터 박스(TextField/Small)로 표시 */
+.tbl-cell-edit :deep(.tcell-editor) {
+  background: #f2f4f6;
+  border-color: transparent;
+  border-radius: 8px;
+  min-height: 120px;
+  padding: 16px 12px;
+  font-size: 15px;
+  color: #333d4b;
+}
+.tbl-cell-edit :deep(.tcell-editor:focus) {
+  background: #fff;
+  border-color: #4083f3;
 }
 
 </style>

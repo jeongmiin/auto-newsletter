@@ -16,7 +16,7 @@
 
     <!-- 모듈 컨텐츠 - isolation 레이어로 CSS 리셋 방지 -->
     <div v-else class="module-content-wrapper">
-      <div v-html="renderedHtml" class="module-content"></div>
+      <div ref="contentEl" v-html="renderedHtml" class="module-content" @click="onContentClick"></div>
     </div>
 
     <!-- 우측 세로 플로팅 툴바 (모듈 바깥 오른쪽) — 위로/아래로/복제/삭제.
@@ -64,9 +64,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watch, nextTick } from 'vue'
 import type { ModuleInstance } from '@/types'
 import { useModuleRenderer } from '@/composables/useModuleRenderer'
+import { useModuleStore } from '@/stores/moduleStore'
 
 interface Props {
   module: ModuleInstance
@@ -86,12 +87,49 @@ defineEmits<{
   delete: [moduleId: string]
 }>()
 
+const moduleStore = useModuleStore()
 const { renderedHtml, moduleMetadata, isLoading } = useModuleRenderer(props.module.id)
+const contentEl = ref<HTMLElement | null>(null)
 
 // 모듈 표시 이름
 const moduleName = computed(() => moduleMetadata.value?.name || props.module.moduleId)
 // 좁은 컬럼(2단 이상)에서는 이름을 숨겨 바 폭을 줄인다 (이름은 툴팁으로 확인)
 const compact = computed(() => !!props.columnInfo && props.columnInfo.columns > 1)
+
+// ── 테이블 셀 선택 (캔버스 미리보기) ─────────────────────────────
+// data-row/col을 가진 셀(ModuleTable)만 처리. 그 외 클릭은 버블돼 일반 모듈 선택.
+const onContentClick = (e: MouseEvent) => {
+  const cellEl = (e.target as HTMLElement).closest('[data-row]') as HTMLElement | null
+  if (!cellEl) return
+  const row = Number(cellEl.dataset.row)
+  const col = Number(cellEl.dataset.col)
+  if (Number.isNaN(row) || Number.isNaN(col)) return
+  e.stopPropagation() // 루트의 전체-선택 대신 셀 선택으로 처리
+  // 모듈도 선택되게(속성 패널 전환) — 직접 선택 경로
+  moduleStore.selectModule(props.module.id)
+  if (e.metaKey || e.ctrlKey) moduleStore.toggleTableCell(props.module.id, row, col)
+  else if (e.shiftKey) moduleStore.rangeSelectTableCell(props.module.id, row, col)
+  else moduleStore.selectTableCell(props.module.id, row, col)
+}
+
+// 선택된 셀에 .cell-selected 클래스를 토글(런타임 DOM만 — 내보내기 HTML엔 없음)
+const applyCellHighlight = () => {
+  const el = contentEl.value
+  if (!el) return
+  const sel = moduleStore.tableCellSelection
+  const selCells = sel && sel.moduleId === props.module.id ? sel.cells : []
+  el.querySelectorAll<HTMLElement>('[data-row]').forEach((c) => {
+    const r = Number(c.dataset.row)
+    const co = Number(c.dataset.col)
+    c.classList.toggle('cell-selected', selCells.some((s) => s.row === r && s.col === co))
+  })
+}
+
+watch(
+  [renderedHtml, () => moduleStore.tableCellSelection],
+  () => nextTick(applyCellHighlight),
+  { deep: true, immediate: true },
+)
 </script>
 
 <style scoped>
@@ -209,6 +247,17 @@ const compact = computed(() => !!props.columnInfo && props.columnInfo.columns > 
   /* Tailwind/base.css의 margin: 0을 무효화 */
   margin: initial;
   padding: initial;
+}
+
+/* 테이블 셀 선택(캔버스): 클릭 가능 표시 + 선택 셀 파란 아웃라인 */
+.module-content :deep(td[data-row]),
+.module-content :deep(th[data-row]) {
+  cursor: pointer;
+}
+.module-content :deep(td.cell-selected),
+.module-content :deep(th.cell-selected) {
+  outline: 2px solid #4083f3;
+  outline-offset: -2px;
 }
 
 /*

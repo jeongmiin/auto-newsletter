@@ -82,6 +82,14 @@ export const useModuleStore = defineStore('module', () => {
   // 지정돼 있으면 다음에 추가되는 모듈이 이 그룹의 해당 (행, 컬럼)에 들어간다.
   const columnTarget = ref<{ groupId: string; rowIndex: number; columnIndex: number } | null>(null)
 
+  // [테이블 셀 선택] 캔버스 미리보기에서 선택한 테이블 셀(들). moduleId로 대상 테이블을 식별.
+  // 클릭=단일, ⌘/Ctrl+클릭=개별 토글, Shift+클릭=anchor→현재의 사각형 범위.
+  const tableCellSelection = ref<{
+    moduleId: string
+    cells: { row: number; col: number }[]
+    anchor: { row: number; col: number } | null
+  } | null>(null)
+
   // 모듈 추가(팔레트 클릭)로 인한 자동 선택인지 표시하는 플래그 — 아래 watch가 소비한다.
   // 추가로 선택되면 좌측 팔레트를 그대로 두고(모듈이 "추가된 상태"), 사용자가 캔버스/목차에서
   // "직접" 선택했을 때만 속성 편집 패널로 전환한다.
@@ -95,6 +103,14 @@ export const useModuleStore = defineStore('module', () => {
       useEditorStore().forceRailPanel = selectedByAdd
     }
     selectedByAdd = false
+  })
+
+  // 선택 모듈이 (테이블 셀 선택 대상과) 다른 모듈로 바뀌면 셀 선택 해제.
+  // 셀 클릭 흐름은 selectModule → selectTableCell 순서라 같은 모듈이면 moduleId가 일치해 유지된다.
+  watch(selectedModuleId, (modId) => {
+    if (tableCellSelection.value && tableCellSelection.value.moduleId !== modId) {
+      tableCellSelection.value = null
+    }
   })
 
   // [컬럼 분할] '직접 구성' 대상 컬럼 밖의 모듈/그룹을 선택하면 대상 지정을 해제한다.
@@ -2529,11 +2545,11 @@ export const useModuleStore = defineStore('module', () => {
     // 셀별 align은 사용자가 '가' 편집기에서 직접 지정했을 때만 채워지며, 그때 더 우선한다.
     const defaultCells: TableCell[][] = [
       [
-        { id: generateUniqueId('cell'), type: 'th', content: '항목', colspan: 1, rowspan: 1 },
+        { id: generateUniqueId('cell'), type: 'th', content: '항목 1', colspan: 1, rowspan: 1 },
         { id: generateUniqueId('cell'), type: 'td', content: '내용', colspan: 1, rowspan: 1 },
       ],
       [
-        { id: generateUniqueId('cell'), type: 'th', content: '항목', colspan: 1, rowspan: 1 },
+        { id: generateUniqueId('cell'), type: 'th', content: '항목 2', colspan: 1, rowspan: 1 },
         { id: generateUniqueId('cell'), type: 'td', content: '내용', colspan: 1, rowspan: 1 },
       ],
     ]
@@ -2542,6 +2558,122 @@ export const useModuleStore = defineStore('module', () => {
     // 열 공통 정렬: 1열 가운데, 2열 왼쪽
     module.properties.tableColAligns = ['center', 'left']
     triggerRef(modules)
+  }
+
+  /**
+   * 테이블을 지정한 크기(rows × cols)로 새로 구성한다.
+   * '테이블 추가' 크기 선택 UI에서 사용 — 첫 행은 제목(th), 나머지는 내용(td).
+   */
+  const setCustomTableSize = (moduleId: string, rows: number, cols: number): void => {
+    const module = modules.value.find((m) => m.id === moduleId)
+    if (!module) return
+
+    const R = Math.max(1, Math.min(50, Math.floor(rows) || 1))
+    const C = Math.max(1, Math.min(20, Math.floor(cols) || 1))
+
+    const cells: TableCell[][] = []
+    for (let r = 0; r < R; r++) {
+      const row: TableCell[] = []
+      for (let c = 0; c < C; c++) {
+        // 첫 열 = 제목(th) '항목 N', 나머지 = 내용(td) '내용'
+        const isHeader = c === 0
+        row.push({
+          id: generateUniqueId('cell'),
+          type: isHeader ? 'th' : 'td',
+          content: isHeader ? `항목 ${r + 1}` : '내용',
+          colspan: 1,
+          rowspan: 1,
+        })
+      }
+      cells.push(row)
+    }
+
+    module.properties.tableCells = cells
+    // 열 공통 정렬: 1열 가운데, 나머지 왼쪽(기본 테이블과 동일 톤)
+    module.properties.tableColAligns = Array.from({ length: C }, (_, c) =>
+      c === 0 ? 'center' : 'left',
+    )
+    // 열 너비는 기본(자동)
+    module.properties.tableColWidths = Array.from({ length: C }, () => '')
+    triggerRef(modules)
+    isDirty.value = true
+  }
+
+  // ============= Table Cell Selection (캔버스 미리보기 셀 선택) =============
+  /** 단일 선택(클릭) */
+  const selectTableCell = (moduleId: string, row: number, col: number): void => {
+    tableCellSelection.value = { moduleId, cells: [{ row, col }], anchor: { row, col } }
+  }
+  /** 개별 토글(⌘/Ctrl+클릭) — 이미 있으면 빼고 없으면 더한다 */
+  const toggleTableCell = (moduleId: string, row: number, col: number): void => {
+    const sel = tableCellSelection.value
+    if (!sel || sel.moduleId !== moduleId) {
+      tableCellSelection.value = { moduleId, cells: [{ row, col }], anchor: { row, col } }
+      return
+    }
+    const idx = sel.cells.findIndex((c) => c.row === row && c.col === col)
+    const cells =
+      idx >= 0 ? sel.cells.filter((_, i) => i !== idx) : [...sel.cells, { row, col }]
+    tableCellSelection.value = cells.length
+      ? { moduleId, cells, anchor: { row, col } }
+      : null
+  }
+  /** 범위 선택(Shift+클릭) — anchor에서 현재 셀까지 사각형 */
+  const rangeSelectTableCell = (moduleId: string, row: number, col: number): void => {
+    const sel = tableCellSelection.value
+    const anchor = sel && sel.moduleId === moduleId && sel.anchor ? sel.anchor : { row, col }
+    const r0 = Math.min(anchor.row, row)
+    const r1 = Math.max(anchor.row, row)
+    const c0 = Math.min(anchor.col, col)
+    const c1 = Math.max(anchor.col, col)
+    const cells: { row: number; col: number }[] = []
+    for (let r = r0; r <= r1; r++) {
+      for (let c = c0; c <= c1; c++) cells.push({ row: r, col: c })
+    }
+    tableCellSelection.value = { moduleId, cells, anchor }
+  }
+  const clearTableCellSelection = (): void => {
+    tableCellSelection.value = null
+  }
+  const isTableCellSelected = (moduleId: string, row: number, col: number): boolean => {
+    const sel = tableCellSelection.value
+    return !!sel && sel.moduleId === moduleId && sel.cells.some((c) => c.row === row && c.col === col)
+  }
+  /** 선택된 여러 셀에 같은 속성을 일괄 적용(제목/내용·정렬·색상 등) */
+  const applyToTableCells = (
+    moduleId: string,
+    cells: { row: number; col: number }[],
+    updates: Partial<TableCell>,
+  ): void => {
+    for (const { row, col } of cells) updateTableCell(moduleId, row, col, updates)
+  }
+  /** 현재 선택이 빈틈 없는 사각형이면 병합. 성공 시 true */
+  const mergeSelectedTableCells = (moduleId: string): boolean => {
+    const sel = tableCellSelection.value
+    if (!sel || sel.moduleId !== moduleId || sel.cells.length < 2) return false
+    const rows = sel.cells.map((c) => c.row)
+    const cols = sel.cells.map((c) => c.col)
+    const r0 = Math.min(...rows)
+    const r1 = Math.max(...rows)
+    const c0 = Math.min(...cols)
+    const c1 = Math.max(...cols)
+    // 선택이 사각형을 정확히 채우는지 확인
+    if (sel.cells.length !== (r1 - r0 + 1) * (c1 - c0 + 1)) return false
+    mergeCells(moduleId, r0, c0, r1 - r0 + 1, c1 - c0 + 1)
+    tableCellSelection.value = { moduleId, cells: [{ row: r0, col: c0 }], anchor: { row: r0, col: c0 } }
+    return true
+  }
+  /** 선택이 병합셀 1개면 병합 해제. 성공 시 true */
+  const unmergeSelectedTableCell = (moduleId: string): boolean => {
+    const sel = tableCellSelection.value
+    if (!sel || sel.moduleId !== moduleId || sel.cells.length !== 1) return false
+    const { row, col } = sel.cells[0]
+    const module = modules.value.find((m) => m.id === moduleId)
+    const cell = (module?.properties.tableCells as TableCell[][] | undefined)?.[row]?.[col]
+    if (!cell || (cell.colspan <= 1 && cell.rowspan <= 1)) return false
+    unmergeCell(moduleId, row, col)
+    tableCellSelection.value = { moduleId, cells: [{ row, col }], anchor: { row, col } }
+    return true
   }
 
   /**
@@ -2615,10 +2747,11 @@ export const useModuleStore = defineStore('module', () => {
           hidden: true,
         })
       } else {
+        // 새 행 셀은 항상 td + '내용'(제목은 '테이블 내용' 탭의 제목 지정으로만 변경)
         newRow.push({
           id: generateUniqueId('cell'),
           type: 'td',
-          content: '',
+          content: '내용',
           colspan: 1,
           rowspan: 1,
         })
@@ -2667,10 +2800,11 @@ export const useModuleStore = defineStore('module', () => {
           hidden: true,
         })
       } else {
+        // 새 열 셀은 항상 td + '내용'(제목은 '테이블 내용' 탭의 제목 지정으로만 변경)
         row.splice(idx, 0, {
           id: generateUniqueId('cell'),
-          type: r === 0 ? 'th' : 'td',
-          content: '',
+          type: 'td',
+          content: '내용',
           colspan: 1,
           rowspan: 1,
         })
@@ -3875,6 +4009,17 @@ ${fullHtml}
     removeTableRow,
     // 커스텀 테이블 셀 관리
     initializeTableCells,
+    setCustomTableSize,
+    // 테이블 셀 선택(캔버스 미리보기)
+    tableCellSelection,
+    selectTableCell,
+    toggleTableCell,
+    rangeSelectTableCell,
+    clearTableCellSelection,
+    isTableCellSelected,
+    applyToTableCells,
+    mergeSelectedTableCells,
+    unmergeSelectedTableCell,
     addTableCellRow,
     addTableCellColumn,
     insertTableCellRow,

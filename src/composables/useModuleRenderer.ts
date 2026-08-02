@@ -157,7 +157,8 @@ export function useModuleRenderer(moduleId: string) {
         return replaceModuleSubTitleContent(html, properties)
 
       case 'ModuleTable':
-        return replaceModuleTableContent(html, properties)
+        // 캔버스 미리보기는 셀 선택을 위해 data-row/col 포함(interactive=true)
+        return replaceModuleTableContent(html, properties, true)
 
       case 'Module01':
         return replaceModule01Content(html, properties)

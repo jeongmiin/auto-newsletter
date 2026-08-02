@@ -64,6 +64,10 @@ export interface TableCell {
   bgColor?: string         // 셀 배경색 (미지정 시 타입별 일괄 색상 사용)
   textColor?: string       // 셀 글자색 (미지정 시 타입별 일괄 색상 사용)
   hidden?: boolean         // 병합으로 인해 숨겨진 셀 여부
+  contentType?: 'text' | 'image'  // 셀 콘텐츠 종류 (미지정=text)
+  imageUrl?: string        // contentType='image'일 때 이미지 URL
+  imageAlt?: string        // contentType='image'일 때 이미지 설명(alt)
+  imageLink?: string       // 이미지 링크 URL. undefined=링크 없음(토글 OFF)
 }
 
 export interface ContentTitle {

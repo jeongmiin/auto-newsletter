@@ -58,25 +58,25 @@ describe('replaceModuleTableContent - 셀별 색상', () => {
   })
 })
 
-describe('replaceModuleTableContent - 부분 굵게(**마커**)', () => {
-  it('**…** 로 감싼 구간만 <strong>으로 변환됨', () => {
-    const cells = [[makeCell({ content: '일반 **강조** 텍스트' })]]
+describe('replaceModuleTableContent - 텍스트 셀 HTML 렌더', () => {
+  // 셀 내용 편집기가 Quill 리치 에디터로 바뀌어, 내용은 HTML을 그대로 렌더한다
+  // (정제는 렌더/내보내기 공통 파이프라인의 sanitizeHtml이 담당).
+  it('리치 텍스트(HTML)를 그대로 렌더한다', () => {
+    const cells = [[makeCell({ content: '<p>일반 <strong>강조</strong> 텍스트</p>' })]]
     const result = replaceModuleTableContent(TEMPLATE, { tableCells: cells })
-    expect(result).toContain('<strong style="font-weight:700;">강조</strong>')
-    expect(result).toContain('일반 ')
-    expect(result).toContain(' 텍스트')
+    expect(result).toContain('<p>일반 <strong>강조</strong> 텍스트</p>')
   })
 
-  it('마커가 없으면 변환되지 않음', () => {
-    const cells = [[makeCell({ content: '굵게 없음' })]]
+  it('일반 텍스트(태그 없음)도 그대로 렌더한다', () => {
+    const cells = [[makeCell({ content: '항목 1' })]]
     const result = replaceModuleTableContent(TEMPLATE, { tableCells: cells })
-    expect(result).not.toContain('<strong')
+    expect(result).toContain('항목 1')
   })
 
-  it('HTML escape 이후에만 변환되어 태그 주입이 방지됨', () => {
-    const cells = [[makeCell({ content: '**<script>**' })]]
+  it('이미지 셀은 <img>로 렌더된다', () => {
+    const cells = [[makeCell({ type: 'td', content: '', contentType: 'image', imageUrl: 'https://x/y.png', imageAlt: '설명' })]]
     const result = replaceModuleTableContent(TEMPLATE, { tableCells: cells })
-    expect(result).toContain('<strong style="font-weight:700;">&lt;script&gt;</strong>')
-    expect(result).not.toContain('<script>')
+    expect(result).toContain('<img src="https://x/y.png"')
+    expect(result).toContain('alt="설명"')
   })
 })
