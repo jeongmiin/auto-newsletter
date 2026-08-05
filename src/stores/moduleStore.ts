@@ -9,6 +9,7 @@ import type {
   AdditionalContent,
   TableCell,
   NewsletterTemplate,
+  TemplateDepartment,
   ModuleGroup,
   ModuleGroupStyles,
   ModuleStyles,
@@ -73,6 +74,8 @@ export const useModuleStore = defineStore('module', () => {
   const selectedModuleId = ref<string | null>(null)
   const availableModules = ref<ModuleMetadata[]>([])
   const availableTemplates = ref<NewsletterTemplate[]>([])
+  // 템플릿 선택 화면의 본부/팀 트리 (templates-config.json의 departments)
+  const availableDepartments = ref<TemplateDepartment[]>([])
   const isDirty = ref(false) // 변경사항 추적
 
   // 모듈 그룹 (그룹 단위 스타일). 멤버십은 ModuleInstance.groupId로 표현된다.
@@ -2440,11 +2443,18 @@ export const useModuleStore = defineStore('module', () => {
         (t) => t && typeof t.id === 'string' && typeof t.name === 'string' && Array.isArray(t.modules),
       )
 
+      // 좌측 본부/팀 트리도 같은 파일에서 온다 (배열 순서 = 표시 순서)
+      availableDepartments.value = Array.isArray(data.departments)
+        ? (data.departments as TemplateDepartment[]).filter(
+            (d) => d && typeof d.name === 'string' && Array.isArray(d.teams),
+          )
+        : []
       availableTemplates.value = validated
       return validated
     } catch (error) {
       console.error('[loadAvailableTemplates] Failed:', error)
       availableTemplates.value = []
+      availableDepartments.value = []
       return []
     }
   }
@@ -4048,6 +4058,7 @@ ${fullHtml}
     selectedModuleMetadata,
     availableModules,
     availableTemplates,
+    availableDepartments,
     isDirty,
     // 그룹
     groups,

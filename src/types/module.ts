@@ -205,11 +205,23 @@ export interface EmailBuilderState {
  * 미리 만들어둔 뉴스레터 템플릿
  * 모듈 인스턴스 배열 + wrap 설정의 스냅샷
  */
+/**
+ * 템플릿 선택 화면의 좌측 본부/팀 트리 한 항목.
+ * 정의는 `public/templates/templates-config.json`의 `departments`에 있다 —
+ * 화면·검사 테스트·등록 스크립트가 모두 그 한 곳을 본다. 배열 순서가 곧 표시 순서다.
+ */
+export interface TemplateDepartment {
+  name: string
+  teams: string[]
+}
+
 export interface NewsletterTemplate {
   id: string
   name: string
   description: string
   thumbnail?: string
+  /** 소속 본부(표시·분류용). 필터는 team으로 하고, 본부 트리는 TemplateSelectView가 갖는다. */
+  division?: string
   /** 소속 팀(템플릿 선택 화면의 좌측 부서/팀 필터용). 미지정이면 '전체'에서만 보인다. */
   team?: string
   wrapSettings: {
@@ -219,6 +231,8 @@ export interface NewsletterTemplate {
     borderStyle: string
     // 포인트 색상 — 기존 템플릿 호환을 위해 optional (없으면 기본값 유지)
     pointColor?: string
+    /** 포인트 색상 팔레트(최대 3개). [0]번이 pointColor와 동기화된다. */
+    pointColors?: string[]
   }
   modules: Array<{
     moduleId: string

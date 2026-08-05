@@ -67,8 +67,18 @@
             @click="pickTemplate(t)"
           >
             <div class="tpl-thumb">
+              <!-- 미리 만들어 둔 썸네일 이미지가 있으면 그걸 쓴다(빠름).
+                   없는 템플릿만 실제 렌더해서 iframe으로 보여준다(폴백). -->
+              <img
+                v-if="thumbSrc(t)"
+                :src="thumbSrc(t)"
+                :alt="`${t.name} 미리보기`"
+                class="tpl-thumb-img"
+                loading="lazy"
+                decoding="async"
+              />
               <iframe
-                v-if="srcdocs[t.id]"
+                v-else-if="srcdocs[t.id]"
                 :srcdoc="srcdocs[t.id]"
                 class="tpl-thumb-iframe"
                 sandbox="allow-same-origin"
@@ -110,21 +120,17 @@ const router = useRouter()
 const moduleStore = useModuleStore()
 const editorStore = useEditorStore()
 
-// 좌측 부서/팀 트리. 필터는 template.team 값과 매칭한다.
-const departments = [
-  { name: '펫레저사업본부', teams: ['펫산업팀', '레저산업팀'] },
-  { name: '문화콘텐츠사업본부', teams: ['라이프콘텐츠팀'] },
-  { name: '신성장산업본부', teams: ['신성장전략팀'] },
-  { name: '융합사업본부', teams: ['융합산업1팀'] },
-]
+// 좌측 부서/팀 트리 — templates-config.json의 departments에서 온다.
+// (화면·검사 테스트·등록 스크립트가 모두 그 한 곳을 보므로 여기에 따로 적지 않는다)
+// 배열 순서가 곧 표시 순서. 필터는 template.team 값과 매칭한다.
+const departments = computed(() => moduleStore.availableDepartments)
 
 const selectedTeam = ref<string>('') // '' = 전체
 const search = ref('')
 
-// 부서 접기/펼치기 (기본 펼침)
-const openDepts = reactive<Record<string, boolean>>(
-  Object.fromEntries(departments.map((d) => [d.name, true])),
-)
+// 부서 접기/펼치기 — 기본 펼침(기록에 없으면 열린 것으로 본다).
+// 트리를 비동기로 받아오므로 목록을 미리 채우지 않는다.
+const openDepts = reactive<Record<string, boolean>>({})
 const isOpen = (name: string) => openDepts[name] !== false
 const toggle = (name: string) => {
   openDepts[name] = !isOpen(name)
@@ -134,14 +140,43 @@ const templates = ref<NewsletterTemplate[]>([])
 const srcdocs = reactive<Record<string, string>>({})
 const applying = ref(false)
 
+// 카드 정렬: 좌측 트리와 같은 순서(본부 → 팀)로 묶고, 그 안에서는 이름 가나다ABC 순.
+// (localeCompare('ko')가 한글 → 영문 순서를 만든다. JSON 순서에 기대지 않고 화면에서 정렬한다)
+const rankOf = (t: NewsletterTemplate): [number, number] => {
+  const list = departments.value
+  const dIdx = list.findIndex((d) => d.name === t.division)
+  if (dIdx === -1) return [list.length, 0] // 트리에 없는 본부는 맨 뒤
+  const tIdx = list[dIdx].teams.indexOf(t.team ?? '')
+  return [dIdx, tIdx === -1 ? list[dIdx].teams.length : tIdx]
+}
+
 const filteredTemplates = computed(() => {
   const q = search.value.trim().toLowerCase()
-  return templates.value.filter((t) => {
-    const teamOk = selectedTeam.value === '' || t.team === selectedTeam.value
-    const searchOk = !q || t.name.toLowerCase().includes(q)
-    return teamOk && searchOk
-  })
+  return templates.value
+    .filter((t) => {
+      const teamOk = selectedTeam.value === '' || t.team === selectedTeam.value
+      const searchOk = !q || t.name.toLowerCase().includes(q)
+      return teamOk && searchOk
+    })
+    .sort((a, b) => {
+      const [ad, at] = rankOf(a)
+      const [bd, bt] = rankOf(b)
+      return ad - bd || at - bt || a.name.localeCompare(b.name, 'ko')
+    })
 })
+
+// 미리 만들어 둔 썸네일 이미지 — src/assets/img/thumbnail/*.png 를 파일명으로 찾는다.
+// (Vite가 해시 붙인 URL로 바꿔 주므로 경로를 직접 쓰지 않고 이 표를 거친다)
+const THUMBNAILS = import.meta.glob<string>('@/assets/img/thumbnail/*.png', {
+  eager: true,
+  import: 'default',
+})
+const thumbUrlByFile: Record<string, string> = Object.fromEntries(
+  Object.entries(THUMBNAILS).map(([p, url]) => [p.split('/').pop()!, url]),
+)
+/** 템플릿의 thumbnail(파일명)에 해당하는 이미지 URL. 없으면 undefined → iframe 폴백 */
+const thumbSrc = (t: NewsletterTemplate): string | undefined =>
+  t.thumbnail ? thumbUrlByFile[t.thumbnail] : undefined
 
 // 썸네일 iframe 문서 만들기 (680px로 렌더 → CSS scale로 축소해 고정 박스에 맞춤)
 const buildThumbDoc = (content: string): string =>
@@ -151,8 +186,10 @@ const buildThumbDoc = (content: string): string =>
 
 onMounted(async () => {
   templates.value = await moduleStore.loadAvailableTemplates()
-  // 각 템플릿을 실제 렌더해 썸네일 생성 (순차 — 과도한 동시 fetch 방지)
+  // 썸네일 이미지가 없는 템플릿만 실제 렌더한다 (렌더 한 건당 모듈 수만큼 fetch가 돌아 비싸다).
+  // 순차 처리 — 과도한 동시 fetch 방지.
   for (const t of templates.value) {
+    if (thumbSrc(t)) continue
     try {
       const html = await moduleStore.renderTemplateHtml(t)
       srcdocs[t.id] = buildThumbDoc(html)
@@ -343,6 +380,15 @@ const pickTemplate = async (t: NewsletterTemplate) => {
 .tpl-card:hover .tpl-thumb {
   border-color: #4083f3;
   box-shadow: 0 4px 14px rgba(64, 131, 243, 0.18);
+}
+/* 미리 만들어 둔 썸네일 이미지 — 680×800으로 캡처한 것을 박스 안쪽(188×221)에 맞춰 크롭.
+   비율이 조금 어긋나도 윗부분이 남도록 object-position:top. */
+.tpl-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  display: block;
 }
 /* 680px로 렌더한 뒤 scale(190/680=0.2794)로 축소 — 상단을 고정 박스에 맞춰 크롭 */
 .tpl-thumb-iframe {
