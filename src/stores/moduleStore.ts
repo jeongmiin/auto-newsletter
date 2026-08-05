@@ -2480,6 +2480,12 @@ export const useModuleStore = defineStore('module', () => {
         continue
       }
 
+      // addModule은 선택 상태에 따라 삽입 위치를 바꾼다 —
+      //  · 선택 모듈이 그룹에 속하면 새 모듈도 그 그룹 안에 넣고(조립형 편집 규칙)
+      //  · 그룹이 선택돼 있으면 그 그룹 '바로 아래'에 넣는다.
+      // 템플릿 로드에서는 둘 다 방금 넣은 것을 가리켜, 그룹 멤버 다음 모듈이 줄줄이
+      // 그 그룹으로 빨려 들어간다 → 선택을 비워 항상 맨 끝에 붙게 한다.
+      clearSelection()
       addModule(moduleMetadata)
       const added = modules.value[modules.value.length - 1]
 
@@ -2493,20 +2499,16 @@ export const useModuleStore = defineStore('module', () => {
           ;(added.styles as Record<string, unknown>)[key] = value
         })
       }
-      // 그룹 소속 복원 (그룹 정의는 아래에서 일괄 복원)
-      if (moduleData.groupId) {
-        added.groupId = moduleData.groupId
-      }
-      // 행/컬럼 인덱스 복원 (행별 독립 컬럼 그룹)
-      if (moduleData.rowIndex != null) {
-        added.rowIndex = moduleData.rowIndex
-      }
-      if (moduleData.columnIndex != null) {
-        added.columnIndex = moduleData.columnIndex
-      }
-      if (moduleData.fullWidth) {
-        added.fullWidth = true // 레거시 데이터 — 렌더 시 rows로 유도됨
-      }
+      // 그룹 소속·컬럼 배치 복원 (그룹 정의는 아래에서 일괄 복원).
+      // 템플릿에 없는 값은 '지운다' — 남겨두면 addModule이 채워 넣은 값이 살아남는다.
+      if (moduleData.groupId) added.groupId = moduleData.groupId
+      else delete added.groupId
+      if (moduleData.rowIndex != null) added.rowIndex = moduleData.rowIndex
+      else delete added.rowIndex
+      if (moduleData.columnIndex != null) added.columnIndex = moduleData.columnIndex
+      else delete added.columnIndex
+      if (moduleData.fullWidth) added.fullWidth = true // 레거시 데이터 — 렌더 시 rows로 유도됨
+      else delete added.fullWidth
     }
 
     // 그룹 정의 복원 후 연속성 정리
