@@ -10,6 +10,7 @@
  * 레거시(구모델: group.columns + member.fullWidth)도 rows로 유도해 하위 호환한다.
  */
 import type { ModuleGroup, ModuleInstance } from '@/types/module'
+import { normalizeColumnWidths } from '@/utils/groupStyle'
 
 export const MAX_COLUMNS = 3
 
@@ -114,15 +115,14 @@ export function computeGroupLayout<T extends ModuleInstance>(
   orderedMembers: T[],
 ): GroupRowLayout<T>[] {
   const rows = layoutGroupRows(orderedMembers, resolveGroupRows(group, orderedMembers))
-  // 행별 컬럼 너비(%) 적용 — 길이가 그 행 컬럼 수와 정확히 일치하고 합계가 유효할 때만
+  // 행별 컬럼 너비(%) 적용 — 합이 정확히 100이 되도록 비례 배분해서 넘긴다.
+  // (그대로 두면 합이 100을 넘길 때 2단이 세로로 무너지고, 모자라면 남는 자리가 오른쪽에 몰린다)
   const cw = group.colWidths
   if (cw) {
     rows.forEach((row, r) => {
-      const w = cw[r]
-      if (row.columns > 1 && Array.isArray(w) && w.length === row.columns) {
-        const sum = w.reduce((a, b) => a + (Number(b) || 0), 0)
-        if (sum > 0) row.widths = w.map((v) => (Number(v) || 0))
-      }
+      if (row.columns <= 1) return
+      const normalized = normalizeColumnWidths(cw[r], row.columns)
+      if (normalized) row.widths = normalized
     })
   }
   return rows

@@ -6,6 +6,7 @@ import {
   resolveGroupStyles,
   DEFAULT_GROUP_STYLES,
   columnCellStyle,
+  normalizeColumnWidths,
   buildColumnLayoutHtml,
   COLUMN_BREAKPOINT_PX,
   groupBoxSide,
@@ -235,9 +236,15 @@ describe('groupStyle', () => {
 
   describe('columnCellStyle (컬럼 fluid-hybrid)', () => {
     it('컬럼 수에 따라 min-width 비율이 정확히 균등 분할된다', () => {
-      expect(columnCellStyle(2)).toContain('min-width:calc(50.0000% - 5px)')
-      expect(columnCellStyle(3)).toContain('min-width:calc(33.3333% - 5px)')
-      expect(columnCellStyle(4)).toContain('min-width:calc(25.0000% - 5px)')
+      expect(columnCellStyle(2)).toContain('min-width:50.0000%')
+      expect(columnCellStyle(3)).toContain('min-width:33.3333%')
+      expect(columnCellStyle(4)).toContain('min-width:25.0000%')
+    })
+
+    it('폭에서 컬럼 간격을 빼지 않는다 — 빼면 남는 자리가 오른쪽에 몰려 왼쪽으로 쏠린다', () => {
+      // calc(50% - 5px) × 2 = 100% - 10px → 왼쪽 여백 5px / 오른쪽 여백 15px
+      expect(columnCellStyle(2)).not.toContain('calc(50.0000% -')
+      expect(columnCellStyle(3)).not.toContain('calc(33.3333% -')
     })
 
     it('모바일 스택용 fluid-hybrid width 공식과 inline-block을 포함한다', () => {
@@ -248,14 +255,38 @@ describe('groupStyle', () => {
     })
 
     it('컬럼 수는 1~4로 클램프된다', () => {
-      expect(columnCellStyle(1)).toContain('min-width:calc(100.0000% - 5px)')
-      expect(columnCellStyle(9)).toContain('min-width:calc(25.0000% - 5px)')
+      expect(columnCellStyle(1)).toContain('min-width:100.0000%')
+      expect(columnCellStyle(9)).toContain('min-width:25.0000%')
+    })
+  })
+
+  describe('normalizeColumnWidths (컬럼 너비 비례 배분)', () => {
+    it('합이 100이 아니면 100이 되도록 비례 배분한다', () => {
+      // 51 + 50 = 101% — 그대로 두면 두 번째 컬럼이 줄바꿈돼 2단이 세로로 무너진다
+      const w = normalizeColumnWidths([51, 50], 2)!
+      expect(w[0] + w[1]).toBeCloseTo(100, 6)
+      expect(w[0]).toBeCloseTo(50.495, 3)
+      expect(w[1]).toBeCloseTo(49.505, 3)
     })
 
-    it('지정 너비에서도 컬럼 간격을 빼, 합이 100%를 넘겨도 아래로 밀려나지 않는다', () => {
-      // 51 + 50 = 101% — 간격을 빼지 않으면 두 번째 컬럼이 줄바꿈돼 2단이 세로로 무너진다
-      expect(columnCellStyle(2, 51)).toContain('min-width:calc(51.0000% - 5px)')
-      expect(columnCellStyle(2, 50)).toContain('min-width:calc(50.0000% - 5px)')
+    it('합이 100보다 작아도 채워 넣는다 (오른쪽 쏠림 방지)', () => {
+      const w = normalizeColumnWidths([30, 30], 2)!
+      expect(w).toEqual([50, 50])
+    })
+
+    it('이미 합이 100이면 그대로 둔다', () => {
+      expect(normalizeColumnWidths([40, 60], 2)).toEqual([40, 60])
+      expect(normalizeColumnWidths([25, 50, 25], 3)).toEqual([25, 50, 25])
+    })
+
+    it('길이가 컬럼 수와 다르면 null (균등 분할로 폴백)', () => {
+      expect(normalizeColumnWidths([50, 50], 3)).toBeNull()
+      expect(normalizeColumnWidths(undefined, 2)).toBeNull()
+    })
+
+    it('0 이하 값이 있으면 null (컬럼이 사라지지 않도록)', () => {
+      expect(normalizeColumnWidths([0, 100], 2)).toBeNull()
+      expect(normalizeColumnWidths([-10, 110], 2)).toBeNull()
     })
   })
 

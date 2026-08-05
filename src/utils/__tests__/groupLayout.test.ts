@@ -105,4 +105,31 @@ describe('groupLayout', () => {
       expect(res.rowCols).toEqual([1, 2, 1])
     })
   })
+describe('컬럼 너비(colWidths) 정규화', () => {
+    const twoColGroup = (colWidths) => ({ rows: [2], colWidths })
+    const twoColMembers = () => [mk('l', { rowIndex: 0, columnIndex: 0 }), mk('r', { rowIndex: 0, columnIndex: 1 })]
+
+    it('합이 100이 아닌 너비를 100이 되도록 비례 배분한다', () => {
+      // 51 + 50 = 101 → 그대로 두면 2단이 세로로 무너진다 (모듈 07번 실제 값)
+      const rows = computeGroupLayout(twoColGroup([[51, 50]]), twoColMembers())
+      const w = rows[0].widths
+      expect(w[0] + w[1]).toBeCloseTo(100, 6)
+      expect(w[0]).toBeCloseTo(50.495, 3)
+    })
+
+    it('합이 100보다 작아도 채워 넣어 오른쪽 쏠림을 막는다', () => {
+      const rows = computeGroupLayout(twoColGroup([[30, 30]]), twoColMembers())
+      expect(rows[0].widths).toEqual([50, 50])
+    })
+
+    it('쓸 수 없는 값이면 너비를 지정하지 않는다 (균등 분할)', () => {
+      expect(computeGroupLayout(twoColGroup([[0, 100]]), twoColMembers())[0].widths).toBeUndefined()
+      expect(computeGroupLayout(twoColGroup([[50]]), twoColMembers())[0].widths).toBeUndefined()
+    })
+
+    it('1컬럼 행에는 너비를 지정하지 않는다', () => {
+      const rows = computeGroupLayout({ rows: [1], colWidths: [[100]] }, [mk('a', { rowIndex: 0, columnIndex: 0 })])
+      expect(rows[0].widths).toBeUndefined()
+    })
+  })
 })

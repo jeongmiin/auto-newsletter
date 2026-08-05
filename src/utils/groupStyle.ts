@@ -158,10 +158,10 @@ export const COLUMN_GAP_PX = 5
  *  buildColumnLayoutHtml / 캔버스 .col-row 가 이를 처리)
  * 컬럼 간 간격은 각 셀 안쪽 padding(box-sizing:border-box라 폭에 포함)으로 준다.
  *
- * ⚠ min-width에서 간격(5px)을 **빼야** 한다. 안 빼면 컬럼 폭 합이 컨테이너를 넘어
- * 두 번째 컬럼이 아래로 밀려나며 2단이 통째로 세로 스택된다 —
- * 특히 사용자가 지정한 너비 합이 100%를 살짝 넘길 때(예: 51+50) 바로 깨진다.
- * 레거시 2단 모듈들도 `calc(N% - 5px)`을 쓴다(processors의 twoColumnRatioProcessor).
+ * ⚠ min-width에서 간격을 빼면 안 된다. `calc(N% - 5px)`로 하면 컬럼 폭 합이
+ * `100% - (컬럼수 × 5px)`이 되어 남는 자리가 **전부 오른쪽에 몰린다**
+ * (2단이면 왼쪽 5px / 오른쪽 15px). 대신 폭 합이 항상 100%가 되도록
+ * `normalizeColumnWidths`로 정규화해서 넘겨, 좌우 여백이 간격(5px)으로 같아지게 한다.
  */
 export function columnCellStyle(columns: number, widthPct?: number): string {
   const n = Math.min(Math.max(columns, 1), 4)
@@ -172,10 +172,30 @@ export function columnCellStyle(columns: number, widthPct?: number): string {
     'vertical-align:top',
     'box-sizing:border-box',
     `padding:${COLUMN_GAP_PX}px`,
-    `min-width:calc(${pct}% - ${COLUMN_GAP_PX}px)`,
+    `min-width:${pct}%`,
     'max-width:100%',
     `width:calc((${COLUMN_BREAKPOINT_PX}px - 100%) * ${COLUMN_BREAKPOINT_PX})`,
   ].join('; ')
+}
+
+/**
+ * 컬럼 너비(%)를 합이 정확히 100이 되도록 비례 배분한다.
+ *
+ * 사용자가 지정한 값은 합이 100이 아닐 수 있다(예: 레거시 모듈 07번의 51+50=101).
+ * 그대로 쓰면 ①합이 100을 넘으면 두 번째 컬럼이 아래로 밀려 2단이 세로로 무너지고
+ * ②합이 100보다 작으면 남는 자리가 오른쪽에 몰려 콘텐츠가 왼쪽으로 쏠린다.
+ * @returns 정규화된 너비 배열. 쓸 수 없는 값이면 null(균등 분할로 폴백)
+ */
+export function normalizeColumnWidths(
+  widths: number[] | undefined | null,
+  columns: number,
+): number[] | null {
+  if (!Array.isArray(widths) || widths.length !== columns || columns < 1) return null
+  const nums = widths.map((v) => Number(v) || 0)
+  if (nums.some((v) => v <= 0)) return null
+  const sum = nums.reduce((a, b) => a + b, 0)
+  if (sum <= 0) return null
+  return nums.map((v) => (v / sum) * 100)
 }
 
 /**
