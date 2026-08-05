@@ -5,15 +5,21 @@
     <link rel="icon" href="/auto-newsletter/develop/assets/favicon-C_tzJh4Y.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Newsletter Builder</title>
-    <!-- Material Symbols (아이콘) -->
+    <!-- Material Symbols (아이콘)
+         ⚠ 가변축 전체 범위(opsz 20..48, wght 100..700, GRAD -50..200)를 요청하면 폰트가 3.9MB가 된다.
+         실제로 쓰는 축(opsz 24 / wght 300..400 / FILL 0..1 / GRAD 0)만 남기고,
+         icon_names로 코드에서 쓰는 아이콘만 받아 13KB로 줄였다.
+         ⚠ 새 아이콘을 쓸 때는 아래 icon_names 목록에도 반드시 추가할 것 —
+           빠지면 아이콘 대신 이름 글자가 그대로 보인다.
+           (검사: src/utils/__tests__/materialSymbols.test.ts 가 코드와 목록을 대조한다) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300..400,0..1,0&icon_names=123,add,add_photo_alternate,ads_click,align_justify_center,align_justify_flex_end,align_justify_flex_start,apps,arrow_downward,arrow_upward,auto_awesome,border_all,border_bottom,border_left,border_outer,border_right,border_top,close,content_copy,dashboard,delete,design_services,desktop_windows,drag_indicator,error,expand_more,format_align_center,format_align_left,format_align_right,format_color_fill,format_color_text,format_letter_spacing_2,format_line_spacing,format_list_bulleted,image,info,ink_marker,link_off,lock,lock_open_right,match_case,palette,redo,remove,restart_alt,search,smartphone,splitscreen,table_chart,table_rows,text_fields,undo,view_column,wrap_text"
       rel="stylesheet"
     />
-    <script type="module" crossorigin src="/auto-newsletter/develop/assets/index-GRz6wjNZ.js"></script>
-    <link rel="stylesheet" crossorigin href="/auto-newsletter/develop/assets/index-CX9aOKfh.css">
+    <script type="module" crossorigin src="/auto-newsletter/develop/assets/index-DQZEsiTb.js"></script>
+    <link rel="stylesheet" crossorigin href="/auto-newsletter/develop/assets/index-BzMzrgLf.css">
   </head>
   <body>
     <div id="app"></div>
