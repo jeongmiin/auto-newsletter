@@ -16,7 +16,7 @@ import type {
 } from '@/types'
 import { useEditorStore } from './editorStore'
 import { formatTextWithBreaks } from '@/utils/textUtils'
-import { generateUniqueId, applyStylesToHtml } from '@/utils/htmlUtils'
+import { generateUniqueId, applyStylesToHtml, escapeForHtml } from '@/utils/htmlUtils'
 import {
   replaceModuleNewsHeaderContent,
   replaceModuleBasicHeaderContent,
@@ -62,6 +62,7 @@ import { sanitizeHtml } from '@/utils/sanitize'
 import { DEFAULT_GROUP_STYLES, wrapGroupHtmlForEmail, resolveGroupStyles, buildColumnLayoutHtml } from '@/utils/groupStyle'
 import { resolveWrapBorderCss } from '@/utils/wrapBorder'
 import { computeGroupLayout, resolveGroupRows, clampColumns, type GroupRowLayout } from '@/utils/groupLayout'
+import type { ComposedConversion } from '@/utils/legacyToComposed'
 
 // 나눈 컬럼의 '구성 요소' 종류 (Figma 717-9607)
 export type ComposedKind = 'image' | 'title' | 'text' | 'button' | 'smallButton'
@@ -327,6 +328,30 @@ export const useModuleStore = defineStore('module', () => {
   }
 
   /**
+   * 새로 추가하는 '조립형 그룹'이 들어갈 위치 — 항상 **선택한 것 바로 아래**.
+   *
+   * - 그룹이 선택됐거나(그룹 박스 클릭) 그룹 멤버가 선택된 상태면 → 그 그룹 **전체 다음**
+   *   (그룹 안에 그룹을 넣을 수는 없으므로 멤버 바로 뒤가 아니라 그룹이 끝나는 지점)
+   * - 단독 모듈이 선택돼 있으면 → 그 모듈 다음
+   * - 아무것도 선택돼 있지 않으면 → 맨 끝
+   */
+  const insertIndexAfterSelection = (): number => {
+    const selected = selectedModuleId.value
+      ? modules.value.find((m) => m.id === selectedModuleId.value)
+      : undefined
+    const groupId = selectedGroupId.value || selected?.groupId
+    if (groupId) {
+      const lastIdx = modules.value.map((m) => m.groupId).lastIndexOf(groupId)
+      if (lastIdx !== -1) return lastIdx + 1
+    }
+    if (selected) {
+      const idx = modules.value.indexOf(selected)
+      if (idx !== -1) return idx + 1
+    }
+    return modules.value.length
+  }
+
+  /**
    * [POC/실험] 모듈 02번을 '원소 모듈 그룹'으로 조립해 추가한다.
    * 단일 이미지 · 설명 텍스트(타이틀형) · 설명 텍스트(본문) · 단일 버튼을
    * 각각 독립 모듈로 만들고 하나의 그룹으로 묶는다.
@@ -373,8 +398,8 @@ export const useModuleStore = defineStore('module', () => {
     }
     if (created.length === 0) return null
 
-    // 맨 끝에 연속으로 추가한 뒤 하나의 그룹으로 묶는다.
-    modules.value.push(...created)
+    // 선택한 것 바로 아래에 연속으로 넣은 뒤 하나의 그룹으로 묶는다.
+    modules.value.splice(insertIndexAfterSelection(), 0, ...created)
     reorderModules()
     const groupId = createGroup(created.map((m) => m.id))
     // 조립 결과의 첫 원소를 선택 상태로 (속성 패널이 원소 단위로 열리는 것을 보여줌)
@@ -457,7 +482,7 @@ export const useModuleStore = defineStore('module', () => {
     }
     if (created.length === 0) return null
 
-    modules.value.push(...created)
+    modules.value.splice(insertIndexAfterSelection(), 0, ...created)
     reorderModules()
     // createGroup이 멤버 rowIndex/columnIndex로부터 rows(=[2])를 유도한다.
     const groupId = createGroup(created.map((m) => m.id))
@@ -537,7 +562,7 @@ export const useModuleStore = defineStore('module', () => {
       }
     }
 
-    modules.value.push(...created)
+    modules.value.splice(insertIndexAfterSelection(), 0, ...created)
     reorderModules()
     // createGroup이 멤버 rowIndex/columnIndex로부터 rows(=[2])를 유도한다.
     const groupId = createGroup(created.map((m) => m.id))
@@ -675,7 +700,7 @@ export const useModuleStore = defineStore('module', () => {
     }
     if (created.length === 0) return null
 
-    modules.value.push(...created)
+    modules.value.splice(insertIndexAfterSelection(), 0, ...created)
     reorderModules()
 
     // 단일 그룹으로 조립. createGroup이 멤버 (row,col)로부터 rows=[1,2]를 유도한다.
@@ -715,7 +740,7 @@ export const useModuleStore = defineStore('module', () => {
       })
     }
     if (created.length === 0) return null
-    modules.value.push(...created)
+    modules.value.splice(insertIndexAfterSelection(), 0, ...created)
     reorderModules()
     const groupId = createGroup(created.map((m) => m.id))
     // 그룹 스타일(배경색 등) 오버라이드 — 예: 푸터 전체 배경색
@@ -724,6 +749,86 @@ export const useModuleStore = defineStore('module', () => {
       if (g) g.styles = { ...g.styles, ...groupStyles }
     }
     selectAddedModule(created[0].id)
+    triggerRef(groups)
+    triggerRef(modules)
+    isDirty.value = true
+    return groupId
+  }
+
+  /**
+   * [파일 열기 v2 변환] 레거시 모듈을 옮겨 담은 조립 결과(ComposedConversion)를 맨 끝에 추가한다.
+   *
+   * `buildComposedGroup`과 달리 **선택 상태를 건드리지 않는다** — 임포트 루프는 `addModule`이
+   * "선택 모듈 바로 아래 삽입"하는 규칙에 의존하므로, 중간에 선택이 첫 멤버로 옮겨가면
+   * 이후 모듈이 그룹 안쪽에 끼어 들어가 순서가 깨진다.
+   * 그룹 이름·행별 컬럼 너비(colWidths)까지 한 번에 반영한다.
+   *
+   * @param into 이미 있는 그룹 안에 원소들을 그대로 풀어 넣을 위치(선택).
+   *   사용자가 직접 묶어둔 그룹 안의 레거시 모듈을 변환할 때 쓴다 — 새 그룹을 만들면
+   *   그룹 멤버 연속 배치 규칙 때문에 앞뒤 모듈 순서가 흐트러진다.
+   * @returns 생성된 그룹 id. 단일 원소·기존 그룹에 편입·실패면 null
+   */
+  const addComposedConversion = (
+    conversion: ComposedConversion,
+    into?: { groupId: string; rowIndex: number; columnIndex: number },
+  ): string | null => {
+    const created: ModuleInstance[] = []
+    for (const spec of conversion.specs) {
+      const meta = availableModules.value.find((m) => m.id === spec.id)
+      if (!meta) {
+        console.warn(`[addComposedConversion] 원소 모듈을 찾을 수 없음: ${spec.id}`)
+        continue
+      }
+      created.push({
+        id: generateUniqueId('module'),
+        moduleId: meta.id,
+        order: 0,
+        properties: { ...getDefaultProperties(meta), ...spec.properties },
+        styles: meta.defaultStyles || {},
+        // 기존 그룹에 편입할 때는 그 칸(행·컬럼)에 세로로 쌓는다
+        rowIndex: into ? into.rowIndex : spec.row,
+        columnIndex: into ? into.columnIndex : spec.col,
+        ...(into ? { groupId: into.groupId } : {}),
+      })
+    }
+    if (created.length === 0) return null
+
+    // 임포트 전용이라 선택 위치를 따지지 않고 저장 파일 순서대로 맨 끝에 이어 붙인다.
+    modules.value.push(...created)
+    reorderModules()
+
+    // 기존 그룹에 편입한 경우 새 그룹을 만들지 않는다 (그룹 정의는 저장 파일에서 복원됨)
+    if (into) {
+      triggerRef(modules)
+      isDirty.value = true
+      return null
+    }
+
+    // 원소가 하나뿐이면(예: 모듈 01번) 그룹으로 묶지 않고 단독 모듈로 둔다
+    if (conversion.single && created.length === 1) {
+      delete created[0].rowIndex
+      delete created[0].columnIndex
+      triggerRef(modules)
+      isDirty.value = true
+      return null
+    }
+
+    const groupId = createGroup(created.map((m) => m.id))
+    if (groupId) {
+      const g = groups.value.find((x) => x.id === groupId)
+      if (g) {
+        g.name = conversion.name
+        if (conversion.groupStyles) g.styles = { ...g.styles, ...conversion.groupStyles }
+        if (conversion.colWidths) {
+          // 행 컬럼 수와 길이가 맞는 행만 반영 (computeGroupLayout이 그 외는 무시하지만 데이터도 깨끗하게)
+          const widths: number[][] = []
+          conversion.colWidths.forEach((w, r) => {
+            if (Array.isArray(w) && w.length > 1) widths[r] = w
+          })
+          if (widths.length > 0) g.colWidths = widths
+        }
+      }
+    }
     triggerRef(groups)
     triggerRef(modules)
     isDirty.value = true
@@ -3667,7 +3772,12 @@ export const useModuleStore = defineStore('module', () => {
     // style의 width:100%/max-width로 반응형 동작한다. (div 래퍼 → 테이블 래퍼)
     const wrapBgHex = /background-color:\s*(#[0-9a-fA-F]{6})/.exec(wrapStyle)?.[1] || '#ffffff'
 
-    const wrapOpen = `<table role="presentation" class="wrap" align="center" width="680" cellpadding="0" cellspacing="0" border="0" bgcolor="${wrapBgHex}" style="${wrapStyle}">
+    // "전체 스타일 > 뉴스레터 요약" → 래퍼 테이블의 summary 속성 (검색 엔진·스크린 리더용 한 줄 설명).
+    // 비어 있으면 속성 자체를 넣지 않는다(빈 summary=""는 의미가 없다).
+    const summaryText = (wrapSettings.summary || '').trim()
+    const summaryAttr = summaryText ? ` summary="${escapeForHtml(summaryText)}"` : ''
+
+    const wrapOpen = `<table role="presentation" class="wrap" align="center" width="680" cellpadding="0" cellspacing="0" border="0" bgcolor="${wrapBgHex}"${summaryAttr} style="${wrapStyle}">
 <tr><td style="padding:0;">`
     const wrapClose = `</td></tr></table>`
 
@@ -3991,6 +4101,7 @@ ${fullHtml}
     addComposedMultiImage,
     addComposedFooter,
     addComposedTwoButton,
+    addComposedConversion,
     composedBuilderMap,
     selectModule,
     updateModuleProperty,

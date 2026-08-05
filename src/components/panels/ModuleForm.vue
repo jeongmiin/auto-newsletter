@@ -2628,6 +2628,9 @@ const STYLE_SECTION_RULES: Record<string, '*' | { exclude: string } | Set<string
   ModuleContactInfo: new Set(['여백']),
   // SNS 아이콘: 핵심 입력(배경색·정렬·구성 요소)은 항상 펼친 채 두고 여백만 접이식 카드로
   ModuleSnsIcons: new Set(['여백']),
+  // 언어 선택 버튼: 버튼 1~3은 자기 노출 토글이 있어 이미 접이식이다.
+  // 색상·공통·여백 섹션은 토글이 없어 평면 나열됐는데, 다른 모듈의 스타일 섹션과 같게 접이식 카드로 맞춘다.
+  TopLanguageButton: new Set(['기본 버튼 색상', '액티브 버튼 색상', '버튼 공통', '여백']),
 }
 const isStyleSection = (group: PropGroup): boolean => {
   if (!group.name) return false

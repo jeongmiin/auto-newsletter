@@ -153,10 +153,15 @@ export const COLUMN_GAP_PX = 5
 
 /**
  * 컬럼 셀(각 컬럼 래퍼)의 인라인 스타일 문자열.
- * box-sizing:border-box + min-width를 정확히 100/n % 로 잡아, 컬럼들이 폭을 정확히 균등 분할한다.
+ * box-sizing:border-box + min-width로 컬럼 폭을 잡는다.
  * (좌우 여백 없이 딱 맞으려면 셀 사이 공백이 없어야 하므로, 부모에 font-size:0 을 적용한다 —
  *  buildColumnLayoutHtml / 캔버스 .col-row 가 이를 처리)
  * 컬럼 간 간격은 각 셀 안쪽 padding(box-sizing:border-box라 폭에 포함)으로 준다.
+ *
+ * ⚠ min-width에서 간격(5px)을 **빼야** 한다. 안 빼면 컬럼 폭 합이 컨테이너를 넘어
+ * 두 번째 컬럼이 아래로 밀려나며 2단이 통째로 세로 스택된다 —
+ * 특히 사용자가 지정한 너비 합이 100%를 살짝 넘길 때(예: 51+50) 바로 깨진다.
+ * 레거시 2단 모듈들도 `calc(N% - 5px)`을 쓴다(processors의 twoColumnRatioProcessor).
  */
 export function columnCellStyle(columns: number, widthPct?: number): string {
   const n = Math.min(Math.max(columns, 1), 4)
@@ -167,7 +172,7 @@ export function columnCellStyle(columns: number, widthPct?: number): string {
     'vertical-align:top',
     'box-sizing:border-box',
     `padding:${COLUMN_GAP_PX}px`,
-    `min-width:${pct}%`,
+    `min-width:calc(${pct}% - ${COLUMN_GAP_PX}px)`,
     'max-width:100%',
     `width:calc((${COLUMN_BREAKPOINT_PX}px - 100%) * ${COLUMN_BREAKPOINT_PX})`,
   ].join('; ')

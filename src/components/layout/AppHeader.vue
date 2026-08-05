@@ -126,6 +126,7 @@ import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
 import { processQuillHtml } from '@/utils/quillHtmlProcessor'
 import { useNewsletterImport } from '@/composables/useNewsletterImport'
+import { serializeModule } from '@/utils/projectFile'
 import { getHistoryInstance } from '@/composables/useHistory'
 import { useToast } from 'primevue/usetoast'
 
@@ -450,13 +451,9 @@ const buildHtmlDocument = (finalHtml: string, includeMetadata: boolean): string 
   let metadataBlock = ''
   if (includeMetadata) {
     const projectState = {
-      modules: moduleStore.modules.map((m) => ({
-        moduleId: m.moduleId,
-        order: m.order,
-        properties: m.properties,
-        styles: m.styles,
-        ...(m.groupId ? { groupId: m.groupId } : {}),
-      })),
+      // 직렬화는 파일 열기(복원)와 짝이라 utils/projectFile에 공용으로 둔다 —
+      // 여기서 필드를 빠뜨리면 다시 열었을 때 그대로 유실된다.
+      modules: moduleStore.modules.map(serializeModule),
       groups: moduleStore.groups,
       wrapSettings: editorStore.wrapSettings,
     }

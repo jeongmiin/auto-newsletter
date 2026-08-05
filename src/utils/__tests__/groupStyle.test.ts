@@ -235,9 +235,9 @@ describe('groupStyle', () => {
 
   describe('columnCellStyle (컬럼 fluid-hybrid)', () => {
     it('컬럼 수에 따라 min-width 비율이 정확히 균등 분할된다', () => {
-      expect(columnCellStyle(2)).toContain('min-width:50.0000%')
-      expect(columnCellStyle(3)).toContain('min-width:33.3333%')
-      expect(columnCellStyle(4)).toContain('min-width:25.0000%')
+      expect(columnCellStyle(2)).toContain('min-width:calc(50.0000% - 5px)')
+      expect(columnCellStyle(3)).toContain('min-width:calc(33.3333% - 5px)')
+      expect(columnCellStyle(4)).toContain('min-width:calc(25.0000% - 5px)')
     })
 
     it('모바일 스택용 fluid-hybrid width 공식과 inline-block을 포함한다', () => {
@@ -248,8 +248,14 @@ describe('groupStyle', () => {
     })
 
     it('컬럼 수는 1~4로 클램프된다', () => {
-      expect(columnCellStyle(1)).toContain('min-width:100.0000%')
-      expect(columnCellStyle(9)).toContain('min-width:25.0000%')
+      expect(columnCellStyle(1)).toContain('min-width:calc(100.0000% - 5px)')
+      expect(columnCellStyle(9)).toContain('min-width:calc(25.0000% - 5px)')
+    })
+
+    it('지정 너비에서도 컬럼 간격을 빼, 합이 100%를 넘겨도 아래로 밀려나지 않는다', () => {
+      // 51 + 50 = 101% — 간격을 빼지 않으면 두 번째 컬럼이 줄바꿈돼 2단이 세로로 무너진다
+      expect(columnCellStyle(2, 51)).toContain('min-width:calc(51.0000% - 5px)')
+      expect(columnCellStyle(2, 50)).toContain('min-width:calc(50.0000% - 5px)')
     })
   })
 
