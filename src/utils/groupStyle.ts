@@ -171,6 +171,10 @@ export function columnCellStyle(columns: number, widthPct?: number): string {
     'display:inline-block',
     'vertical-align:top',
     'box-sizing:border-box',
+    // 부모의 font-size:0(셀 사이 공백 제거용)을 셀 안에서 되돌린다.
+    // 내보내기 HTML에는 캔버스의 .col-cell 규칙이 없어, 안 되돌리면 자기 크기를 지정하지 않은
+    // 콘텐츠가 0px로 사라진다.
+    'font-size:14px',
     `padding:${COLUMN_GAP_PX}px`,
     `min-width:${pct}%`,
     'max-width:100%',
