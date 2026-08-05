@@ -18,7 +18,11 @@ export default defineConfig(({ command }) => {
     base: deployBase,
     plugins: [
       vue(),
-      vueDevTools(),
+      // Vue DevTools는 스토어 상태를 깊게 구독해서, 모듈을 하나 추가할 때마다 모듈 배열
+      // 전체를 다시 순회한다. 모듈이 수십 개인 뉴스레터(템플릿 선택·파일 열기)에서는
+      // 이 순회가 O(n²)로 불어나 68개 기준 13초가 걸린다(끄면 0.9초, 빌드본 0.35초).
+      // 필요할 때만 VUE_DEVTOOLS=1 로 켠다.
+      ...(process.env.VUE_DEVTOOLS === '1' ? [vueDevTools()] : []),
     ],
     resolve: {
       alias: {
