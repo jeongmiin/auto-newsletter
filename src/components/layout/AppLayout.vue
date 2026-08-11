@@ -19,8 +19,6 @@
           v-else-if="!hasSelection && activeCategory"
           :category="activeCategory"
         />
-        <!-- 모듈 순서(구 '모듈 목차') — 레일의 '모듈 순서' 메뉴에서만 열린다 -->
-        <ModuleOutlinePanel v-else-if="!hasSelection && editorStore.activeMenu === 'order'" />
         <!-- AI 도구 — 아직 준비 중(안내 패널) -->
         <ComingSoonPanel v-else-if="!hasSelection && editorStore.activeMenu === 'ai'" />
         <SelectedItemPanel v-else-if="hasSelection" />
@@ -52,6 +50,9 @@
         <!-- 캔버스 영역 -->
         <CanvasArea class="flex-1" />
       </div>
+
+      <!-- 우측 '모듈 순서' 패널 — 기본 닫힘. 레일의 '모듈 순서' 메뉴나 패널 왼쪽 탭으로 여닫는다 -->
+      <ModuleOutlinePanel />
     </div>
 
     <!-- 좌측 패널 리사이즈 오버레이 -->

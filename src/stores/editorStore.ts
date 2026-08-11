@@ -20,9 +20,17 @@ export const useEditorStore = defineStore('editor', () => {
   }
 
   // 좌측 아이콘 레일 활성 메뉴 (신규 디자인 IA)
+  // '모듈 순서'는 좌측 패널을 바꾸지 않고 캔버스 오른쪽 패널을 여닫으므로 여기 포함되지 않는다.
   type EditorMenu =
-    | 'style' | 'point' | 'modules' | 'text' | 'image' | 'button' | 'table' | 'ai' | 'order'
+    | 'style' | 'point' | 'modules' | 'text' | 'image' | 'button' | 'table' | 'ai'
   const activeMenu = ref<EditorMenu>('modules')
+
+  // 캔버스 오른쪽 '모듈 순서' 패널 열림 상태 (기본 닫힘 — 레일 메뉴나 패널 가장자리 탭으로 여닫는다)
+  const isOrderPanelOpen = ref(false)
+
+  const toggleOrderPanel = (): void => {
+    isOrderPanelOpen.value = !isOrderPanelOpen.value
+  }
 
   // true면 캔버스에 선택된 모듈/그룹이 있어도 좌측 패널은 activeMenu(레일) 쪽을 그대로 보여준다.
   // 레일 메뉴를 명시적으로 클릭했을 때 켜지고, 모듈/그룹이 "새로" 선택되면(모듈 추가 포함) 자동으로 꺼진다
@@ -179,6 +187,8 @@ export const useEditorStore = defineStore('editor', () => {
     activeMenu,
     forceRailPanel,
     setActiveMenu,
+    isOrderPanelOpen,
+    toggleOrderPanel,
     setCanvasWidth,
     setModulePanelMode,
     setHoveredModuleId,

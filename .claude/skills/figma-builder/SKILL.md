@@ -85,7 +85,8 @@ description: >-
 2. **빠른추가 카드 목록**: 흰 배경 + 테두리 rounded-8 카드, 좌측 텍스트(추가할 요소명, 예: "타이틀 추가"/"단일 이미지 추가"/"단일 버튼 추가") + 우측 `add_2` "+" 아이콘. 클릭하면 해당 요소(모듈 또는 모듈 안의 서브 콘텐츠)를 캔버스에 즉시 추가. 이미지/버튼처럼 시각 미리보기가 있는 카드는 위쪽에 목업 썸네일이 붙는다(372/412/415 참고).
 3. **(텍스트·이미지만 확인됨) 카테고리 갤러리**: "OO형 모듈" 라벨 + 그 카테고리에 속하는 완성형 모듈들을 상시 썸네일 카드로 나열(기존 `ModulePanel.vue`의 카드/썸네일 로직 재사용 가능 — 카테고리로 이미 필터링된 상태로 렌더하면 됨). **버튼 메뉴(415-2553)에는 이 갤러리가 없음** — 빠른추가 카드 2개뿐. 테이블/구분선·여백은 미확인이라 갤러리 유무 불명.
 
-**모듈순서 레일 메뉴 = 신규 디자인 아님.** 사용자 명시: 클릭 시 **기존에 이미 구현된 `ModuleOutlinePanel.vue`**(모듈 목차) 그대로 보여주면 된다. 새로 디자인할 필요 없음 — `activeMenu === 'order'`일 때 좌측에 `ModuleOutlinePanel`을 배치하는 배선 작업만 필요.
+~~**모듈순서 레일 메뉴 = 신규 디자인 아님.**~~ **(2026-08-11 폐기 — Figma 969-7308/969-7165으로 신규 디자인을 받았다. 아래 Phase 18 참고.)**
+모듈 순서는 **좌측 컨텍스트 패널이 아니라 캔버스 오른쪽의 접이식 패널**이다. `activeMenu`에서 `'order'`는 제거됐고, 레일의 '모듈 순서' 버튼은 `editorStore.toggleOrderPanel()`만 호출한다(좌측 패널은 그대로 둔다).
 
 ### 6-1) ⭐ 새 UI는 레거시 모듈이 아니라 **모듈 v2(조립형)를 기본으로 적용한다** (사용자 명시, 중요)
 
@@ -244,6 +245,27 @@ description: >-
   - **줄바꿈 규칙을 행간·자간 팝오버로 이동**: 툴바에 홀로 남던 3번째 줄을 없애고 같은 '텍스트 흐름' 팝오버에 세그먼트(`기본 / 단어 기준 / 글자 기준`, `.rte-sp-seg`)로 합쳤다. **툴바 한 줄에는 못 들어간다** — 패널 폭 277~309px에서 1줄이 이미 272~282px라 픽커(64px, 아이콘화해도 30~38px)를 더하면 반드시 줄바꿈된다. 적용은 `quill.format('wordBreak', …)`(BLOCK 스코프), 상태는 `editorFormatState.wordBreak`로 동기화. 결과적으로 툴바는 Figma 그대로 2줄.
   - **입력란 높이 조절(resize)**: `.ql-editor`에 `resize: vertical; overflow: auto`(+`min-height:169px`), `.ql-container`는 `height:auto`. ⚠️ PrimeVue `<Editor editorStyle="height: 200px">`의 **인라인 고정 높이를 제거해야** 그립을 끌 때 회색 박스가 함께 커진다(안 지우면 에디터만 커지고 박스는 200px에 머문다).
   - **검증**: `npm run build` 클린, `vitest` 376개 통과, Playwright로 (0)기본 크기 14→24→10px 변경 시 **에디터 렌더 크기와 캔버스 값이 항상 일치**, 부분 30px는 에디터에서도 30px로 보임, (1)커서만 → 배지 없음·기본값 조정이 캔버스 반영, (2)"섹션 타이틀"에서 `타이틀`만 선택 → 배지 노출·그 부분만 28px(`<span style="font-size:28px">타이틀</span>`), (3)전체 선택 시 값 `--`, (4)되돌리기로 인라인 제거 후 기본값 복귀, (5)에디터 2개 모듈에서 서브 타이틀 선택 시 그 필드만 배지·서브 에디터에만 적용됨을 확인.
+
+- **Phase 18 완료(2026-08-11)**: '모듈 순서'를 좌측 패널 → **캔버스 오른쪽 접이식 패널**로 이전 + 그룹형 리스트 재설계 (Figma **969-7308**(패널 열림) / **969-7165**(닫힘) / 리스트 셸 **969-7309**).
+  - **위치·개폐 모델 변경(핵심)**: `EditorMenu` 유니온에서 `'order'` 제거(`editorStore.ts`), `AppLayout.vue`의 좌측 `activeMenu==='order'` 분기 삭제, 대신 캔버스 오른쪽에 `<ModuleOutlinePanel />`을 상시 마운트. 새 상태 `isOrderPanelOpen`(**기본 false**) + `toggleOrderPanel`/`setOrderPanelOpen`. `EditorSidebar.vue`는 `RailKey = MenuKey | 'order'`로 나눠, `'order'`만 `toggleOrderPanel()`을 부르고 `setActiveMenu`를 **호출하지 않는다** → 좌측 패널(선택 속성/카테고리 메뉴)이 그대로 유지된다. 레일 활성 표시도 `isActive()`에서 `'order'`는 `isOrderPanelOpen` 기준으로 분기.
+  - **도크 구조**: `.order-dock`(position:relative) > `.order-tab`(왼쪽 가장자리 탭, `left:-34px`, 34×64, 좌측 라운드) + `.order-panel`(320px ↔ 0, width 트랜지션). 내부 `.order-inner`는 **고정 320px**이어야 접히는 동안 리플로우가 안 생긴다. 닫히면 패널 폭이 0이라 탭이 자연히 화면 오른쪽 끝에 붙는다(Figma 969-7165와 동일). 탭 아이콘은 `arrow_back_ios` — 닫힘 `◀`(그대로), 열림 `▶`(rotate 180).
+  - **행 스펙**: h45 · px5 · rounded-4 · gap8 → `drag_indicator`(24px) · **32px 슬롯**(그룹=chevron / 모듈=Checkbox 20px) · 종류 아이콘(22px) · 라벨(14px) · (그룹 한정) 우측 32px `link_off`. 호버 `#f2f4f6`(gray/100), 선택 `#ebf3ff`(blue/50), 그룹 라벨 `#b037ce`, 모듈 라벨 `#6b7684`, 그룹 아이콘/chevron `#333d4b`. 헤더는 `모듈 순서`(20px medium) + 개수(16px `#8b95a1`), 그 아래 `그룹 묶기 (n)` 버튼(`#4e5968`, h40, rounded-8).
+  - **아코디언**: 그룹은 **기본 닫힘**, `expandedGroupIds: Set<string>`로 그룹마다 독립 — 다른 그룹을 열어도 기존 열림/닫힘 상태가 그대로 유지된다(배타적 아코디언 아님). chevron은 `arrow_back_ios` 하나를 회전해 씀: 접힘 `rotate(180deg)`(▶) / 펼침 `rotate(-90deg)`(▼).
+  - **하위 모듈 행은 드래그 핸들 없이 32px 들여쓰기**. 최상위 드래그(`handle=".order-drag"`, 그룹은 한 덩어리로 이동)는 기존 `displayItems`/`setDisplayOrder` 그대로. 그룹 **안에서** 멤버를 재배치하는 중첩 draggable은 여전히 미구현(`rowIndex` 레이아웃이 깨질 수 있어 의도적으로 제외) — 그래서 멤버 행에 죽은 핸들을 두지 않았다. Figma에는 펼친 그룹 상태가 없어 충돌 없음.
+  - **종류 아이콘**은 `ModuleMetadata.category` 기준 `CATEGORY_ICON` Record(이미지=`broken_image`, 텍스트=`match_case`, 버튼=`ads_click`, 테이블=`border_all`, 구분선=`vertical_distribute`, social=`share`, 그 외=`widgets`), 그룹은 `dashboard`. ⚠ **Record 맵으로 둔 이유**: `materialSymbols.test.ts`가 리터럴·삼항·`icon:`·`*_ICON Record`만 훑기 때문에 switch문으로 두면 subset 검사에 안 잡힌다. `index.html`의 `icon_names`에 `arrow_back_ios,broken_image,share,vertical_distribute,widgets` 추가함.
+  - **텍스트형 모듈 라벨 = 실제 입력 문구**(Figma의 'NEWSLETTER #60' 등): `category==='text'`일 때 메타데이터의 첫 `textarea` prop 값을 태그·엔티티 제거 후 사용하고, 비면 모듈명으로 폴백. 라벨은 `text-overflow: ellipsis`로 잘린다.
+  - **그룹 라벨**은 `group.name`(조립형 템플릿으로 만들면 모듈명이 들어감, Phase 8) → 없으면 `그룹 · N개`. **그룹 해제**는 캔버스 `.group-top-toolbar`와 같은 `moduleStore.ungroup` + `link_off` 아이콘이며, 그룹 행에 **호버하거나 그 그룹이 선택됐을 때만** opacity로 노출(Figma에서 선택행·호버행 둘 다 아이콘이 보인다).
+  - **검증**: `vue-tsc --noEmit` 클린, `vitest` 628개 통과, Playwright로 (1)기본 닫힘(panel width 0, 탭이 화면 우측 끝 x=1566), (2)레일 클릭 시 320px로 열리고 **좌측 패널 폭 368px 불변**, (3)그룹 기본 접힘 → 1번 펼침(하위 6) → 2번도 펼침(12, 1번 유지) → 1번만 접음(6, 2번 유지), (4)선택 `rgb(235,243,255)`·호버 `rgb(242,244,246)`·그룹 라벨 `rgb(176,55,206)`, (5)그룹 해제 클릭 시 그룹 2→1, (6)핸들 드래그로 최상위 순서 변경, (7)라벨이 행 밖으로 넘치지 않음을 확인.
+
+- **Phase 19 완료(2026-08-11)**: '모듈 순서' 패널 — 그룹 아코디언 **펼친 상태** 디자인 + 그룹 내부 드래그 + 체크박스 범위 축소 (Figma **969-8001**(밴드 있는 최종안) / **969-7618**(멤버 선택 상태)).
+  - **펼친 그룹 = 한 덩어리 밴드**: 그룹 행 + 하위 모듈을 `.order-group.is-expanded`로 감싸고 배경 `rgba(235,243,255,0.55)`(**blue/50 @ 55%**, Figma 969-8045 실측값) + `border-radius:4px` + `gap:10px`. 그룹 행은 그 위에서 선택 시 `#ebf3ff`(불투명)로 한 단계 진해진다.
+  - **하위 모듈 행**: `margin-left:37px` · 폭 233px(= 270 − 37, Figma와 픽셀 일치) · `drag_indicator`만 두고 **체크박스 제거**. 선택 시 배경 `#ebf3ff` + 라벨이 `#6b7684` → **`#333d4b`(gray/800)**, 드래그 핸들도 진해짐(Figma 969-7683).
+  - **체크박스는 '그룹에 속하지 않은 모듈'에만** (사용자 규칙: 체크박스의 목적이 '그룹 묶기'이므로). `checkableModules` computed가 `!m.groupId && checked`로 걸러 개수·묶기 대상을 모두 이 기준으로 통일 → 체크 후 다른 경로로 그룹에 편입된 모듈이 카운트에 남지 않는다.
+    - ⚠️ **부수 효과(의도됨)**: 기존 그룹을 체크해 합치던 `mergeModulesIntoGroup` 경로가 이 패널에서 도달 불가능해졌다(스토어 함수·테스트는 그대로 남아 있음). 그룹끼리 병합 UI가 다시 필요해지면 별도 진입점을 만들어야 한다.
+  - **그룹 내부 드래그 — `moduleStore.reorderGroupMembers(groupId, orderedIds)` 신설**: 기존 멤버 순서대로 모아둔 **(배열 슬롯 + rowIndex/columnIndex) 좌표를 고정**해두고 그 자리에 새 순서의 멤버를 꽂는다. → 1단 그룹은 단순 재배열, 다단 그룹은 "어떤 모듈이 어느 칸에 놓이는지"만 바뀌어 `group.rows`(행별 컬럼 수)가 절대 깨지지 않는다. Phase 13에서 "구조상 어렵다"고 미뤘던 항목의 해법.
+  - ⚠️ **중첩 draggable의 handle은 반드시 분리할 것**: 바깥 리스트 `handle=".order-drag--root"`, 그룹 내부 리스트 `handle=".order-drag--member"`. 같은 클래스를 쓰면 멤버 핸들을 잡았을 때 바깥 Sortable이 `closest('.order-item')`로 **그룹 전체를 끌어버린다**. 공통 시각 스타일은 `.order-drag`가 따로 담당(두 핸들 모두 이 클래스를 함께 가진다).
+  - **Playwright 드래그 주의**: `mouse.move`를 한 번에 크게 옮기면 SortableJS가 반응하지 않는다 — 20스텝 정도로 쪼개고 스텝마다 25ms 정도 쉬어야 실제로 재정렬된다(이전 검증에서 "드래그가 안 먹는다"고 오판했던 원인).
+  - **검증**: `vue-tsc` 클린, `vitest` **630개** 통과(`reorderGroupMembers` 테스트 2개 추가 — 그룹 경계 유지, 다단 골격 유지), Playwright로 (1)밴드 `rgba(235,243,255,0.55)`·radius 4px, (2)하위 들여쓰기 37px·폭 233px·체크박스 0개·핸들 6개, (3)멤버 선택 시 `rgb(235,243,255)` + 라벨 `rgb(51,61,75)`, (4)멤버 드래그로 패널·**캔버스 렌더 순서 동시 변경** + 그룹/최상위 개수 불변, (5)그룹 해제 → 단독 모듈 6개 전부 체크박스 노출 → 2개 체크 후 묶기 → 그룹 1개 + 남은 4개만 체크박스, (6)라벨이 행 밖으로 넘치지 않고 리스트 가로 스크롤 없음을 확인.
 
 ## 향후 방향 (사용자 명시, 아직 미구현)
 - **모듈 v2를 메인 시스템으로 승격** (2026-07-18 확정): 새 카테고리 레일 UI는 v2 조립형 모듈을 기본으로 적용(6-1 섹션 참고). v2 템플릿이 없는 카테고리(예: 테이블형)는 **레거시 모듈을 당분간 유지**하고 점진적으로 교체 — 한 번에 전체 전환 금지, 기능 손실 없이 진행.

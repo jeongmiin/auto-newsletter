@@ -1,13 +1,14 @@
 <template>
   <nav class="editor-rail">
-    <template v-for="(item, i) in items" :key="item.key">
+    <!-- 구분선 항목이 뒤따르는 메뉴와 같은 key를 쓰므로(예: 'point' 2개) 인덱스를 key로 쓴다 -->
+    <template v-for="(item, i) in items" :key="i">
       <!-- 구분선 -->
       <div v-if="item.divider" class="rail-divider"></div>
       <button
         v-else
         type="button"
         class="rail-item"
-        :class="{ 'is-active': activeMenu === item.key && !hasSelection }"
+        :class="{ 'is-active': isActive(item.key) }"
         @click="select(item.key)"
       >
         <span class="material-symbols-outlined rail-icon">{{ item.icon }}</span>
@@ -23,11 +24,13 @@ import { storeToRefs } from 'pinia'
 import { useEditorStore } from '@/stores/editorStore'
 import { useModuleStore } from '@/stores/moduleStore'
 
-type MenuKey = 'style' | 'point' | 'modules' | 'text' | 'image' | 'button' | 'table' | 'ai' | 'order'
+type MenuKey = 'style' | 'point' | 'modules' | 'text' | 'image' | 'button' | 'table' | 'ai'
+// '모듈 순서'는 좌측 컨텍스트 패널이 아니라 캔버스 오른쪽 패널을 여닫는 별도 동작이다.
+type RailKey = MenuKey | 'order'
 
 const editorStore = useEditorStore()
 const moduleStore = useModuleStore()
-const { activeMenu } = storeToRefs(editorStore)
+const { activeMenu, isOrderPanelOpen } = storeToRefs(editorStore)
 
 // 캔버스에서 모듈/그룹을 편집 중(속성 패널 노출)이면 어떤 레일 메뉴도 활성 표시하지 않는다.
 // AppLayout의 패널 전환 조건과 동일 — 캔버스 빈 영역 클릭으로 선택이 풀리면 직전 메뉴가 다시 is-active 된다.
@@ -36,7 +39,7 @@ const hasSelection = computed(
 )
 
 // 레일 메뉴 (Figma node 316-2071 순서/아이콘 기준, Material Symbols)
-const items = computed<Array<{ key: MenuKey; label: string; icon: string; divider?: boolean }>>(() => [
+const items = computed<Array<{ key: RailKey; label: string; icon: string; divider?: boolean }>>(() => [
   { key: 'style', label: '전체 스타일', icon: 'design_services' },
   { key: 'point', label: '포인트 색상', icon: 'palette' },
   { key: 'point', label: '', icon: '', divider: true },
@@ -56,9 +59,17 @@ const items = computed<Array<{ key: MenuKey; label: string; icon: string; divide
 // 좌측 패널은 이 레일 메뉴를 그대로 보여준다(선택 자체는 유지 — 그룹 멤버 선택 중 카테고리 메뉴에서
 // 원소 모듈을 추가하면 그 그룹에 삽입되는 흐름이 끊기지 않도록). 새로 선택이 바뀌면
 // moduleStore의 감시 로직이 forceRailPanel을 자동으로 꺼서 속성 패널로 되돌아간다.
-const select = (key: MenuKey) => {
+const select = (key: RailKey) => {
+  // '모듈 순서'는 좌측 패널을 그대로 둔 채 캔버스 오른쪽 패널만 여닫는다.
+  if (key === 'order') {
+    editorStore.toggleOrderPanel()
+    return
+  }
   editorStore.setActiveMenu(key)
 }
+
+const isActive = (key: RailKey): boolean =>
+  key === 'order' ? isOrderPanelOpen.value : activeMenu.value === key && !hasSelection.value
 </script>
 
 <style scoped>

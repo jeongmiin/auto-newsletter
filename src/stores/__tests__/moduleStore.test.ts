@@ -322,6 +322,37 @@ describe('moduleStore', () => {
       expect(group?.rows).toEqual([2])
     })
 
+    it('reorderGroupMembers는 그룹 안 멤버 순서만 바꾸고 그룹 경계는 유지한다', () => {
+      const store = useModuleStore()
+      const [a, b, c] = addThree(store)
+      const gid = store.createGroup([a, b])
+      store.reorderGroupMembers(gid!, [b, a])
+      // 그룹 멤버 순서만 뒤집히고, 그룹 밖 모듈(c)은 계속 뒤에 남는다
+      expect(store.modules.map((m) => m.id)).toEqual([b, a, c])
+      expect(store.modules.map((m) => m.order)).toEqual([0, 1, 2])
+      expect(store.modules.find((m) => m.id === c)?.groupId).toBeUndefined()
+    })
+
+    it('reorderGroupMembers는 행/컬럼 골격을 그대로 두고 멤버만 자리를 바꾼다', () => {
+      const store = useModuleStore()
+      const [a, b, c] = addThree(store)
+      const g1 = store.createGroup([b, c])
+      store.splitModuleColumns(b) // g1 0행 → 2단
+      store.moveModuleColumn(c, 'right') // C를 1번 컬럼으로
+      const merged = store.mergeModulesIntoGroup([a, b, c])!
+      const group = store.groups.find((g) => g.id === merged)
+      expect(group?.rows).toEqual([1, 2])
+
+      store.reorderGroupMembers(merged, [c, a, b])
+      // 슬롯(0행 1컬럼 / 1행 0컬럼 / 1행 1컬럼)은 그대로, 그 자리에 새 순서의 멤버가 들어간다
+      expect(group?.rows).toEqual([1, 2])
+      expect(store.modules.map((m) => m.id)).toEqual([c, a, b])
+      expect(store.modules.find((m) => m.id === c)).toMatchObject({ rowIndex: 0, columnIndex: 0 })
+      expect(store.modules.find((m) => m.id === a)).toMatchObject({ rowIndex: 1, columnIndex: 0 })
+      expect(store.modules.find((m) => m.id === b)).toMatchObject({ rowIndex: 1, columnIndex: 1 })
+      void g1
+    })
+
     it('mergeModulesIntoGroup은 각 그룹의 행 구조를 보존해 합친다 (1행+2행)', () => {
       const store = useModuleStore()
       const [a, b, c] = addThree(store)

@@ -2356,6 +2356,35 @@ export const useModuleStore = defineStore('module', () => {
   }
 
   /**
+   * [모듈 순서 패널] 펼친 그룹 안에서 멤버 순서를 바꾼다.
+   *
+   * 그룹의 행/컬럼 골격은 건드리지 않는다 — 기존 멤버 순서대로 모아둔
+   * (배열 슬롯 + rowIndex/columnIndex) 좌표를 그대로 두고, 그 자리에 새 순서의 멤버를 다시 꽂는다.
+   * → 1단 그룹은 단순 재배열이 되고, 다단 그룹은 "어떤 모듈이 어느 칸에 놓이는지"만 바뀌어
+   *   컬럼 레이아웃(group.rows)이 깨지지 않는다.
+   */
+  const reorderGroupMembers = (groupId: string, orderedModuleIds: string[]): void => {
+    if (orderedModuleIds.length < 2) return
+    const members = modules.value.filter((m) => m.groupId === groupId)
+    if (members.length !== orderedModuleIds.length) return
+    const next = orderedModuleIds
+      .map((id) => members.find((m) => m.id === id))
+      .filter((m): m is ModuleInstance => !!m)
+    if (next.length !== members.length) return
+
+    const slots = members.map((m) => modules.value.indexOf(m)).sort((a, b) => a - b)
+    const coords = members.map((m) => ({ rowIndex: m.rowIndex, columnIndex: m.columnIndex }))
+    slots.forEach((slot, i) => {
+      next[i].rowIndex = coords[i].rowIndex
+      next[i].columnIndex = coords[i].columnIndex
+      modules.value[slot] = next[i]
+    })
+    reorderModules()
+    triggerRef(modules)
+    isDirty.value = true
+  }
+
+  /**
    * 그룹을 표시 단위로 위/아래 한 칸 이동 (그룹 통째 이동)
    */
   const moveGroup = (groupId: string, direction: 'up' | 'down'): void => {
@@ -4091,6 +4120,7 @@ ${fullHtml}
     setColumnWidth,
     setGroupSidePadding,
     setDisplayOrder,
+    reorderGroupMembers,
     moveGroup,
     reorderGroupRows,
     normalizeGroupContiguity,
