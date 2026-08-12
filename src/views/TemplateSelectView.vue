@@ -48,17 +48,8 @@
         </div>
 
         <div class="tpl-grid">
-          <!-- 빈 템플릿 -->
-          <button v-if="selectedTeam === '' && !search.trim()" class="tpl-card" @click="startBlank">
-            <div class="tpl-thumb tpl-thumb--blank">
-              <i class="pi pi-image tpl-blank-icon"></i>
-              <div class="tpl-blank-lines">
-                <span></span><span></span><span></span>
-              </div>
-            </div>
-            <div class="tpl-card-name">빈 템플릿</div>
-          </button>
-
+          <!-- 빈 템플릿 카드는 두지 않는다 — 항상 팀·템플릿을 고른 뒤 에디터로 들어온다.
+               빈 상태로 시작하려면 에디터의 '빈 템플릿'(레일)·'전체 삭제'(헤더)를 쓴다. -->
           <!-- 템플릿 카드 -->
           <button
             v-for="t in filteredTemplates"
@@ -93,7 +84,7 @@
           </button>
 
           <!-- 결과 없음 -->
-          <div v-if="filteredTemplates.length === 0 && !(selectedTeam === '' && !search.trim())" class="tpl-empty">
+          <div v-if="filteredTemplates.length === 0" class="tpl-empty">
             해당 조건의 템플릿이 없습니다.
           </div>
         </div>
@@ -209,20 +200,18 @@ onMounted(async () => {
   }
 })
 
-// 빈 템플릿으로 시작 (에디터를 빈 상태로)
-const startBlank = () => {
-  moduleStore.clearAll()
-  editorStore.setCurrentTemplateName('빈 템플릿')
-  router.push('/editor')
-}
-
 // 템플릿 선택 → 적용 후 에디터로
 const pickTemplate = async (t: NewsletterTemplate) => {
   if (applying.value) return
   applying.value = true
   try {
     await moduleStore.loadTemplate(t.id)
-    editorStore.setCurrentTemplateName(t.name)
+    // 팀은 표시명이 아니라 id로 넘긴다 — 헤더의 팀 이름은 이 id로 트리에서 찾는다
+    editorStore.setCurrentTemplate({
+      templateId: t.id,
+      templateName: t.name,
+      teamId: t.teamId ?? null,
+    })
     router.push('/editor')
   } finally {
     applying.value = false
@@ -418,35 +407,6 @@ const pickTemplate = async (t: NewsletterTemplate) => {
   align-items: center;
   justify-content: center;
   font-size: 20px;
-}
-.tpl-thumb--blank {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  background: #f8f9fa;
-}
-.tpl-blank-icon {
-  font-size: 34px;
-  color: #c4c9d0;
-}
-.tpl-blank-lines {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 60%;
-}
-.tpl-blank-lines span {
-  height: 8px;
-  border-radius: 4px;
-  background: #e2e6ea;
-}
-.tpl-blank-lines span:nth-child(2) {
-  width: 80%;
-}
-.tpl-blank-lines span:nth-child(3) {
-  width: 65%;
 }
 .tpl-card-name {
   font-size: 14px;

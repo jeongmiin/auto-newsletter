@@ -86,13 +86,8 @@
               <!-- 상단 그룹 툴바 (Figma 557-610) — 마우스 오버 또는 그룹/멤버 선택 시에만 노출.
                    스타일 편집 · 위로 이동 · 아래로 이동 · 그룹 해제 · 복제 · 삭제. -->
               <div class="group-top-toolbar no-drag">
-                <button
-                  type="button"
-                  class="gtt-style-btn"
-                  :disabled="selectedGroupId === item.id"
-                  v-tooltip.top="selectedGroupId === item.id ? '이미 이 그룹의 스타일을 편집 중이에요' : undefined"
-                  @click.stop="selectGroupBox(item.id)"
-                >스타일 편집</button>
+                <!-- 그룹 이름 — 조립형 모듈이면 모듈명('이미지형 헤더'), 직접 묶은 그룹이면 '그룹 01' -->
+                <span class="gtt-name">{{ item.group.name || '그룹' }}</span>
                 <button
                   type="button"
                   class="gtt-btn"
@@ -133,6 +128,14 @@
                 >
                   <span class="material-symbols-outlined">delete</span>
                 </button>
+                <!-- Figma 908-11276: 스타일 편집은 툴바 오른쪽 끝 -->
+                <button
+                  type="button"
+                  class="gtt-style-btn"
+                  :disabled="selectedGroupId === item.id"
+                  v-tooltip.top="selectedGroupId === item.id ? '이미 이 그룹의 스타일을 편집 중이에요' : undefined"
+                  @click.stop="selectGroupBox(item.id)"
+                >그룹 스타일 편집</button>
               </div>
               <!-- 실제 스타일 박스 (배경/테두리/여백은 내보내기와 동일) -->
               <div
@@ -511,7 +514,8 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
 }
 
 /* 좌측 드래그 핸들 (Figma 352-1138) — 단독 모듈 왼쪽 바깥에 붙는 흰 카드.
-   선택 중이거나 호버 중일 때 보인다(모듈 우측 툴바와 동일한 노출 조건). */
+   **선택했을 때만** 보인다(모듈 우측 툴바와 동일한 노출 조건).
+   호버만으로 뜨면 마우스가 지나가는 모듈마다 좌우로 카드가 깜빡여 미리보기를 훑기 어렵다. */
 .module-drag-handle {
   position: absolute;
   left: -32px;
@@ -534,7 +538,6 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
   pointer-events: none;
   transition: opacity 0.12s;
 }
-.group:hover .module-drag-handle,
 .module-drag-handle.is-visible {
   opacity: 1;
   pointer-events: auto;
@@ -566,10 +569,22 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
   opacity: 1;
   pointer-events: auto;
 }
+/* 그룹 이름 — 툴바 맨 왼쪽 (Figma 908-11276) */
+.gtt-name {
+  flex-shrink: 0;
+  max-width: 40%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+}
 .gtt-style-btn {
+  /* 오른쪽 끝으로 밀어낸다 (이름과 아이콘 사이 여백을 이 버튼이 흡수) */
+  margin-left: auto;
   height: 30px;
   padding: 0 16px;
-  margin-right: 4px;
   border: none;
   border-radius: 7px;
   background: #333d4b;

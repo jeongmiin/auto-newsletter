@@ -344,6 +344,9 @@ export function replaceModuleTableContent(
   const cellBgColor = String(properties.cellBgColor || '#ffffff')
   const headerTextColor = String(properties.headerTextColor || '#333333')
   const cellTextColor = String(properties.cellTextColor || '#333333')
+  // 타입(제목/내용) 공통 정렬 — '테이블 스타일' 탭에서 설정한다
+  const headerAlign = String(properties.headerAlign || 'center')
+  const cellAlign = String(properties.cellAlign || 'left')
 
   // 바깥 td 여백 (미설정 시: 상/하/좌/우 20px)
   const paddingTop = String(properties.paddingTop ?? '20px')
@@ -402,9 +405,13 @@ export function replaceModuleTableContent(
         const bgColor = cell.bgColor || (cell.type === 'th' ? headerBgColor : cellBgColor)
         const textColor = cell.textColor || (cell.type === 'th' ? headerTextColor : cellTextColor)
         const fontWeight = cell.type === 'th' ? '700' : '400'
-        // 정렬 우선순위: 셀별 지정 > 열 공통(tableColAligns) > 타입 기본
+        // 정렬 우선순위: 셀별 지정 > 열 공통(tableColAligns) > 타입 공통 > 하드코딩 기본.
+        // tableColAligns는 열별 정렬 UI가 있던 시절의 값이라 새 테이블에는 더 이상 채우지
+        // 않는다. 이미 그 값을 가진 기존 템플릿·저장 파일은 예전 그대로 보이게 남겨 둔다.
         const textAlign =
-          cell.align || colAligns[colIndex] || (cell.type === 'th' ? 'center' : 'left')
+          cell.align ||
+          colAligns[colIndex] ||
+          (cell.type === 'th' ? headerAlign : cellAlign)
 
         // 이미지 셀은 이미지가 셀을 꽉 채우도록 안쪽 여백 제거
         const cellPadding = cell.contentType === 'image' ? '0' : '5px 10px'

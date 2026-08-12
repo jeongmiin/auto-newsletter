@@ -44,8 +44,8 @@
 .gg-acc-spacer {
   flex: 1;
 }
-.gg-acc-section:first-child {
-   border-bottom: 1px solid #f2f4f6;
+.gg-acc-section:nth-of-type(2) {
+   border-top: 1px solid #f2f4f6;
 }
 /* 본문: 세로 스택 + 12px 간격 (하위 필드/블록 공통) */
 .gg-acc-body {
@@ -228,7 +228,7 @@
 }
 .gg-acc-body--card {
   padding-bottom: 16px;
-  border-bottom: 1px solid #f2f4f6;
+  /* border-bottom: 1px solid #f2f4f6; */
   margin-bottom: 0;
 }
 /* 기본은 레이아웃에 투명 — 카드 섹션에서만 회색 카드가 된다 */

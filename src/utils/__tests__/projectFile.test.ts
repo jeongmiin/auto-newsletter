@@ -8,6 +8,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { useModuleStore } from '@/stores/moduleStore'
+import { useEditorStore } from '@/stores/editorStore'
 import {
   serializeModule,
   extractProjectMetadata,
@@ -387,5 +388,45 @@ describe('projectFile — 저장 → 열기 왕복', () => {
     expect(findByLabel('오른쪽 버튼')?.columnIndex).toBe(1)
     expect(findByLabel('섹션 타이틀')?.groupId).toBeUndefined()
     expect(second).toEqual(first)
+  })
+})
+
+describe('projectFile — 소속 팀(teamId)', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+    vi.clearAllMocks()
+    seedAvailableModules()
+  })
+
+  it('저장 파일의 teamId를 읽는다', () => {
+    const data = { modules: [], teamId: 'arch-plan' }
+    const html = `${METADATA_START}\n<!-- ${JSON.stringify(data)} -->\n${METADATA_END}`
+    expect(extractProjectMetadata(html)?.teamId).toBe('arch-plan')
+  })
+
+  it('teamId가 없는 예전 파일도 그대로 열린다', () => {
+    const html = `${METADATA_START}\n<!-- {"modules":[]} -->\n${METADATA_END}`
+    const data = extractProjectMetadata(html)
+    expect(data).not.toBeNull()
+    expect(data!.teamId).toBeUndefined()
+  })
+
+  /**
+   * ⚠ 이 규칙을 바꾸려면 근거를 먼저 확인할 것.
+   * 에디터는 팀·템플릿을 고른 뒤에만 들어올 수 있고(router 가드), 파일 열기는 그 안에서 하는
+   * 동작이다. 그래서 "지금 들어온 팀"이 작업의 소속이고, 파일 속 teamId는 기록으로만 남는다.
+   * 파일 쪽을 반영하게 바꾸면 남의 팀 파일을 열어 이어 작업할 때 소속이 조용히 바뀐다.
+   */
+  it('파일을 열어도 현재 작업 팀을 덮어쓰지 않는다', () => {
+    const editorStore = useEditorStore()
+    editorStore.setCurrentTemplate({
+      templateId: 'nextcon-template',
+      templateName: '넥스트콘',
+      teamId: 'arch-plan',
+    })
+
+    restoreProject({ modules: [], teamId: 'pet-industry' }, false)
+
+    expect(editorStore.currentTeamId, '파일의 팀으로 바뀌면 안 된다').toBe('arch-plan')
   })
 })

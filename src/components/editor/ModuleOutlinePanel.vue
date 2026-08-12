@@ -7,7 +7,6 @@
       type="button"
       class="order-tab"
       :aria-label="isOpen ? '모듈 순서 닫기' : '모듈 순서 열기'"
-      v-tooltip.left="isOpen ? '모듈 순서 닫기' : '모듈 순서 열기'"
       @click="editorStore.toggleOrderPanel()"
     >
       <span class="material-symbols-outlined order-tab-icon" :class="{ 'is-open': isOpen }">
@@ -260,9 +259,13 @@ const reorderMembers = (groupId: string, list: ModuleInstance[]): void => {
 const metadataOf = (instance: ModuleInstance) =>
   moduleStore.availableModules.find((m) => m.id === instance.moduleId) || null
 
-/** 그룹 라벨 — 조립형 모듈로 만든 그룹은 그 모듈명(예: '이미지형 헤더')을 그대로 쓴다 */
+/**
+ * 그룹 라벨 — 캔버스 툴바·그룹 스타일 패널과 같은 이름을 쓴다.
+ * 조립형 모듈로 만든 그룹은 모듈명(예: '이미지형 헤더'), 직접 묶은 그룹은 '그룹 01' 식.
+ * (이름은 만들 때 정해지므로 폴백은 이름 없던 시절 데이터용)
+ */
 const groupLabel = (item: { group: ModuleGroup; modules: ModuleInstance[] }): string =>
-  item.group.name || `그룹 · ${item.modules.length}개`
+  item.group.name || '그룹'
 
 /**
  * 모듈 종류 아이콘 (Figma: 이미지=broken_image, 타이틀·텍스트=match_case).
@@ -352,30 +355,29 @@ const setHover = (moduleId: string | null): void => {
 .order-tab {
   position: absolute;
   top: 50%;
-  left: -34px;
+  left: -54px;
+  width: 54px;
   transform: translateY(-50%);
-  width: 34px;
-  height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
-  border: 1px solid #e5e8eb;
+  padding: 20px 0;
   border-right: 0;
-  border-radius: 8px 0 0 8px;
+  border-radius: 15px 0 0 15px;
   background: #fff;
   color: #4e5968;
   cursor: pointer;
-  box-shadow: -2px 0 6px rgba(0, 0, 0, 0.06);
   z-index: 5;
 }
 .order-tab:hover {
-  background: #f6f8fa;
+  box-shadow: -2px 0 6px rgba(0, 0, 0, 0.06);
 }
 .order-tab-icon {
   font-size: 18px;
+  width: 12px;
   line-height: 1;
   transition: transform 0.18s ease;
+  color: #4E5968;
 }
 .order-tab-icon.is-open {
   transform: rotate(180deg);

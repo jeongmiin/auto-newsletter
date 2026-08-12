@@ -1,18 +1,13 @@
 <template>
   <div v-if="group">
-    <!-- 그룹 정보 — Figma 352-1138 패턴: 아이콘/설명 없이 타이틀만(그룹 해제는 캔버스 좌측 액션 툴바에도 있지만
-         패널에서도 바로 접근 가능하도록 타이틀 옆에 작게 유지) -->
+    <!-- 그룹 정보 (Figma 908-11276) — 제목은 '그룹 스타일'이 아니라 **그룹 이름**이다.
+         조립형 모듈로 만든 그룹은 모듈명('이미지형 헤더'), 직접 묶은 그룹은 '그룹 01' 식. -->
     <div class="p-4 pb-3 flex items-center justify-between gap-2">
-      <p class="gg-panel-title truncate">그룹 스타일</p>
-      <Button
-        label="그룹 해제"
-        icon="pi pi-link"
-        severity="danger"
-        outlined
-        size="small"
-        class="shrink-0"
-        @click="ungroup"
-      />
+      <p class="gg-panel-title truncate">{{ groupLabel }}</p>
+      <button type="button" class="gp-ungroup shrink-0" @click="ungroup">
+        <span class="material-symbols-outlined">link_off</span>
+        <span>그룹 해제</span>
+      </button>
     </div>
 
     <div class="px-[25px] pb-[25px] mt-0!">
@@ -84,7 +79,7 @@
                 </div>
               </div>
             </div>
-            <p class="gg-field-hint">*내용과 테두리 사이의 간격입니다.</p>
+            <p class="gg-field-hint">*내용과 테두리 사이의 간격이에요.</p>
           </div>
 
           <!-- 바깥 여백 (margin) -->
@@ -148,7 +143,7 @@
                 </div>
               </div>
             </div>
-            <p class="gg-field-hint">*그룹과 그룹 사이의 간격입니다.</p>
+            <p class="gg-field-hint">*그룹과 그룹 사이의 간격이에요.</p>
           </div>
         </div>
       </div>
@@ -173,7 +168,7 @@
                 :pointColors="wrapPointColors"
                 pointFollow
                 :activeIndex="isUsingPoint('backgroundColor') ? pointIndexFor('backgroundColor') : null"
-                @update:modelValue="setStyle('backgroundColor', $event)"
+                @update:modelValue="onColorInput('backgroundColor', $event)"
                 @select-point="onSelectPoint('backgroundColor', $event)"
                 @add-point-color="editorStore.addPointColor($event)"
                 @remove-point-color="editorStore.removePointColor($event)"
@@ -220,7 +215,7 @@
                 :pointColors="wrapPointColors"
                 pointFollow
                 :activeIndex="isUsingPoint('borderColor') ? pointIndexFor('borderColor') : null"
-                @update:modelValue="setStyle('borderColor', $event)"
+                @update:modelValue="onColorInput('borderColor', $event)"
                 @select-point="onSelectPoint('borderColor', $event)"
                 @add-point-color="editorStore.addPointColor($event)"
                 @remove-point-color="editorStore.removePointColor($event)"
@@ -283,6 +278,9 @@ const editorStore = useEditorStore()
 // (selectedGroup만 보면 멤버 선택 시 좌측 "그룹 구성" 안에서 그룹 스타일이 통째로 사라진다)
 const group = computed(() => moduleStore.activeGroup)
 
+// 패널 제목 = 그룹 이름. 이름은 만들 때 정해지므로(모듈명 또는 '그룹 01') 보통 비어 있지 않다.
+const groupLabel = computed(() => group.value?.name || '그룹')
+
 // ===== 포인트 색상 사용 (최대 3개 중 선택) =====
 const wrapPointColors = computed(() => editorStore.wrapSettings.pointColors ?? [])
 type PointColorKey = 'backgroundColor' | 'borderColor'
@@ -326,6 +324,17 @@ const bgValue = computed(() => group.value?.styles.backgroundColor || '#ffffff')
 const setStyle = (key: keyof ModuleGroupStyles, value: string): void => {
   if (!group.value) return
   moduleStore.updateGroupStyle(group.value.id, key, value)
+}
+
+/**
+ * 색상 필드 직접 입력(팔레트·HEX·투명도).
+ *
+ * 포인트 색상을 따르는 중이면 추종을 먼저 푼다 — 풀지 않으면 값만 바뀌고 렌더는 계속
+ * 포인트 색상으로 해소되어(resolveGroupStyles) 고른 색이 반영되지 않는다.
+ */
+const onColorInput = (key: PointColorKey, value: string): void => {
+  if (isUsingPoint(key)) togglePoint(key, false)
+  setStyle(key, value)
 }
 
 // ===== 테두리 사용 토글 + 두께(GlobalStylePanel.vue와 동일한 range-slider) =====
@@ -455,6 +464,29 @@ const ungroup = (): void => {
   line-height: 1.5;
   color: #191f28;
   letter-spacing: -0.2px;
+}
+/* 그룹 해제 (Figma 908-11276) — 테두리 없는 빨간 텍스트 버튼 + link_off 아이콘.
+   아이콘은 캔버스 툴바·모듈 순서 패널과 같은 것으로 통일했다. */
+.gp-ungroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #f04452;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.gp-ungroup:hover {
+  background: #fdeced;
+}
+.gp-ungroup .material-symbols-outlined {
+  font-size: 20px;
 }
 
 /* 여백 섹션: 안쪽/바깥 여백 두 컨트롤 사이 간격 (Figma 557-610) */

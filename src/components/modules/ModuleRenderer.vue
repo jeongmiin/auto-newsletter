@@ -3,7 +3,7 @@
     @click="$emit('select', module.id)"
     :class="[
       'relative group cursor-pointer border-2 transition-all',
-      isSelected ? 'border-blue-500 bg-blue-50/50' : 'border-transparent hover:border-gray-300',
+      isSelected ? 'border-blue-500 bg-blue-50/50' : 'border-transparent hover:border-blue-500',
     ]"
   >
     <!-- 로딩 스피너 -->
@@ -20,7 +20,8 @@
     </div>
 
     <!-- 우측 세로 플로팅 툴바 (모듈 바깥 오른쪽) — 위로/아래로/복제/삭제.
-         선택 중이거나 호버 중일 때 보인다(편집 중 접근성을 위해 선택 시에도 유지). -->
+         **선택했을 때만** 보인다. 호버만으로 뜨면 마우스가 지나가는 모듈마다 툴바가 깜빡여
+         미리보기를 훑어보기 어렵다(호버 때는 테두리만 표시). -->
     <div
       class="module-toolbar"
       :class="{ 'is-visible': isSelected }"
@@ -166,7 +167,7 @@ watch(
   pointer-events: none;
   transition: opacity 0.12s;
 }
-.group:hover .module-toolbar,
+/* 호버로는 열지 않는다 — 선택(is-visible)했을 때만 */
 .module-toolbar.is-visible {
   opacity: 1;
   pointer-events: auto;

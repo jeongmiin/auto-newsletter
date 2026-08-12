@@ -39,6 +39,16 @@ export interface ProjectMetadata {
     borderColor: string
     borderStyle: string
   }
+  /**
+   * 이 파일을 만든 팀의 **불변 id** (표시명이 아니다).
+   *
+   * 기록용이며 **파일을 열 때 현재 작업 팀을 덮어쓰지 않는다** — 에디터는 반드시
+   * 팀·템플릿을 골라야 들어올 수 있으므로(router 가드), 그때 고른 팀이 기준이다.
+   * 다른 팀 파일을 열어 이어 작업해도 지금 내 팀의 작업물이 된다.
+   *
+   * 예전 파일에는 없다(undefined).
+   */
+  teamId?: string | null
 }
 
 /**
@@ -88,6 +98,12 @@ export interface RestoreResult {
 
 /**
  * 메타데이터를 현재 작업 영역에 복원한다.
+ *
+ * ⚠ `projectData.teamId`는 **일부러 반영하지 않는다.** 에디터는 팀·템플릿을 고른 뒤에만
+ * 들어올 수 있고(router 가드), 파일 열기는 그 안에서 하는 동작이다. 따라서 "지금 내가
+ * 들어온 팀"이 작업의 소속이며, 다른 팀 파일을 열어 이어 작업해도 마찬가지다.
+ * 파일 속 teamId는 만든 팀의 기록으로만 남는다.
+ *
  * @param toComposed true면 예전 편집 방식 모듈을 원소 모듈 그룹으로 바꿔 넣는다
  */
 export function restoreProject(
@@ -213,6 +229,8 @@ export function restoreProject(
       ...moduleStore.groups,
       ...restoredGroups.filter((g) => !existingIds.has(g.id)),
     ]
+    // 이름이 없던 시절 저장된 그룹은 여기서 기본 이름('그룹 01' …)을 받는다
+    moduleStore.ensureGroupNames()
     moduleStore.normalizeGroupContiguity()
   }
 

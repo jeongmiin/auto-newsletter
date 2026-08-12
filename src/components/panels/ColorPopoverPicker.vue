@@ -133,8 +133,9 @@
 
         <div class="popover-divider"></div>
 
-        <!-- 수동 색상 지정 영역 (포인트 색상 추종 중이면 흐리게·비활성) -->
-        <div :class="{ 'manual-locked': manualDisabled }">
+        <!-- 수동 색상 지정 영역 — 포인트 색상을 따르는 중에도 그대로 쓸 수 있다.
+             (여기서 색을 고르면 호출부가 추종을 풀고 고른 색을 그대로 적용한다) -->
+        <div>
         <!-- 기본 팔레트 -->
         <div class="flex flex-col items-center gap-2 my-3">
           <span class="text-[13px] text-gray-400 w-full">기본 팔레트</span>
@@ -259,9 +260,6 @@ const emit = defineEmits<{
   open: []
   close: []
 }>()
-
-// 추종 모드이면서 실제로 포인트 색상을 따르는 중이면 수동 입력(팔레트/HEX/투명도)을 잠근다.
-const manualDisabled = computed(() => props.pointFollow && props.activeIndex != null)
 
 // 포인트 색상 스와치 클릭: 추종 모드이면 부모에 인덱스만 알린다(추종 on/off·저장은 부모 담당).
 const onPointSwatchClick = (color: string, index: number) => {
@@ -476,19 +474,36 @@ const onAlphaInputEvent = (event: Event) => {
 }
 
 const POPOVER_WIDTH = 262
+/**
+ * 포인트 색상 풀 피커의 고정 위치.
+ *
+ * 트리거(추가 버튼·스와치)가 좌측 패널 안쪽에 있어 트리거 기준으로 열면 패널을 덮어
+ * 이미 담긴 색상들이 가려진다. 색을 고르면서 팔레트를 같이 봐야 하므로 패널 바깥쪽
+ * 고정 좌표에서 연다(같은 이유로 top도 고정).
+ */
+const FULL_PICKER_LEFT = 400
+const FULL_PICKER_TOP = 180
+
 const computePosition = () => {
   const el = triggerEl.value
   if (!el) return
   const rect = el.getBoundingClientRect()
   const margin = 8
-  let left = rect.right + margin
-  if (left + POPOVER_WIDTH > window.innerWidth - margin) {
-    left = rect.left - POPOVER_WIDTH - margin
+
+  let left: number
+  if (props.fullPicker) {
+    left = FULL_PICKER_LEFT
+  } else {
+    left = rect.right + margin
+    if (left + POPOVER_WIDTH > window.innerWidth - margin) {
+      left = rect.left - POPOVER_WIDTH - margin
+    }
   }
-  left = Math.max(margin, left)
-  // 포인트 색상 풀 피커 모달은 상단 고정 위치(top 180px), 그 외 색상 팝오버는 트리거 근처에 배치
+  // 좁은 창에서 화면 밖으로 나가지 않게 양쪽을 눌러 둔다
+  left = Math.max(margin, Math.min(left, window.innerWidth - POPOVER_WIDTH - margin))
+
   const top = props.fullPicker
-    ? 180
+    ? FULL_PICKER_TOP
     : Math.max(margin, Math.min(rect.top, window.innerHeight - 520))
   pos.value = { left: left + window.scrollX, top: top + window.scrollY }
 }
@@ -594,12 +609,6 @@ onBeforeUnmount(() => {
 }
 
 /* 포인트 색상 추종 중 — 수동 색상 지정 영역을 흐리게·클릭 불가로 */
-.manual-locked {
-  opacity: 0.4;
-  pointer-events: none;
-  user-select: none;
-}
-
 /* 팝오버 내 '포인트 색상 추가' 버튼 — add_point_color_btn.png 이미지 */
 .quick-swatch-add {
   width: 32px;

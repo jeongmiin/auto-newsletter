@@ -1,7 +1,11 @@
 <template>
   <div class="h-full flex flex-col">
     <!-- 검색 + 카테고리 -->
-    <div v-if="mode === 'modules'" class="pt-[25px] border-b">
+    <!-- 아래 구분선은 탭(.p-tablist)이 그린다 — Figma는 패널 전체 폭이 아니라 콘텐츠 폭에만 긋는다 -->
+    <div v-if="mode === 'modules'" class="mp-head">
+      <!-- 패널 제목 — 다른 레일 메뉴 패널과 같은 panel-title (Figma 1125-2974) -->
+      <h2 class="panel-title">모듈</h2>
+
       <!-- 모듈 검색 -->
       <div class="mp-search">
         <span class="material-symbols-outlined mp-search-icon">search</span>
@@ -23,19 +27,20 @@
         </button>
       </div>
 
-      <!-- 카테고리 탭 (한 줄, 활성 탭 밑줄) -->
-      <div class="mp-tabs">
-        <button
-          v-for="category in categories"
-          :key="category.id"
-          type="button"
-          class="mp-tab"
-          :class="{ 'is-active': selectedCategory === category.id }"
-          @click="goToCategory(category.id)"
-        >
-          {{ category.name }}
-        </button>
-      </div>
+      <!-- 카테고리 탭 — 글자 폭에 맞추고, 패널을 넘치면 좌우 화살표로 넘긴다 (Figma 908-11145).
+           PrimeVue Tabs(scrollable)가 넘침 감지와 화살표를 담당하고, 겉모습만 기존 밑줄 탭으로 덮어쓴다. -->
+      <Tabs
+        :value="selectedCategory"
+        scrollable
+        class="mp-tabs"
+        @update:value="goToCategory(String($event))"
+      >
+        <TabList>
+          <Tab v-for="category in categories" :key="category.id" :value="category.id">
+            {{ category.name }}
+          </Tab>
+        </TabList>
+      </Tabs>
     </div>
 
     <!-- 콘텐츠 영역 -->
@@ -328,6 +333,9 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, nextTick, onMounted } from 'vue'
+import Tabs from 'primevue/tabs'
+import TabList from 'primevue/tablist'
+import Tab from 'primevue/tab'
 import ModuleCard from './ModuleCard.vue'
 import { useModuleThumbnails } from '@/composables/useModuleThumbnails'
 import { storeToRefs } from 'pinia'
@@ -725,23 +733,36 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* 모듈 검색 (Figma 334-2630) */
+/* 패널 머리 — 제목 ↔ 검색 20px (Figma 1125-2972) */
+.mp-head {
+  padding-top: 25px;
+}
+/* 다른 레일 메뉴 패널(GlobalStylePanel·CategoryModulePanel)과 동일한 제목 스타일 */
+.panel-title {
+  margin: 0 25px 20px;
+  font-size: 20px;
+  font-weight: 500;
+  color: #191f28;
+  letter-spacing: -0.2px;
+}
+/* 모듈 검색 (Figma 1125-2975: gray/100 채움 · h40 · px12 · gap8 · rounded8) */
 .mp-search {
   display: flex;
   align-items: center;
-  gap: 6px;
-  height: 36px;
-  padding: 0 10px;
+  gap: 8px;
+  height: 40px;
+  padding: 0 12px;
   margin: 0 25px;
-  border: 1px solid #e5e8eb;
+  border: 0;
   border-radius: 8px;
-  background: #fff;
+  background: #f2f4f6;
 }
+/* 테두리가 없는 채움형이라 포커스는 안쪽 링으로 알린다 */
 .mp-search:focus-within {
-  border-color: #4083f3;
+  box-shadow: inset 0 0 0 1px #4083f3;
 }
 .mp-search-icon {
-  font-size: 18px;
+  font-size: 16px;
   color: #8b95a1;
   flex-shrink: 0;
 }
@@ -752,10 +773,12 @@ onMounted(async () => {
   outline: none;
   background: none;
   font-size: 14px;
+  font-weight: 500;
   color: #191f28;
 }
 .mp-search-input::placeholder {
-  color: #b0b8c1;
+  color: #8b95a1;
+  font-weight: 500;
 }
 .mp-search-clear {
   display: flex;
@@ -774,31 +797,86 @@ onMounted(async () => {
 }
 
 /* 카테고리 탭 — 한 줄, 활성 탭 밑줄 (Figma 334-2630) */
+/* 카테고리 탭 (Figma 908-11156) — PrimeVue Tabs(scrollable) 위에 디자인 스킨을 입힌다.
+   구조도 Figma와 같게 맞췄다: 회색 기준선은 컨테이너(Line 56), 파란 표시는 활성 바(Line 57). */
 .mp-tabs {
-  display: flex;
-  align-items: center;
-  margin-top: 10px;
+  /* 탭·기준선은 콘텐츠 폭(패널에서 25px 안쪽)에 맞추고,
+     화살표만 그 바깥(패널 가장자리에서 9px)까지 나간다 */
+  --tab-inset: 25px;
+  position: relative; /* 화살표 절대배치 기준 */
+  margin-top: 26px;
+  padding: 0 var(--tab-inset);
 }
-.mp-tab {
-  flex: 1;
-  min-width: 0;
-  padding: 8px 2px;
+/* Line 56 — 탭 아래 기준선. 스크롤되는 탭이 아니라 보이는 영역(콘텐츠 폭)에 그린다 */
+.mp-tabs :deep(.p-tablist) {
+  border-bottom: 1.5px solid #e5e8eb;
+  /* 기본값 hidden이면 콘텐츠 폭 바깥에 놓인 화살표가 잘린다.
+     탭 넘침은 아래 .p-tablist-content가 자르므로 여기선 잘라낼 필요가 없다. */
+  overflow: visible;
+}
+/* 탭 넘침을 실제로 감추는(그리고 스크롤하는) 층 */
+.mp-tabs :deep(.p-tablist-content) {
+  overflow: hidden;
+}
+.mp-tabs :deep(.p-tablist-tab-list) {
   border: 0;
   background: none;
-  cursor: pointer;
-  font-size: 13px;
+  /* 탭 사이 간격은 각 탭의 좌우 padding이 만든다 (gap을 더하면 두 배로 벌어진다) */
+  gap: 0;
+}
+.mp-tabs :deep(.p-tab) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+  /* padding에 세로값이 없으므로 높이를 직접 준다(안 주면 글자 높이까지 줄어든다) */
+  height: 27px;
+  padding: 0 15px;
+  border: 0;
+  background: none;
+  font-size: 14px;
   font-weight: 500;
-  color: #8b95a1;
+  line-height: 1.5;
+  letter-spacing: -0.14px;
+  color: #6b7684;
   white-space: nowrap;
-  border-bottom: 2px solid transparent;
-  transition: color 0.12s, border-color 0.12s;
+  transition: color 0.12s;
 }
-.mp-tab:hover {
+.mp-tabs :deep(.p-tab:hover) {
   color: #4e5968;
+  background: none;
 }
-.mp-tab.is-active {
+.mp-tabs :deep(.p-tab-active) {
   color: #4083f3;
-  border-bottom-color: #4083f3;
+}
+/* Line 57 — 활성 탭 아래 파란 바. 기준선을 덮도록 1.5px 내려 붙인다 */
+.mp-tabs :deep(.p-tablist-active-bar) {
+  height: 2px;
+  bottom: -1.5px;
+  background: #4083f3;
+}
+/* 넘칠 때 나오는 화살표 (Figma 908-23354) — 28px 흰 원형 + 그림자.
+   탭 줄 '위에 떠서' 가리는 형태라, 자리를 차지하지 않도록 절대배치한다
+   (PrimeVue 기본값은 인라인이라 그대로 두면 탭이 그만큼 밀린다). */
+.mp-tabs :deep(.p-tablist-nav-button) {
+  position: absolute;
+  top: 0;
+  z-index: 1;
+  width: 28px;
+  height: 28px;
+  margin: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  color: #4e5968;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
+}
+/* 절대배치의 기준은 padding 안쪽이라, 패널 가장자리 기준 9px가 되도록 inset만큼 되돌린다 */
+.mp-tabs :deep(.p-tablist-prev-button) {
+  left: calc(9px - var(--tab-inset));
+}
+.mp-tabs :deep(.p-tablist-next-button) {
+  right: calc(9px - var(--tab-inset));
 }
 
 /* 카테고리 아코디언 (Figma 483-2618 / 637-2113) */

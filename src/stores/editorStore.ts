@@ -19,6 +19,30 @@ export const useEditorStore = defineStore('editor', () => {
     currentTemplateName.value = name || '빈 템플릿'
   }
 
+  /**
+   * 현재 작업의 소속 팀/템플릿 **id**.
+   *
+   * 표시명이 아니라 불변 id를 담는다 — 팀명이 조직개편으로 바뀌어도 이 값이 가리키는
+   * 대상은 그대로다(`templates-config.json`의 departments 규칙 참고). 헤더에 보여줄
+   * 팀 이름은 이 id로 트리에서 찾아 쓴다.
+   *
+   * 앞으로 팀별 이미지 업로드 경로·저장 파일 메타데이터가 이 값을 참조한다.
+   * ⚠ 새로고침하면 사라진다(작업 내용 자체가 메모리에만 있으므로 동작이 어긋나지 않는다).
+   */
+  const currentTeamId = ref<string | null>(null)
+  const currentTemplateId = ref<string | null>(null)
+
+  /** 템플릿을 골라 에디터로 들어올 때 한 번에 지정한다 */
+  const setCurrentTemplate = (info: {
+    templateId: string | null
+    templateName: string
+    teamId: string | null
+  }): void => {
+    currentTemplateId.value = info.templateId
+    currentTeamId.value = info.teamId
+    setCurrentTemplateName(info.templateName)
+  }
+
   // 좌측 아이콘 레일 활성 메뉴 (신규 디자인 IA)
   // '모듈 순서'는 좌측 패널을 바꾸지 않고 캔버스 오른쪽 패널을 여닫으므로 여기 포함되지 않는다.
   type EditorMenu =
@@ -184,6 +208,9 @@ export const useEditorStore = defineStore('editor', () => {
     hoveredModuleId,
     currentTemplateName,
     setCurrentTemplateName,
+    currentTeamId,
+    currentTemplateId,
+    setCurrentTemplate,
     activeMenu,
     forceRailPanel,
     setActiveMenu,

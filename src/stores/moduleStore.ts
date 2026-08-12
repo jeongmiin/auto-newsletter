@@ -2112,6 +2112,7 @@ export const useModuleStore = defineStore('module', () => {
 
     groups.value.push({
       id: newGroupId,
+      name: nextUserGroupName(),
       styles: { ...DEFAULT_GROUP_STYLES },
       rows: deriveRowsFromMembers(sortedTargets),
     })
@@ -2184,7 +2185,12 @@ export const useModuleStore = defineStore('module', () => {
     next.splice(insertAt, 0, ...sortedTargets)
     modules.value.splice(0, modules.value.length, ...next)
 
-    groups.value.push({ id: newGroupId, styles: { ...DEFAULT_GROUP_STYLES }, rows: newRows })
+    groups.value.push({
+      id: newGroupId,
+      name: nextUserGroupName(),
+      styles: { ...DEFAULT_GROUP_STYLES },
+      rows: newRows,
+    })
 
     // 비게 된 기존 그룹 정의 제거, 멤버가 남은 그룹은 rows 재유도
     involvedGroupIds.forEach((gid) => {
@@ -2244,7 +2250,9 @@ export const useModuleStore = defineStore('module', () => {
     // 없어 다단 레이아웃이 깨진다 (createGroup/mergeModulesIntoGroup은 rows를 명시함).
     groups.value.push({
       id: newGroupId,
-      name: group.name,
+      // 모듈 이름('이미지형 헤더')은 그대로 승계하고, 기본 이름('그룹 01')만 새 번호를 준다
+      // — 같은 이름이 둘이면 툴바·모듈 순서에서 어느 쪽인지 구분할 수 없다.
+      name: USER_GROUP_NAME.test(group.name ?? '') ? nextUserGroupName() : group.name,
       rows: group.rows ? [...group.rows] : undefined,
       styles: JSON.parse(JSON.stringify(group.styles)),
     })
@@ -2334,6 +2342,34 @@ export const useModuleStore = defineStore('module', () => {
     if (!group) return
     group.name = name
     triggerRef(groups)
+  }
+
+  /**
+   * 사용자가 직접 묶은 그룹의 기본 이름 — '그룹 01', '그룹 02' …
+   *
+   * 조립형 모듈로 만든 그룹은 모듈 이름을 쓰므로(setGroupName) 이 패턴에 걸리지 않는다.
+   * 번호는 만들 때 한 번 정해 이름으로 굳힌다 — 표시할 때마다 순서로 계산하면
+   * 앞 그룹을 지웠을 때 이미 익숙해진 이름이 통째로 밀린다.
+   */
+  const USER_GROUP_NAME = /^그룹 (\d+)$/
+  const nextUserGroupName = (): string => {
+    const max = groups.value.reduce((n, g) => {
+      const m = USER_GROUP_NAME.exec(g.name ?? '')
+      return m ? Math.max(n, Number(m[1])) : n
+    }, 0)
+    return `그룹 ${String(max + 1).padStart(2, '0')}`
+  }
+
+  /** 이름 없는 그룹에 기본 이름을 채운다 (이름이 없던 시절의 템플릿·저장 파일 대응) */
+  const ensureGroupNames = (): void => {
+    let changed = false
+    for (const g of groups.value) {
+      if (!g.name) {
+        g.name = nextUserGroupName()
+        changed = true
+      }
+    }
+    if (changed) triggerRef(groups)
   }
 
   /**
@@ -2561,6 +2597,8 @@ export const useModuleStore = defineStore('module', () => {
     // 그룹 정의 복원 후 연속성 정리
     if (template.groups && template.groups.length > 0) {
       groups.value = JSON.parse(JSON.stringify(template.groups))
+      // 이름이 없던 시절 만들어진 그룹은 여기서 기본 이름을 받는다
+      ensureGroupNames()
       normalizeGroupContiguity()
     }
 
@@ -2695,8 +2733,10 @@ export const useModuleStore = defineStore('module', () => {
     const module = modules.value.find((m) => m.id === moduleId)
     if (!module) return
 
-    // 정렬은 셀별로 지정하지 않고 열 공통값(tableColAligns)을 기본으로 사용한다.
-    // 셀별 align은 사용자가 '가' 편집기에서 직접 지정했을 때만 채워지며, 그때 더 우선한다.
+    // 정렬은 '테이블 스타일' 탭의 타입 공통값(headerAlign/cellAlign)이 기본이다.
+    // 셀별 align은 사용자가 '개별 스타일'에서 직접 지정했을 때만 채워지며, 그때 더 우선한다.
+    // ⚠ tableColAligns(열 공통)는 채우지 않는다 — 채우면 타입 공통값을 영영 가려 버린다.
+    //    기존 템플릿·저장 파일에 남아 있는 값은 렌더러가 계속 존중한다(하위호환).
     const defaultCells: TableCell[][] = [
       [
         { id: generateUniqueId('cell'), type: 'th', content: '항목 1', colspan: 1, rowspan: 1 },
@@ -2709,8 +2749,6 @@ export const useModuleStore = defineStore('module', () => {
     ]
 
     module.properties.tableCells = defaultCells
-    // 열 공통 정렬: 1열 가운데, 2열 왼쪽
-    module.properties.tableColAligns = ['center', 'left']
     triggerRef(modules)
   }
 
@@ -2743,10 +2781,8 @@ export const useModuleStore = defineStore('module', () => {
     }
 
     module.properties.tableCells = cells
-    // 열 공통 정렬: 1열 가운데, 나머지 왼쪽(기본 테이블과 동일 톤)
-    module.properties.tableColAligns = Array.from({ length: C }, (_, c) =>
-      c === 0 ? 'center' : 'left',
-    )
+    // 정렬은 타입 공통값(headerAlign/cellAlign)에 맡긴다 — tableColAligns를 채우지 않는 이유는
+    // initializeTableCells 주석 참고
     // 열 너비는 기본(자동)
     module.properties.tableColWidths = Array.from({ length: C }, () => '')
     triggerRef(modules)
@@ -2974,9 +3010,10 @@ export const useModuleStore = defineStore('module', () => {
       module.properties.tableColWidths = next
     }
 
-    // 열 공통 정렬 배열도 동기화 (첫 열은 가운데, 나머지는 왼쪽 기본)
+    // 열 공통 정렬 배열은 **이미 값이 있는 테이블(레거시)만** 동기화한다.
+    // 없는 테이블에 새로 만들면 타입 공통값(headerAlign/cellAlign)이 가려진다.
     const colAligns = (module.properties.tableColAligns as string[] | undefined) || []
-    {
+    if (colAligns.length > 0) {
       const next = [...colAligns]
       while (next.length < colCount) next.push('left')
       next.splice(idx, 0, idx === 0 ? 'center' : 'left')
@@ -3296,8 +3333,7 @@ export const useModuleStore = defineStore('module', () => {
     module.properties.tableCells = newCells
     module.properties.tablePresetId = presetId
     module.properties.tableColWidths = Array.from({ length: cols }, () => '')
-    // 열 공통 정렬: 1열 가운데, 나머지 왼쪽
-    module.properties.tableColAligns = Array.from({ length: cols }, (_, i) => (i === 0 ? 'center' : 'left'))
+    // 정렬은 타입 공통값(headerAlign/cellAlign)에 맡긴다 (tableColAligns 미사용)
     triggerRef(modules)
   }
 
@@ -3948,7 +3984,8 @@ ${fullHtml}
           props[prop.key] = prop.defaultRows || []
           break
         case 'table-editor':
-          // 커스텀 테이블의 기본 2x2 셀 생성 (정렬은 열 공통값 tableColAligns로 관리)
+          // 커스텀 테이블의 기본 2x2 셀 생성
+          // (정렬은 타입 공통값 headerAlign/cellAlign로 관리 — tableColAligns는 채우지 않는다)
           props[prop.key] = [
             [
               { id: generateUniqueId('cell'), type: 'th', content: '항목', colspan: 1, rowspan: 1 },
@@ -3959,8 +3996,6 @@ ${fullHtml}
               { id: generateUniqueId('cell'), type: 'td', content: '내용', colspan: 1, rowspan: 1 },
             ],
           ]
-          // 열 공통 정렬 기본값: 1열 가운데, 2열 왼쪽
-          props.tableColAligns = ['center', 'left']
           break
         case 'content-titles':
         case 'content-texts':
@@ -4112,6 +4147,7 @@ ${fullHtml}
     clearSelection,
     updateGroupStyle,
     setGroupName,
+    ensureGroupNames,
     columnTarget,
     splitModuleColumns,
     unsplitModuleColumns,

@@ -8,7 +8,7 @@
         v-else
         type="button"
         class="rail-item"
-        :class="{ 'is-active': isActive(item.key) }"
+        :class="{ 'is-active': isActive(item.key), 'is-accent': item.accent }"
         @click="select(item.key)"
       >
         <span class="material-symbols-outlined rail-icon">{{ item.icon }}</span>
@@ -23,14 +23,17 @@ import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useEditorStore } from '@/stores/editorStore'
 import { useModuleStore } from '@/stores/moduleStore'
+import { useBlankTemplate } from '@/composables/useBlankTemplate'
 
 type MenuKey = 'style' | 'point' | 'modules' | 'text' | 'image' | 'button' | 'table' | 'ai'
-// '모듈 순서'는 좌측 컨텍스트 패널이 아니라 캔버스 오른쪽 패널을 여닫는 별도 동작이다.
-type RailKey = MenuKey | 'order'
+// 좌측 패널을 전환하지 않는 별도 동작들 —
+// 'order'는 캔버스 오른쪽 패널을 여닫고, 'blank'는 확인 후 작업 영역을 비운다.
+type RailKey = MenuKey | 'order' | 'blank'
 
 const editorStore = useEditorStore()
 const moduleStore = useModuleStore()
 const { activeMenu, isOrderPanelOpen } = storeToRefs(editorStore)
+const { confirmBlankTemplate } = useBlankTemplate()
 
 // 캔버스에서 모듈/그룹을 편집 중(속성 패널 노출)이면 어떤 레일 메뉴도 활성 표시하지 않는다.
 // AppLayout의 패널 전환 조건과 동일 — 캔버스 빈 영역 클릭으로 선택이 풀리면 직전 메뉴가 다시 is-active 된다.
@@ -39,7 +42,12 @@ const hasSelection = computed(
 )
 
 // 레일 메뉴 (Figma node 316-2071 순서/아이콘 기준, Material Symbols)
-const items = computed<Array<{ key: RailKey; label: string; icon: string; divider?: boolean }>>(() => [
+// '빈 템플릿'(1125-2964)은 메뉴가 아니라 액션이라 선택 표시를 하지 않고 상시 강조색으로 둔다.
+const items = computed<
+  Array<{ key: RailKey; label: string; icon: string; divider?: boolean; accent?: boolean }>
+>(() => [
+  { key: 'blank', label: '빈 템플릿', icon: 'note_add', accent: true },
+  { key: 'blank', label: '', icon: '', divider: true },
   { key: 'style', label: '전체 스타일', icon: 'design_services' },
   { key: 'point', label: '포인트 색상', icon: 'palette' },
   { key: 'point', label: '', icon: '', divider: true },
@@ -65,14 +73,23 @@ const select = (key: RailKey) => {
     editorStore.toggleOrderPanel()
     return
   }
+  // '빈 템플릿'은 패널 전환이 아니라 확인 후 작업 영역을 비우는 액션이다.
+  if (key === 'blank') {
+    confirmBlankTemplate()
+    return
+  }
   editorStore.setActiveMenu(key)
 }
 
-const isActive = (key: RailKey): boolean =>
-  key === 'order' ? isOrderPanelOpen.value : activeMenu.value === key && !hasSelection.value
+const isActive = (key: RailKey): boolean => {
+  if (key === 'order') return isOrderPanelOpen.value
+  if (key === 'blank') return false // 선택 상태가 없는 액션
+  return activeMenu.value === key && !hasSelection.value
+}
 </script>
 
 <style scoped>
+/* Figma 1125-2995: 폭 80 · 좌우 6 · 첫 항목까지 37 · 항목/구분선 간격 일정하게 25 */
 .editor-rail {
   width: 80px;
   flex-shrink: 0;
@@ -81,16 +98,17 @@ const isActive = (key: RailKey): boolean =>
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18px;
-  padding: 16px 6px;
+  gap: 25px;
+  padding: 37px 6px;
   overflow-y: auto;
 }
+/* 항목 68×60 (아이콘 24 + 5 + 라벨 12), 위아래 8 여백 */
 .rail-item {
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   padding: 8px 0;
   border: 0;
   border-radius: 8px;
@@ -106,9 +124,22 @@ const isActive = (key: RailKey): boolean =>
   background: rgba(235, 243, 255, 0.8);
   color: #2563d4;
 }
+.rail-item.is-accent .rail-icon {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
 .rail-icon {
   font-size: 24px;
   line-height: 1;
+}
+/* '빈 템플릿' — 선택되는 메뉴가 아니라 액션이라 항상 강조색.
+   Figma 1125-2964: 아이콘 34px, 라벨 12px, blue/500 (#2563d4) */
+.rail-item.is-accent {
+  color: #2563d4;
+  gap: 5px;
+}
+
+.rail-item.is-accent:hover {
+  background: rgba(235, 243, 255, 0.8);
 }
 .rail-label {
   font-size: 12px;

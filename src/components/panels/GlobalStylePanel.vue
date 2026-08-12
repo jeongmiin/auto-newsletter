@@ -28,7 +28,7 @@
         optionValue="value"
         class="w-full text-sm"
       />
-      <p class="hint-text">선택한 언어에 맞는 폰트로 모든 모듈을 일괄 적용합니다</p>
+      <p class="hint-text">*선택한 언어에 맞는 폰트를 모든 모듈에 일괄 적용해요.</p>
     </div>
 
     <div class="divider"></div>
@@ -104,7 +104,7 @@
         placeholder="전시 뉴스레터입니다."
       />
     </div>
-    <p class="hint-text -mt-3">*검색 엔진과 스크린 리더를 위한 한 줄 설명입니다.</p>
+    <p class="hint-text -mt-3">*검색 엔진과 스크린 리더를 위한 한 줄 설명이에요.</p>
   </div>
 </template>
 
@@ -187,8 +187,10 @@ const onSummaryInput = (event: Event) => {
   flex-shrink: 0;
 }
 .hint-text {
-  font-size: 12px;
-  color: #8b95a1;
+  font-size: 14px;
+  color: #8B95A1;
+  letter-spacing: -0.14px;
+  line-height: 1.5;
 }
 
 .radio-row {

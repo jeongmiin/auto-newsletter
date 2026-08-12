@@ -41,7 +41,7 @@
       </div>
     </div>
 
-    <p class="hint-text">최대 3개까지 저장할 수 있습니다.</p>
+    <p class="hint-text">*최대 3개까지 저장할 수 있어요.</p>
   </div>
 </template>
 
@@ -130,8 +130,8 @@ const onPickerClose = () => {
   display: flex;
 }
 .hint-text {
-  font-size: 13px;
-  color: #8b95a1;
+  font-size: 14px;
+  color: #8B95A1;
   word-break: keep-all;
 }
 </style>

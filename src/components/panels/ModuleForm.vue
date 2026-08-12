@@ -1283,7 +1283,6 @@
                 <!-- 선택 셀 라벨 pill -->
                 <div class="tbl-cellbar">
                   <span class="tbl-cellchip">
-                    <span class="material-symbols-outlined">apps</span>
                     {{ tableSelectedCells.length === 1
                       ? `${(firstSelCoord?.row ?? 0) + 1}행 ${(firstSelCoord?.col ?? 0) + 1}열`
                       : `${tableSelectedCells.length}개 셀 선택됨` }}
@@ -1321,7 +1320,7 @@
                       <label class="tbl-sec-label">제목 지정</label>
                       <ToggleSwitch :modelValue="selCommonType === 'th'" @update:modelValue="onHeaderToggle($event)" />
                     </div>
-                    <p class="tbl-sec-hint">*OFF시, 내용으로 전환됩니다</p>
+                    <p class="tbl-sec-hint">*OFF시, 내용으로 전환돼요</p>
                   </div>
 
                   <div class="tbl-divider"></div>
@@ -1405,25 +1404,59 @@
                         </template>
                       </Editor>
                     </div>
-                    <p v-else class="tbl-multi-hint">여러 셀이 선택됐습니다. 내용은 셀 하나만 선택해 편집하세요.</p>
+                    <p v-else class="tbl-multi-hint">여러 셀이 선택됐어요. 내용은 셀 하나만 선택해 편집하세요.</p>
                   </div>
-
-                  <div class="tbl-divider"></div>
-                  <!-- 텍스트 정렬 -->
-                  <div class="gg-field">
-                    <label class="tbl-sec-label">텍스트 정렬</label>
-                    <div class="tbl-align">
+                  <!-- 개별 스타일 — '테이블 스타일' 탭의 공통값을 이 셀에만 덮어쓴다.
+                       지정하지 않으면 공통값을 그대로 따른다(그래서 '기본값으로'가 필요). -->
+                  <div class="gg-acc-section">
+                    <div class="gg-acc-header">
+                      <span class="gg-acc-title" @click="cellStyleOpen = !cellStyleOpen">
+                        <i
+                          class="pi gg-acc-chevron"
+                          :class="cellStyleOpen ? 'pi-chevron-down' : 'pi-chevron-right'"
+                        ></i>
+                        <span class="gg-acc-label">개별 스타일</span>
+                      </span>
+                      <span class="gg-acc-spacer"></span>
                       <button
-                        v-for="a in ALIGN_KEYS"
-                        :key="a"
+                        v-if="hasSelOwnStyle"
                         type="button"
-                        class="tbl-align-btn"
-                        :class="{ 'is-active': selCommonAlign === a }"
-                        @click="setSelAlign(a)"
-                      >
-                        <span class="material-symbols-outlined">{{ ALIGN_ICON[a] }}</span>
-                      </button>
+                        class="tbl-colw-reset"
+                        @click.stop="resetSelOwnStyle"
+                      >공통값으로</button>
                     </div>
+                    <div v-if="cellStyleOpen" class="gg-acc-body gg-acc-body--card">
+                      <div class="gg-acc-fields">
+                        <div class="gg-color-row">
+                          <span class="gg-field-label !mb-0">배경색</span>
+                          <ColorPopoverPicker
+                            title="배경색"
+                            :modelValue="selEffectiveBg"
+                            :pointColors="wrapPointColors"
+                            pointFollow
+                            @update:modelValue="setSelBgColor($event)"
+                            @add-point-color="editorStore.addPointColor($event)"
+                            @remove-point-color="editorStore.removePointColor($event)"
+                          />
+                        </div>
+                        <div class="gg-field !mb-0">
+                          <label class="gg-field-label">텍스트 정렬</label>
+                          <div class="tbl-align">
+                            <button
+                              v-for="a in ALIGN_KEYS"
+                              :key="a"
+                              type="button"
+                              class="tbl-align-btn"
+                              :class="{ 'is-active': selCommonAlign === a }"
+                              @click="setSelAlign(a)"
+                            >
+                              <span class="material-symbols-outlined">{{ ALIGN_ICON[a] }}</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <p v-if="cellStyleOpen" class="tbl-sec-hint">*지정하지 않으면 공통값으로 적용돼요.</p>
                   </div>
                 </template>
 
@@ -1448,7 +1481,7 @@
                         placeholder="이미지를 설명하는 문구"
                       />
                     </div>
-                    <p class="tbl-sec-hint">*검색엔진과 스크린리더를 위한 뉴스레터 한 줄 설명이에요</p>
+                    <p class="tbl-sec-hint">*검색 엔진과 스크린 리더를 위한 한 줄 설명이에요.</p>
                   </div>
 
                   <!-- 링크 추가 (이미지 모듈의 링크 섹션과 동일) -->
@@ -2125,10 +2158,21 @@ const applyToSelected = (updates: Partial<TableCell>) => {
 const setSelType = (type: 'th' | 'td') => applyToSelected({ type })
 const setSelAlign = (align: 'left' | 'center' | 'right') => applyToSelected({ align })
 const setSelBgColor = (value: string) => applyToSelected({ bgColor: value.startsWith('#') ? value : `#${value}` })
-const setSelBgColorInput = (value: string) => applyToSelected({ bgColor: normalizeColorInput(value) || undefined })
-const setSelTextColor = (value: string) => applyToSelected({ textColor: value.startsWith('#') ? value : `#${value}` })
-const setSelTextColorInput = (value: string) => applyToSelected({ textColor: normalizeColorInput(value) || undefined })
-const resetSelColors = () => applyToSelected({ bgColor: undefined, textColor: undefined })
+
+// '개별 스타일' 아코디언 — 대개는 공통값을 쓰므로 기본 닫힘.
+// (선택 셀이 바뀌어도 사용자가 연 상태는 유지한다 — 셀을 옮겨 다니며 편집하는 흐름이 끊기지 않게)
+const cellStyleOpen = ref(false)
+
+// '개별 스타일'을 하나라도 지정한 셀이 있으면 '공통값으로' 되돌리기를 노출한다.
+// (지정 전에는 공통값을 따르므로 되돌릴 것이 없다)
+const hasSelOwnStyle = computed(() =>
+  tableSelectedCells.value.some(({ row, col }) => {
+    const c = tableCells.value[row]?.[col]
+    return !!c && (c.bgColor !== undefined || c.align !== undefined)
+  }),
+)
+// undefined로 지우면 렌더러가 다시 공통값으로 폴백한다
+const resetSelOwnStyle = () => applyToSelected({ bgColor: undefined, align: undefined })
 
 // 병합 / 병합 해제
 const canMergeSelection = computed(() => {
@@ -3587,12 +3631,18 @@ const updateColWidth = (colIndex: number, width: string) => {
   }
 }
 
-// 커스텀 테이블 열 공통 정렬 (셀별 정렬이 없는 셀에 적용; 기본: 1열 가운데, 나머지 왼쪽)
-const getColAlign = (colIndex: number): 'left' | 'center' | 'right' => {
+// 열 공통 정렬(레거시) — 열별 정렬 UI가 있던 시절의 값. 값이 남아 있는 테이블에서만 쓰인다.
+const getColAlign = (colIndex: number): 'left' | 'center' | 'right' | null => {
   const aligns = (selectedModule.value?.properties.tableColAligns as string[] | undefined) || []
   const v = aligns[colIndex]
-  if (v === 'left' || v === 'center' || v === 'right') return v
-  return colIndex === 0 ? 'center' : 'left'
+  return v === 'left' || v === 'center' || v === 'right' ? v : null
+}
+
+// 타입(제목/내용) 공통 정렬 — '테이블 스타일' 탭 값
+const getTypeAlign = (type: 'th' | 'td'): 'left' | 'center' | 'right' => {
+  const key = type === 'th' ? 'headerAlign' : 'cellAlign'
+  const v = selectedModule.value?.properties[key]
+  return v === 'left' || v === 'center' || v === 'right' ? v : type === 'th' ? 'center' : 'left'
 }
 
 const updateColAlign = (colIndex: number, align: string) => {
@@ -3607,10 +3657,12 @@ const toggleCellType = (rowIndex: number, colIndex: number) => {
   }
 }
 
-// 셀에 실제 적용되는 정렬 (셀별 지정 > 열 공통 > 타입 기본)
+// 셀에 실제 적용되는 정렬 — 렌더러(moduleContentReplacer)와 같은 우선순위여야
+// '개별 스타일'의 활성 표시가 캔버스와 어긋나지 않는다.
+// 셀별 지정 > 열 공통(레거시) > 타입 공통
 const getCellAlign = (cell: TableCell, colIndex: number): 'left' | 'center' | 'right' => {
   if (cell.align) return cell.align
-  return getColAlign(colIndex)
+  return getColAlign(colIndex) ?? getTypeAlign(cell.type)
 }
 
 // 최대 열 병합 가능 수 계산
@@ -3659,6 +3711,11 @@ const handleColorInput = (key: string, value: string) => {
   if (normalized && !isValidHexColor(normalized)) {
     console.warn(`⚠️ [ColorInput] 유효하지 않은 HEX 컬러: ${normalized}`)
   }
+
+  // 포인트 색상을 따르는 중에 팔레트·HEX·투명도로 색을 직접 고르면 추종을 푼다.
+  // 풀지 않으면 값만 바뀌고 렌더는 계속 포인트 색상으로 해소되어(resolvePointColors)
+  // "골라도 아무 일도 안 일어나는" 것처럼 보인다.
+  if (isUsingPoint(key)) togglePointColor(key, false)
 
   updateProperty(key, normalized)
 }
