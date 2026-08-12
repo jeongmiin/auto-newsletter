@@ -381,11 +381,11 @@ describe('moduleStore', () => {
       const merged = store.mergeModulesIntoGroup([a, b, c])
       const group = store.groups.find((g) => g.id === merged)
       expect(group?.rows).toEqual([1, 2])
-      // 0행(A) 만 한 번 더 분할 → [2,2], 다시 → [3,2] (1행은 그대로)
+      // 0행(A)만 분할 → [2,2] (1행은 그대로). 상한이 2단이라 더 눌러도 변화 없다.
       store.splitModuleColumns(a)
       expect(group?.rows).toEqual([2, 2])
       store.splitModuleColumns(a)
-      expect(group?.rows).toEqual([3, 2])
+      expect(group?.rows).toEqual([2, 2])
       void g1
     })
 

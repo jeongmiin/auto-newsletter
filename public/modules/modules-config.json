@@ -8469,6 +8469,7 @@
       "category": "common",
       "icon": "pi pi-globe",
       "htmlFile": "TopLanguageButton.html",
+      "maxColumns": 1,
       "editableProps": [
         {
           "key": "button1Show",

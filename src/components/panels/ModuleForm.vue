@@ -1690,7 +1690,7 @@
 <script setup lang="ts">
 import { computed, reactive, ref, watch, nextTick, onMounted, onBeforeUnmount } from 'vue'
 import { useModuleStore } from '@/stores/moduleStore'
-import { resolveGroupRows } from '@/utils/groupLayout'
+import { resolveGroupRows, MAX_COLUMNS } from '@/utils/groupLayout'
 import { SNS_ICON_META, defaultSnsIcons, type SnsIconItem } from '@/constants/snsIcons'
 import {
   CONTACT_ITEM_META,
@@ -1808,11 +1808,13 @@ const moduleColumnInfo = computed(() => {
   }
 })
 
-// 이 모듈이 나눌 수 있는 최대 컬럼 수 — config의 maxColumns(예: 설명 텍스트=2), 없으면 전역 3단.
+// 이 모듈이 나눌 수 있는 최대 컬럼 수 — config의 maxColumns, 없으면 전역 MAX_COLUMNS.
+// config 값이 전역 상한을 넘지 않도록 함께 클램프한다.
 // 테이블은 컬럼 분할 대상이 아니므로 1(디자인 686-4239에 컬럼 세그먼트 없음).
-const maxColumns = computed(() =>
-  selectedModuleMetadata.value?.id === 'ModuleTable' ? 1 : (selectedModuleMetadata.value?.maxColumns ?? 3),
-)
+const maxColumns = computed(() => {
+  if (selectedModuleMetadata.value?.id === 'ModuleTable') return 1
+  return Math.min(selectedModuleMetadata.value?.maxColumns ?? MAX_COLUMNS, MAX_COLUMNS)
+})
 
 // 구성 요소(ColumnElementsField)는 빈 컬럼에서 '직접 구성'을 눌렀을 때 뜨는 ColumnComposePanel에서만 노출한다.
 // 요소를 체크해 모듈이 추가·선택되면 여기(ModuleForm)에는 그 모듈의 속성만 보이고 구성 요소는 다시 띄우지 않는다.

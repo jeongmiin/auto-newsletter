@@ -2,7 +2,7 @@
  * 그룹의 '행별 독립 컬럼' 레이아웃 계산 (순수 함수 — 렌더/내보내기 공용, 테스트 가능)
  *
  * 모델:
- *  - 그룹은 여러 '행(row)'을 가지며, 각 행이 자기 컬럼 수(1~4)를 갖는다 → ModuleGroup.rows[]
+ *  - 그룹은 여러 '행(row)'을 가지며, 각 행이 자기 컬럼 수(1~MAX_COLUMNS)를 갖는다 → ModuleGroup.rows[]
  *  - 멤버는 rowIndex(행) · columnIndex(그 행 안 컬럼)로 배치된다
  *  - 같은 (rowIndex, columnIndex) 멤버들은 그 칸에 세로로 쌓인다
  *  - 컬럼 수 1인 행 = 전체폭(세로 스택)
@@ -12,7 +12,12 @@
 import type { ModuleGroup, ModuleInstance } from '@/types/module'
 import { normalizeColumnWidths } from '@/utils/groupStyle'
 
-export const MAX_COLUMNS = 3
+/**
+ * 행을 나눌 수 있는 최대 컬럼 수.
+ * 이메일 클라이언트에서 3단은 모바일 폭에서 읽기 어려워 2단까지만 허용한다.
+ * (기존 저장 파일의 3단 행은 clampColumns로 2단이 되고, 3번째 컬럼 모듈은 마지막 컬럼에 쌓인다)
+ */
+export const MAX_COLUMNS = 2
 
 export const clampColumns = (n: number | undefined): number =>
   Math.min(Math.max(Math.floor(n ?? 1) || 1, 1), MAX_COLUMNS)

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { resolveGroupRows, computeGroupLayout, clampColumns } from '../groupLayout'
+import { resolveGroupRows, computeGroupLayout, clampColumns, MAX_COLUMNS } from '../groupLayout'
 import type { ModuleGroup, ModuleInstance } from '@/types/module'
 
 // 테스트용 최소 멤버 생성
@@ -14,11 +14,12 @@ const mk = (id: string, extra: Partial<ModuleInstance> = {}): ModuleInstance => 
 
 describe('groupLayout', () => {
   describe('clampColumns', () => {
-    it('1~3 범위로 클램프하고 미지정/0은 1로', () => {
+    it('1~MAX_COLUMNS 범위로 클램프하고 미지정/0은 1로', () => {
+      expect(MAX_COLUMNS).toBe(2) // 상한을 바꾸면 UI 세그먼트/모듈 config도 함께 확인할 것
       expect(clampColumns(undefined)).toBe(1)
       expect(clampColumns(0)).toBe(1)
-      expect(clampColumns(3)).toBe(3)
-      expect(clampColumns(9)).toBe(3)
+      expect(clampColumns(2)).toBe(2)
+      expect(clampColumns(9)).toBe(MAX_COLUMNS)
     })
   })
 
@@ -43,18 +44,30 @@ describe('groupLayout', () => {
       expect(rows[1].cells[1].map((m) => m.id)).toEqual(['rtitle', 'btn'])
     })
 
-    it('행별로 다른 컬럼 수를 독립적으로 처리 (1단 + 3단)', () => {
-      const group: Pick<ModuleGroup, 'rows'> = { rows: [1, 3] }
+    it('행별로 다른 컬럼 수를 독립적으로 처리 (1단 + 2단)', () => {
+      const group: Pick<ModuleGroup, 'rows'> = { rows: [1, 2] }
       const members = [
         mk('a', { rowIndex: 0, columnIndex: 0 }),
         mk('b', { rowIndex: 1, columnIndex: 0 }),
         mk('c', { rowIndex: 1, columnIndex: 1 }),
-        mk('d', { rowIndex: 1, columnIndex: 2 }),
       ]
       const rows = computeGroupLayout(group, members)
       expect(rows[0].columns).toBe(1)
-      expect(rows[1].columns).toBe(3)
-      expect(rows[1].cells.map((c) => c.map((m) => m.id))).toEqual([['b'], ['c'], ['d']])
+      expect(rows[1].columns).toBe(2)
+      expect(rows[1].cells.map((c) => c.map((m) => m.id))).toEqual([['b'], ['c']])
+    })
+
+    // 상한이 3단이던 시절의 저장 파일 하위 호환 — 3번째 컬럼 모듈이 사라지면 안 된다
+    it('상한을 넘는 3단 행은 2단으로 잘리고 3번째 컬럼 모듈은 마지막 컬럼에 쌓인다', () => {
+      const group: Pick<ModuleGroup, 'rows'> = { rows: [3] }
+      const members = [
+        mk('b', { rowIndex: 0, columnIndex: 0 }),
+        mk('c', { rowIndex: 0, columnIndex: 1 }),
+        mk('d', { rowIndex: 0, columnIndex: 2 }),
+      ]
+      const rows = computeGroupLayout(group, members)
+      expect(rows[0].columns).toBe(MAX_COLUMNS)
+      expect(rows[0].cells.map((c) => c.map((m) => m.id))).toEqual([['b'], ['c', 'd']])
     })
 
     it('범위를 벗어난 rowIndex/columnIndex는 클램프', () => {
