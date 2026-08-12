@@ -2472,11 +2472,19 @@ export const useModuleStore = defineStore('module', () => {
         (t) => t && typeof t.id === 'string' && typeof t.name === 'string' && Array.isArray(t.modules),
       )
 
-      // 좌측 본부/팀 트리도 같은 파일에서 온다 (배열 순서 = 표시 순서)
+      // 좌측 본부/팀 트리도 같은 파일에서 온다 (배열 순서 = 표시 순서).
+      // id가 없는 항목은 버린다 — 템플릿이 teamId로 트리를 찾으므로 id 없는 팀은
+      // 어차피 아무 템플릿도 매칭되지 않고, 조용히 빈 필터로 남는 게 더 나쁘다.
       availableDepartments.value = Array.isArray(data.departments)
-        ? (data.departments as TemplateDepartment[]).filter(
-            (d) => d && typeof d.name === 'string' && Array.isArray(d.teams),
-          )
+        ? (data.departments as TemplateDepartment[])
+            .filter(
+              (d) =>
+                d && typeof d.id === 'string' && typeof d.name === 'string' && Array.isArray(d.teams),
+            )
+            .map((d) => ({
+              ...d,
+              teams: d.teams.filter((t) => t && typeof t.id === 'string' && typeof t.name === 'string'),
+            }))
         : []
       availableTemplates.value = validated
       return validated

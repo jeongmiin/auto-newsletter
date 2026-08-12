@@ -14,20 +14,20 @@
           전체
         </button>
 
-        <div v-for="dept in departments" :key="dept.name" class="tpl-dept">
-          <button class="tpl-dept-head" @click="toggle(dept.name)">
+        <div v-for="dept in departments" :key="dept.id" class="tpl-dept">
+          <button class="tpl-dept-head" @click="toggle(dept.id)">
             <span>{{ dept.name }}</span>
-            <i class="pi text-xs text-gray-400" :class="isOpen(dept.name) ? 'pi-angle-down' : 'pi-angle-right'"></i>
+            <i class="pi text-xs text-gray-400" :class="isOpen(dept.id) ? 'pi-angle-down' : 'pi-angle-right'"></i>
           </button>
-          <div v-show="isOpen(dept.name)" class="tpl-team-list">
+          <div v-show="isOpen(dept.id)" class="tpl-team-list">
             <button
               v-for="team in dept.teams"
-              :key="team"
+              :key="team.id"
               class="tpl-team"
-              :class="{ 'is-active': selectedTeam === team }"
-              @click="selectedTeam = team"
+              :class="{ 'is-active': selectedTeam === team.id }"
+              @click="selectedTeam = team.id"
             >
-              {{ team }}
+              {{ team.name }}
             </button>
           </div>
         </div>
@@ -122,18 +122,26 @@ const editorStore = useEditorStore()
 
 // 좌측 부서/팀 트리 — templates-config.json의 departments에서 온다.
 // (화면·검사 테스트·등록 스크립트가 모두 그 한 곳을 보므로 여기에 따로 적지 않는다)
-// 배열 순서가 곧 표시 순서. 필터는 template.team 값과 매칭한다.
-const departments = computed(() => moduleStore.availableDepartments)
+// 배열 순서가 곧 표시 순서. 필터는 template.teamId와 id로 매칭한다(표시명이 아니다).
+//
+// 폐지된 조직(active: false)은 트리에서 감춘다. 정의는 지우지 않으므로 그 팀의
+// 옛 템플릿은 '전체'에서 계속 보이고, 저장된 teamId도 여전히 이름을 찾을 수 있다.
+const departments = computed(() =>
+  moduleStore.availableDepartments
+    .filter((d) => d.active !== false)
+    .map((d) => ({ ...d, teams: d.teams.filter((t) => t.active !== false) }))
+    .filter((d) => d.teams.length > 0),
+)
 
-const selectedTeam = ref<string>('') // '' = 전체
+const selectedTeam = ref<string>('') // '' = 전체, 그 외엔 팀 id
 const search = ref('')
 
 // 부서 접기/펼치기 — 기본 펼침(기록에 없으면 열린 것으로 본다).
 // 트리를 비동기로 받아오므로 목록을 미리 채우지 않는다.
 const openDepts = reactive<Record<string, boolean>>({})
-const isOpen = (name: string) => openDepts[name] !== false
-const toggle = (name: string) => {
-  openDepts[name] = !isOpen(name)
+const isOpen = (deptId: string) => openDepts[deptId] !== false
+const toggle = (deptId: string) => {
+  openDepts[deptId] = !isOpen(deptId)
 }
 
 const templates = ref<NewsletterTemplate[]>([])
@@ -142,11 +150,13 @@ const applying = ref(false)
 
 // 카드 정렬: 좌측 트리와 같은 순서(본부 → 팀)로 묶고, 그 안에서는 이름 가나다ABC 순.
 // (localeCompare('ko')가 한글 → 영문 순서를 만든다. JSON 순서에 기대지 않고 화면에서 정렬한다)
+// 순서는 폐지된 조직까지 포함한 원본 트리로 매긴다 — 감춰진 팀의 옛 템플릿이
+// '전체'에서 맨 뒤로 밀려나지 않고 제자리를 지키게 하기 위해서다.
 const rankOf = (t: NewsletterTemplate): [number, number] => {
-  const list = departments.value
-  const dIdx = list.findIndex((d) => d.name === t.division)
+  const list = moduleStore.availableDepartments
+  const dIdx = list.findIndex((d) => d.id === t.divisionId)
   if (dIdx === -1) return [list.length, 0] // 트리에 없는 본부는 맨 뒤
-  const tIdx = list[dIdx].teams.indexOf(t.team ?? '')
+  const tIdx = list[dIdx].teams.findIndex((team) => team.id === t.teamId)
   return [dIdx, tIdx === -1 ? list[dIdx].teams.length : tIdx]
 }
 
@@ -154,7 +164,7 @@ const filteredTemplates = computed(() => {
   const q = search.value.trim().toLowerCase()
   return templates.value
     .filter((t) => {
-      const teamOk = selectedTeam.value === '' || t.team === selectedTeam.value
+      const teamOk = selectedTeam.value === '' || t.teamId === selectedTeam.value
       const searchOk = !q || t.name.toLowerCase().includes(q)
       return teamOk && searchOk
     })

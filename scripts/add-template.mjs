@@ -2,12 +2,14 @@
  * 재편집용 HTML 하나를 템플릿 카탈로그(public/templates/templates-config.json)에 등록한다.
  *
  *   node scripts/add-template.mjs <htmlFile> --id kpet-template --name 케이펫 \
- *        --division 펫사업본부 --team 펫산업팀 [--thumbnail kpet_temp.png] [--description "..."]
+ *        --division pet --team pet-industry [--thumbnail kpet_temp.png] [--description "..."]
  *
  * 같은 id가 이미 있으면 교체한다. 등록 후 목록은 화면과 같은 순서
  * (본부 → 팀 → 이름 가나다ABC)로 다시 정렬한다.
  *
  * 본부/팀 목록은 설정 파일의 departments를 그대로 쓴다 — 화면·검사 테스트와 같은 한 곳이다.
+ * ⚠ --division/--team에는 표시명이 아니라 **id**를 넣는다. 표시명은 조직개편으로 바뀌지만
+ *   id는 불변이라, 저장된 값이 나중에도 같은 조직을 가리킨다.
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -37,11 +39,11 @@ if (!htmlArg || !opts.id || !opts.name || !opts.division || !opts.team) {
     [
       '사용법:',
       '  node scripts/add-template.mjs <htmlFile> --id <id> --name <이름> \\',
-      '       --division <본부> --team <팀> [--thumbnail <파일명>] [--description <설명>]',
+      '       --division <본부id> --team <팀id> [--thumbnail <파일명>] [--description <설명>]',
       '',
       '예:',
       '  node scripts/add-template.mjs temp/kpet_temp_newletter.html \\',
-      '       --id kpet-template --name 케이펫 --division 펫사업본부 --team 펫산업팀 \\',
+      '       --id kpet-template --name 케이펫 --division pet --team pet-industry \\',
       '       --thumbnail kpet_temp.png',
     ].join('\n'),
   )
@@ -54,17 +56,30 @@ const config = JSON.parse(fs.readFileSync(CONFIG, 'utf-8'))
 if (!Array.isArray(config.templates)) config.templates = []
 if (!Array.isArray(config.departments)) die('설정 파일에 departments가 없습니다')
 
-// 본부/팀이 트리에 있는지 — 오타로 목록에서 사라지는 것을 막는다
-const dept = config.departments.find((d) => d.name === opts.division)
+// 본부/팀 id가 트리에 있는지 — 오타로 목록에서 사라지는 것을 막는다.
+// 표시명을 넣는 실수가 잦을 자리라, 이름으로 들어오면 해당 id를 짚어 알려준다.
+const listOrg = (nodes) => nodes.map((n) => `${n.id}(${n.name})`).join(', ')
+
+const dept = config.departments.find((d) => d.id === opts.division)
 if (!dept) {
+  const byName = config.departments.find((d) => d.name === opts.division)
   die(
-    `본부 "${opts.division}"가 트리에 없습니다.\n  쓸 수 있는 본부: ${config.departments
-      .map((d) => d.name)
-      .join(', ')}`,
+    byName
+      ? `--division에는 표시명이 아니라 id를 넣습니다. "${opts.division}" → ${byName.id}`
+      : `본부 id "${opts.division}"가 트리에 없습니다.\n  쓸 수 있는 본부: ${listOrg(config.departments)}`,
   )
 }
-if (!dept.teams.includes(opts.team)) {
-  die(`"${opts.division}"에 팀 "${opts.team}"이 없습니다.\n  쓸 수 있는 팀: ${dept.teams.join(', ')}`)
+const team = dept.teams.find((t) => t.id === opts.team)
+if (!team) {
+  const byName = dept.teams.find((t) => t.name === opts.team)
+  die(
+    byName
+      ? `--team에는 표시명이 아니라 id를 넣습니다. "${opts.team}" → ${byName.id}`
+      : `"${dept.name}"에 팀 id "${opts.team}"이 없습니다.\n  쓸 수 있는 팀: ${listOrg(dept.teams)}`,
+  )
+}
+if (dept.active === false || team.active === false) {
+  die(`폐지된 조직에는 템플릿을 등록할 수 없습니다: ${dept.name} / ${team.name}`)
 }
 
 // 썸네일 파일 존재 확인 (없으면 화면에서 실시간 렌더로 폴백되지만, 대개 오타다)
@@ -123,8 +138,8 @@ const entry = {
   id: opts.id,
   name: opts.name,
   description: opts.description || `${opts.name} 뉴스레터 구성`,
-  division: opts.division,
-  team: opts.team,
+  divisionId: dept.id,
+  teamId: team.id,
   ...(opts.thumbnail ? { thumbnail: opts.thumbnail } : {}),
   wrapSettings: {
     backgroundColor: ws.backgroundColor ?? '#ffffff',
@@ -157,9 +172,9 @@ else config.templates.push(entry)
 
 // 화면과 같은 순서로 재정렬 (본부 → 팀 → 이름 가나다ABC)
 const rank = (t) => {
-  const d = config.departments.findIndex((x) => x.name === t.division)
+  const d = config.departments.findIndex((x) => x.id === t.divisionId)
   if (d === -1) return [config.departments.length, 0]
-  const i = config.departments[d].teams.indexOf(t.team ?? '')
+  const i = config.departments[d].teams.findIndex((x) => x.id === t.teamId)
   return [d, i === -1 ? config.departments[d].teams.length : i]
 }
 config.templates.sort((a, b) => {
@@ -173,7 +188,7 @@ fs.writeFileSync(CONFIG, JSON.stringify(config, null, 2) + '\n', 'utf-8')
 // ── 요약 ───────────────────────────────────────────────────
 const counts = entry.modules.reduce((acc, m) => ((acc[m.moduleId] = (acc[m.moduleId] || 0) + 1), acc), {})
 console.log(`${replaced ? '교체' : '추가'}: ${entry.name} (${entry.id})`)
-console.log(`  ${entry.division} / ${entry.team}${entry.thumbnail ? ` · 썸네일 ${entry.thumbnail}` : ' · 썸네일 없음(실시간 렌더로 표시)'}`)
+console.log(`  ${dept.name} / ${team.name} (${entry.divisionId} / ${entry.teamId})${entry.thumbnail ? ` · 썸네일 ${entry.thumbnail}` : ' · 썸네일 없음(실시간 렌더로 표시)'}`)
 console.log(`  모듈 ${entry.modules.length}개 / 그룹 ${(entry.groups ?? []).length}개`)
 console.log(`  구성: ${Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k}×${v}`).join(', ')}`)
 console.log(`  카탈로그 총 ${config.templates.length}개 → ${path.relative(ROOT, CONFIG)}`)

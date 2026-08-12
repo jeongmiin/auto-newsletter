@@ -1,41 +1,71 @@
 {
   "departments": [
     {
+      "id": "arch",
       "name": "건축사업본부",
       "teams": [
-        "건축기획팀",
-        "건축전략팀"
+        {
+          "id": "arch-plan",
+          "name": "건축기획팀"
+        },
+        {
+          "id": "arch-strategy",
+          "name": "건축전략팀"
+        }
       ]
     },
     {
+      "id": "growth",
       "name": "신성장산업본부",
       "teams": [
-        "신성장전략팀",
-        "MICE사업팀"
+        {
+          "id": "growth-strategy",
+          "name": "신성장전략팀"
+        },
+        {
+          "id": "mice",
+          "name": "MICE사업팀"
+        }
       ]
     },
     {
+      "id": "conv",
       "name": "융합사업본부",
       "teams": [
-        "융합산업1팀"
+        {
+          "id": "conv-industry-1",
+          "name": "융합산업1팀"
+        }
       ]
     },
     {
+      "id": "culture",
       "name": "문화콘텐츠사업본부",
       "teams": [
-        "라이프콘텐츠팀"
+        {
+          "id": "life-content",
+          "name": "라이프콘텐츠팀"
+        }
       ]
     },
     {
+      "id": "pet",
       "name": "펫사업본부",
       "teams": [
-        "펫산업팀"
+        {
+          "id": "pet-industry",
+          "name": "펫산업팀"
+        }
       ]
     },
     {
+      "id": "leisure",
       "name": "레저사업본부",
       "teams": [
-        "레저산업팀"
+        {
+          "id": "leisure-industry",
+          "name": "레저산업팀"
+        }
       ]
     }
   ],
@@ -44,8 +74,8 @@
       "id": "nextcon-template",
       "name": "넥스트콘",
       "description": "넥스트콘 뉴스레터 구성",
-      "division": "건축사업본부",
-      "team": "건축기획팀",
+      "divisionId": "arch",
+      "teamId": "arch-plan",
       "wrapSettings": {
         "backgroundColor": "#0a112c",
         "borderEnabled": false,
@@ -2267,8 +2297,8 @@
       "id": "hoban-template",
       "name": "호반",
       "description": "호반 뉴스레터 구성",
-      "division": "건축사업본부",
-      "team": "건축기획팀",
+      "divisionId": "arch",
+      "teamId": "arch-plan",
       "thumbnail": "hobanexpo_temp.png",
       "wrapSettings": {
         "backgroundColor": "#ffffff",
@@ -4064,8 +4094,8 @@
       "id": "spacedesign-template",
       "name": "공간디자인페어",
       "description": "공간디자인페어 뉴스레터 구성",
-      "division": "건축사업본부",
-      "team": "건축전략팀",
+      "divisionId": "arch",
+      "teamId": "arch-strategy",
       "wrapSettings": {
         "backgroundColor": "#f9f9f9",
         "borderEnabled": false,
@@ -6495,8 +6525,8 @@
       "id": "koreabuild-template",
       "name": "코리아빌드",
       "description": "코리아빌드 뉴스레터 구성",
-      "division": "건축사업본부",
-      "team": "건축전략팀",
+      "divisionId": "arch",
+      "teamId": "arch-strategy",
       "wrapSettings": {
         "backgroundColor": "#ffffff",
         "borderEnabled": false,
@@ -8665,8 +8695,8 @@
       "id": "lawexpo-template",
       "name": "법률 산업 박람회",
       "description": "법률 산업 박람회 뉴스레터 구성",
-      "division": "신성장산업본부",
-      "team": "신성장전략팀",
+      "divisionId": "growth",
+      "teamId": "growth-strategy",
       "wrapSettings": {
         "backgroundColor": "#ffffff",
         "borderEnabled": false,
@@ -9574,8 +9604,8 @@
       "id": "beautysumindia-template",
       "name": "뷰티썸",
       "description": "뷰티썸 뉴스레터 구성",
-      "division": "신성장산업본부",
-      "team": "신성장전략팀",
+      "divisionId": "growth",
+      "teamId": "growth-strategy",
       "wrapSettings": {
         "backgroundColor": "#ffffff",
         "borderEnabled": false,
@@ -10535,8 +10565,8 @@
       "id": "khf-template",
       "name": "KHF",
       "description": "KHF 뉴스레터 구성",
-      "division": "신성장산업본부",
-      "team": "신성장전략팀",
+      "divisionId": "growth",
+      "teamId": "growth-strategy",
       "wrapSettings": {
         "backgroundColor": "#ffffff",
         "borderEnabled": false,
@@ -11419,8 +11449,8 @@
       "id": "slw-template",
       "name": "SLW",
       "description": "SLW 뉴스레터 구성",
-      "division": "신성장산업본부",
-      "team": "MICE사업팀",
+      "divisionId": "growth",
+      "teamId": "mice",
       "wrapSettings": {
         "backgroundColor": "#ffffff",
         "borderEnabled": false,
@@ -13773,8 +13803,8 @@
       "id": "bfs-template",
       "name": "건축 소방 안전 산업전",
       "description": "건축 소방 안전 산업전 뉴스레터 구성",
-      "division": "융합사업본부",
-      "team": "융합산업1팀",
+      "divisionId": "conv",
+      "teamId": "conv-industry-1",
       "wrapSettings": {
         "backgroundColor": "#ffffff",
         "borderEnabled": false,
@@ -16042,8 +16072,8 @@
       "id": "police-template",
       "name": "국제치안산업대전",
       "description": "국제치안산업대전 뉴스레터 구성",
-      "division": "융합사업본부",
-      "team": "융합산업1팀",
+      "divisionId": "conv",
+      "teamId": "conv-industry-1",
       "wrapSettings": {
         "backgroundColor": "#ffffff",
         "borderEnabled": false,
@@ -18469,8 +18499,8 @@
       "id": "evinfra-template",
       "name": "전기차 충전인프라 산업전",
       "description": "전기차 충전인프라 산업전 뉴스레터 구성",
-      "division": "융합사업본부",
-      "team": "융합산업1팀",
+      "divisionId": "conv",
+      "teamId": "conv-industry-1",
       "wrapSettings": {
         "backgroundColor": "#ffffff",
         "borderEnabled": false,
@@ -20396,8 +20426,8 @@
       "id": "issa-template",
       "name": "ISSA",
       "description": "ISSA 뉴스레터 구성",
-      "division": "융합사업본부",
-      "team": "융합산업1팀",
+      "divisionId": "conv",
+      "teamId": "conv-industry-1",
       "wrapSettings": {
         "backgroundColor": "#ffffff",
         "borderEnabled": false,
@@ -23027,8 +23057,8 @@
       "id": "handartykorea-template",
       "name": "핸드아티코리아",
       "description": "핸드아티코리아 뉴스레터 구성",
-      "division": "문화콘텐츠사업본부",
-      "team": "라이프콘텐츠팀",
+      "divisionId": "culture",
+      "teamId": "life-content",
       "wrapSettings": {
         "backgroundColor": "#ffffff",
         "borderEnabled": false,
@@ -24705,8 +24735,8 @@
       "id": "megazoo-template",
       "name": "메가주",
       "description": "메가주 뉴스레터 구성",
-      "division": "펫사업본부",
-      "team": "펫산업팀",
+      "divisionId": "pet",
+      "teamId": "pet-industry",
       "wrapSettings": {
         "backgroundColor": "#f9f9f9",
         "borderEnabled": false,
@@ -25758,8 +25788,8 @@
       "id": "kpet-template",
       "name": "케이펫",
       "description": "케이펫 뉴스레터 구성",
-      "division": "펫사업본부",
-      "team": "펫산업팀",
+      "divisionId": "pet",
+      "teamId": "pet-industry",
       "thumbnail": "kpet_temp.png",
       "wrapSettings": {
         "backgroundColor": "#f9f9f9",
@@ -27933,8 +27963,8 @@
       "id": "gocaf-template",
       "name": "고카프",
       "description": "고카프 뉴스레터 구성",
-      "division": "레저사업본부",
-      "team": "레저산업팀",
+      "divisionId": "leisure",
+      "teamId": "leisure-industry",
       "wrapSettings": {
         "backgroundColor": "#ffffff",
         "borderEnabled": false,
@@ -30213,8 +30243,8 @@
       "id": "kfarm-template",
       "name": "케이팜",
       "description": "케이팜 뉴스레터 구성",
-      "division": "레저사업본부",
-      "team": "레저산업팀",
+      "divisionId": "leisure",
+      "teamId": "leisure-industry",
       "wrapSettings": {
         "backgroundColor": "#f9f9f9",
         "borderEnabled": false,

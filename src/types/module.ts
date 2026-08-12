@@ -202,28 +202,56 @@ export interface EmailBuilderState {
 }
 
 /**
- * 미리 만들어둔 뉴스레터 템플릿
- * 모듈 인스턴스 배열 + wrap 설정의 스냅샷
+ * 조직 식별자 규칙 (본부·팀 공통) — 어기면 과거 데이터와의 연결이 끊긴다.
+ *
+ * · `id`는 **한 번 정하면 절대 바꾸지 않는다.** S3 업로드 경로·저장 파일 등
+ *   되돌릴 수 없는 곳에 박히기 때문이다. 표시명이 바뀌면 `name`만 고친다.
+ * · 조직이 없어져도 **id를 지우지 않는다.** `active: false`로 두면 화면에서만
+ *   사라지고, 과거 데이터가 가리키는 대상은 살아 있다.
+ * · 통합·분할은 **새 id를 발급한다.** 옛 조직은 비활성 + `mergedInto`로 후속을
+ *   가리킨다. id를 재활용하면 과거 데이터의 소속이 조용히 뒤바뀐다.
+ *
+ * 규칙은 `templatesCatalog.test.ts`의 KNOWN_TEAM_IDS 가드가 강제한다.
  */
+interface OrgNode {
+  /** 불변 식별자. 소문자 영숫자와 하이픈만 (URL·S3 키에 그대로 쓰인다) */
+  id: string
+  /** 표시명. 조직개편으로 바뀔 수 있다 */
+  name: string
+  /** 생략 시 활성. 폐지된 조직만 false로 둔다(삭제 금지) */
+  active?: boolean
+  /** 통합·분할로 후속 조직이 있으면 그 id */
+  mergedInto?: string
+}
+
+/** 템플릿 선택 화면 좌측 트리의 팀 한 항목 */
+export type TemplateTeam = OrgNode
+
 /**
  * 템플릿 선택 화면의 좌측 본부/팀 트리 한 항목.
  * 정의는 `public/templates/templates-config.json`의 `departments`에 있다 —
  * 화면·검사 테스트·등록 스크립트가 모두 그 한 곳을 본다. 배열 순서가 곧 표시 순서다.
  */
-export interface TemplateDepartment {
-  name: string
-  teams: string[]
+export interface TemplateDepartment extends OrgNode {
+  teams: TemplateTeam[]
 }
 
+/**
+ * 미리 만들어둔 뉴스레터 템플릿
+ * 모듈 인스턴스 배열 + wrap 설정의 스냅샷
+ */
 export interface NewsletterTemplate {
   id: string
   name: string
   description: string
   thumbnail?: string
-  /** 소속 본부(표시·분류용). 필터는 team으로 하고, 본부 트리는 TemplateSelectView가 갖는다. */
-  division?: string
-  /** 소속 팀(템플릿 선택 화면의 좌측 부서/팀 필터용). 미지정이면 '전체'에서만 보인다. */
-  team?: string
+  /**
+   * 소속 본부 **id**(표시·분류용). 표시명이 아니다 — 트리에서 이름을 찾아 쓴다.
+   * 필터는 teamId로 하고, 본부 트리는 TemplateSelectView가 갖는다.
+   */
+  divisionId?: string
+  /** 소속 팀 **id**(좌측 부서/팀 필터용). 미지정이면 '전체'에서만 보인다. */
+  teamId?: string
   wrapSettings: {
     backgroundColor: string
     borderWidth: string
