@@ -90,32 +90,43 @@
                      (체크박스는 '그룹 묶기'용이라 그룹에 속하지 않은 모듈에만 필요). -->
                 <draggable
                   v-if="isExpanded(item.id)"
-                  :model-value="item.modules"
-                  item-key="id"
+                  :model-value="memberRows(item)"
+                  item-key="key"
                   handle=".order-drag--member"
                   ghost-class="order-ghost"
                   animation="180"
                   class="order-children"
-                  @update:model-value="reorderMembers(item.id, $event)"
+                  @update:model-value="reorderRows(item.id, $event)"
                 >
-                  <template #item="{ element: member }">
-                    <div
-                      class="order-row"
-                      :class="{ 'is-selected': selectedModuleId === member.id }"
-                      @click="select(member.id)"
-                      @mouseenter="setHover(member.id)"
-                      @mouseleave="setHover(null)"
-                    >
+                  <!-- 다단 행은 한 덩어리로 묶어 보여준다 — 캔버스와 마찬가지로 '행'이 이동 단위라
+                       핸들도 행에 하나만 두고, 열이 여럿임을 배경·왼쪽 선으로 표시한다.
+                       컬럼을 풀면 members가 1개인 행이 되어 다시 평범한 줄로 돌아온다.
+                       ⚠ #item 슬롯 안 맨 앞에 주석을 두면 루트가 2개가 되어 vuedraggable이
+                          아무것도 렌더하지 않는다(하위 목록이 통째로 사라짐) — 주석은 슬롯 밖에. -->
+                  <template #item="{ element: row }">
+                    <div class="order-rowgroup" :class="{ 'is-multi': row.members.length > 1 }">
                       <span
-                        class="material-symbols-outlined order-drag order-drag--member"
+                        class="material-symbols-outlined order-drag order-drag--member order-drag--row"
                         title="그룹 안에서 순서 변경"
                         @click.stop
                         >drag_indicator</span
                       >
-                      <span class="material-symbols-outlined order-kind">{{
-                        moduleIcon(member)
-                      }}</span>
-                      <span class="order-label">{{ moduleLabel(member) }}</span>
+                      <div class="order-rowgroup-body">
+                        <div
+                          v-for="member in row.members"
+                          :key="member.id"
+                          class="order-row"
+                          :class="{ 'is-selected': selectedModuleId === member.id }"
+                          @click="select(member.id)"
+                          @mouseenter="setHover(member.id)"
+                          @mouseleave="setHover(null)"
+                        >
+                          <span class="material-symbols-outlined order-kind">{{
+                            moduleIcon(member)
+                          }}</span>
+                          <span class="order-label">{{ moduleLabel(member) }}</span>
+                        </div>
+                      </div>
                     </div>
                   </template>
                 </draggable>
@@ -131,8 +142,10 @@
                 @mouseenter="setHover(item.module.id)"
                 @mouseleave="setHover(null)"
               >
+                <!-- ⚠ 바깥 리스트의 handle은 '.order-drag--root'다. 이 클래스가 빠지면
+                     단독 모듈만 드래그가 통째로 안 먹는다(그룹 행은 되는데 이것만 안 되는 증상). -->
                 <span
-                  class="material-symbols-outlined order-drag"
+                  class="material-symbols-outlined order-drag order-drag--root"
                   title="끌어서 순서 변경"
                   @click.stop
                   >drag_indicator</span
@@ -168,6 +181,7 @@ import draggable from 'vuedraggable'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
 import { useToast } from 'primevue/usetoast'
+import { computeGroupLayout, type GroupRowLayout } from '@/utils/groupLayout'
 import type { ModuleInstance, ModuleGroup, DisplayItem } from '@/types'
 
 const moduleStore = useModuleStore()
@@ -248,11 +262,29 @@ const selectGroupRow = (groupId: string): void => {
 }
 
 /** 그룹 안 멤버 드래그 재정렬 — 그룹의 행/컬럼 골격은 유지된다(moduleStore 참고) */
-const reorderMembers = (groupId: string, list: ModuleInstance[]): void => {
-  moduleStore.reorderGroupMembers(
-    groupId,
-    list.map((m) => m.id),
-  )
+/**
+ * 그룹 멤버를 '행' 단위로 묶는다 — 캔버스와 같은 이동 단위.
+ * 다단 행은 여러 멤버를 한 덩어리로 들고 있고, 컬럼을 풀면 멤버 1개짜리 행이 된다.
+ */
+type OutlineRow = GroupRowLayout<ModuleInstance> & { key: string; members: ModuleInstance[] }
+
+const memberRows = (item: { group: ModuleGroup; modules: ModuleInstance[] }): OutlineRow[] =>
+  computeGroupLayout(item.group, item.modules).map((row, i) => ({
+    ...row,
+    key: row.cells.flat().find(Boolean)?.id ?? `row-${i}`,
+    members: row.cells.flat().filter(Boolean) as ModuleInstance[],
+  }))
+
+/**
+ * 행 순서 변경 — 캔버스와 같은 `reorderGroupRows`를 쓴다.
+ *
+ * ⚠ `reorderGroupMembers`(멤버 단위)로 하면 안 된다. 그 함수는 "i번째 모듈에 i번째 원래 좌표"를
+ * 그대로 물려주기 때문에, 행마다 멤버 수가 다르면 좌표가 밀린다 —
+ * 1단 행(구분선)이 2단 행의 한 칸으로 빨려 들어가 레이아웃이 깨진다.
+ * `reorderGroupRows`는 행별 컬럼 수(group.rows)까지 같이 갱신한다.
+ */
+const reorderRows = (groupId: string, rows: OutlineRow[]): void => {
+  moduleStore.reorderGroupRows(groupId, rows)
 }
 
 // ===== 라벨 / 아이콘 =====
@@ -283,8 +315,20 @@ const CATEGORY_ICON: Record<string, string> = {
   common: 'widgets',
 }
 
+/**
+ * 카테고리만으로는 구분되지 않는 모듈의 아이콘.
+ * `common` 카테고리에 성격이 다른 모듈이 섞여 있어(구분선·헤더 등) 카테고리 아이콘으로는
+ * 전부 `widgets`가 된다. 카테고리를 바꾸면 모듈 팔레트의 탭 분류까지 흔들리므로 표시만 덮어쓴다.
+ * ⚠ 아이콘을 늘리면 index.html의 `icon_names` subset에도 추가할 것.
+ */
+const MODULE_ICON: Record<string, string> = {
+  ModuleDivider: 'vertical_distribute',
+}
+
 const moduleIcon = (instance: ModuleInstance): string =>
-  CATEGORY_ICON[metadataOf(instance)?.category ?? ''] ?? 'widgets'
+  MODULE_ICON[instance.moduleId] ??
+  CATEGORY_ICON[metadataOf(instance)?.category ?? ''] ??
+  'widgets'
 
 /**
  * 모듈 라벨 — 텍스트형은 실제 입력한 문구를 보여주고(Figma의 'NEWSLETTER #60' 등),
@@ -478,6 +522,32 @@ const setHover = (moduleId: string | null): void => {
   flex-direction: column;
   gap: 10px;
   margin-left: 37px;
+}
+
+/* 행 묶음 — 핸들 하나 + 그 행의 모듈들.
+   1단이면 평범한 한 줄과 똑같이 보이고(추가 표시 없음),
+   다단이면 배경과 왼쪽 선으로 "한 덩어리로 움직인다"를 드러낸다. */
+.order-rowgroup {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.order-rowgroup-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.order-rowgroup.is-multi .order-rowgroup-body {
+  gap: 2px;
+  padding: 4px 4px 4px 8px;
+  border-left: 2px solid rgba(64, 131, 243, 0.5);
+  border-radius: 0 4px 4px 0;
+  background: rgba(235, 243, 255, 0.55);
+}
+/* 행 핸들은 첫 줄 높이에 맞춰 위쪽 정렬 (다단이면 여러 줄이라 가운데가 어색하다) */
+.order-rowgroup .order-drag--row {
+  margin-top: 10px;
 }
 
 .order-row {

@@ -22,15 +22,13 @@
     <!-- 우측 세로 플로팅 툴바 (모듈 바깥 오른쪽) — 위로/아래로/복제/삭제.
          **선택했을 때만** 보인다. 호버만으로 뜨면 마우스가 지나가는 모듈마다 툴바가 깜빡여
          미리보기를 훑어보기 어렵다(호버 때는 테두리만 표시). -->
-    <div
-      class="module-toolbar"
-      :class="{ 'is-visible': isSelected }"
-      v-tooltip.left="compact ? moduleName : undefined"
-    >
+    <!-- ⚠ 툴바 컨테이너에는 툴팁을 걸지 않는다. 버튼마다 이미 툴팁이 있어서
+         버튼에 마우스를 올리면 컨테이너 툴팁(모듈 이름)과 겹쳐 두 개가 함께 뜬다. -->
+    <div class="module-toolbar" :class="{ 'is-visible': isSelected }">
       <button
         type="button"
         class="module-toolbar-btn"
-        :disabled="index === 0"
+        :disabled="!canGoUp"
         @click.stop="$emit('move-up', module.id)"
         v-tooltip.left="'위로 이동'"
       >
@@ -39,6 +37,7 @@
       <button
         type="button"
         class="module-toolbar-btn"
+        :disabled="!canGoDown"
         @click.stop="$emit('move-down', module.id)"
         v-tooltip.left="'아래로 이동'"
       >
@@ -76,6 +75,13 @@ interface Props {
   isSelected: boolean
   /** 컬럼 그룹 멤버일 때 좌/우 이동 버튼 표시용 (컬럼 수 + 현재 컬럼) */
   columnInfo?: { columns: number; columnIndex: number }
+  /**
+   * 위/아래 이동 가능 여부. 그룹 멤버는 전역 order가 아니라 **그룹 안 위치**로 판단해야 해서
+   * 캔버스가 직접 넘겨준다(2단 행 안의 모듈은 혼자 위아래로 못 움직이므로 둘 다 false).
+   * 넘기지 않으면 단독 모듈 기준(맨 위면 위로 비활성)으로 동작한다.
+   */
+  canMoveUp?: boolean
+  canMoveDown?: boolean
 }
 
 const props = defineProps<Props>()
@@ -89,13 +95,14 @@ defineEmits<{
 }>()
 
 const moduleStore = useModuleStore()
-const { renderedHtml, moduleMetadata, isLoading } = useModuleRenderer(props.module.id)
+
+// 캔버스가 넘겨주면 그 값을, 아니면 단독 모듈 기준으로 판단한다
+const canGoUp = computed(() => props.canMoveUp ?? props.index !== 0)
+const canGoDown = computed(() => props.canMoveDown ?? true)
+
+const { renderedHtml, isLoading } = useModuleRenderer(props.module.id)
 const contentEl = ref<HTMLElement | null>(null)
 
-// 모듈 표시 이름
-const moduleName = computed(() => moduleMetadata.value?.name || props.module.moduleId)
-// 좁은 컬럼(2단 이상)에서는 이름을 숨겨 바 폭을 줄인다 (이름은 툴팁으로 확인)
-const compact = computed(() => !!props.columnInfo && props.columnInfo.columns > 1)
 
 // ── 테이블 셀 선택 (캔버스 미리보기) ─────────────────────────────
 // data-row/col을 가진 셀(ModuleTable)만 처리. 그 외 클릭은 버블돼 일반 모듈 선택.

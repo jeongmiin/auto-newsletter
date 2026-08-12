@@ -140,7 +140,10 @@
               <!-- 실제 스타일 박스 (배경/테두리/여백은 내보내기와 동일) -->
               <div
                 class="group-box"
-                :class="{ 'group-box--selected': activeGroupId === item.id }"
+                :class="{
+                  'group-box--selected': selectedGroupId === item.id,
+                  'group-box--member': memberActiveGroupId === item.id,
+                }"
                 :style="groupWrapperStyle(item.group)"
                 @click.self="selectGroupBox(item.id)"
               >
@@ -156,10 +159,82 @@
                   ghost-class="dragging-ghost"
                   chosen-class="dragging-chosen"
                   animation="200"
+                  direction="vertical"
                   @end="onGroupRowDrop(item.id, $event)"
                 >
                   <template #item="{ element: row, index: rowIdx }">
-                   <div class="group-row-item">
+                   <div
+                     class="group-row-item"
+                     :class="{
+                       'row--multi': row.columns > 1,
+                       'row--hover': isRowHovered(item.id, rowIdx),
+                       'row--selected': isRowSelected(item.id, rowIdx),
+                     }"
+                     @mouseenter="hoveredRow = { groupId: item.id, rowIndex: rowIdx }"
+                     @mouseleave="hoveredRow = null"
+                   >
+                  <!-- 좌우 자리 바꾸기 (Figma 1125-9661) — 행 한가운데 뜨는 원형 버튼.
+                       다단 행 안 모듈은 위아래로 못 움직이므로, 이동 수단은 좌우 교체뿐이다. -->
+                  <button
+                    v-if="row.columns > 1 && isRowVisible(item.id, rowIdx)"
+                    type="button"
+                    class="row-swap-btn no-drag"
+                    v-tooltip.top="'좌우 자리 바꾸기'"
+                    @click.stop="moduleStore.swapRowColumns(item.id, rowIdx)"
+                  >
+                    <span class="material-symbols-outlined">sync_alt</span>
+                  </button>
+
+                  <!-- 행 전체가 선택됐을 때의 툴바 — 2단은 '행'이 위아래 이동 단위다 -->
+                  <div v-if="isRowSelected(item.id, rowIdx)" class="row-toolbar no-drag">
+                    <button
+                      type="button"
+                      class="module-toolbar-btn"
+                      :disabled="rowIdx === 0"
+                      v-tooltip.left="'위로 이동'"
+                      @click.stop="moveRow(item.id, rowIdx, -1)"
+                    >
+                      <span class="material-symbols-outlined">arrow_upward</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="module-toolbar-btn"
+                      :disabled="rowIdx >= groupRows(item).length - 1"
+                      v-tooltip.left="'아래로 이동'"
+                      @click.stop="moveRow(item.id, rowIdx, 1)"
+                    >
+                      <span class="material-symbols-outlined">arrow_downward</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="module-toolbar-btn"
+                      v-tooltip.left="'행 복제 (컬럼 구성 그대로)'"
+                      @click.stop="duplicateRow(item.id, rowIdx)"
+                    >
+                      <span class="material-symbols-outlined">content_copy</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="module-toolbar-btn is-danger"
+                      v-tooltip.left="'행 전체 삭제'"
+                      @click.stop="confirmDeleteRow(item.id, rowIdx, row)"
+                    >
+                      <span class="material-symbols-outlined">delete</span>
+                    </button>
+                  </div>
+
+                  <!-- 다단 행의 드래그 핸들은 '행' 왼쪽에 하나만 둔다.
+                       열마다 두면 오른쪽 열 핸들이 행 한가운데 ⇄ 버튼과 겹친다(사용자 지적).
+                       클래스는 .dh-member 그대로 — 그룹 내부 draggable의 handle 선택자다. -->
+                  <div
+                    v-if="row.columns > 1"
+                    class="dh-member module-drag-handle dh-row"
+                    :class="{ 'is-visible': isRowSelected(item.id, rowIdx) }"
+                    title="마우스로 끌어서 그룹 안에서 순서를 변경하세요"
+                  >
+                    <span class="material-symbols-outlined">drag_indicator</span>
+                  </div>
+
                   <!-- 다단 행 (.col-row: font-size:0 으로 셀 사이 공백 제거 → 폭 균등 분할) -->
                   <div v-if="row.columns > 1" class="col-row">
                     <div
@@ -175,19 +250,15 @@
                         class="relative group transition-all"
                         :class="{ 'ring-2 ring-amber-400 ring-inset rounded-sm': hoveredModuleId === member.id }"
                       >
-                        <!-- 그룹 안 모듈에도 드래그 핸들 노출 (선택/호버 시). 이 핸들로 그룹 내부에서 재배치. -->
-                        <div
-                          class="dh-member module-drag-handle"
-                          :class="{ 'is-visible': selectedModuleId === member.id }"
-                          title="마우스로 끌어서 그룹 안에서 순서를 변경하세요"
-                        >
-                          <span class="material-symbols-outlined">drag_indicator</span>
-                        </div>
+                        <!-- 열 안 모듈에는 드래그 핸들을 두지 않는다 — 이동 단위가 '행'이라
+                             핸들은 행 왼쪽에 하나만 있고(위 .dh-row), 좌우는 가운데 ⇄로 바꾼다. -->
                         <ModuleRenderer
                           :module="member"
                           :index="member.order"
                           :is-selected="selectedModuleId === member.id"
                           :column-info="{ columns: row.columns, columnIndex: member.columnIndex ?? 0 }"
+                          :can-move-up="false"
+                          :can-move-down="false"
                           @select="selectModule"
                           @move-up="moveModuleUp"
                           @move-down="moveModuleDown"
@@ -259,6 +330,8 @@
                         :index="member.order"
                         :is-selected="selectedModuleId === member.id"
                         :column-info="{ columns: 1, columnIndex: 0 }"
+                        :can-move-up="rowIdx > 0"
+                        :can-move-down="rowIdx < groupRows(item).length - 1"
                         @select="selectModule"
                         @move-up="moveModuleUp"
                         @move-down="moveModuleDown"
@@ -399,8 +472,41 @@ const onDragEnd = () => {
   isDragging.value = false
 }
 
+/**
+ * 모듈 선택. 2단 행 안에서는 행 선택 ↔ 열 선택을 오간다.
+ * (onRowClick이 먼저 행을 선택하고, 이 핸들러가 이어서 열을 선택한다)
+ */
 const selectModule = (moduleId: string) => {
-  moduleStore.selectModule(moduleId)
+  const owner = rowOfModule(moduleId)
+  // 1단 행·단독 모듈은 곧바로 모듈 선택
+  if (!owner) {
+    selectedRow.value = null
+    moduleStore.selectModule(moduleId)
+    return
+  }
+  if (selectedModuleId.value === moduleId) {
+    // 이미 선택된 열을 또 누름 → 행 전체로 되돌린다
+    selectedRow.value = owner
+    moduleStore.clearSelection()
+  } else if (isRowActive(owner)) {
+    // 이 행을 보고 있는 중(행 전체 선택 또는 반대편 열 선택) → 누른 열로 내려간다
+    selectedRow.value = null
+    moduleStore.selectModule(moduleId)
+  } else {
+    // 바깥에서 처음 누름 → 우선 행 전체
+    selectedRow.value = owner
+    moduleStore.clearSelection()
+  }
+}
+
+/** 이 모듈이 속한 '다단' 행 좌표 (1단이면 null — 단계 선택이 없다) */
+const rowOfModule = (moduleId: string): RowRef | null => {
+  const m = moduleStore.modules.find((x) => x.id === moduleId)
+  if (!m?.groupId) return null
+  const group = moduleStore.groups.find((g) => g.id === m.groupId)
+  const rowIndex = m.rowIndex ?? 0
+  if (!group?.rows || (group.rows[rowIndex] ?? 1) <= 1) return null
+  return { groupId: group.id, rowIndex }
 }
 
 // 캔버스에서 미리보기 컨테이너(.canvas-container) 바깥의 빈 영역을 클릭하면
@@ -458,6 +564,89 @@ const groupRows = (item: DisplayItem): GroupRowLayout<ModuleInstance>[] => {
   return computeGroupLayout(item.group, item.modules)
 }
 
+/**
+ * 행 단위 호버/선택 (Figma 1125-3629).
+ *
+ * 2단 행은 "행 전체"와 "그 안의 열" 두 단계로 선택된다:
+ *   1) 처음 누르면 행 전체가 선택되고
+ *   2) 한 번 더 누르면 누른 열의 모듈이 선택된다
+ *   3) 이미 선택된 열을 또 누르면 다시 행 전체로 돌아온다
+ * 1단 행은 행 = 모듈이라 곧바로 모듈이 선택된다(기존 동작).
+ */
+type RowRef = { groupId: string; rowIndex: number }
+const hoveredRow = ref<RowRef | null>(null)
+const selectedRow = ref<RowRef | null>(null)
+
+const sameRow = (a: RowRef | null, groupId: string, rowIndex: number): boolean =>
+  !!a && a.groupId === groupId && a.rowIndex === rowIndex
+
+const isRowHovered = (groupId: string, rowIndex: number): boolean =>
+  sameRow(hoveredRow.value, groupId, rowIndex)
+const isRowSelected = (groupId: string, rowIndex: number): boolean =>
+  sameRow(selectedRow.value, groupId, rowIndex)
+
+/**
+ * 그룹 '안의 요소'를 보고 있는 그룹 id — 멤버 모듈 선택 또는 2단 행 선택.
+ * 그룹 스타일 편집(보라 실선) 중에는 비운다 — 한 그룹에 두 표시가 겹치지 않도록.
+ */
+const memberActiveGroupId = computed(() => {
+  if (selectedGroupId.value) return null
+  return moduleStore.activeGroup?.id ?? selectedRow.value?.groupId ?? null
+})
+
+/** 이 행의 조작 UI(⇄)를 띄울 상태인가 — 호버 중이거나 행/열이 선택된 상태 */
+const isRowVisible = (groupId: string, rowIndex: number): boolean =>
+  isRowHovered(groupId, rowIndex) ||
+  isRowActive({ groupId, rowIndex })
+
+/** 행 복제 — 새로 생긴 아래 행을 이어서 선택해 둔다 */
+const duplicateRow = (groupId: string, rowIndex: number): void => {
+  if (moduleStore.duplicateRow(groupId, rowIndex)) {
+    selectedRow.value = { groupId, rowIndex: rowIndex + 1 }
+  }
+}
+
+/** 행 삭제 — 여러 모듈이 한 번에 사라지므로 확인을 받는다 */
+const confirmDeleteRow = (
+  groupId: string,
+  rowIndex: number,
+  row: GroupRowLayout<ModuleInstance>,
+): void => {
+  const count = row.cells.flat().filter(Boolean).length
+  confirm.require({
+    message: `이 행의 ${count}개 모듈이 모두 삭제됩니다. 계속하시겠습니까?`,
+    header: '행 삭제 확인',
+    rejectLabel: '취소',
+    acceptLabel: '삭제',
+    rejectClass: 'p-button-secondary',
+    acceptClass: 'p-button-danger',
+    accept: () => {
+      moduleStore.deleteRow(groupId, rowIndex)
+      selectedRow.value = null
+    },
+  })
+}
+
+/** 행을 그룹 안에서 한 칸 위/아래로 (다단 행은 이 단위로만 움직인다) */
+const moveRow = (groupId: string, rowIndex: number, delta: number): void => {
+  const item = displayList.value.find((d) => d.type === 'group' && d.id === groupId)
+  if (!item || item.type !== 'group') return
+  const rows = groupRows(item)
+  const to = rowIndex + delta
+  if (to < 0 || to >= rows.length) return
+  const [moved] = rows.splice(rowIndex, 1)
+  rows.splice(to, 0, moved)
+  moduleStore.reorderGroupRows(groupId, rows)
+  selectedRow.value = { groupId, rowIndex: to }
+}
+
+/** 지금 이 행 '안'을 보고 있는가 — 행 전체가 선택됐거나, 그 행의 열 하나가 선택된 상태 */
+const isRowActive = (owner: RowRef): boolean => {
+  if (isRowSelected(owner.groupId, owner.rowIndex)) return true
+  const sel = moduleStore.modules.find((m) => m.id === selectedModuleId.value)
+  return !!sel && sel.groupId === owner.groupId && (sel.rowIndex ?? 0) === owner.rowIndex
+}
+
 // 그룹 내부 draggable: 행의 고유 키 = 그 행 첫 멤버 id
 const rowItemKey = (row: GroupRowLayout<ModuleInstance>): string =>
   row.cells.flat().find(Boolean)?.id ?? 'empty-row'
@@ -511,6 +700,24 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
 /* 드래그 핸들 호버 효과 */
 .dh-top:active {
   cursor: grabbing;
+}
+
+/* 그룹 내부 드래그 대상(행). 핸들이 모듈 왼쪽 바깥(-32px)에 있어서, 사용자는 자연히 그 열을
+   따라 위아래로 끈다. 행 박스가 모듈 폭까지만이면 그 열에는 아무 행도 없어 SortableJS가
+   드롭 대상을 찾지 못한다(아래로 끌 때 특히).
+   ⚠ padding/margin으로 넓히면 **행 박스 자체가 커져서 호버·선택 파란 선이 왼쪽으로 삐져나온다.**
+   그래서 가상 요소로만 히트 영역을 넓힌다 — 박스 크기는 그대로라 테두리도 제자리에 그려진다.
+   (elementFromPoint는 ::before 위에서도 부모 요소를 돌려주므로 드롭 판정에는 그대로 잡힌다) */
+.group-row-item {
+  position: relative;
+}
+.group-row-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -40px;
+  width: 40px;
+  height: 100%;
 }
 
 /* 좌측 드래그 핸들 (Figma 352-1138) — 단독 모듈 왼쪽 바깥에 붙는 흰 카드.
@@ -640,20 +847,22 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
 */
 .group-box {
   position: relative;
-  /* 컬럼 경계(파란 점선)보다 확실히 무겁게 — 그룹 경계와 컬럼 경계가 혼동되지 않도록 */
-  outline: 1.5px dashed rgba(147, 51, 234, 0.5);
-  outline-offset: -1px;
   transition: outline-color 0.12s ease, background-color 0.12s ease;
 }
 
-/* 호버 — "여기를 클릭하면 그룹을 잡을 수 있다"는 신호 (이전엔 호버 표시가 전혀 없었다) */
-.group-box:hover {
-  outline-color: rgba(147, 51, 234, 0.85);
-}
-
+/* 그룹 경계는 세 단계로 보여준다 (Figma 1125-3629 + 사용자 확정).
+   평소엔 아예 두지 않는다 — 행 호버/선택의 파란 선과 겹쳐 읽기 어려워진다.
+     · 그룹 스타일 편집 중  → 보라 실선 (지금 이 그룹 전체를 다루는 중)
+     · 그룹 안 요소 선택 중 → 보라 점선 50% (선택한 요소가 이 그룹 소속이라는 표시) */
 .group-box--selected,
 .group-box--selected:hover {
-  outline: 2px solid #9333ea;
+  outline: 2px solid #c00aee;
+  outline-offset: -1px;
+}
+.group-box--member,
+.group-box--member:hover {
+  outline: 2px dashed rgba(192, 10, 238, 0.5);
+  outline-offset: -1px;
 }
 
 .group-wrap {
@@ -669,11 +878,109 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
 .col-cell {
   /* 부모(col-row)의 font-size:0 을 셀 내부에서 복원 (콘텐츠는 자체 인라인 크기 사용) */
   font-size: 14px;
-  /* 편집 화면에서 컬럼 경계 인지용 옅은 점선 (내보내기에는 없음).
-     그룹 경계(보라 dashed 1.5px)와 헷갈리지 않도록 더 가볍게 dotted 처리. */
-  outline: 1px dotted rgba(37, 99, 235, 0.18);
-  outline-offset: -1px;
   min-height: 40px;
+}
+
+/* ===== 행 호버/선택 (Figma 1125-3629) =====
+   1단·2단 모두 행 전체에 파란 실선, 2단은 각 열에 파란 점선을 더한다.
+   컬럼 점선을 상시 노출하지 않는 이유: 평소엔 미리보기가 실제 메일처럼 보여야 한다. */
+.group-row-item {
+  outline-offset: -2px;
+  transition: outline-color 0.12s ease;
+}
+.group-row-item.row--hover,
+.group-row-item.row--selected {
+  outline: 2px solid #4083f3;
+}
+.row--hover.row--multi .col-cell,
+.row--selected.row--multi .col-cell {
+  outline: 1px dashed rgba(64, 131, 243, 0.5);
+  outline-offset: -1px;
+}
+/* 2단 '행 전체'가 선택된 상태 — 열 안 모듈은 아직 선택 전이라 배경을 깔지 않는다 */
+.group-row-item.row--selected {
+  background: rgba(235, 243, 255, 0.5);
+}
+
+/* 다단 행의 드래그 핸들 — 행 왼쪽 바깥(단독 모듈 핸들과 같은 자리).
+   .module-drag-handle의 위치 규칙을 그대로 쓰되, 행 높이 기준으로 세로 가운데에 맞춘다. */
+.dh-row {
+  left: -32px;
+}
+
+/* 좌우 자리 바꾸기 버튼 — 행 한가운데 (Figma 1125-9661: 40px 원형, gray/800) */
+.row-swap-btn {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 15;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 1000px;
+  background: #333d4b;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.row-swap-btn:hover {
+  background: #4e5968;
+}
+.row-swap-btn .material-symbols-outlined {
+  font-size: 24px;
+}
+
+/* 행 전체 선택 시 위/아래 이동 툴바 — 모듈 툴바와 같은 자리(오른쪽 바깥)·같은 모양 */
+.row-toolbar {
+  position: absolute;
+  right: -50px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 41px;
+  padding: 16px 0;
+  background: #fff;
+  border: 1px solid #e5e8eb;
+  border-radius: 12px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.07);
+}
+/* 모듈 툴바 버튼 모양 재사용 (ModuleRenderer의 .module-toolbar-btn과 동일 규격) */
+.row-toolbar .module-toolbar-btn {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #4e5968;
+  cursor: pointer;
+}
+.row-toolbar .module-toolbar-btn:hover:not(:disabled) {
+  background: #f2f4f6;
+}
+.row-toolbar .module-toolbar-btn:disabled {
+  color: #c4c9d0;
+  cursor: default;
+}
+/* 삭제는 되돌리기 어려운 동작이라 모듈 툴바와 같은 빨간색으로 구분 */
+.row-toolbar .module-toolbar-btn.is-danger {
+  color: #f04452;
+}
+.row-toolbar .module-toolbar-btn.is-danger:hover {
+  background: #fdeced;
+}
+.row-toolbar .material-symbols-outlined {
+  font-size: 20px;
 }
 
 /* 빈 컬럼 placeholder (컬럼 분할 시 방식 선택) — Figma 745-8054 */

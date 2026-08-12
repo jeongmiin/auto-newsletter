@@ -2421,6 +2421,100 @@ export const useModuleStore = defineStore('module', () => {
   }
 
   /**
+   * 다단 행의 컬럼 내용을 좌우로 맞바꾼다 (캔버스 행 가운데 ⇄ 버튼).
+   *
+   * 다단 행 안의 모듈은 위아래로 움직일 수 없다(행이 통째로 움직인다) — 대신 좌우 자리만 바꾼다.
+   * 배열 슬롯은 그대로 두고 columnIndex만 뒤집은 뒤 컬럼 순으로 재배치해,
+   * 다른 행·다른 그룹의 순서에는 영향을 주지 않는다.
+   */
+  const swapRowColumns = (groupId: string, rowIndex: number): boolean => {
+    const members = modules.value.filter(
+      (m) => m.groupId === groupId && (m.rowIndex ?? 0) === rowIndex,
+    )
+    const columns = new Set(members.map((m) => m.columnIndex ?? 0))
+    if (members.length < 2 || columns.size < 2) return false
+
+    const maxCol = Math.max(...columns)
+    const slots = members.map((m) => modules.value.indexOf(m)).sort((a, b) => a - b)
+    // 컬럼을 뒤집고(0↔max) 컬럼 순으로 다시 슬롯에 채운다
+    members.forEach((m) => {
+      m.columnIndex = maxCol - (m.columnIndex ?? 0)
+    })
+    const reordered = [...members].sort((a, b) => (a.columnIndex ?? 0) - (b.columnIndex ?? 0))
+    slots.forEach((slot, i) => {
+      modules.value[slot] = reordered[i]
+    })
+
+    reorderModules()
+    triggerRef(modules)
+    isDirty.value = true
+    return true
+  }
+
+  /** 그룹의 한 '행'에 속한 멤버들 (컬럼 순) */
+  const rowMembersOf = (groupId: string, rowIndex: number): ModuleInstance[] =>
+    modules.value
+      .filter((m) => m.groupId === groupId && (m.rowIndex ?? 0) === rowIndex)
+      .sort((a, b) => (a.columnIndex ?? 0) - (b.columnIndex ?? 0))
+
+  /**
+   * 행 전체를 바로 아래에 복제한다 (다단 행이면 컬럼 구성까지 그대로).
+   * 행이 이동/삭제 단위이므로 복제도 행 단위여야 컬럼 구성이 유지된다.
+   */
+  const duplicateRow = (groupId: string, rowIndex: number): boolean => {
+    const group = groups.value.find((g) => g.id === groupId)
+    const members = rowMembersOf(groupId, rowIndex)
+    if (!group || members.length === 0) return false
+
+    // 뒤쪽 행들을 한 칸씩 밀어 새 행 자리를 만든다
+    modules.value.forEach((m) => {
+      if (m.groupId === groupId && (m.rowIndex ?? 0) > rowIndex) m.rowIndex = (m.rowIndex ?? 0) + 1
+    })
+    const clones = members.map((m) => ({
+      ...m,
+      id: generateUniqueId('module'),
+      rowIndex: rowIndex + 1,
+      properties: JSON.parse(JSON.stringify(m.properties)),
+      styles: JSON.parse(JSON.stringify(m.styles)),
+    }))
+    const lastIndex = Math.max(...members.map((m) => modules.value.indexOf(m)))
+    modules.value.splice(lastIndex + 1, 0, ...clones)
+
+    if (group.rows) group.rows.splice(rowIndex + 1, 0, group.rows[rowIndex] ?? 1)
+    reorderModules()
+    triggerRef(modules)
+    triggerRef(groups)
+    isDirty.value = true
+    return true
+  }
+
+  /** 행 전체 삭제 — 멤버를 모두 지우고 뒤 행을 당긴다 (마지막 행이면 그룹까지 정리) */
+  const deleteRow = (groupId: string, rowIndex: number): boolean => {
+    const group = groups.value.find((g) => g.id === groupId)
+    const members = rowMembersOf(groupId, rowIndex)
+    if (!group || members.length === 0) return false
+
+    const ids = new Set(members.map((m) => m.id))
+    modules.value = modules.value.filter((m) => !ids.has(m.id))
+    modules.value.forEach((m) => {
+      if (m.groupId === groupId && (m.rowIndex ?? 0) > rowIndex) m.rowIndex = (m.rowIndex ?? 0) - 1
+    })
+    if (group.rows) group.rows.splice(rowIndex, 1)
+
+    if (selectedModuleId.value && ids.has(selectedModuleId.value)) selectedModuleId.value = null
+    // 남은 멤버가 없으면 그룹 정의도 지운다
+    if (!modules.value.some((m) => m.groupId === groupId)) {
+      groups.value = groups.value.filter((g) => g.id !== groupId)
+      if (selectedGroupId.value === groupId) selectedGroupId.value = null
+    }
+    reorderModules()
+    triggerRef(modules)
+    triggerRef(groups)
+    isDirty.value = true
+    return true
+  }
+
+  /**
    * 그룹을 표시 단위로 위/아래 한 칸 이동 (그룹 통째 이동)
    */
   const moveGroup = (groupId: string, direction: 'up' | 'down'): void => {
@@ -4148,6 +4242,9 @@ ${fullHtml}
     updateGroupStyle,
     setGroupName,
     ensureGroupNames,
+    swapRowColumns,
+    duplicateRow,
+    deleteRow,
     columnTarget,
     splitModuleColumns,
     unsplitModuleColumns,
