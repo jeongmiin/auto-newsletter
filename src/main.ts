@@ -97,11 +97,13 @@ import { registerLineHeight } from './utils/quillLineHeight'
 import { registerWordBreak } from './utils/quillWordBreak'
 import { registerFontSize } from './utils/quillFontSize'
 import { registerLetterSpacing } from './utils/quillLetterSpacing'
+import { disableNumericListAutofill } from './utils/quillListAutofill'
 registerHighlightMarker()
 registerLineHeight()
 registerWordBreak()
 registerFontSize()
 registerLetterSpacing()
+disableNumericListAutofill()
 import Select from 'primevue/select'
 import ToggleSwitch from 'primevue/toggleswitch'
 import Panel from 'primevue/panel'
