@@ -205,7 +205,6 @@ const goHome = () => {
     confirm.require({
       message: '저장하지 않은 변경사항이 있습니다. 홈으로 나가시겠어요?',
       header: '홈으로 이동',
-      icon: 'pi pi-exclamation-triangle',
       acceptLabel: '나가기',
       rejectLabel: '취소',
       accept: () => router.push('/'),
