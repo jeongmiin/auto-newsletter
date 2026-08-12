@@ -1766,15 +1766,17 @@ const typeLabel = computed<string | null>(() => {
   return TYPE_LABEL_BY_ID[meta.id] ?? CATEGORY_TYPE_LABELS[meta.category] ?? '모듈'
 })
 
-// 패널 상단 제목 — 그룹 멤버면 그룹(=카드) 이름, 단독이면 인스턴스에 붙은 표시 라벨(__moduleLabel),
-// 그것도 없으면 모듈 카드 이름. (그룹으로 묶지 않은 조립 모듈도 카드 이름을 노출하기 위한 경로)
+// 패널 상단 제목 — 항상 '선택한 모듈'의 이름.
+// 그룹 안에 있어도 그룹 이름으로 덮지 않는다. 이 패널이 편집하는 대상은 모듈이고,
+// 그룹 이름은 캔버스 그룹 툴바와 그룹 스타일 패널에서 따로 보인다.
+// 인스턴스에 붙은 표시 라벨(__moduleLabel)이 있으면 그걸, 없으면 모듈 카드 이름을 쓴다.
 const panelTitle = computed(() => {
   const meta = selectedModuleMetadata.value
   if (!meta) return ''
-  // 테이블은 Figma 686-4239대로 '테이블'로 표기(그룹에 안 묶인 단독일 때)
-  if (meta.id === 'ModuleTable' && !moduleStore.activeGroup) return '테이블'
+  // 테이블은 Figma 686-4239대로 '테이블'로 표기
+  if (meta.id === 'ModuleTable') return '테이블'
   const custom = selectedModule.value?.properties?.__moduleLabel
-  return moduleStore.activeGroup?.name || (typeof custom === 'string' ? custom : '') || meta.name
+  return (typeof custom === 'string' ? custom : '') || meta.name
 })
 
 // 섹션 헤더 라벨 — 첫 섹션(gIdx 0)은 모듈 종류 라벨로 대체한다.
