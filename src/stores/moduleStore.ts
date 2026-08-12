@@ -1538,8 +1538,54 @@ export const useModuleStore = defineStore('module', () => {
   }
 
   /**
+   * [행별 컬럼] 1컬럼 행에 여러 모듈이 쌓여 있을 때, 대상 모듈만 자기 행으로 떼어낸다.
+   *
+   * 컬럼 나누기는 '행' 단위라, 이미지 위에 텍스트를 추가하면 둘이 같은 행이 되어
+   * 텍스트만 골라 2단을 눌러도 이미지까지 왼쪽 컬럼으로 끌려 들어간다.
+   * 그래서 나누기 직전에 위/아래 모듈을 각각 별도 행으로 밀어내 대상만 남긴다.
+   *
+   * 이미 다중 컬럼인 행은 건드리지 않는다 — 셀 하나를 행으로 빼내면
+   * 같은 행의 다른 컬럼들이 무너지기 때문이다.
+   * @returns 대상 모듈이 최종적으로 놓인 행 인덱스
+   */
+  const isolateRowMember = (
+    groupId: string,
+    rowIndex: number,
+    mod: ModuleInstance,
+  ): number => {
+    const group = groups.value.find((g) => g.id === groupId)
+    const rows = group?.rows
+    if (!rows || rows[rowIndex] !== 1) return rowIndex
+
+    const members = modules.value
+      .filter((m) => m.groupId === groupId && (m.rowIndex ?? 0) === rowIndex)
+      .sort((a, b) => a.order - b.order)
+    if (members.length <= 1) return rowIndex
+
+    const at = members.indexOf(mod)
+    const before = members.slice(0, at)
+    const after = members.slice(at + 1)
+    const added = (before.length ? 1 : 0) + (after.length ? 1 : 0)
+
+    modules.value.forEach((m) => {
+      if (m.groupId === groupId && (m.rowIndex ?? 0) > rowIndex)
+        m.rowIndex = (m.rowIndex ?? 0) + added
+    })
+    const target = before.length ? rowIndex + 1 : rowIndex
+    mod.rowIndex = target
+    mod.columnIndex = 0
+    after.forEach((m) => {
+      m.rowIndex = target + 1
+      m.columnIndex = 0
+    })
+    rows.splice(rowIndex + 1, 0, ...Array.from({ length: added }, () => 1))
+    return target
+  }
+
+  /**
    * [행별 컬럼] 선택 모듈이 속한 '행'에 컬럼을 하나 추가한다(그 행만 +1단, 최대 4).
    * - 그룹에 없으면: 그 모듈만으로 1행짜리 그룹을 만든 뒤 그 행을 2단으로.
+   * - 그 행에 다른 모듈이 함께 쌓여 있으면 대상 모듈만 떼어낸 뒤 나눈다.
    * @returns 그 행의 적용된 컬럼 수 (실패 시 null)
    */
   const splitModuleColumns = (moduleId: string): number | null => {
@@ -1557,12 +1603,14 @@ export const useModuleStore = defineStore('module', () => {
     ensureGroupRows(group)
     const rows = group.rows as number[]
     const r = Math.min(Math.max(mod.rowIndex ?? 0, 0), rows.length - 1)
-    const next = clampColumns(rows[r] + 1)
-    if (next === rows[r]) return rows[r]
-    rows[r] = next
+    const target = isolateRowMember(groupId, r, mod)
+    const next = clampColumns(rows[target] + 1)
+    if (next === rows[target]) return rows[target]
+    rows[target] = next
     // 그 행 멤버 중 컬럼 인덱스 미지정은 0으로 확정
     modules.value.forEach((m) => {
-      if (m.groupId === groupId && (m.rowIndex ?? 0) === r && m.columnIndex == null) m.columnIndex = 0
+      if (m.groupId === groupId && (m.rowIndex ?? 0) === target && m.columnIndex == null)
+        m.columnIndex = 0
     })
     triggerRef(groups)
     triggerRef(modules)
