@@ -24,7 +24,7 @@
          미리보기를 훑어보기 어렵다(호버 때는 테두리만 표시). -->
     <!-- ⚠ 툴바 컨테이너에는 툴팁을 걸지 않는다. 버튼마다 이미 툴팁이 있어서
          버튼에 마우스를 올리면 컨테이너 툴팁(모듈 이름)과 겹쳐 두 개가 함께 뜬다. -->
-    <div class="module-toolbar" :class="{ 'is-visible': isSelected }">
+    <div class="module-toolbar" :class="{ 'is-visible': isSelected, 'is-left': toolbarOnLeft }">
       <button
         type="button"
         class="module-toolbar-btn"
@@ -100,6 +100,16 @@ const moduleStore = useModuleStore()
 const canGoUp = computed(() => props.canMoveUp ?? props.index !== 0)
 const canGoDown = computed(() => props.canMoveDown ?? true)
 
+/**
+ * 툴바는 모듈 오른쪽 바깥에 뜨는데, 2단 이상 행의 왼쪽 컬럼에서는
+ * 그 '바깥'이 옆 컬럼 위라서 내용을 가린다. 그래서 첫 컬럼만 왼쪽 바깥으로 옮긴다.
+ * (3단 가운데 컬럼은 좌우 어느 쪽도 비어 있지 않아 그대로 둔다)
+ */
+const toolbarOnLeft = computed(() => {
+  const info = props.columnInfo
+  return !!info && info.columns > 1 && info.columnIndex === 0
+})
+
 const { renderedHtml, isLoading } = useModuleRenderer(props.module.id)
 const contentEl = ref<HTMLElement | null>(null)
 
@@ -173,6 +183,11 @@ watch(
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.12s;
+}
+/* 2단 이상 행의 왼쪽 컬럼: 오른쪽에 두면 옆 컬럼을 덮으므로 왼쪽 바깥으로 */
+.module-toolbar.is-left {
+  right: auto;
+  left: -55px;
 }
 /* 호버로는 열지 않는다 — 선택(is-visible)했을 때만 */
 .module-toolbar.is-visible {
