@@ -6,7 +6,7 @@
   -->
   <div
     ref="rootEl"
-    class="module-card"
+    class="ui-card module-card"
     :data-module-id="module.id"
     :style="{ '--thumb-scale': THUMB_SCALE }"
     @click="$emit('add', module)"
@@ -58,17 +58,10 @@ defineEmits<{
 
 <style scoped>
 /* 모듈 카드 — 폭 308px 고정, 인라인 썸네일 + 라벨 (패널 360px − 테두리 1px − 좌우 25px 여백에 맞춤) */
+/* 테두리·배경·호버는 panels.css의 공용 .ui-card — 여기선 폭과 크롭만 */
 .module-card {
   width: 308px;
-  border: 1px solid var(--gray-200);
-  border-radius: 8px;
   overflow: hidden;
-  cursor: pointer;
-  background: var(--white);
-  transition: border-color 0.12s;
-}
-.module-card:hover {
-  border-color: var(--blue-400);
 }
 
 /* 인라인 썸네일 — 680px 렌더를 카드 폭에 맞춰 축소, 상단 크롭 */

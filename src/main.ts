@@ -3,10 +3,11 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 
-// CSS를 먼저 import (토큰 → 전역 → 패널 순서)
+// CSS를 먼저 import (토큰 → 전역 → 패널 → 모듈 속성 폼 순서)
 import './assets/tokens.css'
 import './assets/main.css'
 import './assets/panels.css'
+import './assets/module-form.css'
 import 'primeicons/primeicons.css'
 
 // ============= 전역 에러 핸들러 =============

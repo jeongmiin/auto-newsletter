@@ -35,6 +35,22 @@
   letter-spacing: -0.2px;
 }
 
+/* ===== 클릭 카드 공통 골격 =====
+   모듈 팔레트 카드(.module-card)·빠른추가 카드(.quick-add-card)가 공유하는 테두리/배경/호버.
+   카드마다 다른 건 폭·안쪽 배치뿐이라 그건 각 컴포넌트에 남긴다. */
+.ui-card {
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  background: var(--white);
+  cursor: pointer;
+  transition:
+    border-color 0.12s,
+    background-color 0.12s;
+}
+.ui-card:hover {
+  border-color: var(--blue-400);
+}
+
 /* ===== 필드 라벨 / 힌트 / 서브 라벨 ===== */
 .gg-field-label {
   display: block;

@@ -44,7 +44,9 @@ const usedIcons = (): Map<string, string[]> => {
     byIcon.set(name, list)
   }
 
-  for (const file of walk(SRC).filter((f) => /\.(vue|ts)$/.test(f))) {
+  // .css도 훑는다 — 큰 스타일 블록은 컴포넌트 밖 css 파일로 분리돼 있고(module-form.css),
+  // Quill 툴바 아이콘처럼 ::before content로 넣는 글리프가 거기 들어 있다.
+  for (const file of walk(SRC).filter((f) => /\.(vue|ts|css)$/.test(f))) {
     if (file.includes('__tests__')) continue
     const s = fs.readFileSync(file, 'utf8')
     if (!s.includes('material-symbols-outlined') && !s.includes(SYMBOLS_FONT)) continue

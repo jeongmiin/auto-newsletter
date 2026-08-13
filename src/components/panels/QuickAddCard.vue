@@ -5,7 +5,7 @@
   -->
   <button
     type="button"
-    class="quick-add-card"
+    class="ui-card quick-add-card"
     :class="{ 'quick-add-card--preview': item.preview }"
     @click="$emit('add', item)"
   >
@@ -79,20 +79,16 @@ const buttonPreviewLabels = computed<string[]>(() => {
 </script>
 
 <style scoped>
+/* 테두리·배경·호버는 panels.css의 공용 .ui-card — 여기선 배치와 호버 배경만 */
 .quick-add-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
   padding: 8px 20px;
-  border: 1px solid var(--gray-200);
-  border-radius: 8px;
-  background: var(--white);
-  cursor: pointer;
   text-align: left;
 }
 .quick-add-card:hover {
-  border-color: var(--blue-400);
   background: var(--blue-50);
 }
 .quick-add-label {
