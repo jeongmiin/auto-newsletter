@@ -314,7 +314,7 @@ interface TableCellType {
   colspan: number
   rowspan: number
   width?: string
-  align?: 'left' | 'center' | 'right'
+  align?: 'left' | 'center' | 'right' | 'justify'
   bgColor?: string
   textColor?: string
   hidden?: boolean

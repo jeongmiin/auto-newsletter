@@ -5,8 +5,8 @@
       <!-- 캔버스 컨테이너 -->
       <div
         :class="[
-          'canvas-container shadow-lg transition-all duration-300',
-          canvasWidth === 'mobile' ? 'w-80' : 'w-full max-w-[680px]',
+          'canvas-container shadow-lg transition-all duration-300 w-full',
+          canvasWidth === 'mobile' ? 'max-w-[390px]' : 'max-w-[680px]',
         ]"
         :style="canvasContainerStyle"
       >
@@ -91,6 +91,7 @@
                 <button
                   type="button"
                   class="gtt-btn"
+                  :disabled="isFirstDisplayItem(item.id)"
                   v-tooltip.top="'위로 이동'"
                   @click.stop="moduleStore.moveGroup(item.id, 'up')"
                 >
@@ -99,6 +100,7 @@
                 <button
                   type="button"
                   class="gtt-btn"
+                  :disabled="isLastDisplayItem(item.id)"
                   v-tooltip.top="'아래로 이동'"
                   @click.stop="moduleStore.moveGroup(item.id, 'down')"
                 >
@@ -169,6 +171,7 @@
                        'row--multi': row.columns > 1,
                        'row--hover': isRowHovered(item.id, rowIdx),
                        'row--selected': isRowSelected(item.id, rowIdx),
+                       'row--member': isRowMemberSelected(item.id, rowIdx),
                      }"
                      @mouseenter="hoveredRow = { groupId: item.id, rowIndex: rowIdx }"
                      @mouseleave="hoveredRow = null"
@@ -241,7 +244,7 @@
                       v-for="col in row.columns"
                       :key="`col-${rowIdx}-${col}`"
                       class="col-cell"
-                      :style="colCellStyle(row.columns, row.widths?.[col - 1])"
+                      :style="colCellStyle(row.columns, row.widths?.[col - 1], row.keepInline)"
                     >
                       <div
                         v-for="member in row.cells[col - 1]"
@@ -251,14 +254,15 @@
                         :class="{ 'ring-2 ring-amber-400 ring-inset rounded-sm': hoveredModuleId === member.id }"
                       >
                         <!-- 열 안 모듈에는 드래그 핸들을 두지 않는다 — 이동 단위가 '행'이라
-                             핸들은 행 왼쪽에 하나만 있고(위 .dh-row), 좌우는 가운데 ⇄로 바꾼다. -->
+                             핸들은 행 왼쪽에 하나만 있고(위 .dh-row), 좌우는 가운데 ⇄로 바꾼다.
+                             단, 한 칸에 모듈이 2개 이상 쌓였으면 그 칸 안에서는 위/아래로 옮길 수 있다. -->
                         <ModuleRenderer
                           :module="member"
                           :index="member.order"
                           :is-selected="selectedModuleId === member.id"
                           :column-info="{ columns: row.columns, columnIndex: member.columnIndex ?? 0 }"
-                          :can-move-up="false"
-                          :can-move-down="false"
+                          :can-move-up="canMoveInCell(row.cells[col - 1], member.id, 'up')"
+                          :can-move-down="canMoveInCell(row.cells[col - 1], member.id, 'down')"
                           @select="selectModule"
                           @move-up="moveModuleUp"
                           @move-down="moveModuleDown"
@@ -274,14 +278,14 @@
                         class="empty-col no-drag"
                         :class="{ 'empty-col--target': isColTarget(item.id, rowIdx, col - 1) }"
                       >
+                        <!-- '직접 구성' 대기 상태 (Figma 977-12994) — 좌측 패널의 모듈 목록에서 고르면 이 컬럼에 들어간다 -->
                         <template v-if="isColTarget(item.id, rowIdx, col - 1)">
-                          <span class="material-symbols-outlined empty-col__icon">arrow_downward</span>
-                          <div class="empty-col__prompt">왼쪽 '구성 요소'에서 넣을 요소를<br />체크하면 이 컬럼에 추가됩니다</div>
+                          <div class="empty-col__prompt">좌측 패널에서<br />추가하고 싶은 모듈을 선택해주세요</div>
                           <button
                             type="button"
                             class="empty-col__cancel"
                             @click.stop="targetColumn(item.id, rowIdx, col - 1)"
-                          >취소</button>
+                          >직접 구성 취소</button>
                         </template>
                         <template v-else>
                           <div class="empty-col__prompt">원하시는 방식을 선택해주세요</div>
@@ -303,6 +307,12 @@
                               <span class="empty-col__card-label">직접 구성</span>
                             </button>
                           </div>
+                          <!-- 나눈 걸 되돌리는 길 (Figma 1069-14040) — 빈 컬럼을 지워 이 행을 1단으로 -->
+                          <button
+                            type="button"
+                            class="empty-col__to-single"
+                            @click.stop="collapseRowToSingle(item.id, rowIdx, col - 1)"
+                          >1단으로 변경</button>
                         </template>
                       </div>
                     </div>
@@ -434,6 +444,11 @@ const displayList = computed<DisplayItem[]>({
   set: (value) => moduleStore.setDisplayOrder(value),
 })
 
+// 그룹 통째 이동 가능 여부 — 표시 목록의 맨 위/맨 아래면 그 방향 버튼을 잠근다
+const isFirstDisplayItem = (itemId: string): boolean => displayList.value[0]?.id === itemId
+const isLastDisplayItem = (itemId: string): boolean =>
+  displayList.value[displayList.value.length - 1]?.id === itemId
+
 // 그룹 래퍼 미리보기 스타일 (편집 화면용 — 내보내기 table과 동일한 시각 효과)
 // '포인트 색상 사용' 켜진 색상은 전역 포인트 색상으로 해소해 미리 보여준다
 const groupWrapperStyle = (group: ModuleGroup): Record<string, string> =>
@@ -537,12 +552,59 @@ const moveMemberRow = (moduleId: string, direction: 'up' | 'down'): boolean => {
   return true
 }
 
+/** 다단 행의 한 칸(컬럼)에 쌓인 모듈들 — 그 칸 안에서만 위/아래로 옮길 수 있다 */
+const canMoveInCell = (
+  cell: ModuleInstance[],
+  moduleId: string,
+  direction: 'up' | 'down',
+): boolean => {
+  const i = cell.findIndex((m) => m.id === moduleId)
+  if (i < 0) return false
+  return direction === 'up' ? i > 0 : i < cell.length - 1
+}
+
+/** 이 모듈이 들어 있는 '다단 행의 칸'을 찾는다 (1단 행은 행 단위 이동이라 대상이 아니다) */
+const findMultiColCell = (moduleId: string) => {
+  const mod = modules.value.find((m) => m.id === moduleId)
+  if (!mod?.groupId) return null
+  const item = displayList.value.find((d) => d.type === 'group' && d.id === mod.groupId)
+  if (!item || item.type !== 'group') return null
+  for (const [rowIndex, row] of groupRows(item).entries()) {
+    if (row.columns <= 1) continue
+    for (const [columnIndex, cell] of row.cells.entries()) {
+      if (cell.some((m) => m.id === moduleId)) {
+        return { groupId: mod.groupId, rowIndex, columnIndex, cell }
+      }
+    }
+  }
+  return null
+}
+
+/**
+ * 다단 행의 같은 칸 안에서 위/아래 이동. 행 자체는 그대로 두고 그 칸의 순서만 바꾼다.
+ * @returns 이 경로로 처리했으면 true (칸의 끝이라 못 움직여도 true — 행 이동으로 넘기지 않는다)
+ */
+const moveWithinCell = (moduleId: string, direction: 'up' | 'down'): boolean => {
+  const found = findMultiColCell(moduleId)
+  if (!found) return false
+  const { groupId, rowIndex, columnIndex, cell } = found
+  const i = cell.findIndex((m) => m.id === moduleId)
+  const to = direction === 'up' ? i - 1 : i + 1
+  if (to < 0 || to >= cell.length) return true
+  const ids = cell.map((m) => m.id)
+  ;[ids[i], ids[to]] = [ids[to], ids[i]]
+  moduleStore.reorderColumnElements(groupId, rowIndex, columnIndex, ids)
+  return true
+}
+
 const moveModuleUp = (moduleId: string) => {
+  if (moveWithinCell(moduleId, 'up')) return
   if (moveMemberRow(moduleId, 'up')) return
   moduleStore.moveModuleUp(moduleId)
 }
 
 const moveModuleDown = (moduleId: string) => {
+  if (moveWithinCell(moduleId, 'down')) return
   if (moveMemberRow(moduleId, 'down')) return
   moduleStore.moveModuleDown(moduleId)
 }
@@ -584,6 +646,16 @@ const isRowHovered = (groupId: string, rowIndex: number): boolean =>
   sameRow(hoveredRow.value, groupId, rowIndex)
 const isRowSelected = (groupId: string, rowIndex: number): boolean =>
   sameRow(selectedRow.value, groupId, rowIndex)
+
+/**
+ * 행 자체가 아니라 그 행 '안의 모듈'이 선택된 상태 — 행 경계를 회색 점선으로만 알린다.
+ * (행 선택은 파란 실선이라, 지금 다루는 대상이 행인지 모듈인지 한눈에 갈린다)
+ */
+const isRowMemberSelected = (groupId: string, rowIndex: number): boolean => {
+  if (isRowSelected(groupId, rowIndex)) return false
+  const sel = moduleStore.modules.find((m) => m.id === selectedModuleId.value)
+  return !!sel && sel.groupId === groupId && (sel.rowIndex ?? 0) === rowIndex
+}
 
 /**
  * 그룹 '안의 요소'를 보고 있는 그룹 id — 멤버 모듈 선택 또는 2단 행 선택.
@@ -668,12 +740,16 @@ const onGroupRowDrop = (
 }
 
 // 컬럼 셀 인라인 스타일 (캔버스·이메일 공용 fluid-hybrid)
-const colCellStyle = (columns: number, widthPct?: number): string =>
-  columnCellStyle(columns, widthPct)
+const colCellStyle = (columns: number, widthPct?: number, keepInline?: boolean): string =>
+  columnCellStyle(columns, widthPct, keepInline)
 
 // 이웃 컬럼 복제로 빈 컬럼 채우기 (같은 행)
 const dupIntoColumn = (groupId: string, rowIdx: number, colIdx: number) =>
   moduleStore.duplicateIntoColumn(groupId, rowIdx, colIdx)
+// 빈 컬럼을 지워 이 행을 1단으로 되돌린다 (빈 컬럼 카드의 '1단으로 변경')
+const collapseRowToSingle = (groupId: string, rowIdx: number, colIdx: number) => {
+  moduleStore.removeColumn(groupId, rowIdx, colIdx)
+}
 // '직접 구성': 빈 컬럼을 '추가 대상'으로 지정(토글). 지정 후 왼쪽 패널에서 모듈을 추가하면 이 (행,컬럼)에 들어간다.
 const targetColumn = (groupId: string, rowIdx: number, colIdx: number) => {
   if (isColTarget(groupId, rowIdx, colIdx)) moduleStore.clearColumnTarget()
@@ -828,9 +904,14 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
 .gtt-btn .material-symbols-outlined {
   font-size: 19px;
 }
-.gtt-btn:hover {
+.gtt-btn:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.12);
   color: #fff;
+}
+/* 맨 위/맨 아래 그룹은 그 방향으로 더 못 간다 — 눌러도 소용없는 버튼을 잠근다 */
+.gtt-btn:disabled {
+  color: #4e5968;
+  cursor: not-allowed;
 }
 .gtt-btn--danger {
   color: #ff6b74;
@@ -900,6 +981,13 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
 /* 2단 '행 전체'가 선택된 상태 — 열 안 모듈은 아직 선택 전이라 배경을 깔지 않는다 */
 .group-row-item.row--selected {
   background: rgba(235, 243, 255, 0.5);
+}
+/* 행 안의 '모듈'이 선택된 상태 — 행 바깥 경계에만 회색 점선을 두른다.
+   컬럼 칸에는 점선을 넣지 않는다: 2단이 세로로 쌓이면 칸 선이 행 선과 겹쳐 두 줄로 보인다.
+   (파란 실선은 '행 자체 선택'의 표시로 남겨 둔다) */
+.group-row-item.row--member:not(.row--hover) {
+  outline: 1px dashed #b0b8c1;
+  outline-offset: 2px;
 }
 
 /* 다단 행의 드래그 핸들 — 행 왼쪽 바깥(단독 모듈 핸들과 같은 자리).
@@ -984,62 +1072,76 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
 }
 
 /* 빈 컬럼 placeholder (컬럼 분할 시 방식 선택) — Figma 745-8054 */
+/* 빈 컬럼 자리 (Figma 934-9015): 회색 바탕 + 45° 빗금 위에 흰색 60%를 덮어 아주 옅게 깔린다 */
 .empty-col {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 12px;
   min-height: 100%;
   padding: 20px 16px;
   border: 1px dashed #c6ccd4;
   border-radius: 8px;
+  background-color: #fbfcfd;
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(107, 118, 132, 0.16) 0,
+    rgba(107, 118, 132, 0.16) 1px,
+    transparent 1px,
+    transparent 24px
+  );
 }
 .empty-col--target {
   border-color: #4083f3;
   background: #f5f9ff;
 }
 .empty-col__prompt {
-  font-size: 15px;
-  color: #4e5968;
-  letter-spacing: -0.15px;
+  font-size: 18px;
+  font-weight: 500;
+  color: #191f28;
+  letter-spacing: -0.18px;
   text-align: center;
   line-height: 1.5;
 }
-/* '직접 구성' 선택 후: 이 컬럼이 추가 대상임을 알리는 활성 상태 */
-.empty-col__icon {
-  font-size: 24px;
-  color: #4083f3;
+/* '직접 구성' 대기 상태의 안내는 문장이 길어 본래 크기를 유지한다 */
+.empty-col--target .empty-col__prompt {
+  font-size: 15px;
+  font-weight: 400;
+  color: #4e5968;
+  letter-spacing: -0.15px;
 }
 .empty-col__cancel {
-  padding: 4px 12px;
-  font-size: 12px;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.14px;
   color: #6b7684;
   background: #fff;
   border: 1px solid #e5e8eb;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
 }
 .empty-col__cancel:hover {
   background: #f2f4f6;
 }
-/* 방식 선택 카드 (컬럼 복제 / 직접 구성) */
+/* 방식 선택 카드 (컬럼 복제 / 직접 구성) — Figma 934-9044 */
 .empty-col__cards {
   display: flex;
-  gap: 12px;
+  gap: 10px;
 }
 .empty-col__card {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  width: 84px;
-  height: 74px;
+  gap: 8px;
+  width: 90px;
+  padding: 16px 0;
   background: #fff;
   border: 1px solid #e5e8eb;
-  border-radius: 10px;
-  color: #4e5968;
+  border-radius: 8px;
+  color: #6b7684;
   cursor: pointer;
   transition: border-color 0.12s, color 0.12s, background-color 0.12s;
 }
@@ -1052,8 +1154,22 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
   font-size: 24px;
 }
 .empty-col__card-label {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
-  letter-spacing: -0.13px;
+  letter-spacing: -0.14px;
+}
+/* 나눈 걸 되돌리는 길 — 카드 아래 밑줄 링크 (Figma 1069-14040) */
+.empty-col__to-single {
+  padding: 4px 10px;
+  border: none;
+  background: none;
+  font-size: 15px;
+  font-weight: 500;
+  color: #6b7684;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.empty-col__to-single:hover {
+  color: #4083f3;
 }
 </style>

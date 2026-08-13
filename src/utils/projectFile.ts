@@ -231,6 +231,8 @@ export function restoreProject(
     ]
     // 이름이 없던 시절 저장된 그룹은 여기서 기본 이름('그룹 01' …)을 받는다
     moduleStore.ensureGroupNames()
+    // keepInlineRows가 없던 시절 저장된 뉴스 헤드라인 헤더에 '모바일에서도 가로 유지' 기본값을 채운다
+    moduleStore.ensureKeepInlineDefaults()
     moduleStore.normalizeGroupContiguity()
   }
 

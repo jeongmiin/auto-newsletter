@@ -90,6 +90,8 @@ export interface GroupRowLayout<T> {
   cells: T[][]
   /** 컬럼별 너비(%) — 지정 시 균등 분할 대신 이 비율로 그린다(합계 100). 미지정이면 균등. */
   widths?: number[]
+  /** true면 모바일 폭에서도 세로로 쌓지 않고 컬럼 비율 그대로 나란히 유지한다 */
+  keepInline?: boolean
 }
 
 /**
@@ -116,10 +118,14 @@ export function layoutGroupRows<T extends ModuleInstance>(
  * 편의: 그룹 + 멤버 → 바로 행 레이아웃.
  */
 export function computeGroupLayout<T extends ModuleInstance>(
-  group: Pick<ModuleGroup, 'rows' | 'columns' | 'colWidths'>,
+  group: Pick<ModuleGroup, 'rows' | 'columns' | 'colWidths' | 'keepInlineRows'>,
   orderedMembers: T[],
 ): GroupRowLayout<T>[] {
   const rows = layoutGroupRows(orderedMembers, resolveGroupRows(group, orderedMembers))
+  // '모바일에서도 가로 유지' 행 표시 (다단 행에만 의미가 있다)
+  rows.forEach((row, r) => {
+    if (row.columns > 1 && group.keepInlineRows?.[r]) row.keepInline = true
+  })
   // 행별 컬럼 너비(%) 적용 — 합이 정확히 100이 되도록 비례 배분해서 넘긴다.
   // (그대로 두면 합이 100을 넘길 때 2단이 세로로 무너지고, 모자라면 남는 자리가 오른쪽에 몰린다)
   const cw = group.colWidths

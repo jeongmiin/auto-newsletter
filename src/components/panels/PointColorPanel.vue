@@ -129,9 +129,5 @@ const onPickerClose = () => {
 .swatch-wrap:hover .remove-btn {
   display: flex;
 }
-.hint-text {
-  font-size: 14px;
-  color: #8B95A1;
-  word-break: keep-all;
-}
+/* .hint-text 는 panels.css 공용 클래스로 옮겼다 (패널 공통 힌트 문구) */
 </style>

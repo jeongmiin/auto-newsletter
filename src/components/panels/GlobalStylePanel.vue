@@ -104,7 +104,8 @@
         placeholder="전시 뉴스레터입니다."
       />
     </div>
-    <p class="hint-text -mt-3">*검색 엔진과 스크린 리더를 위한 한 줄 설명이에요.</p>
+    <!-- 공용 .hint-text 의 margin-top(6px)을 이겨야 해서 !important 유틸리티로 준다 -->
+    <p class="hint-text !-mt-3">*검색 엔진과 스크린 리더를 위한 한 줄 설명이에요.</p>
   </div>
 </template>
 
@@ -186,12 +187,7 @@ const onSummaryInput = (event: Event) => {
   background: #e5e8eb;
   flex-shrink: 0;
 }
-.hint-text {
-  font-size: 14px;
-  color: #8B95A1;
-  letter-spacing: -0.14px;
-  line-height: 1.5;
-}
+/* .hint-text 는 panels.css 공용 클래스로 옮겼다 (패널 공통 힌트 문구) */
 
 .radio-row {
   display: flex;

@@ -145,4 +145,29 @@ describe('컬럼 너비(colWidths) 정규화', () => {
       expect(rows[0].widths).toBeUndefined()
     })
   })
+
+  describe('모바일에서도 가로 유지(keepInlineRows)', () => {
+    it('지정된 다단 행만 keepInline이 켜진다', () => {
+      const group: Pick<ModuleGroup, 'rows' | 'keepInlineRows'> = {
+        rows: [2, 2],
+        keepInlineRows: [true],
+      }
+      const members = [
+        mk('a', { rowIndex: 0, columnIndex: 0 }),
+        mk('b', { rowIndex: 0, columnIndex: 1 }),
+        mk('c', { rowIndex: 1, columnIndex: 0 }),
+        mk('d', { rowIndex: 1, columnIndex: 1 }),
+      ]
+      const rows = computeGroupLayout(group, members)
+      expect(rows[0].keepInline).toBe(true)
+      expect(rows[1].keepInline).toBeUndefined()
+    })
+
+    it('1컬럼 행에는 의미가 없어 켜지지 않는다', () => {
+      const rows = computeGroupLayout({ rows: [1], keepInlineRows: [true] }, [
+        mk('a', { rowIndex: 0, columnIndex: 0 }),
+      ])
+      expect(rows[0].keepInline).toBeUndefined()
+    })
+  })
 })

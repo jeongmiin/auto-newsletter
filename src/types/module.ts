@@ -54,6 +54,9 @@ export interface TableRow {
  * 커스텀 테이블 모듈의 셀 정의
  * colspan/rowspan 지원, th/td 타입 구분
  */
+/** 셀 텍스트 정렬 — td의 text-align으로 그대로 나간다 */
+export type TableCellAlign = 'left' | 'center' | 'right' | 'justify'
+
 export interface TableCell {
   id: string
   type: 'th' | 'td'        // 헤더 또는 데이터 셀
@@ -61,7 +64,7 @@ export interface TableCell {
   colspan: number          // 열 병합 (기본 1)
   rowspan: number          // 행 병합 (기본 1)
   width?: string           // 셀 너비 (예: '20%', '100px')
-  align?: 'left' | 'center' | 'right'  // 텍스트 정렬
+  align?: TableCellAlign   // 텍스트 정렬 (미지정 시 테이블 공통값)
   bgColor?: string         // 셀 배경색 (미지정 시 타입별 일괄 색상 사용)
   textColor?: string       // 셀 글자색 (미지정 시 타입별 일괄 색상 사용)
   hidden?: boolean         // 병합으로 인해 숨겨진 셀 여부
@@ -180,6 +183,13 @@ export interface ModuleGroup {
    * 모바일(폭 좁음)에서는 기존처럼 세로 100% 스택된다.
    */
   colWidths?: number[][]
+  /**
+   * 행별 '모바일에서도 가로 유지' 여부 — keepInlineRows[rowIndex] = true면 그 다단 행이
+   * 좁은 폭에서도 세로로 쌓이지 않고 컬럼 비율 그대로 나란히 남는다.
+   * (뉴스 헤드라인 헤더의 "제목 | 웹으로 보기"처럼 한 줄로 읽혀야 하는 짧은 행에 쓴다)
+   * 미지정이면 기존 동작(모바일 폭에서 100% 세로 스택).
+   */
+  keepInlineRows?: boolean[]
   /**
    * [레거시] 그룹 전체의 단일 컬럼 분할 수 (1~4).
    * 행별 독립 컬럼 모델(rows) 도입 이후에는 rows로 대체된다. 마이그레이션 용도로만 읽는다.

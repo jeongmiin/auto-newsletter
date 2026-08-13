@@ -10,17 +10,72 @@
   color: #4e5968;
   margin-bottom: 8px;
 }
-.gg-field-hint {
-  font-size: 12px;
+/* 힌트 문구 */
+.hint-text {
+  font-size: 14px;
   line-height: 1.5;
   letter-spacing: -0.14px;
-  color: #6b7684;
+  color: #8b95a1;
   margin-top: 6px;
   word-break: keep-all;
 }
 .gg-sub-label {
   font-size: 15px;
   color: #4e5968;
+}
+
+/* ===== 모듈 검색창 (Figma 1125-2975: gray/100 채움 · h40 · px12 · gap8 · rounded8) =====
+   ModulePanel(모듈 메뉴)과 ColumnComposePanel(직접 구성)이 같은 모양을 쓰도록 공용으로 둔다.
+   패널마다 다른 바깥 여백(margin)만 각 컴포넌트에서 얹는다. */
+.mp-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  /* 세로 flex 패널 안에서 목록이 길어지면 기본 flex-shrink 때문에 높이가 눌린다 */
+  flex-shrink: 0;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: #f2f4f6;
+}
+/* 테두리가 없는 채움형이라 포커스는 안쪽 링으로 알린다 */
+.mp-search:focus-within {
+  box-shadow: inset 0 0 0 1px #4083f3;
+}
+.mp-search-icon {
+  font-size: 16px;
+  color: #8b95a1;
+  flex-shrink: 0;
+}
+.mp-search-input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: #191f28;
+}
+.mp-search-input::placeholder {
+  color: #8b95a1;
+  font-weight: 500;
+}
+.mp-search-clear {
+  display: flex;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #b0b8c1;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.mp-search-clear:hover {
+  color: #6b7684;
+}
+.mp-search-clear .material-symbols-outlined {
+  font-size: 16px;
 }
 
 /* 아코디언 헤더(라벨 + 우측 토글/스페이서를 한 줄로). 정적 헤더라 커서는 기본값.

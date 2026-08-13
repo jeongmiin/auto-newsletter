@@ -162,11 +162,26 @@ export const COLUMN_GAP_PX = 5
  * `100% - (컬럼수 × 5px)`이 되어 남는 자리가 **전부 오른쪽에 몰린다**
  * (2단이면 왼쪽 5px / 오른쪽 15px). 대신 폭 합이 항상 100%가 되도록
  * `normalizeColumnWidths`로 정규화해서 넘겨, 좌우 여백이 간격(5px)으로 같아지게 한다.
+ *
+ * @param keepInline true면 모바일에서도 세로로 쌓지 않는다 — fluid-hybrid의 폭 전환(calc)을 빼고
+ *   비율 폭을 고정한다. max-width도 같은 비율로 묶어, 내용이 길어져도 옆 컬럼이 아래로 밀리지 않는다.
+ *   ("제목 | 웹으로 보기"처럼 좁은 폭에서도 한 줄로 읽혀야 하는 행에 쓴다)
  */
-export function columnCellStyle(columns: number, widthPct?: number): string {
+export function columnCellStyle(columns: number, widthPct?: number, keepInline?: boolean): string {
   const n = Math.min(Math.max(columns, 1), 4)
   // widthPct(그 컬럼의 지정 너비 %)가 있으면 균등(100/n) 대신 그 값을 데스크톱 폭으로 쓴다.
   const pct = (widthPct != null && widthPct > 0 ? widthPct : 100 / n).toFixed(4)
+  if (keepInline) {
+    return [
+      'display:inline-block',
+      'vertical-align:top',
+      'box-sizing:border-box',
+      'font-size:14px',
+      `padding:${COLUMN_GAP_PX}px`,
+      `width:${pct}%`,
+      `max-width:${pct}%`,
+    ].join('; ')
+  }
   return [
     'display:inline-block',
     'vertical-align:top',
@@ -205,12 +220,20 @@ export function normalizeColumnWidths(
 /**
  * 컬럼별 내부 HTML 배열을 fluid-hybrid 컬럼 레이아웃으로 감싼다.
  * @param columnHtml columnHtml[i] = i번 컬럼에 들어갈 결합 HTML(빈 문자열 허용)
+ * @param keepInline true면 모바일에서도 세로로 쌓지 않고 가로 배치를 유지한다
  */
-export function buildColumnLayoutHtml(columnHtml: string[], widths?: number[]): string {
+export function buildColumnLayoutHtml(
+  columnHtml: string[],
+  widths?: number[],
+  keepInline?: boolean,
+): string {
   const n = Math.min(Math.max(columnHtml.length, 1), 4)
   const cells = columnHtml
     .slice(0, n)
-    .map((inner, i) => `<div style="${columnCellStyle(n, widths?.[i])}">${inner || '&nbsp;'}</div>`)
+    .map(
+      (inner, i) =>
+        `<div style="${columnCellStyle(n, widths?.[i], keepInline)}">${inner || '&nbsp;'}</div>`,
+    )
     .join('')
   // font-size:0 로 inline-block 사이 공백(gap) 제거, letter-spacing:0 보정
   return `<div style="font-size:0; letter-spacing:0;">${cells}</div>`

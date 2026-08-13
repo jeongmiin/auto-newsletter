@@ -745,55 +745,9 @@ onMounted(async () => {
   color: #191f28;
   letter-spacing: -0.2px;
 }
-/* 모듈 검색 (Figma 1125-2975: gray/100 채움 · h40 · px12 · gap8 · rounded8) */
+/* 검색창 모양은 panels.css의 공용 .mp-search* — 여기선 패널 좌우 여백만 얹는다 */
 .mp-search {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  height: 40px;
-  padding: 0 12px;
   margin: 0 25px;
-  border: 0;
-  border-radius: 8px;
-  background: #f2f4f6;
-}
-/* 테두리가 없는 채움형이라 포커스는 안쪽 링으로 알린다 */
-.mp-search:focus-within {
-  box-shadow: inset 0 0 0 1px #4083f3;
-}
-.mp-search-icon {
-  font-size: 16px;
-  color: #8b95a1;
-  flex-shrink: 0;
-}
-.mp-search-input {
-  flex: 1;
-  min-width: 0;
-  border: 0;
-  outline: none;
-  background: none;
-  font-size: 14px;
-  font-weight: 500;
-  color: #191f28;
-}
-.mp-search-input::placeholder {
-  color: #8b95a1;
-  font-weight: 500;
-}
-.mp-search-clear {
-  display: flex;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: #b0b8c1;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-.mp-search-clear:hover {
-  color: #6b7684;
-}
-.mp-search-clear .material-symbols-outlined {
-  font-size: 16px;
 }
 
 /* 카테고리 탭 — 한 줄, 활성 탭 밑줄 (Figma 334-2630) */
@@ -831,7 +785,7 @@ onMounted(async () => {
   min-width: 60px;
   /* padding에 세로값이 없으므로 높이를 직접 준다(안 주면 글자 높이까지 줄어든다) */
   height: 27px;
-  padding: 0 15px;
+  padding: 0 12px;
   border: 0;
   background: none;
   font-size: 14px;
@@ -860,7 +814,7 @@ onMounted(async () => {
    (PrimeVue 기본값은 인라인이라 그대로 두면 탭이 그만큼 밀린다). */
 .mp-tabs :deep(.p-tablist-nav-button) {
   position: absolute;
-  top: 0;
+  top: -3px;
   z-index: 1;
   width: 28px;
   height: 28px;

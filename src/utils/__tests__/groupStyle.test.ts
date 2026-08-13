@@ -258,6 +258,21 @@ describe('groupStyle', () => {
       expect(columnCellStyle(1)).toContain('min-width:100.0000%')
       expect(columnCellStyle(9)).toContain('min-width:25.0000%')
     })
+
+    it('keepInline이면 모바일 스택 공식을 빼고 비율 폭을 고정한다', () => {
+      const s = columnCellStyle(2, undefined, true)
+      expect(s).toContain('display:inline-block')
+      expect(s).toContain('width:50.0000%')
+      // 내용이 길어져도 옆 컬럼이 아래로 밀리지 않도록 max-width도 같은 비율로 묶는다
+      expect(s).toContain('max-width:50.0000%')
+      expect(s).not.toContain('calc(')
+    })
+
+    it('keepInline도 지정 너비(widthPct)를 그대로 쓴다', () => {
+      const s = columnCellStyle(2, 70, true)
+      expect(s).toContain('width:70.0000%')
+      expect(s).toContain('max-width:70.0000%')
+    })
   })
 
   describe('normalizeColumnWidths (컬럼 너비 비례 배분)', () => {
@@ -303,6 +318,12 @@ describe('groupStyle', () => {
     it('빈 컬럼은 &nbsp;로 자리를 유지한다', () => {
       const html = buildColumnLayoutHtml(['<p>A</p>', ''])
       expect(html).toContain('&nbsp;')
+    })
+
+    it('keepInline이면 각 셀이 모바일 스택 공식 없이 고정 비율 폭을 쓴다', () => {
+      const html = buildColumnLayoutHtml(['<p>A</p>', '<p>B</p>'], undefined, true)
+      expect(html.match(/max-width:50\.0000%/g) || []).toHaveLength(2)
+      expect(html).not.toContain('calc(')
     })
   })
 })

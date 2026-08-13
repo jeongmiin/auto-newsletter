@@ -79,7 +79,7 @@
                 </div>
               </div>
             </div>
-            <p class="gg-field-hint">*내용과 테두리 사이의 간격이에요.</p>
+            <p class="hint-text">*내용과 테두리 사이의 간격이에요.</p>
           </div>
 
           <!-- 바깥 여백 (margin) -->
@@ -143,7 +143,7 @@
                 </div>
               </div>
             </div>
-            <p class="gg-field-hint">*그룹과 그룹 사이의 간격이에요.</p>
+            <p class="hint-text">*그룹과 그룹 사이의 간격이에요.</p>
           </div>
         </div>
       </div>

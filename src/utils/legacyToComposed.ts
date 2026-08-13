@@ -31,6 +31,8 @@ export interface ComposedConversion {
   groupStyles?: Partial<ModuleGroupStyles>
   /** 행별 컬럼 너비(%) — colWidths[row] = 그 행 컬럼 너비 배열 */
   colWidths?: number[][]
+  /** 행별 '모바일에서도 가로 유지' — keepInlineRows[row] = true면 좁은 폭에서도 세로로 안 쌓인다 */
+  keepInlineRows?: boolean[]
   /** 원소가 1개뿐이라 그룹으로 묶지 않는 경우 true (단일 모듈로 추가) */
   single?: boolean
   /** 픽셀 동일하게 옮기지 못한 부분 (사용자에게 보고) */
@@ -1239,7 +1241,8 @@ const convertNewsHeader = (p: Props): ComposedConversion => {
       ...pad('0px', '0px', '0px', '0px'),
     },
   })
-  return { name: '뉴스 헤드라인 헤더', specs, warnings }
+  // 제목 행(2행)은 레거시 테이블에서 한 줄(td 두 칸)이었다 — 모바일에서도 그대로 나란히 둔다.
+  return { name: '뉴스 헤드라인 헤더', specs, warnings, keepInlineRows: [false, false, true] }
 }
 
 /** 기본 헤더 — 상단 라인(그룹 테두리) · 로고 · 하단 라인 · 헤더 텍스트 */

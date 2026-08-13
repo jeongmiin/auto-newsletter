@@ -8,15 +8,16 @@
           <p class="gg-panel-title truncate">{{ panelTitle }}</p>
         </div>
 
-        <!-- 영역 컬럼 분할 (Figma Frame 80 · 745:3908) — 1단/2단/3단 세그먼트.
+        <!-- 영역 컬럼 분할 (Figma Frame 80 · 745:3908) — 1단/2단 세그먼트 + 너비 조정.
              나눌 수 없는 모듈(config의 maxColumns=1, 예: 구분선·여백)은 컬럼 컨트롤 자체를 숨긴다.
-             단, 그런 모듈이 다단 행 안에 들어가 있으면 위치/이동 행은 계속 보여준다. -->
+             2단이 다 채워지면 섹션째 사라진다(showLayoutSection 주석 참고).
+             좌우 자리 바꾸기는 캔버스 행 가운데의 ⇄ 버튼이 담당한다. -->
         <div
-          v-if="maxColumns > 1 || moduleColumnInfo.columns > 1"
+          v-if="showLayoutSection || moduleColumnInfo.columns > 1"
           class="px-[25px] pt-4 pb-4 border-b"
         >
-          <template v-if="maxColumns > 1">
-            <p class="gg-field-label !mb-2.5">컬럼</p>
+          <template v-if="showLayoutSection && maxColumns > 1">
+            <p class="gg-field-label !mb-2.5">레이아웃</p>
             <div class="col-seg">
               <button
                 v-for="n in maxColumns"
@@ -29,64 +30,96 @@
               >{{ n }}단</button>
             </div>
           </template>
-          <!-- 다단일 때만: 현재 위치 + 좌/우 컬럼 이동 -->
-          <div v-if="moduleColumnInfo.columns > 1" class="flex items-center gap-1.5 mt-2.5">
-            <span class="gg-field-hint !mt-0 flex-1"
-              >이 행 {{ moduleColumnInfo.columns }}단 중 {{ moduleColumnInfo.columnIndex + 1 }}번</span
-            >
-            <Button
-              @click="moveSelectedModuleColumn('left')"
-              :disabled="moduleColumnInfo.columnIndex === 0"
-              icon="pi pi-arrow-left"
-              severity="secondary"
-              size="small"
-              text
-              v-tooltip.top="'이 모듈을 왼쪽 컬럼으로 이동'"
-            />
-            <Button
-              @click="moveSelectedModuleColumn('right')"
-              :disabled="moduleColumnInfo.columnIndex >= moduleColumnInfo.columns - 1"
-              icon="pi pi-arrow-right"
-              severity="secondary"
-              size="small"
-              text
-              v-tooltip.top="'이 모듈을 오른쪽 컬럼으로 이동'"
-            />
-          </div>
-          <!-- 컬럼 너비 지정(2단 이상) — 선택 컬럼의 너비(%)를 정하면 나머지 컬럼이 남은 폭을 균등 분배.
-               데스크톱에만 적용되고 모바일에서는 세로 100% 스택된다. -->
-          <div v-if="moduleColumnInfo.columns > 1" class="mt-2.5">
-            <p class="gg-field-label !mb-1.5">
-              '{{ moduleColumnInfo.columns }}단 중 {{ moduleColumnInfo.columnIndex + 1 }}번' 너비
-            </p>
-            <div class="gg-margin-slider-row">
-              <input
-                type="range"
-                min="10"
-                max="90"
-                step="1"
-                :value="columnWidthValue"
-                @input="onColumnWidthInput($event)"
-                class="gg-margin-slider"
-              />
-              <div class="gg-margin-value-field">
+          <!-- 너비 조정 (Figma 926-8769 · 977-7717) — 기준은 항상 '첫 번째 열'이고 두 번째 열은
+               100-첫번째로 자동 계산된다. 추천 비율(프리셋)과 직접 조정(슬라이더)은 같은 값을 쓰므로
+               어느 쪽으로 바꿔도 나머지 한쪽과 아래 프리뷰 막대가 함께 따라온다.
+               데스크톱 기준이고, 모바일에서는 아래 '가로 유지'가 꺼져 있으면 세로로 쌓인다. -->
+          <div v-if="showLayoutSection && moduleColumnInfo.columns > 1" class="mt-6">
+            <p class="gg-field-label !mb-4">너비 조정</p>
+            <div class="wadj-tabs">
+              <button
+                type="button"
+                class="wadj-tab"
+                :class="{ 'is-active': widthTab === 'preset' }"
+                @click="widthTab = 'preset'"
+              >
+                <span class="material-symbols-outlined">fit_width</span>추천 비율
+              </button>
+              <button
+                type="button"
+                class="wadj-tab"
+                :class="{ 'is-active': widthTab === 'custom' }"
+                @click="widthTab = 'custom'"
+              >
+                <span class="material-symbols-outlined">edit</span>직접 조정
+              </button>
+            </div>
+
+            <!-- 추천 비율 -->
+            <div v-if="widthTab === 'preset'" class="wadj-presets">
+              <button
+                v-for="p in WIDTH_PRESETS"
+                :key="`wpreset-${p}`"
+                type="button"
+                class="wadj-preset"
+                :class="{ 'is-active': firstColumnWidth === p }"
+                @click="setFirstColumnWidth(p)"
+              >{{ p }} : {{ 100 - p }}</button>
+            </div>
+
+            <!-- 직접 조정 -->
+            <div v-else class="wadj-custom">
+              <p class="gg-field-label !mb-2.5">첫 번째 열 너비</p>
+              <div class="gg-margin-slider-row">
                 <input
-                  type="number"
+                  type="range"
                   min="10"
                   max="90"
-                  :value="columnWidthValue"
-                  @change="onColumnWidthInput($event)"
-                  @keydown.enter="blurTarget"
-                  class="gg-margin-value-input"
+                  step="1"
+                  :value="firstColumnWidth"
+                  @input="onFirstColumnWidthInput($event)"
+                  class="gg-margin-slider"
                 />
-                <span class="gg-margin-value-unit">%</span>
+                <div class="gg-margin-value-field">
+                  <input
+                    type="number"
+                    min="10"
+                    max="90"
+                    :value="firstColumnWidth"
+                    @change="onFirstColumnWidthInput($event)"
+                    @keydown.enter="blurTarget"
+                    class="gg-margin-value-input"
+                  />
+                  <span class="gg-margin-value-unit">%</span>
+                </div>
+              </div>
+              <p class="hint-text">*두 번째 열 너비는 자동으로 계산돼요</p>
+            </div>
+
+            <!-- 비율 프리뷰 — 막대 폭이 실제 비율이라 값과 모양을 함께 확인할 수 있다 -->
+            <div class="wadj-preview">
+              <div class="wadj-preview-bar is-first" :style="{ flexGrow: firstColumnWidth }">
+                {{ firstColumnWidth }}%
+              </div>
+              <div class="wadj-preview-bar" :style="{ flexGrow: 100 - firstColumnWidth }">
+                {{ 100 - firstColumnWidth }}%
               </div>
             </div>
           </div>
+          <!-- 모바일에서도 가로 유지 — 켜면 좁은 폭에서도 세로로 쌓지 않고 컬럼 비율 그대로 나란히 둔다.
+               (뉴스 헤드라인 헤더의 '제목 | 웹으로 보기'처럼 한 줄로 읽혀야 하는 행에 쓴다)
+               레이아웃 조작과 달리 '다 채워진 2단'에서 오히려 필요한 설정이라 계속 노출한다. -->
+          <div v-if="showKeepInlineToggle" class="flex items-center gap-2">
+            <span class="gg-field-label !mb-0 flex-1">모바일에서도 가로 유지</span>
+            <ToggleSwitch :modelValue="rowKeepInlineOn" @update:modelValue="onRowKeepInlineToggle" />
+          </div>
+          <p v-if="showKeepInlineToggle" class="hint-text">
+            끄면 모바일 폭에서 컬럼이 세로로 쌓입니다
+          </p>
         </div>
 
         <!-- 테이블: 내용 / 스타일 탭 (Figma 686-4239) -->
-        <div v-if="isTableModule" class="tbl-tabs">
+        <div v-if="isTableModule && !isColumnSetupMode" class="tbl-tabs">
           <button
             type="button"
             class="tbl-tab"
@@ -101,8 +134,9 @@
           >테이블 스타일</button>
         </div>
 
-        <!-- 속성 편집 폼 -->
-      <div class="px-[25px] pb-7">
+        <!-- 속성 편집 폼 — 컬럼을 나눈 직후(빈 컬럼이 남은 상태)에는 감춘다.
+             '직접 구성' 패널처럼 지금 정할 것(단·너비)만 남겨 두는 편이 헷갈리지 않는다. -->
+      <div v-if="!isColumnSetupMode" class="px-[25px] pb-7">
         <!-- 테이블 스타일 탭 상단: 행 열 관리 + 열 너비 직접 설정 (Figma 715-2843 / 717-3366) -->
         <template v-if="isTableModule && activeTableTab === 'style'">
           <!-- 행 열 관리 -->
@@ -148,10 +182,29 @@
             <!-- 삽입 메뉴 바깥 클릭 닫기 -->
             <div v-if="insertMenu" class="tbl-menu-backdrop" @click="insertMenu = null"></div>
             <div class="tbl-rc-row">
-              <span class="tbl-rc-name"><span class="material-symbols-outlined">table_chart</span>셀 병합</span>
-              <button type="button" class="tbl-rc-merge" :disabled="!canMergeSelection" @click="mergeSelection">셀 병합</button>
+              <span class="tbl-rc-name"><span class="material-symbols-outlined">table_chart</span>셀</span>
+              <!-- 합쳐진 셀 하나를 고르면 같은 자리에서 '나누기'로 바뀐다 —
+                   병합/해제는 한 버튼의 앞뒤 동작이라 자리를 옮기면 되돌리는 길을 못 찾는다.
+                   나누고 나면 선택이 그 셀 하나만 남아 다시 '합치기'(비활성)로 돌아온다. -->
+              <button
+                v-if="canUnmergeSelection"
+                type="button"
+                class="tbl-rc-merge"
+                @click="unmergeSelection"
+              >나누기</button>
+              <button
+                v-else
+                type="button"
+                class="tbl-rc-merge"
+                :disabled="!canMergeSelection"
+                @click="mergeSelection"
+              >합치기</button>
             </div>
-            <p class="tbl-sec-hint">*2개 이상 셀 선택 시, 셀 병합이 가능해요</p>
+            <p class="hint-text">
+              {{ canUnmergeSelection
+                ? '*합쳐진 셀이에요. 나누기를 누르면 원래 칸으로 돌아가요.'
+                : '*2개 이상 셀 합칠 시, SHIFT + 셀 선택하세요.' }}
+            </p>
           </div>
 
           <div class="tbl-divider tbl-divider--wide"></div>
@@ -209,7 +262,7 @@
                 </p>
               </div>
             </div>
-            <p class="tbl-sec-hint tbl-colw-hint">*OFF시, 각 열의 너비가 동일하게 자동 설정돼요</p>
+            <p class="hint-text">*OFF시, 각 열의 너비가 동일하게 자동 설정돼요</p>
           </div>
 
           <div class="tbl-divider tbl-divider--wide"></div>
@@ -508,7 +561,7 @@
                 <span class="gg-margin-value-unit">px</span>
               </div>
             </div>
-            <p v-if="prop.hint" class="gg-field-hint" v-html="prop.hint"></p>
+            <p v-if="prop.hint" class="hint-text" v-html="prop.hint"></p>
           </div>
 
           <!-- 테두리 위치 — 그룹 스타일과 같은 아이콘 다중 선택 (전체/상단/하단/좌측/우측) -->
@@ -547,7 +600,7 @@
                 <span class="gg-margin-value-unit">px</span>
               </div>
             </div>
-            <p v-if="prop.hint" class="gg-field-hint" v-html="prop.hint"></p>
+            <p v-if="prop.hint" class="hint-text" v-html="prop.hint"></p>
           </div>
 
           <!-- 독립 테두리 두께(예: 섹션 타이틀 상단 테두리 두께) — 여백 슬라이더와 동일한 헤드 라벨 + 슬라이더(px) UI -->
@@ -576,7 +629,7 @@
                 <span class="gg-margin-value-unit">px</span>
               </div>
             </div>
-            <p v-if="prop.hint" class="gg-field-hint" v-html="prop.hint"></p>
+            <p v-if="prop.hint" class="hint-text" v-html="prop.hint"></p>
           </div>
 
           <!-- 이미지 최대 너비: 슬라이더 + % 값 (Figma 686-3949) -->
@@ -604,7 +657,7 @@
                 <span class="gg-margin-value-unit">%</span>
               </div>
             </div>
-            <p v-if="prop.hint" class="gg-field-hint" v-html="prop.hint"></p>
+            <p v-if="prop.hint" class="hint-text" v-html="prop.hint"></p>
           </div>
 
           <!-- 모서리 둥글기: 슬라이더 + 값(px) — 여백 슬라이더와 동일 UI -->
@@ -631,7 +684,7 @@
                 <span class="gg-margin-value-unit">px</span>
               </div>
             </div>
-            <p v-if="prop.hint" class="gg-field-hint" v-html="prop.hint"></p>
+            <p v-if="prop.hint" class="hint-text" v-html="prop.hint"></p>
           </div>
 
           <!-- 텍스트 입력 (일반) -->
@@ -645,7 +698,7 @@
               class="w-full"
             />
             <!-- 힌트: 정적 설정(modules-config) 문자열이라 <br> 등 간단한 줄바꿈 허용 -->
-            <p v-if="prop.hint" class="gg-field-hint" v-html="prop.hint"></p>
+            <p v-if="prop.hint" class="hint-text" v-html="prop.hint"></p>
           </div>
 
           <!-- 리치 텍스트 에디터 (Figma 640-3235) — 툴바는 두 줄 그룹 + 세로 구분선 구성.
@@ -767,7 +820,7 @@
               :placeholder="prop.placeholder || 'https://example.com'"
               class="w-full"
             />
-            <p v-if="prop.hint" class="gg-field-hint" v-html="prop.hint"></p>
+            <p v-if="prop.hint" class="hint-text" v-html="prop.hint"></p>
           </div>
 
           <!-- 테두리 스타일 — 전체 스타일(GlobalStylePanel)과 동일한 통합 블록(토글/라디오/색상/두께) -->
@@ -927,7 +980,7 @@
                 </div>
               </template>
             </draggable>
-            <p v-if="prop.hint" class="gg-field-hint" v-html="prop.hint"></p>
+            <p v-if="prop.hint" class="hint-text" v-html="prop.hint"></p>
           </div>
 
           <!-- SNS 아이콘 — 연락처와 같은 리스트(체크로 노출, 손잡이를 끌어 순서 변경, 옆에 링크 입력) -->
@@ -973,7 +1026,7 @@
                 </div>
               </template>
             </draggable>
-            <p v-if="prop.hint" class="gg-field-hint" v-html="prop.hint"></p>
+            <p v-if="prop.hint" class="hint-text" v-html="prop.hint"></p>
           </div>
 
           <!-- 동적 테이블 행 편집 -->
@@ -1287,15 +1340,25 @@
                       ? `${(firstSelCoord?.row ?? 0) + 1}행 ${(firstSelCoord?.col ?? 0) + 1}열`
                       : `${tableSelectedCells.length}개 셀 선택됨` }}
                   </span>
-                  <button
-                    v-if="canUnmergeSelection"
-                    type="button"
-                    class="tbl-icbtn"
-                    @click="unmergeSelection"
-                    v-tooltip.top="'병합 해제'"
-                  >
-                    <span class="material-symbols-outlined">splitscreen</span>
-                  </button>
+                  <div class="tbl-cellbar-actions">
+                    <!-- 개별 스타일(셀 배경색·정렬)은 내용 툴바에서 지정한다 → 되돌리기만 여기 남긴다 -->
+                    <button
+                      v-if="hasSelOwnStyle"
+                      type="button"
+                      class="tbl-colw-reset"
+                      @click="resetSelOwnStyle"
+                      v-tooltip.top="'셀 배경색·정렬을 테이블 공통값으로 되돌리기'"
+                    >공통값으로</button>
+                    <button
+                      v-if="canUnmergeSelection"
+                      type="button"
+                      class="tbl-icbtn"
+                      @click="unmergeSelection"
+                      v-tooltip.top="'병합 해제'"
+                    >
+                      <span class="material-symbols-outlined">splitscreen</span>
+                    </button>
+                  </div>
                 </div>
 
                 <!-- 콘텐츠 타입 (텍스트 / 이미지) -->
@@ -1320,7 +1383,7 @@
                       <label class="tbl-sec-label">제목 지정</label>
                       <ToggleSwitch :modelValue="selCommonType === 'th'" @update:modelValue="onHeaderToggle($event)" />
                     </div>
-                    <p class="tbl-sec-hint">*OFF시, 내용으로 전환돼요</p>
+                    <p class="hint-text">*OFF시, 내용으로 전환돼요</p>
                   </div>
 
                   <div class="tbl-divider"></div>
@@ -1335,14 +1398,31 @@
                         placeholder="내용을 입력하세요"
                       >
                         <template #toolbar>
-                          <!-- 테이블 셀 에디터는 정렬·목록·행간/자간 제외 (텍스트 모듈 에디터와 다름) -->
-                          <!-- 1줄: 굵게·기울임·밑줄·취소선 -->
+                          <!-- 테이블 셀 에디터는 목록·행간/자간 제외 (텍스트 모듈 에디터와 다름).
+                               정렬·배경색은 Quill 서식이 아니라 '셀' 속성에 적용한다 —
+                               td의 text-align/background 로 나가야 이메일에서 셀 전체가 채워진다. -->
+                          <!-- 1줄: 굵게·기울임·밑줄·취소선 │ 셀 정렬 -->
                           <div class="rte-tb-row">
                             <span class="ql-formats rte-tb-grp">
                               <button class="ql-bold" title="굵게"></button>
                               <button class="ql-italic" title="기울임"></button>
                               <button class="ql-underline" title="밑줄"></button>
                               <button class="ql-strike" title="취소선"></button>
+                            </span>
+                            <span class="rte-tb-div"></span>
+                            <span class="rte-tb-grp">
+                              <!-- 정렬 드롭다운 (텍스트 모듈 툴바의 정렬 픽커와 같은 모양) -->
+                              <button
+                                type="button"
+                                class="rte-tb-btn rte-tb-btn--caret"
+                                :class="{ 'is-active': cellAlignMenu.visible }"
+                                title="셀 정렬"
+                                @mousedown.prevent
+                                @click="toggleCellAlignMenu($event)"
+                              >
+                                <span class="material-symbols-outlined">{{ ALIGN_ICON[selCommonAlign || 'left'] }}</span>
+                                <span class="material-symbols-outlined rte-tb-caret">expand_more</span>
+                              </button>
                             </span>
                           </div>
                           <!-- 2줄: 글자색·배경색·형광펜 │ 링크·서식 제거 -->
@@ -1366,20 +1446,20 @@
                                   </button>
                                 </template>
                               </ColorPopoverPicker>
+                              <!-- 배경색은 글자 뒤가 아니라 '셀'을 채운다 — 글자 뒤만 칠하려면 형광펜을 쓴다.
+                                   포인트 색상은 '추종'(pointFollow)이 아니라 색을 그대로 찍는다 —
+                                   셀에는 어느 포인트를 따르는지 저장할 자리가 없어, 추종 모드면 스와치를 눌러도
+                                   부모가 받아 처리할 게 없어 아무 일도 일어나지 않는다. -->
                               <ColorPopoverPicker
-                                title="배경 색상"
-                                :modelValue="editorColorModel(TABLE_CELL_KEY, 'background')"
+                                title="셀 배경색"
+                                :modelValue="selEffectiveBg"
                                 :pointColors="wrapPointColors"
-                                pointFollow
-                                :activeIndex="editorColorActiveIndex(TABLE_CELL_KEY, 'background')"
-                                @open="onEditorColorOpen(TABLE_CELL_KEY, 'background')"
-                                @update:modelValue="onEditorColorInput(TABLE_CELL_KEY, 'background', $event)"
-                                @select-point="onEditorColorSelectPoint(TABLE_CELL_KEY, 'background', $event)"
+                                @update:modelValue="setSelBgColor($event)"
                                 @add-point-color="editorStore.addPointColor($event)"
                                 @remove-point-color="editorStore.removePointColor($event)"
                               >
                                 <template #trigger>
-                                  <button type="button" class="rte-tb-btn" title="배경 색상" @mousedown.prevent>
+                                  <button type="button" class="rte-tb-btn" title="셀 배경색" @mousedown.prevent>
                                     <span class="material-symbols-outlined">format_color_fill</span>
                                   </button>
                                 </template>
@@ -1405,58 +1485,7 @@
                       </Editor>
                     </div>
                     <p v-else class="tbl-multi-hint">여러 셀이 선택됐어요. 내용은 셀 하나만 선택해 편집하세요.</p>
-                  </div>
-                  <!-- 개별 스타일 — '테이블 스타일' 탭의 공통값을 이 셀에만 덮어쓴다.
-                       지정하지 않으면 공통값을 그대로 따른다(그래서 '기본값으로'가 필요). -->
-                  <div class="gg-acc-section">
-                    <div class="gg-acc-header">
-                      <span class="gg-acc-title" @click="cellStyleOpen = !cellStyleOpen">
-                        <i
-                          class="pi gg-acc-chevron"
-                          :class="cellStyleOpen ? 'pi-chevron-down' : 'pi-chevron-right'"
-                        ></i>
-                        <span class="gg-acc-label">개별 스타일</span>
-                      </span>
-                      <span class="gg-acc-spacer"></span>
-                      <button
-                        v-if="hasSelOwnStyle"
-                        type="button"
-                        class="tbl-colw-reset"
-                        @click.stop="resetSelOwnStyle"
-                      >공통값으로</button>
-                    </div>
-                    <div v-if="cellStyleOpen" class="gg-acc-body gg-acc-body--card">
-                      <div class="gg-acc-fields">
-                        <div class="gg-color-row">
-                          <span class="gg-field-label !mb-0">배경색</span>
-                          <ColorPopoverPicker
-                            title="배경색"
-                            :modelValue="selEffectiveBg"
-                            :pointColors="wrapPointColors"
-                            pointFollow
-                            @update:modelValue="setSelBgColor($event)"
-                            @add-point-color="editorStore.addPointColor($event)"
-                            @remove-point-color="editorStore.removePointColor($event)"
-                          />
-                        </div>
-                        <div class="gg-field !mb-0">
-                          <label class="gg-field-label">텍스트 정렬</label>
-                          <div class="tbl-align">
-                            <button
-                              v-for="a in ALIGN_KEYS"
-                              :key="a"
-                              type="button"
-                              class="tbl-align-btn"
-                              :class="{ 'is-active': selCommonAlign === a }"
-                              @click="setSelAlign(a)"
-                            >
-                              <span class="material-symbols-outlined">{{ ALIGN_ICON[a] }}</span>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <p v-if="cellStyleOpen" class="tbl-sec-hint">*지정하지 않으면 공통값으로 적용돼요.</p>
+                    <p class="hint-text">*셀 배경색·정렬은 지정하기 전까지 테이블 공통값을 따라요.</p>
                   </div>
                 </template>
 
@@ -1481,7 +1510,7 @@
                         placeholder="이미지를 설명하는 문구"
                       />
                     </div>
-                    <p class="tbl-sec-hint">*검색 엔진과 스크린 리더를 위한 한 줄 설명이에요.</p>
+                    <p class="hint-text">*검색 엔진과 스크린 리더를 위한 한 줄 설명이에요.</p>
                   </div>
 
                   <!-- 링크 추가 (이미지 모듈의 링크 섹션과 동일) -->
@@ -1516,19 +1545,31 @@
         </div>
         </div>
       </div>
-
-        <!-- 모듈 제거 버튼 -->
-        <div class="px-[25px] pt-4 border-t pb-10">
-          <Button
-            @click="removeModule"
-            label="모듈 삭제"
-            icon="pi pi-trash"
-            severity="danger"
-            outlined
-            class="w-full"
-          />
-        </div>
       </div>
+
+  <!-- 셀 정렬 드롭다운 (테이블 셀 툴바) — 텍스트 모듈 정렬 픽커와 같은 가로 아이콘 메뉴.
+       패널이 스크롤되므로 위치는 버튼 기준 fixed 좌표로 잡는다(행간·자간 팝오버와 동일). -->
+  <Teleport to="body">
+    <div
+      v-if="cellAlignMenu.visible"
+      ref="cellAlignMenuEl"
+      class="rte-align-menu"
+      :style="{ top: `${cellAlignMenu.top}px`, left: `${cellAlignMenu.left}px` }"
+    >
+      <button
+        v-for="a in ALIGN_KEYS"
+        :key="a"
+        type="button"
+        class="rte-align-item"
+        :class="{ 'is-selected': selCommonAlign === a }"
+        :title="ALIGN_LABEL[a]"
+        @mousedown.prevent
+        @click="pickSelAlign(a)"
+      >
+        <span class="material-symbols-outlined">{{ ALIGN_ICON[a] }}</span>
+      </button>
+    </div>
+  </Teleport>
 
   <!-- 행간 · 자간 팝오버 (Figma 640-3235: 툴바의 format_line_spacing) -->
   <Teleport to="body">
@@ -1699,7 +1740,7 @@ import {
   type ContactItemKey,
 } from '@/constants/contactItems'
 import { useEditorStore } from '@/stores/editorStore'
-import type { TableRow, ContentTitle, ContentText, AdditionalContent, TableCell, EditableProp, BorderSide } from '@/types'
+import type { TableRow, ContentTitle, ContentText, AdditionalContent, TableCell, TableCellAlign, EditableProp, BorderSide } from '@/types'
 import { normalizeColorInput, isValidHexColor } from '@/utils/colorHelper'
 import { normalizePxLength } from '@/utils/cssUnit'
 import {
@@ -1771,6 +1812,8 @@ const typeLabel = computed<string | null>(() => {
 // 그룹 이름은 캔버스 그룹 툴바와 그룹 스타일 패널에서 따로 보인다.
 // 인스턴스에 붙은 표시 라벨(__moduleLabel)이 있으면 그걸, 없으면 모듈 카드 이름을 쓴다.
 const panelTitle = computed(() => {
+  // 컬럼을 나눈 직후에는 이 패널이 다루는 대상이 모듈이 아니라 '행의 컬럼'이다 (Figma 926-8769)
+  if (isColumnSetupMode.value) return `${moduleColumnInfo.value.columns}단 컬럼`
   const meta = selectedModuleMetadata.value
   if (!meta) return ''
   // 테이블은 Figma 686-4239대로 '테이블'로 표기
@@ -1791,7 +1834,7 @@ const sectionHeaderLabel = (group: PropGroup, gIdx: number): string =>
 // 선택 모듈이 속한 그룹의 컬럼 수와, 그 안에서의 컬럼 위치(0-based)
 const moduleColumnInfo = computed(() => {
   const mod = selectedModule.value
-  const fallback = { columns: 1, columnIndex: 0, rowIndex: 0, rowCount: 1 }
+  const fallback = { columns: 1, columnIndex: 0, rowIndex: 0, rowCount: 1, hasEmptyColumn: false }
   if (!mod?.groupId) return fallback
   const group = moduleStore.groups.find((g) => g.id === mod.groupId)
   if (!group) return fallback
@@ -1800,13 +1843,47 @@ const moduleColumnInfo = computed(() => {
     .sort((a, b) => a.order - b.order)
   const res = resolveGroupRows(group, members)
   const r = res.rowIndexById[mod.id] ?? 0
+  const columns = res.rowCols[r] ?? 1
+  // 이 행에서 실제로 콘텐츠가 들어간 컬럼들 — 하나라도 비어 있으면 '나누는 중'인 상태
+  const usedColumns = new Set<number>()
+  members.forEach((m) => {
+    if ((res.rowIndexById[m.id] ?? 0) === r) usedColumns.add(res.colIndexById[m.id] ?? 0)
+  })
   return {
-    columns: res.rowCols[r] ?? 1,
+    columns,
     columnIndex: res.colIndexById[mod.id] ?? 0,
     rowIndex: r,
     rowCount: res.rowCols.length,
+    hasEmptyColumn: usedColumns.size < columns,
   }
 })
+
+/**
+ * 레이아웃(단 나누기 · 너비 조정) 섹션 노출 규칙 — Figma 926-8769 vs 977-10559.
+ * · 1단 모듈: 나눌 수 있도록 세그먼트를 보여준다.
+ * · 2단인데 아직 빈 컬럼이 있음: 나눈 직후 조정 단계 → 세그먼트 + 너비 조정을 보여준다.
+ * · 2단이 다 채워짐: 레이아웃 조작을 감추고 그 모듈의 내용 편집만 남긴다.
+ */
+const showLayoutSection = computed(() =>
+  moduleColumnInfo.value.columns > 1
+    ? moduleColumnInfo.value.hasEmptyColumn
+    : maxColumns.value > 1,
+)
+
+/**
+ * 컬럼을 나눈 직후(빈 컬럼이 남은 2단) — 이때 패널은 '직접 구성' 패널처럼
+ * 단·너비만 남기고 그 모듈의 속성 편집은 감춘다(Figma 926-8769: 패널에 레이아웃·너비만 있음).
+ * 빈 컬럼이 채워지면 곧바로 평소의 속성 폼으로 돌아온다.
+ */
+const isColumnSetupMode = computed(
+  () => moduleColumnInfo.value.columns > 1 && moduleColumnInfo.value.hasEmptyColumn,
+)
+
+// '모바일에서도 가로 유지'는 두 컬럼이 다 채워진 뒤에야 의미가 있다 —
+// 나누는 중에는 레이아웃·너비만 남기고(위 주석), 채워진 뒤 속성 폼과 함께 노출한다.
+const showKeepInlineToggle = computed(
+  () => moduleColumnInfo.value.columns > 1 && !isColumnSetupMode.value,
+)
 
 // 이 모듈이 나눌 수 있는 최대 컬럼 수 — config의 maxColumns, 없으면 전역 MAX_COLUMNS.
 // config 값이 전역 상한을 넘지 않도록 함께 클램프한다.
@@ -1816,9 +1893,8 @@ const maxColumns = computed(() => {
   return Math.min(selectedModuleMetadata.value?.maxColumns ?? MAX_COLUMNS, MAX_COLUMNS)
 })
 
-// 구성 요소(ColumnElementsField)는 빈 컬럼에서 '직접 구성'을 눌렀을 때 뜨는 ColumnComposePanel에서만 노출한다.
-// 요소를 체크해 모듈이 추가·선택되면 여기(ModuleForm)에는 그 모듈의 속성만 보이고 구성 요소는 다시 띄우지 않는다.
-// (같은 컬럼에 요소를 더 넣으려면 선택을 해제해 ColumnComposePanel을 다시 띄우거나 팔레트로 추가한다.)
+// 빈 컬럼 채우기는 '직접 구성' 패널(ColumnComposePanel)의 모듈 목록이 담당한다 —
+// 거기서 고른 모듈이 그 컬럼에 들어오면 여기(ModuleForm)에는 그 모듈의 속성만 보인다.
 
 // 1단/2단/3단 세그먼트: 현재 컬럼 수에서 목표 n단까지 split(+1)/unsplit(-1) 반복.
 // (split/unsplit이 적용된 컬럼 수를 반환하므로 반응성 타이밍과 무관하게 반복 판단)
@@ -1839,31 +1915,37 @@ const setColumnsTo = (n: number) => {
     cur = r
   }
 }
-const moveSelectedModuleColumn = (direction: 'left' | 'right') => {
-  if (selectedModule.value) moduleStore.moveModuleColumn(selectedModule.value.id, direction)
-}
+// ===== 너비 조정 — 기준은 '첫 번째 열'(두 번째 열은 100-첫번째로 자동) =====
+// 추천 비율 프리셋(Figma 977-7684): 왼쪽 열이 가질 %만 담는다.
+const WIDTH_PRESETS = [50, 60, 40, 80, 20] as const
+const widthTab = ref<'preset' | 'custom'>('preset')
 
-// ===== 컬럼 너비(%) — 2단 이상일 때 선택 컬럼의 너비 지정 =====
-const columnWidthValue = computed<number>(() => {
+const firstColumnWidth = computed<number>(() => {
   const gid = selectedModule.value?.groupId
   if (!gid) return Math.round(100 / Math.max(moduleColumnInfo.value.columns, 1))
-  return moduleStore.columnWidthOf(
-    gid,
-    moduleColumnInfo.value.rowIndex,
-    moduleColumnInfo.value.columnIndex,
-  )
+  return moduleStore.columnWidthOf(gid, moduleColumnInfo.value.rowIndex, 0)
 })
-const onColumnWidthInput = (event: Event) => {
+const setFirstColumnWidth = (pct: number) => {
   const gid = selectedModule.value?.groupId
   if (!gid) return
+  // setColumnWidth가 나머지 폭을 다른 컬럼에 분배한다(2단이면 정확히 100-pct)
+  moduleStore.setColumnWidth(gid, moduleColumnInfo.value.rowIndex, 0, pct)
+}
+const onFirstColumnWidthInput = (event: Event) => {
   const n = Number.parseInt((event.target as HTMLInputElement).value, 10)
-  if (!Number.isFinite(n)) return
-  moduleStore.setColumnWidth(
-    gid,
-    moduleColumnInfo.value.rowIndex,
-    moduleColumnInfo.value.columnIndex,
-    n,
-  )
+  if (Number.isFinite(n)) setFirstColumnWidth(n)
+}
+
+// ===== 모바일에서도 가로 유지 — 이 모듈이 속한 '행' 단위 설정 =====
+const rowKeepInlineOn = computed<boolean>(() => {
+  const gid = selectedModule.value?.groupId
+  if (!gid) return false
+  return moduleStore.rowKeepsInline(gid, moduleColumnInfo.value.rowIndex)
+})
+const onRowKeepInlineToggle = (on: boolean) => {
+  const gid = selectedModule.value?.groupId
+  if (!gid) return
+  moduleStore.setRowKeepInline(gid, moduleColumnInfo.value.rowIndex, on)
 }
 
 // 아코디언 그룹화:
@@ -2141,14 +2223,14 @@ const selCommonType = computed<'th' | 'td' | ''>(() => {
   const types = cells.map(({ row, col }) => tableCells.value[row]?.[col]?.type)
   return types.every((t) => t && t === types[0]) ? (types[0] as 'th' | 'td') : ''
 })
-const selCommonAlign = computed<'left' | 'center' | 'right' | ''>(() => {
+const selCommonAlign = computed<TableCellAlign | ''>(() => {
   const cells = tableSelectedCells.value
   if (!cells.length) return ''
   const aligns = cells.map(({ row, col }) => {
     const c = tableCells.value[row]?.[col]
     return c ? getCellAlign(c, col) : undefined
   })
-  return aligns.every((a) => a && a === aligns[0]) ? (aligns[0] as 'left' | 'center' | 'right') : ''
+  return aligns.every((a) => a && a === aligns[0]) ? (aligns[0] as TableCellAlign) : ''
 })
 // 색상 피커 표시값 = 첫 선택 셀의 실제 적용 색상
 const selEffectiveBg = computed(() => (firstSelCell.value ? getCellEffectiveBg(firstSelCell.value) : '#ffffff'))
@@ -2160,14 +2242,10 @@ const applyToSelected = (updates: Partial<TableCell>) => {
   if (id) moduleStore.applyToTableCells(id, tableSelectedCells.value, updates)
 }
 const setSelType = (type: 'th' | 'td') => applyToSelected({ type })
-const setSelAlign = (align: 'left' | 'center' | 'right') => applyToSelected({ align })
+const setSelAlign = (align: TableCellAlign) => applyToSelected({ align })
 const setSelBgColor = (value: string) => applyToSelected({ bgColor: value.startsWith('#') ? value : `#${value}` })
 
-// '개별 스타일' 아코디언 — 대개는 공통값을 쓰므로 기본 닫힘.
-// (선택 셀이 바뀌어도 사용자가 연 상태는 유지한다 — 셀을 옮겨 다니며 편집하는 흐름이 끊기지 않게)
-const cellStyleOpen = ref(false)
-
-// '개별 스타일'을 하나라도 지정한 셀이 있으면 '공통값으로' 되돌리기를 노출한다.
+// 셀 배경색·정렬을 하나라도 지정한 셀이 있으면 '공통값으로' 되돌리기를 노출한다.
 // (지정 전에는 공통값을 따르므로 되돌릴 것이 없다)
 const hasSelOwnStyle = computed(() =>
   tableSelectedCells.value.some(({ row, col }) => {
@@ -2220,11 +2298,46 @@ const removeSelectedTableCols = () => {
   moduleStore.clearTableCellSelection()
 }
 // 정렬 아이콘(Material Symbols)
-const ALIGN_KEYS = ['left', 'center', 'right'] as const
+const ALIGN_KEYS: readonly TableCellAlign[] = ['left', 'center', 'right', 'justify']
 const ALIGN_ICON: Record<string, string> = {
   left: 'format_align_left',
   center: 'format_align_center',
   right: 'format_align_right',
+  justify: 'format_align_justify',
+}
+const ALIGN_LABEL: Record<string, string> = {
+  left: '왼쪽 정렬',
+  center: '가운데 정렬',
+  right: '오른쪽 정렬',
+  justify: '양쪽 정렬',
+}
+
+// ===== 셀 정렬 드롭다운 (내용 툴바) =====
+// 정렬은 Quill 서식이 아니라 셀 속성이라 ql-align 픽커를 쓸 수 없다 → 같은 모양의 메뉴를 직접 띄운다.
+const cellAlignMenu = ref<{ visible: boolean; top: number; left: number }>({
+  visible: false,
+  top: 0,
+  left: 0,
+})
+const cellAlignMenuEl = ref<HTMLElement | null>(null)
+const ALIGN_MENU_WIDTH = 52 * 4 // .rte-align-item(52px) × 4칸
+
+const closeCellAlignMenu = () => {
+  cellAlignMenu.value = { ...cellAlignMenu.value, visible: false }
+}
+const toggleCellAlignMenu = (event: MouseEvent) => {
+  if (cellAlignMenu.value.visible) {
+    closeCellAlignMenu()
+    return
+  }
+  const btn = (event.currentTarget as HTMLElement).getBoundingClientRect()
+  // 메뉴(208px)를 버튼 왼쪽에 걸되 화면 밖으로 나가지 않게 민다
+  const left = Math.max(8, Math.min(btn.left, window.innerWidth - ALIGN_MENU_WIDTH - 8))
+  cellAlignMenu.value = { visible: true, top: btn.bottom + 6, left }
+}
+const pickSelAlign = (align: TableCellAlign) => {
+  setSelAlign(align)
+  closeCellAlignMenu()
 }
 // 단일 선택 셀 내용 편집(템플릿 null 내로우잉 회피용 래퍼)
 const registerSelCellEditor = (el: unknown) => {
@@ -3239,6 +3352,14 @@ const addCustomColorItem = (quill: Quill, format: 'color' | 'background') => {
 // 팝오버 바깥 클릭 / Esc 시 닫기 (PrimeVue ColorPicker 오버레이 클릭은 예외)
 const onDocPointerDown = (e: MouseEvent) => {
   const target = e.target as HTMLElement
+  // 셀 정렬 메뉴: 메뉴 안(항목 클릭)과 토글 버튼은 각자 닫으므로 그 밖이면 닫는다
+  if (
+    cellAlignMenu.value.visible &&
+    !cellAlignMenuEl.value?.contains(target) &&
+    !target.closest('.rte-tb-btn--caret')
+  ) {
+    closeCellAlignMenu()
+  }
   if (spacingPopover.value.visible) {
     // 행간·자간 팝오버: 팝오버 내부·Select 오버레이·토글 버튼 클릭은 유지
     if (
@@ -3257,7 +3378,9 @@ const onDocPointerDown = (e: MouseEvent) => {
 }
 const onDocKeydown = (e: KeyboardEvent) => {
   if (e.key !== 'Escape') return
-  const hadPopover = spacingPopover.value.visible || colorPopover.value.visible
+  const hadPopover =
+    spacingPopover.value.visible || colorPopover.value.visible || cellAlignMenu.value.visible
+  if (cellAlignMenu.value.visible) closeCellAlignMenu()
   if (spacingPopover.value.visible) closeSpacingPopover()
   if (colorPopover.value.visible) closeColorPopover()
   // 팝오버를 닫는 Esc는 여기서 소비한다 — 전역 단축키(useKeyboardShortcuts)의 '선택 해제'까지
@@ -3349,12 +3472,6 @@ const handleContentTextUpdate = (textId: string, value: string) => {
 const handleAdditionalContentUpdate = (contentId: string, value: string, propertyKey: string) => {
   const processedHtml = processQuillHtml(value)
   updateAdditionalContentData(contentId, 'text_content', processedHtml, propertyKey)
-}
-
-const removeModule = () => {
-  if (selectedModule.value) {
-    moduleStore.removeModule(selectedModule.value.id)
-  }
 }
 
 // 동적 테이블 행 관리 함수들
@@ -3664,7 +3781,7 @@ const toggleCellType = (rowIndex: number, colIndex: number) => {
 // 셀에 실제 적용되는 정렬 — 렌더러(moduleContentReplacer)와 같은 우선순위여야
 // '개별 스타일'의 활성 표시가 캔버스와 어긋나지 않는다.
 // 셀별 지정 > 열 공통(레거시) > 타입 공통
-const getCellAlign = (cell: TableCell, colIndex: number): 'left' | 'center' | 'right' => {
+const getCellAlign = (cell: TableCell, colIndex: number): TableCellAlign => {
   if (cell.align) return cell.align
   return getColAlign(colIndex) ?? getTypeAlign(cell.type)
 }
@@ -3819,6 +3936,93 @@ const onSelectPointColor = (key: string, index: number): void => {
   background: #4e5968;
   border-color: #4e5968;
   color: #fff;
+}
+
+/* ===== 너비 조정 (Figma 977-7672 탭 · 977-7684 프리셋 · 977-7706 프리뷰) ===== */
+.wadj-tabs {
+  display: flex;
+  gap: 20px;
+  padding: 6px;
+  background: #f2f4f6;
+  border-radius: 8px;
+}
+.wadj-tab {
+  flex: 1 0 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 0;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  font-size: 15px;
+  color: #4e5968;
+  cursor: pointer;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+.wadj-tab.is-active {
+  background: #fff;
+  color: #2563d4;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.15);
+}
+.wadj-tab .material-symbols-outlined {
+  font-size: 20px;
+}
+.wadj-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px 10px;
+  margin-top: 32px;
+}
+.wadj-preset {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 8px;
+  background: #f2f4f6;
+  font-size: 14px;
+  letter-spacing: -0.14px;
+  color: #4e5968;
+  cursor: pointer;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+.wadj-preset:hover {
+  background: #e5e8eb;
+}
+.wadj-preset.is-active {
+  background: #ebf3ff;
+  color: #1a47b0;
+  font-weight: 500;
+}
+.wadj-custom {
+  margin-top: 32px;
+}
+/* 프리뷰 막대: 폭이 곧 비율이다. 10%여도 값이 읽히도록 최소 폭을 준다. */
+.wadj-preview {
+  display: flex;
+  gap: 8px;
+  margin-top: 24px;
+}
+.wadj-preview-bar {
+  flex-basis: 0;
+  min-width: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 10px;
+  border: 1px solid #e5e8eb;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.14px;
+  color: #191f28;
+}
+.wadj-preview-bar.is-first {
+  border-color: transparent;
+  background: #ebf3ff;
+  color: #1a47b0;
 }
 
 /* 정렬 세그먼트 (좌측/중앙/우측) — Figma 686-3949 */
@@ -4513,6 +4717,15 @@ const onSelectPointColor = (key: string, index: number): void => {
   font-size: 20px;
   line-height: 1;
 }
+/* 캐럿이 붙는 버튼(테이블 셀 정렬)은 아이콘+캐럿이 들어가도록 조금 넓게 — ql-align 픽커와 같은 폭 */
+.rte-field :deep(.rte-tb-btn--caret) {
+  width: 38px;
+  gap: 1px;
+}
+.rte-field :deep(.rte-tb-btn--caret .rte-tb-caret) {
+  font-size: 12px;
+  flex-shrink: 0;
+}
 /* 드롭다운 메뉴 공통 카드 (Figma 640-4087 Dropdown/Menu) — 정렬·목록·글자크기·줄바꿈 공용.
    PrimeVue 테마의 `.p-editor .p-editor-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-options`(0,5,0)를
    이겨야 해서 선택자를 그보다 길게 잡는다. */
@@ -4648,6 +4861,39 @@ const onSelectPointColor = (key: string, index: number): void => {
 }
 
 /* 행간 · 자간 팝오버 (Figma 640-3517) — 아이콘+라벨 헤더 + 슬라이더 + 값 필드 */
+/* 셀 정렬 메뉴 — 텍스트 모듈의 ql-align 픽커와 같은 가로 아이콘 카드(52px×4) */
+.rte-align-menu {
+  position: fixed;
+  z-index: 900;
+  display: flex;
+  background: #fff;
+  border: 1px solid #e5e8eb;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+.rte-align-item {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  color: #333d4b;
+  cursor: pointer;
+}
+.rte-align-item:hover {
+  background: #f2f4f6;
+}
+.rte-align-item.is-selected {
+  background: #ebf3ff;
+  color: #4083f3;
+}
+.rte-align-item .material-symbols-outlined {
+  font-size: 24px;
+}
+
 .rte-spacing-popover {
   position: fixed;
   z-index: 900;
@@ -4907,6 +5153,7 @@ const onSelectPointColor = (key: string, index: number): void => {
   background: #f2f4f6;
   border-radius: 8px;
   padding: 10px 12px;
+  word-break: keep-all;
 }
 .tbl-seg {
   display: flex;
@@ -5038,12 +5285,6 @@ const onSelectPointColor = (key: string, index: number): void => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-.tbl-sec-hint {
-  font-size: 14px;
-  color: #6b7684;
-  line-height: 1.5;
-  letter-spacing: -0.3px;
 }
 .tbl-ctype {
   display: flex;

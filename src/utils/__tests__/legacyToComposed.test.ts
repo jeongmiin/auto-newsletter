@@ -831,3 +831,23 @@ describe('legacyToComposed — 모듈 01번(단일 원소)', () => {
     expect(String(c.specs[0].properties.descriptionText)).not.toContain('숨긴 타이틀')
   })
 })
+
+describe('legacyToComposed — 뉴스 헤드라인 헤더', () => {
+  const base = {
+    logoImageUrl: 'https://example.com/logo.png',
+    headerTitle: 'NEWSLETTER VOL.5',
+    webViewText: '👀 웹으로 보기',
+    webViewUrl: 'https://example.com',
+  }
+
+  it('제목|웹으로 보기 행(2행)을 2컬럼으로 만든다', () => {
+    const c = convertLegacyToComposed('ModuleNewsHeader', base)!
+    expect(idsAt(c, 2, 0)).toEqual(['ModuleDescText']) // 제목
+    expect(idsAt(c, 2, 1)).toEqual(['ModuleDescText']) // 웹으로 보기
+  })
+
+  it('그 행만 모바일에서도 가로 유지로 표시한다 (레거시 테이블에서 한 줄이던 행)', () => {
+    const c = convertLegacyToComposed('ModuleNewsHeader', base)!
+    expect(c.keepInlineRows).toEqual([false, false, true])
+  })
+})

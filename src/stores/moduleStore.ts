@@ -830,6 +830,10 @@ export const useModuleStore = defineStore('module', () => {
           })
           if (widths.length > 0) g.colWidths = widths
         }
+        // 모바일에서도 가로로 유지할 행 (레거시 테이블에서 한 줄이던 행)
+        if (conversion.keepInlineRows?.some(Boolean)) {
+          g.keepInlineRows = [...conversion.keepInlineRows]
+        }
       }
     }
     triggerRef(groups)
@@ -1136,9 +1140,10 @@ export const useModuleStore = defineStore('module', () => {
    * [POC/실험] 뉴스 헤드라인 헤더 조립형 —
    * 로고(가운데·40%) → 굵은 라인 → (제목 | 👀 웹으로 보기) 2컬럼 → 얇은 라인
    * '웹으로 보기'는 ModuleDescText의 textAlign='right'로 오른쪽 정렬.
+   * 제목 행(2행)은 모바일에서도 세로로 쌓지 않는다 — 두 텍스트가 한 줄로 읽혀야 헤더 모양이 유지된다.
    */
-  const addComposedNewsHeader = (): string | null =>
-    buildComposedGroup([
+  const addComposedNewsHeader = (): string | null => {
+    const groupId = buildComposedGroup([
       {
         // 로고 (가운데 · 최대 너비 40%)
         id: 'ModuleImg',
@@ -1204,6 +1209,9 @@ export const useModuleStore = defineStore('module', () => {
         overrides: { borderColor: '#dddddd', borderWidth: '1px', borderStyle: 'solid', paddingTop: '0px', paddingBottom: '0px' },
       },
     ])
+    if (groupId) setRowKeepInline(groupId, 2, true)
+    return groupId
+  }
 
   /**
    * [POC/실험] 기본 헤더 조립형 — 상단 라인 → 로고 → 하단 라인 → 헤더 타이틀 (전부 1컬럼 세로 스택)
@@ -1614,7 +1622,10 @@ export const useModuleStore = defineStore('module', () => {
     })
     triggerRef(groups)
     triggerRef(modules)
+    // 나눈 뒤에도 그 모듈을 계속 편집한다 — 단독 모듈이면 위 createGroup이 선택을 그룹으로 옮기며
+    // 모듈 선택을 지우는데, 여기서 그룹 선택까지 풀면 '선택 없음'이 되어 좌측이 모듈 팔레트로 튕긴다.
     selectedGroupId.value = null
+    selectedModuleId.value = moduleId
     isDirty.value = true
     return next
   }
@@ -1961,6 +1972,26 @@ export const useModuleStore = defineStore('module', () => {
     isDirty.value = true
   }
 
+  /** [행별 컬럼] 그 행이 '모바일에서도 가로 유지'인지 (미지정이면 false = 모바일에서 세로 스택) */
+  const rowKeepsInline = (groupId: string, rowIndex: number): boolean =>
+    !!groups.value.find((g) => g.id === groupId)?.keepInlineRows?.[rowIndex]
+
+  /**
+   * [행별 컬럼] 그 행을 '모바일에서도 가로 유지'로 켜고 끈다.
+   * 켜면 좁은 폭에서도 컬럼 비율 그대로 나란히 남는다 — 제목|링크처럼 짧은 한 줄 행용.
+   */
+  const setRowKeepInline = (groupId: string, rowIndex: number, on: boolean): void => {
+    const group = groups.value.find((g) => g.id === groupId)
+    if (!group || rowIndex < 0) return
+    if (!group.keepInlineRows) {
+      if (!on) return
+      group.keepInlineRows = []
+    }
+    group.keepInlineRows[rowIndex] = on
+    triggerRef(groups)
+    isDirty.value = true
+  }
+
   /**
    * 모듈 선택
    */
@@ -2302,6 +2333,9 @@ export const useModuleStore = defineStore('module', () => {
       // — 같은 이름이 둘이면 툴바·모듈 순서에서 어느 쪽인지 구분할 수 없다.
       name: USER_GROUP_NAME.test(group.name ?? '') ? nextUserGroupName() : group.name,
       rows: group.rows ? [...group.rows] : undefined,
+      // 행별 컬럼 너비·'모바일에서도 가로 유지'도 함께 승계 — 빠뜨리면 복제본만 레이아웃이 달라진다
+      colWidths: group.colWidths ? JSON.parse(JSON.stringify(group.colWidths)) : undefined,
+      keepInlineRows: group.keepInlineRows ? [...group.keepInlineRows] : undefined,
       styles: JSON.parse(JSON.stringify(group.styles)),
     })
 
@@ -2416,6 +2450,30 @@ export const useModuleStore = defineStore('module', () => {
         g.name = nextUserGroupName()
         changed = true
       }
+    }
+    if (changed) triggerRef(groups)
+  }
+
+  /** '모바일에서도 가로 유지'가 기본값인 조립형 그룹 이름 — 제목|링크가 한 줄이어야 모양이 유지된다 */
+  const KEEP_INLINE_GROUP_NAMES = new Set(['뉴스 헤드라인 헤더'])
+
+  /**
+   * keepInlineRows가 없던 시절 만들어진 뉴스 헤드라인 헤더 그룹에 기본값을 채운다.
+   * (그 헤더의 "제목 | 웹으로 보기" 행은 모바일에서 세로로 쌓이면 헤더로 읽히지 않는다)
+   * 이미 값이 있는 그룹은 사용자가 정한 것이므로 건드리지 않는다. (템플릿·저장 파일 로드 시 호출)
+   */
+  const ensureKeepInlineDefaults = (): void => {
+    let changed = false
+    for (const g of groups.value) {
+      if (g.keepInlineRows || !KEEP_INLINE_GROUP_NAMES.has(g.name ?? '')) continue
+      const members = modules.value
+        .filter((m) => m.groupId === g.id)
+        .sort((a, b) => a.order - b.order)
+      const { rowCols } = resolveGroupRows(g, members)
+      const flags: boolean[] = rowCols.map((cols) => cols > 1)
+      if (!flags.some(Boolean)) continue
+      g.keepInlineRows = flags
+      changed = true
     }
     if (changed) triggerRef(groups)
   }
@@ -2741,6 +2799,7 @@ export const useModuleStore = defineStore('module', () => {
       groups.value = JSON.parse(JSON.stringify(template.groups))
       // 이름이 없던 시절 만들어진 그룹은 여기서 기본 이름을 받는다
       ensureGroupNames()
+      ensureKeepInlineDefaults()
       normalizeGroupContiguity()
     }
 
@@ -3975,9 +4034,10 @@ export const useModuleStore = defineStore('module', () => {
             // 전체폭 행: 그 컬럼의 멤버들을 세로 스택
             inner += row.cells[0].map((m) => htmlById[m.id]).join('\n') + '\n'
           } else {
-            // 다단 행: 컬럼별 HTML로 fluid-hybrid 레이아웃(모바일 100% 세로 스택)
+            // 다단 행: 컬럼별 HTML로 fluid-hybrid 레이아웃(모바일 100% 세로 스택).
+            // '모바일에서도 가로 유지'(keepInline) 행은 좁은 폭에서도 나란히 남는다.
             const columnHtml = row.cells.map((cell) => cell.map((m) => htmlById[m.id]).join('\n') + '\n')
-            inner += buildColumnLayoutHtml(columnHtml, row.widths)
+            inner += buildColumnLayoutHtml(columnHtml, row.widths, row.keepInline)
           }
         }
         const resolvedGroupStyles = resolveGroupStyles(group.styles, wrapSettings.pointColors)
@@ -4290,6 +4350,9 @@ ${fullHtml}
     updateGroupStyle,
     setGroupName,
     ensureGroupNames,
+    ensureKeepInlineDefaults,
+    rowKeepsInline,
+    setRowKeepInline,
     swapRowColumns,
     duplicateRow,
     deleteRow,

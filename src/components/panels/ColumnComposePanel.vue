@@ -1,45 +1,132 @@
 <template>
-  <!-- 직접 구성 패널 (Figma 717-9607) — 캔버스의 빈 컬럼에서 '직접 구성'을 누르면 열린다.
-       그 컬럼에 넣을 구성 요소를 체크하면 즉시 해당 컬럼에 추가되고, 추가된 모듈이 선택되어
-       좌측 패널이 그 모듈의 속성 폼(구성 요소 + 세부 속성)으로 전환된다. -->
+  <!-- 직접 구성 패널 (Figma 977-12994) — 캔버스의 빈 컬럼에서 '직접 구성'을 누르면 열린다.
+       모듈 팔레트와 같은 카드 목록에서 하나를 고르면 그 컬럼에 바로 들어가고,
+       추가된 모듈이 선택되면서 좌측 패널이 그 모듈의 속성 폼으로 전환된다.
+       (취소는 캔버스의 '직접 구성 취소' 버튼이 담당한다 — 대상 컬럼 바로 위라 찾기 쉽다) -->
   <div v-if="target" class="column-compose-panel">
     <h2 class="panel-title">직접 구성</h2>
-    <p class="panel-desc">
-      {{ positionLabel }}에 넣을 요소를 선택하세요.<br />
-      체크하면 이 컬럼에 바로 추가됩니다.
-    </p>
 
-    <ColumnElementsField
-      :group-id="target.groupId"
-      :row-index="target.rowIndex"
-      :column-index="target.columnIndex"
-    />
+    <!-- 모듈 검색 (모듈 패널과 동일한 채움형 검색창) -->
+    <div class="mp-search">
+      <span class="material-symbols-outlined mp-search-icon">search</span>
+      <input
+        v-model="searchQuery"
+        type="text"
+        class="mp-search-input"
+        placeholder="모듈을 검색하세요"
+        spellcheck="false"
+      />
+      <button
+        v-if="searchQuery"
+        type="button"
+        class="mp-search-clear"
+        title="검색어 지우기"
+        @click="searchQuery = ''"
+      >
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
 
-    <button type="button" class="cancel-btn" @click="moduleStore.clearColumnTarget()">
-      직접 구성 취소
-    </button>
+    <!-- 자주 쓰는 원소 모듈 (카테고리 메뉴와 같은 QuickAddCard) — 전부 그룹을 만들지 않는 단일 모듈 -->
+    <div class="quick-add-list">
+      <QuickAddCard
+        v-for="item in quickAddItems"
+        :key="item.label"
+        :item="item"
+        @add="onQuickAdd(item)"
+      />
+    </div>
+
+    <div class="module-card-grid">
+      <ModuleCard
+        v-for="module in filteredModules"
+        :key="module.id"
+        :ref="(inst: any) => observeCard(inst?.rootEl ?? null, module.id)"
+        :module="module"
+        :srcdoc="thumbs[module.id]"
+        :iframe-height="thumbIframeHeight(module.id)"
+        :box-height="thumbBoxHeight(module.id)"
+        @add="onAdd(module)"
+        @thumb-load="(e: Event) => measureThumbHeight(module.id, e)"
+      />
+      <p v-if="!filteredModules.length" class="empty-text">검색 결과가 없어요</p>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useModuleStore } from '@/stores/moduleStore'
-import ColumnElementsField from './ColumnElementsField.vue'
+import { useModuleThumbnails } from '@/composables/useModuleThumbnails'
+import ModuleCard from './ModuleCard.vue'
+import QuickAddCard from './QuickAddCard.vue'
+import { pickQuickAddItems, type QuickAddItem } from '@/utils/quickAddItems'
+import type { ModuleMetadata } from '@/types'
 
 const moduleStore = useModuleStore()
+// 썸네일 로직은 모듈 패널과 공유 — 카드 UI가 항상 같게 보인다
+const { thumbs, observeCard, measureThumbHeight, thumbIframeHeight, thumbBoxHeight } =
+  useModuleThumbnails()
 
 const target = computed(() => moduleStore.columnTarget)
+const searchQuery = ref('')
 
-// "2단 중 2번 컬럼"처럼 대상 위치를 알려준다(여러 행 그룹이면 행 번호도 함께).
-const positionLabel = computed(() => {
-  const t = target.value
-  if (!t) return '이 컬럼'
-  const group = moduleStore.groups.find((g) => g.id === t.groupId)
-  const rows = group?.rows ?? []
-  const columns = rows[t.rowIndex] ?? 1
-  const colPart = `${columns}단 중 ${t.columnIndex + 1}번 컬럼`
-  return rows.length > 1 ? `${t.rowIndex + 1}행 ${colPart}` : colPart
+// 상단 빠른추가 — 그룹을 만들지 않는(=컬럼 안에 그대로 들어가는) 원소 모듈만 고른다
+const quickAddItems = pickQuickAddItems([
+  '텍스트 추가',
+  '단일 이미지 추가',
+  '단일 버튼 추가',
+  '작은 버튼 추가 (최대 4단)',
+])
+const quickAddModuleIds = new Set(quickAddItems.map((i) => i.moduleId))
+
+/**
+ * 옛 세대(v1) 모듈 — 번호로 부르던 완성형('모듈 01-2번'·'모듈 11번')과 그 시절 섹션 타이틀.
+ * v2에서는 원소 모듈을 조합해 같은 모양을 만들므로 컬럼 채우기 목록에서는 뺀다.
+ */
+const isLegacyModule = (id: string): boolean => id === 'SectionTitle' || /^Module\d/.test(id)
+
+// 목록에서 빼는 것: ①그룹이 되는 조립형(composedBuilderMap) — 그룹은 컬럼 '안'에 못 들어간다
+//                  ②옛 세대(v1) 모듈  ③위 빠른추가로 이미 제공하는 모듈(중복)
+const filteredModules = computed<ModuleMetadata[]>(() => {
+  const list = moduleStore.availableModules.filter(
+    (m) =>
+      !m.hidden &&
+      !moduleStore.composedBuilderMap[m.id] &&
+      !isLegacyModule(m.id) &&
+      !quickAddModuleIds.has(m.id),
+  )
+  const q = searchQuery.value.trim().toLowerCase()
+  if (!q) return list
+  return list.filter(
+    (m) => m.name.toLowerCase().includes(q) || (m.description ?? '').toLowerCase().includes(q),
+  )
 })
+
+onMounted(() => {
+  if (moduleStore.availableModules.length === 0) moduleStore.loadAvailableModules()
+})
+
+/**
+ * 고른 모듈을 대상 컬럼에 넣는다.
+ * 조립형(v2) 빌더를 쓰지 않는 이유: 빌더는 '새 그룹'을 만드는데 그러면 이 컬럼이 아니라
+ * 그룹 바깥에 붙는다. addModule은 columnTarget을 보고 그 (행, 컬럼)에 정확히 넣는다.
+ */
+const onAdd = (module: ModuleMetadata) => {
+  moduleStore.addModule(module)
+}
+
+/** 빠른추가 — 모듈을 넣은 뒤 기본 여백 등 오버라이드를 얹는다(추가된 모듈이 선택 상태다) */
+const onQuickAdd = (item: QuickAddItem) => {
+  const meta = moduleStore.availableModules.find((m) => m.id === item.moduleId)
+  if (!meta) return
+  moduleStore.addModule(meta)
+  if (item.overrides) {
+    for (const [key, value] of Object.entries(item.overrides)) {
+      moduleStore.updateModuleProperty(key, value)
+    }
+  }
+}
 </script>
 
 <style scoped>
@@ -50,7 +137,8 @@ const positionLabel = computed(() => {
   border-right: 1px solid #e5e8eb;
   height: 100%;
   overflow-y: auto;
-  padding: 24px 23px 29px;
+  /* 좌우 25px → 내부 폭 308px = ModuleCard 폭과 일치 */
+  padding: 25px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -61,25 +149,24 @@ const positionLabel = computed(() => {
   color: #191f28;
   letter-spacing: -0.2px;
 }
-.panel-desc {
-  font-size: 13px;
-  line-height: 1.6;
-  color: #6b7684;
-  word-break: keep-all;
-  margin-top: -8px;
+
+/* 검색창(.mp-search*)은 panels.css 공용 스타일 — 모듈 패널과 완전히 같은 모양이다 */
+
+.quick-add-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
 }
-.cancel-btn {
-  align-self: flex-start;
-  height: 36px;
-  padding: 0 14px;
-  border: 1px solid #e5e8eb;
-  border-radius: 8px;
-  background: #fff;
+.module-card-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.empty-text {
   font-size: 14px;
-  color: #4e5968;
-  cursor: pointer;
-}
-.cancel-btn:hover {
-  background: #f7f8fa;
+  color: #8b95a1;
+  text-align: center;
+  padding: 24px 0;
 }
 </style>

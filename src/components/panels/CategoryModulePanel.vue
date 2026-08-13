@@ -79,53 +79,14 @@
       <button type="button" class="ts-add-btn" @click="onAddTable">테이블 추가</button>
     </div>
 
-    <!-- 빠른추가 -->
+    <!-- 빠른추가 (카드는 ColumnComposePanel과 공유하는 QuickAddCard.vue) -->
     <div v-else class="quick-add-list">
-      <button
+      <QuickAddCard
         v-for="item in quickAddItems"
         :key="item.label"
-        type="button"
-        class="quick-add-card"
-        :class="{ 'quick-add-card--preview': item.preview }"
-        @click="onQuickAdd(item)"
-      >
-        <!-- 이미지 카테고리: 미리보기 플레이스홀더 (단일 1칸 / 2단 2칸) -->
-        <template v-if="isImagePreview(item.preview)">
-          <div class="qa-preview" :class="{ 'qa-preview--double': item.preview === 'double-image' }">
-            <img
-              v-for="n in item.preview === 'double-image' ? 2 : 1"
-              :key="n"
-              :src="item.preview === 'double-image' ? img02 : img01"
-              alt=""
-              class="qa-preview-img"
-            />
-          </div>
-          <div class="qa-foot">
-            <span class="quick-add-label">{{ item.label }}</span>
-            <span class="material-symbols-outlined quick-add-icon">add</span>
-          </div>
-        </template>
-        <!-- 버튼 카테고리: 스타일 버튼 미리보기 (단일 큰 버튼 / 2단 / 작은 알약) -->
-        <template v-else-if="isButtonPreview(item.preview)">
-          <div class="qa-btn-preview" :class="{ 'qa-btn-preview--small': item.preview === 'small-button' }">
-            <span
-              v-for="(t, i) in buttonPreviewLabels(item.preview)"
-              :key="i"
-              class="qa-btn"
-              :class="{ 'qa-btn--small': item.preview === 'small-button' }"
-            >{{ t }}</span>
-          </div>
-          <div class="qa-foot">
-            <span class="quick-add-label">{{ item.label }}</span>
-            <span class="material-symbols-outlined quick-add-icon">add</span>
-          </div>
-        </template>
-        <!-- 그 외 카테고리: 라벨 + 추가 아이콘 한 줄 -->
-        <template v-else>
-          <span class="quick-add-label">{{ item.label }}</span>
-          <span class="material-symbols-outlined quick-add-icon">add</span>
-        </template>
-      </button>
+        :item="item"
+        @add="onQuickAdd(item)"
+      />
     </div>
 
     <!-- 카테고리 갤러리 (완성 조립 블록 · v2 우선, 없으면 레거시 폴백) -->
@@ -153,11 +114,11 @@
 import { computed, onMounted, ref } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import ModuleCard from './ModuleCard.vue'
+import QuickAddCard from './QuickAddCard.vue'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useModuleThumbnails } from '@/composables/useModuleThumbnails'
 import type { ModuleMetadata } from '@/types'
-import img01 from '@/assets/img/img01.png'
-import img02 from '@/assets/img/img02.png'
+import { QUICK_ADD_ITEMS, type QuickAddItem } from '@/utils/quickAddItems'
 
 type Category = 'text' | 'image' | 'button' | 'table'
 
@@ -184,69 +145,9 @@ const panelTitle = computed(() =>
   props.category === 'table' ? '테이블 추가' : categoryLabel.value,
 )
 
-interface QuickAddItem {
-  label: string
-  moduleId: string
-  /** 조립형 빌더 키(선택) — moduleId와 다른 조립 템플릿을 쓸 때 지정. 예: '타이틀 추가'는
-   *  SectionTitle 대신 구분선+텍스트 2개 조립 그룹(ComposedTitleSection)을 만든다.
-   *  (같은 SectionTitle을 쓰는 '서브타이틀 추가'가 이 빌더에 휩쓸리지 않도록 분리) */
-  composedBuilderId?: string
-  /** 추가 직후 덮어쓸 속성 묶음(선택) — 예: "서브타이틀"·"텍스트"는 ModuleDescText에 폰트/여백 기본값을 얹어 재사용 */
-  overrides?: Record<string, unknown>
-  /** 미리보기 카드 표시(선택) — 이미지: 플레이스홀더, 버튼: 스타일 버튼 미리보기 */
-  preview?: 'single-image' | 'double-image' | 'single-button' | 'double-button' | 'small-button'
-}
-
-const isImagePreview = (p?: string): boolean => p === 'single-image' || p === 'double-image'
-const isButtonPreview = (p?: string): boolean =>
-  p === 'single-button' || p === 'double-button' || p === 'small-button'
-// 버튼 미리보기에 그릴 버튼 라벨들 (각 모듈 기본 텍스트에 맞춤)
-const buttonPreviewLabels = (p?: string): string[] => {
-  if (p === 'double-button') return ['버튼 1 →', '버튼 2 →']
-  if (p === 'small-button') return ['버튼 1 →']
-  return ['큰 버튼 →']
-}
-
-// 원소 모듈 "빠른추가" — 항상 moduleStore.addModule()로 삽입한다.
-// (선택된 모듈이 v2 그룹 멤버면 addModule이 이미 그 그룹에 이어붙이므로 별도 배선 불필요)
-// 폰트 크기·굵기를 지정한 한 줄 DescText 내용 HTML (moduleStore.weightedTextHtml과 동일 포맷)
-const weightedTextHtml = (text: string, fontSize: string, weight: number, align = 'left'): string =>
-  `<p style="margin:0; padding:0; line-height:1.7; text-align:${align};"><span style="font-size:${fontSize}; font-weight:${weight};">${text}</span></p>`
-
-const QUICK_ADD_ITEMS: Record<Category, QuickAddItem[]> = {
-  text: [
-    { label: '타이틀 추가', moduleId: 'SectionTitle', composedBuilderId: 'ComposedTitleSection' },
-    {
-      // 서브타이틀 = '타이틀 추가' 그룹의 타이틀 텍스트와 같은 속성(18px/700, 여백 15/20/15/20)을 가진 단일 텍스트 모듈
-      label: '서브타이틀 추가',
-      moduleId: 'ModuleDescText',
-      overrides: {
-        descriptionText: weightedTextHtml('서브 타이틀을 입력하세요', '18px', 700),
-        fontSize: '18px',
-        paddingTop: '15px',
-        paddingRight: '20px',
-        paddingBottom: '15px',
-        paddingLeft: '20px',
-      },
-    },
-    // 텍스트 = 좌우 20px 여백을 기본으로 얹은 설명 텍스트 모듈
-    { label: '텍스트 추가', moduleId: 'ModuleDescText', overrides: { paddingLeft: '20px', paddingRight: '20px' } },
-    { label: '인라인 텍스트 추가', moduleId: 'ModuleInlineText', overrides: { paddingLeft: '20px', paddingRight: '20px' } },
-  ],
-  image: [
-    // 단일 이미지 = 모듈 자체의 좌우 바깥 여백 20px 기본
-    { label: '단일 이미지 추가', moduleId: 'ModuleImg', preview: 'single-image', overrides: { paddingLeft: '20px', paddingRight: '20px' } },
-    { label: '2단 이미지 추가', moduleId: 'ModuleMultiImage', preview: 'double-image' },
-  ],
-  button: [
-    // 단일/작은 버튼 = 배경이 채워지도록 '안쪽' 좌우 20px + 바깥 좌우 20px
-    { label: '단일 버튼 추가', moduleId: 'ModuleOneButton', preview: 'single-button', overrides: { buttonPaddingLeft: '20px', buttonPaddingRight: '20px', paddingLeft: '20px', paddingRight: '20px' } },
-    { label: '2단 버튼 추가', moduleId: 'ModuleTwoButton', preview: 'double-button' },
-    { label: '작은 버튼 추가 (최대 4단)', moduleId: 'ModuleSmallButton', preview: 'small-button', overrides: { btnPaddingLeft: '20px', btnPaddingRight: '20px', paddingLeft: '20px', paddingRight: '20px' } },
-  ],
-  // 테이블은 v2 조립 템플릿이 아직 없어 레거시 '커스텀 테이블'(ModuleTable)을 그대로 쓴다.
-  table: [{ label: '테이블 추가', moduleId: 'ModuleTable' }],
-}
+// 원소 모듈 "빠른추가" 정의는 ColumnComposePanel과 공유한다(@/utils/quickAddItems).
+// 조립형 빌더가 없는 항목은 moduleStore.addModule()로 삽입된다 —
+// 선택된 모듈이 v2 그룹 멤버면 addModule이 이미 그 그룹에 이어붙이므로 별도 배선이 필요 없다.
 const quickAddItems = computed(() => QUICK_ADD_ITEMS[props.category])
 
 // 조립형 그룹 모듈의 기본 좌·우 '안쪽' 여백(그룹 스타일 padding). 배경색이 이 여백까지 채워지도록.
@@ -424,90 +325,7 @@ const onGalleryAdd = (module: ModuleMetadata) => {
   flex-direction: column;
   gap: 10px;
 }
-.quick-add-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: 8px 20px;
-  border: 1px solid #e5e8eb;
-  border-radius: 8px;
-  background: #fff;
-  cursor: pointer;
-  text-align: left;
-}
-.quick-add-card:hover {
-  border-color: #4083f3;
-  background: #f6f9ff;
-}
-.quick-add-label {
-  font-size: 16px;
-  font-weight: 500;
-  color: #191f28;
-}
-.quick-add-icon {
-  font-size: 24px;
-  color: #8b95a1;
-  flex-shrink: 0;
-}
-
-/* 미리보기 빠른추가 카드(이미지·버튼) — 상단 미리보기 + 하단 라벨/추가 아이콘 (세로 배치) */
-.quick-add-card--preview {
-  flex-direction: column;
-  align-items: stretch;
-  gap: 12px;
-  padding: 12px;
-}
-.qa-preview {
-  display: flex;
-  gap: 10px;
-}
-.qa-preview-img {
-  flex: 1;
-  min-width: 0;
-  width: 100%;
-  height: auto;
-  display: block;
-  border-radius: 4px;
-}
-.qa-foot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-/* 버튼 미리보기 — 실제 버튼 형태로 표시 */
-.qa-btn-preview {
-  display: flex;
-  gap: 8px;
-}
-.qa-btn-preview--small {
-  justify-content: flex-start;
-}
-.qa-btn {
-  flex: 1;
-  min-width: 0;
-  height: 34px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #191f28;
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-  border-radius: 4px;
-  white-space: nowrap;
-}
-/* 작은 버튼: 알약형 회색, 폭 고정(왼쪽 정렬) */
-.qa-btn--small {
-  flex: 0 0 auto;
-  height: 30px;
-  padding: 0 18px;
-  background: #e5e5e5;
-  color: #333333;
-  font-weight: 500;
-  border-radius: 30px;
-}
+/* 카드 자체의 모양은 QuickAddCard.vue(공용 컴포넌트)가 갖는다 */
 
 /* ===== 테이블 크기 선택 (Figma 640-3379) ===== */
 .table-add {
