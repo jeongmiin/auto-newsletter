@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
-import { nextTick } from 'vue'
+import { nextTick, effectScope } from 'vue'
 import { useModuleStore } from '@/stores/moduleStore'
-import { useHistory } from '../useHistory'
+import { useHistory, getHistoryInstance, disposeHistoryInstance } from '../useHistory'
 import type { ModuleInstance } from '@/types'
 
 const makeModule = (id: string): ModuleInstance => ({
@@ -104,5 +104,48 @@ describe('useHistory - 실행 취소/다시 실행', () => {
     history.undo() // -> 편집 직전([A])
     await flushApply()
     expect(store.modules[0].properties.title).toBe('A')
+  })
+})
+
+/**
+ * 싱글톤(getHistoryInstance)은 **화면 이동으로 죽지 않아야 한다.**
+ * 헤더(AppHeader)는 템플릿 선택 화면에도 있어 싱글톤이 거기서 만들어진다 —
+ * 그 컴포넌트가 언마운트될 때 watcher까지 사라지면 에디터에서 실행취소가 통째로 먹지 않는다.
+ */
+describe('getHistoryInstance - 화면 이동 후에도 살아 있는 감시', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+    vi.useFakeTimers()
+    disposeHistoryInstance()
+  })
+
+  afterEach(() => {
+    disposeHistoryInstance()
+    vi.useRealTimers()
+  })
+
+  it('싱글톤을 만든 컴포넌트가 사라져도 변경을 계속 기록한다', async () => {
+    const store = useModuleStore()
+
+    // 템플릿 선택 화면의 헤더에서 처음 생성되는 상황
+    const viewScope = effectScope()
+    const history = viewScope.run(() => getHistoryInstance())!
+    // 그 화면을 떠난다(언마운트)
+    viewScope.stop()
+
+    // 에디터에서의 편집
+    store.modules.push(makeModule('A'))
+    await flushSave()
+    store.modules.push(makeModule('B'))
+    await flushSave()
+
+    expect(history.canUndo.value).toBe(true)
+    expect(history.undo()).toBe(true)
+    await flushApply()
+    expect(store.modules.map((m) => m.id)).toEqual(['A'])
+  })
+
+  it('같은 인스턴스를 돌려준다', () => {
+    expect(getHistoryInstance()).toBe(getHistoryInstance())
   })
 })

@@ -105,6 +105,7 @@ import { useRouter } from 'vue-router'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
 import AppHeader from '@/components/layout/AppHeader.vue'
+import { getHistoryInstance } from '@/composables/useHistory'
 import type { NewsletterTemplate } from '@/types'
 
 const router = useRouter()
@@ -207,6 +208,9 @@ const pickTemplate = async (t: NewsletterTemplate) => {
   applying.value = true
   try {
     await moduleStore.loadTemplate(t.id)
+    // 실행취소 기록은 템플릿마다 새로 시작한다 — 안 지우면 Ctrl+Z가 **직전에 열었던 템플릿**의
+    // 내용을 되살린다(실행취소 인스턴스는 화면 이동과 무관하게 살아 있다).
+    getHistoryInstance().clearHistory()
     // 팀은 표시명이 아니라 id로 넘긴다 — 헤더의 팀 이름은 이 id로 트리에서 찾는다
     editorStore.setCurrentTemplate({
       templateId: t.id,
