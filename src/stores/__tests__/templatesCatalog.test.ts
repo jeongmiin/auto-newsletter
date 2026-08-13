@@ -46,6 +46,7 @@ const KNOWN_TEAM_IDS = [
   'arch-strategy',
   'growth-strategy',
   'mice',
+  'growth-plan',
   'conv-industry-1',
   'life-content',
   'pet-industry',
@@ -61,8 +62,8 @@ global.fetch = vi.fn(async (url: any) => {
 }) as any
 
 describe('템플릿 카탈로그', () => {
-  it('17개 전시 템플릿이 있다', () => {
-    expect(catalog.templates).toHaveLength(17)
+  it('18개 전시 템플릿이 있다', () => {
+    expect(catalog.templates).toHaveLength(18)
   })
 
   it('본부/팀 트리가 설정 파일에 들어 있다', () => {

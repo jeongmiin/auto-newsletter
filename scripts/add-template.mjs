@@ -2,7 +2,11 @@
  * 재편집용 HTML 하나를 템플릿 카탈로그(public/templates/templates-config.json)에 등록한다.
  *
  *   node scripts/add-template.mjs <htmlFile> --id kpet-template --name 케이펫 \
- *        --division pet --team pet-industry [--thumbnail kpet_temp.png] [--description "..."]
+ *        --division pet --team pet-industry [--thumbnail kpet_temp.png] [--description "..."] \
+ *        [--summary "표 설명(뉴스레터 요약)"]
+ *
+ * --summary는 파일의 뉴스레터 요약(wrapSettings.summary)을 덮어쓴다. 요약 없이 내보낸
+ * 파일로 기존 템플릿을 교체할 때 요약이 사라지는 것을 막는 용도다.
  *
  * 같은 id가 이미 있으면 교체한다. 등록 후 목록은 화면과 같은 순서
  * (본부 → 팀 → 이름 가나다ABC)로 다시 정렬한다.
@@ -39,7 +43,8 @@ if (!htmlArg || !opts.id || !opts.name || !opts.division || !opts.team) {
     [
       '사용법:',
       '  node scripts/add-template.mjs <htmlFile> --id <id> --name <이름> \\',
-      '       --division <본부id> --team <팀id> [--thumbnail <파일명>] [--description <설명>]',
+      '       --division <본부id> --team <팀id> [--thumbnail <파일명>] [--description <설명>] \\',
+      '       [--summary <뉴스레터 요약>]',
       '',
       '예:',
       '  node scripts/add-template.mjs temp/kpet_temp_newletter.html \\',
@@ -150,7 +155,7 @@ const entry = {
     pointColor: ws.pointColor ?? '#2563eb',
     ...(Array.isArray(ws.pointColors) && ws.pointColors.length ? { pointColors: ws.pointColors } : {}),
     fontLanguage: ws.fontLanguage ?? 'default',
-    ...(ws.summary ? { summary: ws.summary } : {}),
+    ...((opts.summary ?? ws.summary) ? { summary: opts.summary ?? ws.summary } : {}),
   },
   modules: [...data.modules].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map(toTemplateModule),
   // ⚠ groups를 빼면 그룹 구성이 통째로 사라진다
