@@ -51,7 +51,13 @@
             <div class="order-item">
               <!-- ===== 그룹 모듈 ===== -->
               <template v-if="item.type === 'group'">
-               <div class="order-group" :class="{ 'is-expanded': isExpanded(item.id) }">
+               <div
+                 class="order-group"
+                 :class="{
+                   'is-expanded': isExpanded(item.id),
+                   'is-selected': selectedGroupId === item.id,
+                 }"
+               >
                 <div
                   class="order-row"
                   :class="{ 'is-selected': selectedGroupId === item.id }"
@@ -533,23 +539,27 @@ const setHover = (moduleId: string | null): void => {
   gap: 10px;
 }
 
-/* 그룹 블록 — 펼치면 그룹 행 + 하위 모듈이 primary-50 55% 밴드로 한 덩어리가 된다 */
+/* 그룹 블록 — 그룹 행 + 하위 모듈.
+   밴드(blue/50 55%)는 **그룹 자체를 선택했을 때만** 깐다(Figma 969-8001).
+   ⚠ 펼치기만 해도 깔면, 그룹 안 모듈을 고른 상태(Figma 969-7618)에서 밴드와
+   선택 행(blue/50 불투명)이 같은 계열로 겹쳐 어느 요소가 선택됐는지 보이지 않는다. */
 .order-group {
   display: flex;
   flex-direction: column;
   gap: 10px;
   border-radius: 4px;
 }
-.order-group.is-expanded {
-  background: rgba(235, 243, 255, 0.55); /* blue/50 @ 55% */
+.order-group.is-selected.is-expanded {
+  background: color-mix(in srgb, var(--blue-50) 55%, transparent);
 }
 
-/* 하위 모듈 리스트 — 그룹 안에서만 드래그 재정렬(handle이 바깥과 다름) */
+/* 하위 모듈 리스트 — 그룹 안에서만 드래그 재정렬(handle이 바깥과 다름).
+   들여쓰기는 그룹 행의 화살표 슬롯(32px)만큼 (Figma도 같은 폭으로 물러나 있다) */
 .order-children {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-left: 37px;
+  margin-left: 32px;
 }
 
 /* 행 묶음 — 핸들 하나 + 그 행의 모듈들.
@@ -569,9 +579,14 @@ const setHover = (moduleId: string | null): void => {
 .order-rowgroup.is-multi .order-rowgroup-body {
   gap: 2px;
   padding: 4px 4px 4px 8px;
-  border-left: 2px solid rgba(64, 131, 243, 0.5);
+  border-left: 2px solid var(--gray-300);
   border-radius: 0 4px 4px 0;
-  background: rgba(235, 243, 255, 0.55);
+  background: var(--gray-100);
+}
+/* 선택된 다단 행은 선택색(blue/50)만 남긴다 — 회색 밴드와 겹쳐 색이 탁해지지 않도록 */
+.order-rowgroup.is-multi.is-selected .order-rowgroup-body {
+  background: transparent;
+  border-left-color: var(--blue-400);
 }
 /* 선택 배경은 행 묶음 전체(왼쪽 핸들 포함)에 깐다 — 라벨 칸만 칠하면 핸들 자리가 떠 보인다 */
 .order-rowgroup.is-selected {
@@ -635,8 +650,9 @@ const setHover = (moduleId: string | null): void => {
   background: transparent;
 }
 
+/* 그룹 행의 화살표·종류 아이콘·이름은 모두 그룹 보라 (Figma 969-7618) */
 .order-chevron {
-  color: var(--gray-750);
+  color: var(--group-text);
   cursor: pointer;
 }
 .order-chevron .material-symbols-outlined {
@@ -656,7 +672,7 @@ const setHover = (moduleId: string | null): void => {
   color: var(--gray-500);
 }
 .order-kind.is-group {
-  color: var(--gray-750);
+  color: var(--group-text);
 }
 
 .order-label {
@@ -670,7 +686,7 @@ const setHover = (moduleId: string | null): void => {
 }
 /* 그룹은 일반 모듈과 한눈에 구분되도록 보라색 */
 .order-label.is-group {
-  color: var(--group);
+  color: var(--group-text);
 }
 
 /* 그룹 해제 — 그룹 행에 마우스를 올리거나 그 그룹이 선택됐을 때만 노출 */
