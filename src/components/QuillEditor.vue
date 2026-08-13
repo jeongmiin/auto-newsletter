@@ -181,7 +181,7 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .quill-editor-wrapper {
-  border: 1px solid #ccc;
+  border: 1px solid var(--gray-300);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -225,7 +225,7 @@ onBeforeUnmount(() => {
 }
 
 :deep(.ql-editor.ql-blank::before) {
-  color: #aaa;
+  color: var(--gray-400);
   font-style: italic;
 }
 
@@ -245,12 +245,12 @@ onBeforeUnmount(() => {
 /* 툴바 스타일 */
 :deep(.ql-toolbar) {
   background: #f5f5f5;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid var(--gray-300);
 }
 
 :deep(.ql-toolbar.ql-snow) {
   border: none;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid var(--gray-300);
 }
 
 :deep(.ql-container.ql-snow) {
@@ -303,6 +303,6 @@ onBeforeUnmount(() => {
 
 :deep(.ql-snow .ql-highlightMarker .ql-picker-item:hover),
 :deep(.ql-snow .ql-highlightMarker .ql-picker-item.ql-selected) {
-  border-color: #06c;
+  border-color: var(--blue-500);
 }
 </style>

@@ -458,13 +458,6 @@ const ungroup = (): void => {
 
 <style scoped>
 /* 좌측 패널 상단 타이틀 — ModuleForm.vue와 동일 스타일(Figma 352-1138) */
-.gg-panel-title {
-  font-size: 20px;
-  font-weight: 500;
-  line-height: 1.5;
-  color: #191f28;
-  letter-spacing: -0.2px;
-}
 /* 그룹 해제 (Figma 908-11276) — 테두리 없는 빨간 텍스트 버튼 + link_off 아이콘.
    아이콘은 캔버스 툴바·모듈 순서 패널과 같은 것으로 통일했다. */
 .gp-ungroup {
@@ -475,7 +468,7 @@ const ungroup = (): void => {
   border: 0;
   border-radius: 6px;
   background: transparent;
-  color: #f04452;
+  color: var(--red-400);
   font-size: 14px;
   font-weight: 500;
   white-space: nowrap;
@@ -483,7 +476,7 @@ const ungroup = (): void => {
   transition: background 0.12s;
 }
 .gp-ungroup:hover {
-  background: #fdeced;
+  background: var(--red-50);
 }
 .gp-ungroup .material-symbols-outlined {
   font-size: 20px;
@@ -505,26 +498,26 @@ const ungroup = (): void => {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  border: 1.5px solid #d1d6db;
-  background: #fff;
+  border: 1.5px solid var(--gray-300);
+  background: var(--white);
   flex-shrink: 0;
   position: relative;
   cursor: pointer;
 }
 .gg-radio-dot.is-checked {
-  border-color: #4083f3;
+  border-color: var(--blue-400);
 }
 .gg-radio-dot.is-checked::after {
   content: '';
   position: absolute;
   inset: 3.5px;
   border-radius: 50%;
-  background: #4083f3;
+  background: var(--blue-400);
 }
 .gg-radio-label {
   font-size: 13px;
   font-weight: 500;
-  color: #333d4b;
+  color: var(--gray-750);
   letter-spacing: -0.13px;
   width: 40px;
   cursor: pointer;
@@ -539,7 +532,7 @@ const ungroup = (): void => {
   appearance: none;
   height: 4px;
   border-radius: 2px;
-  background: #e5e8eb;
+  background: var(--gray-200);
   outline: none;
 }
 .gg-range-slider::-webkit-slider-thumb {
@@ -548,42 +541,42 @@ const ungroup = (): void => {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: #4083f3;
+  background: var(--blue-400);
   cursor: pointer;
-  border: 2px solid #fff;
+  border: 2px solid var(--white);
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
 }
 .gg-range-slider::-moz-range-thumb {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: #4083f3;
+  background: var(--blue-400);
   cursor: pointer;
-  border: 2px solid #fff;
+  border: 2px solid var(--white);
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
 }
 
 .gg-text-input-sm :deep(.p-inputtext),
 :deep(.gg-hex-input) {
-  background: #f2f4f6;
+  background: var(--gray-100);
   border: 1px solid transparent;
   border-radius: 8px;
   box-shadow: none;
 }
 .gg-text-input-sm :deep(.p-inputtext:enabled:focus),
 :deep(.gg-hex-input:focus) {
-  border-color: #4083f3;
-  background: #fff;
+  border-color: var(--blue-400);
+  background: var(--white);
   box-shadow: none;
 }
 .gg-select-sm :deep(.p-select) {
-  border: 1px solid #e5e8eb;
+  border: 1px solid var(--gray-200);
   border-radius: 8px;
   box-shadow: none;
 }
 .gg-select-sm :deep(.p-select-label) {
   font-size: 13px;
-  color: #333d4b;
+  color: var(--gray-750);
 }
 
 </style>

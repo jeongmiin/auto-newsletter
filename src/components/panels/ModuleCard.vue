@@ -60,15 +60,15 @@ defineEmits<{
 /* 모듈 카드 — 폭 308px 고정, 인라인 썸네일 + 라벨 (패널 360px − 테두리 1px − 좌우 25px 여백에 맞춤) */
 .module-card {
   width: 308px;
-  border: 1px solid #e5e8eb;
+  border: 1px solid var(--gray-200);
   border-radius: 8px;
   overflow: hidden;
   cursor: pointer;
-  background: #fff;
+  background: var(--white);
   transition: border-color 0.12s;
 }
 .module-card:hover {
-  border-color: #4083f3;
+  border-color: var(--blue-400);
 }
 
 /* 인라인 썸네일 — 680px 렌더를 카드 폭에 맞춰 축소, 상단 크롭 */
@@ -76,8 +76,8 @@ defineEmits<{
   width: 100%;
   padding: 10px;
   overflow: hidden;
-  background: #ffffff;
-  border-bottom: 1px solid #eef0f2;
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-200);
   position: relative;
   box-sizing: border-box;
 }
@@ -86,7 +86,7 @@ defineEmits<{
   /* height는 실제 콘텐츠 높이로 인라인 지정 */
   border: 0;
   display: block;
-  background: #fff;
+  background: var(--white);
   /* 축소 비율은 THUMB_SCALE(JS 상수)을 CSS 변수로 주입 — 단일 소스 */
   transform: scale(var(--thumb-scale));
   transform-origin: top left;
@@ -102,10 +102,10 @@ defineEmits<{
 }
 .module-card-label {
   padding: 12px;
-  background: #f9fafb;
+  background: var(--gray-50);
   font-size: 14px;
   font-weight: 500;
-  color: #191f28;
+  color: var(--gray-800);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

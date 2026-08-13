@@ -104,7 +104,13 @@
                        ⚠ #item 슬롯 안 맨 앞에 주석을 두면 루트가 2개가 되어 vuedraggable이
                           아무것도 렌더하지 않는다(하위 목록이 통째로 사라짐) — 주석은 슬롯 밖에. -->
                   <template #item="{ element: row }">
-                    <div class="order-rowgroup" :class="{ 'is-multi': row.members.length > 1 }">
+                    <div
+                      class="order-rowgroup"
+                      :class="{
+                        'is-multi': row.members.length > 1,
+                        'is-selected': hasSelectedMember(row.members),
+                      }"
+                    >
                       <span
                         class="material-symbols-outlined order-drag order-drag--member order-drag--row"
                         title="그룹 안에서 순서 변경"
@@ -115,6 +121,7 @@
                         <div
                           v-for="member in row.members"
                           :key="member.id"
+                          :id="`order-row-${member.id}`"
                           class="order-row"
                           :class="{ 'is-selected': selectedModuleId === member.id }"
                           @click="select(member.id)"
@@ -176,7 +183,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import draggable from 'vuedraggable'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
@@ -210,6 +217,24 @@ const toggleExpand = (groupId: string): void => {
   else next.add(groupId)
   expandedGroupIds.value = next
 }
+
+/**
+ * 캔버스에서 그룹 안 모듈을 고르면 그 그룹 아코디언을 펼쳐 선택 요소가 목록에 드러나게 한다.
+ * (Figma 969-7618의 '멤버 선택' 상태)
+ * 패널 자체는 열지 않는다 — 닫아 둔 건 사용자의 선택이므로, 열어 볼 때 이미 펼쳐져 있으면 된다.
+ * 다른 그룹의 펼침 상태도 건드리지 않는다(그룹마다 독립).
+ */
+watch(selectedModuleId, async (id) => {
+  if (!id) return
+  const groupId = moduleStore.modules.find((m) => m.id === id)?.groupId
+  if (!groupId) return
+  if (!expandedGroupIds.value.has(groupId)) {
+    expandedGroupIds.value = new Set(expandedGroupIds.value).add(groupId)
+  }
+  if (!isOpen.value) return // 닫혀 있으면 스크롤할 화면이 없다
+  await nextTick()
+  document.getElementById(`order-row-${id}`)?.scrollIntoView({ block: 'nearest' })
+})
 
 // ===== 체크박스 다중선택 (그룹 묶기용) =====
 // 체크박스는 '그룹 묶기'를 위한 것이라 **그룹에 속하지 않은 모듈에만** 노출된다.
@@ -267,6 +292,10 @@ const selectGroupRow = (groupId: string): void => {
  * 다단 행은 여러 멤버를 한 덩어리로 들고 있고, 컬럼을 풀면 멤버 1개짜리 행이 된다.
  */
 type OutlineRow = GroupRowLayout<ModuleInstance> & { key: string; members: ModuleInstance[] }
+
+/** 이 행 묶음 안에 선택된 모듈이 있는가 — 선택 배경을 핸들까지 포함한 행 묶음 전체에 깐다 */
+const hasSelectedMember = (members: ModuleInstance[]): boolean =>
+  members.some((m) => m.id === selectedModuleId.value)
 
 const memberRows = (item: { group: ModuleGroup; modules: ModuleInstance[] }): OutlineRow[] =>
   computeGroupLayout(item.group, item.modules).map((row, i) => ({
@@ -375,8 +404,7 @@ const setHover = (moduleId: string | null): void => {
 .order-panel {
   width: 320px;
   height: 100%;
-  background: #fff;
-  border-left: 1px solid #e5e8eb;
+  background: var(--white);
   overflow: hidden;
   transition: width 0.18s ease;
 }
@@ -399,8 +427,6 @@ const setHover = (moduleId: string | null): void => {
 .order-tab {
   position: absolute;
   top: 50%;
-  left: -54px;
-  width: 54px;
   transform: translateY(-50%);
   display: flex;
   align-items: center;
@@ -408,23 +434,25 @@ const setHover = (moduleId: string | null): void => {
   padding: 20px 0;
   border-right: 0;
   border-radius: 15px 0 0 15px;
-  background: #fff;
-  color: #4e5968;
+  background: var(--white);
+  color: var(--gray-700);
   cursor: pointer;
   z-index: 5;
 }
+.order-dock .order-tab{left: -34px; width: 34px;}
+.order-dock.is-collapsed .order-tab{  left: -54px; width: 54px;}
 .order-tab:hover {
-  box-shadow: -2px 0 6px rgba(0, 0, 0, 0.06);
+  box-shadow: -4px 0 6px rgba(0, 0, 0, 0.06);
 }
 .order-tab-icon {
   font-size: 18px;
   width: 12px;
   line-height: 1;
   transition: transform 0.18s ease;
-  color: #4E5968;
+  color: var(--gray-700);
 }
 .order-tab-icon.is-open {
-  transform: rotate(180deg);
+  transform: rotate(-180deg);
 }
 
 /* ===== 헤더 ===== */
@@ -438,13 +466,13 @@ const setHover = (moduleId: string | null): void => {
   font-size: 20px;
   font-weight: 500;
   line-height: 1.5;
-  color: #191f28;
+  color: var(--gray-800);
   letter-spacing: -0.2px;
 }
 .order-count {
   font-size: 16px;
   line-height: 1.5;
-  color: #8b95a1;
+  color: var(--gray-500);
   letter-spacing: -0.16px;
 }
 
@@ -454,19 +482,19 @@ const setHover = (moduleId: string | null): void => {
   height: 40px;
   border: 0;
   border-radius: 8px;
-  background: #4e5968;
-  color: #fff;
+  background: var(--gray-700);
+  color: var(--white);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.12s;
 }
 .order-group-btn:hover:not(:disabled) {
-  background: #3d4756;
+  background: var(--gray-750);
 }
 .order-group-btn:disabled {
-  background: #d1d6db;
-  color: #fff;
+  background: var(--gray-300);
+  color: var(--white);
   cursor: default;
 }
 .order-clear-btn {
@@ -477,7 +505,7 @@ const setHover = (moduleId: string | null): void => {
   background: transparent;
   padding: 0;
   font-size: 13px;
-  color: #6b7684;
+  color: var(--gray-600);
   cursor: pointer;
   text-decoration: underline;
 }
@@ -487,7 +515,7 @@ const setHover = (moduleId: string | null): void => {
   padding-top: 40px;
   text-align: center;
   font-size: 14px;
-  color: #8b95a1;
+  color: var(--gray-500);
 }
 
 /* ===== 리스트 ===== */
@@ -545,6 +573,15 @@ const setHover = (moduleId: string | null): void => {
   border-radius: 0 4px 4px 0;
   background: rgba(235, 243, 255, 0.55);
 }
+/* 선택 배경은 행 묶음 전체(왼쪽 핸들 포함)에 깐다 — 라벨 칸만 칠하면 핸들 자리가 떠 보인다 */
+.order-rowgroup.is-selected {
+  background: var(--blue-50); /* blue/50 */
+  border-radius: 4px;
+}
+/* 배경을 행 묶음이 맡으므로 안쪽 행은 글자·핸들 강조만 남긴다(같은 색을 두 번 칠하지 않도록) */
+.order-rowgroup .order-row.is-selected {
+  background: transparent;
+}
 /* 행 핸들은 첫 줄 높이에 맞춰 위쪽 정렬 (다단이면 여러 줄이라 가운데가 어색하다) */
 .order-rowgroup .order-drag--row {
   margin-top: 10px;
@@ -561,24 +598,24 @@ const setHover = (moduleId: string | null): void => {
   transition: background 0.12s;
 }
 .order-row:hover {
-  background: #f2f4f6; /* gray/100 */
+  background: var(--gray-100); /* gray/100 */
 }
 .order-row.is-selected {
-  background: #ebf3ff; /* blue/50 */
+  background: var(--blue-50); /* blue/50 */
 }
 /* 선택된 행은 라벨·핸들이 진해진다 (그룹 라벨은 보라 유지) */
 .order-row.is-selected .order-label:not(.is-group) {
-  color: #333d4b; /* gray/800 */
+  color: var(--gray-750); /* gray/800 */
 }
 .order-row.is-selected .order-drag {
-  color: #6b7684;
+  color: var(--gray-600);
 }
 
 .order-drag {
   flex-shrink: 0;
   font-size: 24px;
   line-height: 1;
-  color: #b0b8c1;
+  color: var(--gray-400);
   cursor: grab;
 }
 .order-drag:active {
@@ -599,7 +636,7 @@ const setHover = (moduleId: string | null): void => {
 }
 
 .order-chevron {
-  color: #333d4b;
+  color: var(--gray-750);
   cursor: pointer;
 }
 .order-chevron .material-symbols-outlined {
@@ -616,29 +653,29 @@ const setHover = (moduleId: string | null): void => {
   flex-shrink: 0;
   font-size: 22px;
   line-height: 1;
-  color: #8b95a1;
+  color: var(--gray-500);
 }
 .order-kind.is-group {
-  color: #333d4b;
+  color: var(--gray-750);
 }
 
 .order-label {
   flex: 1;
   min-width: 0;
   font-size: 14px;
-  color: #6b7684; /* gray/600 */
+  color: var(--gray-600); /* gray/600 */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 /* 그룹은 일반 모듈과 한눈에 구분되도록 보라색 */
 .order-label.is-group {
-  color: #b037ce;
+  color: var(--group);
 }
 
 /* 그룹 해제 — 그룹 행에 마우스를 올리거나 그 그룹이 선택됐을 때만 노출 */
 .order-ungroup {
-  color: #4e5968;
+  color: var(--gray-700);
   cursor: pointer;
   opacity: 0;
   pointer-events: none;
@@ -654,18 +691,18 @@ const setHover = (moduleId: string | null): void => {
   pointer-events: auto;
 }
 .order-ungroup:hover {
-  color: #e03131;
+  color: var(--red-400);
 }
 
 .order-help {
   flex-shrink: 0;
   font-size: 12px;
   line-height: 1.6;
-  color: #8b95a1;
+  color: var(--gray-500);
   word-break: keep-all;
 }
 
-/* PrimeVue 체크박스를 Figma 스펙(20px, radius 4, #d1d6db)에 맞춤 */
+/* PrimeVue 체크박스를 Figma 스펙(20px, radius 4, var(--gray-300))에 맞춤 */
 .order-slot :deep(.p-checkbox) {
   width: 20px;
   height: 20px;
@@ -674,7 +711,7 @@ const setHover = (moduleId: string | null): void => {
   width: 20px;
   height: 20px;
   border-radius: 4px;
-  border-color: #d1d6db;
+  border-color: var(--gray-300);
 }
 
 /* 드래그 중 자리 표시(ghost) */
@@ -682,6 +719,6 @@ const setHover = (moduleId: string | null): void => {
   opacity: 0.5;
 }
 :deep(.order-ghost) .order-row {
-  background: #ebf3ff;
+  background: var(--blue-50);
 }
 </style>

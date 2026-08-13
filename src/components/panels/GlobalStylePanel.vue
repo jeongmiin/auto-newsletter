@@ -1,5 +1,5 @@
 <template>
-  <div class="global-style-panel">
+  <div class="side-panel global-style-panel">
     <h2 class="panel-title">전체 스타일</h2>
 
     <!-- 배경 색상 -->
@@ -149,23 +149,9 @@ const onSummaryInput = (event: Event) => {
 </script>
 
 <style scoped>
+/* 껍데기는 panels.css의 .side-panel — 안쪽 여백만 다르다 */
 .global-style-panel {
-  width: var(--left-panel-width, 360px);
-  flex-shrink: 0;
-  background: #fff;
-  border-right: 1px solid #e5e8eb;
-  height: 100%;
-  overflow-y: auto;
   padding: 24px 30px 29px;
-  display: flex;
-  flex-direction: column;
-  gap: 26px;
-}
-.panel-title {
-  font-size: 20px;
-  font-weight: 500;
-  color: #191f28;
-  letter-spacing: -0.2px;
 }
 .row-between {
   display: flex;
@@ -175,16 +161,16 @@ const onSummaryInput = (event: Event) => {
 .row-label {
   font-size: 16px;
   font-weight: 500;
-  color: #333d4b;
+  color: var(--gray-750);
   letter-spacing: -0.16px;
 }
 .sub-label {
   font-size: 15px;
-  color: #4e5968;
+  color: var(--gray-700);
 }
 .divider {
   height: 1px;
-  background: #e5e8eb;
+  background: var(--gray-200);
   flex-shrink: 0;
 }
 /* .hint-text 는 panels.css 공용 클래스로 옮겼다 (패널 공통 힌트 문구) */
@@ -199,26 +185,26 @@ const onSummaryInput = (event: Event) => {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  border: 1.5px solid #d1d6db;
-  background: #fff;
+  border: 1.5px solid var(--gray-300);
+  background: var(--white);
   flex-shrink: 0;
   position: relative;
   cursor: pointer;
 }
 .radio-dot.is-checked {
-  border-color: #4083f3;
+  border-color: var(--blue-400);
 }
 .radio-dot.is-checked::after {
   content: '';
   position: absolute;
   inset: 3.5px;
   border-radius: 50%;
-  background: #4083f3;
+  background: var(--blue-400);
 }
 .radio-label {
   font-size: 13px;
   font-weight: 500;
-  color: #333d4b;
+  color: var(--gray-750);
   letter-spacing: -0.13px;
   width: 40px;
   cursor: pointer;
@@ -234,7 +220,7 @@ const onSummaryInput = (event: Event) => {
   gap: 2px;
   height: 32px;
   padding: 0 12px;
-  background: #f2f4f6;
+  background: var(--gray-100);
   border-radius: 8px;
   flex-shrink: 0;
 }
@@ -245,7 +231,7 @@ const onSummaryInput = (event: Event) => {
   outline: none;
   text-align: right;
   font-size: 15px;
-  color: #191f28;
+  color: var(--gray-800);
   -moz-appearance: textfield;
   appearance: textfield;
 }
@@ -256,22 +242,22 @@ const onSummaryInput = (event: Event) => {
 }
 .width-field .unit {
   font-size: 14px;
-  color: #6b7684;
+  color: var(--gray-600);
 }
 
 .summary-field {
   height: 40px;
   padding: 0 12px;
-  background: #f2f4f6;
+  background: var(--gray-100);
   border-radius: 8px;
   border: none;
   outline: none;
   font-size: 15px;
-  color: #191f28;
+  color: var(--gray-800);
   width: 100%;
 }
 .summary-field::placeholder {
-  color: #8b95a1;
+  color: var(--gray-500);
 }
 
 .range-slider {
@@ -279,7 +265,7 @@ const onSummaryInput = (event: Event) => {
   appearance: none;
   height: 4px;
   border-radius: 2px;
-  background: #e5e8eb;
+  background: var(--gray-200);
   outline: none;
 }
 .range-slider::-webkit-slider-thumb {
@@ -288,18 +274,18 @@ const onSummaryInput = (event: Event) => {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: #4083f3;
+  background: var(--blue-400);
   cursor: pointer;
-  border: 2px solid #fff;
+  border: 2px solid var(--white);
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
 }
 .range-slider::-moz-range-thumb {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: #4083f3;
+  background: var(--blue-400);
   cursor: pointer;
-  border: 2px solid #fff;
+  border: 2px solid var(--white);
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
 }
 </style>

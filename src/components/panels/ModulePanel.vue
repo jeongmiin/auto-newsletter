@@ -738,12 +738,9 @@ onMounted(async () => {
   padding-top: 25px;
 }
 /* 다른 레일 메뉴 패널(GlobalStylePanel·CategoryModulePanel)과 동일한 제목 스타일 */
+/* 제목 모양은 panels.css의 공용 .panel-title — 여기선 패널 여백만 얹는다 */
 .panel-title {
   margin: 0 25px 20px;
-  font-size: 20px;
-  font-weight: 500;
-  color: #191f28;
-  letter-spacing: -0.2px;
 }
 /* 검색창 모양은 panels.css의 공용 .mp-search* — 여기선 패널 좌우 여백만 얹는다 */
 .mp-search {
@@ -763,7 +760,7 @@ onMounted(async () => {
 }
 /* Line 56 — 탭 아래 기준선. 스크롤되는 탭이 아니라 보이는 영역(콘텐츠 폭)에 그린다 */
 .mp-tabs :deep(.p-tablist) {
-  border-bottom: 1.5px solid #e5e8eb;
+  border-bottom: 1.5px solid var(--gray-200);
   /* 기본값 hidden이면 콘텐츠 폭 바깥에 놓인 화살표가 잘린다.
      탭 넘침은 아래 .p-tablist-content가 자르므로 여기선 잘라낼 필요가 없다. */
   overflow: visible;
@@ -792,22 +789,22 @@ onMounted(async () => {
   font-weight: 500;
   line-height: 1.5;
   letter-spacing: -0.14px;
-  color: #6b7684;
+  color: var(--gray-600);
   white-space: nowrap;
   transition: color 0.12s;
 }
 .mp-tabs :deep(.p-tab:hover) {
-  color: #4e5968;
+  color: var(--gray-700);
   background: none;
 }
 .mp-tabs :deep(.p-tab-active) {
-  color: #4083f3;
+  color: var(--blue-400);
 }
 /* Line 57 — 활성 탭 아래 파란 바. 기준선을 덮도록 1.5px 내려 붙인다 */
 .mp-tabs :deep(.p-tablist-active-bar) {
   height: 2px;
   bottom: -1.5px;
-  background: #4083f3;
+  background: var(--blue-400);
 }
 /* 넘칠 때 나오는 화살표 (Figma 908-23354) — 28px 흰 원형 + 그림자.
    탭 줄 '위에 떠서' 가리는 형태라, 자리를 차지하지 않도록 절대배치한다
@@ -821,8 +818,8 @@ onMounted(async () => {
   margin: 0;
   border: 0;
   border-radius: 50%;
-  background: #fff;
-  color: #4e5968;
+  background: var(--white);
+  color: var(--gray-700);
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
 }
 /* 절대배치의 기준은 padding 안쪽이라, 패널 가장자리 기준 9px가 되도록 inset만큼 되돌린다 */
@@ -839,7 +836,7 @@ onMounted(async () => {
   flex-direction: column;
 }
 .mp-acc {
-  border-bottom: 1px solid #f2f4f6;
+  border-bottom: 1px solid var(--gray-100);
 }
 .mp-acc-header {
   display: flex;
@@ -855,16 +852,16 @@ onMounted(async () => {
 .mp-acc-title {
   font-size: 15px;
   font-weight: 500;
-  color: #333d4b;
+  color: var(--gray-750);
   letter-spacing: -0.15px;
 }
 .mp-acc-count {
-  color: #8b95a1;
+  color: var(--gray-500);
   font-weight: 400;
 }
 .mp-acc-chevron {
   font-size: 13px;
-  color: #8b95a1;
+  color: var(--gray-500);
 }
 /* 아코디언 본문 — 카드 목록 하단 여백 (아코디언 전용 차이) */
 .mp-acc .module-card-grid {

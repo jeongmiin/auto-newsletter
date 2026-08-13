@@ -86,7 +86,7 @@ const onAlphaInput = (value: number) => {
   gap: 0.5rem;
 }
 
-/* 색상 스와치: 옆 입력 필드 높이에 맞추고, #ffffff도 보이도록 테두리 추가 */
+/* 색상 스와치: 옆 입력 필드 높이에 맞추고, var(--white)도 보이도록 테두리 추가 */
 .color-alpha-picker :deep(.p-colorpicker-preview) {
   border-radius: 6px;
   border: 1px solid var(--p-surface-200);

@@ -71,19 +71,19 @@ const toggleSide = (side: BorderSide) => {
   flex-direction: column;
   gap: 2px;
   padding: 3px 2px;
-  border: 1px solid #e5e8eb;
+  border: 1px solid var(--gray-200);
   border-radius: 4px;
-  background: #fff;
-  color: #4e5968;
+  background: var(--white);
+  color: var(--gray-700);
   cursor: pointer;
 }
 .bd-side-btn:hover {
-  background: #f7f8fa;
+  background: var(--gray-50);
 }
 .bd-side-btn.is-active {
-  background: #ebf3ff;
-  border-color: #4083f3;
-  color: #4083f3;
+  background: var(--blue-50);
+  border-color: var(--blue-400);
+  color: var(--blue-400);
 }
 .bd-side-btn .material-symbols-outlined {
   font-size: 20px;

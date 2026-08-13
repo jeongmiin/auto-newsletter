@@ -3,7 +3,7 @@
        모듈 팔레트와 같은 카드 목록에서 하나를 고르면 그 컬럼에 바로 들어가고,
        추가된 모듈이 선택되면서 좌측 패널이 그 모듈의 속성 폼으로 전환된다.
        (취소는 캔버스의 '직접 구성 취소' 버튼이 담당한다 — 대상 컬럼 바로 위라 찾기 쉽다) -->
-  <div v-if="target" class="column-compose-panel">
+  <div v-if="target" class="side-panel column-compose-panel">
     <h2 class="panel-title">직접 구성</h2>
 
     <!-- 모듈 검색 (모듈 패널과 동일한 채움형 검색창) -->
@@ -130,24 +130,9 @@ const onQuickAdd = (item: QuickAddItem) => {
 </script>
 
 <style scoped>
+/* 껍데기는 panels.css의 .side-panel — 항목 간격만 좁힌다 */
 .column-compose-panel {
-  width: var(--left-panel-width, 360px);
-  flex-shrink: 0;
-  background: #fff;
-  border-right: 1px solid #e5e8eb;
-  height: 100%;
-  overflow-y: auto;
-  /* 좌우 25px → 내부 폭 308px = ModuleCard 폭과 일치 */
-  padding: 25px;
-  display: flex;
-  flex-direction: column;
   gap: 20px;
-}
-.panel-title {
-  font-size: 20px;
-  font-weight: 500;
-  color: #191f28;
-  letter-spacing: -0.2px;
 }
 
 /* 검색창(.mp-search*)은 panels.css 공용 스타일 — 모듈 패널과 완전히 같은 모양이다 */
@@ -165,7 +150,7 @@ const onQuickAdd = (item: QuickAddItem) => {
 }
 .empty-text {
   font-size: 14px;
-  color: #8b95a1;
+  color: var(--gray-500);
   text-align: center;
   padding: 24px 0;
 }

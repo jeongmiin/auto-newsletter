@@ -85,24 +85,24 @@ const buttonPreviewLabels = computed<string[]>(() => {
   justify-content: space-between;
   width: 100%;
   padding: 8px 20px;
-  border: 1px solid #e5e8eb;
+  border: 1px solid var(--gray-200);
   border-radius: 8px;
-  background: #fff;
+  background: var(--white);
   cursor: pointer;
   text-align: left;
 }
 .quick-add-card:hover {
-  border-color: #4083f3;
-  background: #f6f9ff;
+  border-color: var(--blue-400);
+  background: var(--blue-50);
 }
 .quick-add-label {
   font-size: 16px;
   font-weight: 500;
-  color: #191f28;
+  color: var(--gray-800);
 }
 .quick-add-icon {
   font-size: 24px;
-  color: #8b95a1;
+  color: var(--gray-500);
   flex-shrink: 0;
 }
 
@@ -146,8 +146,8 @@ const buttonPreviewLabels = computed<string[]>(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #191f28;
-  color: #fff;
+  background: var(--gray-800);
+  color: var(--white);
   font-size: 13px;
   font-weight: 700;
   border-radius: 4px;

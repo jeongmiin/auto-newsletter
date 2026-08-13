@@ -765,7 +765,7 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
 /* 드래그 중인 요소의 고스트 스타일 */
 .dragging-ghost {
   opacity: 0.5;
-  background: #e5e7eb;
+  background: var(--gray-200);
 }
 
 /* 드래그로 선택된 요소 스타일 */
@@ -811,12 +811,12 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fff;
-  border: 1px solid #e5e8eb;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
   border-radius: 12px 0 0 12px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.11);
   cursor: grab;
-  color: #8b95a1;
+  color: var(--gray-500);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.12s;
@@ -841,7 +841,7 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
   gap: 16px;
   width: calc(100% + 2px);
   padding: 10px 25px;
-  background: #191f28;
+  background: var(--gray-800);
   border-radius: 10px 10px 0 0;
   opacity: 0;
   pointer-events: none;
@@ -859,7 +859,7 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #fff;
+  color: var(--white);
   font-size: 14px;
   font-weight: 500;
 }
@@ -870,8 +870,8 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
   padding: 0 16px;
   border: none;
   border-radius: 7px;
-  background: #333d4b;
-  color: #d1d6db;
+  background: var(--gray-750);
+  color: var(--gray-300);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -879,13 +879,13 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
   transition: background-color 0.12s ease, color 0.12s ease;
 }
 .gtt-style-btn:not(:disabled):hover {
-  background: #4e5968;
-  color: #fff;
+  background: var(--gray-700);
+  color: var(--white);
 }
 /* 이미 이 그룹 스타일 편집 중이면 비활성 — 다른 모듈/그룹을 선택하면 다시 활성화된다 */
 .gtt-style-btn:disabled {
-  background: #2b323c;
-  color: #6b7684;
+  background: var(--gray-800);
+  color: var(--gray-600);
   cursor: not-allowed;
 }
 .gtt-btn {
@@ -896,7 +896,7 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
   justify-content: center;
   border: none;
   background: none;
-  color: #d1d6db;
+  color: var(--gray-300);
   cursor: pointer;
   border-radius: 7px;
   transition: background-color 0.12s ease, color 0.12s ease;
@@ -906,19 +906,19 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
 }
 .gtt-btn:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.12);
-  color: #fff;
+  color: var(--white);
 }
 /* 맨 위/맨 아래 그룹은 그 방향으로 더 못 간다 — 눌러도 소용없는 버튼을 잠근다 */
 .gtt-btn:disabled {
-  color: #4e5968;
+  color: var(--gray-700);
   cursor: not-allowed;
 }
 .gtt-btn--danger {
-  color: #ff6b74;
+  color: var(--red-400);
 }
 .gtt-btn--danger:hover {
   background: rgba(240, 68, 82, 0.2);
-  color: #ff6b74;
+  color: var(--red-400);
 }
 
 /*
@@ -937,7 +937,7 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
      · 그룹 안 요소 선택 중 → 보라 점선 50% (선택한 요소가 이 그룹 소속이라는 표시) */
 .group-box--selected,
 .group-box--selected:hover {
-  outline: 2px solid #c00aee;
+  outline: 2px solid var(--group);
   outline-offset: -1px;
 }
 .group-box--member,
@@ -971,7 +971,7 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
 }
 .group-row-item.row--hover,
 .group-row-item.row--selected {
-  outline: 2px solid #4083f3;
+  outline: 2px solid var(--blue-400);
 }
 .row--hover.row--multi .col-cell,
 .row--selected.row--multi .col-cell {
@@ -986,7 +986,7 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
    컬럼 칸에는 점선을 넣지 않는다: 2단이 세로로 쌓이면 칸 선이 행 선과 겹쳐 두 줄로 보인다.
    (파란 실선은 '행 자체 선택'의 표시로 남겨 둔다) */
 .group-row-item.row--member:not(.row--hover) {
-  outline: 1px dashed #b0b8c1;
+  outline: 1px dashed var(--gray-400);
   outline-offset: 2px;
 }
 
@@ -1010,13 +1010,13 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
   justify-content: center;
   border: 0;
   border-radius: 1000px;
-  background: #333d4b;
-  color: #fff;
+  background: var(--gray-750);
+  color: var(--white);
   cursor: pointer;
   transition: background 0.12s;
 }
 .row-swap-btn:hover {
-  background: #4e5968;
+  background: var(--gray-700);
 }
 .row-swap-btn .material-symbols-outlined {
   font-size: 24px;
@@ -1035,8 +1035,8 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
   gap: 10px;
   width: 41px;
   padding: 16px 0;
-  background: #fff;
-  border: 1px solid #e5e8eb;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
   border-radius: 12px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.07);
 }
@@ -1050,22 +1050,22 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
   border: 0;
   border-radius: 8px;
   background: transparent;
-  color: #4e5968;
+  color: var(--gray-700);
   cursor: pointer;
 }
 .row-toolbar .module-toolbar-btn:hover:not(:disabled) {
-  background: #f2f4f6;
+  background: var(--gray-100);
 }
 .row-toolbar .module-toolbar-btn:disabled {
-  color: #c4c9d0;
+  color: var(--gray-300);
   cursor: default;
 }
 /* 삭제는 되돌리기 어려운 동작이라 모듈 툴바와 같은 빨간색으로 구분 */
 .row-toolbar .module-toolbar-btn.is-danger {
-  color: #f04452;
+  color: var(--red-400);
 }
 .row-toolbar .module-toolbar-btn.is-danger:hover {
-  background: #fdeced;
+  background: var(--red-50);
 }
 .row-toolbar .material-symbols-outlined {
   font-size: 20px;
@@ -1081,9 +1081,9 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
   gap: 12px;
   min-height: 100%;
   padding: 20px 16px;
-  border: 1px dashed #c6ccd4;
+  border: 1px dashed var(--gray-300);
   border-radius: 8px;
-  background-color: #fbfcfd;
+  background-color: var(--gray-50);
   background-image: repeating-linear-gradient(
     45deg,
     rgba(107, 118, 132, 0.16) 0,
@@ -1093,13 +1093,13 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
   );
 }
 .empty-col--target {
-  border-color: #4083f3;
-  background: #f5f9ff;
+  border-color: var(--blue-400);
+  background: var(--blue-50);
 }
 .empty-col__prompt {
   font-size: 18px;
   font-weight: 500;
-  color: #191f28;
+  color: var(--gray-800);
   letter-spacing: -0.18px;
   text-align: center;
   line-height: 1.5;
@@ -1108,7 +1108,7 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
 .empty-col--target .empty-col__prompt {
   font-size: 15px;
   font-weight: 400;
-  color: #4e5968;
+  color: var(--gray-700);
   letter-spacing: -0.15px;
 }
 .empty-col__cancel {
@@ -1116,14 +1116,14 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
   font-size: 14px;
   font-weight: 500;
   letter-spacing: -0.14px;
-  color: #6b7684;
-  background: #fff;
-  border: 1px solid #e5e8eb;
+  color: var(--gray-600);
+  background: var(--white);
+  border: 1px solid var(--gray-200);
   border-radius: 8px;
   cursor: pointer;
 }
 .empty-col__cancel:hover {
-  background: #f2f4f6;
+  background: var(--gray-100);
 }
 /* 방식 선택 카드 (컬럼 복제 / 직접 구성) — Figma 934-9044 */
 .empty-col__cards {
@@ -1138,17 +1138,17 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
   gap: 8px;
   width: 90px;
   padding: 16px 0;
-  background: #fff;
-  border: 1px solid #e5e8eb;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
   border-radius: 8px;
-  color: #6b7684;
+  color: var(--gray-600);
   cursor: pointer;
   transition: border-color 0.12s, color 0.12s, background-color 0.12s;
 }
 .empty-col__card:hover {
-  border-color: #4083f3;
-  color: #4083f3;
-  background: #f5f9ff;
+  border-color: var(--blue-400);
+  color: var(--blue-400);
+  background: var(--blue-50);
 }
 .empty-col__card .material-symbols-outlined {
   font-size: 24px;
@@ -1165,11 +1165,11 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
   background: none;
   font-size: 15px;
   font-weight: 500;
-  color: #6b7684;
+  color: var(--gray-600);
   text-decoration: underline;
   cursor: pointer;
 }
 .empty-col__to-single:hover {
-  color: #4083f3;
+  color: var(--blue-400);
 }
 </style>

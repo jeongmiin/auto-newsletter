@@ -176,8 +176,8 @@ watch(
   gap: 10px;
   width: 41px;
   padding: 16px 0;
-  background: #fff;
-  border: 1px solid #e5e8eb;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
   border-radius: 12px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.07);
   opacity: 0;
@@ -202,7 +202,7 @@ watch(
   justify-content: center;
   border: none;
   background: none;
-  color: #4e5968;
+  color: var(--gray-700);
   cursor: pointer;
   border-radius: 6px;
 }
@@ -210,20 +210,20 @@ watch(
   font-size: 20px;
 }
 .module-toolbar-btn:hover {
-  background: #f2f4f6;
+  background: var(--gray-100);
 }
 .module-toolbar-btn:disabled {
-  color: #d1d6db;
+  color: var(--gray-300);
   cursor: not-allowed;
 }
 .module-toolbar-btn:disabled:hover {
   background: none;
 }
 .module-toolbar-btn.is-danger {
-  color: #f04452;
+  color: var(--red-400);
 }
 .module-toolbar-btn.is-danger:hover {
-  background: #fff1f1;
+  background: var(--red-50);
 }
 
 /* CSS 격리 레이어 */
@@ -279,7 +279,7 @@ watch(
 }
 .module-content :deep(td.cell-selected),
 .module-content :deep(th.cell-selected) {
-  outline: 2px solid #4083f3;
+  outline: 2px solid var(--blue-400);
   outline-offset: -2px;
 }
 

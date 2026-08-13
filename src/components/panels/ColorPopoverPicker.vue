@@ -566,11 +566,11 @@ onBeforeUnmount(() => {
   width: 35px;
   height: 35px;
   border-radius: 8px;
-  /* 바깥 아웃라인 1px(#E5E8EB) → 그 안 흰색 2px 링 → 안쪽에 선택 색상(inline background-color) */
-  border: 1px solid #e5e8eb;
-  box-shadow: inset 0 0 0 2px #fff;
+  /* 바깥 아웃라인 1px(var(--gray-200)) → 그 안 흰색 2px 링 → 안쪽에 선택 색상(inline background-color) */
+  border: 1px solid var(--gray-200);
+  box-shadow: inset 0 0 0 2px var(--white);
   cursor: pointer;
-  background-color: #fff;
+  background-color: var(--white);
 }
 
 /* 포인트 색상 추가 버튼 — add_point_color_btn.png 이미지 트리거 */
@@ -597,14 +597,14 @@ onBeforeUnmount(() => {
   z-index: 1100;
   width: 262px;
   padding: 15px 16px;
-  background: #fff;
+  background: var(--white);
   border-radius: 12px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
 }
 
 .popover-divider {
   height: 1px;
-  background: #f2f4f6;
+  background: var(--gray-100);
   width: 100%;
 }
 
@@ -642,8 +642,8 @@ onBeforeUnmount(() => {
   display: block;
 }
 .quick-swatch.is-active {
-  border: 1px solid #4083f3;
-  box-shadow: inset 0 0 0 2px #fff;
+  border: 1px solid var(--blue-400);
+  box-shadow: inset 0 0 0 2px var(--white);
 }
 .quick-swatch-remove {
   position: absolute;
@@ -652,8 +652,8 @@ onBeforeUnmount(() => {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: #191f28;
-  color: #fff;
+  background: var(--gray-800);
+  color: var(--white);
   display: none;
   align-items: center;
   justify-content: center;
@@ -673,20 +673,20 @@ onBeforeUnmount(() => {
   width: 32px;
   height: 32px;
   border-radius: 6px;
-  border: 1px solid #e5e8eb;
+  border: 1px solid var(--gray-200);
   cursor: pointer;
 }
 /* 선택된 색 — 파란 외곽선 + 안쪽 흰 링(선택 색상이 가운데에 보임) */
 .palette-swatch.is-selected {
-  border: 1px solid #4083f3;
-  box-shadow: inset 0 0 0 2px #fff;
+  border: 1px solid var(--blue-400);
+  box-shadow: inset 0 0 0 2px var(--white);
 }
 
 .custom-swatch-preview {
   width: 32px;
   height: 32px;
   border-radius: 6px;
-  border: 1px solid #e5e8eb;
+  border: 1px solid var(--gray-200);
   flex-shrink: 0;
   padding: 0;
   cursor: pointer;
@@ -700,7 +700,7 @@ onBeforeUnmount(() => {
   left: 0;
   z-index: 20;
   margin-top: 8px;
-  background: #fff;
+  background: var(--white);
   border-radius: 10px;
   padding: 10px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
@@ -735,7 +735,7 @@ onBeforeUnmount(() => {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  border: 2px solid #fff;
+  border: 2px solid var(--white);
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
   transform: translate(-50%, -50%);
   pointer-events: none;
@@ -764,15 +764,15 @@ onBeforeUnmount(() => {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: #fff;
-  border: 2px solid #fff;
+  background: var(--white);
+  border: 2px solid var(--white);
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.45);
   transform: translate(-50%, -50%);
   pointer-events: none;
 }
 
 .hex-field :deep(input) {
-  background: #f2f4f6;
+  background: var(--gray-100);
   border-radius: 8px;
   height: 32px;
 }
@@ -781,13 +781,13 @@ onBeforeUnmount(() => {
   min-width: 56px;
   height: 32px;
   padding: 0 12px;
-  background: #f2f4f6;
+  background: var(--gray-100);
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 13px;
-  color: #191f28;
+  color: var(--gray-800);
   flex-shrink: 0;
 }
 
@@ -797,14 +797,14 @@ onBeforeUnmount(() => {
   height: 36px;
   border-radius: 8px;
   border: none;
-  background: #4083f3;
-  color: #fff;
+  background: var(--blue-400);
+  color: var(--white);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
 }
 .confirm-add-btn:hover {
-  background: #2563d4;
+  background: var(--blue-500);
 }
 
 /* 불투명도 슬라이더 — 트랙(체크패턴+색 그라디언트)은 인라인 style(alphaTrackStyle)로 주입,
@@ -815,7 +815,7 @@ onBeforeUnmount(() => {
   height: 12px;
   border-radius: 6px;
   outline: none;
-  border: 1px solid #e5e8eb;
+  border: 1px solid var(--gray-200);
   box-sizing: border-box;
 }
 .alpha-slider::-webkit-slider-thumb {
@@ -824,18 +824,18 @@ onBeforeUnmount(() => {
   width: 15px;
   height: 15px;
   border-radius: 50%;
-  background: var(--thumb-color, #4083f3);
+  background: var(--thumb-color, var(--blue-400));
   cursor: pointer;
-  border: 2px solid #fff;
+  border: 2px solid var(--white);
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.35);
 }
 .alpha-slider::-moz-range-thumb {
   width: 15px;
   height: 15px;
   border-radius: 50%;
-  background: var(--thumb-color, #4083f3);
+  background: var(--thumb-color, var(--blue-400));
   cursor: pointer;
-  border: 2px solid #fff;
+  border: 2px solid var(--white);
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.35);
 }
 </style>

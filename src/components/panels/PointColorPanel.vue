@@ -1,5 +1,5 @@
 <template>
-  <div class="point-color-panel">
+  <div class="side-panel point-color-panel">
     <h2 class="panel-title">포인트색상</h2>
 
     <!-- 추가 버튼 (상단) — 새 포인트 색상 선택 팝오버. 색을 바꾸는 즉시 팔레트에 추가/갱신된다.
@@ -81,23 +81,10 @@ const onPickerClose = () => {
 </script>
 
 <style scoped>
+/* 껍데기는 panels.css의 .side-panel — 안쪽 여백·항목 간격만 다르다 */
 .point-color-panel {
-  width: var(--left-panel-width, 360px);
-  flex-shrink: 0;
-  background: #fff;
-  border-right: 1px solid #e5e8eb;
-  height: 100%;
-  overflow-y: auto;
   padding: 24px 23px 29px;
-  display: flex;
-  flex-direction: column;
   gap: 20px;
-}
-.panel-title {
-  font-size: 20px;
-  font-weight: 500;
-  color: #191f28;
-  letter-spacing: -0.2px;
 }
 .swatch-row {
   display: flex;
@@ -119,7 +106,7 @@ const onPickerClose = () => {
   height: 20px;
   border-radius: 50%;
   background: rgba(0,0,0,0.5);
-  color: #fff;
+  color: var(--white);
   display: none;
   align-items: center;
   justify-content: center;

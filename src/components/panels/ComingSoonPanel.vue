@@ -14,8 +14,8 @@
 .coming-soon-panel {
   width: var(--left-panel-width, 360px);
   flex-shrink: 0;
-  background: #fff;
-  border-right: 1px solid #e5e8eb;
+  background: var(--white);
+  border-right: 1px solid var(--gray-200);
   height: 100%;
   display: flex;
   align-items: center;
@@ -29,12 +29,12 @@
 }
 .cs-icon {
   font-size: 44px;
-  color: #8b95a1;
+  color: var(--gray-500);
   font-variation-settings: 'wght' 300;
 }
 .cs-text {
   font-size: 15px;
-  color: #8b95a1;
+  color: var(--gray-500);
   letter-spacing: -0.15px;
 }
 </style>

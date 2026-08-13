@@ -37,8 +37,8 @@ const isGroupItselfSelected = computed(() => !!moduleStore.selectedGroup)
 .selected-item-panel {
   width: var(--left-panel-width, 360px);
   flex-shrink: 0;
-  background: #fff;
-  border-right: 1px solid #e5e8eb;
+  background: var(--white);
+  border-right: 1px solid var(--gray-200);
   height: 100%;
   display: flex;
   flex-direction: column;

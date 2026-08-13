@@ -38,12 +38,12 @@ defineEmits<{
   height: 18px;
   border-radius: 4px;
   border: 2px solid transparent;
-  box-shadow: 0 0 0 1px #d1d6db;
+  box-shadow: 0 0 0 1px var(--gray-300);
   cursor: pointer;
   flex-shrink: 0;
 }
 .point-swatch.is-active {
-  border-color: #fff;
-  box-shadow: 0 0 0 2px #4083f3;
+  border-color: var(--white);
+  box-shadow: 0 0 0 2px var(--blue-400);
 }
 </style>

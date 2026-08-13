@@ -93,8 +93,8 @@ const isActive = (key: RailKey): boolean => {
 .editor-rail {
   width: 80px;
   flex-shrink: 0;
-  background: #fff;
-  border-right: 1px solid #e5e8eb;
+  background: var(--white);
+  border-right: 1px solid var(--gray-200);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -113,16 +113,16 @@ const isActive = (key: RailKey): boolean => {
   border: 0;
   border-radius: 8px;
   background: transparent;
-  color: #6b7280;
+  color: var(--gray-600);
   cursor: pointer;
   transition: background 0.12s, color 0.12s;
 }
 .rail-item:hover {
-  background: #f6f8fa;
+  background: var(--gray-50);
 }
 .rail-item.is-active {
   background: rgba(235, 243, 255, 0.8);
-  color: #2563d4;
+  color: var(--blue-500);
 }
 .rail-item.is-accent .rail-icon {
   font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
@@ -132,9 +132,9 @@ const isActive = (key: RailKey): boolean => {
   line-height: 1;
 }
 /* '빈 템플릿' — 선택되는 메뉴가 아니라 액션이라 항상 강조색.
-   Figma 1125-2964: 아이콘 34px, 라벨 12px, blue/500 (#2563d4) */
+   Figma 1125-2964: 아이콘 34px, 라벨 12px, blue/500 (var(--blue-500)) */
 .rail-item.is-accent {
-  color: #2563d4;
+  color: var(--blue-500);
   gap: 5px;
 }
 
@@ -151,7 +151,7 @@ const isActive = (key: RailKey): boolean => {
 .rail-divider {
   width: 12px;
   height: 1px;
-  background: #e5e8eb;
+  background: var(--gray-200);
   flex-shrink: 0;
 }
 </style>

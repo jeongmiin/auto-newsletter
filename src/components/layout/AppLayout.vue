@@ -169,10 +169,10 @@ onUnmounted(() => {
 }
 
 .resize-handle.is-resizing > div:first-child {
-  background-color: #dbeafe; /* blue-100 */
+  background-color: var(--blue-100); /* blue-100 */
 }
 
 .resize-handle.is-resizing .w-0\.5.h-6 {
-  background-color: #3b82f6; /* blue-500 */
+  background-color: var(--blue-400); /* blue-500 */
 }
 </style>

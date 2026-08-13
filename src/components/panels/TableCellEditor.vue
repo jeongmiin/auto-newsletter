@@ -167,7 +167,7 @@ defineExpose({ toggleBold })
 }
 .tcell-editor:empty::before {
   content: attr(data-placeholder);
-  color: #9ca3af;
+  color: var(--gray-400);
   pointer-events: none;
 }
 </style>

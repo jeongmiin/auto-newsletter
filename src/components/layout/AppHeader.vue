@@ -671,8 +671,8 @@ const downloadForSend = (): Promise<void> => downloadHtml(false)
   align-items: center;
   height: 60px;
   padding: 0 21px;
-  background: #fff;
-  border-bottom: 1px solid #e5e8eb;
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-200);
 }
 /* 홈 ↔ 나머지 25px (1125-3054) */
 .hleft {
@@ -704,14 +704,14 @@ const downloadForSend = (): Promise<void> => downloadHtml(false)
 }
 .hsaved {
   font-size: 13px;
-  color: #6b7684;
+  color: var(--gray-600);
   white-space: nowrap;
 }
 
 .hbar {
   width: 1px;
   height: 32px;
-  background: #e5e8eb;
+  background: var(--gray-200);
   flex-shrink: 0;
 }
 /* 아이콘 버튼 (홈·실행취소/다시실행) — Figma 40×40 */
@@ -724,16 +724,16 @@ const downloadForSend = (): Promise<void> => downloadHtml(false)
   border: 0;
   border-radius: 8px;
   background: transparent;
-  color: #4b5563;
+  color: var(--gray-700);
   cursor: pointer;
   flex-shrink: 0;
   transition: background 0.12s;
 }
 .hicon:hover:not(:disabled) {
-  background: #f2f4f6;
+  background: var(--gray-100);
 }
 .hicon:disabled {
-  color: #cbd1d8;
+  color: var(--gray-300);
   cursor: default;
 }
 .hicon .material-symbols-outlined {
@@ -765,26 +765,26 @@ const downloadForSend = (): Promise<void> => downloadHtml(false)
 }
 /* 저장용 — blue/50 배경 + blue/600 글자 */
 .hbtn--tint {
-  background: #ebf3ff;
-  color: #1a47b0;
+  background: var(--blue-50);
+  color: var(--blue-600);
 }
 /* 미리보기 — gray/100 배경 + gray/700 글자 */
 .hbtn--muted {
-  background: #f2f4f6;
-  color: #4e5968;
+  background: var(--gray-100);
+  color: var(--gray-700);
 }
 /* 발송용 — blue/400 채움 */
 .hbtn--primary {
-  background: #4083f3;
-  color: #fff;
+  background: var(--blue-400);
+  color: var(--white);
 }
 /* 더 보기 — 40×40 정사각, 흰 배경 + gray/200 테두리 */
 .hbtn--icon {
   width: 40px;
   padding: 0;
-  background: #fff;
-  border: 1px solid #e5e8eb;
-  color: #4e5968;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  color: var(--gray-700);
 }
 /* 소속 팀 (Figma 1125-3060: success/50 배경 + success/700 글자) */
 .hteam {
@@ -794,8 +794,8 @@ const downloadForSend = (): Promise<void> => downloadHtml(false)
   padding: 6px;
   min-width: 100px;
   border-radius: 8px;
-  background: #e8faf2;
-  color: #017a49;
+  background: var(--green-50);
+  color: var(--green-700);
   font-size: 14px;
   font-weight: 500;
   white-space: nowrap;
@@ -807,7 +807,7 @@ const downloadForSend = (): Promise<void> => downloadHtml(false)
   align-items: center;
   gap: 4px;
   font-size: 14px;
-  color: #4e5968;
+  color: var(--gray-700);
   min-width: 0;
 }
 .hcrumb-link {
@@ -824,7 +824,7 @@ const downloadForSend = (): Promise<void> => downloadHtml(false)
   white-space: nowrap;
 }
 .hcrumb-link:hover {
-  color: #2563d4;
+  color: var(--blue-500);
 }
 /* 전체 삭제 (Figma 1125-2964: gap 6px, px 10px, rounded 8px, 14px medium, error/400) */
 .hclear {
@@ -836,7 +836,7 @@ const downloadForSend = (): Promise<void> => downloadHtml(false)
   border: 0;
   border-radius: 8px;
   background: transparent;
-  color: #f04452;
+  color: var(--red-400);
   font-size: 14px;
   font-weight: 500;
   white-space: nowrap;
@@ -845,7 +845,7 @@ const downloadForSend = (): Promise<void> => downloadHtml(false)
   transition: background 0.12s;
 }
 .hclear:hover {
-  background: #fdeced;
+  background: var(--red-50);
 }
 .hclear .material-symbols-outlined {
   font-size: 22px;
@@ -853,7 +853,7 @@ const downloadForSend = (): Promise<void> => downloadHtml(false)
 /* PC/모바일 세그먼트 토글 */
 .seg {
   display: inline-flex;
-  background-color:#f3f4f6;
+  background-color:var(--gray-100);
   border-radius: 5rem;
 }
 .seg-btn {
@@ -864,14 +864,14 @@ const downloadForSend = (): Promise<void> => downloadHtml(false)
   height: 32px;
   border: 0;
   border-radius: 1000px;
-  background: #f3f4f6;
-  color: #6b7280;
+  background: var(--gray-100);
+  color: var(--gray-600);
   cursor: pointer;
   transition: background 0.12s, color 0.12s;
 }
 .seg-btn.is-active {
-  background: #111827;
-  color: #fff;
+  background: var(--gray-800);
+  color: var(--white);
 }
 .seg-btn .material-symbols-outlined {
   font-size: 20px;

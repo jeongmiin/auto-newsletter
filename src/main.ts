@@ -3,7 +3,8 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 
-// CSS를 먼저 import
+// CSS를 먼저 import (토큰 → 전역 → 패널 순서)
+import './assets/tokens.css'
 import './assets/main.css'
 import './assets/panels.css'
 import 'primeicons/primeicons.css'
@@ -61,21 +62,42 @@ import ConfirmationService from 'primevue/confirmationservice'
 import Aura from '@primevue/themes/aura'
 import { definePreset } from '@primevue/themes'
 
-// 블루 계열 커스텀 테마
+// 디자인 시스템 팔레트를 PrimeVue 테마에 그대로 넣는다 —
+// 버튼·토글·체크박스 같은 PrimeVue 컴포넌트가 우리 UI(assets/tokens.css)와 같은 색을 쓰도록.
+// ⚠ 값을 바꿀 땐 assets/tokens.css도 함께 고칠 것 (두 곳이 같은 팔레트를 복제한다).
+// 900·950은 팔레트에 없어 각 계열 끝(800)에서 한 단계씩 더 어둡게 이어 붙였다.
 const BluePreset = definePreset(Aura, {
   semantic: {
     primary: {
-      50: '{blue.50}',
-      100: '{blue.100}',
-      200: '{blue.200}',
-      300: '{blue.300}',
-      400: '{blue.400}',
-      500: '{blue.500}',
-      600: '{blue.600}',
-      700: '{blue.700}',
-      800: '{blue.800}',
-      900: '{blue.900}',
-      950: '{blue.950}',
+      50: '#ebf3ff',
+      100: '#c2dcff',
+      200: '#99c4ff',
+      300: '#70acff',
+      400: '#4083f3',
+      500: '#2563d4',
+      600: '#1a47b0',
+      700: '#112f85',
+      800: '#091c58',
+      900: '#061340',
+      950: '#030a22',
+    },
+    colorScheme: {
+      light: {
+        surface: {
+          0: '#ffffff',
+          50: '#f9fafb',
+          100: '#f2f4f6',
+          200: '#e5e8eb',
+          300: '#d1d6db',
+          400: '#b0b8c1',
+          500: '#8b95a1',
+          600: '#6b7684',
+          700: '#4e5968',
+          800: '#191f28',
+          900: '#11161d',
+          950: '#0a0d12',
+        },
+      },
     },
   },
 })

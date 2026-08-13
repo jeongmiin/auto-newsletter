@@ -1,5 +1,5 @@
 <template>
-  <div class="category-module-panel">
+  <div class="side-panel category-module-panel">
     <h2 class="panel-title">{{ panelTitle }}</h2>
 
     <!-- 테이블: 크기 선택(사각형 그리드) + 직접 입력(행/열 스테퍼) — 두 값이 서로 연동된다 -->
@@ -300,25 +300,8 @@ const onGalleryAdd = (module: ModuleMetadata) => {
 </script>
 
 <style scoped>
-.category-module-panel {
-  width: var(--left-panel-width, 360px);
-  flex-shrink: 0;
-  background: #fff;
-  border-right: 1px solid #e5e8eb;
-  height: 100%;
-  overflow-y: auto;
-  /* 좌우 20px → 내부 폭 320px = ModuleCard 폭과 정확히 일치 (넘침 방지) */
-  padding: 25px;
-  display: flex;
-  flex-direction: column;
-  gap: 26px;
-}
-.panel-title {
-  font-size: 20px;
-  font-weight: 500;
-  color: #191f28;
-  letter-spacing: -0.2px;
-}
+/* 껍데기는 panels.css의 .side-panel — 이 패널은 기본값(padding 25 / gap 26) 그대로 쓴다.
+   좌우 25px → 내부 폭 308px = ModuleCard 폭과 일치(넘침 방지). */
 
 .quick-add-list {
   display: flex;
@@ -342,12 +325,12 @@ const onGalleryAdd = (module: ModuleMetadata) => {
 .ts-head-label {
   font-size: 16px;
   font-weight: 500;
-  color: #333d4b;
+  color: var(--gray-750);
   letter-spacing: -0.16px;
 }
 .ts-head-size {
   font-size: 15px;
-  color: #4083f3;
+  color: var(--blue-400);
   letter-spacing: -0.15px;
   white-space: nowrap;
 }
@@ -365,29 +348,29 @@ const onGalleryAdd = (module: ModuleMetadata) => {
   width: 40px;
   height: 40px;
   padding: 0;
-  border: 1px solid #e5e8eb;
+  border: 1px solid var(--gray-200);
   border-radius: 6px;
-  background: #f2f4f6;
+  background: var(--gray-100);
   cursor: pointer;
   transition:
     background 0.08s,
     border-color 0.08s;
 }
 .ts-cell:hover {
-  border-color: #4083f3;
+  border-color: var(--blue-400);
 }
 .ts-cell--on {
-  background: #ebf3ff;
-  border-color: #4083f3;
+  background: var(--blue-50);
+  border-color: var(--blue-400);
 }
 .ts-divider {
   height: 1px;
-  background: #e5e8eb;
+  background: var(--gray-200);
 }
 .ts-section-label {
   font-size: 16px;
   font-weight: 500;
-  color: #333d4b;
+  color: var(--gray-750);
   letter-spacing: -0.16px;
 }
 /* 직접 입력: 행/열 스테퍼 */
@@ -404,16 +387,16 @@ const onGalleryAdd = (module: ModuleMetadata) => {
 }
 .ts-input-label {
   font-size: 15px;
-  color: #4e5968;
+  color: var(--gray-700);
 }
 .ts-stepper {
   display: flex;
   align-items: center;
   height: 40px;
   padding: 0 11px;
-  border: 1px solid #e5e8eb;
+  border: 1px solid var(--gray-200);
   border-radius: 8px;
-  background: #fff;
+  background: var(--white);
 }
 .ts-step-btn {
   flex-shrink: 0;
@@ -425,11 +408,11 @@ const onGalleryAdd = (module: ModuleMetadata) => {
   padding: 0;
   border: none;
   background: none;
-  color: #4e5968;
+  color: var(--gray-700);
   cursor: pointer;
 }
 .ts-step-btn:hover {
-  color: #191f28;
+  color: var(--gray-800);
 }
 .ts-step-btn .material-symbols-outlined {
   font-size: 22px;
@@ -438,7 +421,7 @@ const onGalleryAdd = (module: ModuleMetadata) => {
   flex-shrink: 0;
   width: 1px;
   height: 30px;
-  background: #e5e8eb;
+  background: var(--gray-200);
 }
 .ts-step-val {
   flex: 1;
@@ -450,7 +433,7 @@ const onGalleryAdd = (module: ModuleMetadata) => {
   text-align: center;
   font-size: 15px;
   font-weight: 500;
-  color: #191f28;
+  color: var(--gray-800);
   -moz-appearance: textfield;
   appearance: textfield;
 }
@@ -467,14 +450,14 @@ const onGalleryAdd = (module: ModuleMetadata) => {
   height: 40px;
   border: none;
   border-radius: 8px;
-  background: #4083f3;
-  color: #fff;
+  background: var(--blue-400);
+  color: var(--white);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
 }
 .ts-add-btn:hover {
-  background: #3b78e0;
+  background: var(--blue-500);
 }
 
 .gallery-section {
@@ -485,6 +468,6 @@ const onGalleryAdd = (module: ModuleMetadata) => {
 .gallery-title {
   font-size: 16px;
   font-weight: 500;
-  color: #333d4b;
+  color: var(--gray-750);
 }
 </style>

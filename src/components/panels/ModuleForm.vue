@@ -3893,19 +3893,12 @@ const onSelectPointColor = (key: string, index: number): void => {
 
 <style scoped>
 /* 좌측 패널 상단 타이틀 — 그룹 스타일 패널(GroupPropertiesPanel)과 동일 (Figma 352-1138) */
-.gg-panel-title {
-  font-size: 20px;
-  font-weight: 500;
-  line-height: 1.5;
-  color: #191f28;
-  letter-spacing: -0.2px;
-}
 /* 패널 상단 타이틀 바 — 스크롤 시 상단 고정(sticky). 흰 배경으로 아래 콘텐츠를 덮는다. */
 .gg-panel-title-bar {
   position: sticky;
   top: 0;
   z-index: 20;
-  background: #fff;
+  background: var(--white);
 }
 
 /* 컬럼 세그먼트 (1단/2단/3단) — Figma Frame 80(745:3908) */
@@ -3920,22 +3913,22 @@ const onSelectPointColor = (key: string, index: number): void => {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #e5e8eb;
+  border: 1px solid var(--gray-200);
   border-radius: 8px;
-  background: #fff;
-  color: #8b95a1;
+  background: var(--white);
+  color: var(--gray-500);
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease;
 }
 .col-seg-btn:hover {
-  border-color: #d1d6db;
+  border-color: var(--gray-300);
 }
 .col-seg-btn.is-active {
-  background: #4e5968;
-  border-color: #4e5968;
-  color: #fff;
+  background: var(--gray-700);
+  border-color: var(--gray-700);
+  color: var(--white);
 }
 
 /* ===== 너비 조정 (Figma 977-7672 탭 · 977-7684 프리셋 · 977-7706 프리뷰) ===== */
@@ -3943,7 +3936,7 @@ const onSelectPointColor = (key: string, index: number): void => {
   display: flex;
   gap: 20px;
   padding: 6px;
-  background: #f2f4f6;
+  background: var(--gray-100);
   border-radius: 8px;
 }
 .wadj-tab {
@@ -3958,13 +3951,13 @@ const onSelectPointColor = (key: string, index: number): void => {
   border-radius: 6px;
   background: none;
   font-size: 15px;
-  color: #4e5968;
+  color: var(--gray-700);
   cursor: pointer;
   transition: background-color 0.12s ease, color 0.12s ease;
 }
 .wadj-tab.is-active {
-  background: #fff;
-  color: #2563d4;
+  background: var(--white);
+  color: var(--blue-500);
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.15);
 }
 .wadj-tab .material-symbols-outlined {
@@ -3980,19 +3973,19 @@ const onSelectPointColor = (key: string, index: number): void => {
   padding: 8px 15px;
   border: none;
   border-radius: 8px;
-  background: #f2f4f6;
+  background: var(--gray-100);
   font-size: 14px;
   letter-spacing: -0.14px;
-  color: #4e5968;
+  color: var(--gray-700);
   cursor: pointer;
   transition: background-color 0.12s ease, color 0.12s ease;
 }
 .wadj-preset:hover {
-  background: #e5e8eb;
+  background: var(--gray-200);
 }
 .wadj-preset.is-active {
-  background: #ebf3ff;
-  color: #1a47b0;
+  background: var(--blue-50);
+  color: var(--blue-600);
   font-weight: 500;
 }
 .wadj-custom {
@@ -4011,18 +4004,18 @@ const onSelectPointColor = (key: string, index: number): void => {
   align-items: center;
   justify-content: center;
   padding: 8px 10px;
-  border: 1px solid #e5e8eb;
+  border: 1px solid var(--gray-200);
   border-radius: 8px;
-  background: #fff;
+  background: var(--white);
   font-size: 14px;
   font-weight: 500;
   letter-spacing: -0.14px;
-  color: #191f28;
+  color: var(--gray-800);
 }
 .wadj-preview-bar.is-first {
   border-color: transparent;
-  background: #ebf3ff;
-  color: #1a47b0;
+  background: var(--blue-50);
+  color: var(--blue-600);
 }
 
 /* 정렬 세그먼트 (좌측/중앙/우측) — Figma 686-3949 */
@@ -4038,10 +4031,10 @@ const onSelectPointColor = (key: string, index: number): void => {
   align-items: center;
   justify-content: center;
   gap: 5px;
-  border: 1px solid #e5e8eb;
+  border: 1px solid var(--gray-200);
   border-radius: 8px;
-  background: #fff;
-  color: #6b7684;
+  background: var(--white);
+  color: var(--gray-600);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -4051,20 +4044,20 @@ const onSelectPointColor = (key: string, index: number): void => {
   font-size: 18px;
 }
 .align-seg-btn:hover {
-  border-color: #d1d6db;
+  border-color: var(--gray-300);
 }
 .align-seg-btn.is-active {
-  background: #4083f3;
-  border-color: #4083f3;
-  color: #fff;
+  background: var(--blue-400);
+  border-color: var(--blue-400);
+  color: var(--white);
 }
 /* 최대 너비 100%일 때: 정렬 세그먼트 비활성 — 활성/선택 여부와 무관하게 톤 통일(클릭 불가) */
 .align-seg.is-disabled .align-seg-btn,
 .align-seg.is-disabled .align-seg-btn.is-active,
 .align-seg.is-disabled .align-seg-btn:hover {
-  background: #ECEEF1;
-  border-color: #D1D6DC;
-  color: #B0B8C1;
+  background: var(--gray-200);
+  border-color: var(--gray-300);
+  color: var(--gray-400);
   cursor: not-allowed;
 }
 
@@ -4074,9 +4067,9 @@ const onSelectPointColor = (key: string, index: number): void => {
 }
 
 /*
-  흰색(#ffffff) 글자 표시 보정 — 에디터 전용.
+  흰색(var(--white)) 글자 표시 보정 — 에디터 전용.
   에디터 배경이 흰색이라 흰 글자가 보이지 않으므로, 편집 화면에서만 회색으로 보여준다.
-  실제 저장값·가운데 미리보기·미리보기 버튼 화면·내려받은 HTML 에는 #ffffff 가 그대로 유지된다.
+  실제 저장값·가운데 미리보기·미리보기 버튼 화면·내려받은 HTML 에는 var(--white) 가 그대로 유지된다.
   (브라우저는 인라인 color 를 rgb(255, 255, 255) 로 직렬화하므로 그 형태를 우선 매칭하고,
    '; color:' / 시작 위치로 한정해 background-color 의 흰색은 건드리지 않는다.)
 */
@@ -4084,9 +4077,9 @@ const onSelectPointColor = (key: string, index: number): void => {
 :deep(.ql-editor [style*='; color: rgb(255, 255, 255)']),
 :deep(.ql-editor [style^='color: rgba(255, 255, 255']),
 :deep(.ql-editor [style*='; color: rgba(255, 255, 255']),
-:deep(.ql-editor [style^='color: #ffffff']),
-:deep(.ql-editor [style*='; color: #ffffff']) {
-  color: #b0b0b0 !important;
+:deep(.ql-editor [style^='color: var(--white)']),
+:deep(.ql-editor [style*='; color: var(--white)']) {
+  color: var(--gray-400) !important;
 }
 
 /*
@@ -4158,7 +4151,7 @@ const onSelectPointColor = (key: string, index: number): void => {
   font-family: 'Material Symbols Outlined';
   font-size: 20px;
   line-height: 1;
-  color: #444;
+  color: var(--gray-700);
 }
 /* 팔레트를 여는 픽커라 캐럿은 두지 않는다(글자색·배경색 픽커와 동일) */
 :deep(.ql-snow .ql-picker.ql-highlightMarker .ql-picker-label svg) {
@@ -4175,16 +4168,16 @@ const onSelectPointColor = (key: string, index: number): void => {
   float: left;
   margin: 2px;
   padding: 0;
-  border: 1px solid #ccc;
+  border: 1px solid var(--gray-300);
 }
 :deep(.ql-snow .ql-picker.ql-highlightMarker .ql-picker-item:hover),
 :deep(.ql-snow .ql-picker.ql-highlightMarker .ql-picker-item.ql-selected) {
-  border-color: #06c;
+  border-color: var(--blue-500);
 }
 /* 첫 옵션(값 없음) = 형광펜 해제 */
 :deep(.ql-snow .ql-picker.ql-highlightMarker .ql-picker-item:not([data-value])) {
   position: relative;
-  background: #fff;
+  background: var(--white);
 }
 :deep(.ql-snow .ql-picker.ql-highlightMarker .ql-picker-item:not([data-value])::after) {
   content: '✕';
@@ -4193,7 +4186,7 @@ const onSelectPointColor = (key: string, index: number): void => {
   font-size: 11px;
   line-height: 16px;
   text-align: center;
-  color: #999;
+  color: var(--gray-500);
 }
 :deep(.ql-snow .ql-picker.ql-highlightMarker .ql-picker-item[data-value='#fff555']) {
   background: linear-gradient(transparent 50%, #fff555 50%);
@@ -4231,11 +4224,11 @@ const onSelectPointColor = (key: string, index: number): void => {
     #ff00ff,
     #ff0000
   );
-  border: 1px solid #ccc;
+  border: 1px solid var(--gray-300);
 }
 :deep(.ql-snow .ql-picker.ql-color .ql-custom-color:hover),
 :deep(.ql-snow .ql-picker.ql-background .ql-custom-color:hover) {
-  border-color: #06c;
+  border-color: var(--blue-500);
 }
 :deep(.ql-snow .ql-picker.ql-color .ql-custom-color::after),
 :deep(.ql-snow .ql-picker.ql-background .ql-custom-color::after) {
@@ -4248,7 +4241,7 @@ const onSelectPointColor = (key: string, index: number): void => {
   font-size: 12px;
   font-weight: 700;
   line-height: 1;
-  color: #fff;
+  color: var(--white);
   text-shadow: 0 0 2px rgba(0, 0, 0, 0.7);
 }
 
@@ -4260,8 +4253,8 @@ const onSelectPointColor = (key: string, index: number): void => {
   z-index: 900;
   width: 400px;
   padding: 12px;
-  background: #fff;
-  border: 1px solid #e5e7eb;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
   border-radius: 8px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
@@ -4277,7 +4270,7 @@ const onSelectPointColor = (key: string, index: number): void => {
 
 .table-editor-grid :deep(.p-inputtext::placeholder) {
   font-size: 0.75rem;
-  color: #9ca3af;
+  color: var(--gray-400);
 }
 
 /* 열 너비 입력 — 래퍼가 테두리/포커스 링을 담당하므로 내부 InputText는 평평하게 */
@@ -4315,17 +4308,17 @@ const onSelectPointColor = (key: string, index: number): void => {
   width: 1.25rem;
   height: 1.25rem;
   border-radius: 9999px;
-  border: 1px solid #93c5fd;
-  color: #3b82f6;
-  background: #fff;
+  border: 1px solid var(--blue-200);
+  color: var(--blue-400);
+  background: var(--white);
   line-height: 1;
   flex-shrink: 0;
 }
 .tbl-insert-btn:hover {
-  background: #3b82f6;
+  background: var(--blue-400);
   border-style: solid;
-  border-color: #3b82f6;
-  color: #fff;
+  border-color: var(--blue-400);
+  color: var(--white);
 }
 
 /* 병합 셀렉트 스타일 */
@@ -4367,26 +4360,26 @@ const onSelectPointColor = (key: string, index: number): void => {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  border: 1.5px solid #d1d6db;
-  background: #fff;
+  border: 1.5px solid var(--gray-300);
+  background: var(--white);
   flex-shrink: 0;
   position: relative;
   cursor: pointer;
 }
 .gg-brd-radio-dot.is-checked {
-  border-color: #4083f3;
+  border-color: var(--blue-400);
 }
 .gg-brd-radio-dot.is-checked::after {
   content: '';
   position: absolute;
   inset: 3.5px;
   border-radius: 50%;
-  background: #4083f3;
+  background: var(--blue-400);
 }
 .gg-brd-radio-label {
   font-size: 13px;
   font-weight: 500;
-  color: #333d4b;
+  color: var(--gray-750);
   letter-spacing: -0.13px;
   width: 60px;
   cursor: pointer;
@@ -4401,28 +4394,28 @@ const onSelectPointColor = (key: string, index: number): void => {
   width: 100%;
   height: 32px;
   padding: 0 12px;
-  background: #f2f4f6;
+  background: var(--gray-100);
   border: 1px solid transparent;
   border-radius: 8px;
   font-size: 15px;
-  color: #191f28;
+  color: var(--gray-800);
   box-shadow: none;
 }
 .gg-text-input :deep(.p-inputtext::placeholder) {
-  color: #8b95a1;
+  color: var(--gray-500);
 }
 .gg-text-input :deep(.p-inputtext:enabled:focus) {
-  border-color: #4083f3;
-  background: #fff;
+  border-color: var(--blue-400);
+  background: var(--white);
   box-shadow: none;
 }
 .gg-acc-body--card .gg-text-input :deep(.p-inputtext) {
-  background-color: #ffffff;
+  background-color: var(--white);
 }
 /* 셀렉트 — Dropdown/Small */
 .gg-select :deep(.p-select) {
   height: 40px;
-  border: 1px solid #e5e8eb;
+  border: 1px solid var(--gray-200);
   border-radius: 8px;
   box-shadow: none;
 }
@@ -4430,10 +4423,10 @@ const onSelectPointColor = (key: string, index: number): void => {
   display: flex;
   align-items: center;
   font-size: 15px;
-  color: #333d4b;
+  color: var(--gray-750);
 }
 .gg-select :deep(.p-select:not(.p-disabled).p-focus) {
-  border-color: #4083f3;
+  border-color: var(--blue-400);
   box-shadow: none;
 }
 
@@ -4449,7 +4442,7 @@ const onSelectPointColor = (key: string, index: number): void => {
   font-size: 16px;
   font-weight: 500;
   letter-spacing: -0.16px;
-  color: #333d4b;
+  color: var(--gray-750);
 }
 
 /* 접이식 섹션 헤더(화살표+타이틀)는 클릭으로 열고/닫는다 */
@@ -4478,7 +4471,7 @@ const onSelectPointColor = (key: string, index: number): void => {
 /* flat 모듈의 인라인 토글(이미지 링크 사용·테두리 등) 위 구분선 —
    이름 있는 섹션의 gg-acc-section 구분선과 동일하게 토글 섹션을 시각적으로 분리한다. */
 .mf-toggle-divider {
-  border-top: 1px solid #f2f4f6;
+  border-top: 1px solid var(--gray-100);
   padding-top: 26px;
 }
 
@@ -4496,27 +4489,27 @@ const onSelectPointColor = (key: string, index: number): void => {
   padding: 0 14px;
   font-size: 13px;
   font-weight: 500;
-  background: #4e5968;
-  color: #fff;
-  border: 1px solid #4e5968;
+  background: var(--gray-700);
+  color: var(--white);
+  border: 1px solid var(--gray-700);
   cursor: pointer;
 }
 .gg-segment-btn:disabled {
-  background: #d1d6db;
-  border-color: #d1d6db;
-  color: #fff;
+  background: var(--gray-300);
+  border-color: var(--gray-300);
+  color: var(--white);
   cursor: not-allowed;
 }
 .gg-segment-btn--ghost {
-  background: #fff;
-  color: #4e5968;
-  border-color: #d1d6db;
+  background: var(--white);
+  color: var(--gray-700);
+  border-color: var(--gray-300);
   border-left: none;
 }
 .gg-segment-btn--ghost:disabled {
-  background: #fff;
-  color: #d1d6db;
-  border-color: #e5e8eb;
+  background: var(--white);
+  color: var(--gray-300);
+  border-color: var(--gray-200);
 }
 
 /* 푸터 연락처 행 — 리스트 톤(.cmp-row)은 공용 정의를 그대로 쓰고 값 입력만 덧붙인다 */
@@ -4544,7 +4537,7 @@ const onSelectPointColor = (key: string, index: number): void => {
   object-fit: contain;
   padding: 3px;
   border-radius: 50%;
-  background: #4b5563;
+  background: var(--gray-700);
 }
 .ct-check .sns-label {
   width: 56px;
@@ -4558,8 +4551,8 @@ const onSelectPointColor = (key: string, index: number): void => {
   min-width: 0;
   width: 100%;
   height: 32px;
-  background: #fff;
-  border: 1px solid #e5e8eb;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
   border-radius: 8px;
   font-size: 13px;
 }
@@ -4572,11 +4565,11 @@ const onSelectPointColor = (key: string, index: number): void => {
   margin-left: 6px;
   padding: 0 8px;
   border-radius: 10px;
-  background: #ebf3ff;
+  background: var(--blue-50);
   font-size: 12px;
   font-weight: 500;
   letter-spacing: -0.12px;
-  color: #4083f3;
+  color: var(--blue-400);
   vertical-align: middle;
 }
 /* 라벨 행: 왼쪽 라벨(+배지) / 오른쪽 되돌리기 버튼 */
@@ -4594,11 +4587,11 @@ const onSelectPointColor = (key: string, index: number): void => {
   border: none;
   background: none;
   font-size: 13px;
-  color: #6b7684;
+  color: var(--gray-600);
   cursor: pointer;
 }
 .fs-reset-btn:hover {
-  color: #4083f3;
+  color: var(--blue-400);
 }
 .fs-reset-btn .material-symbols-outlined {
   font-size: 16px;
@@ -4636,7 +4629,7 @@ const onSelectPointColor = (key: string, index: number): void => {
 .rte-field :deep(.rte-tb-div) {
   width: 1px;
   height: 21px;
-  background: #e5e8eb;
+  background: var(--gray-200);
   flex-shrink: 0;
 }
 
@@ -4700,18 +4693,18 @@ const onSelectPointColor = (key: string, index: number): void => {
 .rte-field :deep(.ql-snow.ql-toolbar button:hover),
 .rte-field :deep(.rte-tb-btn:hover),
 .rte-field :deep(.ql-snow.ql-toolbar .ql-picker-label:hover) {
-  background: #f2f4f6;
+  background: var(--gray-100);
   border-radius: 8px;
 }
 .rte-field :deep(.rte-tb-btn) {
   border: none;
   background: none;
   cursor: pointer;
-  color: #444;
+  color: var(--gray-700);
 }
 .rte-field :deep(.rte-tb-btn.is-active) {
-  background: #ebf3ff;
-  color: #4083f3;
+  background: var(--blue-50);
+  color: var(--blue-400);
 }
 .rte-field :deep(.rte-tb-btn .material-symbols-outlined) {
   font-size: 20px;
@@ -4730,8 +4723,8 @@ const onSelectPointColor = (key: string, index: number): void => {
    PrimeVue 테마의 `.p-editor .p-editor-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-options`(0,5,0)를
    이겨야 해서 선택자를 그보다 길게 잡는다. */
 .rte-field :deep(.p-editor .p-editor-toolbar .ql-picker.ql-expanded .ql-picker-options) {
-  background: #fff;
-  border: 1px solid #e5e8eb;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
   overflow: hidden;
@@ -4746,7 +4739,7 @@ const onSelectPointColor = (key: string, index: number): void => {
   padding: 6px 12px;
 }
 .rte-field :deep(.ql-snow.ql-toolbar .ql-picker:not(.ql-align) .ql-picker-item:hover) {
-  background: #f2f4f6;
+  background: var(--gray-100);
 }
 
 /* 정렬 드롭다운: 아이콘 3(+양쪽정렬)칸을 가로로 나열한 메뉴 (Figma 640-4087).
@@ -4778,14 +4771,14 @@ const onSelectPointColor = (key: string, index: number): void => {
   padding: 0;
   margin: 0;
   float: none;
-  color: #333d4b;
+  color: var(--gray-750);
 }
 .rte-field :deep(.ql-picker.ql-align .ql-picker-item:hover) {
-  background: #f2f4f6;
+  background: var(--gray-100);
 }
 .rte-field :deep(.ql-picker.ql-align .ql-picker-item.ql-selected) {
-  background: #ebf3ff;
-  color: #4083f3;
+  background: var(--blue-50);
+  color: var(--blue-400);
 }
 .rte-field :deep(.ql-picker.ql-align .ql-picker-item svg) {
   width: 24px;
@@ -4799,7 +4792,7 @@ const onSelectPointColor = (key: string, index: number): void => {
   font-family: 'Material Symbols Outlined';
   font-size: 12px;
   line-height: 1;
-  color: #444;
+  color: var(--gray-700);
   flex-shrink: 0;
 }
 
@@ -4812,7 +4805,7 @@ const onSelectPointColor = (key: string, index: number): void => {
   font-family: 'Material Symbols Outlined';
   font-size: 20px;
   line-height: 1;
-  color: #444;
+  color: var(--gray-700);
 }
 /* 드롭다운 항목 텍스트 — Quill은 header/font/size 픽커에만 data-label 노출 규칙이 있어
    커스텀 픽커(ql-list)는 이 규칙이 없으면 항목이 빈 칸으로 보인다. */
@@ -4829,7 +4822,7 @@ const onSelectPointColor = (key: string, index: number): void => {
    높이는 콘텐츠/사용자 리사이즈에 따라가도록 auto — 고정 높이면 리사이즈 그립이 먹지 않는다. */
 .rte-field :deep(.ql-container.ql-snow) {
   border: none;
-  background: #f2f4f6;
+  background: var(--gray-100);
   border-radius: 8px;
   height: auto;
 }
@@ -4843,21 +4836,21 @@ const onSelectPointColor = (key: string, index: number): void => {
   /* 본문 기본 크기는 '폰트 크기' 값을 그대로 따라간다(캔버스와 같은 크기로 보이도록).
      부분 지정된 텍스트는 인라인 font-size가 그대로 우선한다. */
   font-size: var(--rte-base-size, 15px);
-  color: #333d4b;
+  color: var(--gray-750);
 }
 
 /* 접이식 카드(gg-acc-body--card > .gg-acc-fields) 안의 텍스트 에디터는
-   회색 카드 위에서 구분되도록 툴바를 회색(#f2f4f6), 작성란을 흰색(#fff)으로 뒤집는다. */
+   회색 카드 위에서 구분되도록 툴바를 회색(var(--gray-100)), 작성란을 흰색(var(--white))으로 뒤집는다. */
 .gg-acc-body--card > .gg-acc-fields .rte-field {
-  --p-editor-toolbar-background: #f2f4f6;
+  --p-editor-toolbar-background: var(--gray-100);
 }
 .gg-acc-body--card > .gg-acc-fields .rte-field :deep(.ql-toolbar.ql-snow) {
-  background: #f2f4f6;
+  background: var(--gray-100);
   border-radius: 8px;
   padding: 12px;
 }
 .gg-acc-body--card > .gg-acc-fields .rte-field :deep(.ql-container.ql-snow) {
-  background: #fff;
+  background: var(--white);
 }
 
 /* 행간 · 자간 팝오버 (Figma 640-3517) — 아이콘+라벨 헤더 + 슬라이더 + 값 필드 */
@@ -4866,8 +4859,8 @@ const onSelectPointColor = (key: string, index: number): void => {
   position: fixed;
   z-index: 900;
   display: flex;
-  background: #fff;
-  border: 1px solid #e5e8eb;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
   overflow: hidden;
@@ -4880,15 +4873,15 @@ const onSelectPointColor = (key: string, index: number): void => {
   justify-content: center;
   border: none;
   background: none;
-  color: #333d4b;
+  color: var(--gray-750);
   cursor: pointer;
 }
 .rte-align-item:hover {
-  background: #f2f4f6;
+  background: var(--gray-100);
 }
 .rte-align-item.is-selected {
-  background: #ebf3ff;
-  color: #4083f3;
+  background: var(--blue-50);
+  color: var(--blue-400);
 }
 .rte-align-item .material-symbols-outlined {
   font-size: 24px;
@@ -4899,7 +4892,7 @@ const onSelectPointColor = (key: string, index: number): void => {
   z-index: 900;
   width: 318px;
   padding: 25px 20px;
-  background: #fff;
+  background: var(--white);
   border-radius: 8px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
   display: flex;
@@ -4918,12 +4911,12 @@ const onSelectPointColor = (key: string, index: number): void => {
 }
 .rte-sp-icon {
   font-size: 24px;
-  color: #333d4b;
+  color: var(--gray-750);
 }
 .rte-sp-label {
   font-size: 15px;
   line-height: 1.5;
-  color: #4e5968;
+  color: var(--gray-700);
 }
 .rte-sp-row {
   display: flex;
@@ -4940,20 +4933,20 @@ const onSelectPointColor = (key: string, index: number): void => {
 .rte-sp-seg-btn {
   flex: 1;
   height: 32px;
-  border: 1px solid #e5e8eb;
+  border: 1px solid var(--gray-200);
   border-radius: 8px;
-  background: #fff;
+  background: var(--white);
   font-size: 13px;
-  color: #4e5968;
+  color: var(--gray-700);
   cursor: pointer;
 }
 .rte-sp-seg-btn:hover {
-  background: #f7f8fa;
+  background: var(--gray-50);
 }
 .rte-sp-seg-btn.is-active {
-  background: #ebf3ff;
-  border-color: #4083f3;
-  color: #4083f3;
+  background: var(--blue-50);
+  border-color: var(--blue-400);
+  color: var(--blue-400);
   font-weight: 500;
 }
 .rte-sp-value {
@@ -4964,7 +4957,7 @@ const onSelectPointColor = (key: string, index: number): void => {
   align-items: center;
   justify-content: center;
   padding: 0 8px;
-  background: #f2f4f6;
+  background: var(--gray-100);
   border-radius: 8px;
 }
 .rte-sp-value input {
@@ -4975,7 +4968,7 @@ const onSelectPointColor = (key: string, index: number): void => {
   font-size: 13px;
   font-weight: 500;
   letter-spacing: -0.13px;
-  color: #191f28;
+  color: var(--gray-800);
   appearance: textfield;
   -moz-appearance: textfield;
 }
@@ -4989,21 +4982,21 @@ const onSelectPointColor = (key: string, index: number): void => {
 }
 /* 아직 지정되지 않은 값 — 슬라이더 기본 위치를 보여주되 적용 전임을 흐리게 표시 */
 .rte-sp-value.is-unset input {
-  color: #8b95a1;
+  color: var(--gray-500);
 }
 
 /* ===== 테이블 편집 패널 (Figma 686-4239) ===== */
 .tbl-tabs {
   display: flex;
   margin-top: 8px;
-  border-bottom: 1px solid #e5e8eb;
+  border-bottom: 1px solid var(--gray-200);
 }
 .tbl-tab {
   flex: 1;
   padding: 8px 0 10px;
   font-size: 14px;
   font-weight: 500;
-  color: #6b7684;
+  color: var(--gray-600);
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
@@ -5012,8 +5005,8 @@ const onSelectPointColor = (key: string, index: number): void => {
   letter-spacing: -0.14px;
 }
 .tbl-tab.is-active {
-  color: #4083f3;
-  border-bottom-color: #4083f3;
+  color: var(--blue-400);
+  border-bottom-color: var(--blue-400);
 }
 
 .tbl-content {
@@ -5037,7 +5030,7 @@ const onSelectPointColor = (key: string, index: number): void => {
 .tbl-size {
   font-size: 14px;
   font-weight: 500;
-  color: #4e5968;
+  color: var(--gray-700);
 }
 .tbl-toolbar-actions {
   display: flex;
@@ -5049,16 +5042,16 @@ const onSelectPointColor = (key: string, index: number): void => {
   gap: 2px;
   height: 32px;
   padding: 0 12px;
-  border: 1px solid #e5e8eb;
+  border: 1px solid var(--gray-200);
   border-radius: 8px;
-  background: #fff;
+  background: var(--white);
   font-size: 13px;
-  color: #4e5968;
+  color: var(--gray-700);
   cursor: pointer;
 }
 .tbl-tbtn:hover {
-  border-color: #4083f3;
-  color: #4083f3;
+  border-color: var(--blue-400);
+  color: var(--blue-400);
 }
 .tbl-tbtn .material-symbols-outlined {
   font-size: 18px;
@@ -5074,12 +5067,12 @@ const onSelectPointColor = (key: string, index: number): void => {
 }
 .tbl-empty-icon {
   font-size: 60px;
-  color: #c4cad1;
+  color: var(--gray-300);
 }
 .tbl-empty-text {
   font-size: 16px;
   font-weight: 500;
-  color: #8b95a1;
+  color: var(--gray-500);
   text-align: center;
   line-height: 1.5;
 }
@@ -5098,7 +5091,7 @@ const onSelectPointColor = (key: string, index: number): void => {
 .tbl-sel-count {
   font-size: 14px;
   font-weight: 600;
-  color: #333d4b;
+  color: var(--gray-750);
 }
 .tbl-sel-actions {
   display: flex;
@@ -5110,16 +5103,16 @@ const onSelectPointColor = (key: string, index: number): void => {
   gap: 2px;
   height: 28px;
   padding: 0 10px;
-  border: 1px solid #e5e8eb;
+  border: 1px solid var(--gray-200);
   border-radius: 6px;
-  background: #fff;
+  background: var(--white);
   font-size: 12px;
-  color: #6b7684;
+  color: var(--gray-600);
   cursor: pointer;
 }
 .tbl-mini:hover {
-  border-color: #f04452;
-  color: #f04452;
+  border-color: var(--red-400);
+  color: var(--red-400);
 }
 .tbl-mini .material-symbols-outlined {
   font-size: 16px;
@@ -5136,21 +5129,21 @@ const onSelectPointColor = (key: string, index: number): void => {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #e5e8eb;
+  border: 1px solid var(--gray-200);
   border-radius: 8px;
-  background: #fff;
-  color: #4e5968;
+  background: var(--white);
+  color: var(--gray-700);
   cursor: pointer;
 }
 .tbl-bold:hover {
-  border-color: #4083f3;
-  color: #4083f3;
+  border-color: var(--blue-400);
+  color: var(--blue-400);
 }
 .tbl-multi-hint {
   font-size: 13px;
-  color: #6b7684;
+  color: var(--gray-600);
   line-height: 1.5;
-  background: #f2f4f6;
+  background: var(--gray-100);
   border-radius: 8px;
   padding: 10px 12px;
   word-break: keep-all;
@@ -5165,17 +5158,17 @@ const onSelectPointColor = (key: string, index: number): void => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #e5e8eb;
+  border: 1px solid var(--gray-200);
   border-radius: 8px;
-  background: #fff;
+  background: var(--white);
   font-size: 14px;
-  color: #4e5968;
+  color: var(--gray-700);
   cursor: pointer;
 }
 .tbl-seg-btn.is-active {
-  background: #ebf3ff;
-  border-color: #4083f3;
-  color: #4083f3;
+  background: var(--blue-50);
+  border-color: var(--blue-400);
+  color: var(--blue-400);
 }
 .tbl-seg-icon .material-symbols-outlined {
   font-size: 20px;
@@ -5187,14 +5180,14 @@ const onSelectPointColor = (key: string, index: number): void => {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #e5e8eb;
+  border: 1px solid var(--gray-200);
   border-radius: 8px;
-  background: #fff;
-  color: #8b95a1;
+  background: var(--white);
+  color: var(--gray-500);
   cursor: pointer;
 }
 .tbl-reset:hover {
-  color: #4e5968;
+  color: var(--gray-700);
 }
 .tbl-merge-btn {
   display: inline-flex;
@@ -5202,17 +5195,17 @@ const onSelectPointColor = (key: string, index: number): void => {
   justify-content: center;
   gap: 4px;
   height: 40px;
-  border: 1px solid #e5e8eb;
+  border: 1px solid var(--gray-200);
   border-radius: 8px;
-  background: #fff;
+  background: var(--white);
   font-size: 14px;
   font-weight: 500;
-  color: #4e5968;
+  color: var(--gray-700);
   cursor: pointer;
 }
 .tbl-merge-btn:hover {
-  border-color: #4083f3;
-  color: #4083f3;
+  border-color: var(--blue-400);
+  color: var(--blue-400);
 }
 .tbl-merge-btn .material-symbols-outlined {
   font-size: 18px;
@@ -5237,11 +5230,11 @@ const onSelectPointColor = (key: string, index: number): void => {
   gap: 8px;
   height: 29px;
   padding: 4px 10px;
-  background: #ebf3ff;
+  background: var(--blue-50);
   border-radius: 6px;
   font-size: 14px;
   font-weight: 500;
-  color: #4083f3;
+  color: var(--blue-400);
   letter-spacing: -0.14px;
   white-space: nowrap;
 }
@@ -5258,15 +5251,15 @@ const onSelectPointColor = (key: string, index: number): void => {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #e5e8eb;
+  border: 1px solid var(--gray-200);
   border-radius: 6px;
-  background: #fff;
-  color: #6b7684;
+  background: var(--white);
+  color: var(--gray-600);
   cursor: pointer;
 }
 .tbl-icbtn:hover {
-  border-color: #4083f3;
-  color: #4083f3;
+  border-color: var(--blue-400);
+  color: var(--blue-400);
 }
 .tbl-icbtn .material-symbols-outlined {
   font-size: 18px;
@@ -5274,12 +5267,12 @@ const onSelectPointColor = (key: string, index: number): void => {
 .tbl-sec-label {
   font-size: 16px;
   font-weight: 500;
-  color: #333d4b;
+  color: var(--gray-750);
   letter-spacing: -0.16px;
 }
 .tbl-divider {
   height: 1px;
-  background: #e5e8eb;
+  background: var(--gray-200);
 }
 .tbl-toggle-row {
   display: flex;
@@ -5297,18 +5290,18 @@ const onSelectPointColor = (key: string, index: number): void => {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  border: 1px solid #e5e8eb;
+  border: 1px solid var(--gray-200);
   border-radius: 8px;
-  background: #fff;
+  background: var(--white);
   font-size: 14px;
   font-weight: 500;
-  color: #6b7684;
+  color: var(--gray-600);
   cursor: pointer;
 }
 .tbl-ctype-btn.is-active {
-  background: #4e5968;
-  border-color: #4e5968;
-  color: #fff;
+  background: var(--gray-700);
+  border-color: var(--gray-700);
+  color: var(--white);
 }
 .tbl-ctype-btn .material-symbols-outlined {
   font-size: 20px;
@@ -5323,16 +5316,16 @@ const onSelectPointColor = (key: string, index: number): void => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #e5e8eb;
+  border: 1px solid var(--gray-200);
   border-radius: 8px;
-  background: #fff;
-  color: #4e5968;
+  background: var(--white);
+  color: var(--gray-700);
   cursor: pointer;
 }
 .tbl-align-btn.is-active {
-  background: #333d4b;
-  border-color: #333d4b;
-  color: #fff;
+  background: var(--gray-750);
+  border-color: var(--gray-750);
+  color: var(--white);
 }
 .tbl-align-btn .material-symbols-outlined {
   font-size: 22px;
@@ -5341,18 +5334,18 @@ const onSelectPointColor = (key: string, index: number): void => {
   width: 100%;
   height: 40px;
   padding: 0 12px;
-  border: 1px solid #e5e8eb;
+  border: 1px solid var(--gray-200);
   border-radius: 8px;
-  background: #fff;
+  background: var(--white);
   font-size: 14px;
-  color: #191f28;
+  color: var(--gray-800);
 }
 .tbl-input::placeholder {
-  color: #b0b8c1;
+  color: var(--gray-400);
 }
 .tbl-input:focus {
   outline: none;
-  border-color: #4083f3;
+  border-color: var(--blue-400);
 }
 /* ── 테이블 스타일 탭: 커스텀 블록만 27px 여백(아코디언은 gg-acc-section 공통 스타일에 맡김) ── */
 /* 탭 밑줄 → 행 열 관리 */
@@ -5384,12 +5377,12 @@ const onSelectPointColor = (key: string, index: number): void => {
   align-items: center;
   gap: 8px;
   font-size: 15px;
-  color: #4e5968;
+  color: var(--gray-700);
   white-space: nowrap;
 }
 .tbl-rc-name .material-symbols-outlined {
   font-size: 24px;
-  color: #4e5968;
+  color: var(--gray-700);
 }
 .tbl-rc-btns {
   display: flex;
@@ -5404,17 +5397,17 @@ const onSelectPointColor = (key: string, index: number): void => {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  border: 1px solid #e5e8eb;
+  border: 1px solid var(--gray-200);
   border-radius: 8px;
-  background: #fff;
+  background: var(--white);
   font-size: 15px;
   font-weight: 500;
-  color: #6b7684;
+  color: var(--gray-600);
   cursor: pointer;
 }
 .tbl-rc-btn:hover {
-  border-color: #4083f3;
-  color: #4083f3;
+  border-color: var(--blue-400);
+  color: var(--blue-400);
 }
 .tbl-rc-btn .material-symbols-outlined {
   font-size: 20px;
@@ -5436,8 +5429,8 @@ const onSelectPointColor = (key: string, index: number): void => {
   z-index: 30;
   min-width: 170px;
   padding: 4px;
-  background: #fff;
-  border: 1px solid #e5e8eb;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
   border-radius: 8px;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
   display: flex;
@@ -5449,22 +5442,22 @@ const onSelectPointColor = (key: string, index: number): void => {
   border: none;
   background: none;
   font-size: 14px;
-  color: #333d4b;
+  color: var(--gray-750);
   border-radius: 6px;
   cursor: pointer;
   white-space: nowrap;
 }
 .tbl-insert-menu button:hover:not(:disabled) {
-  background: #f2f4f6;
+  background: var(--gray-100);
 }
 .tbl-insert-menu button:disabled {
-  color: #c4cad1;
+  color: var(--gray-300);
   cursor: not-allowed;
 }
 .tbl-insert-hint {
   padding: 4px 12px 6px;
   font-size: 12px;
-  color: #8b95a1;
+  color: var(--gray-500);
   line-height: 1.4;
   white-space: normal;
 }
@@ -5476,27 +5469,27 @@ const onSelectPointColor = (key: string, index: number): void => {
 .tbl-rc-merge {
   width: 201px;
   height: 40px;
-  border: 1px solid #d1d6db;
+  border: 1px solid var(--gray-300);
   border-radius: 8px;
-  background: #fff;
+  background: var(--white);
   font-size: 15px;
   font-weight: 500;
-  color: #4e5968;
+  color: var(--gray-700);
   cursor: pointer;
 }
 /* 병합 가능(2개 이상 선택) 시 파란 버튼 */
 .tbl-rc-merge:not(:disabled) {
-  background: #4083f3;
-  border-color: #4083f3;
-  color: #ffffff;
+  background: var(--blue-400);
+  border-color: var(--blue-400);
+  color: var(--white);
 }
 .tbl-rc-merge:not(:disabled):hover {
-  background: #3b78e0;
-  border-color: #3b78e0;
+  background: var(--blue-500);
+  border-color: var(--blue-500);
 }
 .tbl-rc-merge:disabled {
   opacity: 0.5;
-  color: #b0b8c1;
+  color: var(--gray-400);
   cursor: not-allowed;
 }
 
@@ -5519,11 +5512,11 @@ const onSelectPointColor = (key: string, index: number): void => {
 }
 .tbl-colw-auto {
   font-size: 12px;
-  color: #8b95a1;
+  color: var(--gray-500);
 }
 .tbl-colw-reset {
   font-size: 12px;
-  color: #4083f3;
+  color: var(--blue-400);
   background: none;
   border: none;
   padding: 0;
@@ -5539,7 +5532,7 @@ const onSelectPointColor = (key: string, index: number): void => {
   gap: 4px;
   margin-top: 14px;
   font-size: 13px;
-  color: #f04452;
+  color: var(--red-400);
   line-height: 1.4;
 }
 .tbl-colw-warn .material-symbols-outlined {
@@ -5548,17 +5541,17 @@ const onSelectPointColor = (key: string, index: number): void => {
 
 /* 내용 편집기 — 디자인의 filled 텍스트 에디터 박스(TextField/Small)로 표시 */
 .tbl-cell-edit :deep(.tcell-editor) {
-  background: #f2f4f6;
+  background: var(--gray-100);
   border-color: transparent;
   border-radius: 8px;
   min-height: 120px;
   padding: 16px 12px;
   font-size: 15px;
-  color: #333d4b;
+  color: var(--gray-750);
 }
 .tbl-cell-edit :deep(.tcell-editor:focus) {
-  background: #fff;
-  border-color: #4083f3;
+  background: var(--white);
+  border-color: var(--blue-400);
 }
 
 </style>

@@ -182,6 +182,7 @@ const thumbSrc = (t: NewsletterTemplate): string | undefined =>
 // 썸네일 iframe 문서 만들기 (680px로 렌더 → CSS scale로 축소해 고정 박스에 맞춤)
 const buildThumbDoc = (content: string): string =>
   `<!DOCTYPE html><html><head><meta charset="utf-8"><base target="_blank">` +
+  // ⚠ iframe 안 문서라 앱의 CSS 변수(tokens.css)가 닿지 않는다 — 색은 리터럴로 둔다
   `<style>html,body{margin:0;padding:0;background:#fff;overflow:hidden;}*{box-sizing:border-box;}</style>` +
   `</head><body><div style="width:680px;max-width:680px;margin:0;">${content}</div></body></html>`
 
@@ -222,7 +223,7 @@ const pickTemplate = async (t: NewsletterTemplate) => {
 <style scoped>
 .tpl-page {
   min-height: 100vh;
-  background: #fff;
+  background: var(--white);
   display: flex;
   flex-direction: column;
 }
@@ -255,7 +256,7 @@ const pickTemplate = async (t: NewsletterTemplate) => {
   padding: 7px 20px;
   font-size: 16px;
   font-weight: 500;
-  color: #191f28;
+  color: var(--gray-800);
   letter-spacing: -0.16px;
   background: none;
   border: 0;
@@ -272,7 +273,7 @@ const pickTemplate = async (t: NewsletterTemplate) => {
   padding: 7px 20px;
   font-size: 16px;
   font-weight: 400;
-  color: #6b7684;
+  color: var(--gray-600);
   letter-spacing: -0.16px;
   background: none;
   border: 0;
@@ -281,16 +282,16 @@ const pickTemplate = async (t: NewsletterTemplate) => {
   transition: background 0.12s, color 0.12s;
 }
 .tpl-team:hover {
-  background: #f6f8fa;
+  background: var(--gray-50);
 }
 .tpl-team--top {
   font-weight: 500;
-  color: #191f28;
+  color: var(--gray-800);
 }
 .tpl-team.is-active {
   position: relative;
-  background: #ebf3ff;
-  color: #191f28;
+  background: var(--blue-50);
+  color: var(--gray-800);
   font-weight: 500;
 }
 .tpl-team.is-active::before{content: ""; display: block; width: 5px; height: 100%; background-color: var(--p-primary-500); position: absolute; top: 0; left: -16px; border-radius: 0 5px 5px 0;}
@@ -305,7 +306,7 @@ const pickTemplate = async (t: NewsletterTemplate) => {
 .tpl-title {
   font-size: 34px;
   font-weight: 500;
-  color: #000;
+  color: var(--black);
   letter-spacing: -0.34px;
   margin: 0 0 28px;
 }
@@ -316,13 +317,13 @@ const pickTemplate = async (t: NewsletterTemplate) => {
   height: 48px;
   max-width: 630px;
   padding: 0 20px;
-  background: #f2f4f6;
+  background: var(--gray-100);
   border-radius: 50px;
   margin-bottom: 40px;
 }
 .tpl-search > .pi-search {
   font-size: 20px;
-  color: #6b7684;
+  color: var(--gray-600);
   flex-shrink: 0;
 }
 /* PrimeVue InputText를 알약 배경 안에서 테두리/배경 없이 평평하게 */
@@ -338,7 +339,7 @@ const pickTemplate = async (t: NewsletterTemplate) => {
   box-shadow: none;
   padding: 0;
   font-size: 17px;
-  color: #191f28;
+  color: var(--gray-800);
 }
 .tpl-search :deep(.p-inputtext:enabled:focus),
 .tpl-search :deep(.p-inputtext:enabled:hover) {
@@ -346,7 +347,7 @@ const pickTemplate = async (t: NewsletterTemplate) => {
   box-shadow: none;
 }
 .tpl-search :deep(.p-inputtext::placeholder) {
-  color: #6b7684;
+  color: var(--gray-600);
 }
 
 /* 카드 그리드 */
@@ -369,15 +370,15 @@ const pickTemplate = async (t: NewsletterTemplate) => {
 .tpl-thumb {
   width: 190px;
   height: 223px;
-  border: 1px solid #e5e8eb;
+  border: 1px solid var(--gray-200);
   border-radius: 8px;
   overflow: hidden;
-  background: #fff;
+  background: var(--white);
   position: relative;
   transition: box-shadow 0.15s, border-color 0.15s;
 }
 .tpl-card:hover .tpl-thumb {
-  border-color: #4083f3;
+  border-color: var(--blue-400);
   box-shadow: 0 4px 14px rgba(64, 131, 243, 0.18);
 }
 /* 미리 만들어 둔 썸네일 이미지 — 680×800으로 캡처한 것을 박스 안쪽(188×221)에 맞춰 크롭.
@@ -395,7 +396,7 @@ const pickTemplate = async (t: NewsletterTemplate) => {
   height: 820px;
   border: 0;
   display: block;
-  background: #fff;
+  background: var(--white);
   transform: scale(0.2794);
   transform-origin: top left;
   pointer-events: none;
@@ -411,11 +412,11 @@ const pickTemplate = async (t: NewsletterTemplate) => {
 .tpl-card-name {
   font-size: 14px;
   font-weight: 500;
-  color: #191f28;
+  color: var(--gray-800);
   word-break: break-word;
 }
 .tpl-empty {
-  color: #9ca3af;
+  color: var(--gray-400);
   font-size: 14px;
   padding: 40px 0;
 }
@@ -430,7 +431,7 @@ const pickTemplate = async (t: NewsletterTemplate) => {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  color: #374151;
+  color: var(--gray-700);
   z-index: 2000;
 }
 </style>
