@@ -349,7 +349,9 @@ watch(
   font-weight: bold;
 }
 .module-content :deep(a) {
-  color: #0066cc;
+  /* 내용(메일 본문) 색이라 UI 팔레트가 아닌 --content-link를 쓴다.
+     인라인 color가 붙은 링크는 그쪽이 이기므로 여기 값은 '색 미지정' 링크의 기본색이다. */
+  color: var(--content-link);
   font-weight: 600;
   text-decoration: underline;
   pointer-events: none; /* 캔버스에서 링크 클릭 방지 */

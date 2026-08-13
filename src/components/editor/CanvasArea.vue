@@ -84,8 +84,10 @@
               }"
             >
               <!-- 상단 그룹 툴바 (Figma 557-610) — 마우스 오버 또는 그룹/멤버 선택 시에만 노출.
-                   스타일 편집 · 위로 이동 · 아래로 이동 · 그룹 해제 · 복제 · 삭제. -->
-              <div class="group-top-toolbar no-drag">
+                   스타일 편집 · 위로 이동 · 아래로 이동 · 그룹 해제 · 복제 · 삭제.
+                   버튼이 아닌 빈 자리(그룹 이름 포함)를 눌러도 그룹이 선택된다 —
+                   각 버튼은 @click.stop이라 자기 동작만 하고 여기까지 올라오지 않는다. -->
+              <div class="group-top-toolbar no-drag" @click="selectGroupBox(item.id)">
                 <!-- 그룹 이름 — 조립형 모듈이면 모듈명('이미지형 헤더'), 직접 묶은 그룹이면 '그룹 01' -->
                 <span class="gtt-name">{{ item.group.name || '그룹' }}</span>
                 <button
@@ -845,6 +847,8 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
   border-radius: 10px 10px 0 0;
   opacity: 0;
   pointer-events: none;
+  /* 빈 자리를 눌러도 그룹이 선택되므로 손가락 커서로 알린다(버튼은 자기 커서를 쓴다) */
+  cursor: pointer;
   transition: opacity 0.12s ease;
 }
 .group-wrap:hover > .group-top-toolbar,

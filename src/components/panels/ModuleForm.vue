@@ -2045,12 +2045,25 @@ const groupHeaderToggle = (group: PropGroup): EditableProp | null => {
   return rest.every((p) => showWhenKey(p) === first.key) ? first : null
 }
 
-// 그룹 판넬 펼침 상태 — 그룹명(또는 인덱스)별로 관리. 기본값: 첫 그룹만 펼침(기존 Panel 동작과 동일)
+// 그룹 판넬 펼침 상태 — 그룹명(또는 인덱스)별로 관리
 const groupPanelExpanded = reactive<Record<string, boolean>>({})
 const groupPanelKey = (group: PropGroup, index: number): string => group.name ?? `_flat_${index}`
-// 접이식 섹션은 항상 '닫힘'으로 시작하고, 사용자가 열고/접은 상태만 기억한다.
-const isGroupPanelExpanded = (group: PropGroup, index: number): boolean =>
-  groupPanelExpanded[groupPanelKey(group, index)] === true
+
+/**
+ * 모듈별로 '기본 펼침'인 섹션. 여기 없는 접이식 섹션은 닫힌 채로 시작한다.
+ * (언어 선택 버튼은 버튼 1이 사실상 필수 입력이라 열어 둔다)
+ */
+const DEFAULT_OPEN_SECTIONS: Record<string, string[]> = {
+  TopLanguageButton: ['버튼 1'],
+}
+
+// 사용자가 한 번이라도 열고/접었으면 그 상태를, 아니면 위 기본값을 따른다.
+const isGroupPanelExpanded = (group: PropGroup, index: number): boolean => {
+  const remembered = groupPanelExpanded[groupPanelKey(group, index)]
+  if (remembered !== undefined) return remembered
+  const moduleId = selectedModuleMetadata.value?.id
+  return !!(moduleId && group.name && DEFAULT_OPEN_SECTIONS[moduleId]?.includes(group.name))
+}
 
 const setGroupPanelExpanded = (group: PropGroup, index: number, open: boolean): void => {
   groupPanelExpanded[groupPanelKey(group, index)] = open
@@ -2791,8 +2804,9 @@ const STYLE_SECTION_RULES: Record<string, '*' | { exclude: string } | Set<string
   // SNS 아이콘: 핵심 입력(배경색·정렬·구성 요소)은 항상 펼친 채 두고 여백만 접이식 카드로
   ModuleSnsIcons: new Set(['여백']),
   // 언어 선택 버튼: 버튼 1~3은 자기 노출 토글이 있어 이미 접이식이다.
-  // 색상·공통·여백 섹션은 토글이 없어 평면 나열됐는데, 다른 모듈의 스타일 섹션과 같게 접이식 카드로 맞춘다.
-  TopLanguageButton: new Set(['기본 버튼 색상', '액티브 버튼 색상', '버튼 공통', '여백']),
+  // 첫 섹션('공통 버튼 스타일')은 다른 모듈의 '내용'처럼 항상 펼친 평면 섹션으로 두고,
+  // 나머지 토글 없는 섹션만 접이식 카드로 맞춘다.
+  TopLanguageButton: new Set(['활성(액티브) 버튼 색상', '여백']),
 }
 const isStyleSection = (group: PropGroup): boolean => {
   if (!group.name) return false
