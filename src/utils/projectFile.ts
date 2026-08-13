@@ -38,6 +38,12 @@ export interface ProjectMetadata {
     borderWidth: string
     borderColor: string
     borderStyle: string
+    /** 전체 스타일의 '뉴스레터 요약' — 내보내기 때 래퍼 표의 summary 속성이 된다 */
+    summary?: string
+    /** 실제 적용되는 포인트 색상(팔레트 [0]번). 팔레트가 생기기 전 파일에는 이것만 있다. */
+    pointColor?: string
+    /** 포인트 색상 팔레트(최대 3개) */
+    pointColors?: string[]
   }
   /**
    * 이 파일을 만든 팀의 **불변 id** (표시명이 아니다).
@@ -115,7 +121,8 @@ export function restoreProject(
 
   moduleStore.clearAll()
   if (projectData.wrapSettings) {
-    editorStore.updateWrapSettings(projectData.wrapSettings)
+    // 포인트 색상 팔레트까지 '여는 파일이 정한다' — 앞서 열어 둔 템플릿의 색이 남으면 안 된다.
+    editorStore.applyLoadedWrapSettings(projectData.wrapSettings)
   }
 
   let restoredCount = 0
@@ -123,6 +130,19 @@ export function restoreProject(
   const warnings = new Set<string>()
 
   const ordered = [...projectData.modules].sort((a, b) => a.order - b.order)
+
+  // 뉴스레터 요약('전체 스타일')은 **여는 파일이 정한다** — 앞서 열어 둔 파일의 값이 남아 있으면 안 된다.
+  // 예전 파일에는 이 설정이 없고 대신 헤더 모듈의 표 설명(tableSummary)이 같은 역할을 했으므로
+  // (v1은 헤더 표에, v2는 래퍼 표의 summary 속성에 붙는다) 그 값을 끌어와 채운다.
+  if (!(projectData.wrapSettings?.summary || '').trim()) {
+    const legacySummary =
+      ordered
+        .map((m) =>
+          typeof m.properties?.tableSummary === 'string' ? m.properties.tableSummary.trim() : '',
+        )
+        .find(Boolean) ?? ''
+    editorStore.updateWrapSettings({ summary: legacySummary })
+  }
 
   /**
    * 한 모듈을 새 편집 방식(원소 모듈)으로 바꿔 넣어본다.
@@ -157,16 +177,27 @@ export function restoreProject(
       return false
     }
 
-    moduleStore.addComposedConversion(
+    const inlined = !!groupId && canInline
+    const newGroupId = moduleStore.addComposedConversion(
       conversion,
-      groupId && canInline
+      inlined
         ? {
-            groupId,
+            groupId: groupId!,
             rowIndex: moduleData.rowIndex ?? 0,
             columnIndex: moduleData.columnIndex ?? 0,
           }
         : undefined,
     )
+    // 사용자 묶음에서 떼어낸 경우(헤더·푸터처럼 자기 그룹이 필요한 모듈) 그 묶음의 겉모습을
+    // 새 그룹에도 물려준다. 안 그러면 묶음에 줬던 배경색·테두리가 이 모듈에서만 사라진다.
+    if (!inlined && groupId && newGroupId) {
+      const sourceStyles = projectData.groups?.find((g) => g.id === groupId)?.styles
+      const target = moduleStore.groups.find((g) => g.id === newGroupId)
+      if (sourceStyles && target) {
+        // 변환기가 직접 정한 그룹 스타일(예: 푸터 배경색)이 우선한다
+        target.styles = { ...sourceStyles, ...(conversion.groupStyles ?? {}) }
+      }
+    }
     conversion.warnings?.forEach((w) => warnings.add(w))
     // 변환이 그룹을 만들면 createGroup이 그 그룹을 '선택' 상태로 둔다. 그대로 두면 다음 모듈이
     // addModule의 "선택 그룹 바로 아래 삽입" 규칙에 걸려 엉뚱한 자리에 끼어든다.

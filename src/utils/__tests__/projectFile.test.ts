@@ -430,3 +430,199 @@ describe('projectFile — 소속 팀(teamId)', () => {
     expect(editorStore.currentTeamId, '파일의 팀으로 바뀌면 안 된다').toBe('arch-plan')
   })
 })
+
+describe('projectFile — 예전 파일 열기(새 편집 방식 변환)', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+    seedAvailableModules()
+    // 헤더 변환이 만드는 원소 모듈까지 알고 있어야 한다
+    useModuleStore().availableModules = [
+      ...AVAILABLE,
+      ...['ModuleDivider', 'ModuleImg', 'ModuleDescText'].map(meta),
+    ]
+  })
+
+  it('헤더의 표 설명(tableSummary)을 전체 스타일의 뉴스레터 요약으로 옮긴다', () => {
+    const editorStore = useEditorStore()
+    restoreProject(
+      {
+        modules: [
+          {
+            moduleId: 'ModuleNewsHeader',
+            order: 0,
+            properties: { tableSummary: '전기차 충전 인프라 산업전 소개 뉴스레터 입니다.' },
+            styles: {},
+          },
+        ],
+      },
+      true,
+    )
+    expect(editorStore.wrapSettings.summary).toBe('전기차 충전 인프라 산업전 소개 뉴스레터 입니다.')
+  })
+
+  it('파일에 요약이 들어 있으면 그 값을 쓴다(표 설명으로 덮지 않는다)', () => {
+    const editorStore = useEditorStore()
+    restoreProject(
+      {
+        modules: [{ moduleId: 'ModuleNewsHeader', order: 0, properties: { tableSummary: '헤더 설명' }, styles: {} }],
+        wrapSettings: {
+          backgroundColor: '#ffffff',
+          borderWidth: '0px',
+          borderColor: '#dddddd',
+          borderStyle: 'solid',
+          summary: '내가 쓴 요약',
+        },
+      },
+      true,
+    )
+    expect(editorStore.wrapSettings.summary).toBe('내가 쓴 요약')
+  })
+
+  it('사용자 묶음에서 떼어낸 헤더가 그 묶음의 배경색을 물려받는다', () => {
+    const store = useModuleStore()
+    restoreProject(
+      {
+        modules: [
+          {
+            moduleId: 'ModuleNewsHeader',
+            order: 0,
+            properties: { headerTitle: 'VOL.1' },
+            styles: {},
+            groupId: 'g1',
+          },
+          { moduleId: 'ModuleImg', order: 1, properties: {}, styles: {}, groupId: 'g1' },
+        ],
+        groups: [
+          {
+            id: 'g1',
+            styles: { backgroundColor: '#0000aa', borderWidth: '0px', borderStyle: 'solid' },
+          },
+        ],
+      },
+      true,
+    )
+    // 헤더는 자기 그룹으로 떨어져 나가지만 배경색은 그대로 따라와야 한다
+    const headerGroup = store.groups.find((g) => g.id !== 'g1')
+    expect(headerGroup?.styles.backgroundColor).toBe('#0000aa')
+  })
+})
+
+describe('projectFile — 뉴스레터 요약은 여는 파일이 정한다', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+    seedAvailableModules()
+  })
+
+  it('앞서 연 파일의 요약이 남아 있어도 새로 연 파일 값으로 바뀐다', () => {
+    const editorStore = useEditorStore()
+    editorStore.updateWrapSettings({ summary: '먼저 연 파일의 요약' })
+    restoreProject(
+      {
+        modules: [
+          {
+            moduleId: 'ModuleBasicHeader',
+            order: 0,
+            properties: { tableSummary: '고카프 전시 뉴스레터 입니다.' },
+            styles: {},
+          },
+        ],
+      },
+      true,
+    )
+    expect(editorStore.wrapSettings.summary).toBe('고카프 전시 뉴스레터 입니다.')
+  })
+
+  it('예전 방식 그대로 열 때도 요약을 채운다', () => {
+    const editorStore = useEditorStore()
+    restoreProject(
+      {
+        modules: [
+          { moduleId: 'ModuleBasicHeader', order: 0, properties: { tableSummary: '표 설명' }, styles: {} },
+        ],
+      },
+      false,
+    )
+    expect(editorStore.wrapSettings.summary).toBe('표 설명')
+  })
+
+  it('요약도 표 설명도 없는 파일을 열면 이전 값이 지워진다', () => {
+    const editorStore = useEditorStore()
+    editorStore.updateWrapSettings({ summary: '먼저 연 파일의 요약' })
+    restoreProject({ modules: [{ moduleId: 'ModuleImg', order: 0, properties: {}, styles: {} }] }, true)
+    expect(editorStore.wrapSettings.summary).toBe('')
+  })
+})
+
+describe('projectFile — 포인트 색상 팔레트는 여는 파일이 정한다', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+    vi.clearAllMocks()
+    seedAvailableModules()
+  })
+
+  const openWith = (wrapSettings: ProjectMetadata['wrapSettings']) =>
+    restoreProject({ modules: [], wrapSettings }, false)
+
+  it('팔레트가 없고 단일 pointColor만 있는 예전 파일은 1개짜리 팔레트가 된다', () => {
+    const editorStore = useEditorStore()
+    // 앞서 열어 둔 템플릿에 3개가 들어 있는 상태
+    editorStore.updateWrapSettings({ pointColors: ['#111111', '#222222', '#333333'] })
+
+    openWith({
+      backgroundColor: '#ffffff',
+      borderWidth: '0px',
+      borderColor: '#dddddd',
+      borderStyle: 'solid',
+      pointColor: '#058bae',
+    })
+
+    expect(editorStore.wrapSettings.pointColors).toEqual(['#058bae'])
+    expect(editorStore.wrapSettings.pointColor).toBe('#058bae')
+  })
+
+  it('팔레트가 있는 파일은 그 팔레트를 그대로 쓴다', () => {
+    const editorStore = useEditorStore()
+    editorStore.updateWrapSettings({ pointColors: ['#111111', '#222222', '#333333'] })
+
+    openWith({
+      backgroundColor: '#ffffff',
+      borderWidth: '0px',
+      borderColor: '#dddddd',
+      borderStyle: 'solid',
+      pointColor: '#aa0000',
+      pointColors: ['#aa0000', '#bb0000'],
+    })
+
+    expect(editorStore.wrapSettings.pointColors).toEqual(['#aa0000', '#bb0000'])
+  })
+
+  it('포인트 색상을 하나도 안 쓴 파일이면 팔레트를 비운다', () => {
+    const editorStore = useEditorStore()
+    editorStore.updateWrapSettings({ pointColors: ['#111111', '#222222'] })
+
+    openWith({
+      backgroundColor: '#ffffff',
+      borderWidth: '0px',
+      borderColor: '#dddddd',
+      borderStyle: 'solid',
+      pointColor: '',
+    })
+
+    expect(editorStore.wrapSettings.pointColors).toEqual([])
+    expect(editorStore.wrapSettings.pointColor).toBe('')
+  })
+
+  it('색상 정보가 아예 없는 파일이면 지금 팔레트를 그대로 둔다', () => {
+    const editorStore = useEditorStore()
+    editorStore.updateWrapSettings({ pointColors: ['#111111', '#222222'] })
+
+    openWith({
+      backgroundColor: '#ffffff',
+      borderWidth: '0px',
+      borderColor: '#dddddd',
+      borderStyle: 'solid',
+    })
+
+    expect(editorStore.wrapSettings.pointColors).toEqual(['#111111', '#222222'])
+  })
+})

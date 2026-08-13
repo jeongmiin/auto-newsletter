@@ -153,3 +153,126 @@ describe('푸터 연락처(H·T·E·F) 항목', () => {
     expect(html).not.toContain('02-1111-2222')
   })
 })
+
+describe('migrateModuleProperties — 모서리 둥글기 토글', () => {
+  it('토글이 없던 시절 파일은 저장된 둥글기를 켜진 것으로 본다', () => {
+    const next = migrateModuleProperties('ModuleImg', {
+      imageUrl: 'https://example.com/a.png',
+      imageBorderRadius: '10px',
+    })
+    expect(next.showBorderRadius).toBe(true)
+    expect(next.imageBorderRadius).toBe('10px')
+  })
+
+  it('둥글기가 0이면 켜지 않는다', () => {
+    const next = migrateModuleProperties('ModuleImg', { imageBorderRadius: '0px' })
+    expect(next.showBorderRadius).toBeUndefined()
+  })
+
+  it('사용자가 꺼 둔 파일(toggle=false)은 그대로 둔다', () => {
+    const next = migrateModuleProperties('ModuleImg', {
+      imageBorderRadius: '10px',
+      showBorderRadius: false,
+    })
+    expect(next.showBorderRadius).toBe(false)
+  })
+})
+
+describe('migrateModuleProperties — 옛 테이블 셀 내용(굵게 마커·줄바꿈)', () => {
+  it('**굵게** 마커와 \n 줄바꿈을 HTML로 바꾼다', () => {
+    const next = migrateModuleProperties('ModuleTable', {
+      tableCells: [
+        [
+          { id: 'a', type: 'th', content: '주차 요금', colspan: 1, rowspan: 1 },
+          {
+            id: 'b',
+            type: 'td',
+            content: '**⚠ 일반차량**\n[기본요금-30분] 500원\n\n**⚠ 감면(50%)**\n경차',
+            colspan: 1,
+            rowspan: 1,
+          },
+        ],
+      ],
+    })
+    const cells = next.tableCells as Array<Array<Record<string, unknown>>>
+    expect(cells[0][1].content).toBe(
+      '<strong style="font-weight:700;">⚠ 일반차량</strong><br>[기본요금-30분] 500원<br><br><strong style="font-weight:700;">⚠ 감면(50%)</strong><br>경차',
+    )
+    // 마커·줄바꿈이 없는 셀은 그대로 둔다
+    expect(cells[0][0].content).toBe('주차 요금')
+  })
+
+  it('꺾쇠·앰퍼샌드는 이스케이프해 글자 그대로 남긴다', () => {
+    const next = migrateModuleProperties('ModuleTable', {
+      tableCells: [[{ id: 'a', type: 'td', content: '<경품> A & B\n2줄째', colspan: 1, rowspan: 1 }]],
+    })
+    const cells = next.tableCells as Array<Array<Record<string, unknown>>>
+    expect(cells[0][0].content).toBe('&lt;경품&gt; A &amp; B<br>2줄째')
+  })
+
+  it('이미 리치 HTML인 셀은 건드리지 않는다', () => {
+    const props = {
+      tableCells: [
+        [{ id: 'a', type: 'td', content: '<p>이미 <strong>서식</strong>이 있다</p>', colspan: 1, rowspan: 1 }],
+      ],
+    }
+    expect(migrateModuleProperties('ModuleTable', props)).toBe(props)
+  })
+})
+
+describe('migrateModuleProperties — 셀 종류가 없던 시절의 이미지 셀', () => {
+  it('imageUrl만 있는 셀을 이미지 셀로 표시한다', () => {
+    const next = migrateModuleProperties('ModuleTable', {
+      tableCells: [
+        [
+          { id: 'a', type: 'th', content: '부스 타입', colspan: 1, rowspan: 1 },
+          {
+            id: 'b',
+            type: 'td',
+            content: '내용',
+            colspan: 1,
+            rowspan: 1,
+            imageUrl: 'https://example.com/booth.png',
+          },
+        ],
+      ],
+    })
+    const cells = next.tableCells as Array<Array<Record<string, unknown>>>
+    expect(cells[0][1].contentType).toBe('image')
+    expect(cells[0][0].contentType).toBeUndefined()
+  })
+
+  it('contentType이 정해진 셀은 옛 imageUrl이 남아 있어도 건드리지 않는다', () => {
+    const props = {
+      tableCells: [
+        [
+          {
+            id: 'a',
+            type: 'td',
+            content: '텍스트로 바꾼 셀',
+            colspan: 1,
+            rowspan: 1,
+            contentType: 'text',
+            imageUrl: 'https://example.com/old.png',
+          },
+        ],
+      ],
+    }
+    expect(migrateModuleProperties('ModuleTable', props)).toBe(props)
+  })
+
+  it('굵게 마커와 이미지 셀이 한 테이블에 섞여 있어도 둘 다 변환한다', () => {
+    const next = migrateModuleProperties('ModuleTable', {
+      tableCells: [
+        [
+          { id: 'a', type: 'td', content: '**굵게**\n둘째 줄', colspan: 1, rowspan: 1 },
+          { id: 'b', type: 'td', content: '', colspan: 1, rowspan: 1, imageUrl: 'https://e.com/x.png' },
+        ],
+      ],
+    })
+    const cells = next.tableCells as Array<Array<Record<string, unknown>>>
+    expect(cells[0][0].content).toContain('<strong style="font-weight:700;">굵게</strong><br>둘째 줄')
+    expect(cells[0][0].contentType).toBeUndefined()
+    expect(cells[0][1].contentType).toBe('image')
+  })
+})

@@ -215,7 +215,7 @@ describe('legacyToComposed — 섹션 타이틀', () => {
     expect(sub.textColor).toBe('#333333')
   })
 
-  it('이미 서식이 들어간 타이틀(가운데 정렬·색상 등)은 그대로 둔다', () => {
+  it('이미 서식이 들어간 타이틀(가운데 정렬·색상 등)은 구조를 건드리지 않고 굵기만 겉에서 물려준다', () => {
     const rich = '<p style="text-align:center;"><strong style="color:#e8590c;">가운데 제목</strong></p>'
     const c = convertLegacyToComposed('SectionTitle', {
       ...base,
@@ -223,7 +223,8 @@ describe('legacyToComposed — 섹션 타이틀', () => {
       showMainTitle: true,
       mainTitle: rich,
     })!
-    expect(propsOf(c, 1).descriptionText).toBe(rich)
+    // 레거시 td가 mainTitleFontWeight(기본 700)를 걸어 줬으므로 그 굵기를 잃지 않아야 한다
+    expect(propsOf(c, 1).descriptionText).toBe(`<div style="font-weight:700;">${rich}</div>`)
   })
 
   it('타이틀 여백을 원래 값 그대로 가져간다', () => {
@@ -849,5 +850,374 @@ describe('legacyToComposed — 뉴스 헤드라인 헤더', () => {
   it('그 행만 모바일에서도 가로 유지로 표시한다 (레거시 테이블에서 한 줄이던 행)', () => {
     const c = convertLegacyToComposed('ModuleNewsHeader', base)!
     expect(c.keepInlineRows).toEqual([false, false, true])
+  })
+})
+
+describe('legacyToComposed — 섹션 타이틀 굵기', () => {
+  it('평문 타이틀은 레거시 굵기를 span에 넣는다', () => {
+    const c = convertLegacyToComposed('SectionTitle', {
+      mainTitle: '섹션 타이틀',
+      mainTitleFontWeight: '700',
+      showSubTitle: false,
+    })!
+    const main = c.specs.find((s) => String(s.properties.descriptionText).includes('섹션 타이틀'))!
+    expect(String(main.properties.descriptionText)).toContain('font-weight:700')
+  })
+
+  it('리치 텍스트 타이틀도 굵기를 잃지 않는다 (설명 텍스트 td가 400을 강제하므로 겉을 감싼다)', () => {
+    const c = convertLegacyToComposed('SectionTitle', {
+      mainTitle: '<p style="margin:0;">리치 타이틀</p>',
+      mainTitleFontWeight: '700',
+      showSubTitle: false,
+    })!
+    const main = c.specs.find((s) => String(s.properties.descriptionText).includes('리치 타이틀'))!
+    const html = String(main.properties.descriptionText)
+    expect(html).toContain('font-weight:700')
+    expect(html).toContain('<p style="margin:0;">리치 타이틀</p>') // 원래 구조는 그대로
+  })
+
+  it('기본 굵기(400/normal)면 감싸지 않는다', () => {
+    const c = convertLegacyToComposed('SectionTitle', {
+      mainTitle: '<p>보통 굵기</p>',
+      mainTitleFontWeight: '400',
+      showSubTitle: false,
+    })!
+    const main = c.specs.find((s) => String(s.properties.descriptionText).includes('보통 굵기'))!
+    expect(String(main.properties.descriptionText)).toBe('<p>보통 굵기</p>')
+  })
+})
+
+describe('legacyToComposed — 하단 푸터 안내문구', () => {
+  const korean =
+    '<p style="line-height:1.7;"><span style="color:#999999;">본 메일은 …</span></p>' +
+    '<p><a href="https://edm.esfair.kr/rejectMail.aspx?code=HOBAN">[수신거부]</a></p>'
+
+  it('저장된 국문 안내문구가 있으면 그대로 가져온다 (문장·링크를 새로 찍지 않는다)', () => {
+    const c = convertLegacyToComposed('ModuleFooter', {
+      showKoreanFooter: true,
+      koreanNoticeText: korean,
+      // 예전 키는 저장돼 있지 않은 파일이 많다
+    })!
+    const notice = c.specs.at(-1)!
+    expect(String(notice.properties.descriptionText)).toBe(korean)
+    // 하드코딩 문장이 섞여 들어가면 안 된다
+    expect(String(notice.properties.descriptionText)).not.toContain('으로 문의 바랍니다')
+  })
+
+  it('영문 안내문구도 저장값을 쓰고, 국문 뒤에 빈 줄로 띄운다', () => {
+    const english = "If you don't want this type of information, click <a href=\"#\">[unsubscription]</a>"
+    const c = convertLegacyToComposed('ModuleFooter', {
+      showKoreanFooter: true,
+      koreanNoticeText: korean,
+      showEnglishFooter: true,
+      englishNoticeText: english,
+    })!
+    const html = String(c.specs.at(-1)!.properties.descriptionText)
+    expect(html).toContain(korean)
+    expect(html).toContain(english)
+    expect(html.indexOf(korean)).toBeLessThan(html.indexOf(english))
+  })
+
+  it('안내문구 속성이 없는 옛 파일은 기존 기본 문장으로 되살린다', () => {
+    const c = convertLegacyToComposed('ModuleFooter', {
+      showKoreanFooter: true,
+      unsubscribeUrl: 'https://example.com/reject',
+      inquiryEmail: 'a@b.com',
+    })!
+    const html = String(c.specs.at(-1)!.properties.descriptionText)
+    expect(html).toContain('수신동의')
+    expect(html).toContain('https://example.com/reject')
+    expect(html).toContain('a@b.com')
+  })
+})
+
+describe('legacyToComposed — 포인트 색상 추종 유지', () => {
+  it('모듈 05번 오른쪽 강조 타이틀의 배경이 포인트 색상을 계속 따른다', () => {
+    const c = convertLegacyToComposed('Module05-3', {
+      showRightTitle: true,
+      rightTitleEmphasis: true,
+      topRightTitle1: '1:1 건축사 상담회',
+      rightTitleBgColor: '#e5e5e5',
+      rightTitleBgColor__usePoint: true,
+      rightTitleTextColor: '#ffffff',
+    })!
+    const title = c.specs.find((s) => String(s.properties.descriptionText).includes('건축사'))!
+    expect(title.properties.bgColor).toBe('#e5e5e5') // 리터럴 값도 그대로 (추종 해제 시 복귀용)
+    expect(title.properties.bgColor__usePoint).toBe(true)
+  })
+
+  it('강조가 꺼져 있으면 추종 메타를 넘기지 않는다 (투명 배경이 포인트 색으로 칠해지면 안 된다)', () => {
+    const c = convertLegacyToComposed('Module05-3', {
+      showRightTitle: true,
+      rightTitleEmphasis: false,
+      topRightTitle1: '제목',
+      rightTitleBgColor: '#e5e5e5',
+      rightTitleBgColor__usePoint: true,
+    })!
+    const title = c.specs.find((s) => String(s.properties.descriptionText).includes('제목'))!
+    expect(title.properties.bgColor).toBe('transparent')
+    expect(title.properties.bgColor__usePoint).toBeUndefined()
+  })
+
+  it('모듈 06번 좌·우 타이틀 배경도 추종을 유지한다', () => {
+    const c = convertLegacyToComposed('Module06', {
+      leftTitle: '왼쪽',
+      leftTitleBgColor: '#e5e5e5',
+      leftTitleBgColor__usePoint: true,
+      leftTitleBgColor__pointIndex: 1,
+      rightTitle: '오른쪽',
+      rightTitleBgColor: '#e5e5e5',
+      rightTitleBgColor__usePoint: true,
+    })!
+    const left = c.specs.find((s) => String(s.properties.descriptionText).includes('왼쪽'))!
+    const right = c.specs.find((s) => String(s.properties.descriptionText).includes('오른쪽'))!
+    expect(left.properties.bgColor__usePoint).toBe(true)
+    expect(left.properties.bgColor__pointIndex).toBe(1)
+    expect(right.properties.bgColor__usePoint).toBe(true)
+  })
+})
+
+describe('legacyToComposed — 뉴스 헤드라인 헤더 제목 줄 여백', () => {
+  const titleRow = (props: Record<string, unknown>) => {
+    const c = convertLegacyToComposed('ModuleNewsHeader', props)!
+    const cells = c.specs.filter((s) => s.row === 2)
+    return { left: cells.find((s) => s.col === 0)!.properties, right: cells.find((s) => s.col === 1)!.properties }
+  }
+
+  it('컬럼 셀이 갖는 5px을 빼서 원본 여백(5/20/10/20)과 같아진다', () => {
+    // 레거시 td: padding:5px 20px 10px 20px (두 칸을 감싼 하나의 td)
+    const { left, right } = titleRow({
+      headerTitle: 'NEWSLETTER VOL.1',
+      headerTitlePaddingTop: '5px',
+      headerTitlePaddingRight: '20px',
+      headerTitlePaddingBottom: '10px',
+      headerTitlePaddingLeft: '20px',
+    })
+    // 셀 padding 5px + 여기 값 = 원본 여백
+    expect([left.marginTop, left.marginBottom, left.marginLeft, left.marginRight]).toEqual([
+      '0px',
+      '5px',
+      '15px',
+      '0px',
+    ])
+    expect([right.marginTop, right.marginBottom, right.marginRight, right.marginLeft]).toEqual([
+      '0px',
+      '5px',
+      '15px',
+      '0px',
+    ])
+  })
+
+  it('네 방향이 20px인 파일도 15px + 셀 5px = 20px가 된다', () => {
+    const { left, right } = titleRow({
+      headerTitlePaddingTop: '20px',
+      headerTitlePaddingRight: '20px',
+      headerTitlePaddingBottom: '20px',
+      headerTitlePaddingLeft: '20px',
+    })
+    expect(left.marginTop).toBe('15px')
+    expect(left.marginLeft).toBe('15px')
+    expect(right.marginRight).toBe('15px')
+  })
+
+  it('px이 아니거나 5px보다 작은 값은 0 아래로 내리지 않는다', () => {
+    const { left } = titleRow({ headerTitlePaddingTop: '2px', headerTitlePaddingLeft: '1em' })
+    expect(left.marginTop).toBe('0px')
+    expect(left.marginLeft).toBe('1em')
+  })
+})
+
+describe('legacyToComposed — 기본 헤더 텍스트 정렬', () => {
+  it('레거시 표의 text-align:center를 이어받아 가운데 정렬로 온다', () => {
+    const c = convertLegacyToComposed('ModuleBasicHeader', {
+      logoImageUrl: 'https://example.com/logo.png',
+      headerText: '<p style="margin:0; padding:0;">NEWSLETTER <strong>VOL.1</strong></p>',
+    })!
+    const text = c.specs.find((s) => String(s.properties.descriptionText).includes('NEWSLETTER'))!
+    expect(text.properties.textAlign).toBe('center')
+  })
+})
+
+describe('legacyToComposed — 이미지형 헤더 타이틀 굵기', () => {
+  it('리치 텍스트 타이틀도 레거시 컨테이너의 굵기(700)를 유지한다', () => {
+    const rich =
+      '<p style="margin: 0; padding: 0;"><span style="color: var(--point-color, #4161af);">📢 ISSA SHOW ASIA 2026</span></p>'
+    const c = convertLegacyToComposed('ModuleImageHeader', {
+      imageUrl: 'https://example.com/main.jpg',
+      showTitle: true,
+      titleText: rich,
+    })!
+    const title = c.specs.find((s) => String(s.properties.descriptionText).includes('ISSA SHOW'))!
+    expect(title.properties.descriptionText).toBe(`<div style="font-weight:700;">${rich}</div>`)
+  })
+
+  it('본문(굵기 없음)은 감싸지 않는다', () => {
+    const rich = '<p style="margin: 0; padding: 0;">본문입니다</p>'
+    const c = convertLegacyToComposed('ModuleImageHeader', {
+      imageUrl: 'https://example.com/main.jpg',
+      showTitle: false,
+      showBody: true,
+      bodyText: rich,
+    })!
+    const body = c.specs.find((s) => String(s.properties.descriptionText).includes('본문입니다'))!
+    expect(body.properties.descriptionText).toBe(rich)
+  })
+})
+
+describe('legacyToComposed — 로고 최대 너비', () => {
+  const logoOf = (moduleId: string, props: Record<string, unknown>) => {
+    const c = convertLegacyToComposed(moduleId, props)!
+    return c.specs.find((s) => s.id === 'ModuleImg')!.properties
+  }
+
+  it('30%처럼 직접 줄여 둔 값은 그대로 가져오고 원본 크기로 덮지 않는다', () => {
+    const logo = logoOf('ModuleBasicHeader', {
+      logoImageUrl: 'https://example.com/logo.png',
+      logoMaxWidth: '30%',
+    })
+    expect(logo.imageMaxWidth).toBe('30%')
+    expect(logo[FIT_NATURAL_WIDTH_KEY]).toBeUndefined()
+  })
+
+  it('100%는 예전처럼 원본 크기로 채우도록 표식을 남긴다', () => {
+    const logo = logoOf('ModuleBasicHeader', {
+      logoImageUrl: 'https://example.com/logo.png',
+      logoMaxWidth: '100%',
+    })
+    expect(logo[FIT_NATURAL_WIDTH_KEY]).toBe(true)
+  })
+
+  it('뉴스 헤드라인 헤더도 같은 규칙을 따른다', () => {
+    expect(
+      logoOf('ModuleNewsHeader', { logoImageUrl: 'https://example.com/l.png', logoMaxWidth: '50%' })
+        .imageMaxWidth,
+    ).toBe('50%')
+    expect(
+      logoOf('ModuleNewsHeader', { logoImageUrl: 'https://example.com/l.png', logoMaxWidth: '100%' })[
+        FIT_NATURAL_WIDTH_KEY
+      ],
+    ).toBe(true)
+  })
+})
+
+describe('legacyToComposed — 테두리 색 포인트 추종', () => {
+  it('2개 버튼의 테두리 색 추종을 유지한다', () => {
+    const c = convertLegacyToComposed('ModuleTwoButton', {
+      button1Text: '버튼1',
+      button2Text: '버튼2',
+      button2BorderStyle: 'solid',
+      button2BorderColor: '#000000',
+      button2BorderColor__usePoint: true,
+      button2TextColor__usePoint: true,
+    })!
+    const btn2 = c.specs.find((s) => s.properties.buttonText === '버튼2')!
+    expect(btn2.properties.buttonBorderColor__usePoint).toBe(true)
+    expect(btn2.properties.buttonTextColor__usePoint).toBe(true)
+  })
+
+  it('단일 버튼(모듈 05번 큰 버튼 등)도 테두리 색 추종을 유지한다', () => {
+    const c = convertLegacyToComposed('Module02', {
+      imageUrl: 'https://example.com/a.png',
+      showButton: true,
+      buttonText: '버튼',
+      buttonBorderColor: '#000000',
+      buttonBorderColor__usePoint: true,
+      buttonBorderColor__pointIndex: 2,
+    })!
+    const btn = c.specs.find((s) => s.id === 'ModuleOneButton')!
+    expect(btn.properties.buttonBorderColor__usePoint).toBe(true)
+    expect(btn.properties.buttonBorderColor__pointIndex).toBe(2)
+  })
+
+  it('2단 이미지의 테두리 색 추종도 유지한다', () => {
+    const c = convertLegacyToComposed('ModuleMultiImage', {
+      leftImageUrl: 'https://example.com/l.png',
+      rightImageUrl: 'https://example.com/r.png',
+      leftImageBorderColor: '#e1e1e1',
+      leftImageBorderColor__usePoint: true,
+    })!
+    const left = c.specs.find((s) => s.id === 'ModuleImg' && s.col === 0)!
+    expect(left.properties.imageBorderColor__usePoint).toBe(true)
+  })
+})
+
+describe('legacyToComposed — 모듈 07번 컬럼 너비·텍스트 정렬', () => {
+  const base = {
+    imageUrl: 'https://example.com/a.jpg',
+    title: '독립부스',
+    contentText: '<p>3,000,000원</p>',
+  }
+
+  it('좌우 반전형도 너비를 자리(왼쪽/오른쪽) 그대로 쓴다', () => {
+    // 반전형: 왼쪽=텍스트(55) / 오른쪽=이미지(45)
+    const c = convertLegacyToComposed('Module07_reverse', {
+      ...base,
+      leftWidthPercent: '55',
+      rightWidthPercent: '45',
+    })!
+    expect(c.colWidths).toEqual([[55, 45]])
+    // 텍스트가 왼쪽(0번), 이미지가 오른쪽(1번)
+    expect(c.specs.find((s) => s.id === 'ModuleImg')!.col).toBe(1)
+    expect(c.specs.filter((s) => s.id === 'ModuleDescText').every((s) => s.col === 0)).toBe(true)
+  })
+
+  it('기본형 너비도 그대로 쓴다', () => {
+    const c = convertLegacyToComposed('Module07', {
+      ...base,
+      leftWidthPercent: '51',
+      rightWidthPercent: '50',
+    })!
+    expect(c.colWidths).toEqual([[51, 50]])
+    expect(c.specs.find((s) => s.id === 'ModuleImg')!.col).toBe(0)
+  })
+
+  it('정렬 값이 없는 예전 파일은 가운데 정렬로 읽는다 (원본이 td align=center를 물려받았다)', () => {
+    const c = convertLegacyToComposed('Module07_reverse', base)!
+    const texts = c.specs.filter((s) => s.id === 'ModuleDescText')
+    expect(texts).toHaveLength(2)
+    expect(texts.every((s) => s.properties.textAlign === 'center')).toBe(true)
+    expect(String(texts[0].properties.descriptionText)).toContain('text-align:center')
+  })
+
+  it('titleAlign이 있으면 그 값을 쓴다', () => {
+    const c = convertLegacyToComposed('Module07', { ...base, titleAlign: 'right' })!
+    const texts = c.specs.filter((s) => s.id === 'ModuleDescText')
+    expect(texts.every((s) => s.properties.textAlign === 'right')).toBe(true)
+  })
+})
+
+describe('legacyToComposed — 모듈 10번 라벨·시간', () => {
+  const base = {
+    imageUrl: 'https://example.com/a.png',
+    title: '<p>14:00 ~ 14:30</p><p><strong>발표 제목</strong></p>',
+    timeText: '14:00 ~ 14:30',
+  }
+  const textsOf = (c: NonNullable<ReturnType<typeof convertLegacyToComposed>>) =>
+    c.specs.filter((s) => s.id === 'ModuleDescText').map((s) => String(s.properties.descriptionText))
+
+  it('라벨을 껐으면 시간도 내보내지 않는다 (레거시는 시간이 라벨 블록 안에 있다)', () => {
+    const c = convertLegacyToComposed('Module10', { ...base, showLabel: false, showTime: true })!
+    const texts = textsOf(c)
+    // 타이틀 하나만 — 시간 줄이 따로 붙지 않는다(타이틀 본문의 시간과 중복 방지)
+    expect(texts).toHaveLength(1)
+    expect(texts[0]).toContain('14:00 ~ 14:30')
+  })
+
+  it('라벨을 켜면 라벨과 시간이 한 줄로 나온다', () => {
+    const c = convertLegacyToComposed('Module10', {
+      ...base,
+      showLabel: true,
+      labelText: '기조연설',
+      showTime: true,
+    })!
+    const texts = textsOf(c)
+    expect(texts).toHaveLength(2)
+    expect(texts[0]).toContain('기조연설')
+    expect(texts[0]).toContain('14:00 ~ 14:30')
+  })
+
+  it('라벨 스위치가 없으면 라벨 줄을 만들지 않는다 (레거시 프로세서와 동일)', () => {
+    const c = convertLegacyToComposed('Module10', { ...base, showTime: true })!
+    expect(textsOf(c)).toHaveLength(1)
   })
 })

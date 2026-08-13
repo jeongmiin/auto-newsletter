@@ -60,11 +60,38 @@ const offByDefault = (p: Props, key: string): boolean => p[key] === true
  * 포인트 색상 "추종" 메타(`__usePoint`/`__pointIndex`)를 색상 키 이름이 바뀌어도 유지한다.
  * (예: ModuleTwoButton.button1BgColor → ModuleOneButton.buttonBgColor)
  */
+/**
+ * 컬럼 셀이 자동으로 갖는 안쪽 여백(COLUMN_GAP_PX = 5px)만큼 값을 줄인다.
+ *
+ * 레거시에서 2단이 **바깥 td 하나의 padding**으로만 여백을 갖던 행(예: 뉴스 헤드라인 헤더의
+ * 'VOL.1 | 웹으로 보기' 줄)을 그대로 옮기면, v2 컬럼 셀의 5px이 더해져 여백이 넓어진다.
+ * px이 아닌 값(%·em 등)이나 5px 미만은 건드리지 않는다(0 아래로는 내리지 않는다).
+ */
+const COLUMN_CELL_GAP_PX = 5
+const minusColumnGap = (value: string): string => {
+  const m = /^\s*(\d+(?:\.\d+)?)px\s*$/.exec(value)
+  if (!m) return value
+  return `${Math.max(0, Number(m[1]) - COLUMN_CELL_GAP_PX)}px`
+}
+
 const carryPointMeta = (from: Props, fromKey: string, toKey: string, into: Props): void => {
   const use = from[`${fromKey}__usePoint`]
   const idx = from[`${fromKey}__pointIndex`]
   if (use !== undefined) into[`${toKey}__usePoint`] = use
   if (idx !== undefined) into[`${toKey}__pointIndex`] = idx
+}
+
+/**
+ * 위와 같지만 객체 리터럴 안에서 펼쳐 쓰는 형태.
+ * 색상 값만 옮기고 이 메타를 빠뜨리면 "포인트 색상으로 사용"이 풀려서, 변환 뒤에는
+ * 그 자리가 저장된 리터럴 색(예: 회색 기본값)으로 굳어 버린다.
+ *   예) bgColor: s(p, 'rightTitleBgColor', '#e5e5e5'),
+ *       ...pointMeta(p, 'rightTitleBgColor', 'bgColor'),
+ */
+const pointMeta = (from: Props, fromKey: string, toKey: string): Props => {
+  const out: Props = {}
+  carryPointMeta(from, fromKey, toKey, out)
+  return out
 }
 
 /** 이미 블록 태그를 가진 리치 텍스트인지 (Quill 편집 결과는 <p>로 시작한다) */
@@ -79,7 +106,13 @@ const toRich = (
   opt: { lineHeight?: string; bold?: boolean; align?: string } = {},
 ): string => {
   if (!text) return ''
-  if (isRichHtml(text)) return text
+  if (isRichHtml(text)) {
+    // 이미 블록 구조가 있으면 그 구조는 그대로 두고, 레거시 컨테이너가 주던 굵기만
+    // 겉에서 한 겹 감싸 물려준다 — 설명 텍스트 모듈의 td가 font-weight:400을 강제하므로
+    // 감싸지 않으면 레거시에서 굵던 타이틀이 변환 후 보통 굵기로 풀린다.
+    // (안쪽 요소가 자기 굵기를 갖고 있으면 그쪽이 이긴다)
+    return opt.bold ? `<div style="font-weight:700;">${text}</div>` : text
+  }
   const style = [
     'margin:0',
     'padding:0',
@@ -135,6 +168,12 @@ const addPx = (value: string, add: number): string => {
  */
 export const FIT_NATURAL_WIDTH_KEY = '__fitNaturalWidth'
 
+/** '100%'·빈 값처럼 '폭 제한 없음'인지 — 그 외 %(예: 30%)는 사용자가 정한 크기 제한이다 */
+const isFullWidth = (value: string): boolean => {
+  const v = value.trim()
+  return v === '' || /^100(\.0+)?%$/.test(v)
+}
+
 /** 이미지 원소 모듈 속성 (레거시 이미지 필드 → ModuleImg) */
 interface ImageSrc {
   url: string
@@ -149,8 +188,13 @@ interface ImageSrc {
   align?: string
   /** 원본 크기로 그려야 하는 이미지(헤더 로고) */
   fitNatural?: boolean
+  /**
+   * 테두리 색의 원본 속성 키 — 넘기면 '포인트 색상으로 사용' 표식을 함께 옮긴다.
+   * (색상 값만 옮기면 추종이 풀려 저장된 리터럴 색으로 굳는다)
+   */
+  borderColorKey?: string
 }
-const imgProps = (src: ImageSrc, padding: Props): Props => {
+const imgProps = (src: ImageSrc, padding: Props, p?: Props): Props => {
   const radius = src.borderRadius ?? '0px'
   return {
     imageUrl: src.url,
@@ -166,6 +210,7 @@ const imgProps = (src: ImageSrc, padding: Props): Props => {
     imageBorderColor: src.borderColor ?? '#000000',
     ...padding,
     ...(src.fitNatural ? { [FIT_NATURAL_WIDTH_KEY]: true } : {}),
+    ...(p && src.borderColorKey ? pointMeta(p, src.borderColorKey, 'imageBorderColor') : {}),
   }
 }
 
@@ -271,6 +316,7 @@ const bigButtonProps = (
   }
   carryPointMeta(p, keys.bg, 'buttonBgColor', out)
   carryPointMeta(p, keys.fg, 'buttonTextColor', out)
+  carryPointMeta(p, keys.borderColor, 'buttonBorderColor', out)
   return out
 }
 
@@ -310,6 +356,7 @@ const convertModule01 = (p: Props): ComposedConversion => {
           fontSize: s(p, 'contentTextFontSize', '14px'),
           textColor: '#333333',
           bgColor: s(p, 'bgColor', '#f5f5f5'),
+          ...pointMeta(p, 'bgColor', 'bgColor'),
           textAlign: s(p, 'textAlign', 'left'),
           descriptionText: titleHtml + (isRichHtml(body) ? body : toRich(body)),
           ...pad('15px', '20px', '15px', '20px'),
@@ -356,7 +403,9 @@ const convertModule12 = (p: Props): ComposedConversion => {
         properties: {
           fontSize: s(p, 'textFontSize', '14px'),
           textColor: s(p, 'textColor', '#333333'),
+          ...pointMeta(p, 'textColor', 'textColor'),
           bgColor: s(p, 'boxBgColor', '#f5f5f5'),
+          ...pointMeta(p, 'boxBgColor', 'bgColor'),
           textAlign: s(p, 'textAlign', 'center'),
           descriptionText:
             titleHtml + toRich(s(p, 'contentText'), { lineHeight: s(p, 'textLineHeight', '1.7') }),
@@ -366,6 +415,7 @@ const convertModule12 = (p: Props): ComposedConversion => {
           borderStyle: 'solid',
           borderWidth,
           borderColor: s(p, 'boxBorderColor', '#dddddd'),
+          ...pointMeta(p, 'boxBorderColor', 'borderColor'),
           ...pad('15px', '20px', '15px', '20px'),
           ...outerMargin(
             s(p, 'paddingTop', '0px'),
@@ -391,7 +441,9 @@ const convertModule011 = (p: Props): ComposedConversion => {
       properties: {
         fontSize: s(p, `${prefix}TitleFontSize`, '16px'),
         textColor: s(p, 'titleTextColor', '#111111'),
+        ...pointMeta(p, 'titleTextColor', 'textColor'),
         bgColor: s(p, 'titleBgColor', '#e5e5e5'),
+        ...pointMeta(p, 'titleBgColor', 'bgColor'),
         textAlign: 'center',
         descriptionText: toRich(s(p, `${prefix}Title`), {
           lineHeight: s(p, `${prefix}TitleLineHeight`, '1.7'),
@@ -409,7 +461,9 @@ const convertModule011 = (p: Props): ComposedConversion => {
       properties: {
         fontSize: s(p, `${prefix}ContentFontSize`, '14px'),
         textColor: s(p, 'contentTextColor', '#333333'),
+        ...pointMeta(p, 'contentTextColor', 'textColor'),
         bgColor: s(p, 'contentBgColor', '#f3f3f3'),
+        ...pointMeta(p, 'contentBgColor', 'bgColor'),
         textAlign: 'center',
         descriptionText: s(p, `${prefix}Content`),
         ...pad('10px', '10px', '10px', '10px'),
@@ -526,8 +580,10 @@ const convertModule04 = (p: Props): ComposedConversion => {
           borderStyle: s(p, `${prefix}ImageBorderStyle`, 'none'),
           borderWidth: s(p, `${prefix}ImageBorderWidth`, '1px'),
           borderColor: s(p, `${prefix}ImageBorderColor`, '#000000'),
+          borderColorKey: `${prefix}ImageBorderColor`,
         },
         pad('0px', '0px', '0px', '0px'),
+        p,
       ),
     })
     if (onByDefault(p, `show${cap}Title`)) {
@@ -689,7 +745,9 @@ const convertModule051 = (p: Props): ComposedConversion => {
       properties: {
         fontSize: s(p, 'boxTitleFontSize', '16px'),
         textColor: s(p, 'boxColor', '#111111'),
+        ...pointMeta(p, 'boxColor', 'textColor'),
         bgColor: s(p, 'boxBgColor', '#e5e5e5'),
+        ...pointMeta(p, 'boxBgColor', 'bgColor'),
         descriptionText: toRich(s(p, 'boxTitle'), {
           lineHeight: s(p, 'boxTitleLineHeight', '1.7'),
           bold: true,
@@ -748,7 +806,9 @@ const convertModule053 = (p: Props): ComposedConversion => {
       properties: {
         fontSize: s(p, 'topSectionTitleFontSize', '16px'),
         textColor: s(p, 'topSectionTitleTextColor', '#111111'),
+        ...pointMeta(p, 'topSectionTitleTextColor', 'textColor'),
         bgColor: s(p, 'topSectionTitleBgColor', '#e5e5e5'),
+        ...pointMeta(p, 'topSectionTitleBgColor', 'bgColor'),
         descriptionText: toRich(s(p, 'topSectionTitle'), {
           lineHeight: s(p, 'topSectionTitleLineHeight', '1.7'),
           bold: true,
@@ -797,6 +857,10 @@ const convertModule053 = (p: Props): ComposedConversion => {
         fontSize: s(p, 'topRightTitle1FontSize', '14px'),
         textColor: emphasis ? s(p, 'rightTitleTextColor', '#111111') : '#111111',
         bgColor: emphasis ? s(p, 'rightTitleBgColor', '#e5e5e5') : 'transparent',
+        // 강조(배경 박스)일 때만 포인트 색상 추종을 넘긴다 —
+        // 강조가 꺼진 자리에 메타만 남기면 투명이어야 할 배경이 포인트 색으로 칠해진다
+        ...(emphasis ? pointMeta(p, 'rightTitleTextColor', 'textColor') : {}),
+        ...(emphasis ? pointMeta(p, 'rightTitleBgColor', 'bgColor') : {}),
         descriptionText: toRich(s(p, 'topRightTitle1'), {
           lineHeight: s(p, 'topRightTitle1LineHeight', '1.7'),
           bold: true,
@@ -880,6 +944,8 @@ const convertModule06 = (p: Props): ComposedConversion => {
         fontSize: s(p, `${prefix}TitleFontSize`, '16px'),
         textColor: s(p, `${prefix}TitleColor`, '#111111'),
         bgColor: s(p, `${prefix}TitleBgColor`, '#e5e5e5'),
+        ...pointMeta(p, `${prefix}TitleColor`, 'textColor'),
+        ...pointMeta(p, `${prefix}TitleBgColor`, 'bgColor'),
         textAlign: 'center',
         descriptionText: toRich(s(p, `${prefix}Title`), {
           lineHeight: s(p, `${prefix}TitleLineHeight`, '1.7'),
@@ -946,6 +1012,10 @@ const convertModule06 = (p: Props): ComposedConversion => {
 const convertModule07 = (p: Props, reverse: boolean): ComposedConversion => {
   const imgCol = reverse ? 1 : 0
   const txtCol = reverse ? 0 : 1
+  // 텍스트 칸 정렬 — 예전 파일에는 titleAlign이 아예 없다. 그 시절 렌더는 바깥 td의
+  // align="center"를 물려받아 텍스트 칸이 통째로 가운데였다(치환되지 않은 {{titleAlign}}도
+  // 결국 상속으로 같은 결과). 그래서 값이 없으면 'left'가 아니라 'center'가 원본에 맞다.
+  const textAlign = s(p, 'titleAlign') || 'center'
   const specs: ComposedElementSpec[] = [
     {
       id: 'ModuleImg',
@@ -969,11 +1039,13 @@ const convertModule07 = (p: Props, reverse: boolean): ComposedConversion => {
       properties: {
         fontSize: s(p, 'titleFontSize', '18px'),
         textColor: s(p, 'titleTextColor', '#111111'),
+        ...pointMeta(p, 'titleTextColor', 'textColor'),
         bgColor: s(p, 'titleBgColor', 'transparent'),
-        textAlign: s(p, 'titleAlign', 'left'),
+        ...pointMeta(p, 'titleBgColor', 'bgColor'),
+        textAlign,
         showBorderRadius: !isZeroLength(s(p, 'titleBorderRadius', '0px')),
         borderRadius: s(p, 'titleBorderRadius', '0px'),
-        descriptionText: `<p style="margin:0; padding:0; line-height:${s(p, 'titleLineHeight', '1.7')}; text-align:${s(p, 'titleAlign', 'left')};"><span style="font-weight:${s(p, 'titleFontWeight', '700')};">${s(p, 'title')}</span></p>`,
+        descriptionText: `<p style="margin:0; padding:0; line-height:${s(p, 'titleLineHeight', '1.7')}; text-align:${textAlign};"><span style="font-weight:${s(p, 'titleFontWeight', '700')};">${s(p, 'title')}</span></p>`,
         ...pad('5px', '10px', '5px', '10px'),
         ...outerMargin(
           s(p, 'textAreaPaddingTop', '25px'),
@@ -990,7 +1062,10 @@ const convertModule07 = (p: Props, reverse: boolean): ComposedConversion => {
       properties: {
         fontSize: s(p, 'contentTextFontSize', '14px'),
         textColor: s(p, 'contentTextColor', '#333333'),
+        ...pointMeta(p, 'contentTextColor', 'textColor'),
         bgColor: s(p, 'contentBgColor', 'transparent'),
+        ...pointMeta(p, 'contentBgColor', 'bgColor'),
+        textAlign,
         showBorderRadius: !isZeroLength(s(p, 'contentBorderRadius', '0px')),
         borderRadius: s(p, 'contentBorderRadius', '0px'),
         descriptionText: s(p, 'contentText'),
@@ -1012,7 +1087,9 @@ const convertModule07 = (p: Props, reverse: boolean): ComposedConversion => {
           text: s(p, 'buttonText', '더보기 →'),
           url: s(p, 'buttonUrl', '#'),
           bgColor: s(p, 'buttonBgColor', '#e5e5e5'),
+          ...pointMeta(p, 'buttonBgColor', 'bgColor'),
           textColor: s(p, 'buttonTextColor', '#333333'),
+          ...pointMeta(p, 'buttonTextColor', 'textColor'),
           bgKey: 'buttonBgColor',
         },
       ],
@@ -1025,12 +1102,14 @@ const convertModule07 = (p: Props, reverse: boolean): ComposedConversion => {
     )
     if (smallProps) specs.push({ id: 'ModuleSmallButton', row: 0, col: txtCol, properties: smallProps })
   }
-  const widths = twoColWidths(p)
   return {
     name: reverse ? '모듈 07번(좌우 반전)' : '모듈 07번',
     specs,
     groupStyles: { paddingLeft: '15px', paddingRight: '15px' },
-    colWidths: [reverse ? [widths[1], widths[0]] : widths],
+    // ⚠ 뒤집지 않는다. leftWidthPercent/rightWidthPercent는 **자리(왼쪽/오른쪽) 기준**이라
+    // 좌우 반전이어도 그대로다 — 반전형은 라벨만 '왼쪽(텍스트)/오른쪽(이미지)'로 바뀐다.
+    // (뒤집으면 55:45로 넣은 텍스트 칸이 45%로 들어와 비율이 반대가 된다)
+    colWidths: [twoColWidths(p)],
   }
 }
 
@@ -1054,13 +1133,19 @@ const convertModule10 = (p: Props): ComposedConversion => {
       ),
     })
   }
-  // 라벨(배지) + 시간을 한 줄로 — 레거시 인라인 마크업을 그대로 옮긴다
-  const labelHtml = onByDefault(p, 'showLabel')
+  // 라벨(배지) + 시간을 한 줄로 — 레거시 인라인 마크업을 그대로 옮긴다.
+  // ⚠ 레거시 템플릿에서 **시간은 라벨 블록 안에 있다.** 라벨을 끄면 프로세서
+  // (module10LabelProcessor)가 블록째 지워 시간도 같이 사라진다 — 그 동작을 그대로 따른다.
+  // 안 그러면 시간을 타이틀 본문에도 적어 둔 파일에서 같은 시간이 두 번 나온다.
+  // 라벨 노출 기준도 프로세서와 같게 '명시적 true일 때만'으로 맞춘다.
+  const showLabel = offByDefault(p, 'showLabel')
+  const labelHtml = showLabel
     ? `<span style="display:inline-block; background-color:${s(p, 'labelBgColor', '#333333')}; border-radius:30px; padding:5px 20px; color:${s(p, 'labelTextColor', '#ffffff')}; font-size:${s(p, 'labelTextFontSize', '13px')}; line-height:1.5em; font-weight:700;">${s(p, 'labelText')}</span>`
     : ''
-  const timeHtml = offByDefault(p, 'showTime')
-    ? `<span style="display:inline-block; margin:5px; color:${s(p, 'timeTextColor', '#666666')}; font-size:${s(p, 'timeTextFontSize', '13px')}; line-height:1.5em; font-weight:600;">${s(p, 'timeText')}</span>`
-    : ''
+  const timeHtml =
+    showLabel && offByDefault(p, 'showTime')
+      ? `<span style="display:inline-block; margin:5px; color:${s(p, 'timeTextColor', '#666666')}; font-size:${s(p, 'timeTextFontSize', '13px')}; line-height:1.5em; font-weight:600;">${s(p, 'timeText')}</span>`
+      : ''
   if (labelHtml || timeHtml) {
     specs.push({
       id: 'ModuleDescText',
@@ -1118,7 +1203,8 @@ const convertModule101 = (p: Props): ComposedConversion => {
         pad('5px', '5px', '5px', '5px'),
       ),
     })
-    if (onByDefault(p, `show${cap}Label`)) {
+    // 라벨 노출 기준은 레거시 프로세서(module101LabelProcessor)와 같게 '명시적 true일 때만'
+    if (offByDefault(p, `show${cap}Label`)) {
       specs.push({
         id: 'ModuleDescText',
         row: 0,
@@ -1156,11 +1242,12 @@ const convertModule101 = (p: Props): ComposedConversion => {
 const convertNewsHeader = (p: Props): ComposedConversion => {
   const warnings: string[] = []
   const logoMaxWidth = s(p, 'logoMaxWidth', '100%')
-  // 최대 너비가 %면 레거시에서는 '원본 크기'로 그려졌다 → 열 때 실제 크기를 재 px로 채운다
-  const fitNatural = logoMaxWidth.endsWith('%')
+  // 최대 너비가 100%면 레거시에서는 사실상 '원본 크기'로 그려졌다 → 열 때 실제 크기를 재 px로 채운다.
+  // 100%가 아닌 %(예: 30%)는 사용자가 직접 줄여 둔 크기 제한이므로 그 값을 그대로 살린다.
+  const fitNatural = isFullWidth(logoMaxWidth)
   if (s(p, 'tableSummary')) {
     warnings.push(
-      '뉴스 헤드라인 헤더: 화면 낭독기용 표 설명(summary)은 새 편집 방식에 해당 설정이 없어 빠집니다.',
+      '뉴스 헤드라인 헤더: 화면 낭독기용 표 설명(summary)은 전체 스타일의 뉴스레터 요약으로 옮겨집니다(요약이 비어 있을 때만).',
     )
   }
   const specs: ComposedElementSpec[] = []
@@ -1189,6 +1276,7 @@ const convertNewsHeader = (p: Props): ComposedConversion => {
       borderWidth: s(p, 'logoBorderWidth', '5px'),
       borderStyle: 'solid',
       borderColor: s(p, 'logoBorderColor', '#000000'),
+      ...pointMeta(p, 'logoBorderColor', 'borderColor'),
       dividerWidth: '100%',
       ...pad('0px', '0px', '0px', '0px'),
     },
@@ -1200,14 +1288,16 @@ const convertNewsHeader = (p: Props): ComposedConversion => {
     properties: {
       fontSize: s(p, 'headerTitleFontSize', '16px'),
       textColor: s(p, 'titleColor', '#333333'),
+      ...pointMeta(p, 'titleColor', 'textColor'),
       textAlign: 'left',
       descriptionText: `<p style="margin:0; padding:0; line-height:1.7;"><span style="font-weight:600;">${s(p, 'headerTitle')}</span></p>`,
       ...pad('0px', '0px', '0px', '0px'),
+      // 레거시는 두 칸을 감싼 td 하나에만 여백이 있었다 → 컬럼 셀이 갖는 5px을 빼야 폭이 같아진다
       ...outerMargin(
-        s(p, 'headerTitlePaddingTop', '5px'),
+        minusColumnGap(s(p, 'headerTitlePaddingTop', '5px')),
         '0px',
-        s(p, 'headerTitlePaddingBottom', '10px'),
-        s(p, 'headerTitlePaddingLeft', '20px'),
+        minusColumnGap(s(p, 'headerTitlePaddingBottom', '10px')),
+        minusColumnGap(s(p, 'headerTitlePaddingLeft', '20px')),
       ),
     },
   })
@@ -1218,13 +1308,14 @@ const convertNewsHeader = (p: Props): ComposedConversion => {
     properties: {
       fontSize: s(p, 'webViewFontSize', '16px'),
       textColor: s(p, 'webViewColor', '#333333'),
+      ...pointMeta(p, 'webViewColor', 'textColor'),
       textAlign: 'right',
       descriptionText: `<p style="margin:0; padding:0; line-height:1.7em; text-align:right;"><a href="${s(p, 'webViewUrl', '#')}" target="_blank" style="text-decoration:none; color:${s(p, 'webViewColor', '#333333')};">${s(p, 'webViewText', '👀 웹으로 보기')}</a></p>`,
       ...pad('0px', '0px', '0px', '0px'),
       ...outerMargin(
-        s(p, 'headerTitlePaddingTop', '5px'),
-        s(p, 'headerTitlePaddingRight', '20px'),
-        s(p, 'headerTitlePaddingBottom', '10px'),
+        minusColumnGap(s(p, 'headerTitlePaddingTop', '5px')),
+        minusColumnGap(s(p, 'headerTitlePaddingRight', '20px')),
+        minusColumnGap(s(p, 'headerTitlePaddingBottom', '10px')),
         '0px',
       ),
     },
@@ -1249,11 +1340,12 @@ const convertNewsHeader = (p: Props): ComposedConversion => {
 const convertBasicHeader = (p: Props): ComposedConversion => {
   const warnings: string[] = []
   const logoMaxWidth = s(p, 'logoMaxWidth', '100%')
-  // 최대 너비가 %면 레거시에서는 '원본 크기'로 그려졌다 → 열 때 실제 크기를 재 px로 채운다
-  const fitNatural = logoMaxWidth.endsWith('%')
+  // 최대 너비가 100%면 레거시에서는 사실상 '원본 크기'로 그려졌다 → 열 때 실제 크기를 재 px로 채운다.
+  // 100%가 아닌 %(예: 30%)는 사용자가 직접 줄여 둔 크기 제한이므로 그 값을 그대로 살린다.
+  const fitNatural = isFullWidth(logoMaxWidth)
   if (s(p, 'tableSummary')) {
     warnings.push(
-      '기본 헤더: 화면 낭독기용 표 설명(summary)은 새 편집 방식에 해당 설정이 없어 빠집니다.',
+      '기본 헤더: 화면 낭독기용 표 설명(summary)은 전체 스타일의 뉴스레터 요약으로 옮겨집니다(요약이 비어 있을 때만).',
     )
   }
   // 그룹 스타일(테두리·좌우 여백)을 쓰지 않고 전부 원소 모듈 속성으로 푼다 —
@@ -1272,6 +1364,7 @@ const convertBasicHeader = (p: Props): ComposedConversion => {
         borderWidth: topBorderWidth,
         borderStyle: 'solid',
         borderColor: s(p, 'topBorderColor', '#000000'),
+        ...pointMeta(p, 'topBorderColor', 'borderColor'),
         dividerWidth: '100%',
         ...pad('0px', '0px', '0px', '0px'),
       },
@@ -1310,6 +1403,7 @@ const convertBasicHeader = (p: Props): ComposedConversion => {
           borderWidth: s(p, 'logoBorderWidth', '1px'),
           borderStyle: 'solid',
           borderColor: s(p, 'logoBorderColor', '#dddddd'),
+          ...pointMeta(p, 'logoBorderColor', 'borderColor'),
           dividerWidth: '100%',
           ...pad('0px', '20px', '0px', '20px'),
         },
@@ -1321,6 +1415,10 @@ const convertBasicHeader = (p: Props): ComposedConversion => {
         properties: {
           fontSize: s(p, 'headerFontSize', '20px'),
           textColor: s(p, 'headerTextColor', '#111111'),
+          ...pointMeta(p, 'headerTextColor', 'textColor'),
+          // 레거시 기본 헤더는 표 전체에 text-align:center가 걸려 있어 이 텍스트도 가운데였다
+          // (문단에 자기 정렬이 있으면 그쪽이 이긴다)
+          textAlign: 'center',
           descriptionText: s(p, 'headerText'),
           ...pad('0px', '0px', '0px', '0px'),
           ...outerMargin(
@@ -1341,7 +1439,7 @@ const convertImageHeader = (p: Props): ComposedConversion => {
   const warnings: string[] = []
   if (s(p, 'tableSummary')) {
     warnings.push(
-      '이미지형 헤더: 화면 낭독기용 표 설명(summary)은 새 편집 방식에 해당 설정이 없어 빠집니다.',
+      '이미지형 헤더: 화면 낭독기용 표 설명(summary)은 전체 스타일의 뉴스레터 요약으로 옮겨집니다(요약이 비어 있을 때만).',
     )
   }
   specs.push({
@@ -1387,6 +1485,7 @@ const convertImageHeader = (p: Props): ComposedConversion => {
       properties: {
         fontSize: s(p, 'volFontSize', '15px'),
         textColor: s(p, 'volColor', '#333333'),
+        ...pointMeta(p, 'volColor', 'textColor'),
         textAlign: 'center',
         descriptionText: lines.join(''),
         ...pad('20px', '0px', '20px', '0px'),
@@ -1402,6 +1501,7 @@ const convertImageHeader = (p: Props): ComposedConversion => {
       borderWidth: s(p, 'dividerWidth', '1px'),
       borderStyle: s(p, 'dividerStyle', 'dotted'),
       borderColor: s(p, 'dividerColor', '#999999'),
+      ...pointMeta(p, 'dividerColor', 'borderColor'),
       dividerWidth: '100%',
       ...pad(
         s(p, 'dividerPaddingTop', '0px'),
@@ -1419,6 +1519,7 @@ const convertImageHeader = (p: Props): ComposedConversion => {
       properties: {
         fontSize: s(p, 'titleFontSize', '20px'),
         textColor: s(p, 'titleColor', '#111111'),
+        ...pointMeta(p, 'titleColor', 'textColor'),
         descriptionText: toRich(s(p, 'titleText'), { lineHeight: '1.5em', bold: true }),
         ...pad('0px', '20px', '0px', '20px'),
         ...outerMargin('0px', '0px', '0px', '0px'),
@@ -1433,6 +1534,7 @@ const convertImageHeader = (p: Props): ComposedConversion => {
       properties: {
         fontSize: s(p, 'bodyFontSize', '14px'),
         textColor: s(p, 'bodyColor', '#333333'),
+        ...pointMeta(p, 'bodyColor', 'textColor'),
         descriptionText: toRich(s(p, 'bodyText'), { lineHeight: '1.7em' }),
         ...pad('20px', '20px', '20px', '20px'),
         ...outerMargin('0px', '0px', '0px', '0px'),
@@ -1486,12 +1588,26 @@ const weightedTextHtml = (
   lineHeight?: string,
 ): string => {
   if (!text) return ''
-  if (isRichHtml(text)) return text
+  if (isRichHtml(text)) {
+    // 이미 블록 구조를 가진 리치 텍스트는 그 구조를 건드리지 않는다.
+    // 다만 굵기는 겉에서 한 겹 감싸 물려준다 — 설명 텍스트 모듈의 td가 font-weight:400을
+    // 강제하므로, 감싸지 않으면 레거시에서 굵던 제목이 변환 후 보통 굵기로 풀린다.
+    // (안쪽 요소가 자기 font-weight를 갖고 있으면 그쪽이 그대로 이긴다)
+    return isBoldWeight(weight) ? `<div style="font-weight:${weight};">${text}</div>` : text
+  }
   const lh = lineHeight ? ` line-height:${lineHeight};` : ''
   return (
     `<p style="margin:0; padding:0;${lh}">` +
     `<span style="font-size:${fontSize}; font-weight:${weight};">${text}</span></p>`
   )
+}
+
+/** 기본 굵기(400/normal)보다 굵은 값인지 — 기본값이면 감쌀 필요가 없다 */
+const isBoldWeight = (weight: string): boolean => {
+  const w = (weight || '').trim().toLowerCase()
+  if (!w || w === 'normal' || w === '400') return false
+  const n = Number(w)
+  return Number.isFinite(n) ? n > 400 : true
 }
 
 /**
@@ -1519,6 +1635,7 @@ const convertSectionTitle = (p: Props): ComposedConversion => {
         borderWidth,
         borderStyle: 'solid',
         borderColor: s(p, 'topBorderColor', '#333333'),
+        ...pointMeta(p, 'topBorderColor', 'borderColor'),
         dividerWidth: '100%',
         ...pad('0px', '0px', '0px', '0px'),
       },
@@ -1560,6 +1677,7 @@ const convertSectionTitle = (p: Props): ComposedConversion => {
       properties: {
         fontSize,
         textColor: s(p, 'mainTitleColor', '#111111'),
+        ...pointMeta(p, 'mainTitleColor', 'textColor'),
         descriptionText: weightedTextHtml(
           s(p, 'mainTitle'),
           fontSize,
@@ -1629,8 +1747,10 @@ const convertMultiImage = (p: Props): ComposedConversion => ({
           borderStyle: s(p, `${prefix}ImageBorderStyle`, 'none'),
           borderWidth: s(p, `${prefix}ImageBorderWidth`, '1px'),
           borderColor: s(p, `${prefix}ImageBorderColor`, '#000000'),
+          borderColorKey: `${prefix}ImageBorderColor`,
         },
         pad('0px', '0px', '0px', '0px'),
+        p,
       ),
     }
   }),
@@ -1661,6 +1781,7 @@ const convertTwoButton = (p: Props): ComposedConversion => {
     }
     carryPointMeta(p, `button${n}BgColor`, 'buttonBgColor', props)
     carryPointMeta(p, `button${n}TextColor`, 'buttonTextColor', props)
+    carryPointMeta(p, `button${n}BorderColor`, 'buttonBorderColor', props)
     return { id: 'ModuleOneButton', row: 0, col, properties: props }
   })
   return {
@@ -1763,30 +1884,47 @@ const convertFooter = (p: Props): ComposedConversion => {
     col: 0,
     properties: {
       snsIconBgColor: s(p, 'snsIconBgColor', '#333333'),
+      ...pointMeta(p, 'snsIconBgColor', 'snsIconBgColor'),
       snsAlign: 'center',
       snsIcons: snsIconsFromLegacy(p),
       ...pad('0px', '5px', '15px', '5px'),
     },
   })
+  // 안내문구 — 저장 파일에 직접 쓴 문구(koreanNoticeText·englishNoticeText)가 있으면 그걸 그대로 쓴다.
+  // 뉴스레터마다 문장·수신거부 링크·문의 메일이 다르고, 그 값은 이 속성 안에만 들어 있다
+  // (unsubscribeUrl·inquiryEmail은 문구를 직접 쓰기 시작한 뒤로 저장되지 않는 파일이 많다).
+  // 그런 속성이 없는 더 옛날 파일만 예전 기본 문장으로 되살린다.
+  const asBlock = (html: string): string =>
+    isRichHtml(html) ? html : `<p style="margin:0; padding:0; line-height:1.7em;">${html}</p>`
   const guide: string[] = []
   if (onByDefault(p, 'showKoreanFooter')) {
-    guide.push(
-      '<p style="margin:0; padding:0; line-height:1.7em;">본 메일은 회원님의 수신동의 여부를 확인한 결과 회원님께서 수신동의를 하셨기에 발송되었습니다.</p>',
-      `<p style="margin:0; padding:0; line-height:1.7em;">메일 수신을 원치 않으시면 <a href="${unsubscribeUrl}" target="_blank" style="text-decoration:none; color:${textColor}; font-weight:700;">[수신거부]</a> 를 클릭하십시오.</p>`,
-    )
-    if (onByDefault(p, 'showInquiry')) {
+    const saved = s(p, 'koreanNoticeText')
+    if (saved) {
+      guide.push(asBlock(saved))
+    } else {
       guide.push(
-        `<p style="margin:0; padding:0; line-height:1.7em;">본 메일은 발신전용 메일이므로 문의사항은 <strong>${inquiryEmail}</strong>으로 문의 바랍니다</p>`,
+        '<p style="margin:0; padding:0; line-height:1.7em;">본 메일은 회원님의 수신동의 여부를 확인한 결과 회원님께서 수신동의를 하셨기에 발송되었습니다.</p>',
+        `<p style="margin:0; padding:0; line-height:1.7em;">메일 수신을 원치 않으시면 <a href="${unsubscribeUrl}" target="_blank" style="text-decoration:none; color:${textColor}; font-weight:700;">[수신거부]</a> 를 클릭하십시오.</p>`,
       )
+      if (onByDefault(p, 'showInquiry')) {
+        guide.push(
+          `<p style="margin:0; padding:0; line-height:1.7em;">본 메일은 발신전용 메일이므로 문의사항은 <strong>${inquiryEmail}</strong>으로 문의 바랍니다</p>`,
+        )
+      }
     }
   }
   if (offByDefault(p, 'showEnglishFooter')) {
-    guide.push(
-      `<p style="margin:0; padding:0; line-height:1.7em;">&nbsp;</p>`,
-      `<p style="margin:0; padding:0; line-height:1.7em;">If you don't want this type of information or e-mail, please click the <a href="${unsubscribeUrl}" target="_blank" style="text-decoration:none; color:${textColor}; font-weight:700;">[unsubscription]</a></p>`,
-      `<p style="margin:0; padding:0; line-height:1.7em;">Please note that this is a no-reply email. For any inquiries,</p>`,
-      `<p style="margin:0; padding:0; line-height:1.7em;">contact us at ${s(p, 'phone')} or via email at ${inquiryEmail}.</p>`,
-    )
+    const saved = s(p, 'englishNoticeText')
+    guide.push(`<p style="margin:0; padding:0; line-height:1.7em;">&nbsp;</p>`)
+    if (saved) {
+      guide.push(asBlock(saved))
+    } else {
+      guide.push(
+        `<p style="margin:0; padding:0; line-height:1.7em;">If you don't want this type of information or e-mail, please click the <a href="${unsubscribeUrl}" target="_blank" style="text-decoration:none; color:${textColor}; font-weight:700;">[unsubscription]</a></p>`,
+        `<p style="margin:0; padding:0; line-height:1.7em;">Please note that this is a no-reply email. For any inquiries,</p>`,
+        `<p style="margin:0; padding:0; line-height:1.7em;">contact us at ${s(p, 'phone')} or via email at ${inquiryEmail}.</p>`,
+      )
+    }
   }
   if (guide.length > 0) {
     specs.push({

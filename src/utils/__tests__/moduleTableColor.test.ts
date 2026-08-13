@@ -80,3 +80,64 @@ describe('replaceModuleTableContent - 텍스트 셀 HTML 렌더', () => {
     expect(result).toContain('alt="설명"')
   })
 })
+
+describe('replaceModuleTableContent - 옛 셀 내용 형식 안전망', () => {
+  it('마이그레이션을 거치지 않은 **굵게**·\n도 렌더 시점에 변환한다', () => {
+    const cells = [[makeCell({ content: '**주의**\n둘째 줄' })]]
+    const result = replaceModuleTableContent(TEMPLATE, { tableCells: cells })
+    expect(result).toContain('<strong style="font-weight:700;">주의</strong><br>둘째 줄')
+  })
+
+  it('리치 HTML 셀은 그대로 내보낸다', () => {
+    const cells = [[makeCell({ content: '<p>이미 <strong>서식</strong>이 있다</p>' })]]
+    const result = replaceModuleTableContent(TEMPLATE, { tableCells: cells })
+    expect(result).toContain('<p>이미 <strong>서식</strong>이 있다</p>')
+  })
+})
+
+describe('replaceModuleTableContent - 옛 이미지 셀 안전망', () => {
+  it('contentType 없이 imageUrl만 있어도 이미지로 렌더한다', () => {
+    const cells = [[makeCell({ content: '내용', imageUrl: 'https://example.com/a.png' })]]
+    const result = replaceModuleTableContent(TEMPLATE, { tableCells: cells })
+    expect(result).toContain('<img src="https://example.com/a.png"')
+    expect(result).toContain('padding:0')
+    expect(result).not.toContain('>내용<')
+  })
+
+  it('텍스트로 지정한 셀은 옛 imageUrl이 남아 있어도 텍스트로 렌더한다', () => {
+    const cells = [[makeCell({ content: '내용', contentType: 'text', imageUrl: 'https://example.com/a.png' })]]
+    const result = replaceModuleTableContent(TEMPLATE, { tableCells: cells })
+    expect(result).toContain('>내용<')
+    expect(result).not.toContain('<img')
+  })
+})
+
+describe('replaceModuleTableContent - 타입(제목/내용) 공통 정렬', () => {
+  it('직접 고른 공통 정렬이 레거시 열 공통 정렬을 이긴다', () => {
+    const cells = [[makeCell({ type: 'th', content: '제목' }), makeCell({ type: 'td', content: '내용' })]]
+    const result = replaceModuleTableContent(TEMPLATE, {
+      tableCells: cells,
+      tableColAligns: ['center', 'center'],
+      headerAlign: 'right',
+    })
+    // 제목: 직접 고른 right, 내용: 아직 안 골랐으므로 레거시 열 공통 center 유지
+    expect(result).toContain('text-align:right')
+    expect(result).toContain('text-align:center')
+    expect(result).not.toContain('text-align:left')
+  })
+
+  it('공통 정렬을 고르지 않았으면 레거시 열 공통 정렬이 그대로 쓰인다', () => {
+    const cells = [[makeCell({ type: 'td', content: '내용' })]]
+    const result = replaceModuleTableContent(TEMPLATE, {
+      tableCells: cells,
+      tableColAligns: ['right'],
+    })
+    expect(result).toContain('text-align:right')
+  })
+
+  it('셀별 지정은 공통 정렬보다 우선한다', () => {
+    const cells = [[makeCell({ type: 'td', content: '내용', align: 'center' })]]
+    const result = replaceModuleTableContent(TEMPLATE, { tableCells: cells, cellAlign: 'right' })
+    expect(result).toContain('text-align:center')
+  })
+})

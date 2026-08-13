@@ -909,9 +909,9 @@
                 :key="opt.value"
                 type="button"
                 class="align-seg-btn"
-                :class="{ 'is-active': String(selectedModule.properties[prop.key] || 'center') === opt.value }"
+                :class="{ 'is-active': alignValueOf(prop) === opt.value }"
                 :disabled="alignDisabledByFullWidth"
-                @click="updateProperty(prop.key, opt.value)"
+                @click="onAlignSegmentPick(prop, opt.value)"
               >
                 <span class="material-symbols-outlined">{{ opt.icon }}</span>
                 {{ opt.label }}
@@ -2541,6 +2541,24 @@ const isAlignSegment = (prop: EditableProp): boolean => {
   const vals = prop.options.map((o) => o.value)
   return vals.includes('left') && vals.includes('center') && vals.includes('right')
 }
+/** 세그먼트에서 활성으로 보일 값 — 저장값이 없으면 그 속성의 기본값(제목 center / 내용 left 등) */
+const alignValueOf = (prop: EditableProp): string =>
+  String(selectedModule.value?.properties[prop.key] || prop.default || 'center')
+
+/**
+ * 표의 '텍스트 정렬'(headerAlign/cellAlign)은 타입 공통값이라, 셀에 남아 있는 개별 정렬을
+ * 함께 지워야 말 그대로 공통으로 적용된다 → 전용 액션으로 처리. 그 외 정렬은 종전대로.
+ */
+const TABLE_TYPE_ALIGN_KEYS: Record<string, 'th' | 'td'> = { headerAlign: 'th', cellAlign: 'td' }
+const onAlignSegmentPick = (prop: EditableProp, value: string) => {
+  const cellType = TABLE_TYPE_ALIGN_KEYS[prop.key]
+  const id = selectedModule.value?.id
+  if (cellType && id && selectedModule.value?.moduleId === 'ModuleTable') {
+    moduleStore.setTableTypeAlign(id, cellType, value as 'left' | 'center' | 'right')
+    return
+  }
+  updateProperty(prop.key, value)
+}
 
 // ===== 폰트 크기: 모듈 기본값 ↔ 선택 영역 크기 통합 컨트롤 (Figma 640-3689) =====
 // 드래그 선택이 있으면 그 범위의 인라인 크기를, 없으면 모듈 기본값(prop)을 대상으로 한다.
@@ -3795,9 +3813,14 @@ const toggleCellType = (rowIndex: number, colIndex: number) => {
 
 // 셀에 실제 적용되는 정렬 — 렌더러(moduleContentReplacer)와 같은 우선순위여야
 // '개별 스타일'의 활성 표시가 캔버스와 어긋나지 않는다.
-// 셀별 지정 > 열 공통(레거시) > 타입 공통
+// 셀별 지정 > 타입 공통(직접 고른 경우) > 열 공통(레거시) > 타입 기본값
+const isTypeAlignSet = (type: 'th' | 'td'): boolean => {
+  const v = selectedModule.value?.properties[type === 'th' ? 'headerAlign' : 'cellAlign']
+  return v === 'left' || v === 'center' || v === 'right'
+}
 const getCellAlign = (cell: TableCell, colIndex: number): TableCellAlign => {
   if (cell.align) return cell.align
+  if (isTypeAlignSet(cell.type)) return getTypeAlign(cell.type)
   return getColAlign(colIndex) ?? getTypeAlign(cell.type)
 }
 

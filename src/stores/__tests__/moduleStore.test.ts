@@ -484,3 +484,50 @@ describe('moduleStore', () => {
     })
   })
 })
+describe('moduleStore — 표의 타입 공통 정렬', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+    vi.clearAllMocks()
+  })
+
+  /** 셀별 정렬이 박혀 있는 2×2 표를 가진 모듈 하나 */
+  const seedTable = () => {
+    const store = useModuleStore()
+    store.addModule(mockModuleMetadata)
+    const module = store.modules[0]
+    module.properties.tableCells = [
+      [
+        { id: 'a', type: 'th', content: '제목1', colspan: 1, rowspan: 1, align: 'center' },
+        { id: 'b', type: 'td', content: '내용1', colspan: 1, rowspan: 1, align: 'center' },
+      ],
+      [
+        { id: 'c', type: 'th', content: '제목2', colspan: 1, rowspan: 1, align: 'center' },
+        { id: 'd', type: 'td', content: '내용2', colspan: 1, rowspan: 1 },
+      ],
+    ]
+    return { store, moduleId: module.id }
+  }
+  const cellsOf = (store: ReturnType<typeof useModuleStore>) =>
+    (store.modules[0].properties.tableCells as any[][]).flat()
+
+  it('공통 정렬을 고르면 그 타입 셀의 개별 정렬을 지운다', () => {
+    const { store, moduleId } = seedTable()
+
+    store.setTableTypeAlign(moduleId, 'th', 'right')
+
+    expect(store.modules[0].properties.headerAlign).toBe('right')
+    expect(cellsOf(store).filter((c) => c.type === 'th').every((c) => c.align === undefined)).toBe(true)
+    // 다른 타입(내용)의 개별 정렬은 건드리지 않는다
+    expect(cellsOf(store).find((c) => c.id === 'b').align).toBe('center')
+  })
+
+  it('제목/내용 지정을 바꿔도 셀별 정렬을 남기지 않는다(공통값을 따르게)', () => {
+    const { store, moduleId } = seedTable()
+
+    store.toggleCellType(moduleId, 0, 1) // 내용1 → 제목
+
+    const cell = cellsOf(store).find((c) => c.id === 'b')
+    expect(cell.type).toBe('th')
+    expect(cell.align).toBeUndefined()
+  })
+})

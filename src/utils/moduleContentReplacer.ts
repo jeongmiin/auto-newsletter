@@ -5,7 +5,12 @@
 
 import { replaceModuleContent, replaceModuleContentSync } from './moduleContentProcessor'
 import { MODULE_CONFIG_REGISTRY } from './moduleConfigs'
-import { buildCompanyInfoFromLegacy } from './moduleMigrations'
+import {
+  buildCompanyInfoFromLegacy,
+  isLegacyImageCell,
+  isLegacyTableCellText,
+  legacyTableCellToHtml,
+} from './moduleMigrations'
 import { escapeForHtml } from './htmlUtils'
 import type { ProcessorContext } from './moduleContentProcessor'
 
@@ -344,9 +349,12 @@ export function replaceModuleTableContent(
   const cellBgColor = String(properties.cellBgColor || '#ffffff')
   const headerTextColor = String(properties.headerTextColor || '#333333')
   const cellTextColor = String(properties.cellTextColor || '#333333')
-  // 타입(제목/내용) 공통 정렬 — '테이블 스타일' 탭에서 설정한다
+  // 타입(제목/내용) 공통 정렬 — '테이블 스타일' 탭에서 설정한다.
+  // 값이 저장돼 있으면(= 사용자가 직접 고른 것) 레거시 열 공통 정렬보다 우선한다.
   const headerAlign = String(properties.headerAlign || 'center')
   const cellAlign = String(properties.cellAlign || 'left')
+  const headerAlignSet = typeof properties.headerAlign === 'string' && properties.headerAlign !== ''
+  const cellAlignSet = typeof properties.cellAlign === 'string' && properties.cellAlign !== ''
 
   // 바깥 td 여백 (미설정 시: 상/하/좌/우 20px)
   const paddingTop = String(properties.paddingTop ?? '20px')
@@ -405,16 +413,21 @@ export function replaceModuleTableContent(
         const bgColor = cell.bgColor || (cell.type === 'th' ? headerBgColor : cellBgColor)
         const textColor = cell.textColor || (cell.type === 'th' ? headerTextColor : cellTextColor)
         const fontWeight = cell.type === 'th' ? '700' : '400'
-        // 정렬 우선순위: 셀별 지정 > 열 공통(tableColAligns) > 타입 공통 > 하드코딩 기본.
+        // 정렬 우선순위: 셀별 지정 > 타입 공통(사용자가 고른 경우) > 열 공통(레거시) > 기본값.
         // tableColAligns는 열별 정렬 UI가 있던 시절의 값이라 새 테이블에는 더 이상 채우지
-        // 않는다. 이미 그 값을 가진 기존 템플릿·저장 파일은 예전 그대로 보이게 남겨 둔다.
-        const textAlign =
-          cell.align ||
-          colAligns[colIndex] ||
-          (cell.type === 'th' ? headerAlign : cellAlign)
+        // 않는다. 이미 그 값을 가진 기존 템플릿·저장 파일은 예전 그대로 보이게 남겨 두되,
+        // '테이블 스타일'에서 타입 공통 정렬을 직접 고르면 그 값이 이긴다 —
+        // 안 그러면 레거시 표에서 공통 정렬이 영영 먹지 않는다.
+        const isHeader = cell.type === 'th'
+        const typeAlign = isHeader ? headerAlign : cellAlign
+        const typeAlignSet = isHeader ? headerAlignSet : cellAlignSet
+        const textAlign = cell.align || (typeAlignSet ? typeAlign : colAligns[colIndex] || typeAlign)
 
+        // 셀 종류가 없던 시절 파일은 imageUrl만으로 이미지 셀을 정했다 — 렌더 시점 안전망
+        // (정상 경로에서는 로드 시 migrateModuleProperties가 contentType을 채운다).
+        const isImageCell = cell.contentType === 'image' || isLegacyImageCell(cell)
         // 이미지 셀은 이미지가 셀을 꽉 채우도록 안쪽 여백 제거
-        const cellPadding = cell.contentType === 'image' ? '0' : '5px 10px'
+        const cellPadding = isImageCell ? '0' : '5px 10px'
 
         // 인라인 스타일 (이메일 호환성)
         const style = [
@@ -442,7 +455,7 @@ export function replaceModuleTableContent(
 
         // 이미지 셀: <img> 렌더 (없으면 안내 플레이스홀더)
         let inner: string
-        if (cell.contentType === 'image') {
+        if (isImageCell) {
           const url = escapeForHtml(cell.imageUrl || '')
           const alt = escapeForHtml(cell.imageAlt || '')
           if (url) {
@@ -458,7 +471,10 @@ export function replaceModuleTableContent(
         } else {
           // 텍스트 셀: Quill 리치 에디터 HTML을 그대로 사용(텍스트 모듈과 동일).
           // 정제(sanitize)·리스트 변환·포인트색은 렌더/내보내기 공통 파이프라인이 처리한다.
-          inner = cell.content || ''
+          // 리치 에디터 이전 형식(**굵게** 마커 + \n)이 남아 있으면 여기서 변환한다 —
+          // 렌더 시점 안전망(정상 경로에서는 로드 시 migrateModuleProperties가 이미 변환한다).
+          const raw = cell.content || ''
+          inner = isLegacyTableCellText(raw) ? legacyTableCellToHtml(raw) : raw
         }
         return `<${tag}${colspanAttr}${rowspanAttr}${dataAttr} style="${style}">${inner}</${tag}>`
       })

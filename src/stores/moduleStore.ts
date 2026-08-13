@@ -2752,7 +2752,7 @@ export const useModuleStore = defineStore('module', () => {
     clearAll()
 
     if (template.wrapSettings) {
-      editorStore.updateWrapSettings(template.wrapSettings)
+      editorStore.applyLoadedWrapSettings(template.wrapSettings)
     }
 
     // 배열 순서를 그대로 적용 (JSON 작성 시 직관적으로 추가/삭제 가능)
@@ -3462,13 +3462,43 @@ export const useModuleStore = defineStore('module', () => {
     if (colIndex < 0 || colIndex >= cells[rowIndex].length) return
 
     const cell = cells[rowIndex][colIndex]
-    const newType = cell.type === 'th' ? 'td' : 'th'
-    cell.type = newType
-    // 타입 변경 시 기본 정렬 적용 (TH: center, TD: left)
-    cell.align = newType === 'th' ? 'center' : 'left'
+    cell.type = cell.type === 'th' ? 'td' : 'th'
+    // 셀별 정렬은 지운다 — 바뀐 타입의 공통 정렬(headerAlign/cellAlign)을 따르게 한다.
+    // (여기서 셀에 값을 박아 두면 '테이블 스타일'의 공통 정렬이 그 셀에 영영 먹지 않는다)
+    delete cell.align
 
     module.properties.tableCells = [...cells]
     triggerRef(modules)
+  }
+
+  /**
+   * 타입(제목/내용) 공통 정렬 적용 — '테이블 스타일' 탭의 텍스트 정렬.
+   *
+   * 말 그대로 '공통'이 되도록, 그 타입 셀에 남아 있는 **셀별 정렬을 함께 지운다**.
+   * 셀별 값이 남아 있으면(예전 UI나 옛 파일에서 채워진 값) 공통값을 가려 아무 변화가 없다.
+   * 지운 뒤 개별 셀에 다시 지정하면 종전대로 그 값이 우선한다.
+   * 레거시 열 공통 정렬(tableColAligns)은 지우지 않는다 — 열 단위라 다른 타입까지
+   * 건드리게 된다. 대신 렌더러가 '직접 고른 타입 공통값'을 그보다 우선한다.
+   */
+  const setTableTypeAlign = (
+    moduleId: string,
+    type: 'th' | 'td',
+    align: 'left' | 'center' | 'right',
+  ): void => {
+    const module = modules.value.find((m) => m.id === moduleId)
+    if (!module) return
+
+    module.properties[type === 'th' ? 'headerAlign' : 'cellAlign'] = align
+    const cells = (module.properties.tableCells as TableCell[][]) || []
+    for (const row of cells) {
+      for (const cell of row) {
+        if (cell?.type === type) delete cell.align
+      }
+    }
+
+    module.properties.tableCells = [...cells]
+    triggerRef(modules)
+    isDirty.value = true
   }
 
   /**
@@ -4438,6 +4468,7 @@ ${fullHtml}
     mergeCells,
     unmergeCell,
     toggleCellType,
+    setTableTypeAlign,
     applyTablePreset,
     addContentTitle,
     updateContentTitle,

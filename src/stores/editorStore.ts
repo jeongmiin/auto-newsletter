@@ -132,12 +132,29 @@ export const useEditorStore = defineStore('editor', () => {
   const updateWrapSettings = (settings: Partial<WrapSettings>): void => {
     const next: WrapSettings = { ...wrapSettings.value, ...settings }
     if (settings.pointColors) {
+      // 팔레트를 통째로 넘기면 그 값이 전부다 — 빈 팔레트면 적용 색상도 비운다(removePointColor와 동일).
       next.pointColors = settings.pointColors.slice(0, 3)
-      next.pointColor = next.pointColors[0] ?? next.pointColor
+      next.pointColor = next.pointColors[0] ?? ''
     } else if (settings.pointColor) {
       next.pointColors = [settings.pointColor, ...(wrapSettings.value.pointColors ?? []).filter((c) => c !== settings.pointColor)].slice(0, 3)
     }
     wrapSettings.value = next
+  }
+
+  /**
+   * 파일·템플릿을 열 때의 전체 스타일 적용.
+   *
+   * 포인트 색상 팔레트는 **여는 쪽이 정한다**. 그냥 updateWrapSettings로 넘기면 예전 파일처럼
+   * 단일 pointColor만 있는 경우 그 색만 [0]번에 꽂히고, 직전에 열어 둔 템플릿의 2·3번 색이
+   * 팔레트에 그대로 남는다(파일에는 1개뿐인데 3개가 보인다).
+   * 팔레트가 없는 파일은 단일 색 하나짜리 팔레트로 본다.
+   * 색상 정보가 아예 없는 파일이면 판단 근거가 없으므로 지금 팔레트를 그대로 둔다.
+   */
+  const applyLoadedWrapSettings = (settings: Partial<WrapSettings>): void => {
+    const palette =
+      settings.pointColors ??
+      (settings.pointColor !== undefined ? [settings.pointColor].filter(Boolean) : null)
+    updateWrapSettings(palette ? { ...settings, pointColors: palette } : settings)
   }
 
   /**
@@ -221,6 +238,7 @@ export const useEditorStore = defineStore('editor', () => {
     setHoveredModuleId,
     updateCanvasSettings,
     updateWrapSettings,
+    applyLoadedWrapSettings,
     addPointColor,
     appendPointColor,
     updatePointColorAt,
