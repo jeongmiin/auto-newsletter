@@ -123,8 +123,8 @@ description: >-
   - **캔버스 툴바/핸들**: `ModuleRenderer.vue`의 상단 가로 pill → 우측 세로 카드(삭제·복제·위·아래, `isSelected || hover` 노출)로 교체. `CanvasArea.vue`의 좌측 `dh-top` 바 → Figma 스펙의 흰 카드+`drag_indicator` 아이콘으로 교체(클래스명 `dh-top`은 유지 — vuedraggable `handle` 옵션 의존). 그룹 헤더 바는 라운드/그림자만 가볍게 다듬음(구조 불변).
   - **미구현**: 테이블/구분선·여백 레일 메뉴 콘텐츠(Figma 스펙 없음), `EditorToolbar`의 PC/모바일 중복 제거, 모듈순서 메뉴 ↔ `ModuleOutlinePanel` 배선(지금도 항상 별도 렌더되지만 레일의 `order` 메뉴와는 아직 안 이어짐).
 - **Phase 4 완료(2026-07-18)**: `ModuleForm.vue` 필드 레벨 스타일링 (Figma 372-3000/378-1704/412-2139/408-1758 기준) — 인풋 필드·셀렉트·텍스트 에디터·컬럼분할 버튼·행간·자간·폰트크기·여백 필드.
-  - **공통 필드 토큰**(`.gg-*` 클래스): 라벨 15px `#4e5968`, 힌트 14px `#6b7684`, 텍스트/URL 필드는 filled `#f2f4f6` 배경 h-40 rounded-8, 셀렉트는 흰 배경+`#e5e8eb` 테두리 h-40, 토글 행은 `justify-between` + 16px `#333d4b` 라벨 + 36×20 ToggleSwitch.
-  - **컬럼분할**: "컬럼 추가"/"되돌리기" 버튼을 세그먼트 필(`.gg-segment` — 좌: 진한 `#4e5968` 채움, 우: 흰 배경+테두리)로 교체. 클릭 핸들러(`splitSelectedModule`/`unsplitSelectedModule`)는 완전히 그대로.
+  - **공통 필드 토큰**(`.gg-*` 클래스): 라벨 15px `var(--gray-700)`, 힌트 14px `var(--gray-600)`, 텍스트/URL 필드는 filled `var(--gray-100)` 배경 h-40 rounded-8, 셀렉트는 흰 배경+`var(--gray-200)` 테두리 h-40, 토글 행은 `justify-between` + 16px `var(--gray-750)` 라벨 + 36×20 ToggleSwitch.
+  - **컬럼분할**: "컬럼 추가"/"되돌리기" 버튼을 세그먼트 필(`.gg-segment` — 좌: 진한 `var(--gray-700)` 채움, 우: 흰 배경+테두리)로 교체. 클릭 핸들러(`splitSelectedModule`/`unsplitSelectedModule`)는 완전히 그대로.
   - **폰트 크기 필드**: `prop.key`가 `FontSize`로 끝나는 텍스트 필드(`isFontSizeField`)를 스테퍼(−/값/+, `.gg-stepper`)로 렌더. 값 포맷(`"22px"` 문자열)은 기존과 동일하게 유지(`adjustFontSize`가 파싱 후 다시 `${n}px`로 저장).
   - **행간/자간 외부 분리(핵심 회귀 리스크 항목)**: Quill 툴바 안의 `<select class="ql-lineHeight/ql-letterSpacing">`를 제거하고, 에디터 바로 위에 별도 PrimeVue `Select` 2개(`.rte-ext-row`)로 이전. 내부적으로 색상 팝오버와 동일한 "필드별 Quill 인스턴스 추적" 패턴(`quillByKey`/`quillRangeByKey`, `onEditorLoad(event, key)`)을 재사용 — `applyLineHeight`는 `quill.format('lineHeight', value, 'user')`(블록 스코프), `applyLetterSpacing`은 선택범위 있으면 `formatText`, 없으면 `setSelection`+`format`(인라인 스코프). 드롭다운 표시값은 `selection-change`/`text-change` 리스너로 `editorFormatState[key]`에 동기화. Playwright로 실제 `line-height`/`letter-spacing` 인라인 스타일이 적용되는 것까지 검증 완료(동일 기능 유지 확인).
   - **검증**: `npx vue-tsc --noEmit` 클린, `npx vitest run` 362개 전부 통과, Playwright로 텍스트/이미지 모듈 좌·우 양쪽 패널에서 필드 스타일 및 행간·자간·폰트크기 스테퍼·세그먼트 버튼 동작 확인.
@@ -132,7 +132,7 @@ description: >-
 - **Phase 5 완료(2026-07-18)**: 여백 잠금 슬라이더(Figma 365-2691) · 필드 오버플로우 수정 · 그룹 헤더 바 플로팅 툴바화.
   - **여백/패딩 4방향 잠금 슬라이더**: `ModuleForm.vue`에 `isQuadStart`/`isQuadMember`(modules-config의 `...Top/Right/Bottom/Left` 4연속 키 패턴을 감지, 모든 `padding*`/`margin*`/`buttonPadding*`/`logoPadding*` 등 접두사에 범용 적용) + `.gg-margin-quad`(잠금 아이콘 토글, 잠금 시 슬라이더+필드 하나로 4방향 동시 조정, 해제 시 상/우/하/좌 2×2 그리드로 개별 조정). 기존 `paddingTop` 등 개별 prop 저장 방식은 그대로(`updateProperty`를 4번 호출)라 하위호환 문제 없음. Playwright로 슬라이더 드래그 → 4방향 모두 반영 → 잠금 해제 시 그리드 값 유지까지 확인.
   - **좌측 패널 필드 오버플로우 수정**: 360px 패널(Figma 스펙 그대로 유지, 패널 자체는 넓히지 않음) 안에서 컬러 필드 행(`ColorAlphaPicker`+`HexColorInput`)이 `scrollWidth > clientWidth`로 잘리던 문제 — 원인은 `HexColorInput`(내부 `<input>`)이 `flex-1`만 있고 `min-width:0`이 없어 flexbox가 content 폭 밑으로 못 줄인 것. `min-w-0` 추가(`ModuleForm.vue` 색상 필드 2곳 + Quill 팝오버, `GroupPropertiesPanel.vue` 배경/테두리 색상 2곳) + `ColorAlphaPicker`의 투명도 `InputNumber` 폭을 4.5rem→3.5rem로 축소. Playwright로 `scrollWidth === clientWidth` 확인.
-  - **그룹 헤더 바 리스킨**: `CanvasArea.vue`의 `.group-header`(그룹 상단 바, 드래그 핸들 겸용) — 보라색 PrimeIcons 팔레트 → 흰 배경+`#e5e8eb` 테두리+그림자(모듈 우측 플로팅 툴바와 동일 톤) + Material Symbols 아이콘(`content_copy`/`link_off`/`tune`/`delete`)로 교체. 선택 상태는 `#ebf3ff`+`#4083f3` 테두리(파란 액센트로 통일). 클릭 핸들러는 전부 그대로(복제/해제/스타일편집/삭제 동작 불변) — Playwright로 복제·삭제 확인 다이얼로그까지 확인.
+  - **그룹 헤더 바 리스킨**: `CanvasArea.vue`의 `.group-header`(그룹 상단 바, 드래그 핸들 겸용) — 보라색 PrimeIcons 팔레트 → 흰 배경+`var(--gray-200)` 테두리+그림자(모듈 우측 플로팅 툴바와 동일 톤) + Material Symbols 아이콘(`content_copy`/`link_off`/`tune`/`delete`)로 교체. 선택 상태는 `var(--blue-50)`+`var(--blue-400)` 테두리(파란 액센트로 통일). 클릭 핸들러는 전부 그대로(복제/해제/스타일편집/삭제 동작 불변) — Playwright로 복제·삭제 확인 다이얼로그까지 확인.
   - **검증**: `npx vue-tsc --noEmit` 클린, `npx vitest run` 362개 통과, Playwright로 여백 슬라이더/오버플로우/그룹 헤더 액션 모두 확인.
 
 - **Phase 6 완료(2026-07-18)**: `ModuleForm.vue`의 PrimeVue `Panel`(named prop group) → Figma 352-1138 접이식 헤더로 교체 + `ModulePanel.vue` v2 스왑.
@@ -211,14 +211,14 @@ description: >-
   - **목록 버튼 2개 → 드롭다운 1개**: Figma의 목록 드롭다운에 맞춰 `<select class="ql-list">`(번호 목록/글머리 기호/목록 없음)로 교체. Quill 일반 Picker라 라벨이 텍스트여서 CSS로 `font-size:0` + `::before`에 Material `format_list_bulleted` 글리프를 얹었다(드롭다운 항목은 한글 라벨 유지).
   - **행간·자간 → 툴바 팝오버**: Phase 4에서 에디터 위로 뺐던 `.rte-ext-row`(Select 2개)를 제거하고, 1줄 끝의 `format_line_spacing` 버튼(`.rte-tb-btn` — **`ql-` 클래스가 없어 Quill의 `attach()`가 건드리지 않는다**)이 여는 팝오버로 이전. `@mousedown.prevent`로 에디터 선택 유지, 저장된 `quillRangeByKey`가 없으면 본문 전체를 대상으로 삼는다(드롭다운 표시값과 동일 기준). 적용 함수(`applyLineHeight`/`applyLetterSpacing`)는 그대로 재사용.
   - **Esc 처리**: 팝오버가 열려 있을 때의 Esc는 `onDocKeydown`(캡처 단계)에서 소비(`stopPropagation`)한다 — 안 그러면 `useKeyboardShortcuts`의 전역 '선택 해제'까지 실행돼 편집 중이던 모듈이 통째로 선택 해제된다.
-  - **치수**: 툴바 테두리 제거·줄 간격 20px·본문과 16px, 본문은 `#f2f4f6` 채움 + rounded-8 + `20px 12px` 패딩 + min-height 169px(`.ql-editor` 배경을 transparent로 내려야 컨테이너 회색이 보인다). **좌측 패널 실제 폭이 277px로 Figma(310px)보다 좁아** 버튼 30px·그룹 gap 6px·줄 gap 12px로 축소(그 결과 273px, 3줄 모두 한 줄에 들어감).
-  - **정렬 드롭다운 메뉴(Figma 640-3977 / 640-4087)**: Quill 기본 세로 목록 → **가로 아이콘 메뉴 카드**로 리스킨. 흰 배경 + `#e5e8eb` 1px + rounded-8 + `0 0 10px rgba(0,0,0,.15)`, 항목 52×52(아이콘 24px), 현재 값은 `#ebf3ff` 배경(`.ql-selected`). 버튼 아래 `left:50%; translateX(-50%)`로 걸어 좁은 패널에서 오른쪽으로 넘치지 않게 한다. Figma는 3칸(좌·중앙·우)이지만 Quill 기본 4번째인 **양쪽 정렬을 유지**(기능 손실 방지).
+  - **치수**: 툴바 테두리 제거·줄 간격 20px·본문과 16px, 본문은 `var(--gray-100)` 채움 + rounded-8 + `20px 12px` 패딩 + min-height 169px(`.ql-editor` 배경을 transparent로 내려야 컨테이너 회색이 보인다). **좌측 패널 실제 폭이 277px로 Figma(310px)보다 좁아** 버튼 30px·그룹 gap 6px·줄 gap 12px로 축소(그 결과 273px, 3줄 모두 한 줄에 들어감).
+  - **정렬 드롭다운 메뉴(Figma 640-3977 / 640-4087)**: Quill 기본 세로 목록 → **가로 아이콘 메뉴 카드**로 리스킨. 흰 배경 + `var(--gray-200)` 1px + rounded-8 + `0 0 10px rgba(0,0,0,.15)`, 항목 52×52(아이콘 24px), 현재 값은 `var(--blue-50)` 배경(`.ql-selected`). 버튼 아래 `left:50%; translateX(-50%)`로 걸어 좁은 패널에서 오른쪽으로 넘치지 않게 한다. Figma는 3칸(좌·중앙·우)이지만 Quill 기본 4번째인 **양쪽 정렬을 유지**(기능 손실 방지).
     - ⚠️ **특이점 2가지**: (1) PrimeVue 테마의 `.p-editor .p-editor-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-options`(0,5,0)가 스코프 스타일(0,4,0)을 이겨서 카드 스타일이 안 먹는다 → 선택자를 `.rte-field :deep(.p-editor .p-editor-toolbar .ql-picker[.ql-align].ql-expanded .ql-picker-options)`로 더 길게 잡아야 한다. (2) 드롭다운을 열면 에디터가 blur → Quill이 서식을 빈 값으로 갱신해 **현재 값 하이라이트가 사라진다** → `onEditorLoad`에서 툴바의 `.ql-picker-label` mousedown 기본동작을 막아 선택을 유지(Quill Picker는 mousedown에서 여닫으므로 동작에는 영향 없음).
-  - **행간·자간 팝오버 내용(Figma 640-3517 / Frame53 640-3623)**: 드롭다운 2개 → **슬라이더 + 값 필드 2섹션**으로 교체. 카드 318×208(`padding 25px 20px`, rounded-8, `0 0 5px rgba(0,0,0,.15)`, 섹션 gap 26px), 섹션마다 `24px 아이콘(format_line_spacing / format_letter_spacing_2) + 15px #4e5968 라벨` → `슬라이더 + 50×32 filled 값 필드(13px medium, 단위 없음)`. 위치는 버튼이 아니라 **텍스트 필드 열**에 맞춰 건다(버튼 기준이면 좁은 패널에서 왼쪽으로 밀린다).
+  - **행간·자간 팝오버 내용(Figma 640-3517 / Frame53 640-3623)**: 드롭다운 2개 → **슬라이더 + 값 필드 2섹션**으로 교체. 카드 318×208(`padding 25px 20px`, rounded-8, `0 0 5px rgba(0,0,0,.15)`, 섹션 gap 26px), 섹션마다 `24px 아이콘(format_line_spacing / format_letter_spacing_2) + 15px var(--gray-700) 라벨` → `슬라이더 + 50×32 filled 값 필드(13px medium, 단위 없음)`. 위치는 버튼이 아니라 **텍스트 필드 열**에 맞춰 건다(버튼 기준이면 좁은 패널에서 왼쪽으로 밀린다).
     - **포맷 whitelist 제거(중요)**: 슬라이더는 연속값을 만드는데 `quillLineHeight`/`quillLetterSpacing`의 StyleAttributor에 whitelist(행간 5개 / 자간 음수 4개)가 걸려 있어 임의 값이 **조용히 무시**된다 → whitelist를 없애고 범위 상수(`LINE_HEIGHT_MIN/MAX/STEP/FALLBACK` 1.0~3.0·0.1·1.5, `LETTER_SPACING_*` -2~5px·0.1·0)와 변환 헬퍼(`toLineHeightValue`/`parseLineHeight` 등)를 대신 export. 예전 저장 값은 whitelist가 없어져 그대로 유효(하위호환 ↑), 자간은 **0·양수도 처음으로 지정 가능**해졌다. 두 유틸의 whitelist 테스트는 연속값·하위호환 테스트로 교체(370→374개).
-    - **미지정 상태 표시**: 값이 없으면 슬라이더는 기본 위치(1.5 / 0)에 서고 값 글자만 `#8b95a1`로 흐리게 — 실제 적용은 사용자가 움직였을 때만 일어난다.
+    - **미지정 상태 표시**: 값이 없으면 슬라이더는 기본 위치(1.5 / 0)에 서고 값 글자만 `var(--gray-500)`로 흐리게 — 실제 적용은 사용자가 움직였을 때만 일어난다.
     - **자간이 "안 먹는" 문제(사용자 제보 → 수정)**: `letterSpacing`은 INLINE 스코프라 **커서만 있고 드래그 선택이 없으면** `quill.format()`이 커서 자리의 빈 span(`<span class="ql-cursor">`)에만 걸려 화면상 아무 변화가 없었다(행간은 BLOCK이라 문단에 걸려 정상 동작 → "자간만 안 된다"로 보인다). `applyLetterSpacing`에서 `r.length === 0`이면 `quill.getLine(r.index)`로 **커서가 있는 문단 전체**에 `formatText`하도록 수정. 드래그 선택이 있으면 종전대로 그 범위에만 적용.
-  - **검증**: `npm run build` 클린, `vitest` 374개 통과, Playwright로 (1)섹션 타이틀·설명 텍스트 모두 `슬라이더<툴바<본문` 순서, (2)툴바 3줄이 각각 한 줄(높이 32), (3)굵게/기울임/밑줄/취소선·정렬·목록 드롭다운·글자색 팔레트+직접선택·글자 크기·줄바꿈·행간·자간이 전부 본문과 캔버스에 반영, (4)Esc가 팝오버만 닫고 선택은 유지, (5)정렬 메뉴가 가로 카드(210×54, 항목 52×52)로 뜨고 현재 정렬이 `#ebf3ff`로 표시되며 패널 밖으로 안 넘침, (6)행간·자간 팝오버가 318×208로 뜨고 슬라이더/직접입력이 `line-height:1.4`·`letter-spacing:-0.5px`·`2px`(양수)까지 본문·캔버스에 반영됨을 확인.
+  - **검증**: `npm run build` 클린, `vitest` 374개 통과, Playwright로 (1)섹션 타이틀·설명 텍스트 모두 `슬라이더<툴바<본문` 순서, (2)툴바 3줄이 각각 한 줄(높이 32), (3)굵게/기울임/밑줄/취소선·정렬·목록 드롭다운·글자색 팔레트+직접선택·글자 크기·줄바꿈·행간·자간이 전부 본문과 캔버스에 반영, (4)Esc가 팝오버만 닫고 선택은 유지, (5)정렬 메뉴가 가로 카드(210×54, 항목 52×52)로 뜨고 현재 정렬이 `var(--blue-50)`로 표시되며 패널 밖으로 안 넘침, (6)행간·자간 팝오버가 318×208로 뜨고 슬라이더/직접입력이 `line-height:1.4`·`letter-spacing:-0.5px`·`2px`(양수)까지 본문·캔버스에 반영됨을 확인.
 
 - **Phase 16 완료(2026-07-31)**: 텍스트 모듈(`ModuleDescText`) 스타일 섹션을 이미지 모듈과 같은 접이식 카드로 통일 (사용자 요청).
   - **modules-config 재그룹(ModuleDescText만)**: `배경 박스`(bgColor+borderRadius+padding4) / `바깥 여백`(margin4) → **`여백`(padding4+margin4) · `배경색`(bgColor) · `모서리 둥글기`(borderRadius)** 로 분리하고, 순서를 `내용 → 여백 → 배경색 → 모서리 둥글기 → 테두리`로 재배치. **키·기본값·라벨은 그대로**라 렌더/내보내기·저장 템플릿에 영향 없음(패널 표시용 그룹명·순서만 변경). 한 섹션에 quad 2개가 들어가도 `isQuadStart`가 접두사별로 각각 잡아 `안쪽 여백`/`바깥 여백` 두 블록으로 렌더된다.
@@ -249,7 +249,7 @@ description: >-
 - **Phase 18 완료(2026-08-11)**: '모듈 순서'를 좌측 패널 → **캔버스 오른쪽 접이식 패널**로 이전 + 그룹형 리스트 재설계 (Figma **969-7308**(패널 열림) / **969-7165**(닫힘) / 리스트 셸 **969-7309**).
   - **위치·개폐 모델 변경(핵심)**: `EditorMenu` 유니온에서 `'order'` 제거(`editorStore.ts`), `AppLayout.vue`의 좌측 `activeMenu==='order'` 분기 삭제, 대신 캔버스 오른쪽에 `<ModuleOutlinePanel />`을 상시 마운트. 새 상태 `isOrderPanelOpen`(**기본 false**) + `toggleOrderPanel`/`setOrderPanelOpen`. `EditorSidebar.vue`는 `RailKey = MenuKey | 'order'`로 나눠, `'order'`만 `toggleOrderPanel()`을 부르고 `setActiveMenu`를 **호출하지 않는다** → 좌측 패널(선택 속성/카테고리 메뉴)이 그대로 유지된다. 레일 활성 표시도 `isActive()`에서 `'order'`는 `isOrderPanelOpen` 기준으로 분기.
   - **도크 구조**: `.order-dock`(position:relative) > `.order-tab`(왼쪽 가장자리 탭, `left:-34px`, 34×64, 좌측 라운드) + `.order-panel`(320px ↔ 0, width 트랜지션). 내부 `.order-inner`는 **고정 320px**이어야 접히는 동안 리플로우가 안 생긴다. 닫히면 패널 폭이 0이라 탭이 자연히 화면 오른쪽 끝에 붙는다(Figma 969-7165와 동일). 탭 아이콘은 `arrow_back_ios` — 닫힘 `◀`(그대로), 열림 `▶`(rotate 180).
-  - **행 스펙**: h45 · px5 · rounded-4 · gap8 → `drag_indicator`(24px) · **32px 슬롯**(그룹=chevron / 모듈=Checkbox 20px) · 종류 아이콘(22px) · 라벨(14px) · (그룹 한정) 우측 32px `link_off`. 호버 `#f2f4f6`(gray/100), 선택 `#ebf3ff`(blue/50), 그룹 라벨 `#b037ce`, 모듈 라벨 `#6b7684`, 그룹 아이콘/chevron `#333d4b`. 헤더는 `모듈 순서`(20px medium) + 개수(16px `#8b95a1`), 그 아래 `그룹 묶기 (n)` 버튼(`#4e5968`, h40, rounded-8).
+  - **행 스펙**: h45 · px5 · rounded-4 · gap8 → `drag_indicator`(24px) · **32px 슬롯**(그룹=chevron / 모듈=Checkbox 20px) · 종류 아이콘(22px) · 라벨(14px) · (그룹 한정) 우측 32px `link_off`. 호버 `var(--gray-100)`(gray/100), 선택 `var(--blue-50)`(blue/50), 그룹 라벨 `var(--group-text)`, 모듈 라벨 `var(--gray-600)`, 그룹 아이콘/chevron `var(--gray-750)`(→ 2026-08-13 `var(--group-text)`로 통일, Phase 22). 헤더는 `모듈 순서`(20px medium) + 개수(16px `var(--gray-500)`), 그 아래 `그룹 묶기 (n)` 버튼(`var(--gray-700)`, h40, rounded-8).
   - **아코디언**: 그룹은 **기본 닫힘**, `expandedGroupIds: Set<string>`로 그룹마다 독립 — 다른 그룹을 열어도 기존 열림/닫힘 상태가 그대로 유지된다(배타적 아코디언 아님). chevron은 `arrow_back_ios` 하나를 회전해 씀: 접힘 `rotate(180deg)`(▶) / 펼침 `rotate(-90deg)`(▼).
   - **하위 모듈 행은 드래그 핸들 없이 32px 들여쓰기**. 최상위 드래그(`handle=".order-drag"`, 그룹은 한 덩어리로 이동)는 기존 `displayItems`/`setDisplayOrder` 그대로. 그룹 **안에서** 멤버를 재배치하는 중첩 draggable은 여전히 미구현(`rowIndex` 레이아웃이 깨질 수 있어 의도적으로 제외) — 그래서 멤버 행에 죽은 핸들을 두지 않았다. Figma에는 펼친 그룹 상태가 없어 충돌 없음.
   - **종류 아이콘**은 `ModuleMetadata.category` 기준 `CATEGORY_ICON` Record(이미지=`broken_image`, 텍스트=`match_case`, 버튼=`ads_click`, 테이블=`border_all`, 구분선=`vertical_distribute`, social=`share`, 그 외=`widgets`), 그룹은 `dashboard`. ⚠ **Record 맵으로 둔 이유**: `materialSymbols.test.ts`가 리터럴·삼항·`icon:`·`*_ICON Record`만 훑기 때문에 switch문으로 두면 subset 검사에 안 잡힌다. `index.html`의 `icon_names`에 `arrow_back_ios,broken_image,share,vertical_distribute,widgets` 추가함.
@@ -258,8 +258,8 @@ description: >-
   - **검증**: `vue-tsc --noEmit` 클린, `vitest` 628개 통과, Playwright로 (1)기본 닫힘(panel width 0, 탭이 화면 우측 끝 x=1566), (2)레일 클릭 시 320px로 열리고 **좌측 패널 폭 368px 불변**, (3)그룹 기본 접힘 → 1번 펼침(하위 6) → 2번도 펼침(12, 1번 유지) → 1번만 접음(6, 2번 유지), (4)선택 `rgb(235,243,255)`·호버 `rgb(242,244,246)`·그룹 라벨 `rgb(176,55,206)`, (5)그룹 해제 클릭 시 그룹 2→1, (6)핸들 드래그로 최상위 순서 변경, (7)라벨이 행 밖으로 넘치지 않음을 확인.
 
 - **Phase 19 완료(2026-08-11)**: '모듈 순서' 패널 — 그룹 아코디언 **펼친 상태** 디자인 + 그룹 내부 드래그 + 체크박스 범위 축소 (Figma **969-8001**(밴드 있는 최종안) / **969-7618**(멤버 선택 상태)).
-  - **펼친 그룹 = 한 덩어리 밴드**: 그룹 행 + 하위 모듈을 `.order-group.is-expanded`로 감싸고 배경 `rgba(235,243,255,0.55)`(**blue/50 @ 55%**, Figma 969-8045 실측값) + `border-radius:4px` + `gap:10px`. 그룹 행은 그 위에서 선택 시 `#ebf3ff`(불투명)로 한 단계 진해진다.
-  - **하위 모듈 행**: `margin-left:37px` · 폭 233px(= 270 − 37, Figma와 픽셀 일치) · `drag_indicator`만 두고 **체크박스 제거**. 선택 시 배경 `#ebf3ff` + 라벨이 `#6b7684` → **`#333d4b`(gray/800)**, 드래그 핸들도 진해짐(Figma 969-7683).
+  - **펼친 그룹 = 한 덩어리 밴드**: 그룹 행 + 하위 모듈을 감싸고 배경 blue/50 @ 55%(Figma 969-8045 실측값) + `border-radius:4px` + `gap:10px`. 그룹 행은 그 위에서 선택 시 `var(--blue-50)`(불투명)로 한 단계 진해진다. **(2026-08-13 수정 — 조건이 `.is-expanded`에서 `.is-selected.is-expanded`로 좁아졌다. Phase 22 참고)**
+  - **하위 모듈 행**: `margin-left:37px`(→ 2026-08-13 `32px`, Phase 22) · 폭 233px(= 270 − 37, Figma와 픽셀 일치) · `drag_indicator`만 두고 **체크박스 제거**. 선택 시 배경 `var(--blue-50)` + 라벨이 `var(--gray-600)` → **`var(--gray-750)`(gray/800)**, 드래그 핸들도 진해짐(Figma 969-7683).
   - **체크박스는 '그룹에 속하지 않은 모듈'에만** (사용자 규칙: 체크박스의 목적이 '그룹 묶기'이므로). `checkableModules` computed가 `!m.groupId && checked`로 걸러 개수·묶기 대상을 모두 이 기준으로 통일 → 체크 후 다른 경로로 그룹에 편입된 모듈이 카운트에 남지 않는다.
     - ⚠️ **부수 효과(의도됨)**: 기존 그룹을 체크해 합치던 `mergeModulesIntoGroup` 경로가 이 패널에서 도달 불가능해졌다(스토어 함수·테스트는 그대로 남아 있음). 그룹끼리 병합 UI가 다시 필요해지면 별도 진입점을 만들어야 한다.
   - **그룹 내부 드래그 — `moduleStore.reorderGroupMembers(groupId, orderedIds)` 신설**: 기존 멤버 순서대로 모아둔 **(배열 슬롯 + rowIndex/columnIndex) 좌표를 고정**해두고 그 자리에 새 순서의 멤버를 꽂는다. → 1단 그룹은 단순 재배열, 다단 그룹은 "어떤 모듈이 어느 칸에 놓이는지"만 바뀌어 `group.rows`(행별 컬럼 수)가 절대 깨지지 않는다. Phase 13에서 "구조상 어렵다"고 미뤘던 항목의 해법.
@@ -270,7 +270,7 @@ description: >-
 - **Phase 20 완료(2026-08-12)**: '빈 템플릿' 진입점을 **템플릿 선택 화면 → 에디터**로 이전 (Figma **1125-2964**).
   - **정책 변경**: 템플릿 선택 화면의 '빈 템플릿' 카드를 **제거**했다(`TemplateSelectView.vue`의 카드 + `startBlank` + `.tpl-thumb--blank` 계열 CSS). 이제 **항상 팀·템플릿을 고른 뒤에만** 에디터로 들어온다. 빈 상태로 시작하려면 에디터 안에서 명시적으로 비운다.
     - ⚠️ 카드를 지우면서 '결과 없음' 조건도 함께 고쳐야 한다 — 기존 `filteredTemplates.length === 0 && !(selectedTeam === '' && !search.trim())`은 빈 템플릿 카드가 자리를 채운다는 전제였다. 그대로 두면 '전체 + 검색 없음 + 0건'일 때 화면이 통째로 빈다. `filteredTemplates.length === 0`으로 단순화함.
-  - **진입점 2개, 동작 1개**: 좌측 레일 최상단 **'빈 템플릿'**(`note_add` 34px, `#2563d4`, 아래 구분선)과 상단 헤더의 **'전체 삭제'**(`delete`, `#f04452`, 14px medium, undo/redo 뒤 구분선). 둘 다 같은 확인 모달을 띄운다 → 문구·처리를 **`useBlankTemplate.ts`(신규 컴포저블)** 한 곳에 두고 양쪽에서 호출.
+  - **진입점 2개, 동작 1개**: 좌측 레일 최상단 **'빈 템플릿'**(`note_add` 34px, `var(--blue-500)`, 아래 구분선)과 상단 헤더의 **'전체 삭제'**(`delete`, `var(--red-400)`, 14px medium, undo/redo 뒤 구분선). 둘 다 같은 확인 모달을 띄운다 → 문구·처리를 **`useBlankTemplate.ts`(신규 컴포저블)** 한 곳에 두고 양쪽에서 호출.
   - **레일의 'blank'은 메뉴가 아니라 액션**: `RailKey = MenuKey | 'order' | 'blank'`로 확장하되 `setActiveMenu`를 부르지 않고 `isActive()`가 항상 false를 반환한다(선택 상태 없음). 대신 `.rail-item.is-accent`로 **상시 파란색**(Figma에서 '모듈'만 활성 배경이고 '빈 템플릿'은 항상 강조색). `'order'`와 같은 계열의 예외 처리다.
   - **확인 모달은 PrimeVue `confirm.require`** — 프로젝트에 이미 쓰는 패턴(`CanvasArea`/`ModulePanel`/`useNewsletterImport`)이라 새 Dialog 컴포넌트를 만들지 않았다. 단 `message`는 문자열만 받아 여러 줄이 한 줄로 붙는다 → **`main.css`에 `.p-confirmdialog-message { white-space: pre-line }`** 전역 규칙 1줄 추가(한 줄짜리 기존 확인창엔 영향 없음).
   - **`clearHistory()`를 반드시 함께 부른다**: 모달 문구가 "이 작업은 되돌릴 수 없어요"인데 히스토리를 남기면 실행취소로 되살아나 **안내가 거짓이 된다**. `clearToBlank()`는 `clearAll()` + `setCurrentTemplateName('빈 템플릿')` + `getHistoryInstance().clearHistory()`.
@@ -281,8 +281,8 @@ description: >-
 
   ### 21-1) 상단 헤더 v2 재구성 (Figma 1125-2964 / 1125-3082 / 1125-3110)
   - **여백을 Figma 실측대로**: 바 높이 **60**, 좌우 패딩 **21**, 홈↔나머지 **25**, 팀·브레드크럼·구분선·실행취소·전체삭제 사이 **20**(균일), 실행취소↔다시실행 **8**, 우측 버튼 사이 **10**, 아이콘 버튼 **40×40**(홈 글리프 31), 구분선 높이 **32**. 기존엔 `h-14`(56)·`px-3`·`gap-2`로 뭉뚱그려져 있었다 → **3단 중첩 구조**(`.hnav` → `.hleft`(25) → `.hleft-group`(20))로 재구성해야 구간별 간격이 독립적으로 맞는다.
-  - **로고 삭제 → `home` 아이콘**(랜딩으로, 작업 중이면 확인). **팀 pill**(`#e8faf2`/`#017a49`) + 브레드크럼 `템플릿명 > 에디터`.
-  - **우측 액션 버튼을 커스텀 버튼으로 교체**: PrimeVue `Button`(small/outlined)으로는 Figma 스펙(h40·px16·15px·색 채움)이 안 나온다 → `.hbtn`(+`--tint` `#ebf3ff`/`#1a47b0`, `--muted` `#f2f4f6`/`#4e5968`, `--primary` `#4083f3`/흰색, `--icon` 40×40 흰 배경+`#e5e8eb`). 아이콘도 Material Symbols(`download`/`visibility`/`send`/`more_horiz`)로 헤더 안에서 통일.
+  - **로고 삭제 → `home` 아이콘**(랜딩으로, 작업 중이면 확인). **팀 pill**(`var(--green-50)`/`var(--green-700)`) + 브레드크럼 `템플릿명 > 에디터`.
+  - **우측 액션 버튼을 커스텀 버튼으로 교체**: PrimeVue `Button`(small/outlined)으로는 Figma 스펙(h40·px16·15px·색 채움)이 안 나온다 → `.hbtn`(+`--tint` `var(--blue-50)`/`var(--blue-600)`, `--muted` `var(--gray-100)`/`var(--gray-700)`, `--primary` `var(--blue-400)`/흰색, `--icon` 40×40 흰 배경+`var(--gray-200)`). 아이콘도 Material Symbols(`download`/`visibility`/`send`/`more_horiz`)로 헤더 안에서 통일.
   - **'코드 복사'·'파일 열기'를 `⋯` 오버플로 메뉴로**: PrimeVue **팝업 `Menu`**. ⚠ 팝업 Menu는 `body`로 텔레포트되어 **컴포넌트 scoped 스타일이 닿지 않는다** → 스킨은 `main.css`에 `.hmore-menu`로 둔다.
   - **저장 표기**: `2026년 8월 12일 11시…` → **`2026.08.12 11:31:18 저장용 다운 완료`**. 0으로 자리를 채워야 시각이 바뀔 때 옆 버튼이 밀리지 않는다.
   - **미적용(사용자 미확정)**: Figma 라벨은 `저장용/발송용 다운로드`인데 코드는 `내려받기` 유지. 저장상태 문구도 Figma는 굵기 없이 한 덩어리인데 타입만 굵게 유지.
@@ -294,11 +294,11 @@ description: >-
   - 빈 템플릿 적용 시에도 `teamId`는 유지(담당자가 바뀐 게 아니라 내용만 지운 것).
 
   ### 21-3) 모듈 패널 — 제목·검색·카테고리 탭 (Figma 908-11145)
-  - 패널 제목 **`모듈`**을 다른 레일 메뉴와 같은 `.panel-title`(20px/500/`#191f28`/-0.2px)로 추가, 검색창은 **채움형**(`#f2f4f6` h40 px12 gap8 rounded8, 아이콘 16, placeholder `#8b95a1`). ⚠ 테두리가 없어져 포커스 표시를 **안쪽 링**(`inset box-shadow`)으로 대체해야 한다.
-  - **카테고리 탭을 PrimeVue `Tabs`(scrollable)로 교체**. 폭은 글자에 맞추고(예전엔 `flex:1` 균등 분할) 넘치면 화살표로 스크롤. 탭 스펙: 14px/500/자간 -0.14, 비활성 `#6b7684`·활성 `#4083f3`, `min-width:60px`(사용자 지정) + `padding:0 15px`, 높이 27.
+  - 패널 제목 **`모듈`**을 다른 레일 메뉴와 같은 `.panel-title`(20px/500/`var(--gray-800)`/-0.2px)로 추가, 검색창은 **채움형**(`var(--gray-100)` h40 px12 gap8 rounded8, 아이콘 16, placeholder `var(--gray-500)`). ⚠ 테두리가 없어져 포커스 표시를 **안쪽 링**(`inset box-shadow`)으로 대체해야 한다.
+  - **카테고리 탭을 PrimeVue `Tabs`(scrollable)로 교체**. 폭은 글자에 맞추고(예전엔 `flex:1` 균등 분할) 넘치면 화살표로 스크롤. 탭 스펙: 14px/500/자간 -0.14, 비활성 `var(--gray-600)`·활성 `var(--blue-400)`, `min-width:60px`(사용자 지정) + `padding:0 15px`, 높이 27.
     - ⚠ `padding`에 세로값이 없으므로 **높이를 직접 줘야** 글자 높이까지 줄어들지 않는다. 탭 간격은 padding이 만들므로 `gap:0`(gap을 더하면 두 배로 벌어진다).
     - **구조를 Figma와 같게**: 회색 기준선(Line 56)은 **컨테이너(`.p-tablist`)**에 콘텐츠 폭으로, 파란 표시(Line 57)는 **PrimeVue 활성 바**로. 각 탭 `border-bottom`으로 그리던 방식을 버렸다. `.mp-head`의 전체폭 `border-b`도 제거(Figma는 콘텐츠 폭에만 긋는다).
-    - **화살표는 28px 흰 원형 + `0 0 4px rgba(0,0,0,.25)` 그림자**, 글리프 `#4e5968`, 패널 가장자리에서 **9px**, 탭 위에 **떠서 가린다**(PrimeVue 기본은 인라인이라 그대로 두면 탭이 밀린다) → `position:absolute`.
+    - **화살표는 28px 흰 원형 + `0 0 4px rgba(0,0,0,.25)` 그림자**, 글리프 `var(--gray-700)`, 패널 가장자리에서 **9px**, 탭 위에 **떠서 가린다**(PrimeVue 기본은 인라인이라 그대로 두면 탭이 밀린다) → `position:absolute`.
     - ⚠ **두 개의 함정**: (1) 절대배치 기준이 `.mp-tabs`의 안쪽 여백이라 `right:9px`가 실제로는 34px가 된다 → `--tab-inset` 변수로 `calc(9px - var(--tab-inset))`. (2) `.p-tablist`의 기본 `overflow:hidden`이 **바깥에 놓인 화살표를 잘라낸다** → `.p-tablist`는 `visible`로 두고 **`.p-tablist-content`가 넘침을 자르게** 옮긴다.
 
   ### 21-4) 그룹 이름 규칙 + 툴바 (Figma 908-11276)
@@ -321,6 +321,20 @@ description: >-
 
   - **검증**: `npm run build` 클린, `vitest` **648개** 통과(신규: projectFile teamId 3개, quillListAutofill 10개). Playwright로 헤더 여백 20여 항목·탭 스펙 13항목을 Figma 값과 1:1 대조, 팀 유지(진입→저장→다른 팀 진입→열기), 그룹 이름(모듈명/`그룹 02·03·04`), 호버 시 툴바·핸들 opacity 0 → 클릭 시 1, 색상 팝오버 추종 해제 후 속성 반영까지 확인.
   - ⚠ **Playwright 팁(이번에 반복해 걸림)**: (1) 좌측 패널의 아코디언·색상 트리거는 `.gg-acc-body--card`가 pointer-event를 가로채 **일반 클릭이 타임아웃**된다 → `page.evaluate`로 `dispatchEvent(new MouseEvent('click',{bubbles:true}))`. (2) 캔버스 모듈 셀렉터는 `.module-wrapper`가 아니라 **`.module-content`**. (3) 템플릿 로드 직후 **마지막 모듈이 자동 선택**돼 있어 "호버 시 툴바가 보인다"는 오판이 나온다 → 대상 모듈만 측정할 것. (4) 저장 버튼은 `showSaveFilePicker`(네이티브 대화상자)로 가 다운로드 이벤트가 안 잡힌다 → `addInitScript`로 `delete window.showSaveFilePicker`. (5) `getBoundingClientRect`는 **클리핑을 반영하지 않는다**(잘렸는지 판단에 쓰면 오탐).
+
+- **Phase 22 완료(2026-08-13)**: '모듈 순서' 패널을 Figma **969-7618**(그룹 안 요소 선택 상태)에 맞춤 + 색 토큰 정리.
+  - **그룹 보라는 두 가지다**: 캔버스 그룹 테두리 `var(--group)`(#cf40f3)와 목록 글자 **`var(--group-text)`(#b037ce, 신규)**. 흰 배경 위 14px 글자용이라 한 톤 어둡다(Figma 변수명 `그룹 2 - 모듈리스트 텍스트`). 그룹 행의 **화살표·`dashboard` 아이콘·이름을 모두** 이 색으로 통일(예전엔 이름만 보라, 나머지는 회색).
+  - **밴드는 '그룹을 선택했을 때'만**(사용자 확정, 2026-08-13). 두 상태를 구분해야 한다:
+    - **그룹 선택 + 펼침**(Figma 969-8001): 블록 배경 `color-mix(in srgb, var(--blue-50) 55%, transparent)` + 그룹 행은 그 위에 불투명 `var(--blue-50)`.
+    - **그룹 안 모듈 선택**(Figma 969-7618): 블록 배경 **없음** · 그룹 행도 평상시 그대로 · 선택된 멤버 행만 `var(--blue-50)` + 라벨 `var(--gray-750)`.
+    - ⚠ 펼치기만 해도 밴드를 깔면(Phase 19 초기 구현) 밴드와 선택 행이 같은 계열로 겹쳐 **어느 요소가 선택됐는지 보이지 않는다.** 조건은 `.order-group.is-selected.is-expanded`.
+  - **다단 행 밴드도 파랑 → 회색**(`var(--gray-100)` + `var(--gray-300)` 좌측선). 선택색이 파랑이라 같은 계열이 겹치면 안 된다. 선택된 다단 행은 밴드를 지우고 좌측선만 `var(--blue-400)`.
+  - 하위 모듈 들여쓰기 `37px` → **`32px`**(그룹 행의 화살표 슬롯 폭).
+  - **색은 전부 `src/assets/tokens.css` 변수로 쓴다** — 이 문서의 색 표기도 hex 대신 토큰명으로 통일했다(2026-08-13). 뉴스레터 **내용**(모듈 기본값·레거시 변환·내보내기 HTML)만 예외로 리터럴 hex를 유지한다(메일 클라이언트가 CSS 변수를 못 읽는다).
+  - **검증**: `npm run build` 클린, `vitest` 709개 통과. `vite preview`+Playwright로 케이펫 템플릿에서 두 상태를 각각 측정 —
+    ① 그룹 행 클릭: 블록 `color(srgb .92 .95 1 / .55)` · 그룹 행 `rgb(235,243,255)`,
+    ② 캔버스 그룹 멤버 클릭: 아코디언 자동 펼침 · 블록/그룹 행 배경 투명 · 선택 멤버 `rgb(235,243,255)` + 라벨 `rgb(51,61,75)`.
+    그룹 글자·화살표·아이콘은 두 상태 모두 `rgb(176,55,206)`.
 
 ## 향후 방향 (사용자 명시, 아직 미구현)
 - **팀별 이미지 업로드(S3)** (2026-08-12 협의): 이미지를 올리면 바로 링크가 잡히도록 하는 게 목표. **선행 배선은 모두 끝났다** — 팀 불변 id(561d117) · `editorStore.currentTeamId` · 팀 없이 에디터 진입 불가(router 가드) · 저장 파일 `teamId`(Phase 21-2).
