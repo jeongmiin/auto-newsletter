@@ -47,11 +47,11 @@
               </div>
               <div class="flex items-center gap-2">
                 <span class="w-5 h-5 bg-blue-100 text-blue-600 rounded flex items-center justify-center text-xs font-bold">2</span>
-                <span>모듈 클릭 후 오른쪽에서 내용 편집</span>
+                <span>모듈 클릭 후 왼쪽 설정패널에서 내용 편집</span>
               </div>
               <div class="flex items-center gap-2">
                 <span class="w-5 h-5 bg-blue-100 text-blue-600 rounded flex items-center justify-center text-xs font-bold">3</span>
-                <span>완성 후 상단에서 파일 저장</span>
+                <span>제작 완료 후 상단의 저장용 내려받기 후 발송용 내려받기</span>
               </div>
             </div>
           </div>
@@ -392,6 +392,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch, nextTick } from 'vue'
+import { useRouter } from 'vue-router'
 import { useConfirm } from 'primevue/useconfirm'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
@@ -406,6 +407,7 @@ import { computeGroupLayout, type GroupRowLayout } from '@/utils/groupLayout'
 const moduleStore = useModuleStore()
 const editorStore = useEditorStore()
 const confirm = useConfirm()
+const router = useRouter()
 const { importHtmlFile } = useNewsletterImport()
 
 // 그룹 전체 삭제 — 멤버 모듈까지 함께 지우므로 확인 후 진행
@@ -423,8 +425,10 @@ const confirmDeleteGroup = (item: DisplayItem): void => {
   })
 }
 
-// 빈 화면 빠른 시작: 좌측 패널을 템플릿 탭으로 전환
-const startFromTemplate = (): void => editorStore.setModulePanelMode('templates')
+// 빈 화면 빠른 시작: 템플릿 선택 화면으로 이동 (에디터 안에서 고르던 옛 목록 대신)
+const startFromTemplate = (): void => {
+  void router.push('/templates')
+}
 // 빈 화면 빠른 시작: 재편집용 HTML 파일 열기
 const openFile = (): void => {
   void importHtmlFile()

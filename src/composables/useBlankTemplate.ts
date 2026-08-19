@@ -17,6 +17,9 @@ export function useBlankTemplate() {
   /** 확인 없이 즉시 비운다 (확인은 호출부에서 이미 받은 상태) */
   const clearToBlank = (): void => {
     moduleStore.clearAll()
+    // 전체 스타일(배경색·테두리·포인트 색상·뉴스레터 요약)도 처음 값으로 —
+    // 모듈만 지우면 앞 작업물의 배경색·요약이 빈 템플릿에 그대로 묻어난다.
+    editorStore.resetWrapSettings()
     // 템플릿만 비우고 소속 팀(teamId)은 유지한다 — 담당자가 바뀐 게 아니라 내용만 지운 것이라,
     // 이후 이미지 업로드 경로 등이 계속 같은 팀을 가리켜야 한다.
     editorStore.setCurrentTemplate({

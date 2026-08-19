@@ -45,39 +45,8 @@
 
     <!-- 콘텐츠 영역 -->
     <div ref="contentEl" class="flex-1 overflow-y-auto px-[25px] pt-2 pb-10" @scroll="onModuleLeave">
-      <!-- 템플릿 리스트 -->
-      <div v-if="mode === 'templates'">
-        <div v-if="templates.length === 0" class="text-center py-8 text-gray-500">
-          <i class="pi pi-folder-open text-3xl text-gray-300 mb-3 block"></i>
-          <div class="text-sm">사용 가능한 템플릿이 없습니다</div>
-          <div class="text-xs text-gray-400 mt-1">상단의 "템플릿 내보내기"로<br />현재 작업을 템플릿으로 저장할 수 있습니다</div>
-        </div>
-        <div v-else class="space-y-2">
-          <div
-            v-for="template in templates"
-            :key="template.id"
-            @click="applyTemplate(template)"
-            class="p-3 border-2 border-dashed border-blue-200 rounded-lg cursor-pointer hover:bg-blue-50 hover:border-blue-400 transition-colors"
-          >
-            <div class="flex items-center space-x-3">
-              <div class="w-8 h-8 bg-blue-100 text-blue-700 rounded flex items-center justify-center">
-                <i class="pi pi-file-edit"></i>
-              </div>
-              <div class="flex-1 min-w-0">
-                <div class="font-medium text-sm truncate">{{ template.name }}</div>
-                <div class="text-xs text-gray-500 truncate">{{ template.description || `${template.modules.length}개 모듈` }}</div>
-              </div>
-            </div>
-          </div>
-          <div class="text-xs text-gray-500 mt-3 px-1 flex flex-wrap gap-2 items-center">
-            <i class="pi pi-info-circle"></i>
-            템플릿을 적용하면 현재 작업이 대체됩니다
-          </div>
-        </div>
-      </div>
-
       <!-- [임시] 조립형 모듈 v2 (POC) -->
-      <div v-else-if="mode === 'modules-v2'" class="space-y-3">
+      <div v-if="mode === 'modules-v2'" class="space-y-3">
         <div class="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-md p-2 leading-relaxed">
           <i class="pi pi-info-circle mr-1"></i>실험용 임시 탭입니다. 원소 모듈(단일 이미지·설명 텍스트·단일 버튼)을 하나의 그룹으로 조립합니다.
           그룹 멤버를 선택한 뒤 다른 모듈을 추가하면 <b>그룹 안</b>에 들어가고, 삭제로 노출/비노출을 제어합니다.
@@ -342,19 +311,16 @@ import { storeToRefs } from 'pinia'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
 import { useToast } from 'primevue/usetoast'
-import { useConfirm } from 'primevue/useconfirm'
-import type { ModuleMetadata, NewsletterTemplate } from '@/types'
+import type { ModuleMetadata } from '@/types'
 
 const moduleStore = useModuleStore()
 const editorStore = useEditorStore()
 const toast = useToast()
-const confirm = useConfirm()
 
 // 모듈/템플릿 탭 모드는 editorStore에서 공유 (캔버스 빈 화면 버튼에서도 전환)
 const { modulePanelMode: mode } = storeToRefs(editorStore)
 const selectedCategory = ref<string>('all')
 const modules = ref<ModuleMetadata[]>([])
-const templates = ref<NewsletterTemplate[]>([])
 
 const searchQuery = ref('')
 
@@ -681,48 +647,8 @@ const { thumbs, observeCard, prerenderThumbs, measureThumbHeight, thumbIframeHei
 // 조립형 핸들러 호환용 — 인라인 썸네일에선 닫을 미리보기가 없음(no-op)
 const onModuleLeave = () => {}
 
-const applyTemplate = (template: NewsletterTemplate) => {
-  const doLoad = async () => {
-    const ok = await moduleStore.loadTemplate(template.id)
-    if (ok) {
-      // 세그먼트 토글을 없앴으므로, 템플릿 적용 후 모듈 목록으로 자동 복귀
-      // (템플릿 모드는 캔버스 빈 화면의 '템플릿으로 시작'에서만 진입한다)
-      mode.value = 'modules'
-      toast.add({
-        severity: 'success',
-        summary: '템플릿 적용됨',
-        detail: `${template.name} 템플릿이 적용되었습니다`,
-        life: 2500,
-      })
-    } else {
-      toast.add({
-        severity: 'error',
-        summary: '템플릿 적용 실패',
-        detail: '템플릿을 불러올 수 없습니다',
-        life: 4000,
-      })
-    }
-  }
-
-  // 작업 내용이 있으면 확인
-  if (moduleStore.modules.length > 0) {
-    confirm.require({
-      message: `현재 ${moduleStore.modules.length}개의 모듈이 있습니다. 템플릿을 적용하면 모두 대체됩니다. 계속하시겠습니까?`,
-      header: '템플릿 적용 확인',
-      rejectLabel: '취소',
-      acceptLabel: '적용',
-      rejectClass: 'p-button-secondary',
-      acceptClass: 'p-button-primary',
-      accept: doLoad,
-    })
-  } else {
-    doLoad()
-  }
-}
-
 onMounted(async () => {
   modules.value = await moduleStore.loadAvailableModules()
-  templates.value = await moduleStore.loadAvailableTemplates()
   // 카테고리 아코디언에 들어가는 모든 모듈 썸네일을 미리 렌더 → 카드 높이 확정 → 탭 이동 시 깜빡임 방지
   const ids = new Set<string>()
   for (const catId of Object.keys(CATEGORY_MODULE_IDS)) {

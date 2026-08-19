@@ -6,9 +6,9 @@ import { EDITOR_CONFIG } from '@/constants/defaults'
 export const useEditorStore = defineStore('editor', () => {
   const canvasWidth = ref<'mobile' | 'desktop'>('desktop')
 
-  // 좌측 모듈 패널 탭 모드 (모듈 / 템플릿 / 모듈 v2[임시]) — 캔버스 빈 화면 등에서 전환 가능하도록 공유
+  // 좌측 모듈 패널 탭 모드 (모듈 / 모듈 v2[임시])
   // 'modules-v2': 원소 모듈을 그룹으로 조립하는 실험용 임시 탭 (POC)
-  const modulePanelMode = ref<'modules' | 'templates' | 'modules-v2'>('modules')
+  const modulePanelMode = ref<'modules' | 'modules-v2'>('modules')
 
   // 목차 패널 ↔ 캔버스 하이라이트 동기화용 (마우스 올린 모듈 id)
   const hoveredModuleId = ref<string | null>(null)
@@ -73,8 +73,11 @@ export const useEditorStore = defineStore('editor', () => {
     zoom: 1
   })
 
-  // 뉴스레터 wrap 설정 (전체 스타일 / 포인트 색상)
-  const wrapSettings = ref<WrapSettings>({
+  /**
+   * 뉴스레터 wrap 설정(전체 스타일 / 포인트 색상)의 **처음 값**.
+   * '빈 템플릿'·'전체 삭제'가 여기로 되돌리므로, 기본값은 반드시 이 한 곳에서만 정한다.
+   */
+  const createDefaultWrapSettings = (): WrapSettings => ({
     backgroundColor: '#f9f9f9',
     borderEnabled: false,
     borderWidth: '6px',
@@ -83,8 +86,11 @@ export const useEditorStore = defineStore('editor', () => {
     pointColor: '#2563eb',
     pointColors: ['#2563eb'],
     fontLanguage: 'default',
-    summary: ''
+    summary: '',
   })
+
+  // 뉴스레터 wrap 설정 (전체 스타일 / 포인트 색상)
+  const wrapSettings = ref<WrapSettings>(createDefaultWrapSettings())
 
   /**
    * 캔버스 너비 설정 (모바일/데스크톱)
@@ -94,9 +100,9 @@ export const useEditorStore = defineStore('editor', () => {
   }
 
   /**
-   * 좌측 모듈 패널 탭 모드 설정 (모듈 / 템플릿)
+   * 좌측 모듈 패널 탭 모드 설정
    */
-  const setModulePanelMode = (mode: 'modules' | 'templates' | 'modules-v2'): void => {
+  const setModulePanelMode = (mode: 'modules' | 'modules-v2'): void => {
     modulePanelMode.value = mode
   }
 
@@ -139,6 +145,14 @@ export const useEditorStore = defineStore('editor', () => {
       next.pointColors = [settings.pointColor, ...(wrapSettings.value.pointColors ?? []).filter((c) => c !== settings.pointColor)].slice(0, 3)
     }
     wrapSettings.value = next
+  }
+
+  /**
+   * 전체 스타일을 처음 값으로 되돌린다 — '빈 템플릿'·'전체 삭제'용.
+   * 배경색·테두리·포인트 색상·뉴스레터 요약이 모두 기본값으로 돌아간다.
+   */
+  const resetWrapSettings = (): void => {
+    wrapSettings.value = createDefaultWrapSettings()
   }
 
   /**
@@ -238,6 +252,7 @@ export const useEditorStore = defineStore('editor', () => {
     setHoveredModuleId,
     updateCanvasSettings,
     updateWrapSettings,
+    resetWrapSettings,
     applyLoadedWrapSettings,
     addPointColor,
     appendPointColor,
