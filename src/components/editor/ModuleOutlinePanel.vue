@@ -358,6 +358,8 @@ const CATEGORY_ICON: Record<string, string> = {
  */
 const MODULE_ICON: Record<string, string> = {
   ModuleDivider: 'vertical_distribute',
+  // 카테고리는 '버튼'(버튼 메뉴에 함께 노출)이지만 목록에서는 SNS임이 드러나야 한다
+  ModuleSnsIcons: 'share',
 }
 
 const moduleIcon = (instance: ModuleInstance): string =>

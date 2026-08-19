@@ -2898,9 +2898,9 @@
     },
     {
       "id": "ModuleSnsIcons",
-      "name": "SNS 아이콘",
+      "name": "SNS 아이콘 버튼",
       "description": "원형 SNS 아이콘 (아이콘별 링크·노출 개별 설정)",
-      "category": "common",
+      "category": "button",
       "icon": "pi pi-share-alt",
       "htmlFile": "ModuleSnsIcons.html",
       "editableProps": [
@@ -8444,7 +8444,7 @@
       "id": "TopLanguageButton",
       "name": "언어 선택 버튼",
       "description": "상단 다국어(EN/JP/TH) 선택 버튼",
-      "category": "common",
+      "category": "button",
       "icon": "pi pi-globe",
       "htmlFile": "TopLanguageButton.html",
       "maxColumns": 1,

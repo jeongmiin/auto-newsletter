@@ -317,17 +317,6 @@ const onGalleryAdd = (module: ModuleMetadata) => {
   gap: 26px;
 }
 /* 크기 선택 헤더: 좌 라벨 + 우 현재 크기 */
-.ts-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.ts-head-label {
-  font-size: 16px;
-  font-weight: 500;
-  color: var(--gray-750);
-  letter-spacing: -0.16px;
-}
 .ts-head-size {
   font-size: 15px;
   color: var(--blue-400);
@@ -366,12 +355,6 @@ const onGalleryAdd = (module: ModuleMetadata) => {
 .ts-divider {
   height: 1px;
   background: var(--gray-200);
-}
-.ts-section-label {
-  font-size: 16px;
-  font-weight: 500;
-  color: var(--gray-750);
-  letter-spacing: -0.16px;
 }
 /* 직접 입력: 행/열 스테퍼 */
 .ts-inputs {

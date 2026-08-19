@@ -466,32 +466,6 @@
   flex-direction: column;
   gap: 18px;
 }
-.module-form .gg-brd-radio-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-}
-.module-form .gg-brd-radio-dot {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 1.5px solid var(--gray-300);
-  background: var(--white);
-  flex-shrink: 0;
-  position: relative;
-  cursor: pointer;
-}
-.module-form .gg-brd-radio-dot.is-checked {
-  border-color: var(--blue-400);
-}
-.module-form .gg-brd-radio-dot.is-checked::after {
-  content: '';
-  position: absolute;
-  inset: 3.5px;
-  border-radius: 50%;
-  background: var(--blue-400);
-}
 .module-form .gg-brd-radio-label {
   font-size: 13px;
   font-weight: 500;
@@ -553,12 +527,6 @@
   justify-content: space-between;
   padding: 8px 0;
   width: 100%;
-}
-.module-form .gg-toggle-label {
-  font-size: 16px;
-  font-weight: 500;
-  letter-spacing: -0.16px;
-  color: var(--gray-750);
 }
 
 /* 접이식 섹션 헤더(화살표+타이틀)는 클릭으로 열고/닫는다 */
@@ -1138,11 +1106,6 @@
 .module-form .tbl-content .gg-field-label {
   margin-bottom: 0;
 }
-.module-form .tbl-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
 .module-form .tbl-size {
   font-size: 14px;
   font-weight: 500;
@@ -1198,11 +1161,6 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-}
-.module-form .tbl-sel-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 }
 .module-form .tbl-sel-count {
   font-size: 14px;
@@ -1380,20 +1338,9 @@
 .module-form .tbl-icbtn .material-symbols-outlined {
   font-size: 18px;
 }
-.module-form .tbl-sec-label {
-  font-size: 16px;
-  font-weight: 500;
-  color: var(--gray-750);
-  letter-spacing: -0.16px;
-}
 .module-form .tbl-divider {
   height: 1px;
   background: var(--gray-200);
-}
-.module-form .tbl-toggle-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 }
 .module-form .tbl-ctype {
   display: flex;
@@ -1617,11 +1564,6 @@
 }
 .module-form .tbl-colw + .tbl-colw {
   margin-top: 22px;
-}
-.module-form .tbl-colw-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 }
 .module-form .tbl-colw-head .gg-field-label {
   margin-bottom: 0;

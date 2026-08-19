@@ -342,7 +342,7 @@
         >
           <!-- 리치텍스트(textarea)는 위에 '폰트 크기'와 서식 툴바가 바로 붙으므로 별도 라벨을 두지 않는다(Figma 640-3689) -->
           <label
-            v-show="prop.type !== 'boolean' && prop.type !== 'checkbox' && prop.type !== 'textarea' && prop.type !== 'table-editor' && !isColorBlock(prop) && !isQuadStart(prop, group.props, index) && !isSingleSpacingField(prop) && !isBorderWidthField(prop) && !isBorderStyleStart(prop)"
+            v-show="prop.type !== 'boolean' && prop.type !== 'checkbox' && prop.type !== 'textarea' && prop.type !== 'table-editor' && !isColorBlock(prop) && !isQuadStart(prop, group.props, index) && !isSingleSpacingField(prop) && !isBorderWidthField(prop) && !isPxWidthField(prop) && !isBorderStyleStart(prop)"
             class="gg-field-label"
             :class="{ 'fs-label-row': isFontSizeField(prop) }"
           >
@@ -633,6 +633,35 @@
             <p v-if="prop.hint" class="hint-text" v-html="prop.hint"></p>
           </div>
 
+          <!-- px 고정 너비(예: 언어 선택 버튼의 버튼 너비) — 여백·테두리 두께와 같은 슬라이더 UI -->
+          <div v-else-if="isPxWidthField(prop)" class="gg-margin-quad">
+            <div class="gg-margin-quad-head">
+              <span class="gg-field-label !mb-0">{{ prop.label }}</span>
+            </div>
+            <div class="gg-margin-slider-row">
+              <input
+                type="range"
+                min="0"
+                :max="PX_WIDTH_MAX"
+                step="1"
+                :value="quadPxNumber(prop)"
+                @input="onSingleSpacingInput(prop, $event)"
+                class="gg-margin-slider"
+              />
+              <div class="gg-margin-value-field">
+                <input
+                  type="number"
+                  min="0"
+                  :value="quadPxNumber(prop)"
+                  @input="onSingleSpacingInput(prop, $event)"
+                  class="gg-margin-value-input"
+                />
+                <span class="gg-margin-value-unit">px</span>
+              </div>
+            </div>
+            <p v-if="prop.hint" class="hint-text" v-html="prop.hint"></p>
+          </div>
+
           <!-- 이미지 최대 너비: 슬라이더 + % 값 (Figma 686-3949) -->
           <div v-else-if="isMaxWidthField(prop)" class="space-y-1">
             <div class="gg-margin-slider-row">
@@ -845,9 +874,9 @@
               <div class="flex flex-col gap-[10px]">
                 <span class="gg-sub-label">스타일</span>
                 <div class="flex flex-col gap-[14px]">
-                  <label v-for="opt in borderStyleOptionsFor(prop)" :key="opt.value" class="gg-brd-radio-row">
+                  <label v-for="opt in borderStyleOptionsFor(prop)" :key="opt.value" class="ui-radio-row">
                     <span
-                      class="gg-brd-radio-dot"
+                      class="ui-radio-dot"
                       :class="{ 'is-checked': String(selectedModule.properties[prop.key] || '') === opt.value }"
                       @click="updateProperty(prop.key, opt.value)"
                     ></span>
@@ -2742,6 +2771,16 @@ const isBorderWidthField = (prop: EditableProp): boolean =>
   // borderWidth·topBorderWidth·borderTopWidth(테이블) 등 '...테두리 두께' 키를 모두 슬라이더로
   /border\w*width$/i.test(prop.key) &&
   !isBorderMember(prop, editableProps.value)
+
+// px로 고정하는 너비 값(예: 언어 선택 버튼의 '버튼 너비' 70px) — 여백 슬라이더와 같은 UI로 그린다.
+// 기본값으로 갈라낸다: '%'면 최대 너비 슬라이더, 'auto'(작은 버튼 등)면 그대로 텍스트 필드.
+const PX_WIDTH_MAX = 200
+const isPxWidthField = (prop: EditableProp): boolean =>
+  prop.type === 'text' &&
+  /width$/i.test(prop.key) &&
+  !isMaxWidthField(prop) &&
+  !isBorderWidthField(prop) &&
+  /^\d+px$/.test(String(prop.default ?? '').trim())
 
 const quadPxNumber = (prop: EditableProp): number => {
   const raw = String(selectedModule.value?.properties[prop.key] ?? prop.default ?? '0')

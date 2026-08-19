@@ -194,9 +194,9 @@
             <div class="flex flex-col gap-[10px]">
               <span class="gg-sub-label">스타일</span>
               <div class="flex flex-col gap-[14px]">
-                <label v-for="opt in borderStyleOptions" :key="opt.value" class="gg-radio-row">
+                <label v-for="opt in borderStyleOptions" :key="opt.value" class="ui-radio-row">
                   <span
-                    class="gg-radio-dot"
+                    class="ui-radio-dot"
                     :class="{ 'is-checked': (group.styles.borderStyle ?? 'solid') === opt.value }"
                     @click="setStyle('borderStyle', opt.value)"
                   ></span>
@@ -232,7 +232,7 @@
                   max="20"
                   :value="borderWidthNum"
                   @input="onBorderWidthSlide"
-                  class="gg-range-slider flex-1"
+                  class="gg-margin-slider"
                 />
                 <div class="gg-margin-value-field">
                   <input
@@ -488,32 +488,6 @@ const ungroup = (): void => {
 }
 
 /* 테두리 상세 — 라디오/슬라이더 스타일 */
-.gg-radio-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-}
-.gg-radio-dot {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 1.5px solid var(--gray-300);
-  background: var(--white);
-  flex-shrink: 0;
-  position: relative;
-  cursor: pointer;
-}
-.gg-radio-dot.is-checked {
-  border-color: var(--blue-400);
-}
-.gg-radio-dot.is-checked::after {
-  content: '';
-  position: absolute;
-  inset: 3.5px;
-  border-radius: 50%;
-  background: var(--blue-400);
-}
 .gg-radio-label {
   font-size: 13px;
   font-weight: 500;
@@ -527,34 +501,6 @@ const ungroup = (): void => {
   height: 0;
 }
 /* 테두리 두께 슬라이더 — 여백 슬라이더(gg-margin-slider, 전역)와 동일 트랙/썸 */
-.gg-range-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  height: 4px;
-  border-radius: 2px;
-  background: var(--gray-200);
-  outline: none;
-}
-.gg-range-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--blue-400);
-  cursor: pointer;
-  border: 2px solid var(--white);
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
-}
-.gg-range-slider::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--blue-400);
-  cursor: pointer;
-  border: 2px solid var(--white);
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
-}
 
 .gg-text-input-sm :deep(.p-inputtext),
 :deep(.gg-hex-input) {

@@ -44,8 +44,8 @@
       <div class="flex flex-col gap-[10px]">
         <span class="sub-label">스타일</span>
         <div class="flex flex-col gap-[18px]">
-          <label v-for="opt in borderStyleOptions" :key="opt.value" class="radio-row">
-            <span class="radio-dot" :class="{ 'is-checked': wrapSettings.borderStyle === opt.value }" @click="update('borderStyle', opt.value)"></span>
+          <label v-for="opt in borderStyleOptions" :key="opt.value" class="ui-radio-row">
+            <span class="ui-radio-dot" :class="{ 'is-checked': wrapSettings.borderStyle === opt.value }" @click="update('borderStyle', opt.value)"></span>
             <span class="radio-label" @click="update('borderStyle', opt.value)">{{ opt.label }}</span>
             <span class="radio-preview" :style="{ borderTop: `4px ${opt.value} #333d4b` }"></span>
           </label>
@@ -75,7 +75,7 @@
             max="20"
             :value="borderWidthNum"
             @input="onWidthSlideEvent"
-            class="range-slider flex-1"
+            class="gg-margin-slider"
           />
           <div class="width-field">
             <input
@@ -153,17 +153,6 @@ const onSummaryInput = (event: Event) => {
 .global-style-panel {
   padding: 24px 30px 29px;
 }
-.row-between {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.row-label {
-  font-size: 16px;
-  font-weight: 500;
-  color: var(--gray-750);
-  letter-spacing: -0.16px;
-}
 .sub-label {
   font-size: 15px;
   color: var(--gray-700);
@@ -175,32 +164,6 @@ const onSummaryInput = (event: Event) => {
 }
 /* .hint-text 는 panels.css 공용 클래스로 옮겼다 (패널 공통 힌트 문구) */
 
-.radio-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-}
-.radio-dot {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 1.5px solid var(--gray-300);
-  background: var(--white);
-  flex-shrink: 0;
-  position: relative;
-  cursor: pointer;
-}
-.radio-dot.is-checked {
-  border-color: var(--blue-400);
-}
-.radio-dot.is-checked::after {
-  content: '';
-  position: absolute;
-  inset: 3.5px;
-  border-radius: 50%;
-  background: var(--blue-400);
-}
 .radio-label {
   font-size: 13px;
   font-weight: 500;
@@ -260,32 +223,4 @@ const onSummaryInput = (event: Event) => {
   color: var(--gray-500);
 }
 
-.range-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  height: 4px;
-  border-radius: 2px;
-  background: var(--gray-200);
-  outline: none;
-}
-.range-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--blue-400);
-  cursor: pointer;
-  border: 2px solid var(--white);
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
-}
-.range-slider::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--blue-400);
-  cursor: pointer;
-  border: 2px solid var(--white);
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
-}
 </style>

@@ -121,11 +121,6 @@ const buttonPreviewLabels = computed<string[]>(() => {
   display: block;
   border-radius: 4px;
 }
-.qa-foot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
 
 /* 버튼 미리보기 — 실제 버튼 형태로 표시 */
 .qa-btn-preview {
