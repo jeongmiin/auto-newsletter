@@ -1,5 +1,9 @@
 <template>
-  <div class="flex-1 bg-gray-100 px-8 pt-24 pb-36 overflow-auto" @click="onCanvasBlankClick">
+  <div
+    ref="canvasScrollEl"
+    class="flex-1 bg-gray-100 px-8 pt-24 pb-36 overflow-auto"
+    @click="onCanvasBlankClick"
+  >
     <!-- pt-24: 상단 여백 — 그룹 상단 툴바(top:-44px)가 잘리지 않도록 확보 -->
     <div class="flex justify-center">
       <!-- 캔버스 컨테이너 -->
@@ -387,6 +391,29 @@
         </draggable>
       </div>
     </div>
+
+    <!-- 맨 위·맨 아래로 이동 (캔버스 오른쪽 아래에 붙어 따라다닌다).
+         스크롤 영역 안에 두되 sticky로 고정하고, 높이 0이라 스크롤 길이를 늘리지 않는다. -->
+    <div v-if="modules.length > 0" class="canvas-jump">
+      <div class="canvas-jump-inner">
+        <button
+          type="button"
+          class="cj-btn"
+          aria-label="맨 위로"
+          @click.stop="scrollCanvas('top')"
+        >
+          <span class="material-symbols-outlined">arrow_upward</span>
+        </button>
+        <button
+          type="button"
+          class="cj-btn"
+          aria-label="맨 아래로"
+          @click.stop="scrollCanvas('bottom')"
+        >
+          <span class="material-symbols-outlined">arrow_downward</span>
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -423,6 +450,14 @@ const confirmDeleteGroup = (item: DisplayItem): void => {
     acceptClass: 'p-button-danger',
     accept: () => moduleStore.deleteGroup(item.id),
   })
+}
+
+// 캔버스 스크롤 영역 — 맨 위/맨 아래로 보내는 버튼이 이 요소를 움직인다
+const canvasScrollEl = ref<HTMLElement | null>(null)
+const scrollCanvas = (to: 'top' | 'bottom'): void => {
+  const el = canvasScrollEl.value
+  if (!el) return
+  el.scrollTo({ top: to === 'top' ? 0 : el.scrollHeight, behavior: 'smooth' })
 }
 
 // 빈 화면 빠른 시작: 템플릿 선택 화면으로 이동 (에디터 안에서 고르던 옛 목록 대신)
@@ -767,6 +802,48 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
 </script>
 
 <style scoped>
+/* ===== 맨 위·맨 아래로 이동 =====
+   스크롤 영역 안에 sticky로 두고, 껍데기 높이를 0으로 만들어 스크롤 길이를 늘리지 않는다.
+   (absolute로 두면 스크롤과 함께 흘러가고, fixed로 두면 '모듈 순서' 패널 개폐를 따라오지 못한다) */
+.canvas-jump {
+  position: sticky;
+  bottom: 0;
+  height: 0;
+  z-index: 5;
+}
+.canvas-jump-inner {
+  position: absolute;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+/* 헤더의 아이콘 버튼(.hbtn--icon)과 같은 모양 — 40×40 흰 배경 + gray/200 테두리 */
+.cj-btn {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  background: var(--white);
+  color: var(--gray-400);
+  cursor: pointer;
+  transition:
+    background 0.12s,
+    color 0.12s;
+}
+.cj-btn:hover {
+  background: var(--blue-50);
+  color: var(--blue-400);
+}
+.cj-btn .material-symbols-outlined {
+  font-size: 18px;
+  line-height: 1;
+}
+
 /* 드래그 중인 요소의 고스트 스타일 */
 .dragging-ghost {
   opacity: 0.5;
