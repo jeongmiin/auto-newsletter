@@ -75,7 +75,7 @@
   ],
   "templates": [
     {
-      "id": "nextcon-template",
+      "id": "nextcon",
       "name": "넥스트콘",
       "description": "넥스트콘 뉴스레터 구성",
       "divisionId": "arch",
@@ -2371,7 +2371,7 @@
       ]
     },
     {
-      "id": "hoban-template",
+      "id": "hobanexpo",
       "name": "호반",
       "description": "호반 뉴스레터 구성",
       "divisionId": "arch",
@@ -4222,7 +4222,7 @@
       ]
     },
     {
-      "id": "spacedesign-template",
+      "id": "space_design",
       "name": "공간디자인페어",
       "description": "공간디자인페어 뉴스레터 구성",
       "divisionId": "arch",
@@ -6654,7 +6654,7 @@
       ]
     },
     {
-      "id": "koreabuild-template",
+      "id": "koreabuild",
       "name": "코리아빌드",
       "description": "코리아빌드 뉴스레터 구성",
       "divisionId": "arch",
@@ -8901,7 +8901,7 @@
       ]
     },
     {
-      "id": "lawexpo-template",
+      "id": "lawexposeoul",
       "name": "법률 산업 박람회",
       "description": "법률 산업 박람회 뉴스레터 구성",
       "divisionId": "growth",
@@ -9806,7 +9806,7 @@
       ]
     },
     {
-      "id": "beautysumindia-template",
+      "id": "beautysumkorea",
       "name": "뷰티썸",
       "description": "뷰티썸 뉴스레터 구성",
       "divisionId": "growth",
@@ -10832,7 +10832,7 @@
       ]
     },
     {
-      "id": "khf-template",
+      "id": "khospital",
       "name": "KHF",
       "description": "KHF 뉴스레터 구성",
       "divisionId": "growth",
@@ -11717,7 +11717,7 @@
       ]
     },
     {
-      "id": "scx-template",
+      "id": "smartconexpo",
       "name": "스마트건설·안전·AI 엑스포",
       "description": "스마트건설·안전·AI 엑스포 뉴스레터 구성",
       "divisionId": "growth",
@@ -14161,7 +14161,7 @@
       ]
     },
     {
-      "id": "slw-template",
+      "id": "slw",
       "name": "SLW",
       "description": "SLW 뉴스레터 구성",
       "divisionId": "growth",
@@ -16599,7 +16599,7 @@
       ]
     },
     {
-      "id": "c-uas-template",
+      "id": "c-uas",
       "name": "대드론",
       "description": "대드론 뉴스레터 구성",
       "divisionId": "growth",
@@ -18433,7 +18433,7 @@
       ]
     },
     {
-      "id": "bfs-template",
+      "id": "bfs",
       "name": "건축 소방 안전 산업전",
       "description": "건축 소방 안전 산업전 뉴스레터 구성",
       "divisionId": "conv",
@@ -20769,7 +20769,7 @@
       ]
     },
     {
-      "id": "police-template",
+      "id": "police",
       "name": "국제치안산업대전",
       "description": "국제치안산업대전 뉴스레터 구성",
       "divisionId": "conv",
@@ -23191,7 +23191,7 @@
       ]
     },
     {
-      "id": "evinfra-template",
+      "id": "evinfra",
       "name": "전기차 충전인프라 산업전",
       "description": "전기차 충전인프라 산업전 뉴스레터 구성",
       "divisionId": "conv",
@@ -25196,7 +25196,7 @@
       ]
     },
     {
-      "id": "issa-template",
+      "id": "issashowasia",
       "name": "ISSA",
       "description": "ISSA 뉴스레터 구성",
       "divisionId": "conv",
@@ -27828,7 +27828,7 @@
       ]
     },
     {
-      "id": "handartykorea-template",
+      "id": "handarty",
       "name": "핸드아티코리아",
       "description": "핸드아티코리아 뉴스레터 구성",
       "divisionId": "culture",
@@ -29588,7 +29588,7 @@
       ]
     },
     {
-      "id": "megazoo-template",
+      "id": "megazoo",
       "name": "메가주",
       "description": "메가주 뉴스레터 구성",
       "divisionId": "pet",
@@ -30657,7 +30657,7 @@
       ]
     },
     {
-      "id": "kpet-template",
+      "id": "kpet",
       "name": "케이펫",
       "description": "케이펫 뉴스레터 구성",
       "divisionId": "pet",
@@ -32900,7 +32900,7 @@
       ]
     },
     {
-      "id": "gocaf-template",
+      "id": "gocaf",
       "name": "고카프",
       "description": "고카프 뉴스레터 구성",
       "divisionId": "leisure",
@@ -35206,7 +35206,7 @@
       ]
     },
     {
-      "id": "kfarm-template",
+      "id": "kfarm",
       "name": "케이팜",
       "description": "케이팜 뉴스레터 구성",
       "divisionId": "leisure",
