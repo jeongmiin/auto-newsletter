@@ -420,7 +420,7 @@ describe('projectFile — 소속 팀(teamId)', () => {
   it('파일을 열어도 현재 작업 팀을 덮어쓰지 않는다', () => {
     const editorStore = useEditorStore()
     editorStore.setCurrentTemplate({
-      templateId: 'nextcon-template',
+      templateId: 'nextcon',
       templateName: '넥스트콘',
       teamId: 'arch-plan',
     })

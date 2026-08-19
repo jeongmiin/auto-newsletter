@@ -181,7 +181,8 @@ describe('템플릿 카탈로그', () => {
   catalog.templates.forEach((t) => {
     describe(`${t.name} (${t.id})`, () => {
       it('필수 항목을 갖춘다', () => {
-        expect(t.id).toMatch(/^[a-z0-9-]+$/)
+        // id는 이미지가 든 S3 폴더명을 그대로 쓴다(space_design처럼 밑줄이 있는 폴더가 있다)
+        expect(t.id).toMatch(/^[a-z0-9_-]+$/)
         expect(t.name.trim()).not.toBe('')
         expect(t.description.trim()).not.toBe('')
         expect(t.modules.length).toBeGreaterThan(0)
