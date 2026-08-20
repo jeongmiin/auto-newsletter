@@ -7,8 +7,21 @@
 
 import Quill from 'quill'
 
-/** 선택 가능한 자간 값 (툴바 드롭다운과 동일 순서, -1px이 최소) */
-export const LETTER_SPACING_OPTIONS = ['-1px', '-0.7px', '-0.5px', '-0.3px'] as const
+/** 자간 슬라이더 범위(px) (Figma 640-3517 — 드롭다운 고정 목록 → 슬라이더 연속값) */
+export const LETTER_SPACING_MIN = -2
+export const LETTER_SPACING_MAX = 5
+export const LETTER_SPACING_STEP = 0.1
+/** 값이 지정되지 않았을 때 슬라이더가 서는 위치 (실제 적용은 사용자가 움직였을 때만) */
+export const LETTER_SPACING_FALLBACK = 0
+
+/** 숫자 → 저장 값('-0.5px'). 불필요한 소수점은 떼어낸다. */
+export const toLetterSpacingValue = (n: number): string => `${Number(n.toFixed(1))}px`
+
+/** 저장 값('-0.5px') → 숫자(px). 파싱 실패 시 null. */
+export const parseLetterSpacing = (value: unknown): number | null => {
+  const n = Number.parseFloat(String(value ?? ''))
+  return Number.isFinite(n) ? n : null
+}
 
 type ParchmentLike = {
   StyleAttributor: new (
@@ -29,9 +42,9 @@ export const registerLetterSpacing = (): void => {
   if (registered) return
   const Parchment = Quill.import('parchment') as unknown as ParchmentLike
 
+  // whitelist 없음 — 슬라이더가 -2~5px를 0.1 단위로 만들어내고, 예전 값('-1px' 등)도 그대로 유효하다.
   const LetterSpacingStyle = new Parchment.StyleAttributor('letterSpacing', 'letter-spacing', {
     scope: Parchment.Scope.INLINE,
-    whitelist: [...LETTER_SPACING_OPTIONS],
   })
 
   Quill.register('formats/letterSpacing', LetterSpacingStyle as never, true)

@@ -1,6 +1,13 @@
 import { describe, it, expect, beforeAll } from 'vitest'
 import Quill from 'quill'
-import { registerLineHeight, LINE_HEIGHT_OPTIONS } from '../quillLineHeight'
+import {
+  registerLineHeight,
+  LINE_HEIGHT_MIN,
+  LINE_HEIGHT_MAX,
+  LINE_HEIGHT_STEP,
+  toLineHeightValue,
+  parseLineHeight,
+} from '../quillLineHeight'
 
 // vitest(happy-dom) 환경에서 행간(line-height) 블록 포맷 검증
 
@@ -19,8 +26,16 @@ beforeAll(() => {
 })
 
 describe('quillLineHeight', () => {
-  it('배수 옵션 5개를 제공해야 함', () => {
-    expect(LINE_HEIGHT_OPTIONS).toEqual(['1.0', '1.2', '1.5', '1.7', '2.0'])
+  it('슬라이더 범위(1.0~3.0, 0.1 단위)를 제공해야 함', () => {
+    expect([LINE_HEIGHT_MIN, LINE_HEIGHT_MAX, LINE_HEIGHT_STEP]).toEqual([1.0, 3.0, 0.1])
+  })
+
+  it('숫자 ↔ 저장 값 변환 (소수 한 자리)', () => {
+    expect(toLineHeightValue(1.4)).toBe('1.4')
+    expect(toLineHeightValue(2)).toBe('2.0')
+    expect(parseLineHeight('1.7')).toBe(1.7)
+    expect(parseLineHeight('')).toBeNull()
+    expect(parseLineHeight(undefined)).toBeNull()
   })
 
   it('lineHeight 포맷이 Quill 레지스트리에 등록되어야 함', () => {
@@ -57,10 +72,17 @@ describe('quillLineHeight', () => {
     expect(q2.getSemanticHTML()).toContain('line-height: 1.5')
   })
 
-  it('whitelist 외 값은 적용되지 않음', () => {
+  it('슬라이더가 만드는 임의의 소수 값도 그대로 적용됨 (whitelist 없음)', () => {
     const q = createEditor()
     q.setText('x\n')
-    q.formatLine(0, 1, 'lineHeight', '3.3') // 허용 목록에 없음
-    expect(q.getSemanticHTML()).not.toContain('line-height: 3.3')
+    q.formatLine(0, 1, 'lineHeight', toLineHeightValue(1.4))
+    expect(q.getSemanticHTML()).toContain('line-height: 1.4')
+  })
+
+  it('예전에 저장된 고정 옵션 값도 계속 유효함 (하위호환)', () => {
+    const q = createEditor()
+    q.setText('x\n')
+    q.formatLine(0, 1, 'lineHeight', '1.7')
+    expect(q.getSemanticHTML()).toContain('line-height: 1.7')
   })
 })

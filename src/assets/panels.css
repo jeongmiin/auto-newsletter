@@ -1,0 +1,480 @@
+/* 좌측 속성 패널 공용 스타일 — ModuleForm.vue · GroupPropertiesPanel.vue 공유.
+   두 패널에 스코프 스타일로 중복 정의돼 있던 필드 토큰·잠금 버튼·4방향 여백 슬라이더를 한 곳으로 통합한다.
+   (아코디언 컨테이너·라디오 등 컴포넌트마다 값이 다른 스타일은 각 컴포넌트 스코프에 그대로 둔다.) */
+
+/* ===== 좌측 패널 껍데기 =====
+   레일 메뉴 패널(전체 스타일·포인트 색상·모듈·카테고리·직접 구성)이 공유하는 폭·배경·테두리.
+   패널마다 다른 건 안쪽 여백(padding)과 항목 간격(gap)뿐이라 그 둘만 각 컴포넌트에서 덮어쓴다. */
+.side-panel {
+  width: var(--left-panel-width, 360px);
+  flex-shrink: 0;
+  height: 100%;
+  overflow-y: auto;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  background: var(--white);
+  border-right: 1px solid var(--gray-200);
+}
+
+/* ===== 패널 제목 =====
+   .panel-title  = 레일 메뉴 패널 제목(모듈·텍스트·직접 구성 …)
+   .gg-panel-title = 선택된 모듈/그룹 속성 패널의 상단 제목(줄높이만 다르다) */
+.panel-title {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--gray-800);
+  letter-spacing: -0.2px;
+}
+.gg-panel-title {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--gray-800);
+  letter-spacing: -0.2px;
+}
+
+/* ===== 클릭 카드 공통 골격 =====
+   모듈 팔레트 카드(.module-card)·빠른추가 카드(.quick-add-card)가 공유하는 테두리/배경/호버.
+   카드마다 다른 건 폭·안쪽 배치뿐이라 그건 각 컴포넌트에 남긴다. */
+.ui-card {
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  background: var(--white);
+  cursor: pointer;
+  transition:
+    border-color 0.12s,
+    background-color 0.12s;
+}
+.ui-card:hover {
+  border-color: var(--blue-400);
+}
+
+/* ===== 필드 라벨 / 힌트 / 서브 라벨 ===== */
+.gg-field-label {
+  display: block;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--gray-700);
+  margin-bottom: 8px;
+}
+/* 힌트 문구 */
+.hint-text {
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: -0.14px;
+  color: var(--gray-500);
+  margin-top: 6px;
+  word-break: keep-all;
+}
+.gg-sub-label {
+  font-size: 15px;
+  color: var(--gray-700);
+}
+
+/* ===== 모듈 검색창 (Figma 1125-2975: gray/100 채움 · h40 · px12 · gap8 · rounded8) =====
+   ModulePanel(모듈 메뉴)과 ColumnComposePanel(직접 구성)이 같은 모양을 쓰도록 공용으로 둔다.
+   패널마다 다른 바깥 여백(margin)만 각 컴포넌트에서 얹는다. */
+.mp-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  /* 세로 flex 패널 안에서 목록이 길어지면 기본 flex-shrink 때문에 높이가 눌린다 */
+  flex-shrink: 0;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--gray-100);
+}
+/* 테두리가 없는 채움형이라 포커스는 안쪽 링으로 알린다 */
+.mp-search:focus-within {
+  box-shadow: inset 0 0 0 1px var(--blue-400);
+}
+.mp-search-icon {
+  font-size: 16px;
+  color: var(--gray-500);
+  flex-shrink: 0;
+}
+.mp-search-input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gray-800);
+}
+.mp-search-input::placeholder {
+  color: var(--gray-500);
+  font-weight: 500;
+}
+.mp-search-clear {
+  display: flex;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--gray-400);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.mp-search-clear:hover {
+  color: var(--gray-600);
+}
+.mp-search-clear .material-symbols-outlined {
+  font-size: 16px;
+}
+
+/* 아코디언 헤더(라벨 + 우측 토글/스페이서를 한 줄로). 정적 헤더라 커서는 기본값.
+   (섹션 컨테이너 .gg-acc-section / 본문 .gg-acc-body 는 패널마다 값이 달라 각 컴포넌트 스코프에 둔다) */
+.gg-acc-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 26px 0;
+  background: none;
+  border: none;
+  text-align: left;
+}
+.gg-acc-spacer {
+  flex: 1;
+}
+.gg-acc-section:nth-of-type(2) {
+   border-top: 1px solid var(--gray-100);
+}
+/* 본문: 세로 스택 + 12px 간격 (하위 필드/블록 공통) */
+.gg-acc-body {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 26px;
+}
+
+/* ===== 4방향(상·우·하·좌) 여백 잠금 컨트롤 ===== */
+.gg-margin-quad {
+  width: 100%;
+}
+.gg-margin-quad-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.gg-lock-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: none;
+  color: var(--gray-800);
+  cursor: pointer;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+.gg-lock-btn:hover {
+  background: var(--gray-100);
+}
+
+/* 여백 개별/공통 적용 잠금 아이콘 — Material Symbols(채워진 FILL 1) */
+.gg-lock-btn .gg-lock-icon {
+  font-size: 20px;
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+.gg-margin-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 32px;
+}
+.gg-margin-value-field {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 32px;
+  padding: 0 12px;
+  background: var(--gray-100);
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+.gg-acc-body--card .gg-margin-value-field{
+  background-color: var(--white);
+}
+.gg-margin-value-input {
+  width: 28px;
+  border: none;
+  background: none;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.15px;
+  color: var(--gray-800);
+  text-align: right;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+.gg-margin-value-input::-webkit-outer-spin-button,
+.gg-margin-value-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.gg-margin-value-input:focus {
+  outline: none;
+}
+.gg-margin-value-unit {
+  font-size: 14px;
+  color: var(--gray-600);
+}
+.gg-margin-grid {
+  display: grid;
+  /* 1fr만 쓰면 트랙 최소폭이 auto(=콘텐츠 min-content)로 잡혀 좁은 패널에서 넘친다 → 0으로 고정 */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.gg-margin-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 10px;
+  background: var(--gray-100);
+  border-radius: 8px;
+  min-width: 0;
+}
+.gg-margin-cell-label {
+  font-size: 13px;
+  color: var(--gray-600);
+  flex-shrink: 0;
+}
+.gg-margin-cell-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: none;
+  font-size: 14px;
+  color: var(--gray-800);
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+.gg-margin-cell-input::-webkit-outer-spin-button,
+.gg-margin-cell-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.gg-margin-cell-input:focus {
+  outline: none;
+}
+
+/* 잠금 해제 시 방향별(상단/하단/좌측/우측) 슬라이더 리스트 — Figma 612-4305 */
+.gg-margin-dir-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.gg-margin-dir-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.gg-margin-dir-label {
+  font-size: 14px;
+  color: var(--gray-700);
+  letter-spacing: -0.14px;
+}
+
+/* ===== 접이식 섹션 카드 (ModuleForm · GroupPropertiesPanel 공유) =====
+   헤더의 chevron/클릭 커서, 열렸을 때의 회색 카드 본문. */
+.gg-acc-chevron {
+  font-size: 12px;
+  color: var(--gray-500);
+  flex-shrink: 0;
+}
+.gg-acc-header.is-clickable {
+  cursor: pointer;
+}
+.gg-acc-body--card {
+  padding-bottom: 16px;
+  /* border-bottom: 1px solid var(--gray-100); */
+  margin-bottom: 0;
+}
+/* 기본은 레이아웃에 투명 — 카드 섹션에서만 회색 카드가 된다 */
+.gg-acc-fields {
+  display: contents;
+}
+.gg-acc-body--card > .gg-acc-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background-color: var(--gray-100);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+/* 헤더에서 '열기/닫기'를 담당하는 영역 (chevron + 라벨). 스위치와 분리돼 있다. */
+.gg-acc-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+/* 스위치가 꺼진 섹션 — 내용은 그대로 볼 수 있지만 조작은 막는다 */
+.gg-acc-fields.is-disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* ===== 체크 + 드래그 리스트 (구성 요소 · 푸터 연락처 공용, Figma 717-9607) ===== */
+.cmp-title {
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.16px;
+  color: var(--gray-750);
+  margin-bottom: 12px;
+}
+.cmp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cmp-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 45px;
+  padding: 0 12px 0 10px;
+  background: var(--gray-50);
+  border-radius: 8px;
+}
+.cmp-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  cursor: pointer;
+}
+.cmp-label {
+  font-size: 14px;
+  color: var(--gray-750);
+  letter-spacing: -0.14px;
+}
+.cmp-drag {
+  font-size: 24px;
+  color: var(--gray-500);
+  cursor: grab;
+  flex-shrink: 0;
+  user-select: none;
+}
+.cmp-drag:active {
+  cursor: grabbing;
+}
+/* 아직 추가되지 않은 요소 — 바꿀 순서가 없으므로 잡히지 않는다 */
+.cmp-drag--off {
+  color: var(--gray-300);
+  cursor: default;
+}
+.cmp-row--ghost {
+  opacity: 0.45;
+}
+.cmp-row--chosen {
+  background: var(--blue-50);
+}
+
+/* ==========================================================================
+   여러 패널이 똑같이 쓰던 조각들 — 한 곳으로 모음
+   (전체 스타일 · 그룹 스타일 · 모듈 속성 · 카테고리 패널이 같은 값을 각자 갖고 있었다)
+   ========================================================================== */
+
+/* ===== 좌우로 벌린 한 줄 (라벨 ↔ 값/토글) =====
+   같은 세 줄이 패널마다 다른 이름으로 반복돼 있었다. 이름은 그대로 두고 정의만 합친다. */
+.row-between,
+.qa-foot,
+.ts-head,
+.tbl-toolbar,
+.tbl-sel-head,
+.tbl-toggle-row,
+.tbl-colw-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ===== 섹션 라벨 16px (아코디언 제목·토글 라벨·표 속성 소제목) ===== */
+.gg-acc-label,
+.gg-toggle-label,
+.tbl-sec-label,
+.ts-head-label,
+.ts-section-label,
+.row-label {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--gray-750);
+  letter-spacing: -0.16px;
+}
+
+/* ===== 라디오 (테두리 스타일 선택 등) =====
+   전체 스타일·그룹 스타일·모듈 속성 세 곳에 같은 모양이 따로 있던 것을 하나로. */
+.ui-radio-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+.ui-radio-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid var(--gray-300);
+  background: var(--white);
+  flex-shrink: 0;
+  position: relative;
+  cursor: pointer;
+}
+.ui-radio-dot.is-checked {
+  border-color: var(--blue-400);
+}
+.ui-radio-dot.is-checked::after {
+  content: '';
+  position: absolute;
+  inset: 3.5px;
+  border-radius: 50%;
+  background: var(--blue-400);
+}
+
+/* ===== 슬라이더 =====
+   여백·테두리 두께 등 숫자 값을 끄는 컨트롤. `.gg-margin-slider`가 이미 가장 많이 쓰여
+   그 이름을 대표로 삼고, 같은 모양이던 다른 이름들을 여기로 흡수했다. */
+.gg-margin-slider {
+  flex: 1;
+  min-width: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--gray-200);
+  outline: none;
+}
+.gg-margin-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--blue-400);
+  cursor: pointer;
+  border: 2px solid var(--white);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+}
+.gg-margin-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--blue-400);
+  cursor: pointer;
+  border: 2px solid var(--white);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+}

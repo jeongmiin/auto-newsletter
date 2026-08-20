@@ -6,8 +6,21 @@
 
 import Quill from 'quill'
 
-/** 행간 배수 옵션 (드롭다운 값) */
-export const LINE_HEIGHT_OPTIONS = ['1.0', '1.2', '1.5', '1.7', '2.0']
+/** 행간 슬라이더 범위 (Figma 640-3517 — 드롭다운 고정 목록 → 슬라이더 연속값) */
+export const LINE_HEIGHT_MIN = 1.0
+export const LINE_HEIGHT_MAX = 3.0
+export const LINE_HEIGHT_STEP = 0.1
+/** 값이 지정되지 않았을 때 슬라이더가 서는 위치 (실제 적용은 사용자가 움직였을 때만) */
+export const LINE_HEIGHT_FALLBACK = 1.5
+
+/** 숫자 → 저장 값('1.4'). 소수 한 자리로 통일한다. */
+export const toLineHeightValue = (n: number): string => n.toFixed(1)
+
+/** 저장 값('1.4') → 숫자. 파싱 실패 시 null. */
+export const parseLineHeight = (value: unknown): number | null => {
+  const n = Number.parseFloat(String(value ?? ''))
+  return Number.isFinite(n) ? n : null
+}
 
 type ParchmentLike = {
   StyleAttributor: new (
@@ -28,9 +41,10 @@ export const registerLineHeight = (): void => {
   if (registered) return
   const Parchment = Quill.import('parchment') as unknown as ParchmentLike
 
+  // whitelist를 두지 않는다 — 슬라이더가 1.0~3.0을 0.1 단위로 만들어내고,
+  // 예전에 저장된 값('1.0'/'1.2'/'1.5'/'1.7'/'2.0')도 그대로 유효하다.
   const LineHeightStyle = new Parchment.StyleAttributor('lineHeight', 'line-height', {
     scope: Parchment.Scope.BLOCK,
-    whitelist: LINE_HEIGHT_OPTIONS,
   })
 
   Quill.register('formats/lineHeight', LineHeightStyle, true)

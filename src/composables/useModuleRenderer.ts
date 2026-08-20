@@ -12,9 +12,13 @@ import {
   replaceModuleBasicHeaderContent,
   replaceModuleImageHeaderContent,
   replaceModuleDescTextContent,
+  replaceModuleInlineTextContent,
   replaceModuleImgContent,
+  replaceModuleSnsIconsContent,
+  replaceModuleContactInfoContent,
   replaceModuleOneButtonContent,
   replaceModuleTwoButtonContent,
+  replaceModuleSmallButtonContent,
   replaceTopLanguageButtonContent,
   replaceSectionTitleContent,
   replaceModule04Content,
@@ -65,7 +69,7 @@ export function useModuleRenderer(moduleId: string) {
   ): Promise<string> => {
     const { moduleId: mId } = moduleInstance
     // '포인트 색상 사용'으로 체크된 색상 속성을 전역 포인트 색상으로 해소
-    const properties = resolvePointColors(moduleInstance.properties, editorStore.wrapSettings.pointColor)
+    const properties = resolvePointColors(moduleInstance.properties, editorStore.wrapSettings.pointColors)
 
     switch (mId) {
       case 'ModuleNewsHeader':
@@ -80,14 +84,26 @@ export function useModuleRenderer(moduleId: string) {
       case 'ModuleDescText':
         return replaceModuleDescTextContent(html, properties)
 
+      case 'ModuleInlineText':
+        return replaceModuleInlineTextContent(html, properties)
+
       case 'ModuleImg':
         return replaceModuleImgContent(html, properties)
+
+      case 'ModuleSnsIcons':
+        return replaceModuleSnsIconsContent(html, properties)
+
+      case 'ModuleContactInfo':
+        return replaceModuleContactInfoContent(html, properties)
 
       case 'ModuleOneButton':
         return replaceModuleOneButtonContent(html, properties)
 
       case 'ModuleTwoButton':
         return replaceModuleTwoButtonContent(html, properties)
+
+      case 'ModuleSmallButton':
+        return replaceModuleSmallButtonContent(html, properties)
 
       case 'TopLanguageButton':
         return replaceTopLanguageButtonContent(html, properties)
@@ -141,7 +157,8 @@ export function useModuleRenderer(moduleId: string) {
         return replaceModuleSubTitleContent(html, properties)
 
       case 'ModuleTable':
-        return replaceModuleTableContent(html, properties)
+        // 캔버스 미리보기는 셀 선택을 위해 data-row/col 포함(interactive=true)
+        return replaceModuleTableContent(html, properties, true)
 
       case 'Module01':
         return replaceModule01Content(html, properties)
@@ -260,14 +277,15 @@ export function useModuleRenderer(moduleId: string) {
     { deep: true, immediate: false }  // deep: true로 properties 변경 감지
   )
 
-  // 전역 포인트 색상 변경 시 — '포인트 색상 사용'으로 체크된 모듈들도 다시 렌더
+  // 전역 포인트 색상(최대 3개) 변경 시 — '포인트 색상 사용'으로 체크된 모듈들도 다시 렌더
   watch(
-    () => editorStore.wrapSettings.pointColor,
+    () => editorStore.wrapSettings.pointColors,
     () => {
       if (currentModule.value) {
         debouncedLoadModuleHtml()
       }
-    }
+    },
+    { deep: true }
   )
 
   // 다국어 폰트 변경 시 — 모든 모듈을 선택 언어 폰트로 다시 렌더

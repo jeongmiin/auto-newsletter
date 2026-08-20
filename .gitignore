@@ -28,3 +28,7 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+# 템플릿 원본 작업 파일 (재편집용 HTML) — 템플릿은 public/templates/templates-config.json에
+# 이미 담겨 있어 앱 실행에 필요 없다. 용량이 커서 이력에 남기지 않는다.
+temp/

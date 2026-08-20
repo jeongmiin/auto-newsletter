@@ -58,54 +58,86 @@ describe('replaceModuleTableContent - 셀별 색상', () => {
   })
 })
 
-describe('replaceModuleTableContent - 셀 이미지', () => {
-  it('imageUrl 지정 시 셀은 padding 없이 이미지가 꽉 차게(width:100%) 렌더됨', () => {
-    const cells = [[makeCell({ content: '무시될 텍스트', imageUrl: 'https://example.com/a.png', imageAlt: '대체' })]]
+describe('replaceModuleTableContent - 텍스트 셀 HTML 렌더', () => {
+  // 셀 내용 편집기가 Quill 리치 에디터로 바뀌어, 내용은 HTML을 그대로 렌더한다
+  // (정제는 렌더/내보내기 공통 파이프라인의 sanitizeHtml이 담당).
+  it('리치 텍스트(HTML)를 그대로 렌더한다', () => {
+    const cells = [[makeCell({ content: '<p>일반 <strong>강조</strong> 텍스트</p>' })]]
     const result = replaceModuleTableContent(TEMPLATE, { tableCells: cells })
-    expect(result).toContain('padding:0')
-    expect(result).toContain('<img src="https://example.com/a.png"')
-    expect(result).toContain('alt="대체"')
-    expect(result).toContain('width:100%')
-    // 이미지 셀은 텍스트/기본 셀 padding을 쓰지 않는다
-    expect(result).not.toContain('padding:5px 10px')
-    expect(result).not.toContain('무시될 텍스트')
+    expect(result).toContain('<p>일반 <strong>강조</strong> 텍스트</p>')
   })
 
-  it('imageUrl 이 빈 문자열/공백이면 일반 텍스트 셀로 렌더됨', () => {
-    const cells = [[makeCell({ content: '내용', imageUrl: '   ' })]]
+  it('일반 텍스트(태그 없음)도 그대로 렌더한다', () => {
+    const cells = [[makeCell({ content: '항목 1' })]]
     const result = replaceModuleTableContent(TEMPLATE, { tableCells: cells })
-    expect(result).toContain('padding:5px 10px')
-    expect(result).toContain('내용')
-    expect(result).not.toContain('<img')
+    expect(result).toContain('항목 1')
   })
 
-  it('이미지 URL 의 따옴표/꺾쇠는 이스케이프되어 속성 주입이 방지됨', () => {
-    const cells = [[makeCell({ imageUrl: 'x" onerror="alert(1)' })]]
+  it('이미지 셀은 <img>로 렌더된다', () => {
+    const cells = [[makeCell({ type: 'td', content: '', contentType: 'image', imageUrl: 'https://x/y.png', imageAlt: '설명' })]]
     const result = replaceModuleTableContent(TEMPLATE, { tableCells: cells })
-    expect(result).not.toContain('onerror="alert(1)"')
-    expect(result).toContain('&quot;')
+    expect(result).toContain('<img src="https://x/y.png"')
+    expect(result).toContain('alt="설명"')
   })
 })
 
-describe('replaceModuleTableContent - 부분 굵게(**마커**)', () => {
-  it('**…** 로 감싼 구간만 <strong>으로 변환됨', () => {
-    const cells = [[makeCell({ content: '일반 **강조** 텍스트' })]]
+describe('replaceModuleTableContent - 옛 셀 내용 형식 안전망', () => {
+  it('마이그레이션을 거치지 않은 **굵게**·\n도 렌더 시점에 변환한다', () => {
+    const cells = [[makeCell({ content: '**주의**\n둘째 줄' })]]
     const result = replaceModuleTableContent(TEMPLATE, { tableCells: cells })
-    expect(result).toContain('<strong style="font-weight:700;">강조</strong>')
-    expect(result).toContain('일반 ')
-    expect(result).toContain(' 텍스트')
+    expect(result).toContain('<strong style="font-weight:700;">주의</strong><br>둘째 줄')
   })
 
-  it('마커가 없으면 변환되지 않음', () => {
-    const cells = [[makeCell({ content: '굵게 없음' })]]
+  it('리치 HTML 셀은 그대로 내보낸다', () => {
+    const cells = [[makeCell({ content: '<p>이미 <strong>서식</strong>이 있다</p>' })]]
     const result = replaceModuleTableContent(TEMPLATE, { tableCells: cells })
-    expect(result).not.toContain('<strong')
+    expect(result).toContain('<p>이미 <strong>서식</strong>이 있다</p>')
+  })
+})
+
+describe('replaceModuleTableContent - 옛 이미지 셀 안전망', () => {
+  it('contentType 없이 imageUrl만 있어도 이미지로 렌더한다', () => {
+    const cells = [[makeCell({ content: '내용', imageUrl: 'https://example.com/a.png' })]]
+    const result = replaceModuleTableContent(TEMPLATE, { tableCells: cells })
+    expect(result).toContain('<img src="https://example.com/a.png"')
+    expect(result).toContain('padding:0')
+    expect(result).not.toContain('>내용<')
   })
 
-  it('HTML escape 이후에만 변환되어 태그 주입이 방지됨', () => {
-    const cells = [[makeCell({ content: '**<script>**' })]]
+  it('텍스트로 지정한 셀은 옛 imageUrl이 남아 있어도 텍스트로 렌더한다', () => {
+    const cells = [[makeCell({ content: '내용', contentType: 'text', imageUrl: 'https://example.com/a.png' })]]
     const result = replaceModuleTableContent(TEMPLATE, { tableCells: cells })
-    expect(result).toContain('<strong style="font-weight:700;">&lt;script&gt;</strong>')
-    expect(result).not.toContain('<script>')
+    expect(result).toContain('>내용<')
+    expect(result).not.toContain('<img')
+  })
+})
+
+describe('replaceModuleTableContent - 타입(제목/내용) 공통 정렬', () => {
+  it('직접 고른 공통 정렬이 레거시 열 공통 정렬을 이긴다', () => {
+    const cells = [[makeCell({ type: 'th', content: '제목' }), makeCell({ type: 'td', content: '내용' })]]
+    const result = replaceModuleTableContent(TEMPLATE, {
+      tableCells: cells,
+      tableColAligns: ['center', 'center'],
+      headerAlign: 'right',
+    })
+    // 제목: 직접 고른 right, 내용: 아직 안 골랐으므로 레거시 열 공통 center 유지
+    expect(result).toContain('text-align:right')
+    expect(result).toContain('text-align:center')
+    expect(result).not.toContain('text-align:left')
+  })
+
+  it('공통 정렬을 고르지 않았으면 레거시 열 공통 정렬이 그대로 쓰인다', () => {
+    const cells = [[makeCell({ type: 'td', content: '내용' })]]
+    const result = replaceModuleTableContent(TEMPLATE, {
+      tableCells: cells,
+      tableColAligns: ['right'],
+    })
+    expect(result).toContain('text-align:right')
+  })
+
+  it('셀별 지정은 공통 정렬보다 우선한다', () => {
+    const cells = [[makeCell({ type: 'td', content: '내용', align: 'center' })]]
+    const result = replaceModuleTableContent(TEMPLATE, { tableCells: cells, cellAlign: 'right' })
+    expect(result).toContain('text-align:center')
   })
 })

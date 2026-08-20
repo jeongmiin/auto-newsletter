@@ -1,0 +1,1613 @@
+/* ===== 모듈 속성 패널(ModuleForm.vue) 스타일 =====
+   컴포넌트의 <style scoped>가 1,600줄을 넘겨 파일에서 관리하도록 분리했다.
+   scoped가 아니므로 모든 규칙에 `.module-form`(ModuleForm 루트 클래스)을 붙여
+   원래의 적용 범위를 그대로 유지한다 — Quill/PrimeVue 내부(.ql-*, .p-*)를 건드리는
+   규칙이 많아 전역으로 풀면 다른 화면의 에디터까지 바뀐다.
+
+   예외: 행간·자간 팝오버(.rte-spacing-popover*), 셀 정렬 메뉴(.rte-align-*),
+   색상 팝오버(.quill-color-popover)는 body로 Teleport돼 루트 바깥에 렌더되므로
+   접두사 없이 전역으로 둔다. */
+
+/* 좌측 패널 상단 타이틀 — 그룹 스타일 패널(GroupPropertiesPanel)과 동일 (Figma 352-1138) */
+/* 패널 상단 타이틀 바 — 스크롤 시 상단 고정(sticky). 흰 배경으로 아래 콘텐츠를 덮는다. */
+.module-form .gg-panel-title-bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--white);
+}
+
+/* 컬럼 세그먼트 (1단/2단/3단) — Figma Frame 80(745:3908) */
+.module-form .col-seg {
+  display: flex;
+  gap: 10px;
+}
+.module-form .col-seg-btn {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  background: var(--white);
+  color: var(--gray-500);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+.module-form .col-seg-btn:hover {
+  border-color: var(--gray-300);
+}
+.module-form .col-seg-btn.is-active {
+  background: var(--gray-700);
+  border-color: var(--gray-700);
+  color: var(--white);
+}
+
+/* ===== 너비 조정 (Figma 977-7672 탭 · 977-7684 프리셋 · 977-7706 프리뷰) ===== */
+.module-form .wadj-tabs {
+  display: flex;
+  gap: 20px;
+  padding: 6px;
+  background: var(--gray-100);
+  border-radius: 8px;
+}
+.module-form .wadj-tab {
+  flex: 1 0 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 0;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  font-size: 15px;
+  color: var(--gray-700);
+  cursor: pointer;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+.module-form .wadj-tab.is-active {
+  background: var(--white);
+  color: var(--blue-500);
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.15);
+}
+.module-form .wadj-tab .material-symbols-outlined {
+  font-size: 20px;
+}
+.module-form .wadj-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px 10px;
+  margin-top: 32px;
+}
+.module-form .wadj-preset {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 8px;
+  background: var(--gray-100);
+  font-size: 14px;
+  letter-spacing: -0.14px;
+  color: var(--gray-700);
+  cursor: pointer;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+.module-form .wadj-preset:hover {
+  background: var(--gray-200);
+}
+.module-form .wadj-preset.is-active {
+  background: var(--blue-50);
+  color: var(--blue-600);
+  font-weight: 500;
+}
+.module-form .wadj-custom {
+  margin-top: 32px;
+}
+/* 프리뷰 막대: 폭이 곧 비율이다. 10%여도 값이 읽히도록 최소 폭을 준다. */
+.module-form .wadj-preview {
+  display: flex;
+  gap: 8px;
+  margin-top: 24px;
+}
+.module-form .wadj-preview-bar {
+  flex-basis: 0;
+  min-width: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 10px;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  background: var(--white);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.14px;
+  color: var(--gray-800);
+}
+.module-form .wadj-preview-bar.is-first {
+  border-color: transparent;
+  background: var(--blue-50);
+  color: var(--blue-600);
+}
+
+/* 정렬 세그먼트 (좌측/중앙/우측) — Figma 686-3949 */
+.module-form .align-seg {
+  display: flex;
+  gap: 12px;
+}
+.module-form .align-seg-btn {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  background: var(--white);
+  color: var(--gray-600);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+.module-form .align-seg-btn .material-symbols-outlined {
+  font-size: 18px;
+}
+.module-form .align-seg-btn:hover {
+  border-color: var(--gray-300);
+}
+.module-form .align-seg-btn.is-active {
+  background: var(--blue-400);
+  border-color: var(--blue-400);
+  color: var(--white);
+}
+/* 최대 너비 100%일 때: 정렬 세그먼트 비활성 — 활성/선택 여부와 무관하게 톤 통일(클릭 불가) */
+.module-form .align-seg.is-disabled .align-seg-btn,
+.module-form .align-seg.is-disabled .align-seg-btn.is-active,
+.module-form .align-seg.is-disabled .align-seg-btn:hover {
+  background: var(--gray-200);
+  border-color: var(--gray-300);
+  color: var(--gray-400);
+  cursor: not-allowed;
+}
+
+/* Quill 에디터를 이메일 기본 폰트로 통일 (입력 시 결과물과 동일하게 보이도록) */
+.module-form .ql-editor {
+  font-family: AppleSDGothic, 'malgun gothic', 'nanum gothic', 'Noto Sans KR', sans-serif;
+}
+
+/*
+  흰색(var(--white)) 글자 표시 보정 — 에디터 전용.
+  에디터 배경이 흰색이라 흰 글자가 보이지 않으므로, 편집 화면에서만 회색으로 보여준다.
+  실제 저장값·가운데 미리보기·미리보기 버튼 화면·내려받은 HTML 에는 var(--white) 가 그대로 유지된다.
+  (브라우저는 인라인 color 를 rgb(255, 255, 255) 로 직렬화하므로 그 형태를 우선 매칭하고,
+   '; color:' / 시작 위치로 한정해 background-color 의 흰색은 건드리지 않는다.)
+*/
+.module-form .ql-editor [style^='color: rgb(255, 255, 255)'],
+.module-form .ql-editor [style*='; color: rgb(255, 255, 255)'],
+.module-form .ql-editor [style^='color: rgba(255, 255, 255'],
+.module-form .ql-editor [style*='; color: rgba(255, 255, 255'],
+.module-form .ql-editor [style^='color: var(--white)'],
+.module-form .ql-editor [style*='; color: var(--white)'] {
+  color: var(--gray-400) !important;
+}
+
+/*
+  리스트 마커 단일화 — 글머리(bullet)=•, 번호(ordered)=1.
+  네이티브 <ol> 숫자 등 다른 마커를 모두 끄고, Quill이 각 항목에 넣는
+  <span class="ql-ui">의 ::before로만 마커를 그려 이중 표기를 방지한다.
+*/
+.module-form .ql-editor ol,
+.module-form .ql-editor ul {
+  margin: 0;
+  padding-left: 1.5em;
+  list-style: none !important;
+  counter-reset: ql-list-0;
+}
+.module-form .ql-editor li[data-list] {
+  list-style: none !important;
+}
+/* 혹시 남아있는 네이티브 ::marker(숫자)도 강제로 숨김 */
+.module-form .ql-editor li[data-list]::marker {
+  content: '' !important;
+}
+.module-form .ql-editor li[data-list] > .ql-ui {
+  display: inline-block;
+  margin-left: -1.5em;
+  margin-right: 0.3em;
+  text-align: right;
+  white-space: nowrap;
+  width: 1.2em;
+}
+.module-form .ql-editor li[data-list='bullet'] > .ql-ui::before {
+  content: '\2022'; /* • */
+}
+.module-form .ql-editor li[data-list='ordered'] {
+  counter-increment: ql-list-0;
+}
+.module-form .ql-editor li[data-list='ordered'] > .ql-ui::before {
+  content: counter(ql-list-0, decimal) '. ';
+}
+
+/* 글자 크기(font-size) 드롭다운 픽커 — 선택 영역에 부분 적용(인라인) */
+.module-form .ql-snow .ql-picker.ql-fontSize {
+  width: 64px;
+}
+.module-form .ql-snow .ql-picker.ql-fontSize .ql-picker-label[data-label]:not([data-label=''])::before,
+.module-form .ql-snow .ql-picker.ql-fontSize .ql-picker-item[data-label]:not([data-label=''])::before {
+  content: attr(data-label);
+}
+
+/* 줄바꿈 규칙(word-break) 드롭다운 픽커 — lineHeight와 동일하게 data-label 텍스트 노출 */
+.module-form .ql-snow .ql-picker.ql-wordBreak {
+  width: 76px;
+}
+.module-form .ql-snow .ql-picker.ql-wordBreak .ql-picker-label[data-label]:not([data-label=''])::before,
+.module-form .ql-snow .ql-picker.ql-wordBreak .ql-picker-item[data-label]:not([data-label=''])::before {
+  content: attr(data-label);
+}
+/* 옵션 라벨이 길어 줄바꿈/잘림되지 않도록 옵션 목록 폭 자동 확장 */
+.module-form .ql-snow .ql-picker.ql-wordBreak .ql-picker-options {
+  width: max-content;
+  white-space: nowrap;
+}
+
+/* 형광펜(반투명 마커) 드롭다운 픽커 — 라벨은 Material 마커 아이콘(Figma 753-9174의 ink_marker) */
+.module-form .ql-snow .ql-picker.ql-highlightMarker .ql-picker-label {
+  font-size: 0;
+}
+.module-form .ql-snow .ql-picker.ql-highlightMarker .ql-picker-label::before {
+  content: 'ink_marker';
+  font-family: 'Material Symbols Outlined';
+  font-size: 20px;
+  line-height: 1;
+  color: var(--gray-700);
+}
+/* 팔레트를 여는 픽커라 캐럿은 두지 않는다(글자색·배경색 픽커와 동일) */
+.module-form .ql-snow .ql-picker.ql-highlightMarker .ql-picker-label svg {
+  display: none;
+}
+.module-form .ql-snow .ql-picker.ql-highlightMarker .ql-picker-options {
+  padding: 4px;
+  width: 130px;
+}
+/* 색상 스와치 */
+.module-form .ql-snow .ql-picker.ql-highlightMarker .ql-picker-item {
+  width: 18px;
+  height: 18px;
+  float: left;
+  margin: 2px;
+  padding: 0;
+  border: 1px solid var(--gray-300);
+}
+.module-form .ql-snow .ql-picker.ql-highlightMarker .ql-picker-item:hover,
+.module-form .ql-snow .ql-picker.ql-highlightMarker .ql-picker-item.ql-selected {
+  border-color: var(--blue-500);
+}
+/* 첫 옵션(값 없음) = 형광펜 해제 */
+.module-form .ql-snow .ql-picker.ql-highlightMarker .ql-picker-item:not([data-value]) {
+  position: relative;
+  background: var(--white);
+}
+.module-form .ql-snow .ql-picker.ql-highlightMarker .ql-picker-item:not([data-value])::after {
+  content: '✕';
+  position: absolute;
+  inset: 0;
+  font-size: 11px;
+  line-height: 16px;
+  text-align: center;
+  color: var(--gray-500);
+}
+.module-form .ql-snow .ql-picker.ql-highlightMarker .ql-picker-item[data-value='#fff555'] {
+  background: linear-gradient(transparent 50%, #fff555 50%);
+}
+.module-form .ql-snow .ql-picker.ql-highlightMarker .ql-picker-item[data-value='#ffd1d1'] {
+  background: linear-gradient(transparent 50%, #ffd1d1 50%);
+}
+.module-form .ql-snow .ql-picker.ql-highlightMarker .ql-picker-item[data-value='#c7f0c7'] {
+  background: linear-gradient(transparent 50%, #c7f0c7 50%);
+}
+.module-form .ql-snow .ql-picker.ql-highlightMarker .ql-picker-item[data-value='#cce4ff'] {
+  background: linear-gradient(transparent 50%, #cce4ff 50%);
+}
+.module-form .ql-snow .ql-picker.ql-highlightMarker .ql-picker-item[data-value='#ffd9b3'] {
+  background: linear-gradient(transparent 50%, #ffd9b3 50%);
+}
+.module-form .ql-snow .ql-picker.ql-highlightMarker .ql-picker-item[data-value='#e0c7ff'] {
+  background: linear-gradient(transparent 50%, #e0c7ff 50%);
+}
+.module-form .ql-snow .ql-picker.ql-highlightMarker .ql-picker-item[data-value='#13ecff'] {
+  background: linear-gradient(transparent 50%, #13ecff 50%);
+}
+
+/* 색상/배경 피커의 "직접 선택(기타)" 항목 — 무지개 스와치 + 스포이드 아이콘 */
+.module-form .ql-snow .ql-picker.ql-color .ql-custom-color,
+.module-form .ql-snow .ql-picker.ql-background .ql-custom-color {
+  position: relative;
+  background: conic-gradient(
+    #ff0000,
+    #ff7f00,
+    #ffff00,
+    #00ff00,
+    #00ffff,
+    #0000ff,
+    #ff00ff,
+    #ff0000
+  );
+  border: 1px solid var(--gray-300);
+}
+.module-form .ql-snow .ql-picker.ql-color .ql-custom-color:hover,
+.module-form .ql-snow .ql-picker.ql-background .ql-custom-color:hover {
+  border-color: var(--blue-500);
+}
+.module-form .ql-snow .ql-picker.ql-color .ql-custom-color::after,
+.module-form .ql-snow .ql-picker.ql-background .ql-custom-color::after {
+  content: '+';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--white);
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.7);
+}
+
+/* 색상 직접 선택 팝오버 (body로 Teleport, 에디터 왼쪽에 부착) */
+.quill-color-popover {
+  position: absolute;
+  /* PrimeVue ColorPicker 오버레이(overlay 티어 ≈1000+)보다 낮게 두어
+     팝오버 위로 그라데이션 패널이 정상적으로 뜨도록 한다. */
+  z-index: 900;
+  width: 400px;
+  padding: 12px;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* 테이블 에디터 그리드 스타일 */
+.module-form .table-editor-grid {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.module-form .table-editor-grid .p-inputtext {
+  font-size: 0.8125rem;
+}
+
+.module-form .table-editor-grid .p-inputtext::placeholder {
+  font-size: 0.75rem;
+  color: var(--gray-400);
+}
+
+/* 열 너비 입력 — 래퍼가 테두리/포커스 링을 담당하므로 내부 InputText는 평평하게 */
+.module-form .col-width-field .p-inputtext {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  background: transparent !important;
+  height: 1.5rem;
+}
+.module-form .col-width-field .p-inputtext:focus {
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* 열 공통 정렬 Select — 좁은 열 헤더에 맞춰 작게 */
+.module-form .col-align-select .p-select-label {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+}
+.module-form .col-align-select .p-select-dropdown {
+  width: 1.5rem;
+}
+
+/* 셀 타입 토글 버튼 호버 효과 */
+.module-form .table-editor-grid button {
+  transition: all 0.15s ease;
+}
+
+/* 행/열 사이 삽입 버튼 (행 컨트롤·열 헤더에 표시) */
+.module-form .tbl-insert-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 9999px;
+  border: 1px solid var(--blue-200);
+  color: var(--blue-400);
+  background: var(--white);
+  line-height: 1;
+  flex-shrink: 0;
+}
+.module-form .tbl-insert-btn:hover {
+  background: var(--blue-400);
+  border-style: solid;
+  border-color: var(--blue-400);
+  color: var(--white);
+}
+
+/* 병합 셀렉트 스타일 */
+.module-form .table-editor-grid select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 2px center;
+  background-repeat: no-repeat;
+  background-size: 14px;
+  padding-right: 16px;
+  text-align: center;
+}
+
+/* ============================================================
+   필드 레벨 스타일 토큰 (Figma 372-3000/378-1704/412-2139/408-1758)
+   ============================================================ */
+
+/* 컬러 필드 행 — 전체 스타일과 동일하게 라벨 좌 / 스와치 우 */
+.module-form .gg-color-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* 테두리 통합 블록 — 전체 스타일(GlobalStylePanel) 테두리 섹션과 동일 톤 */
+.module-form .gg-border-block {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.module-form .gg-brd-radio-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gray-750);
+  letter-spacing: -0.13px;
+  width: 60px;
+  cursor: pointer;
+}
+.module-form .gg-brd-radio-preview {
+  width: 50px;
+  height: 0;
+}
+
+/* 텍스트/URL 인풋 — TextField/Small/Filled */
+.module-form .gg-text-input .p-inputtext {
+  width: 100%;
+  height: 32px;
+  padding: 0 12px;
+  background: var(--gray-100);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 15px;
+  color: var(--gray-800);
+  box-shadow: none;
+}
+.module-form .gg-text-input .p-inputtext::placeholder {
+  color: var(--gray-500);
+}
+.module-form .gg-text-input .p-inputtext:enabled:focus {
+  border-color: var(--blue-400);
+  background: var(--white);
+  box-shadow: none;
+}
+.module-form .gg-acc-body--card .gg-text-input .p-inputtext {
+  background-color: var(--white);
+}
+/* 셀렉트 — Dropdown/Small */
+.module-form .gg-select .p-select {
+  height: 40px;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  box-shadow: none;
+}
+.module-form .gg-select .p-select-label {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  color: var(--gray-750);
+}
+.module-form .gg-select .p-select:not(.p-disabled).p-focus {
+  border-color: var(--blue-400);
+  box-shadow: none;
+}
+
+/* 여백/노출 등 아코디언 토글 행 */
+.module-form .gg-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  width: 100%;
+}
+
+/* 접이식 섹션 헤더(화살표+타이틀)는 클릭으로 열고/닫는다 */
+/* 열린 섹션 본문 (Figma 608-2624 / 640-2393) — 본문은 하단 구분선만 두고,
+   실제 배경 카드는 내부 각 속성 블록(> div)에 적용한다. */
+/* 이름 없는(flat) 그룹은 구분선 제거 (ModuleForm 전용) */
+.module-form .gg-acc-section--flat {
+  border-top: none;
+}
+
+/* 여백-quad 전용 그룹(헤더 없음, 예: '바깥 여백')은 섹션 구분선·상단 여백을 제거해
+   flat 모듈의 '여백'(본문 속 인라인 필드)과 동일한 간격으로 앞 섹션에 이어 붙인다. */
+.module-form .gg-acc-section--quad {
+  border-top: none;
+}
+.module-form .gg-acc-section--quad > .gg-acc-body {
+  padding-top: 0;
+}
+
+/* 속성 간격 26px 통일 — space-y 유틸(마진)은 v-show(display:none) 요소 주변에도 유령 여백을
+   남겨 간격이 들쭉날쭉해지므로 flex gap으로 일원화한다(숨긴 요소는 flow에서 빠져 gap 미적용). */
+.module-form .gg-acc-body {
+  gap: 26px;
+}
+
+/* flat 모듈의 인라인 토글(이미지 링크 사용·테두리 등) 위 구분선 —
+   이름 있는 섹션의 gg-acc-section 구분선과 동일하게 토글 섹션을 시각적으로 분리한다. */
+.module-form .mf-toggle-divider {
+  border-top: 1px solid var(--gray-100);
+  padding-top: 26px;
+}
+
+/* 컬럼 분할 세그먼트 필 버튼 (1단/2단 세그먼트, Figma 378-1706) */
+.module-form .gg-segment {
+  display: inline-flex;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.module-form .gg-segment-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 500;
+  background: var(--gray-700);
+  color: var(--white);
+  border: 1px solid var(--gray-700);
+  cursor: pointer;
+}
+.module-form .gg-segment-btn:disabled {
+  background: var(--gray-300);
+  border-color: var(--gray-300);
+  color: var(--white);
+  cursor: not-allowed;
+}
+.module-form .gg-segment-btn--ghost {
+  background: var(--white);
+  color: var(--gray-700);
+  border-color: var(--gray-300);
+  border-left: none;
+}
+.module-form .gg-segment-btn--ghost:disabled {
+  background: var(--white);
+  color: var(--gray-300);
+  border-color: var(--gray-200);
+}
+
+/* 푸터 연락처 행 — 리스트 톤(.cmp-row)은 공용 정의를 그대로 쓰고 값 입력만 덧붙인다 */
+.module-form .ct-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  height: 100%;
+  cursor: pointer;
+}
+/* 라벨 폭을 고정해 항목마다 입력창 시작 위치를 맞춘다 (H 홈페이지 / T 전화 / E 이메일 / F 팩스) */
+.module-form .ct-check .cmp-label {
+  width: 72px;
+  flex-shrink: 0;
+}
+/* SNS는 라벨 앞에 아이콘 썸네일이 하나 더 들어가므로 간격·라벨 폭을 따로 잡는다 */
+.module-form .sns-check {
+  gap: 8px;
+}
+.module-form .sns-thumb {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  object-fit: contain;
+  padding: 3px;
+  border-radius: 50%;
+  background: var(--gray-700);
+}
+.module-form .ct-check .sns-label {
+  width: 56px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* InputText의 루트가 곧 <input> 이라 클래스는 input 자신에게 붙는다 */
+.module-form .ct-input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  height: 32px;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+/* 폰트 크기 대상 배지 / 개별 크기 되돌리기 (Figma 640-3689) */
+.module-form .fs-target-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  margin-left: 6px;
+  padding: 0 8px;
+  border-radius: 10px;
+  background: var(--blue-50);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: -0.12px;
+  color: var(--blue-400);
+  vertical-align: middle;
+}
+/* 라벨 행: 왼쪽 라벨(+배지) / 오른쪽 되돌리기 버튼 */
+.module-form .fs-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.module-form .fs-reset-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 13px;
+  color: var(--gray-600);
+  cursor: pointer;
+}
+.module-form .fs-reset-btn:hover {
+  color: var(--blue-400);
+}
+.module-form .fs-reset-btn .material-symbols-outlined {
+  font-size: 16px;
+}
+
+/* 리치텍스트 필드 (Figma 640-3235) — 툴바는 테두리 없는 2줄 그룹, 본문은 회색 채움 박스 */
+.module-form .rte-field {
+  width: 100%;
+}
+
+/* 툴바: 테두리/배경 없이 줄 사이 20px, 본문과는 16px 간격 */
+.module-form .rte-field .ql-toolbar.ql-snow {
+  border: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+/* 줄: 그룹 │ 구분선 │ 그룹. 패널 폭(≈277px)이 Figma(310px)보다 좁아 간격만 10/5px로 좁혔다
+   (Figma 스펙은 15/8px). 그래도 안 들어가면 줄바꿈되도록 wrap은 유지. */
+.module-form .rte-field .rte-tb-row {
+  position: relative; /* 정렬 메뉴가 이 줄의 왼쪽 모서리를 기준으로 열린다 */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.module-form .rte-field .ql-toolbar.ql-snow .ql-formats.rte-tb-grp {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-right: 0;
+}
+/* 그룹 사이 세로 구분선 (1px × 21px) */
+.module-form .rte-field .rte-tb-div {
+  width: 1px;
+  height: 21px;
+  background: var(--gray-200);
+  flex-shrink: 0;
+}
+
+/* ===== 툴바 컨트롤 정렬 통일 (Figma 753-9174) =====
+   Quill 기본 스타일은 버튼 24×28(float:left)·피커 라벨 좌우 비대칭 패딩·캐럿 absolute 라서
+   아이콘 크기와 세로 위치가 제각각이다. 버튼·피커를 모두 같은 정사각 박스로 만들고
+   내부 글리프를 flex 중앙 정렬해 한 줄에 정확히 맞춘다. (박스 30px = Figma 32px에서 2px 축소) */
+.module-form .rte-field .ql-snow.ql-toolbar button,
+.module-form .rte-field .rte-tb-btn,
+.module-form .rte-field .ql-snow.ql-toolbar .ql-picker {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  margin: 0;
+  float: none;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+/* 캐럿이 붙는 피커(정렬·목록·글자 크기·줄바꿈)는 아이콘+캐럿이 들어가도록 조금 넓게 */
+.module-form .rte-field .ql-snow.ql-toolbar .ql-picker.ql-align,
+.module-form .rte-field .ql-snow.ql-toolbar .ql-picker.ql-list {
+  width: 38px;
+}
+.module-form .rte-field .ql-snow.ql-toolbar .ql-picker.ql-fontSize,
+.module-form .rte-field .ql-snow.ql-toolbar .ql-picker.ql-wordBreak {
+  width: auto;
+}
+.module-form .rte-field .ql-snow.ql-toolbar button svg {
+  width: 20px;
+  height: 20px;
+  float: none;
+}
+/* 피커 라벨: 박스를 꽉 채우고 아이콘·캐럿을 가운데로 (Quill의 좌우 비대칭 패딩 제거) */
+.module-form .rte-field .ql-snow.ql-toolbar .ql-picker-label {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 0 4px;
+  border: none;
+}
+.module-form .rte-field .ql-snow.ql-toolbar .ql-picker-label svg {
+  position: static;
+  margin: 0;
+  right: auto;
+  top: auto;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+/* 캐럿(∨)만 있는 svg는 작게 — 아이콘 뒤에 붙는 화살표 */
+.module-form .rte-field .ql-snow.ql-toolbar .ql-picker:not(.ql-color-picker):not(.ql-icon-picker) .ql-picker-label svg {
+  width: 12px;
+  height: 12px;
+}
+.module-form .rte-field .ql-snow.ql-toolbar button:hover,
+.module-form .rte-field .rte-tb-btn:hover,
+.module-form .rte-field .ql-snow.ql-toolbar .ql-picker-label:hover {
+  background: var(--gray-100);
+  border-radius: 8px;
+}
+.module-form .rte-field .rte-tb-btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--gray-700);
+}
+.module-form .rte-field .rte-tb-btn.is-active {
+  background: var(--blue-50);
+  color: var(--blue-400);
+}
+.module-form .rte-field .rte-tb-btn .material-symbols-outlined {
+  font-size: 20px;
+  line-height: 1;
+}
+/* 캐럿이 붙는 버튼(테이블 셀 정렬)은 아이콘+캐럿이 들어가도록 조금 넓게 — ql-align 픽커와 같은 폭 */
+.module-form .rte-field .rte-tb-btn--caret {
+  width: 38px;
+  gap: 1px;
+}
+.module-form .rte-field .rte-tb-btn--caret .rte-tb-caret {
+  font-size: 12px;
+  flex-shrink: 0;
+}
+/* 드롭다운 메뉴 공통 카드 (Figma 640-4087 Dropdown/Menu) — 정렬·목록·글자크기·줄바꿈 공용.
+   PrimeVue 테마의 `.p-editor .p-editor-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-options`(0,5,0)를
+   이겨야 해서 선택자를 그보다 길게 잡는다. */
+.module-form .rte-field .p-editor .p-editor-toolbar .ql-picker.ql-expanded .ql-picker-options {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  margin-top: 6px;
+  padding: 4px 0;
+  /* 픽커를 flex(justify-content:center) 박스로 만들면 절대배치 자식의 기준 위치까지 가운데로
+     밀려 메뉴가 패널 왼쪽 밖으로 튀어나간다 → 기준을 왼쪽 모서리로 고정한다. */
+  left: 0;
+  right: auto;
+}
+.module-form .rte-field .ql-snow.ql-toolbar .ql-picker:not(.ql-align) .ql-picker-item {
+  padding: 6px 12px;
+}
+.module-form .rte-field .ql-snow.ql-toolbar .ql-picker:not(.ql-align) .ql-picker-item:hover {
+  background: var(--gray-100);
+}
+
+/* 정렬 드롭다운: 아이콘 3(+양쪽정렬)칸을 가로로 나열한 메뉴 (Figma 640-4087).
+   버튼 아래 가운데 정렬 — 패널 오른쪽으로 넘치지 않도록 좌우 중앙에 건다. */
+/* 정렬 메뉴(가로 210px)는 버튼 기준으로 놓으면 좁은 패널(≈277px) 밖으로 나간다 →
+   픽커의 position을 풀고 줄(.rte-tb-row) 왼쪽 모서리에 맞춘다(Figma 640-4087도 버튼 중앙이 아니라
+   줄 왼쪽 가까이에 걸려 있다). */
+.module-form .rte-field .ql-snow.ql-toolbar .ql-picker.ql-align {
+  position: static;
+}
+.module-form .rte-field .p-editor .p-editor-toolbar .ql-picker.ql-align.ql-expanded .ql-picker-options {
+  display: flex;
+  flex-direction: row;
+  padding: 0;
+  left: 0;
+  transform: none;
+  white-space: nowrap;
+  /* Quill 기본값 min-width:100% 는 기준 박스(=이 줄)의 폭을 따라가므로 패널을 넓히면 메뉴도 늘어난다
+     → 항상 아이콘 칸(52px×N) 크기로 고정한다. */
+  min-width: 0;
+  width: max-content;
+}
+.module-form .rte-field .ql-picker.ql-align .ql-picker-item {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  float: none;
+  color: var(--gray-750);
+}
+.module-form .rte-field .ql-picker.ql-align .ql-picker-item:hover {
+  background: var(--gray-100);
+}
+.module-form .rte-field .ql-picker.ql-align .ql-picker-item.ql-selected {
+  background: var(--blue-50);
+  color: var(--blue-400);
+}
+.module-form .rte-field .ql-picker.ql-align .ql-picker-item svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* 정렬 픽커: Quill 아이콘 픽커는 캐럿이 없어 목록 픽커와 모양이 어긋난다 →
+   Figma(753-9174)처럼 아이콘 옆에 캐럿을 붙인다. */
+.module-form .rte-field .ql-snow.ql-toolbar .ql-picker.ql-align .ql-picker-label::after {
+  content: 'expand_more';
+  font-family: 'Material Symbols Outlined';
+  font-size: 12px;
+  line-height: 1;
+  color: var(--gray-700);
+  flex-shrink: 0;
+}
+
+/* 목록 드롭다운: 라벨 텍스트 대신 아이콘 + 캐럿 (드롭다운 항목은 한글 라벨 그대로) */
+.module-form .rte-field .ql-snow.ql-toolbar .ql-picker.ql-list .ql-picker-label {
+  font-size: 0;
+}
+.module-form .rte-field .ql-snow.ql-toolbar .ql-picker.ql-list .ql-picker-label::before {
+  content: 'format_list_bulleted';
+  font-family: 'Material Symbols Outlined';
+  font-size: 20px;
+  line-height: 1;
+  color: var(--gray-700);
+}
+/* 드롭다운 항목 텍스트 — Quill은 header/font/size 픽커에만 data-label 노출 규칙이 있어
+   커스텀 픽커(ql-list)는 이 규칙이 없으면 항목이 빈 칸으로 보인다. */
+.module-form .rte-field .ql-snow .ql-picker.ql-list .ql-picker-item[data-label]:not([data-label=''])::before {
+  content: attr(data-label);
+}
+.module-form .rte-field .ql-snow.ql-toolbar .ql-picker.ql-list .ql-picker-options {
+  font-size: 14px;
+  white-space: nowrap;
+  min-width: 0;
+  width: max-content;
+}
+/* 본문: 회색 채움 박스 (TextField/Small/Default).
+   높이는 콘텐츠/사용자 리사이즈에 따라가도록 auto — 고정 높이면 리사이즈 그립이 먹지 않는다. */
+.module-form .rte-field .ql-container.ql-snow {
+  border: none;
+  background: var(--gray-100);
+  border-radius: 8px;
+  height: auto;
+}
+/* 우하단 그립을 끌어 입력란 높이를 조절할 수 있다(세로만) */
+.module-form .rte-field .ql-container.ql-snow .ql-editor {
+  background: transparent; /* 컨테이너의 회색 채움이 보이도록 */
+  padding: 20px 12px;
+  min-height: 169px;
+  resize: vertical;
+  overflow: auto;
+  /* 본문 기본 크기는 '폰트 크기' 값을 그대로 따라간다(캔버스와 같은 크기로 보이도록).
+     부분 지정된 텍스트는 인라인 font-size가 그대로 우선한다. */
+  font-size: var(--rte-base-size, 15px);
+  color: var(--gray-750);
+}
+
+/* 접이식 카드(gg-acc-body--card > .gg-acc-fields) 안의 텍스트 에디터는
+   회색 카드 위에서 구분되도록 툴바를 회색(var(--gray-100)), 작성란을 흰색(var(--white))으로 뒤집는다. */
+.module-form .gg-acc-body--card > .gg-acc-fields .rte-field {
+  --p-editor-toolbar-background: var(--gray-100);
+}
+.module-form .gg-acc-body--card > .gg-acc-fields .rte-field .ql-toolbar.ql-snow {
+  background: var(--gray-100);
+  border-radius: 8px;
+  padding: 12px;
+}
+.module-form .gg-acc-body--card > .gg-acc-fields .rte-field .ql-container.ql-snow {
+  background: var(--white);
+}
+
+/* 행간 · 자간 팝오버 (Figma 640-3517) — 아이콘+라벨 헤더 + 슬라이더 + 값 필드 */
+/* 셀 정렬 메뉴 — 텍스트 모듈의 ql-align 픽커와 같은 가로 아이콘 카드(52px×4) */
+.rte-align-menu {
+  position: fixed;
+  z-index: 900;
+  display: flex;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+.rte-align-item {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  color: var(--gray-750);
+  cursor: pointer;
+}
+.rte-align-item:hover {
+  background: var(--gray-100);
+}
+.rte-align-item.is-selected {
+  background: var(--blue-50);
+  color: var(--blue-400);
+}
+.rte-align-item .material-symbols-outlined {
+  font-size: 24px;
+}
+
+.rte-spacing-popover {
+  position: fixed;
+  z-index: 900;
+  width: 318px;
+  padding: 25px 20px;
+  background: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+.rte-sp-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.rte-sp-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.rte-sp-icon {
+  font-size: 24px;
+  color: var(--gray-750);
+}
+.rte-sp-label {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--gray-700);
+}
+.rte-sp-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+  height: 32px;
+}
+/* 줄바꿈 세그먼트 (기본 / 단어 기준 / 글자 기준) */
+.rte-sp-seg {
+  display: flex;
+  gap: 6px;
+}
+.rte-sp-seg-btn {
+  flex: 1;
+  height: 32px;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  background: var(--white);
+  font-size: 13px;
+  color: var(--gray-700);
+  cursor: pointer;
+}
+.rte-sp-seg-btn:hover {
+  background: var(--gray-50);
+}
+.rte-sp-seg-btn.is-active {
+  background: var(--blue-50);
+  border-color: var(--blue-400);
+  color: var(--blue-400);
+  font-weight: 500;
+}
+.rte-sp-value {
+  width: 50px;
+  height: 32px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  background: var(--gray-100);
+  border-radius: 8px;
+}
+.rte-sp-value input {
+  width: 100%;
+  border: none;
+  background: none;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.13px;
+  color: var(--gray-800);
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+.rte-sp-value input::-webkit-outer-spin-button,
+.rte-sp-value input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.rte-sp-value input:focus {
+  outline: none;
+}
+/* 아직 지정되지 않은 값 — 슬라이더 기본 위치를 보여주되 적용 전임을 흐리게 표시 */
+.rte-sp-value.is-unset input {
+  color: var(--gray-500);
+}
+
+/* ===== 테이블 편집 패널 (Figma 686-4239) ===== */
+.module-form .tbl-tabs {
+  display: flex;
+  margin-top: 8px;
+  border-bottom: 1px solid var(--gray-200);
+}
+.module-form .tbl-tab {
+  flex: 1;
+  padding: 8px 0 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gray-600);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  cursor: pointer;
+  letter-spacing: -0.14px;
+}
+.module-form .tbl-tab.is-active {
+  color: var(--blue-400);
+  border-bottom-color: var(--blue-400);
+}
+
+.module-form .tbl-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.module-form .tbl-content .gg-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.module-form .tbl-content .gg-field-label {
+  margin-bottom: 0;
+}
+.module-form .tbl-size {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gray-700);
+}
+.module-form .tbl-toolbar-actions {
+  display: flex;
+  gap: 6px;
+}
+.module-form .tbl-tbtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  background: var(--white);
+  font-size: 13px;
+  color: var(--gray-700);
+  cursor: pointer;
+}
+.module-form .tbl-tbtn:hover {
+  border-color: var(--blue-400);
+  color: var(--blue-400);
+}
+.module-form .tbl-tbtn .material-symbols-outlined {
+  font-size: 18px;
+}
+
+/* 빈 안내 */
+.module-form .tbl-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 56px 0;
+}
+.module-form .tbl-empty-icon {
+  font-size: 60px;
+  color: var(--gray-300);
+}
+.module-form .tbl-empty-text {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--gray-500);
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* 셀 편집 */
+.module-form .tbl-cell-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.module-form .tbl-sel-count {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-750);
+}
+.module-form .tbl-sel-actions {
+  display: flex;
+  gap: 6px;
+}
+.module-form .tbl-mini {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--gray-200);
+  border-radius: 6px;
+  background: var(--white);
+  font-size: 12px;
+  color: var(--gray-600);
+  cursor: pointer;
+}
+.module-form .tbl-mini:hover {
+  border-color: var(--red-400);
+  color: var(--red-400);
+}
+.module-form .tbl-mini .material-symbols-outlined {
+  font-size: 16px;
+}
+.module-form .tbl-content-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+.module-form .tbl-bold {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  background: var(--white);
+  color: var(--gray-700);
+  cursor: pointer;
+}
+.module-form .tbl-bold:hover {
+  border-color: var(--blue-400);
+  color: var(--blue-400);
+}
+.module-form .tbl-multi-hint {
+  font-size: 13px;
+  color: var(--gray-600);
+  line-height: 1.5;
+  background: var(--gray-100);
+  border-radius: 8px;
+  padding: 10px 12px;
+  word-break: keep-all;
+}
+.module-form .tbl-seg {
+  display: flex;
+  gap: 6px;
+}
+.module-form .tbl-seg-btn {
+  flex: 1;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  background: var(--white);
+  font-size: 14px;
+  color: var(--gray-700);
+  cursor: pointer;
+}
+.module-form .tbl-seg-btn.is-active {
+  background: var(--blue-50);
+  border-color: var(--blue-400);
+  color: var(--blue-400);
+}
+.module-form .tbl-seg-icon .material-symbols-outlined {
+  font-size: 20px;
+}
+.module-form .tbl-reset {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  background: var(--white);
+  color: var(--gray-500);
+  cursor: pointer;
+}
+.module-form .tbl-reset:hover {
+  color: var(--gray-700);
+}
+.module-form .tbl-merge-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 40px;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  background: var(--white);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gray-700);
+  cursor: pointer;
+}
+.module-form .tbl-merge-btn:hover {
+  border-color: var(--blue-400);
+  color: var(--blue-400);
+}
+.module-form .tbl-merge-btn .material-symbols-outlined {
+  font-size: 18px;
+}
+
+/* ── 셀 편집 재설계 (Figma 694-4798 / 757-6257) ── */
+.module-form .tbl-cell-edit {
+  gap: 26px;
+}
+.module-form .tbl-cell-edit .gg-field {
+  gap: 14px;
+}
+.module-form .tbl-cellbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.module-form .tbl-cellchip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 29px;
+  padding: 4px 10px;
+  background: var(--blue-50);
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--blue-400);
+  letter-spacing: -0.14px;
+  white-space: nowrap;
+}
+.module-form .tbl-cellchip .material-symbols-outlined {
+  font-size: 20px;
+}
+.module-form .tbl-cellbar-actions {
+  display: flex;
+  gap: 4px;
+}
+.module-form .tbl-icbtn {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--gray-200);
+  border-radius: 6px;
+  background: var(--white);
+  color: var(--gray-600);
+  cursor: pointer;
+}
+.module-form .tbl-icbtn:hover {
+  border-color: var(--blue-400);
+  color: var(--blue-400);
+}
+.module-form .tbl-icbtn .material-symbols-outlined {
+  font-size: 18px;
+}
+.module-form .tbl-divider {
+  height: 1px;
+  background: var(--gray-200);
+}
+.module-form .tbl-ctype {
+  display: flex;
+  gap: 12px;
+}
+.module-form .tbl-ctype-btn {
+  flex: 1;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  background: var(--white);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gray-600);
+  cursor: pointer;
+}
+.module-form .tbl-ctype-btn.is-active {
+  background: var(--gray-700);
+  border-color: var(--gray-700);
+  color: var(--white);
+}
+.module-form .tbl-ctype-btn .material-symbols-outlined {
+  font-size: 20px;
+}
+.module-form .tbl-align {
+  display: flex;
+  gap: 12px;
+}
+.module-form .tbl-align-btn {
+  flex: 1;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  background: var(--white);
+  color: var(--gray-700);
+  cursor: pointer;
+}
+.module-form .tbl-align-btn.is-active {
+  background: var(--gray-750);
+  border-color: var(--gray-750);
+  color: var(--white);
+}
+.module-form .tbl-align-btn .material-symbols-outlined {
+  font-size: 22px;
+}
+.module-form .tbl-input {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  background: var(--white);
+  font-size: 14px;
+  color: var(--gray-800);
+}
+.module-form .tbl-input::placeholder {
+  color: var(--gray-400);
+}
+.module-form .tbl-input:focus {
+  outline: none;
+  border-color: var(--blue-400);
+}
+/* ── 테이블 스타일 탭: 커스텀 블록만 27px 여백(아코디언은 gg-acc-section 공통 스타일에 맡김) ── */
+/* 탭 밑줄 → 행 열 관리 */
+.module-form .tbl-rowcol {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 26px;
+}
+/* 행 열 관리 ↔ 열 너비, 열 너비 ↔ 첫 아코디언 사이 구분선(위·아래 27px) */
+.module-form .tbl-divider--wide {
+  margin-top: 26px;
+}
+/* 내용 탭: 탭 밑줄 → 첫 콘텐츠(1행1열 chip / 빈 안내) */
+.module-form .tbl-content {
+  margin-top: 26px;
+}
+.module-form .tbl-rowcol .tbl-sec-label {
+  margin-bottom: 10px;
+}
+.module-form .tbl-rc-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.module-form .tbl-rc-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  color: var(--gray-700);
+  white-space: nowrap;
+}
+.module-form .tbl-rc-name .material-symbols-outlined {
+  font-size: 24px;
+  color: var(--gray-700);
+}
+.module-form .tbl-rc-btns {
+  display: flex;
+  gap: 12px;
+  width: 201px;
+}
+.module-form .tbl-rc-btn {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  background: var(--white);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--gray-600);
+  cursor: pointer;
+}
+.module-form .tbl-rc-btn:hover {
+  border-color: var(--blue-400);
+  color: var(--blue-400);
+}
+.module-form .tbl-rc-btn .material-symbols-outlined {
+  font-size: 20px;
+}
+/* 행/열 추가 드롭다운 */
+.module-form .tbl-rc-add {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+}
+.module-form .tbl-rc-btn--add {
+  gap: 2px;
+}
+.module-form .tbl-insert-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 30;
+  min-width: 170px;
+  padding: 4px;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+}
+.module-form .tbl-insert-menu button {
+  text-align: left;
+  padding: 9px 12px;
+  border: none;
+  background: none;
+  font-size: 14px;
+  color: var(--gray-750);
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.module-form .tbl-insert-menu button:hover:not(:disabled) {
+  background: var(--gray-100);
+}
+.module-form .tbl-insert-menu button:disabled {
+  color: var(--gray-300);
+  cursor: not-allowed;
+}
+.module-form .tbl-insert-hint {
+  padding: 4px 12px 6px;
+  font-size: 12px;
+  color: var(--gray-500);
+  line-height: 1.4;
+  white-space: normal;
+}
+.module-form .tbl-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+}
+.module-form .tbl-rc-merge {
+  width: 201px;
+  height: 40px;
+  border: 1px solid var(--gray-300);
+  border-radius: 8px;
+  background: var(--white);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--gray-700);
+  cursor: pointer;
+}
+/* 병합 가능(2개 이상 선택) 시 파란 버튼 */
+.module-form .tbl-rc-merge:not(:disabled) {
+  background: var(--blue-400);
+  border-color: var(--blue-400);
+  color: var(--white);
+}
+.module-form .tbl-rc-merge:not(:disabled):hover {
+  background: var(--blue-500);
+  border-color: var(--blue-500);
+}
+.module-form .tbl-rc-merge:disabled {
+  opacity: 0.5;
+  color: var(--gray-400);
+  cursor: not-allowed;
+}
+
+/* 열 너비 직접 설정 */
+.module-form .tbl-colw {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.module-form .tbl-colw + .tbl-colw {
+  margin-top: 22px;
+}
+.module-form .tbl-colw-head .gg-field-label {
+  margin-bottom: 0;
+}
+.module-form .tbl-colw-auto {
+  font-size: 12px;
+  color: var(--gray-500);
+}
+.module-form .tbl-colw-reset {
+  font-size: 12px;
+  color: var(--blue-400);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+.module-form .tbl-colw-reset:hover {
+  text-decoration: underline;
+}
+/* 100% 초과 경고 */
+.module-form .tbl-colw-warn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--red-400);
+  line-height: 1.4;
+}
+.module-form .tbl-colw-warn .material-symbols-outlined {
+  font-size: 18px;
+}
+
+/* 내용 편집기 — 디자인의 filled 텍스트 에디터 박스(TextField/Small)로 표시 */
+.module-form .tbl-cell-edit .tcell-editor {
+  background: var(--gray-100);
+  border-color: transparent;
+  border-radius: 8px;
+  min-height: 120px;
+  padding: 16px 12px;
+  font-size: 15px;
+  color: var(--gray-750);
+}
+.module-form .tbl-cell-edit .tcell-editor:focus {
+  background: var(--white);
+  border-color: var(--blue-400);
+}

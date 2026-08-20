@@ -1,85 +1,231 @@
 <template>
-  <header class="flex items-center justify-between px-4 py-2 bg-white border-b">
-    <!-- 왼쪽: 로고 + 타이틀 -->
-    <div class="flex items-center gap-2">
-      <img src="/src/assets/img/logo/logo.png" alt="Logo" class="w-7 h-7" />
-      <h2 class="font-bold text-gray-800 text-lg">Newsletter Builder</h2>
+  <!-- Figma 1125-2964 top nav: 높이 60, 좌우 패딩 21 -->
+  <header class="hnav">
+    <!-- 왼쪽 묶음 (1125-3054): 홈 ↔ 나머지 25px -->
+    <div class="hleft">
+      <!-- 홈 (클릭 시 랜딩 페이지로) — 40×40, 아이콘 31px -->
+      <button
+        type="button"
+        class="hicon hhome"
+        @click="goHome"
+        v-tooltip.bottom="'처음 화면으로'"
+      >
+        <span class="material-symbols-outlined">home</span>
+      </button>
+
+      <!-- 팀·브레드크럼·실행취소·전체삭제 (1125-3059): 항목 간 20px -->
+      <div v-if="showActions" class="hleft-group">
+        <!-- 소속 팀 — 표시명은 teamId로 트리에서 찾는다(트리 미로딩 시엔 숨김) -->
+        <span v-if="currentTeamName" class="hteam">{{ currentTeamName }}</span>
+
+        <!-- 브레드크럼: 템플릿명(클릭 시 템플릿 선택 페이지로 이동) > 에디터 -->
+        <span class="hcrumb">
+          <button type="button" class="hcrumb-link" @click="goTemplates">
+            {{ currentTemplateName }}
+          </button>
+          &gt; 에디터
+        </span>
+
+        <span class="hbar"></span>
+
+        <!-- 실행취소/다시실행 (1125-3064): 40×40, 사이 8px -->
+        <div class="hundo">
+          <button
+            type="button"
+            class="hicon"
+            :disabled="!canUndo"
+            @click="doUndo"
+            v-tooltip.bottom="'이전으로'"
+          >
+            <span class="material-symbols-outlined">undo</span>
+          </button>
+          <button
+            type="button"
+            class="hicon"
+            :disabled="!canRedo"
+            @click="doRedo"
+            v-tooltip.bottom="'다음으로'"
+          >
+            <span class="material-symbols-outlined">redo</span>
+          </button>
+        </div>
+
+        <span class="hbar"></span>
+
+        <!-- 전체 삭제 = 빈 템플릿으로 시작 (레일의 '빈 템플릿'과 같은 확인 모달) -->
+        <button
+          type="button"
+          class="hclear"
+          @click="confirmBlankTemplate"
+          v-tooltip.bottom="'작업 내용을 모두 지우고 빈 템플릿으로 시작합니다'"
+        >
+          <span class="material-symbols-outlined">delete</span>
+          <span>전체 삭제</span>
+        </button>
+      </div>
     </div>
 
-    <!-- 오른쪽: 파일 관리 버튼들 -->
-    <div class="flex items-center gap-2">
-      <span v-if="lastDownload" class="text-sm text-gray-500 whitespace-nowrap">
-        {{ lastDownloadDateLabel }}<span class="font-bold">{{ lastDownload.type }}</span> 내려받음
-      </span>
-      <Button
-        @click="downloadForSave"
-        label="저장용 내려받기"
-        icon="pi pi-save"
-        outlined
-        size="small"
-        v-tooltip.bottom="'재편집용 — 다시 불러와 편집 가능'"
-      />
-      <Button
-        @click="importHtmlFile"
-        label="파일 열기"
-        icon="pi pi-folder-open"
-        outlined
-        size="small"
-        v-tooltip.bottom="'이전에 저장한 파일을 불러옵니다'"
-      />
-      <Button
-        @click="previewEmail"
-        label="미리보기"
-        icon="pi pi-eye"
-        severity="secondary"
-        outlined
-        size="small"
-        v-tooltip.bottom="'새 창에서 완성된 모습을 확인합니다'"
-      />
-      <Button
-        @click="exportHtml"
-        label="코드 복사"
-        icon="pi pi-copy"
-        severity="secondary"
-        outlined
-        size="small"
-        v-tooltip.bottom="'코드를 클립보드에 복사합니다'"
-      />
+    <template v-if="showActions">
+      <!-- 중앙: PC / 모바일 토글 -->
+      <div class="flex-1 flex justify-center">
+        <div class="seg">
+          <button
+            type="button"
+            class="seg-btn"
+            :class="{ 'is-active': canvasWidth === 'desktop' }"
+            @click="editorStore.setCanvasWidth('desktop')"
+            v-tooltip.bottom="'PC 화면'"
+          >
+            <span class="material-symbols-outlined">desktop_windows</span>
+          </button>
+          <button
+            type="button"
+            class="seg-btn"
+            :class="{ 'is-active': canvasWidth === 'mobile' }"
+            @click="editorStore.setCanvasWidth('mobile')"
+            v-tooltip.bottom="'모바일 화면'"
+          >
+            <span class="material-symbols-outlined">smartphone</span>
+          </button>
+        </div>
+      </div>
 
-      <Button
-        @click="downloadForSend"
-        label="발송용 내려받기"
-        icon="pi pi-send"
-        size="small"
-        v-tooltip.bottom="'메일 발송용 — 다시 불러와 편집 불가능'"
-      />
-    </div>
+      <!-- 우측 (1125-3080): 저장상태 ↔ 버튼 그룹 10px, 버튼끼리도 10px -->
+      <div class="hright">
+        <span v-if="lastDownload" class="hsaved">
+          {{ lastDownloadDateLabel }}<span class="font-bold">{{ lastDownload.type }}</span> 다운 완료
+        </span>
+        <button
+          type="button"
+          class="hbtn hbtn--tint"
+          @click="downloadForSave"
+          v-tooltip.bottom="'재편집용 — 다시 불러와 편집 가능'"
+        >
+          <span class="material-symbols-outlined">download</span>
+          <span>저장용 내려받기</span>
+        </button>
+        <button
+          type="button"
+          class="hbtn hbtn--muted"
+          @click="previewEmail"
+          v-tooltip.bottom="'새 창에서 완성된 모습을 확인합니다'"
+        >
+          <span class="material-symbols-outlined">visibility</span>
+          <span>미리보기</span>
+        </button>
+        <button
+          type="button"
+          class="hbtn hbtn--primary"
+          @click="downloadForSend"
+          v-tooltip.bottom="'메일 발송용 — 다시 불러와 편집 불가능'"
+        >
+          <span class="material-symbols-outlined">send</span>
+          <span>발송용 내려받기</span>
+        </button>
+
+        <!-- 자주 쓰지 않는 동작은 한 단계 안으로 (Figma 1125-3110) -->
+        <button
+          type="button"
+          class="hbtn hbtn--icon"
+          aria-haspopup="true"
+          aria-controls="header-more-menu"
+          @click="toggleMoreMenu"
+          v-tooltip.bottom="'더 보기'"
+        >
+          <span class="material-symbols-outlined">more_horiz</span>
+        </button>
+        <Menu id="header-more-menu" ref="moreMenu" :model="moreMenuItems" popup class="hmore-menu" />
+      </div>
+    </template>
   </header>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import Menu from 'primevue/menu'
+import { useConfirm } from 'primevue/useconfirm'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
 import { processQuillHtml } from '@/utils/quillHtmlProcessor'
 import { useNewsletterImport } from '@/composables/useNewsletterImport'
+import { serializeModule } from '@/utils/projectFile'
+import { getHistoryInstance } from '@/composables/useHistory'
+import { useBlankTemplate } from '@/composables/useBlankTemplate'
 import { useToast } from 'primevue/usetoast'
+
+// showActions=false면 오른쪽 파일 관리 버튼들을 숨긴다(예: 템플릿 선택 화면)
+withDefaults(defineProps<{ showActions?: boolean }>(), { showActions: true })
 
 const moduleStore = useModuleStore()
 const editorStore = useEditorStore()
 const toast = useToast()
+const router = useRouter()
+const confirm = useConfirm()
 const { importHtmlFile } = useNewsletterImport()
+const { confirmBlankTemplate } = useBlankTemplate()
+
+// 실행취소/다시실행 (전역 히스토리 싱글턴)
+const history = getHistoryInstance()
+const canUndo = history.canUndo
+const canRedo = history.canRedo
+const doUndo = () => history.undo()
+const doRedo = () => history.redo()
+
+// PC/모바일 토글 상태
+const canvasWidth = computed(() => editorStore.canvasWidth)
+
+// 브레드크럼: 현재 템플릿명(빈 문서면 '빈 템플릿') → 클릭 시 템플릿 선택 페이지로 이동
+const currentTemplateName = computed(() => editorStore.currentTemplateName)
+const goTemplates = () => router.push('/templates')
+
+// 소속 팀 표시명 — 저장된 건 불변 id뿐이라 트리에서 찾아 쓴다.
+// (팀명이 바뀌어도 id는 그대로이므로 항상 최신 이름이 나온다)
+const currentTeamName = computed(() => {
+  const id = editorStore.currentTeamId
+  if (!id) return ''
+  for (const dept of moduleStore.availableDepartments) {
+    const team = dept.teams.find((t) => t.id === id)
+    if (team) return team.name
+  }
+  return ''
+})
+
+// 우측 '더 보기' 메뉴 — 자주 쓰지 않는 동작만 모은다
+const moreMenu = ref<InstanceType<typeof Menu> | null>(null)
+const moreMenuItems = computed(() => [
+  { label: '코드 복사', icon: 'pi pi-copy', command: () => void exportHtml() },
+  { label: '파일 열기', icon: 'pi pi-folder-open', command: () => void importHtmlFile() },
+])
+const toggleMoreMenu = (event: Event) => moreMenu.value?.toggle(event)
+
+// 로고 클릭 → 홈으로. 작업 중(변경사항 있음)이면 확인 후 이동.
+const goHome = () => {
+  if (moduleStore.modules.length > 0 && moduleStore.isDirty) {
+    confirm.require({
+      message: '저장하지 않은 변경사항이 있습니다. 홈으로 나가시겠어요?',
+      header: '홈으로 이동',
+      acceptLabel: '나가기',
+      rejectLabel: '취소',
+      accept: () => router.push('/'),
+    })
+    return
+  }
+  router.push('/')
+}
 
 // 최근 내려받음 표시 (메모리 상태 — 새로고침 시 초기화)
 const lastDownload = ref<{ time: Date; type: '저장용' | '발송용' } | null>(null)
 
-// 날짜 부분 ("… 초 ") — 타입은 템플릿에서 굵게 별도 렌더
+// 날짜 부분 ("2026.08.12 11:19:39 ") — 타입은 템플릿에서 굵게 별도 렌더.
+// 자리를 0으로 채워 폭이 흔들리지 않게 한다(시각이 바뀔 때마다 옆 버튼이 밀리지 않도록).
 const lastDownloadDateLabel = computed(() => {
   if (!lastDownload.value) return ''
   const d = lastDownload.value.time
+  const pad = (n: number): string => String(n).padStart(2, '0')
   return (
-    `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일 ` +
-    `${d.getHours()}시 ${d.getMinutes()}분 ${d.getSeconds()}초 `
+    `${d.getFullYear()}.${pad(d.getMonth() + 1)}.${pad(d.getDate())} ` +
+    `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())} `
   )
 })
 
@@ -351,15 +497,14 @@ const buildHtmlDocument = (finalHtml: string, includeMetadata: boolean): string 
   let metadataBlock = ''
   if (includeMetadata) {
     const projectState = {
-      modules: moduleStore.modules.map((m) => ({
-        moduleId: m.moduleId,
-        order: m.order,
-        properties: m.properties,
-        styles: m.styles,
-        ...(m.groupId ? { groupId: m.groupId } : {}),
-      })),
+      // 직렬화는 파일 열기(복원)와 짝이라 utils/projectFile에 공용으로 둔다 —
+      // 여기서 필드를 빠뜨리면 다시 열었을 때 그대로 유실된다.
+      modules: moduleStore.modules.map(serializeModule),
       groups: moduleStore.groups,
       wrapSettings: editorStore.wrapSettings,
+      // 만든 팀을 기록해 둔다(표시명이 아니라 불변 id).
+      // 다시 열 때 현재 작업 팀을 덮어쓰지는 않는다 — projectFile.ts의 teamId 주석 참고.
+      teamId: editorStore.currentTeamId,
     }
     // 콘텐츠의 '-->' 등으로 HTML 주석이 조기 종료되어 파일이 깨지는 것을 방지.
     // <, > 를 < / > 로 치환 → JSON 문자열 값 안에서만 등장하므로 JSON.parse가 복원(import 변경 불필요).
@@ -517,3 +662,218 @@ const downloadForSave = (): Promise<void> => downloadHtml(true)
 // 발송용: 메타데이터 제거 (메일 발송용)
 const downloadForSend = (): Promise<void> => downloadHtml(false)
 </script>
+
+<style scoped>
+/* 세로 구분선 */
+/* ── 상단 바 골격 (Figma 1125-3053: 1920×60, 좌우 21px) ────────────────── */
+.hnav {
+  display: flex;
+  align-items: center;
+  height: 60px;
+  padding: 0 21px;
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-200);
+}
+/* 홈 ↔ 나머지 25px (1125-3054) */
+.hleft {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  min-width: 0;
+}
+/* 팀·브레드크럼·구분선·실행취소·전체삭제 사이 20px (1125-3059) */
+.hleft-group {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-width: 0;
+}
+/* 실행취소 ↔ 다시실행 8px (1125-3064) */
+.hundo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+/* 우측 묶음 — 저장상태·버튼 모두 10px 간격 (1125-3080 / 1125-3082) */
+.hright {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.hsaved {
+  font-size: 13px;
+  color: var(--gray-600);
+  white-space: nowrap;
+}
+
+.hbar {
+  width: 1px;
+  height: 32px;
+  background: var(--gray-200);
+  flex-shrink: 0;
+}
+/* 아이콘 버튼 (홈·실행취소/다시실행) — Figma 40×40 */
+.hicon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--gray-700);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.12s;
+}
+.hicon:hover:not(:disabled) {
+  background: var(--gray-100);
+}
+.hicon:disabled {
+  color: var(--gray-300);
+  cursor: default;
+}
+.hicon .material-symbols-outlined {
+  font-size: 24px;
+}
+
+/* ── 우측 액션 버튼 (Figma 1125-3082: h40 · px16 · gap6 · rounded8 · 15px) ── */
+.hbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: filter 0.12s, background 0.12s;
+}
+.hbtn:hover {
+  filter: brightness(0.96);
+}
+.hbtn .material-symbols-outlined {
+  font-size: 22px;
+}
+/* 저장용 — blue/50 배경 + blue/600 글자 */
+.hbtn--tint {
+  background: var(--blue-50);
+  color: var(--blue-600);
+}
+/* 미리보기 — gray/100 배경 + gray/700 글자 */
+.hbtn--muted {
+  background: var(--gray-100);
+  color: var(--gray-700);
+}
+/* 발송용 — blue/400 채움 */
+.hbtn--primary {
+  background: var(--blue-400);
+  color: var(--white);
+}
+/* 더 보기 — 40×40 정사각, 흰 배경 + gray/200 테두리 */
+.hbtn--icon {
+  width: 40px;
+  padding: 0;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  color: var(--gray-700);
+}
+/* 소속 팀 (Figma 1125-3060: success/50 배경 + success/700 글자) */
+.hteam {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  min-width: 100px;
+  border-radius: 8px;
+  background: var(--green-50);
+  color: var(--green-700);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+/* 브레드크럼 (Figma 1125-3062: 14px, gray/700, 템플릿명만 밑줄) */
+.hcrumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  color: var(--gray-700);
+  min-width: 0;
+}
+.hcrumb-link {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.hcrumb-link:hover {
+  color: var(--blue-500);
+}
+/* 전체 삭제 (Figma 1125-2964: gap 6px, px 10px, rounded 8px, 14px medium, error/400) */
+.hclear {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--red-400);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.12s;
+}
+.hclear:hover {
+  background: var(--red-50);
+}
+.hclear .material-symbols-outlined {
+  font-size: 22px;
+}
+/* PC/모바일 세그먼트 토글 */
+.seg {
+  display: inline-flex;
+  background-color:var(--gray-100);
+  border-radius: 5rem;
+}
+.seg-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 32px;
+  border: 0;
+  border-radius: 1000px;
+  background: var(--gray-100);
+  color: var(--gray-600);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.seg-btn.is-active {
+  background: var(--gray-800);
+  color: var(--white);
+}
+.seg-btn .material-symbols-outlined {
+  font-size: 20px;
+}
+</style>

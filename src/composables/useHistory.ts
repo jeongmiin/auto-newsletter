@@ -1,4 +1,4 @@
-import { ref, watch, computed, onScopeDispose } from 'vue'
+import { ref, watch, computed, onScopeDispose, effectScope } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useModuleStore } from '@/stores/moduleStore'
 import type { ModuleInstance, ModuleGroup } from '@/types'
@@ -163,10 +163,28 @@ export function useHistory() {
 
 // 싱글톤 인스턴스
 let historyInstance: ReturnType<typeof useHistory> | null = null
+let historyScope: ReturnType<typeof effectScope> | null = null
 
+/**
+ * 앱 전역에서 공유하는 실행취소 인스턴스.
+ *
+ * ⚠ **분리된 effect scope(detached)에서 만든다.** 그냥 만들면 `useHistory` 안의 watcher가
+ * "이 함수를 처음 부른 컴포넌트"의 scope에 매달려, 그 컴포넌트가 언마운트될 때
+ * `onScopeDispose`로 **감시가 죽는다**. 헤더(AppHeader)는 템플릿 선택 화면에도 있으므로
+ * 싱글톤이 거기서 만들어지고, 에디터로 넘어오는 순간 감시가 끊겨
+ * 실행취소·다시실행 버튼과 Ctrl+Z가 통째로 먹지 않았다.
+ */
 export function getHistoryInstance() {
   if (!historyInstance) {
-    historyInstance = useHistory()
+    historyScope = effectScope(true)
+    historyInstance = historyScope.run(() => useHistory())!
   }
   return historyInstance
+}
+
+/** 테스트용 — 싱글톤과 그 scope(watcher)를 정리한다 */
+export function disposeHistoryInstance(): void {
+  historyScope?.stop()
+  historyScope = null
+  historyInstance = null
 }

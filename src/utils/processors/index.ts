@@ -4,12 +4,16 @@
  */
 
 import type { ContentProcessor } from '../moduleContentProcessor'
+import type { BorderSide } from '@/types'
+import { parseBorderSides } from '@/utils/borderSides'
+import { readContactItems, buildContactRowHtml } from '@/constants/contactItems'
 import {
   removeSubTitleDiv,
   removeButtonFromHtml,
   escapeForHtml,
   removeMarker,
 } from '../htmlUtils'
+import { buildSnsRowHtml, defaultSnsIcons, type SnsIconItem } from '../../constants/snsIcons'
 import { shouldRenderElement } from '../textUtils'
 import { applyModule02ButtonStyles } from '../buttonUtils'
 import { REGEX_PATTERNS, DEFAULT_TWO_COLUMN_IMAGE_URL, HTML_MARKERS } from '@/constants/defaults'
@@ -88,6 +92,42 @@ export const removeSectionImageProcessor: ContentProcessor = (html, properties) 
     )
   }
   return html
+}
+
+/**
+ * 작은 버튼 모듈 프로세서 (ModuleSmallButton 전용)
+ * 버튼 1은 항상 노출, 2~4는 showBtn2/3/4 토글로 조건부 제거.
+ */
+export const removeSmallButtonsProcessor: ContentProcessor = (html, properties) => {
+  let result = html
+  if (properties.showBtn2 !== true) {
+    result = result.replace(/<!-- 작은 버튼 2 -->.*?<!-- \/\/작은 버튼 2 -->/gs, '')
+  }
+  if (properties.showBtn3 !== true) {
+    result = result.replace(/<!-- 작은 버튼 3 -->.*?<!-- \/\/작은 버튼 3 -->/gs, '')
+  }
+  if (properties.showBtn4 !== true) {
+    result = result.replace(/<!-- 작은 버튼 4 -->.*?<!-- \/\/작은 버튼 4 -->/gs, '')
+  }
+  return result
+}
+
+/**
+ * 인라인 텍스트 제거 프로세서 (ModuleInlineText 전용)
+ * showText2/3/4가 true가 아니면 해당 인라인 텍스트(감싸는 마커 블록)를 제거한다. (미설정 시 숨김)
+ */
+export const removeInlineTextsProcessor: ContentProcessor = (html, properties) => {
+  let result = html
+  if (properties.showText2 !== true) {
+    result = result.replace(/<!-- 인라인 텍스트 2 -->[\s\S]*?<!-- \/\/인라인 텍스트 2 -->/g, '')
+  }
+  if (properties.showText3 !== true) {
+    result = result.replace(/<!-- 인라인 텍스트 3 -->[\s\S]*?<!-- \/\/인라인 텍스트 3 -->/g, '')
+  }
+  if (properties.showText4 !== true) {
+    result = result.replace(/<!-- 인라인 텍스트 4 -->[\s\S]*?<!-- \/\/인라인 텍스트 4 -->/g, '')
+  }
+  return result
 }
 
 /**
@@ -477,14 +517,33 @@ export const module07ButtonProcessor: ContentProcessor = (html, properties) => {
 }
 
 /**
+ * ModuleSnsIcons(독립 SNS 아이콘 모듈) 렌더 프로세서
+ * properties.snsIcons(순서 있는 배열)에서 show=true 아이콘을 순서대로 생성해 <!--SNS_ROW--> 위치에 주입.
+ * → 아이콘별 노출/링크는 물론 '순서 변경'까지 데이터로 제어된다.
+ */
+export const snsIconsProcessor: ContentProcessor = (html, properties) => {
+  const icons = Array.isArray(properties.snsIcons)
+    ? (properties.snsIcons as SnsIconItem[])
+    : defaultSnsIcons()
+  const bgColor = (properties.snsIconBgColor as string) || '#333333'
+  const row = buildSnsRowHtml(icons, bgColor)
+  return html.replace('<!--SNS_ROW-->', row)
+}
+
+/**
+ * ModuleFooter 연락처 줄(H 홈페이지 · T 전화 · E 이메일 · F 팩스) 렌더 프로세서.
+ * properties.contactItems(순서 있는 배열)에서 show=true 항목만 순서대로 만들어 <!--CONTACT_ROW-->에 주입한다.
+ * 배열이 없으면 구버전 속성(show 플래그와 값)에서 생성 → 기존 인스턴스도 그대로 렌더된다.
+ */
+export const footerContactProcessor: ContentProcessor = (html, properties) => {
+  const items = readContactItems(properties as Record<string, unknown>)
+  return html.replace('<!--CONTACT_ROW-->', buildContactRowHtml(items))
+}
+
+/**
  * ModuleFooter SNS 아이콘 조건부 제거 프로세서
  */
 export const footerSnsProcessor: ContentProcessor = (html, properties) => {
-  // 회사 정보 H/T/E 조건부 표시 (미설정 시 표시 = 기존 동작 유지)
-  const showWebsite = properties.showWebsite !== false
-  const showPhone = properties.showPhone !== false
-  const showEmail = properties.showEmail !== false
-  const showFax = properties.showFax === true // 신규 항목 — 미설정 시 숨김
   // 안내문구 국문/영문 — 각각 독립 토글.
   //  · 국문: 미설정 시 표시(기본 노출). 숨기려면 showKoreanFooter=false.
   //  · 영문: 미설정 시 숨김(옵트인). 표시하려면 showEnglishFooter=true.
@@ -494,11 +553,6 @@ export const footerSnsProcessor: ContentProcessor = (html, properties) => {
 
   // [제거 조건, 마커 라벨] 목록 — 조건이 true이면 해당 마커 블록 제거
   const removals: Array<[boolean, string]> = [
-    // 회사 정보
-    [!showWebsite, '홈페이지'],
-    [!showPhone, '전화'],
-    [!showEmail, '이메일'],
-    [!showFax, '팩스'],
     // SNS 아이콘 (미설정 시 숨김)
     [properties.showHome !== true, '홈'],
     [properties.showFacebook !== true, '페이스북'],
@@ -519,9 +573,15 @@ export const footerSnsProcessor: ContentProcessor = (html, properties) => {
     [!showKoreanFooter && !showEnglishFooter, '안내문구'],
   ]
 
-  // 안내문구(국문/영문)는 이제 koreanNoticeText/englishNoticeText로 자유 편집된다.
-  // 국문/영문 블록 자체의 노출 여부만 마커로 제어한다.
+  // 문의 이메일 안내 줄: 미설정 시 발신전용 안내 문구로 대체 (설정 시 기존 문구 유지)
   let result = html
+  if (properties.showInquiry === false) {
+    result = result.replace(
+      /<!-- 문의 -->.*?<!-- \/\/문의 -->/gs,
+      '<!-- 문의 --><div>본 메일은 발신전용 메일입니다.</div><!-- //문의 -->'
+    )
+  }
+
   result = removals.reduce((acc, [shouldRemove, label]) => {
     if (!shouldRemove) return acc
     const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`)
@@ -576,6 +636,53 @@ export const module12TitleProcessor: ContentProcessor = (html, properties) => {
 }
 
 /**
+ * Module01-2 카테고리 조건부 제거 프로세서
+ * showCategory가 false이면 카테고리 배지 영역(감싸는 마커 블록)을 통째로 제거 (미설정 시 표시)
+ */
+export const module012CategoryProcessor: ContentProcessor = (html, properties) => {
+  if (properties.showCategory === false) {
+    return html.replace(/<!-- 카테고리 -->[\s\S]*?<!-- \/\/카테고리 -->/g, '')
+  }
+  return html
+}
+
+/**
+ * 박스 테두리 프로세서(공용) — showBorder가 true이면 4방향 전체 테두리 CSS를 {{borderCss}}에 주입한다.
+ * (설명 텍스트의 변별 테두리와 달리 박스 전체를 두르므로 위치 선택 없이 border 단축 속성을 쓴다)
+ * Module01-2 · Module11 등 '박스형' 모듈이 공용으로 쓴다.
+ */
+export const boxBorderProcessor: ContentProcessor = (html, properties) => {
+  const str = (value: unknown, fallback: string): string => {
+    const s = typeof value === 'string' ? value.trim() : ''
+    return s === '' ? fallback : s
+  }
+  let css = ''
+  if (properties.showBorder === true) {
+    const width = str(properties.borderWidth, '1px')
+    const style = str(properties.borderStyle, 'solid')
+    const color = str(properties.borderColor, '#cccccc')
+    css = ` border:${width} ${style} ${color};`
+  }
+  return html.replace(/\{\{\s*borderCss\s*\}\}/g, css)
+}
+
+/**
+ * 모서리 둥글기 프로세서(공용) — 모서리 둥글기 사용(showBorderRadius) 토글을 반영한다.
+ * HTML의 `{{<key>Css}}`(예: borderRadiusCss, imageBorderRadiusCss, button1BorderRadiusCss)를
+ * 짝이 되는 속성 `<key>`(borderRadius/imageBorderRadius/…) 값으로 채우되,
+ * showBorderRadius가 명시적으로 false면 0(적용 안 함)으로, 미설정(레거시)이면 저장값 그대로 쓴다.
+ * 하나의 토글이 그 모듈의 모든 모서리 값을 함께 제어한다.
+ */
+export const boxBorderRadiusProcessor: ContentProcessor = (html, properties) => {
+  const off = properties.showBorderRadius === false
+  return html.replace(/\{\{\s*(\w*[Bb]orderRadius)Css\s*\}\}/g, (_m, key) => {
+    if (off) return '0px'
+    const v = properties[key]
+    return typeof v === 'string' && v.trim() ? v.trim() : '0px'
+  })
+}
+
+/**
  * Module10 라벨 조건부 제거 프로세서
  */
 export const module10LabelProcessor: ContentProcessor = (html, properties) => {
@@ -600,6 +707,20 @@ export const module11LabelProcessor: ContentProcessor = (html, properties) => {
     result = result.replace(/<!-- 버튼 -->[\s\S]*?<!-- \/\/버튼 -->/g, '')
   }
   return result
+}
+
+/**
+ * Module11 링크 프로세서 — 링크 사용(showLink)이 꺼져 있거나 URL이 비어 있으면
+ * 박스를 감싼 <a> 링크 래퍼를 <div>로 바꿔 클릭 링크를 제거한다.
+ * (마커에 인접한 래퍼 <a>만 대상 — 콘텐츠 에디터 본문 속 <a>는 건드리지 않는다)
+ */
+export const module11LinkProcessor: ContentProcessor = (html, properties) => {
+  const url = typeof properties.linkUrl === 'string' ? properties.linkUrl.trim() : ''
+  const linkOn = properties.showLink !== false && url !== ''
+  if (linkOn) return html
+  return html
+    .replace(/(<!-- 링크 박스 -->)<a\b[^>]*>/, '$1<div style="display:block;">')
+    .replace(/<\/a>(<!-- \/\/링크 박스 -->)/, '</div>$1')
 }
 
 /**
@@ -652,20 +773,6 @@ export const imageLinkProcessor: ContentProcessor = (html, properties) => {
   if (properties.showImageLink !== true) {
     return html.replace(
       /<!-- 이미지 링크 --><a[^>]*>([\s\S]*?)<\/a><!-- \/\/이미지 링크 -->/g,
-      (_, imgContent) => imgContent,
-    )
-  }
-  return html
-}
-
-/**
- * 섹션 타이틀 '이미지 타이틀' 링크 조건부 제거 프로세서 (SectionTitle 전용)
- * showSectionImageLink가 false이면 a 태그를 제거하고 img만 남긴다(단일 이미지 모듈과 동일 동작).
- */
-export const sectionImageLinkProcessor: ContentProcessor = (html, properties) => {
-  if (properties.showSectionImageLink !== true) {
-    return html.replace(
-      /<!-- 섹션 이미지 링크 --><a[^>]*>([\s\S]*?)<\/a><!-- \/\/섹션 이미지 링크 -->/g,
       (_, imgContent) => imgContent,
     )
   }
@@ -743,6 +850,33 @@ export const topLanguageButtonProcessor: ContentProcessor = (html, properties) =
     .join('')
 
   return html.replace(/\{\{\s*languageButtons\s*\}\}/g, buttonsHtml)
+}
+
+/**
+ * 설명 텍스트(ModuleDescText) 테두리 프로세서
+ * showBorder 토글이 켜지면 borderPosition(아래/위/위·아래)에 맞춰 배경 박스 div에
+ * 구분선 CSS({{borderCss}})를 주입한다. (모듈 10번 타이틀처럼 텍스트 위/아래 구분선용)
+ * 꺼져 있으면 빈 문자열로 치환해 테두리 없음.
+ */
+export const descTextBorderProcessor: ContentProcessor = (html, properties) => {
+  const str = (value: unknown, fallback: string): string => {
+    const s = typeof value === 'string' ? value.trim() : ''
+    return s === '' ? fallback : s
+  }
+  let css = ''
+  if (properties.showBorder === true) {
+    const width = str(properties.borderWidth, '1px')
+    const style = str(properties.borderStyle, 'solid')
+    const color = str(properties.borderColor, '#999999')
+    const line = `${width} ${style} ${color}`
+    // 'top,bottom'처럼 여러 변을 이어 붙인 값 · 구버전 단일 값('bottom'/'top'/'both') 모두 해석.
+    // 값이 아예 없으면(구버전 기본) 아래쪽 한 줄.
+    const raw = properties.borderPosition
+    const sides =
+      raw == null || raw === '' ? (['bottom'] as BorderSide[]) : parseBorderSides(raw)
+    css = sides.map((side) => ` border-${side}:${line};`).join('')
+  }
+  return html.replace(/\{\{\s*borderCss\s*\}\}/g, css)
 }
 
 // SubTitle 프로세서

@@ -1,0 +1,58 @@
+name: Deploy develop preview to GitHub Pages
+
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+
+# gh-pages 브랜치로 푸시하기 위한 쓰기 권한
+permissions:
+  contents: write
+
+# master 배포와 같은 gh-pages 브랜치를 건드리므로 같은 그룹으로 직렬화
+concurrency:
+  group: 'gh-pages-deploy'
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # develop 미리보기는 /auto-newsletter/develop/ 하위경로로 서비스되므로 base도 그렇게 빌드
+      - name: Build (base=/auto-newsletter/develop/)
+        run: npm run build
+        env:
+          NODE_ENV: production
+          DEPLOY_BASE: /auto-newsletter/develop/
+
+      - name: Verify build output
+        run: |
+          echo "📁 dist 구조"; ls -laR dist/ | head -50
+          if [ -d "dist/modules" ]; then
+            echo "✅ modules 폴더 존재 ($(ls -1 dist/modules/ | wc -l)개)"
+          else
+            echo "❌ ERROR: modules 폴더가 없습니다!"; exit 1
+          fi
+
+      # gh-pages 브랜치의 'develop' 하위폴더에 배포. keep_files=true 라 루트(master)는 보존.
+      - name: Deploy to gh-pages (/develop)
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          destination_dir: develop
+          keep_files: true
+          commit_message: 'deploy(develop): ${{ github.sha }}'

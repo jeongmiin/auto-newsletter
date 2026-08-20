@@ -293,4 +293,241 @@ describe('moduleStore', () => {
       expect(result).toHaveLength(0)
     })
   })
+
+  describe('행별 독립 컬럼 (rows 모델)', () => {
+    // 모듈 3개 추가하고 id 반환
+    const addThree = (store: ReturnType<typeof useModuleStore>) => {
+      store.addModule(mockModuleMetadata)
+      store.addModule(mockModuleMetadata)
+      store.addModule(mockModuleMetadata)
+      return store.modules.map((m) => m.id)
+    }
+
+    /**
+     * 두 모듈을 한 행 2컬럼으로 나란히 놓는 픽스처.
+     * splitModuleColumns는 대상 모듈만 떼어내므로(같은 행에 쌓인 모듈을 끌고 들어가지 않는다)
+     * 나란히 배치는 캔버스 드래그로 만들어진다 — 테스트에서는 그 결과 좌표를 직접 준다.
+     */
+    const makeTwoColumnRow = (
+      store: ReturnType<typeof useModuleStore>,
+      groupId: string,
+      leftId: string,
+      rightId: string,
+    ) => {
+      const group = store.groups.find((g) => g.id === groupId)!
+      group.rows = [2]
+      const place = (id: string, col: number) => {
+        const m = store.modules.find((x) => x.id === id)!
+        m.rowIndex = 0
+        m.columnIndex = col
+      }
+      place(leftId, 0)
+      place(rightId, 1)
+    }
+
+    it('createGroup은 1행·1컬럼 세로 스택 그룹을 만든다', () => {
+      const store = useModuleStore()
+      const [a, b] = addThree(store)
+      const gid = store.createGroup([a, b])
+      const group = store.groups.find((g) => g.id === gid)
+      expect(group?.rows).toEqual([1])
+      expect(store.modules.find((m) => m.id === a)?.rowIndex).toBe(0)
+      expect(store.modules.find((m) => m.id === b)?.columnIndex).toBe(0)
+    })
+
+    it('splitModuleColumns는 그 모듈이 속한 행만 +1단 한다', () => {
+      const store = useModuleStore()
+      const [a, b] = addThree(store)
+      const gid = store.createGroup([a, b])
+      store.splitModuleColumns(a) // 0행만 2단으로
+      const group = store.groups.find((g) => g.id === gid)
+      expect(group?.rows).toEqual([2, 1]) // b는 자기 행(1행)으로 밀려난다
+    })
+
+    it('splitModuleColumns는 같은 행에 쌓인 다른 모듈을 끌고 들어가지 않는다', () => {
+      const store = useModuleStore()
+      const [a, b] = addThree(store) // a 위, b 아래로 쌓인 1컬럼 그룹
+      const gid = store.createGroup([a, b])
+      store.splitModuleColumns(b) // 아래쪽 b만 2단으로
+
+      const group = store.groups.find((g) => g.id === gid)
+      expect(group?.rows).toEqual([1, 2]) // a의 행은 1단 그대로
+      const at = (id: string) => {
+        const m = store.modules.find((x) => x.id === id)
+        return [m?.rowIndex, m?.columnIndex]
+      }
+      expect(at(a)).toEqual([0, 0])
+      expect(at(b)).toEqual([1, 0])
+    })
+
+    it('splitModuleColumns는 위아래로 쌓인 가운데 모듈만 떼어낸다', () => {
+      const store = useModuleStore()
+      const [a, b, c] = addThree(store)
+      const gid = store.createGroup([a, b, c])
+      store.splitModuleColumns(b) // 가운데 b만 2단으로
+
+      const group = store.groups.find((g) => g.id === gid)
+      expect(group?.rows).toEqual([1, 2, 1]) // 위(a) / 대상(b) / 아래(c)
+      expect(store.modules.find((m) => m.id === a)?.rowIndex).toBe(0)
+      expect(store.modules.find((m) => m.id === b)?.rowIndex).toBe(1)
+      expect(store.modules.find((m) => m.id === c)?.rowIndex).toBe(2)
+    })
+
+    it('splitModuleColumns는 이미 다중 컬럼인 행은 떼어내지 않는다', () => {
+      const store = useModuleStore()
+      const [a, b] = addThree(store)
+      const gid = store.createGroup([a, b])
+      store.splitModuleColumns(a) // 0행 2단, b는 1행으로
+      store.setColumnTarget(gid!, 0, 0) // 0행 0컬럼에 모듈 하나 더 추가(a와 같은 칸에 쌓임)
+      store.addModule(mockModuleMetadata)
+      const stacked = store.modules.filter(
+        (m) => m.groupId === gid && m.rowIndex === 0 && m.columnIndex === 0,
+      )
+      expect(stacked.length).toBe(2)
+
+      store.splitModuleColumns(stacked[0].id) // 이미 2단(상한) — 아무것도 바뀌지 않는다
+
+      const group = store.groups.find((g) => g.id === gid)
+      expect(group?.rows).toEqual([2, 1]) // 행이 늘지 않았다 = 떼어내지 않았다
+      expect(stacked.every((m) => m.rowIndex === 0)).toBe(true)
+    })
+
+    it('splitModuleColumns는 전역 상한(2단)을 넘기지 않는다', () => {
+      const store = useModuleStore()
+      const [a, b] = addThree(store)
+      const gid = store.createGroup([a, b])
+      expect(store.splitModuleColumns(a)).toBe(2)
+      expect(store.splitModuleColumns(a)).toBe(2) // 더 눌러도 그대로
+      expect(store.groups.find((g) => g.id === gid)?.rows).toEqual([2, 1])
+    })
+
+    it('reorderGroupMembers는 그룹 안 멤버 순서만 바꾸고 그룹 경계는 유지한다', () => {
+      const store = useModuleStore()
+      const [a, b, c] = addThree(store)
+      const gid = store.createGroup([a, b])
+      store.reorderGroupMembers(gid!, [b, a])
+      // 그룹 멤버 순서만 뒤집히고, 그룹 밖 모듈(c)은 계속 뒤에 남는다
+      expect(store.modules.map((m) => m.id)).toEqual([b, a, c])
+      expect(store.modules.map((m) => m.order)).toEqual([0, 1, 2])
+      expect(store.modules.find((m) => m.id === c)?.groupId).toBeUndefined()
+    })
+
+    it('reorderGroupMembers는 행/컬럼 골격을 그대로 두고 멤버만 자리를 바꾼다', () => {
+      const store = useModuleStore()
+      const [a, b, c] = addThree(store)
+      const g1 = store.createGroup([b, c])!
+      makeTwoColumnRow(store, g1, b, c) // g1 0행 → B·C 2컬럼
+      const merged = store.mergeModulesIntoGroup([a, b, c])!
+      const group = store.groups.find((g) => g.id === merged)
+      expect(group?.rows).toEqual([1, 2])
+
+      store.reorderGroupMembers(merged, [c, a, b])
+      // 슬롯(0행 1컬럼 / 1행 0컬럼 / 1행 1컬럼)은 그대로, 그 자리에 새 순서의 멤버가 들어간다
+      expect(group?.rows).toEqual([1, 2])
+      expect(store.modules.map((m) => m.id)).toEqual([c, a, b])
+      expect(store.modules.find((m) => m.id === c)).toMatchObject({ rowIndex: 0, columnIndex: 0 })
+      expect(store.modules.find((m) => m.id === a)).toMatchObject({ rowIndex: 1, columnIndex: 0 })
+      expect(store.modules.find((m) => m.id === b)).toMatchObject({ rowIndex: 1, columnIndex: 1 })
+      void g1
+    })
+
+    it('mergeModulesIntoGroup은 각 그룹의 행 구조를 보존해 합친다 (1행+2행)', () => {
+      const store = useModuleStore()
+      const [a, b, c] = addThree(store)
+      // B·C를 2컬럼 한 행 그룹으로
+      const g1 = store.createGroup([b, c])!
+      makeTwoColumnRow(store, g1, b, c)
+      // 단독 A + (2컬럼)B·C 를 한 그룹으로 병합
+      const merged = store.mergeModulesIntoGroup([a, b, c])
+      const group = store.groups.find((g) => g.id === merged)
+      // 0행: A(전체폭 1컬럼), 1행: B·C(2컬럼)
+      expect(group?.rows).toEqual([1, 2])
+      expect(store.modules.find((m) => m.id === a)).toMatchObject({ rowIndex: 0, columnIndex: 0 })
+      expect(store.modules.find((m) => m.id === b)).toMatchObject({ rowIndex: 1, columnIndex: 0 })
+      expect(store.modules.find((m) => m.id === c)).toMatchObject({ rowIndex: 1, columnIndex: 1 })
+      // 병합된 기존 그룹(g1)은 제거됨
+      expect(store.groups.find((g) => g.id === g1)).toBeUndefined()
+    })
+
+    it('한 그룹 안에서 행마다 컬럼 수가 독립적으로 바뀐다', () => {
+      const store = useModuleStore()
+      const [a, b, c] = addThree(store)
+      const g1 = store.createGroup([b, c])!
+      makeTwoColumnRow(store, g1, b, c)
+      const merged = store.mergeModulesIntoGroup([a, b, c])
+      const group = store.groups.find((g) => g.id === merged)
+      expect(group?.rows).toEqual([1, 2])
+      // 0행(A)만 분할 → [2,2] (1행은 그대로). 상한이 2단이라 더 눌러도 변화 없다.
+      store.splitModuleColumns(a)
+      expect(group?.rows).toEqual([2, 2])
+      store.splitModuleColumns(a)
+      expect(group?.rows).toEqual([2, 2])
+      // 0행만 되돌리면 1행은 2단으로 남는다 = 행마다 독립
+      store.unsplitModuleColumns(a)
+      expect(group?.rows).toEqual([1, 2])
+      void g1
+    })
+
+    it('그룹이 선택된 상태에서 모듈을 추가하면 그 그룹 바로 아래(그룹 밖)에 삽입된다', () => {
+      const store = useModuleStore()
+      const [a, b, c] = addThree(store) // 순서: a, b, c
+      const gid = store.createGroup([a, b]) as string // a,b를 그룹으로 (c는 그룹 밖, 뒤)
+      store.selectGroup(gid) // 그룹 선택 (모듈 미선택)
+      store.addModule(mockModuleMetadata) // 그룹 아래에 추가되어야 함
+      const ids = store.modules.map((m) => m.id)
+      const newId = store.selectedModuleId as string
+      // 새 모듈은 b(그룹 마지막 멤버) 바로 뒤, c 앞에 위치
+      expect(ids.indexOf(newId)).toBe(ids.indexOf(b) + 1)
+      expect(ids.indexOf(newId)).toBeLessThan(ids.indexOf(c))
+      // 그룹에 속하지 않아야 함
+      expect(store.modules.find((m) => m.id === newId)?.groupId).toBeUndefined()
+    })
+  })
+})
+describe('moduleStore — 표의 타입 공통 정렬', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+    vi.clearAllMocks()
+  })
+
+  /** 셀별 정렬이 박혀 있는 2×2 표를 가진 모듈 하나 */
+  const seedTable = () => {
+    const store = useModuleStore()
+    store.addModule(mockModuleMetadata)
+    const module = store.modules[0]
+    module.properties.tableCells = [
+      [
+        { id: 'a', type: 'th', content: '제목1', colspan: 1, rowspan: 1, align: 'center' },
+        { id: 'b', type: 'td', content: '내용1', colspan: 1, rowspan: 1, align: 'center' },
+      ],
+      [
+        { id: 'c', type: 'th', content: '제목2', colspan: 1, rowspan: 1, align: 'center' },
+        { id: 'd', type: 'td', content: '내용2', colspan: 1, rowspan: 1 },
+      ],
+    ]
+    return { store, moduleId: module.id }
+  }
+  const cellsOf = (store: ReturnType<typeof useModuleStore>) =>
+    (store.modules[0].properties.tableCells as any[][]).flat()
+
+  it('공통 정렬을 고르면 그 타입 셀의 개별 정렬을 지운다', () => {
+    const { store, moduleId } = seedTable()
+
+    store.setTableTypeAlign(moduleId, 'th', 'right')
+
+    expect(store.modules[0].properties.headerAlign).toBe('right')
+    expect(cellsOf(store).filter((c) => c.type === 'th').every((c) => c.align === undefined)).toBe(true)
+    // 다른 타입(내용)의 개별 정렬은 건드리지 않는다
+    expect(cellsOf(store).find((c) => c.id === 'b').align).toBe('center')
+  })
+
+  it('제목/내용 지정을 바꿔도 셀별 정렬을 남기지 않는다(공통값을 따르게)', () => {
+    const { store, moduleId } = seedTable()
+
+    store.toggleCellType(moduleId, 0, 1) // 내용1 → 제목
+
+    const cell = cellsOf(store).find((c) => c.id === 'b')
+    expect(cell.type).toBe('th')
+    expect(cell.align).toBeUndefined()
+  })
 })

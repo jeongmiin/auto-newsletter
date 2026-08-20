@@ -5,7 +5,14 @@ import {
   wrapGroupHtmlForEmail,
   resolveGroupStyles,
   DEFAULT_GROUP_STYLES,
+  columnCellStyle,
+  normalizeColumnWidths,
+  buildColumnLayoutHtml,
+  COLUMN_BREAKPOINT_PX,
+  groupBoxSide,
+  groupBoxShorthand,
 } from '@/utils/groupStyle'
+import { parseBorderSides, serializeBorderSides } from '@/utils/borderSides'
 
 describe('groupStyle', () => {
   describe('groupBorderShorthand', () => {
@@ -81,7 +88,7 @@ describe('groupStyle', () => {
           borderColor: '#dddddd',
           borderColorUsePoint: true,
         },
-        '#ff0000',
+        ['#ff0000'],
       )
       expect(out.backgroundColor).toBe('#ff0000')
       expect(out.borderColor).toBe('#ff0000')
@@ -90,7 +97,7 @@ describe('groupStyle', () => {
     it('배경이 비어있으면(배경색 미사용) 포인트 색을 적용하지 않는다', () => {
       const out = resolveGroupStyles(
         { backgroundColor: '', backgroundColorUsePoint: true },
-        '#ff0000',
+        ['#ff0000'],
       )
       expect(out.backgroundColor).toBe('')
     })
@@ -98,15 +105,33 @@ describe('groupStyle', () => {
     it('플래그가 꺼져 있으면 수동 색을 유지한다', () => {
       const out = resolveGroupStyles(
         { backgroundColor: '#ffffff', borderColor: '#dddddd' },
-        '#ff0000',
+        ['#ff0000'],
       )
       expect(out.backgroundColor).toBe('#ffffff')
       expect(out.borderColor).toBe('#dddddd')
     })
 
-    it('pointColor가 없으면 원본을 그대로 반환', () => {
+    it('pointColors가 없으면 원본을 그대로 반환', () => {
       const s = { backgroundColor: '#fff', backgroundColorUsePoint: true }
-      expect(resolveGroupStyles(s, '')).toBe(s)
+      expect(resolveGroupStyles(s, [])).toBe(s)
+      expect(resolveGroupStyles(s, null)).toBe(s)
+    })
+
+    it('backgroundColorPointIndex/borderColorPointIndex로 지정한 포인트 색상(최대 3개 중)을 사용한다', () => {
+      const pointColors = ['#2563eb', '#000000', '#ec4899']
+      const out = resolveGroupStyles(
+        {
+          backgroundColor: '#ffffff',
+          backgroundColorUsePoint: true,
+          backgroundColorPointIndex: 1,
+          borderColor: '#dddddd',
+          borderColorUsePoint: true,
+          borderColorPointIndex: 2,
+        },
+        pointColors,
+      )
+      expect(out.backgroundColor).toBe('#000000')
+      expect(out.borderColor).toBe('#ec4899')
     })
   })
 
@@ -166,5 +191,163 @@ describe('groupStyle', () => {
       expect(html).not.toMatch(/border-right:/)
       expect(html).not.toMatch(/border-bottom:/)
     })
+  })
+
+  describe('그룹 여백 4방향 (안/밖)', () => {
+    it('4방향 필드가 없으면 기존 shorthand를 그대로 사용(하위 호환)', () => {
+      expect(groupBoxShorthand({ padding: '16px' }, 'padding')).toBe('16px')
+      expect(groupBoxShorthand({ margin: '12px 0' }, 'margin')).toBe('12px 0')
+      expect(groupBoxShorthand({}, 'padding')).toBe('')
+    })
+
+    it('4방향 값이 하나라도 있으면 상·우·하·좌로 조합(미설정 변은 shorthand 폴백)', () => {
+      // shorthand 16px + top만 20px 지정 → "20px 16px 16px 16px"
+      expect(groupBoxShorthand({ padding: '16px', paddingTop: '20px' }, 'padding')).toBe(
+        '20px 16px 16px 16px',
+      )
+      // 4방향 전부 지정
+      expect(
+        groupBoxShorthand(
+          { marginTop: '4px', marginRight: '8px', marginBottom: '4px', marginLeft: '8px' },
+          'margin',
+        ),
+      ).toBe('4px 8px 4px 8px')
+    })
+
+    it('모두 0/빈값이면 빈 문자열', () => {
+      expect(
+        groupBoxShorthand(
+          { paddingTop: '0px', paddingRight: '0', paddingBottom: '0px', paddingLeft: '0' },
+          'padding',
+        ),
+      ).toBe('')
+    })
+
+    it('groupBoxSide: 명시 4방향 우선, 없으면 shorthand 파싱값', () => {
+      // shorthand "10px 20px" → 상/하 10px, 좌/우 20px
+      expect(groupBoxSide({ padding: '10px 20px' }, 'padding', 'top')).toBe('10px')
+      expect(groupBoxSide({ padding: '10px 20px' }, 'padding', 'right')).toBe('20px')
+      // 명시 필드가 있으면 그 값
+      expect(groupBoxSide({ padding: '10px 20px', paddingTop: '30px' }, 'padding', 'top')).toBe(
+        '30px',
+      )
+    })
+  })
+
+  describe('columnCellStyle (컬럼 fluid-hybrid)', () => {
+    it('컬럼 수에 따라 min-width 비율이 정확히 균등 분할된다', () => {
+      expect(columnCellStyle(2)).toContain('min-width:50.0000%')
+      expect(columnCellStyle(3)).toContain('min-width:33.3333%')
+      expect(columnCellStyle(4)).toContain('min-width:25.0000%')
+    })
+
+    it('폭에서 컬럼 간격을 빼지 않는다 — 빼면 남는 자리가 오른쪽에 몰려 왼쪽으로 쏠린다', () => {
+      // calc(50% - 5px) × 2 = 100% - 10px → 왼쪽 여백 5px / 오른쪽 여백 15px
+      expect(columnCellStyle(2)).not.toContain('calc(50.0000% -')
+      expect(columnCellStyle(3)).not.toContain('calc(33.3333% -')
+    })
+
+    it('모바일 스택용 fluid-hybrid width 공식과 inline-block을 포함한다', () => {
+      const s = columnCellStyle(2)
+      expect(s).toContain('display:inline-block')
+      expect(s).toContain(`width:calc((${COLUMN_BREAKPOINT_PX}px - 100%) * ${COLUMN_BREAKPOINT_PX})`)
+      expect(s).toContain('max-width:100%')
+    })
+
+    it('컬럼 수는 1~4로 클램프된다', () => {
+      expect(columnCellStyle(1)).toContain('min-width:100.0000%')
+      expect(columnCellStyle(9)).toContain('min-width:25.0000%')
+    })
+
+    it('keepInline이면 모바일 스택 공식을 빼고 비율 폭을 고정한다', () => {
+      const s = columnCellStyle(2, undefined, true)
+      expect(s).toContain('display:inline-block')
+      expect(s).toContain('width:50.0000%')
+      // 내용이 길어져도 옆 컬럼이 아래로 밀리지 않도록 max-width도 같은 비율로 묶는다
+      expect(s).toContain('max-width:50.0000%')
+      expect(s).not.toContain('calc(')
+    })
+
+    it('keepInline도 지정 너비(widthPct)를 그대로 쓴다', () => {
+      const s = columnCellStyle(2, 70, true)
+      expect(s).toContain('width:70.0000%')
+      expect(s).toContain('max-width:70.0000%')
+    })
+  })
+
+  describe('normalizeColumnWidths (컬럼 너비 비례 배분)', () => {
+    it('합이 100이 아니면 100이 되도록 비례 배분한다', () => {
+      // 51 + 50 = 101% — 그대로 두면 두 번째 컬럼이 줄바꿈돼 2단이 세로로 무너진다
+      const w = normalizeColumnWidths([51, 50], 2)!
+      expect(w[0] + w[1]).toBeCloseTo(100, 6)
+      expect(w[0]).toBeCloseTo(50.495, 3)
+      expect(w[1]).toBeCloseTo(49.505, 3)
+    })
+
+    it('합이 100보다 작아도 채워 넣는다 (오른쪽 쏠림 방지)', () => {
+      const w = normalizeColumnWidths([30, 30], 2)!
+      expect(w).toEqual([50, 50])
+    })
+
+    it('이미 합이 100이면 그대로 둔다', () => {
+      expect(normalizeColumnWidths([40, 60], 2)).toEqual([40, 60])
+      expect(normalizeColumnWidths([25, 50, 25], 3)).toEqual([25, 50, 25])
+    })
+
+    it('길이가 컬럼 수와 다르면 null (균등 분할로 폴백)', () => {
+      expect(normalizeColumnWidths([50, 50], 3)).toBeNull()
+      expect(normalizeColumnWidths(undefined, 2)).toBeNull()
+    })
+
+    it('0 이하 값이 있으면 null (컬럼이 사라지지 않도록)', () => {
+      expect(normalizeColumnWidths([0, 100], 2)).toBeNull()
+      expect(normalizeColumnWidths([-10, 110], 2)).toBeNull()
+    })
+  })
+
+  describe('buildColumnLayoutHtml', () => {
+    it('컬럼별 HTML을 각 셀 div로 감싼다', () => {
+      const html = buildColumnLayoutHtml(['<p>A</p>', '<p>B</p>'])
+      expect((html.match(/display:inline-block/g) || []).length).toBe(2)
+      expect(html).toContain('<p>A</p>')
+      expect(html).toContain('<p>B</p>')
+      // inline-block 공백 제거용 부모 font-size:0
+      expect(html).toContain('font-size:0')
+    })
+
+    it('빈 컬럼은 &nbsp;로 자리를 유지한다', () => {
+      const html = buildColumnLayoutHtml(['<p>A</p>', ''])
+      expect(html).toContain('&nbsp;')
+    })
+
+    it('keepInline이면 각 셀이 모바일 스택 공식 없이 고정 비율 폭을 쓴다', () => {
+      const html = buildColumnLayoutHtml(['<p>A</p>', '<p>B</p>'], undefined, true)
+      expect(html.match(/max-width:50\.0000%/g) || []).toHaveLength(2)
+      expect(html).not.toContain('calc(')
+    })
+  })
+})
+
+describe('parseBorderSides / serializeBorderSides (모듈 속성 테두리 위치)', () => {
+  it('쉼표로 이어 붙인 값을 변 배열로 파싱함 (순서는 상·우·하·좌)', () => {
+    expect(parseBorderSides('bottom,top')).toEqual(['top', 'bottom'])
+    expect(parseBorderSides('left,right,top,bottom')).toEqual(['top', 'right', 'bottom', 'left'])
+  })
+
+  it("구버전 값('both'/'top'/'bottom')도 그대로 해석함", () => {
+    expect(parseBorderSides('both')).toEqual(['top', 'bottom'])
+    expect(parseBorderSides('top')).toEqual(['top'])
+    expect(parseBorderSides('bottom')).toEqual(['bottom'])
+  })
+
+  it('빈 값·알 수 없는 값은 빈 배열', () => {
+    expect(parseBorderSides('')).toEqual([])
+    expect(parseBorderSides(undefined)).toEqual([])
+    expect(parseBorderSides('diagonal')).toEqual([])
+  })
+
+  it('배열 → 저장 문자열로 직렬화 (빈 배열이면 빈 문자열)', () => {
+    expect(serializeBorderSides(['bottom', 'top'])).toBe('top,bottom')
+    expect(serializeBorderSides([])).toBe('')
   })
 })

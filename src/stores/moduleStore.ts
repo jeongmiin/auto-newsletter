@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed, triggerRef } from 'vue'
+import { ref, computed, triggerRef, watch } from 'vue'
 import type {
   ModuleInstance,
   ModuleMetadata,
@@ -9,21 +9,27 @@ import type {
   AdditionalContent,
   TableCell,
   NewsletterTemplate,
+  TemplateDepartment,
   ModuleGroup,
   ModuleGroupStyles,
+  ModuleStyles,
   DisplayItem,
 } from '@/types'
 import { useEditorStore } from './editorStore'
 import { formatTextWithBreaks } from '@/utils/textUtils'
-import { generateUniqueId, applyStylesToHtml } from '@/utils/htmlUtils'
+import { generateUniqueId, applyStylesToHtml, escapeForHtml } from '@/utils/htmlUtils'
 import {
   replaceModuleNewsHeaderContent,
   replaceModuleBasicHeaderContent,
   replaceModuleImageHeaderContent,
   replaceModuleDescTextContent,
+  replaceModuleInlineTextContent,
   replaceModuleImgContent,
+  replaceModuleSnsIconsContent,
+  replaceModuleContactInfoContent,
   replaceModuleOneButtonContent,
   replaceModuleTwoButtonContent,
+  replaceModuleSmallButtonContent,
   replaceTopLanguageButtonContent,
   replaceSectionTitleContent,
   replaceModule04Content,
@@ -49,11 +55,18 @@ import {
 } from '@/utils/moduleContentReplacer'
 import { convertQuillListsToEmailHtml } from '@/utils/quillHtmlProcessor'
 import { flattenAlphaColorsInHtml } from '@/utils/colorFlatten'
-import { resolvePointColors, resolvePointColorVar } from '@/utils/pointColor'
+import { resolvePointColors, resolvePointColorVars } from '@/utils/pointColor'
 import { applyFontFamily } from '@/utils/fontFamily'
 import { migrateModuleProperties } from '@/utils/moduleMigrations'
+import { defaultContactItems } from '@/constants/contactItems'
 import { sanitizeHtml } from '@/utils/sanitize'
-import { DEFAULT_GROUP_STYLES, wrapGroupHtmlForEmail, resolveGroupStyles } from '@/utils/groupStyle'
+import { DEFAULT_GROUP_STYLES, wrapGroupHtmlForEmail, resolveGroupStyles, buildColumnLayoutHtml } from '@/utils/groupStyle'
+import { resolveWrapBorderCss } from '@/utils/wrapBorder'
+import { computeGroupLayout, resolveGroupRows, clampColumns, type GroupRowLayout } from '@/utils/groupLayout'
+import type { ComposedConversion } from '@/utils/legacyToComposed'
+
+// 나눈 컬럼의 '구성 요소' 종류 (Figma 717-9607)
+export type ComposedKind = 'image' | 'title' | 'text' | 'button' | 'smallButton'
 
 export const useModuleStore = defineStore('module', () => {
   // ============= State =============
@@ -61,12 +74,76 @@ export const useModuleStore = defineStore('module', () => {
   const selectedModuleId = ref<string | null>(null)
   const availableModules = ref<ModuleMetadata[]>([])
   const availableTemplates = ref<NewsletterTemplate[]>([])
+  // 템플릿 선택 화면의 본부/팀 트리 (templates-config.json의 departments)
+  const availableDepartments = ref<TemplateDepartment[]>([])
   const isDirty = ref(false) // 변경사항 추적
 
   // 모듈 그룹 (그룹 단위 스타일). 멤버십은 ModuleInstance.groupId로 표현된다.
   const groups = ref<ModuleGroup[]>([])
   // 현재 선택된 그룹 (속성 패널에서 그룹 스타일 편집 대상)
   const selectedGroupId = ref<string | null>(null)
+  // [컬럼 분할] 빈 컬럼을 클릭해 '추가 대상'으로 지정한 상태.
+  // 지정돼 있으면 다음에 추가되는 모듈이 이 그룹의 해당 (행, 컬럼)에 들어간다.
+  const columnTarget = ref<{ groupId: string; rowIndex: number; columnIndex: number } | null>(null)
+
+  // [테이블 셀 선택] 캔버스 미리보기에서 선택한 테이블 셀(들). moduleId로 대상 테이블을 식별.
+  // 클릭=단일, ⌘/Ctrl+클릭=개별 토글, Shift+클릭=anchor→현재의 사각형 범위.
+  const tableCellSelection = ref<{
+    moduleId: string
+    cells: { row: number; col: number }[]
+    anchor: { row: number; col: number } | null
+  } | null>(null)
+
+  // 모듈 추가(팔레트 클릭)로 인한 자동 선택인지 표시하는 플래그 — 아래 watch가 소비한다.
+  // 추가로 선택되면 좌측 팔레트를 그대로 두고(모듈이 "추가된 상태"), 사용자가 캔버스/목차에서
+  // "직접" 선택했을 때만 속성 편집 패널로 전환한다.
+  let selectedByAdd = false
+
+  // 모듈/그룹이 "새로" 선택되면 좌측 패널을 전환한다.
+  // - 사용자 직접 선택(캔버스·목차 클릭): 속성 패널로 전환(forceRailPanel = false)
+  // - 팔레트에서 모듈 추가에 의한 자동 선택: 팔레트 유지(forceRailPanel = true)
+  watch([selectedModuleId, selectedGroupId], ([modId, grpId], [prevModId, prevGrpId]) => {
+    if ((modId && modId !== prevModId) || (grpId && grpId !== prevGrpId)) {
+      useEditorStore().forceRailPanel = selectedByAdd
+    }
+    selectedByAdd = false
+  })
+
+  // 선택 모듈이 (테이블 셀 선택 대상과) 다른 모듈로 바뀌면 셀 선택 해제.
+  // 셀 클릭 흐름은 selectModule → selectTableCell 순서라 같은 모듈이면 moduleId가 일치해 유지된다.
+  watch(selectedModuleId, (modId) => {
+    if (tableCellSelection.value && tableCellSelection.value.moduleId !== modId) {
+      tableCellSelection.value = null
+    }
+  })
+
+  // [컬럼 분할] '직접 구성' 대상 컬럼 밖의 모듈/그룹을 선택하면 대상 지정을 해제한다.
+  // (대상 컬럼 안의 모듈을 선택하는 건 구성 요소 편집의 연장이므로 지정을 유지 —
+  //  구성 요소를 체크해 추가된 모듈이 자동 선택되는 경우가 이에 해당.)
+  watch([selectedModuleId, selectedGroupId], () => {
+    const target = columnTarget.value
+    if (!target) return
+    if (selectedGroupId.value) {
+      columnTarget.value = null
+      return
+    }
+    const id = selectedModuleId.value
+    if (!id) return
+    const mod = modules.value.find((m) => m.id === id)
+    const inTargetCell =
+      mod &&
+      mod.groupId === target.groupId &&
+      (mod.rowIndex ?? 0) === target.rowIndex &&
+      (mod.columnIndex ?? 0) === target.columnIndex
+    if (!inTargetCell) columnTarget.value = null
+  })
+
+  // 모듈 추가 시 새 모듈을 선택 상태로 두되(캔버스 하이라이트 유지), 좌측 팔레트는 그대로 유지한다.
+  const selectAddedModule = (id: string): void => {
+    selectedByAdd = true
+    selectedModuleId.value = id
+    selectedGroupId.value = null
+  }
 
   // ============= Computed =============
   const selectedModule = computed(
@@ -76,6 +153,22 @@ export const useModuleStore = defineStore('module', () => {
   const selectedGroup = computed(
     () => groups.value.find((g) => g.id === selectedGroupId.value) || null,
   )
+
+  /**
+   * "활성 그룹" — 그룹이 직접 선택됐거나(selectedGroupId), 그 그룹의 멤버가 선택된
+   * 드릴다운 상태 둘 다를 그룹 맥락으로 취급한다.
+   *
+   * selectedModuleId/selectedGroupId는 서로를 배타적으로 지우므로 "멤버 선택 = 그룹은 null"이
+   * 정상 상태인데, UI(좌측 그룹 뷰·캔버스 하이라이트)는 계층 모델을 기대한다. 그 간극을 메우는 getter.
+   * 주의: addModule의 삽입 위치 규칙은 raw ref(selectedGroupId)에 의존하므로 이 getter로 대체하지 말 것
+   * — "그룹 자체 선택(→그룹 아래 삽입)"과 "멤버 드릴다운(→그룹 안 삽입)"의 구분이 사라진다.
+   */
+  const activeGroup = computed(() => {
+    if (selectedGroup.value) return selectedGroup.value
+    const gid = selectedModule.value?.groupId
+    if (!gid) return null
+    return groups.value.find((g) => g.id === gid) || null
+  })
 
   /**
    * 캔버스/목차 표시용 리스트.
@@ -177,22 +270,52 @@ export const useModuleStore = defineStore('module', () => {
       styles: moduleMetadata.defaultStyles || {},
     }
 
+    // [컬럼 분할] 빈 컬럼이 '추가 대상'으로 지정돼 있으면 그 (행, 컬럼)에 넣는다.
+    if (columnTarget.value) {
+      const { groupId, rowIndex, columnIndex } = columnTarget.value
+      const lastIdx = modules.value.map((m) => m.groupId).lastIndexOf(groupId)
+      if (lastIdx !== -1) {
+        newModule.groupId = groupId
+        newModule.rowIndex = rowIndex
+        newModule.columnIndex = columnIndex
+        modules.value.splice(lastIdx + 1, 0, newModule)
+        reorderModules()
+        selectAddedModule(newModule.id)
+        columnTarget.value = null
+        isDirty.value = true
+        return
+      }
+      columnTarget.value = null
+    }
+
+    // 그룹이 선택돼 있고(모듈은 미선택) 있으면, 새 모듈을 그 그룹 '바로 아래'(그룹 밖 단독)에 삽입한다.
+    if (!selectedModuleId.value && selectedGroupId.value) {
+      const gid = selectedGroupId.value
+      const lastIdx = modules.value.map((m) => m.groupId).lastIndexOf(gid)
+      if (lastIdx !== -1) {
+        modules.value.splice(lastIdx + 1, 0, newModule) // groupId 미지정 = 그룹에 속하지 않음
+        reorderModules()
+        selectAddedModule(newModule.id)
+        isDirty.value = true
+        return
+      }
+    }
+
     // 선택된 모듈이 있으면 그 바로 아래에 삽입, 없으면 맨 끝에 추가
-    let selectedIndex = selectedModuleId.value
+    const selectedIndex = selectedModuleId.value
       ? modules.value.findIndex((m) => m.id === selectedModuleId.value)
       : -1
 
-    // 선택 모듈이 그룹에 속하면, 그룹 연속성이 깨지지 않도록 그룹 마지막 멤버 뒤에 삽입
-    // (새 모듈은 그룹에 포함되지 않음)
+    // 선택 모듈이 그룹에 속하면, 새 모듈을 '그 그룹 안'에 삽입한다(조립형 편집).
+    // → 그룹 멤버를 선택한 뒤 원소 모듈을 추가하면 그룹 구성원으로 들어온다.
+    //   (연속성 유지: 선택 멤버 바로 뒤에 같은 groupId로 삽입)
+    //   컬럼 그룹이면 '선택 모듈과 같은 컬럼'에 이어 붙는다(선택 모듈 아래에 추가).
     if (selectedIndex !== -1) {
-      const selGroupId = modules.value[selectedIndex].groupId
-      if (selGroupId) {
-        while (
-          selectedIndex + 1 < modules.value.length &&
-          modules.value[selectedIndex + 1].groupId === selGroupId
-        ) {
-          selectedIndex++
-        }
+      const sel = modules.value[selectedIndex]
+      if (sel.groupId) {
+        newModule.groupId = sel.groupId
+        newModule.rowIndex = sel.rowIndex ?? 0
+        newModule.columnIndex = sel.columnIndex ?? 0
       }
     }
 
@@ -203,8 +326,1669 @@ export const useModuleStore = defineStore('module', () => {
     }
 
     reorderModules()
-    selectedModuleId.value = newModule.id
+    selectAddedModule(newModule.id)
+    isDirty.value = true
+  }
+
+  /**
+   * 새로 추가하는 '조립형 그룹'이 들어갈 위치 — 항상 **선택한 것 바로 아래**.
+   *
+   * - 그룹이 선택됐거나(그룹 박스 클릭) 그룹 멤버가 선택된 상태면 → 그 그룹 **전체 다음**
+   *   (그룹 안에 그룹을 넣을 수는 없으므로 멤버 바로 뒤가 아니라 그룹이 끝나는 지점)
+   * - 단독 모듈이 선택돼 있으면 → 그 모듈 다음
+   * - 아무것도 선택돼 있지 않으면 → 맨 끝
+   */
+  const insertIndexAfterSelection = (): number => {
+    const selected = selectedModuleId.value
+      ? modules.value.find((m) => m.id === selectedModuleId.value)
+      : undefined
+    const groupId = selectedGroupId.value || selected?.groupId
+    if (groupId) {
+      const lastIdx = modules.value.map((m) => m.groupId).lastIndexOf(groupId)
+      if (lastIdx !== -1) return lastIdx + 1
+    }
+    if (selected) {
+      const idx = modules.value.indexOf(selected)
+      if (idx !== -1) return idx + 1
+    }
+    return modules.value.length
+  }
+
+  /**
+   * [POC/실험] 모듈 02번을 '원소 모듈 그룹'으로 조립해 추가한다.
+   * 단일 이미지 · 설명 텍스트(타이틀형) · 설명 텍스트(본문) · 단일 버튼을
+   * 각각 독립 모듈로 만들고 하나의 그룹으로 묶는다.
+   * → 각 원소는 독립 속성 패널을 가지며, 멤버를 선택해 원소 모듈을 더 추가/삭제해
+   *   자유롭게 구성을 바꿀 수 있다. (노출/비노출 = 모듈 추가/삭제)
+   * @returns 생성된 그룹 id (실패 시 null)
+   */
+  const addComposedModule02 = (): string | null => {
+    // 조립 스펙: [원소 모듈 id, 기본값 위에 덮어쓸 프리셋]
+    const specs: Array<{ id: string; overrides: Record<string, unknown> }> = [
+      { id: 'ModuleImg', overrides: {} },
+      {
+        id: 'ModuleDescText',
+        overrides: {
+          descriptionText:
+            '<p style="margin:0; padding:0; line-height:1.7;"><strong style="font-size:22px;">타이틀을 입력하세요</strong></p>',
+          textColor: '#111111',
+        },
+      },
+      {
+        id: 'ModuleDescText',
+        overrides: {
+          descriptionText:
+            '<p style="margin:0; padding:0; line-height:1.7;">본문 텍스트를 입력하세요. 이 블록은 단일 이미지 · 설명 텍스트 · 단일 버튼 원소 모듈로 조립되었습니다.</p>',
+        },
+      },
+      { id: 'ModuleOneButton', overrides: { buttonText: '자세히 보기 →' } },
+    ]
+
+    const created: ModuleInstance[] = []
+    for (const spec of specs) {
+      const meta = availableModules.value.find((m) => m.id === spec.id)
+      if (!meta) {
+        console.warn(`[addComposedModule02] 원소 모듈을 찾을 수 없음: ${spec.id}`)
+        continue
+      }
+      created.push({
+        id: generateUniqueId('module'),
+        moduleId: meta.id,
+        order: 0, // reorderModules에서 최종 보정
+        properties: { ...getDefaultProperties(meta), ...spec.overrides },
+        styles: meta.defaultStyles || {},
+      })
+    }
+    if (created.length === 0) return null
+
+    // 선택한 것 바로 아래에 연속으로 넣은 뒤 하나의 그룹으로 묶는다.
+    modules.value.splice(insertIndexAfterSelection(), 0, ...created)
+    reorderModules()
+    const groupId = createGroup(created.map((m) => m.id))
+    // 조립 결과의 첫 원소를 선택 상태로 (속성 패널이 원소 단위로 열리는 것을 보여줌)
+    selectAddedModule(created[0].id)
+    isDirty.value = true
+    return groupId
+  }
+
+  /**
+   * [POC/실험] 모듈 04번을 '2컬럼 조립 그룹'으로 추가한다.
+   * 각 컬럼 = 이미지 · 설명 텍스트(타이틀형) · 설명 텍스트(본문) · 작은 버튼.
+   * 컬럼(columns=2)이라 데스크톱은 좌우 2단, 모바일(좁은 폭)은 컬럼이 100%로 세로 스택된다.
+   * @returns 생성된 그룹 id (실패 시 null)
+   */
+  const addComposedModule04 = (): string | null => {
+    // 한 컬럼의 구성 (수평 여백은 컬럼 셀이 제공하므로 0으로 덮어씀)
+    const columnSpec: Array<{ id: string; overrides: Record<string, unknown> }> = [
+      {
+        id: 'ModuleImg',
+        overrides: {
+          imageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-2column.png',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '8px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        id: 'ModuleDescText',
+        overrides: {
+          descriptionText:
+            '<p style="margin:0; padding:0; line-height:1.7;"><strong style="font-size:16px;">타이틀을 입력하세요</strong></p>',
+          textColor: '#111111',
+          paddingRight: '0px',
+          paddingLeft: '0px',
+          paddingBottom: '4px',
+        },
+      },
+      {
+        id: 'ModuleDescText',
+        overrides: {
+          descriptionText:
+            '<p style="margin:0; padding:0; line-height:1.7;">본문 텍스트를 입력하세요.</p>',
+          paddingRight: '0px',
+          paddingLeft: '0px',
+          paddingBottom: '8px',
+        },
+      },
+      {
+        id: 'ModuleSmallButton',
+        overrides: {
+          align: 'left',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '0px',
+          paddingLeft: '0px',
+        },
+      },
+    ]
+
+    // 2개 컬럼(columnIndex 0,1)을 각각 동일 구성으로 생성
+    const created: ModuleInstance[] = []
+    for (let col = 0; col < 2; col++) {
+      for (const spec of columnSpec) {
+        const meta = availableModules.value.find((m) => m.id === spec.id)
+        if (!meta) {
+          console.warn(`[addComposedModule04] 원소 모듈을 찾을 수 없음: ${spec.id}`)
+          continue
+        }
+        created.push({
+          id: generateUniqueId('module'),
+          moduleId: meta.id,
+          order: 0,
+          properties: { ...getDefaultProperties(meta), ...spec.overrides },
+          styles: meta.defaultStyles || {},
+          rowIndex: 0,
+          columnIndex: col,
+        })
+      }
+    }
+    if (created.length === 0) return null
+
+    modules.value.splice(insertIndexAfterSelection(), 0, ...created)
+    reorderModules()
+    // createGroup이 멤버 rowIndex/columnIndex로부터 rows(=[2])를 유도한다.
+    const groupId = createGroup(created.map((m) => m.id))
+    selectAddedModule(created[0].id)
+    triggerRef(groups)
+    triggerRef(modules)
+    isDirty.value = true
+    return groupId
+  }
+
+  /**
+   * [POC/실험] 모듈 01-1번을 '2컬럼 조립 그룹'으로 추가한다.
+   * 각 컬럼 = 제목 박스 + 내용 박스 (둘 다 설명 텍스트, 배경 박스 사용).
+   * 설명 텍스트의 '바깥 여백/안쪽 여백/배경'을 활용해 색 박스 카드를 만든다.
+   * 데스크톱 2단, 모바일 세로 스택.
+   * @returns 생성된 그룹 id (실패 시 null)
+   */
+  const addComposedModule011 = (): string | null => {
+    // 한 컬럼 = [제목 박스, 내용 박스]. 둘 다 설명 텍스트.
+    const columnSpec: Array<{ overrides: Record<string, unknown> }> = [
+      {
+        // 제목 박스 (진한 배경, 가운데, 볼드)
+        overrides: {
+          descriptionText:
+            '<p style="margin:0; padding:0; line-height:1.7; text-align:center;"><strong style="font-size:16px;">타이틀을 입력하세요</strong></p>',
+          bgColor: '#e5e5e5',
+          textColor: '#111111',
+          fontSize: '16px',
+          paddingTop: '6px',
+          paddingRight: '0px',
+          paddingBottom: '6px',
+          paddingLeft: '0px',
+          marginTop: '0px',
+          marginRight: '0px',
+          marginBottom: '0px',
+          marginLeft: '0px',
+        },
+      },
+      {
+        // 내용 박스 (연한 배경, 가운데)
+        overrides: {
+          descriptionText:
+            '<p style="margin:0; padding:0; line-height:1.7; text-align:center;">콘텐츠 텍스트를 입력하세요</p>',
+          bgColor: '#f3f3f3',
+          textColor: '#333333',
+          fontSize: '14px',
+          paddingTop: '10px',
+          paddingRight: '10px',
+          paddingBottom: '10px',
+          paddingLeft: '10px',
+          marginTop: '0px',
+          marginRight: '0px',
+          marginBottom: '0px',
+          marginLeft: '0px',
+        },
+      },
+    ]
+
+    const meta = availableModules.value.find((m) => m.id === 'ModuleDescText')
+    if (!meta) {
+      console.warn('[addComposedModule011] ModuleDescText 모듈을 찾을 수 없음')
+      return null
+    }
+
+    const created: ModuleInstance[] = []
+    for (let col = 0; col < 2; col++) {
+      for (const spec of columnSpec) {
+        created.push({
+          id: generateUniqueId('module'),
+          moduleId: meta.id,
+          order: 0,
+          properties: { ...getDefaultProperties(meta), ...spec.overrides },
+          styles: meta.defaultStyles || {},
+          rowIndex: 0,
+          columnIndex: col,
+        })
+      }
+    }
+
+    modules.value.splice(insertIndexAfterSelection(), 0, ...created)
+    reorderModules()
+    // createGroup이 멤버 rowIndex/columnIndex로부터 rows(=[2])를 유도한다.
+    const groupId = createGroup(created.map((m) => m.id))
+    selectAddedModule(created[0].id)
+    triggerRef(groups)
+    triggerRef(modules)
+    isDirty.value = true
+    return groupId
+  }
+
+  /**
+   * [POC/실험] 모듈 05번(05-3형)을 조립형으로 추가한다.
+   * 원본 = ①상단 섹션(전체폭): 회색 타이틀 박스 + 섹션 텍스트 / ②하단 2단: 좌 이미지 · 우 타이틀·텍스트·작은버튼.
+   * '전체폭 + 2단'을 하나의 그룹으로 조립한다 — 상단 두 멤버는 fullWidth로 모든 컬럼을 가로지르고,
+   * 하단 멤버는 columnIndex(0/1)로 2단 배치된다. (fullWidth 밴드 렌더는 캔버스/내보내기 공용)
+   * @returns 생성된 그룹 id (실패 시 null)
+   */
+  const addComposedModule05 = (): string | null => {
+    // row: 행 인덱스(0=상단 전체폭 섹션, 1=하단 2단) / col: 그 행 안 컬럼 인덱스
+    const specs: Array<{
+      id: string
+      row: number
+      col: number
+      overrides: Record<string, unknown>
+    }> = [
+      // ── 0행: 상단 섹션 (1컬럼 전체폭) ──
+      {
+        // 상단 섹션 타이틀 (회색 배경 박스, 좌측 정렬, 굵게)
+        id: 'ModuleDescText',
+        row: 0,
+        col: 0,
+        overrides: {
+          descriptionText:
+            '<p style="margin:0; padding:0; line-height:1.7;"><strong style="font-size:16px;">상단 섹션 타이틀</strong></p>',
+          bgColor: '#e5e5e5',
+          textColor: '#111111',
+          fontSize: '16px',
+          paddingTop: '6px',
+          paddingRight: '0px',
+          paddingBottom: '6px',
+          paddingLeft: '20px',
+        },
+      },
+      {
+        // 상단 섹션 텍스트
+        id: 'ModuleDescText',
+        row: 0,
+        col: 0,
+        overrides: {
+          descriptionText:
+            '<p style="margin:0; padding:0; line-height:1.7;">상단 섹션 텍스트입니다.</p>',
+          textColor: '#111111',
+          fontSize: '15px',
+          paddingTop: '16px',
+          paddingRight: '0px',
+          paddingBottom: '16px',
+          paddingLeft: '0px',
+        },
+      },
+      // ── 1행: 하단 2단 (좌 이미지 · 우 타이틀+텍스트+버튼) ──
+      {
+        id: 'ModuleImg',
+        row: 1,
+        col: 0,
+        overrides: {
+          imageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-2column.png',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '8px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        // 오른쪽 타이틀 (굵게)
+        id: 'ModuleDescText',
+        row: 1,
+        col: 1,
+        overrides: {
+          descriptionText:
+            '<p style="margin:0; padding:0; line-height:1.7;"><strong style="font-size:14px;">오른쪽 타이틀</strong></p>',
+          textColor: '#111111',
+          fontSize: '14px',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '4px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        // 오른쪽 텍스트
+        id: 'ModuleDescText',
+        row: 1,
+        col: 1,
+        overrides: {
+          descriptionText:
+            '<p style="margin:0; padding:0; line-height:1.7;">오른쪽 텍스트입니다.</p>',
+          textColor: '#111111',
+          fontSize: '14px',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '10px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        id: 'ModuleSmallButton',
+        row: 1,
+        col: 1,
+        overrides: {
+          align: 'left',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '0px',
+          paddingLeft: '0px',
+        },
+      },
+    ]
+
+    const created: ModuleInstance[] = []
+    for (const spec of specs) {
+      const meta = availableModules.value.find((m) => m.id === spec.id)
+      if (!meta) {
+        console.warn(`[addComposedModule05] 원소 모듈을 찾을 수 없음: ${spec.id}`)
+        continue
+      }
+      created.push({
+        id: generateUniqueId('module'),
+        moduleId: meta.id,
+        order: 0,
+        properties: { ...getDefaultProperties(meta), ...spec.overrides },
+        styles: meta.defaultStyles || {},
+        rowIndex: spec.row,
+        columnIndex: spec.col,
+      })
+    }
+    if (created.length === 0) return null
+
+    modules.value.splice(insertIndexAfterSelection(), 0, ...created)
+    reorderModules()
+
+    // 단일 그룹으로 조립. createGroup이 멤버 (row,col)로부터 rows=[1,2]를 유도한다.
+    // → 0행: 전체폭(1컬럼) 상단 섹션 / 1행: 2컬럼 하단
+    const groupId = createGroup(created.map((m) => m.id))
+
+    selectAddedModule(created[0].id)
+    triggerRef(groups)
+    triggerRef(modules)
+    isDirty.value = true
+    return groupId
+  }
+
+  /**
+   * [조립형 공통] specs(원소 모듈 + row/col + 오버라이드)로부터 하나의 조립 그룹을 만든다.
+   * createGroup이 멤버의 rowIndex/columnIndex로부터 group.rows(행별 컬럼 수)를 유도한다.
+   */
+  const buildComposedGroup = (
+    specs: Array<{ id: string; row: number; col: number; overrides: Record<string, unknown> }>,
+    groupStyles?: Partial<ModuleGroupStyles>,
+  ): string | null => {
+    const created: ModuleInstance[] = []
+    for (const spec of specs) {
+      const meta = availableModules.value.find((m) => m.id === spec.id)
+      if (!meta) {
+        console.warn(`[buildComposedGroup] 원소 모듈을 찾을 수 없음: ${spec.id}`)
+        continue
+      }
+      created.push({
+        id: generateUniqueId('module'),
+        moduleId: meta.id,
+        order: 0,
+        properties: { ...getDefaultProperties(meta), ...spec.overrides },
+        styles: meta.defaultStyles || {},
+        rowIndex: spec.row,
+        columnIndex: spec.col,
+      })
+    }
+    if (created.length === 0) return null
+    modules.value.splice(insertIndexAfterSelection(), 0, ...created)
+    reorderModules()
+    const groupId = createGroup(created.map((m) => m.id))
+    // 그룹 스타일(배경색 등) 오버라이드 — 예: 푸터 전체 배경색
+    if (groupId && groupStyles) {
+      const g = groups.value.find((x) => x.id === groupId)
+      if (g) g.styles = { ...g.styles, ...groupStyles }
+    }
+    selectAddedModule(created[0].id)
+    triggerRef(groups)
+    triggerRef(modules)
+    isDirty.value = true
+    return groupId
+  }
+
+  /**
+   * [파일 열기 v2 변환] 레거시 모듈을 옮겨 담은 조립 결과(ComposedConversion)를 맨 끝에 추가한다.
+   *
+   * `buildComposedGroup`과 달리 **선택 상태를 건드리지 않는다** — 임포트 루프는 `addModule`이
+   * "선택 모듈 바로 아래 삽입"하는 규칙에 의존하므로, 중간에 선택이 첫 멤버로 옮겨가면
+   * 이후 모듈이 그룹 안쪽에 끼어 들어가 순서가 깨진다.
+   * 그룹 이름·행별 컬럼 너비(colWidths)까지 한 번에 반영한다.
+   *
+   * @param into 이미 있는 그룹 안에 원소들을 그대로 풀어 넣을 위치(선택).
+   *   사용자가 직접 묶어둔 그룹 안의 레거시 모듈을 변환할 때 쓴다 — 새 그룹을 만들면
+   *   그룹 멤버 연속 배치 규칙 때문에 앞뒤 모듈 순서가 흐트러진다.
+   * @returns 생성된 그룹 id. 단일 원소·기존 그룹에 편입·실패면 null
+   */
+  const addComposedConversion = (
+    conversion: ComposedConversion,
+    into?: { groupId: string; rowIndex: number; columnIndex: number },
+  ): string | null => {
+    const created: ModuleInstance[] = []
+    for (const spec of conversion.specs) {
+      const meta = availableModules.value.find((m) => m.id === spec.id)
+      if (!meta) {
+        console.warn(`[addComposedConversion] 원소 모듈을 찾을 수 없음: ${spec.id}`)
+        continue
+      }
+      created.push({
+        id: generateUniqueId('module'),
+        moduleId: meta.id,
+        order: 0,
+        properties: { ...getDefaultProperties(meta), ...spec.properties },
+        styles: meta.defaultStyles || {},
+        // 기존 그룹에 편입할 때는 그 칸(행·컬럼)에 세로로 쌓는다
+        rowIndex: into ? into.rowIndex : spec.row,
+        columnIndex: into ? into.columnIndex : spec.col,
+        ...(into ? { groupId: into.groupId } : {}),
+      })
+    }
+    if (created.length === 0) return null
+
+    // 임포트 전용이라 선택 위치를 따지지 않고 저장 파일 순서대로 맨 끝에 이어 붙인다.
+    modules.value.push(...created)
+    reorderModules()
+
+    // 기존 그룹에 편입한 경우 새 그룹을 만들지 않는다 (그룹 정의는 저장 파일에서 복원됨)
+    if (into) {
+      triggerRef(modules)
+      isDirty.value = true
+      return null
+    }
+
+    // 원소가 하나뿐이면(예: 모듈 01번) 그룹으로 묶지 않고 단독 모듈로 둔다
+    if (conversion.single && created.length === 1) {
+      delete created[0].rowIndex
+      delete created[0].columnIndex
+      triggerRef(modules)
+      isDirty.value = true
+      return null
+    }
+
+    const groupId = createGroup(created.map((m) => m.id))
+    if (groupId) {
+      const g = groups.value.find((x) => x.id === groupId)
+      if (g) {
+        g.name = conversion.name
+        if (conversion.groupStyles) g.styles = { ...g.styles, ...conversion.groupStyles }
+        if (conversion.colWidths) {
+          // 행 컬럼 수와 길이가 맞는 행만 반영 (computeGroupLayout이 그 외는 무시하지만 데이터도 깨끗하게)
+          const widths: number[][] = []
+          conversion.colWidths.forEach((w, r) => {
+            if (Array.isArray(w) && w.length > 1) widths[r] = w
+          })
+          if (widths.length > 0) g.colWidths = widths
+        }
+        // 모바일에서도 가로로 유지할 행 (레거시 테이블에서 한 줄이던 행)
+        if (conversion.keepInlineRows?.some(Boolean)) {
+          g.keepInlineRows = [...conversion.keepInlineRows]
+        }
+      }
+    }
+    triggerRef(groups)
+    triggerRef(modules)
+    isDirty.value = true
+    return groupId
+  }
+
+  /** 그룹의 좌·우 '안쪽' 여백(그룹 스타일 padding)을 지정한다. 조립형 모듈 추가 시 기본 좌우 여백 부여용.
+   *  그룹 배경색을 줬을 때 이 여백까지 색이 채워지도록 바깥 여백(margin)이 아닌 안쪽 여백을 쓴다. 바깥은 0으로. */
+  const setGroupSidePadding = (groupId: string | null | undefined, lr: string): void => {
+    if (!groupId) return
+    const g = groups.value.find((x) => x.id === groupId)
+    if (!g) return
+    g.styles = { ...g.styles, paddingLeft: lr, paddingRight: lr, marginLeft: '0px', marginRight: '0px' }
+    triggerRef(groups)
+    isDirty.value = true
+  }
+
+  // 조립형 헬퍼: 굵은 타이틀 DescText 내용 HTML
+  const boldTitleHtml = (text: string, fontSize: string, align = 'left'): string =>
+    `<p style="margin:0; padding:0; line-height:1.7; text-align:${align};"><strong style="font-size:${fontSize};">${text}</strong></p>`
+  const textHtml = (text: string, align = 'left'): string =>
+    `<p style="margin:0; padding:0; line-height:1.7; text-align:${align};">${text}</p>`
+
+  /**
+   * [POC/실험] 모듈 05-1번 조립형 — 2단(좌 이미지 · 우 강조 타이틀 박스 + 텍스트 + 작은 버튼)
+   */
+  const addComposedModule051 = (): string | null =>
+    buildComposedGroup([
+      {
+        id: 'ModuleImg',
+        row: 0,
+        col: 0,
+        overrides: { paddingTop: '0px', paddingRight: '0px', paddingBottom: '8px', paddingLeft: '0px' },
+      },
+      {
+        // 강조 타이틀 (회색 배경 박스)
+        id: 'ModuleDescText',
+        row: 0,
+        col: 1,
+        overrides: {
+          descriptionText: boldTitleHtml('강조 타이틀', '16px'),
+          bgColor: '#e5e5e5',
+          textColor: '#111111',
+          fontSize: '16px',
+          paddingTop: '6px',
+          paddingRight: '10px',
+          paddingBottom: '6px',
+          paddingLeft: '10px',
+        },
+      },
+      {
+        id: 'ModuleDescText',
+        row: 0,
+        col: 1,
+        overrides: {
+          descriptionText: textHtml('콘텐츠 텍스트를 입력하세요.'),
+          textColor: '#333333',
+          fontSize: '14px',
+          paddingTop: '10px',
+          paddingRight: '0px',
+          paddingBottom: '10px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        id: 'ModuleSmallButton',
+        row: 0,
+        col: 1,
+        overrides: { align: 'left', paddingTop: '0px', paddingRight: '0px', paddingBottom: '0px', paddingLeft: '0px' },
+      },
+    ])
+
+  /**
+   * [POC/실험] 모듈 06번 조립형 — 2단 대칭. 각 컬럼 = 타이틀 박스(가운데) → 이미지 → 텍스트 → 작은 버튼
+   */
+  const addComposedModule06 = (): string | null => {
+    const column = (col: number): Array<{ id: string; row: number; col: number; overrides: Record<string, unknown> }> => [
+      {
+        id: 'ModuleDescText',
+        row: 0,
+        col,
+        overrides: {
+          descriptionText: boldTitleHtml(col === 0 ? '왼쪽 섹션 타이틀' : '오른쪽 섹션 타이틀', '16px', 'center'),
+          bgColor: '#e5e5e5',
+          textColor: '#111111',
+          fontSize: '16px',
+          paddingTop: '6px',
+          paddingRight: '10px',
+          paddingBottom: '6px',
+          paddingLeft: '10px',
+        },
+      },
+      {
+        id: 'ModuleImg',
+        row: 0,
+        col,
+        overrides: {
+          imageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-2column.png',
+          paddingTop: '10px',
+          paddingRight: '0px',
+          paddingBottom: '8px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        id: 'ModuleDescText',
+        row: 0,
+        col,
+        overrides: {
+          descriptionText: textHtml(col === 0 ? '왼쪽 콘텐츠 텍스트입니다.' : '오른쪽 콘텐츠 텍스트입니다.'),
+          textColor: '#333333',
+          fontSize: '14px',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '10px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        id: 'ModuleSmallButton',
+        row: 0,
+        col,
+        overrides: { align: 'left', paddingTop: '0px', paddingRight: '0px', paddingBottom: '0px', paddingLeft: '0px' },
+      },
+    ]
+    return buildComposedGroup([...column(0), ...column(1)])
+  }
+
+  /**
+   * [POC/실험] 모듈 07번 조립형 — 2단(좌 이미지 · 우 타이틀 + 텍스트 + 작은 버튼)
+   * @param reverse true면 이미지를 오른쪽에 배치(07 반대 방향)
+   */
+  const addComposedModule07 = (reverse = false): string | null => {
+    const imgCol = reverse ? 1 : 0
+    const textCol = reverse ? 0 : 1
+    return buildComposedGroup([
+      {
+        id: 'ModuleImg',
+        row: 0,
+        col: imgCol,
+        overrides: {
+          imageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-2column.png',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '8px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        id: 'ModuleDescText',
+        row: 0,
+        col: textCol,
+        overrides: {
+          descriptionText: boldTitleHtml('콘텐츠 타이틀', '18px'),
+          textColor: '#111111',
+          fontSize: '18px',
+          paddingTop: '4px',
+          paddingRight: '0px',
+          paddingBottom: '8px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        id: 'ModuleDescText',
+        row: 0,
+        col: textCol,
+        overrides: {
+          descriptionText: textHtml('콘텐츠 텍스트를 입력하세요.'),
+          textColor: '#333333',
+          fontSize: '14px',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '10px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        id: 'ModuleSmallButton',
+        row: 0,
+        col: textCol,
+        overrides: { align: 'left', paddingTop: '0px', paddingRight: '0px', paddingBottom: '0px', paddingLeft: '0px' },
+      },
+    ])
+  }
+
+  /**
+   * 모듈 10번 조립형(v2) — 2단: 좌 이미지(25%) · 우 [라벨(작은버튼 배지) + 타이틀](75%).
+   * 원본 모듈 10번(이미지 좌 · 라벨/시간/타이틀 우)의 좌우 배치를 원소 모듈로 재현한다.
+   */
+  const addComposedModule10 = (): string | null => {
+    const groupId = buildComposedGroup([
+      {
+        id: 'ModuleImg',
+        row: 0,
+        col: 0,
+        overrides: {
+          imageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-speaker.png',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '8px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        // 라벨 + 시간 — 인라인 텍스트(배지 + 옆 시간 텍스트)
+        id: 'ModuleInlineText',
+        row: 0,
+        col: 1,
+        overrides: {
+          align: 'left',
+          text1: '라벨',
+          showText2: true,
+          text2: '14:20~14:40',
+          text2BgColor: 'transparent',
+          text2TextColor: '#666666',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '4px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        // 타이틀
+        id: 'ModuleDescText',
+        row: 0,
+        col: 1,
+        overrides: {
+          descriptionText: boldTitleHtml('콘텐츠 타이틀', '15px'),
+          textColor: '#111111',
+          fontSize: '15px',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '8px',
+          paddingLeft: '0px',
+        },
+      },
+    ])
+    // 이미지 컬럼 25% / 텍스트 컬럼 75%
+    if (groupId) {
+      const g = groups.value.find((x) => x.id === groupId)
+      if (g) g.colWidths = [[25, 75]]
+    }
+    return groupId
+  }
+
+  /**
+   * 모듈 10-1번 조립형(v2) — 2단 컬럼. 각 컬럼 = 이미지 → 라벨(작은버튼 배지) → 타이틀(설명텍스트).
+   * 원본 모듈 10-1번처럼 각 컬럼을 가운데 정렬한다.
+   */
+  const addComposedModule101 = (): string | null => {
+    const column = (
+      col: number,
+    ): Array<{ id: string; row: number; col: number; overrides: Record<string, unknown> }> => [
+      {
+        id: 'ModuleImg',
+        row: 0,
+        col,
+        overrides: {
+          imageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-speaker.png',
+          imageAlign: 'center',
+          imageMaxWidth: '50%',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '8px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        // 라벨 — 인라인 텍스트(배지), 가운데 정렬
+        id: 'ModuleInlineText',
+        row: 0,
+        col,
+        overrides: {
+          align: 'center',
+          text1: '라벨',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '6px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        id: 'ModuleDescText',
+        row: 0,
+        col,
+        overrides: {
+          descriptionText: boldTitleHtml(col === 0 ? '왼쪽 타이틀' : '오른쪽 타이틀', '15px', 'center'),
+          textColor: '#111111',
+          fontSize: '15px',
+          textAlign: 'center',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '8px',
+          paddingLeft: '0px',
+        },
+      },
+    ]
+    return buildComposedGroup([...column(0), ...column(1)])
+  }
+
+  /**
+   * [POC/실험] 뉴스 헤드라인 헤더 조립형 —
+   * 로고(가운데·40%) → 굵은 라인 → (제목 | 👀 웹으로 보기) 2컬럼 → 얇은 라인
+   * '웹으로 보기'는 ModuleDescText의 textAlign='right'로 오른쪽 정렬.
+   * 제목 행(2행)은 모바일에서도 세로로 쌓지 않는다 — 두 텍스트가 한 줄로 읽혀야 헤더 모양이 유지된다.
+   */
+  const addComposedNewsHeader = (): string | null => {
+    const groupId = buildComposedGroup([
+      {
+        // 로고 (가운데 · 최대 너비 40%)
+        id: 'ModuleImg',
+        row: 0,
+        col: 0,
+        overrides: {
+          imageUrl:
+            'https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/newsletter/images/logo-gray.png',
+          imageAlt: '로고',
+          imageAlign: 'center',
+          imageMaxWidth: '40%',
+          paddingTop: '30px',
+          paddingRight: '0px',
+          paddingBottom: '20px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        // 로고 하단 굵은 라인
+        id: 'ModuleDivider',
+        row: 1,
+        col: 0,
+        overrides: { borderColor: '#000000', borderWidth: '5px', borderStyle: 'solid', paddingTop: '0px', paddingBottom: '0px' },
+      },
+      {
+        // 제목 (왼쪽)
+        id: 'ModuleDescText',
+        row: 2,
+        col: 0,
+        overrides: {
+          descriptionText: boldTitleHtml('NEWSLETTER VOL.1', '16px'),
+          textColor: '#333333',
+          fontSize: '16px',
+          textAlign: 'left',
+          paddingTop: '8px',
+          paddingRight: '0px',
+          paddingBottom: '8px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        // 웹으로 보기 (오른쪽 정렬 — textAlign 속성 사용)
+        id: 'ModuleDescText',
+        row: 2,
+        col: 1,
+        overrides: {
+          descriptionText:
+            '<p style="margin:0; padding:0; line-height:1.7;"><a href="#" target="_blank" style="color:#333333; text-decoration:none; font-size:16px;">👀 웹으로 보기</a></p>',
+          textColor: '#333333',
+          fontSize: '16px',
+          textAlign: 'right',
+          paddingTop: '8px',
+          paddingRight: '0px',
+          paddingBottom: '8px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        // 제목 행 하단 얇은 라인
+        id: 'ModuleDivider',
+        row: 3,
+        col: 0,
+        overrides: { borderColor: '#dddddd', borderWidth: '1px', borderStyle: 'solid', paddingTop: '0px', paddingBottom: '0px' },
+      },
+    ])
+    if (groupId) setRowKeepInline(groupId, 2, true)
+    return groupId
+  }
+
+  /**
+   * [POC/실험] 기본 헤더 조립형 — 상단 라인 → 로고 → 하단 라인 → 헤더 타이틀 (전부 1컬럼 세로 스택)
+   */
+  const addComposedBasicHeader = (): string | null =>
+    buildComposedGroup([
+      {
+        // 상단 테두리 라인
+        id: 'ModuleDivider',
+        row: 0,
+        col: 0,
+        overrides: { borderColor: '#000000', borderWidth: '3px', borderStyle: 'solid', paddingTop: '0px', paddingBottom: '0px' },
+      },
+      {
+        // 로고 (가운데 정렬 · 최대 너비 40%)
+        id: 'ModuleImg',
+        row: 1,
+        col: 0,
+        overrides: {
+          imageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/logo-gray.png',
+          imageAlt: '로고',
+          imageAlign: 'center',
+          imageMaxWidth: '40%',
+          paddingTop: '30px',
+          paddingRight: '0px',
+          paddingBottom: '20px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        // 로고 하단 라인
+        id: 'ModuleDivider',
+        row: 2,
+        col: 0,
+        overrides: { borderColor: '#dddddd', borderWidth: '1px', borderStyle: 'solid', paddingTop: '0px', paddingBottom: '0px' },
+      },
+      {
+        // 헤더 타이틀
+        id: 'ModuleDescText',
+        row: 3,
+        col: 0,
+        overrides: {
+          descriptionText:
+            '<p style="margin:0; padding:0; line-height:1.7; text-align:center;">NEWSLETTER <strong>VOL.1</strong></p>',
+          fontSize: '20px',
+          textColor: '#111111',
+          paddingTop: '15px',
+          paddingRight: '0px',
+          paddingBottom: '15px',
+          paddingLeft: '0px',
+        },
+      },
+    ])
+
+  /**
+   * [POC/실험] 이미지형 헤더 조립형 — 비주얼 이미지 → 볼/날짜/홈 → 구분선 → 타이틀+본문 → 버튼 (전부 1컬럼)
+   */
+  const addComposedImageHeader = (): string | null =>
+    buildComposedGroup([
+      {
+        id: 'ModuleImg',
+        row: 0,
+        col: 0,
+        overrides: {
+          imageUrl:
+            'https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/newsletter/images/img-visual.png',
+          imageAlt: '전시소개글',
+          paddingTop: '20px',
+          paddingRight: '0px',
+          paddingBottom: '20px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        // 볼 · 날짜 · 홈 링크 (가운데, 줄마다 다른 크기)
+        id: 'ModuleDescText',
+        row: 1,
+        col: 0,
+        overrides: {
+          descriptionText:
+            '<p style="margin:0; padding:0; line-height:1.7; text-align:center; font-size:15px;">NEWSLETTER VOL.1</p>' +
+            '<p style="margin:0; padding:0; line-height:1.7; text-align:center; font-size:20px;"><strong>2023. 8. 3 (목) - 8. 6 (일) COEX</strong></p>' +
+            '<p style="margin:0; padding:0; line-height:1.7; text-align:center; font-size:14px;"><a href="#" style="color:#333333; text-decoration:none;">🏠 홈페이지 바로가기</a></p>',
+          textColor: '#333333',
+          fontSize: '15px',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '0px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        // 점선 구분선
+        id: 'ModuleDivider',
+        row: 2,
+        col: 0,
+        overrides: { borderColor: '#999999', borderWidth: '1px', borderStyle: 'dotted', paddingTop: '20px', paddingBottom: '20px' },
+      },
+      {
+        // 타이틀 (볼드) — 볼드 부분을 별도 설명 텍스트로 분리
+        id: 'ModuleDescText',
+        row: 3,
+        col: 0,
+        overrides: {
+          descriptionText:
+            '<p style="margin:0; padding:0; line-height:1.7; font-size:20px;"><strong>국내 유일 기계설비 종합 전시회<br><span style="color:#eb2a25;">『대한민국 기계설비전시회(HVAC KOREA)』</span>가 제 7회를 맞이하였습니다.</strong></p>',
+          textColor: '#111111',
+          fontSize: '20px',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '0px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        // 본문 (노멀) — 타이틀 아래 별도 설명 텍스트
+        id: 'ModuleDescText',
+        row: 3,
+        col: 0,
+        overrides: {
+          descriptionText:
+            '<p style="margin:0; padding:0; line-height:1.7; font-size:14px;">본 전시회는 1군건설사, 설계, 시공, 학계 등 각 부문별 바이어군을 대표하는 유관 협회들과 함께 준비하는 전시회입니다. 새로운 비즈니스 기회를 찾으세요!</p>',
+          textColor: '#333333',
+          fontSize: '14px',
+          paddingTop: '12px',
+          paddingRight: '0px',
+          paddingBottom: '0px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        // 큰 버튼 (사전등록)
+        id: 'ModuleOneButton',
+        row: 4,
+        col: 0,
+        overrides: {
+          buttonText: '사전등록 →',
+          buttonBgColor: '#111111',
+          buttonTextColor: '#ffffff',
+          buttonBorderRadius: '5px',
+          paddingTop: '20px',
+          paddingBottom: '20px',
+        },
+      },
+    ])
+
+  /**
+   * [POC/실험] 복수 이미지 조립형 — 좌·우 이미지 2컬럼 한 행 (모바일 세로 스택)
+   */
+  const addComposedMultiImage = (): string | null =>
+    buildComposedGroup([
+      {
+        id: 'ModuleImg',
+        row: 0,
+        col: 0,
+        overrides: {
+          imageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-2column.png',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '0px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        id: 'ModuleImg',
+        row: 0,
+        col: 1,
+        overrides: {
+          imageUrl: 'https://design.messeesang.com/e-dm/newsletter/images/img-2column.png',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '0px',
+          paddingLeft: '0px',
+        },
+      },
+    ])
+
+  /**
+   * [POC/실험] 하단 푸터 조립형 —
+   * 회사정보+연락처 → 구분선 → SNS 아이콘 → 수신거부 안내 (전부 1컬럼).
+   * 두 난점을 해결: ①전체 배경색은 '그룹 배경색'으로, ②원형 SNS 아이콘 행은 설명 텍스트의 인라인 HTML로 재현.
+   */
+  const addComposedFooter = (): string | null => {
+    return buildComposedGroup(
+      [
+        {
+          // 회사 정보 (가운데)
+          id: 'ModuleDescText',
+          row: 0,
+          col: 0,
+          overrides: {
+            descriptionText:
+              '<p style="margin:0; padding:0; line-height:1.7;"><strong>코리아빌드 사무국</strong></p>' +
+              '<p style="margin:0; padding:0; line-height:1.7;">(주)메쎄이상</p>' +
+              '<p style="margin:0; padding:0; line-height:1.7; font-size:13px;">서울시 마포구 월드컵북로 58길 9 ES타워 (03922)</p>',
+            textColor: '#333333',
+            fontSize: '16px',
+            textAlign: 'center',
+            paddingTop: '30px',
+            paddingRight: '0px',
+            paddingBottom: '0px',
+            paddingLeft: '0px',
+          },
+        },
+        {
+          // 연락처 (H·T·E·F) — 항목별 노출/순서를 속성 패널에서 직접 조절한다
+          id: 'ModuleContactInfo',
+          row: 0,
+          col: 0,
+          overrides: {
+            contactItems: defaultContactItems({
+              websiteUrl: 'www.koreabuild.co.kr',
+              phone: '02-6121-6362',
+              email: 'hvackorea@esgroup.net',
+              fax: '02-6121-6363',
+            }),
+            contactFontSize: '13px',
+            contactTextColor: '#333333',
+            contactAlign: 'center',
+            paddingTop: '8px',
+            paddingRight: '0px',
+            paddingBottom: '10px',
+            paddingLeft: '0px',
+          },
+        },
+        {
+          // 구분선
+          id: 'ModuleDivider',
+          row: 1,
+          col: 0,
+          overrides: { borderColor: '#aaaaaa', borderWidth: '1px', borderStyle: 'solid', paddingTop: '0px', paddingBottom: '15px' },
+        },
+        {
+          // SNS 아이콘 행 (독립 모듈 — 아이콘별 링크·노출 개별 설정 가능)
+          id: 'ModuleSnsIcons',
+          row: 2,
+          col: 0,
+          overrides: {
+            snsAlign: 'center',
+            paddingTop: '0px',
+            paddingRight: '5px',
+            paddingBottom: '10px',
+            paddingLeft: '5px',
+          },
+        },
+        {
+          // 수신거부 안내 (국문, 작게 · 가운데)
+          id: 'ModuleDescText',
+          row: 3,
+          col: 0,
+          overrides: {
+            descriptionText:
+              '<p style="margin:0; padding:0; line-height:1.7;">본 메일은 회원님의 수신동의 여부를 확인한 결과 회원님께서 수신동의를 하셨기에 발송되었습니다.</p>' +
+              '<p style="margin:0; padding:0; line-height:1.7;">메일 수신을 원치 않으시면 <a href="#" target="_blank" style="text-decoration:none; color:#333333; font-weight:700;">[수신거부]</a> 를 클릭하십시오.</p>' +
+              '<p style="margin:0; padding:0; line-height:1.7;">본 메일은 발신전용 메일이므로 문의사항은 <strong>hvackorea@esgroup.net</strong>으로 문의 바랍니다</p>',
+            textColor: '#333333',
+            fontSize: '12px',
+            textAlign: 'center',
+            paddingTop: '10px',
+            paddingRight: '25px',
+            paddingBottom: '40px',
+            paddingLeft: '25px',
+          },
+        },
+      ],
+      { backgroundColor: '#e9e9e9' }, // 푸터 전체 배경색
+    )
+  }
+
+  /**
+   * [POC/실험] 복수 버튼 조립형 — 단일 버튼(ModuleOneButton) 2개를 2단 행으로.
+   * 데스크톱 좌우 2단, 모바일 세로 스택. 각 버튼은 독립 요소라 개별 편집·삭제 가능.
+   */
+  const addComposedTwoButton = (): string | null =>
+    buildComposedGroup([
+      {
+        id: 'ModuleOneButton',
+        row: 0,
+        col: 0,
+        overrides: {
+          buttonText: '버튼 1 →',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '0px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        id: 'ModuleOneButton',
+        row: 0,
+        col: 1,
+        overrides: {
+          buttonText: '버튼 2 →',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '0px',
+          paddingLeft: '0px',
+        },
+      },
+    ])
+
+  /** 그룹 멤버를 order 순으로 반환 */
+  const orderedGroupMembers = (groupId: string): ModuleInstance[] =>
+    modules.value.filter((m) => m.groupId === groupId).sort((a, b) => a.order - b.order)
+
+  /** 멤버들의 rowIndex/columnIndex로부터 행별 컬럼 수 배열을 유도 */
+  const deriveRowsFromMembers = (members: ModuleInstance[]): number[] => {
+    const rowCount = Math.max(1, ...members.map((m) => (m.rowIndex ?? 0) + 1))
+    const rows = Array.from({ length: rowCount }, () => 1)
+    for (const m of members) {
+      const r = Math.min(Math.max(m.rowIndex ?? 0, 0), rowCount - 1)
+      rows[r] = Math.max(rows[r], clampColumns((m.columnIndex ?? 0) + 1))
+    }
+    return rows
+  }
+
+  /**
+   * [행별 컬럼] 레거시(group.columns + fullWidth) 그룹을 행별 독립 컬럼 모델로 승격한다.
+   * group.rows가 이미 있으면 아무것도 하지 않는다. (읽기 경로는 항상 신모델을 가정)
+   */
+  const ensureGroupRows = (group: ModuleGroup): void => {
+    if (group.rows && group.rows.length > 0) return
+    const members = orderedGroupMembers(group.id)
+    const res = resolveGroupRows(group, members)
+    members.forEach((m) => {
+      m.rowIndex = res.rowIndexById[m.id] ?? 0
+      m.columnIndex = res.colIndexById[m.id] ?? 0
+      delete m.fullWidth
+    })
+    group.rows = res.rowCols.length > 0 ? res.rowCols : [1]
+    delete group.columns
+  }
+
+  /**
+   * [행별 컬럼] 1컬럼 행에 여러 모듈이 쌓여 있을 때, 대상 모듈만 자기 행으로 떼어낸다.
+   *
+   * 컬럼 나누기는 '행' 단위라, 이미지 위에 텍스트를 추가하면 둘이 같은 행이 되어
+   * 텍스트만 골라 2단을 눌러도 이미지까지 왼쪽 컬럼으로 끌려 들어간다.
+   * 그래서 나누기 직전에 위/아래 모듈을 각각 별도 행으로 밀어내 대상만 남긴다.
+   *
+   * 이미 다중 컬럼인 행은 건드리지 않는다 — 셀 하나를 행으로 빼내면
+   * 같은 행의 다른 컬럼들이 무너지기 때문이다.
+   * @returns 대상 모듈이 최종적으로 놓인 행 인덱스
+   */
+  const isolateRowMember = (
+    groupId: string,
+    rowIndex: number,
+    mod: ModuleInstance,
+  ): number => {
+    const group = groups.value.find((g) => g.id === groupId)
+    const rows = group?.rows
+    if (!rows || rows[rowIndex] !== 1) return rowIndex
+
+    const members = modules.value
+      .filter((m) => m.groupId === groupId && (m.rowIndex ?? 0) === rowIndex)
+      .sort((a, b) => a.order - b.order)
+    if (members.length <= 1) return rowIndex
+
+    const at = members.indexOf(mod)
+    const before = members.slice(0, at)
+    const after = members.slice(at + 1)
+    const added = (before.length ? 1 : 0) + (after.length ? 1 : 0)
+
+    modules.value.forEach((m) => {
+      if (m.groupId === groupId && (m.rowIndex ?? 0) > rowIndex)
+        m.rowIndex = (m.rowIndex ?? 0) + added
+    })
+    const target = before.length ? rowIndex + 1 : rowIndex
+    mod.rowIndex = target
+    mod.columnIndex = 0
+    after.forEach((m) => {
+      m.rowIndex = target + 1
+      m.columnIndex = 0
+    })
+    rows.splice(rowIndex + 1, 0, ...Array.from({ length: added }, () => 1))
+    return target
+  }
+
+  /**
+   * [행별 컬럼] 선택 모듈이 속한 '행'에 컬럼을 하나 추가한다(그 행만 +1단, 최대 4).
+   * - 그룹에 없으면: 그 모듈만으로 1행짜리 그룹을 만든 뒤 그 행을 2단으로.
+   * - 그 행에 다른 모듈이 함께 쌓여 있으면 대상 모듈만 떼어낸 뒤 나눈다.
+   * @returns 그 행의 적용된 컬럼 수 (실패 시 null)
+   */
+  const splitModuleColumns = (moduleId: string): number | null => {
+    const mod = modules.value.find((m) => m.id === moduleId)
+    if (!mod) return null
+
+    let groupId = mod.groupId
+    if (!groupId) {
+      const gid = createGroup([moduleId]) // 단독 모듈 → 1행(1컬럼) 그룹
+      if (!gid) return null
+      groupId = gid
+    }
+    const group = groups.value.find((g) => g.id === groupId)
+    if (!group) return null
+    ensureGroupRows(group)
+    const rows = group.rows as number[]
+    const r = Math.min(Math.max(mod.rowIndex ?? 0, 0), rows.length - 1)
+    const target = isolateRowMember(groupId, r, mod)
+    const next = clampColumns(rows[target] + 1)
+    if (next === rows[target]) return rows[target]
+    rows[target] = next
+    // 그 행 멤버 중 컬럼 인덱스 미지정은 0으로 확정
+    modules.value.forEach((m) => {
+      if (m.groupId === groupId && (m.rowIndex ?? 0) === target && m.columnIndex == null)
+        m.columnIndex = 0
+    })
+    triggerRef(groups)
+    triggerRef(modules)
+    // 나눈 뒤에도 그 모듈을 계속 편집한다 — 단독 모듈이면 위 createGroup이 선택을 그룹으로 옮기며
+    // 모듈 선택을 지우는데, 여기서 그룹 선택까지 풀면 '선택 없음'이 되어 좌측이 모듈 팔레트로 튕긴다.
     selectedGroupId.value = null
+    selectedModuleId.value = moduleId
+    isDirty.value = true
+    return next
+  }
+
+  /**
+   * [행별 컬럼] 선택 모듈이 속한 '행'의 컬럼을 하나 줄인다(-1단).
+   * - 사라지는 마지막 컬럼의 모듈들은 그 행의 마지막 남는 컬럼으로 합쳐진다.
+   * - 그룹이 1행·1컬럼·단일 멤버가 되면 그룹까지 해제(완전 원복).
+   * @returns 그 행의 되돌린 뒤 컬럼 수 (실패 시 null)
+   */
+  const unsplitModuleColumns = (moduleId: string): number | null => {
+    const mod = modules.value.find((m) => m.id === moduleId)
+    if (!mod || !mod.groupId) return null
+    const group = groups.value.find((g) => g.id === mod.groupId)
+    if (!group) return null
+    ensureGroupRows(group)
+    const rows = group.rows as number[]
+    const r = Math.min(Math.max(mod.rowIndex ?? 0, 0), rows.length - 1)
+    const cur = rows[r]
+    if (cur <= 1) return cur
+    const next = cur - 1
+
+    // 이 행에서 사라지는 컬럼(next 이상)의 모듈을 마지막 남는 컬럼(next-1)으로 클램프
+    modules.value.forEach((m) => {
+      if (m.groupId === group.id && (m.rowIndex ?? 0) === r && (m.columnIndex ?? 0) > next - 1) {
+        m.columnIndex = next - 1
+      }
+    })
+    rows[r] = next
+
+    // 그룹이 1행·1컬럼·단일 멤버로 축소되면 그룹 해제(완전 원복)
+    const members = orderedGroupMembers(group.id)
+    if (rows.length === 1 && rows[0] === 1 && members.length <= 1) {
+      members.forEach((m) => {
+        delete m.groupId
+        delete m.rowIndex
+        delete m.columnIndex
+      })
+      const gi = groups.value.findIndex((g) => g.id === group.id)
+      if (gi !== -1) groups.value.splice(gi, 1)
+      if (selectedGroupId.value === group.id) selectedGroupId.value = null
+      triggerRef(groups)
+      triggerRef(modules)
+      isDirty.value = true
+      return 1
+    }
+    triggerRef(groups)
+    triggerRef(modules)
+    isDirty.value = true
+    return next
+  }
+
+  /**
+   * [행별 컬럼] 특정 행의 특정 컬럼(주로 빈 컬럼)을 삭제한다.
+   * - 삭제 컬럼보다 오른쪽 컬럼들은 왼쪽으로 한 칸 당겨진다.
+   * - 삭제 컬럼에 모듈이 남아 있으면 왼쪽 컬럼으로 흡수된다.
+   * @returns 삭제 후 그 행의 컬럼 수 (실패 시 null)
+   */
+  const removeColumn = (groupId: string, rowIndex: number, columnIndex: number): number | null => {
+    const group = groups.value.find((g) => g.id === groupId)
+    if (!group) return null
+    ensureGroupRows(group)
+    const rows = group.rows as number[]
+    if (rowIndex < 0 || rowIndex >= rows.length) return null
+    const cols = rows[rowIndex]
+    if (cols <= 1) return cols
+    const next = cols - 1
+
+    // 이 행에서 삭제 컬럼 오른쪽은 왼쪽으로 당기고, 삭제 컬럼의 잔여 모듈은 왼쪽 컬럼으로 흡수
+    modules.value.forEach((m) => {
+      if (m.groupId !== groupId || (m.rowIndex ?? 0) !== rowIndex) return
+      const c = m.columnIndex ?? 0
+      if (c > columnIndex) m.columnIndex = c - 1
+      else if (c === columnIndex) m.columnIndex = Math.max(columnIndex - 1, 0)
+    })
+    rows[rowIndex] = next
+
+    // 삭제한 컬럼이 추가 대상이었다면 해제
+    if (columnTarget.value?.groupId === groupId) columnTarget.value = null
+    triggerRef(groups)
+    triggerRef(modules)
+    isDirty.value = true
+    return next
+  }
+
+  /**
+   * [행별 컬럼] 빈 컬럼을 '추가 대상'으로 지정 (다음에 추가되는 모듈이 이 행/컬럼으로).
+   * 캔버스 '직접 구성' 버튼이 호출한다 — 좌측 패널을 이 컬럼의 '구성 요소' 패널로 전환하기 위해
+   * 기존 선택(다른 컬럼의 모듈 등)과 레일 패널 고정을 함께 해제한다.
+   */
+  const setColumnTarget = (groupId: string, rowIndex: number, columnIndex: number): void => {
+    columnTarget.value = { groupId, rowIndex, columnIndex }
+    selectedModuleId.value = null
+    selectedGroupId.value = null
+    useEditorStore().forceRailPanel = false
+  }
+  /** [행별 컬럼] 추가 대상 컬럼 지정 해제 */
+  const clearColumnTarget = (): void => {
+    columnTarget.value = null
+  }
+
+  /**
+   * [행별 컬럼] 같은 행 이웃 컬럼의 모듈을 복제해 대상(빈) 컬럼을 채운다.
+   * 대상보다 왼쪽에서 가장 가까운 컬럼(없으면 가장 왼쪽 컬럼)의 멤버들을 복제한다.
+   */
+  const duplicateIntoColumn = (groupId: string, rowIndex: number, columnIndex: number): void => {
+    const rowMembers = modules.value.filter(
+      (m) => m.groupId === groupId && (m.rowIndex ?? 0) === rowIndex,
+    )
+    if (rowMembers.length === 0) return
+    const cols = Array.from(new Set(rowMembers.map((m) => m.columnIndex ?? 0)))
+    const leftCols = cols.filter((c) => c < columnIndex).sort((a, b) => b - a)
+    const sourceCol = leftCols.length > 0 ? leftCols[0] : Math.min(...cols)
+    const sources = rowMembers.filter((m) => (m.columnIndex ?? 0) === sourceCol)
+    if (sources.length === 0) return
+
+    const lastIdx = modules.value.map((m) => m.groupId).lastIndexOf(groupId)
+    const clones: ModuleInstance[] = sources.map((m) => ({
+      ...m,
+      id: generateUniqueId('module'),
+      rowIndex,
+      columnIndex,
+      properties: JSON.parse(JSON.stringify(m.properties)),
+      styles: JSON.parse(JSON.stringify(m.styles)),
+    }))
+    modules.value.splice(lastIdx + 1, 0, ...clones)
+    reorderModules()
+    selectedModuleId.value = clones[0].id
+    columnTarget.value = null
+    isDirty.value = true
+  }
+
+  // ===== [행별 컬럼] 구성 요소(조립 원소) 토글 — Figma 717-9607 =====
+  // 나눈 컬럼(셀)을 이미지·타이틀·텍스트·버튼 원소로 구성한다. 체크=존재, 해제=제거.
+  // (조립형 02와 동일한 원소 매핑. 타이틀/텍스트는 둘 다 ModuleDescText라 __composedKind로 구분)
+  const COMPOSED_SPECS: Record<ComposedKind, { moduleId: string; overrides: Record<string, unknown> }> = {
+    image: { moduleId: 'ModuleImg', overrides: {} },
+    title: {
+      moduleId: 'ModuleDescText',
+      overrides: {
+        descriptionText:
+          '<p style="margin:0; padding:0; line-height:1.7;"><strong style="font-size:22px;">타이틀을 입력하세요</strong></p>',
+        textColor: '#111111',
+      },
+    },
+    text: {
+      moduleId: 'ModuleDescText',
+      overrides: {
+        descriptionText: '<p style="margin:0; padding:0; line-height:1.7;">본문 텍스트를 입력하세요.</p>',
+      },
+    },
+    button: { moduleId: 'ModuleOneButton', overrides: { buttonText: '자세히 보기 →' } },
+    // 작은 버튼(옆으로 나열, 최대 4개) — 모듈 기본값(버튼 1개 노출)을 그대로 쓴다
+    smallButton: { moduleId: 'ModuleSmallButton', overrides: {} },
+  }
+
+  // 셀(그룹/행/컬럼) 멤버 — order 기준 정렬
+  const cellMembers = (groupId: string, rowIndex: number, columnIndex: number): ModuleInstance[] =>
+    modules.value
+      .filter(
+        (m) =>
+          m.groupId === groupId && (m.rowIndex ?? 0) === rowIndex && (m.columnIndex ?? 0) === columnIndex,
+      )
+      .sort((a, b) => a.order - b.order)
+
+  // 모듈 → 구성 요소 종류 판별 (타이틀/텍스트는 __composedKind로, 없으면 텍스트로 간주)
+  const moduleComposedKind = (m: ModuleInstance): ComposedKind | null => {
+    if (m.moduleId === 'ModuleImg') return 'image'
+    if (m.moduleId === 'ModuleOneButton') return 'button'
+    if (m.moduleId === 'ModuleSmallButton') return 'smallButton'
+    if (m.moduleId === 'ModuleDescText')
+      return m.properties.__composedKind === 'title' ? 'title' : 'text'
+    return null
+  }
+
+  /**
+   * 셀 안의 구성 요소 목록 — 실제 배치 순서(위→아래)대로, 종류당 하나(첫 번째)만.
+   * 구성 요소 4종에 해당하지 않는 모듈(구분선 등)과 같은 종류의 중복 모듈은 제외된다.
+   */
+  const columnElements = (
+    groupId: string,
+    rowIndex: number,
+    columnIndex: number,
+  ): { kind: ComposedKind; moduleId: string }[] => {
+    const seen = new Set<ComposedKind>()
+    const result: { kind: ComposedKind; moduleId: string }[] = []
+    cellMembers(groupId, rowIndex, columnIndex).forEach((m) => {
+      const kind = moduleComposedKind(m)
+      if (!kind || seen.has(kind)) return
+      seen.add(kind)
+      result.push({ kind, moduleId: m.id })
+    })
+    return result
+  }
+
+  /**
+   * 셀 안의 구성 요소 순서 변경 (좌측 '구성 요소' 리스트 드래그).
+   * orderedModuleIds에 준 모듈들이 modules 배열에서 이미 차지하고 있던 자리들에 새 순서로 재배치한다
+   * → 같은 셀의 다른 모듈(구성 요소 아닌 것)·다른 셀/그룹의 순서는 건드리지 않는다.
+   */
+  const reorderColumnElements = (
+    groupId: string,
+    rowIndex: number,
+    columnIndex: number,
+    orderedModuleIds: string[],
+  ): void => {
+    if (orderedModuleIds.length < 2) return
+    const members = cellMembers(groupId, rowIndex, columnIndex).filter((m) =>
+      orderedModuleIds.includes(m.id),
+    )
+    if (members.length !== orderedModuleIds.length) return
+    const slots = members.map((m) => modules.value.indexOf(m)).sort((a, b) => a - b)
+    const next = orderedModuleIds
+      .map((id) => members.find((m) => m.id === id))
+      .filter((m): m is ModuleInstance => !!m)
+    if (next.length !== slots.length) return
+    slots.forEach((slot, i) => {
+      modules.value[slot] = next[i]
+    })
+    reorderModules()
+    triggerRef(modules)
+    isDirty.value = true
+  }
+
+  // 셀에 특정 구성 요소가 존재하는지
+  const hasColumnElement = (
+    groupId: string,
+    rowIndex: number,
+    columnIndex: number,
+    kind: ComposedKind,
+  ): boolean => cellMembers(groupId, rowIndex, columnIndex).some((m) => moduleComposedKind(m) === kind)
+
+  // 구성 요소 토글: on=true면 기본값으로 생성해 셀에 추가(+선택), off면 그 종류 모듈을 셀에서 제거
+  const setColumnElement = (
+    groupId: string,
+    rowIndex: number,
+    columnIndex: number,
+    kind: ComposedKind,
+    on: boolean,
+  ): void => {
+    if (on) {
+      if (hasColumnElement(groupId, rowIndex, columnIndex, kind)) return
+      const spec = COMPOSED_SPECS[kind]
+      const meta = availableModules.value.find((m) => m.id === spec.moduleId)
+      if (!meta) return
+      const properties: Record<string, unknown> = { ...getDefaultProperties(meta), ...spec.overrides }
+      // 타이틀/텍스트(둘 다 ModuleDescText) 구분용 마커
+      if (spec.moduleId === 'ModuleDescText') properties.__composedKind = kind
+      const newModule: ModuleInstance = {
+        id: generateUniqueId('module'),
+        moduleId: meta.id,
+        order: 0,
+        groupId,
+        rowIndex,
+        columnIndex,
+        properties,
+        styles: meta.defaultStyles || {},
+      }
+      const lastIdx = modules.value.map((m) => m.groupId).lastIndexOf(groupId)
+      if (lastIdx === -1) return
+      modules.value.splice(lastIdx + 1, 0, newModule)
+      reorderModules()
+      // 속성 폼을 유지한 채 새 원소를 선택(구성 요소 + 새 모듈 속성 계속 노출). selectAddedModule은
+      // forceRailPanel을 켜서 팔레트로 전환되므로 여기서는 selectModule을 쓴다.
+      selectModule(newModule.id)
+      isDirty.value = true
+    } else {
+      const target = cellMembers(groupId, rowIndex, columnIndex).find(
+        (m) => moduleComposedKind(m) === kind,
+      )
+      if (!target) return
+      // 제거 후에도 구성 요소가 유지되도록, 같은 셀의 다른 멤버를 선택(없으면 선택 해제).
+      const wasSelected = selectedModuleId.value === target.id
+      const rest = cellMembers(groupId, rowIndex, columnIndex).filter((m) => m.id !== target.id)
+      removeModule(target.id)
+      if (wasSelected && rest.length > 0) selectModule(rest[0].id)
+    }
+  }
+
+  /** [행별 컬럼] 모듈을 같은 행 안에서 왼쪽/오른쪽 이웃 컬럼으로 이동 */
+  const moveModuleColumn = (moduleId: string, direction: 'left' | 'right'): void => {
+    const mod = modules.value.find((m) => m.id === moduleId)
+    if (!mod || !mod.groupId) return
+    const group = groups.value.find((g) => g.id === mod.groupId)
+    if (!group) return
+    ensureGroupRows(group)
+    const rows = group.rows as number[]
+    const r = Math.min(Math.max(mod.rowIndex ?? 0, 0), rows.length - 1)
+    const cols = rows[r]
+    if (cols <= 1) return
+    const cur = mod.columnIndex ?? 0
+    const next = Math.min(Math.max(cur + (direction === 'right' ? 1 : -1), 0), cols - 1)
+    if (next === cur) return
+    mod.columnIndex = next
+    triggerRef(modules)
+    selectedModuleId.value = moduleId
+    isDirty.value = true
+  }
+
+  /** [행별 컬럼] 특정 행/컬럼의 현재 너비(%) — 미지정이면 균등(100/컬럼수) */
+  const columnWidthOf = (groupId: string, rowIndex: number, columnIndex: number): number => {
+    const group = groups.value.find((g) => g.id === groupId)
+    const rows = group?.rows
+    const cols = clampColumns(rows?.[rowIndex] ?? 1)
+    const w = group?.colWidths?.[rowIndex]
+    if (cols > 1 && Array.isArray(w) && w.length === cols && w[columnIndex] != null) {
+      return Math.round(w[columnIndex])
+    }
+    return Math.round(100 / cols)
+  }
+
+  /**
+   * [행별 컬럼] 특정 행/컬럼의 너비(%)를 지정한다. 나머지 컬럼은 남은 %(100-지정값)를 균등 분배.
+   * 데스크톱에만 적용되고 모바일에서는 기존처럼 세로 100% 스택된다.
+   */
+  const setColumnWidth = (
+    groupId: string,
+    rowIndex: number,
+    columnIndex: number,
+    pct: number,
+  ): void => {
+    const group = groups.value.find((g) => g.id === groupId)
+    if (!group) return
+    ensureGroupRows(group)
+    const rows = group.rows as number[]
+    const cols = clampColumns(rows[rowIndex] ?? 1)
+    if (cols <= 1 || columnIndex < 0 || columnIndex >= cols) return
+    const p = Math.max(10, Math.min(90, Math.round(pct)))
+    const widths = new Array<number>(cols).fill(0)
+    widths[columnIndex] = p
+    // 나머지 컬럼에 (100-p)% 균등 분배(정수 보정: 나머지를 앞쪽부터 1씩 얹는다)
+    const others = cols - 1
+    const rest = 100 - p
+    const each = Math.floor(rest / others)
+    let remainder = rest - each * others
+    for (let i = 0; i < cols; i++) {
+      if (i === columnIndex) continue
+      widths[i] = each + (remainder > 0 ? 1 : 0)
+      if (remainder > 0) remainder--
+    }
+    if (!group.colWidths) group.colWidths = []
+    group.colWidths[rowIndex] = widths
+    triggerRef(groups)
+    isDirty.value = true
+  }
+
+  /** [행별 컬럼] 그 행이 '모바일에서도 가로 유지'인지 (미지정이면 false = 모바일에서 세로 스택) */
+  const rowKeepsInline = (groupId: string, rowIndex: number): boolean =>
+    !!groups.value.find((g) => g.id === groupId)?.keepInlineRows?.[rowIndex]
+
+  /**
+   * [행별 컬럼] 그 행을 '모바일에서도 가로 유지'로 켜고 끈다.
+   * 켜면 좁은 폭에서도 컬럼 비율 그대로 나란히 남는다 — 제목|링크처럼 짧은 한 줄 행용.
+   */
+  const setRowKeepInline = (groupId: string, rowIndex: number, on: boolean): void => {
+    const group = groups.value.find((g) => g.id === groupId)
+    if (!group || rowIndex < 0) return
+    if (!group.keepInlineRows) {
+      if (!on) return
+      group.keepInlineRows = []
+    }
+    group.keepInlineRows[rowIndex] = on
+    triggerRef(groups)
     isDirty.value = true
   }
 
@@ -214,6 +1998,9 @@ export const useModuleStore = defineStore('module', () => {
   const selectModule = (moduleId: string): void => {
     selectedModuleId.value = moduleId
     selectedGroupId.value = null
+    // 사용자가 직접 선택한 것이므로 속성 패널로 전환한다.
+    // (추가 직후 자동 선택된 모듈을 다시 클릭해도 확실히 전환되도록 id 변화와 무관하게 명시)
+    useEditorStore().forceRailPanel = false
   }
 
   /**
@@ -389,19 +2176,119 @@ export const useModuleStore = defineStore('module', () => {
       .slice(0, firstIndex)
       .filter((m) => !targetIdSet.has(m.id)).length
 
+    // 멤버가 이미 rowIndex/columnIndex를 갖고 있으면(조립형) 그 배치를 존중하고,
+    // 없으면 1행·1컬럼 세로 스택으로 둔다.
     sortedTargets.forEach((m) => {
       m.groupId = newGroupId
+      if (m.rowIndex == null) m.rowIndex = 0
+      if (m.columnIndex == null) m.columnIndex = 0
+      delete m.fullWidth
     })
 
     const next = [...remaining]
     next.splice(insertAt, 0, ...sortedTargets)
     modules.value.splice(0, modules.value.length, ...next)
 
-    groups.value.push({ id: newGroupId, styles: { ...DEFAULT_GROUP_STYLES } })
+    groups.value.push({
+      id: newGroupId,
+      name: nextUserGroupName(),
+      styles: { ...DEFAULT_GROUP_STYLES },
+      rows: deriveRowsFromMembers(sortedTargets),
+    })
 
     reorderModules()
     selectedGroupId.value = newGroupId
     selectedModuleId.value = null
+    isDirty.value = true
+    return newGroupId
+  }
+
+  /**
+   * [행별 컬럼] 선택 모듈들을 하나의 그룹으로 병합한다. (이미 그룹인 것도 허용)
+   * - 각 기존 그룹의 (행,컬럼) 구조는 보존되어 새 그룹에서 연속된 행 블록이 된다.
+   * - 그룹에 안 속했던 단독 모듈은 각각 1컬럼 행이 된다.
+   * → "1컬럼짜리 + 2컬럼 그룹"을 합치면 1컬럼 행 + 2컬럼 행을 가진 한 그룹이 된다.
+   * @returns 새 그룹 id (실패 시 null)
+   */
+  const mergeModulesIntoGroup = (moduleIds: string[]): string | null => {
+    const targets = moduleIds
+      .map((id) => modules.value.find((m) => m.id === id))
+      .filter((m): m is ModuleInstance => !!m)
+    if (targets.length < 1) return null
+
+    // 관련된 기존 그룹을 행 모델로 승격
+    const involvedGroupIds = new Set(
+      targets.map((m) => m.groupId).filter((g): g is string => !!g),
+    )
+    involvedGroupIds.forEach((gid) => {
+      const g = groups.value.find((x) => x.id === gid)
+      if (g) ensureGroupRows(g)
+    })
+
+    const sortedTargets = [...targets].sort((a, b) => a.order - b.order)
+    const newGroupId = generateUniqueId('group')
+
+    // 새 행 배정: (기존 그룹 + 기존 행) 단위로 묶고, 단독 모듈은 각각 새 행
+    const rowKeyToNewIndex = new Map<string, number>()
+    const newRows: number[] = []
+    const plan = sortedTargets.map((m) => {
+      const key = m.groupId ? `${m.groupId}:${m.rowIndex ?? 0}` : `solo:${m.id}`
+      let newRow = rowKeyToNewIndex.get(key)
+      if (newRow == null) {
+        newRow = newRows.length
+        rowKeyToNewIndex.set(key, newRow)
+        newRows.push(1)
+      }
+      const col = m.groupId ? m.columnIndex ?? 0 : 0
+      newRows[newRow] = Math.max(newRows[newRow], clampColumns(col + 1))
+      return { m, newRow, col }
+    })
+
+    // 위치 계산 (첫 멤버 자리에 연속 배치)
+    const firstIndex = modules.value.map((m) => m.id).indexOf(sortedTargets[0].id)
+    const targetIdSet = new Set(sortedTargets.map((m) => m.id))
+    const remaining = modules.value.filter((m) => !targetIdSet.has(m.id))
+    const insertAt = modules.value
+      .slice(0, firstIndex)
+      .filter((m) => !targetIdSet.has(m.id)).length
+
+    // 배치 적용
+    plan.forEach(({ m, newRow, col }) => {
+      m.groupId = newGroupId
+      m.rowIndex = newRow
+      m.columnIndex = col
+      delete m.fullWidth
+    })
+
+    const next = [...remaining]
+    next.splice(insertAt, 0, ...sortedTargets)
+    modules.value.splice(0, modules.value.length, ...next)
+
+    groups.value.push({
+      id: newGroupId,
+      name: nextUserGroupName(),
+      styles: { ...DEFAULT_GROUP_STYLES },
+      rows: newRows,
+    })
+
+    // 비게 된 기존 그룹 정의 제거, 멤버가 남은 그룹은 rows 재유도
+    involvedGroupIds.forEach((gid) => {
+      const rest = modules.value.filter((m) => m.groupId === gid)
+      if (rest.length === 0) {
+        const gi = groups.value.findIndex((g) => g.id === gid)
+        if (gi !== -1) groups.value.splice(gi, 1)
+        if (selectedGroupId.value === gid) selectedGroupId.value = null
+      } else {
+        const g = groups.value.find((x) => x.id === gid)
+        if (g) g.rows = deriveRowsFromMembers(rest.sort((a, b) => a.order - b.order))
+      }
+    })
+
+    reorderModules()
+    selectedGroupId.value = newGroupId
+    selectedModuleId.value = null
+    triggerRef(groups)
+    triggerRef(modules)
     isDirty.value = true
     return newGroupId
   }
@@ -437,8 +2324,20 @@ export const useModuleStore = defineStore('module', () => {
     const insertIndex = modules.value.findIndex((m) => m.id === lastMemberId) + 1
     modules.value.splice(insertIndex, 0, ...clones)
 
-    // 그룹 정의 복제 (스타일 깊은 복사)
-    groups.value.push({ id: newGroupId, styles: JSON.parse(JSON.stringify(group.styles)) })
+    // 그룹 정의 복제 (스타일 깊은 복사, 이름도 함께 승계)
+    // rows(행별 컬럼 수)를 빠뜨리면 멤버는 rowIndex/columnIndex를 그대로 물려받는데 그룹엔 행 정보가
+    // 없어 다단 레이아웃이 깨진다 (createGroup/mergeModulesIntoGroup은 rows를 명시함).
+    groups.value.push({
+      id: newGroupId,
+      // 모듈 이름('이미지형 헤더')은 그대로 승계하고, 기본 이름('그룹 01')만 새 번호를 준다
+      // — 같은 이름이 둘이면 툴바·모듈 순서에서 어느 쪽인지 구분할 수 없다.
+      name: USER_GROUP_NAME.test(group.name ?? '') ? nextUserGroupName() : group.name,
+      rows: group.rows ? [...group.rows] : undefined,
+      // 행별 컬럼 너비·'모바일에서도 가로 유지'도 함께 승계 — 빠뜨리면 복제본만 레이아웃이 달라진다
+      colWidths: group.colWidths ? JSON.parse(JSON.stringify(group.colWidths)) : undefined,
+      keepInlineRows: group.keepInlineRows ? [...group.keepInlineRows] : undefined,
+      styles: JSON.parse(JSON.stringify(group.styles)),
+    })
 
     reorderModules()
     selectedGroupId.value = newGroupId
@@ -491,6 +2390,16 @@ export const useModuleStore = defineStore('module', () => {
   const selectGroup = (groupId: string): void => {
     selectedGroupId.value = groupId
     selectedModuleId.value = null
+    // 사용자가 직접 선택한 것이므로 즉시 속성(그룹 스타일) 패널로 전환한다.
+    // (selectModule과 동일 — 이미 선택된 그룹을 레일 메뉴 상태에서 다시 눌러도 한 번에 전환되도록 명시.
+    //  이게 없으면 forceRailPanel 해제를 watch에만 의존해 두 번 눌러야 바뀌는 경우가 생긴다.)
+    useEditorStore().forceRailPanel = false
+  }
+
+  /** 모듈/그룹 선택 해제 — 좌측 레일 메뉴로 이동할 때 캔버스 선택 상태를 비운다 */
+  const clearSelection = (): void => {
+    selectedModuleId.value = null
+    selectedGroupId.value = null
   }
 
   /**
@@ -506,6 +2415,67 @@ export const useModuleStore = defineStore('module', () => {
     ;(group.styles as Record<string, unknown>)[styleKey] = value
     triggerRef(groups)
     isDirty.value = true
+  }
+
+  // 조립형(v2) 템플릿에서 만든 그룹에 표시용 이름을 붙인다(예: "이미지형 헤더").
+  // 좌측 "그룹 구성" 패널이 이 이름을 타이틀로 보여준다 — 없으면 일반 라벨로 대체.
+  const setGroupName = (groupId: string, name: string): void => {
+    const group = groups.value.find((g) => g.id === groupId)
+    if (!group) return
+    group.name = name
+    triggerRef(groups)
+  }
+
+  /**
+   * 사용자가 직접 묶은 그룹의 기본 이름 — '그룹 01', '그룹 02' …
+   *
+   * 조립형 모듈로 만든 그룹은 모듈 이름을 쓰므로(setGroupName) 이 패턴에 걸리지 않는다.
+   * 번호는 만들 때 한 번 정해 이름으로 굳힌다 — 표시할 때마다 순서로 계산하면
+   * 앞 그룹을 지웠을 때 이미 익숙해진 이름이 통째로 밀린다.
+   */
+  const USER_GROUP_NAME = /^그룹 (\d+)$/
+  const nextUserGroupName = (): string => {
+    const max = groups.value.reduce((n, g) => {
+      const m = USER_GROUP_NAME.exec(g.name ?? '')
+      return m ? Math.max(n, Number(m[1])) : n
+    }, 0)
+    return `그룹 ${String(max + 1).padStart(2, '0')}`
+  }
+
+  /** 이름 없는 그룹에 기본 이름을 채운다 (이름이 없던 시절의 템플릿·저장 파일 대응) */
+  const ensureGroupNames = (): void => {
+    let changed = false
+    for (const g of groups.value) {
+      if (!g.name) {
+        g.name = nextUserGroupName()
+        changed = true
+      }
+    }
+    if (changed) triggerRef(groups)
+  }
+
+  /** '모바일에서도 가로 유지'가 기본값인 조립형 그룹 이름 — 제목|링크가 한 줄이어야 모양이 유지된다 */
+  const KEEP_INLINE_GROUP_NAMES = new Set(['뉴스 헤드라인 헤더'])
+
+  /**
+   * keepInlineRows가 없던 시절 만들어진 뉴스 헤드라인 헤더 그룹에 기본값을 채운다.
+   * (그 헤더의 "제목 | 웹으로 보기" 행은 모바일에서 세로로 쌓이면 헤더로 읽히지 않는다)
+   * 이미 값이 있는 그룹은 사용자가 정한 것이므로 건드리지 않는다. (템플릿·저장 파일 로드 시 호출)
+   */
+  const ensureKeepInlineDefaults = (): void => {
+    let changed = false
+    for (const g of groups.value) {
+      if (g.keepInlineRows || !KEEP_INLINE_GROUP_NAMES.has(g.name ?? '')) continue
+      const members = modules.value
+        .filter((m) => m.groupId === g.id)
+        .sort((a, b) => a.order - b.order)
+      const { rowCols } = resolveGroupRows(g, members)
+      const flags: boolean[] = rowCols.map((cols) => cols > 1)
+      if (!flags.some(Boolean)) continue
+      g.keepInlineRows = flags
+      changed = true
+    }
+    if (changed) triggerRef(groups)
   }
 
   /**
@@ -528,6 +2498,129 @@ export const useModuleStore = defineStore('module', () => {
   }
 
   /**
+   * [모듈 순서 패널] 펼친 그룹 안에서 멤버 순서를 바꾼다.
+   *
+   * 그룹의 행/컬럼 골격은 건드리지 않는다 — 기존 멤버 순서대로 모아둔
+   * (배열 슬롯 + rowIndex/columnIndex) 좌표를 그대로 두고, 그 자리에 새 순서의 멤버를 다시 꽂는다.
+   * → 1단 그룹은 단순 재배열이 되고, 다단 그룹은 "어떤 모듈이 어느 칸에 놓이는지"만 바뀌어
+   *   컬럼 레이아웃(group.rows)이 깨지지 않는다.
+   */
+  const reorderGroupMembers = (groupId: string, orderedModuleIds: string[]): void => {
+    if (orderedModuleIds.length < 2) return
+    const members = modules.value.filter((m) => m.groupId === groupId)
+    if (members.length !== orderedModuleIds.length) return
+    const next = orderedModuleIds
+      .map((id) => members.find((m) => m.id === id))
+      .filter((m): m is ModuleInstance => !!m)
+    if (next.length !== members.length) return
+
+    const slots = members.map((m) => modules.value.indexOf(m)).sort((a, b) => a - b)
+    const coords = members.map((m) => ({ rowIndex: m.rowIndex, columnIndex: m.columnIndex }))
+    slots.forEach((slot, i) => {
+      next[i].rowIndex = coords[i].rowIndex
+      next[i].columnIndex = coords[i].columnIndex
+      modules.value[slot] = next[i]
+    })
+    reorderModules()
+    triggerRef(modules)
+    isDirty.value = true
+  }
+
+  /**
+   * 다단 행의 컬럼 내용을 좌우로 맞바꾼다 (캔버스 행 가운데 ⇄ 버튼).
+   *
+   * 다단 행 안의 모듈은 위아래로 움직일 수 없다(행이 통째로 움직인다) — 대신 좌우 자리만 바꾼다.
+   * 배열 슬롯은 그대로 두고 columnIndex만 뒤집은 뒤 컬럼 순으로 재배치해,
+   * 다른 행·다른 그룹의 순서에는 영향을 주지 않는다.
+   */
+  const swapRowColumns = (groupId: string, rowIndex: number): boolean => {
+    const members = modules.value.filter(
+      (m) => m.groupId === groupId && (m.rowIndex ?? 0) === rowIndex,
+    )
+    const columns = new Set(members.map((m) => m.columnIndex ?? 0))
+    if (members.length < 2 || columns.size < 2) return false
+
+    const maxCol = Math.max(...columns)
+    const slots = members.map((m) => modules.value.indexOf(m)).sort((a, b) => a - b)
+    // 컬럼을 뒤집고(0↔max) 컬럼 순으로 다시 슬롯에 채운다
+    members.forEach((m) => {
+      m.columnIndex = maxCol - (m.columnIndex ?? 0)
+    })
+    const reordered = [...members].sort((a, b) => (a.columnIndex ?? 0) - (b.columnIndex ?? 0))
+    slots.forEach((slot, i) => {
+      modules.value[slot] = reordered[i]
+    })
+
+    reorderModules()
+    triggerRef(modules)
+    isDirty.value = true
+    return true
+  }
+
+  /** 그룹의 한 '행'에 속한 멤버들 (컬럼 순) */
+  const rowMembersOf = (groupId: string, rowIndex: number): ModuleInstance[] =>
+    modules.value
+      .filter((m) => m.groupId === groupId && (m.rowIndex ?? 0) === rowIndex)
+      .sort((a, b) => (a.columnIndex ?? 0) - (b.columnIndex ?? 0))
+
+  /**
+   * 행 전체를 바로 아래에 복제한다 (다단 행이면 컬럼 구성까지 그대로).
+   * 행이 이동/삭제 단위이므로 복제도 행 단위여야 컬럼 구성이 유지된다.
+   */
+  const duplicateRow = (groupId: string, rowIndex: number): boolean => {
+    const group = groups.value.find((g) => g.id === groupId)
+    const members = rowMembersOf(groupId, rowIndex)
+    if (!group || members.length === 0) return false
+
+    // 뒤쪽 행들을 한 칸씩 밀어 새 행 자리를 만든다
+    modules.value.forEach((m) => {
+      if (m.groupId === groupId && (m.rowIndex ?? 0) > rowIndex) m.rowIndex = (m.rowIndex ?? 0) + 1
+    })
+    const clones = members.map((m) => ({
+      ...m,
+      id: generateUniqueId('module'),
+      rowIndex: rowIndex + 1,
+      properties: JSON.parse(JSON.stringify(m.properties)),
+      styles: JSON.parse(JSON.stringify(m.styles)),
+    }))
+    const lastIndex = Math.max(...members.map((m) => modules.value.indexOf(m)))
+    modules.value.splice(lastIndex + 1, 0, ...clones)
+
+    if (group.rows) group.rows.splice(rowIndex + 1, 0, group.rows[rowIndex] ?? 1)
+    reorderModules()
+    triggerRef(modules)
+    triggerRef(groups)
+    isDirty.value = true
+    return true
+  }
+
+  /** 행 전체 삭제 — 멤버를 모두 지우고 뒤 행을 당긴다 (마지막 행이면 그룹까지 정리) */
+  const deleteRow = (groupId: string, rowIndex: number): boolean => {
+    const group = groups.value.find((g) => g.id === groupId)
+    const members = rowMembersOf(groupId, rowIndex)
+    if (!group || members.length === 0) return false
+
+    const ids = new Set(members.map((m) => m.id))
+    modules.value = modules.value.filter((m) => !ids.has(m.id))
+    modules.value.forEach((m) => {
+      if (m.groupId === groupId && (m.rowIndex ?? 0) > rowIndex) m.rowIndex = (m.rowIndex ?? 0) - 1
+    })
+    if (group.rows) group.rows.splice(rowIndex, 1)
+
+    if (selectedModuleId.value && ids.has(selectedModuleId.value)) selectedModuleId.value = null
+    // 남은 멤버가 없으면 그룹 정의도 지운다
+    if (!modules.value.some((m) => m.groupId === groupId)) {
+      groups.value = groups.value.filter((g) => g.id !== groupId)
+      if (selectedGroupId.value === groupId) selectedGroupId.value = null
+    }
+    reorderModules()
+    triggerRef(modules)
+    triggerRef(groups)
+    isDirty.value = true
+    return true
+  }
+
+  /**
    * 그룹을 표시 단위로 위/아래 한 칸 이동 (그룹 통째 이동)
    */
   const moveGroup = (groupId: string, direction: 'up' | 'down'): void => {
@@ -539,6 +2632,50 @@ export const useModuleStore = defineStore('module', () => {
     const next = [...items]
     ;[next[idx], next[swapWith]] = [next[swapWith], next[idx]]
     setDisplayOrder(next)
+  }
+
+  /**
+   * [그룹 내부] 드래그로 재배치된 '행' 순서를 반영한다.
+   * orderedRows = 캔버스에서 새로 정렬된 GroupRowLayout 배열(각 행의 cells에 멤버 포함).
+   * - 각 멤버의 rowIndex/columnIndex를 새 행/열 위치로 갱신
+   * - group.rows(행별 컬럼 수)를 새 순서로 재구성
+   * - modules 배열에서 그 그룹의 연속 멤버 구간을 새 순서로 교체
+   */
+  const reorderGroupRows = (
+    groupId: string,
+    orderedRows: GroupRowLayout<ModuleInstance>[],
+  ): void => {
+    const group = groups.value.find((g) => g.id === groupId)
+    if (!group) return
+    const newRowCols: number[] = []
+    const newOrderIds: string[] = []
+    orderedRows.forEach((row, r) => {
+      newRowCols.push(row.columns)
+      row.cells.forEach((cellMembers, c) => {
+        cellMembers.forEach((m) => {
+          const mod = modules.value.find((x) => x.id === m.id)
+          if (mod) {
+            mod.rowIndex = r
+            mod.columnIndex = c
+          }
+          newOrderIds.push(m.id)
+        })
+      })
+    })
+    if (newOrderIds.length === 0) return
+    group.rows = newRowCols
+    // 그룹 멤버(연속 구간)를 새 순서로 교체
+    const memberSet = new Set(newOrderIds)
+    const start = modules.value.findIndex((m) => memberSet.has(m.id))
+    if (start < 0) return
+    const orderedMembers = newOrderIds
+      .map((id) => modules.value.find((m) => m.id === id))
+      .filter((m): m is ModuleInstance => !!m)
+    modules.value.splice(start, orderedMembers.length, ...orderedMembers)
+    reorderModules()
+    triggerRef(modules)
+    triggerRef(groups)
+    isDirty.value = true
   }
 
   /**
@@ -571,11 +2708,26 @@ export const useModuleStore = defineStore('module', () => {
         (t) => t && typeof t.id === 'string' && typeof t.name === 'string' && Array.isArray(t.modules),
       )
 
+      // 좌측 본부/팀 트리도 같은 파일에서 온다 (배열 순서 = 표시 순서).
+      // id가 없는 항목은 버린다 — 템플릿이 teamId로 트리를 찾으므로 id 없는 팀은
+      // 어차피 아무 템플릿도 매칭되지 않고, 조용히 빈 필터로 남는 게 더 나쁘다.
+      availableDepartments.value = Array.isArray(data.departments)
+        ? (data.departments as TemplateDepartment[])
+            .filter(
+              (d) =>
+                d && typeof d.id === 'string' && typeof d.name === 'string' && Array.isArray(d.teams),
+            )
+            .map((d) => ({
+              ...d,
+              teams: d.teams.filter((t) => t && typeof t.id === 'string' && typeof t.name === 'string'),
+            }))
+        : []
       availableTemplates.value = validated
       return validated
     } catch (error) {
       console.error('[loadAvailableTemplates] Failed:', error)
       availableTemplates.value = []
+      availableDepartments.value = []
       return []
     }
   }
@@ -600,7 +2752,7 @@ export const useModuleStore = defineStore('module', () => {
     clearAll()
 
     if (template.wrapSettings) {
-      editorStore.updateWrapSettings(template.wrapSettings)
+      editorStore.applyLoadedWrapSettings(template.wrapSettings)
     }
 
     // 배열 순서를 그대로 적용 (JSON 작성 시 직관적으로 추가/삭제 가능)
@@ -611,6 +2763,12 @@ export const useModuleStore = defineStore('module', () => {
         continue
       }
 
+      // addModule은 선택 상태에 따라 삽입 위치를 바꾼다 —
+      //  · 선택 모듈이 그룹에 속하면 새 모듈도 그 그룹 안에 넣고(조립형 편집 규칙)
+      //  · 그룹이 선택돼 있으면 그 그룹 '바로 아래'에 넣는다.
+      // 템플릿 로드에서는 둘 다 방금 넣은 것을 가리켜, 그룹 멤버 다음 모듈이 줄줄이
+      // 그 그룹으로 빨려 들어간다 → 선택을 비워 항상 맨 끝에 붙게 한다.
+      clearSelection()
       addModule(moduleMetadata)
       const added = modules.value[modules.value.length - 1]
 
@@ -624,20 +2782,26 @@ export const useModuleStore = defineStore('module', () => {
           ;(added.styles as Record<string, unknown>)[key] = value
         })
       }
-      // 그룹 소속 복원 (그룹 정의는 아래에서 일괄 복원)
-      if (moduleData.groupId) {
-        added.groupId = moduleData.groupId
-      }
+      // 그룹 소속·컬럼 배치 복원 (그룹 정의는 아래에서 일괄 복원).
+      // 템플릿에 없는 값은 '지운다' — 남겨두면 addModule이 채워 넣은 값이 살아남는다.
+      if (moduleData.groupId) added.groupId = moduleData.groupId
+      else delete added.groupId
+      if (moduleData.rowIndex != null) added.rowIndex = moduleData.rowIndex
+      else delete added.rowIndex
+      if (moduleData.columnIndex != null) added.columnIndex = moduleData.columnIndex
+      else delete added.columnIndex
+      if (moduleData.fullWidth) added.fullWidth = true // 레거시 데이터 — 렌더 시 rows로 유도됨
+      else delete added.fullWidth
     }
 
-    // 그룹 정의 복원
+    // 그룹 정의 복원 후 연속성 정리
     if (template.groups && template.groups.length > 0) {
       groups.value = JSON.parse(JSON.stringify(template.groups))
+      // 이름이 없던 시절 만들어진 그룹은 여기서 기본 이름을 받는다
+      ensureGroupNames()
+      ensureKeepInlineDefaults()
+      normalizeGroupContiguity()
     }
-    // 연속성 정리는 항상 수행한다. 그룹 정의가 없는데 모듈에 groupId만 남은
-    // 불완전 템플릿(구버전 convert 산출물 등)의 dangling groupId를 제거해
-    // "그룹이 풀렸는데 이미 그룹에 속함" 오류를 방지한다.
-    normalizeGroupContiguity()
 
     if (modules.value.length > 0) {
       selectedModuleId.value = modules.value[0].id
@@ -697,6 +2861,8 @@ export const useModuleStore = defineStore('module', () => {
         properties: JSON.parse(JSON.stringify(m.properties)),
         styles: JSON.parse(JSON.stringify(m.styles)),
         ...(m.groupId ? { groupId: m.groupId } : {}),
+        ...(m.rowIndex != null ? { rowIndex: m.rowIndex } : {}),
+        ...(m.columnIndex != null ? { columnIndex: m.columnIndex } : {}),
       })),
       groups: JSON.parse(JSON.stringify(groups.value)),
     }
@@ -768,23 +2934,137 @@ export const useModuleStore = defineStore('module', () => {
     const module = modules.value.find((m) => m.id === moduleId)
     if (!module) return
 
-    // 정렬은 셀별로 지정하지 않고 열 공통값(tableColAligns)을 기본으로 사용한다.
-    // 셀별 align은 사용자가 '가' 편집기에서 직접 지정했을 때만 채워지며, 그때 더 우선한다.
+    // 정렬은 '테이블 스타일' 탭의 타입 공통값(headerAlign/cellAlign)이 기본이다.
+    // 셀별 align은 사용자가 '개별 스타일'에서 직접 지정했을 때만 채워지며, 그때 더 우선한다.
+    // ⚠ tableColAligns(열 공통)는 채우지 않는다 — 채우면 타입 공통값을 영영 가려 버린다.
+    //    기존 템플릿·저장 파일에 남아 있는 값은 렌더러가 계속 존중한다(하위호환).
     const defaultCells: TableCell[][] = [
       [
-        { id: generateUniqueId('cell'), type: 'th', content: '항목', colspan: 1, rowspan: 1 },
+        { id: generateUniqueId('cell'), type: 'th', content: '항목 1', colspan: 1, rowspan: 1 },
         { id: generateUniqueId('cell'), type: 'td', content: '내용', colspan: 1, rowspan: 1 },
       ],
       [
-        { id: generateUniqueId('cell'), type: 'th', content: '항목', colspan: 1, rowspan: 1 },
+        { id: generateUniqueId('cell'), type: 'th', content: '항목 2', colspan: 1, rowspan: 1 },
         { id: generateUniqueId('cell'), type: 'td', content: '내용', colspan: 1, rowspan: 1 },
       ],
     ]
 
     module.properties.tableCells = defaultCells
-    // 열 공통 정렬: 1열 가운데, 2열 왼쪽
-    module.properties.tableColAligns = ['center', 'left']
     triggerRef(modules)
+  }
+
+  /**
+   * 테이블을 지정한 크기(rows × cols)로 새로 구성한다.
+   * '테이블 추가' 크기 선택 UI에서 사용 — 첫 행은 제목(th), 나머지는 내용(td).
+   */
+  const setCustomTableSize = (moduleId: string, rows: number, cols: number): void => {
+    const module = modules.value.find((m) => m.id === moduleId)
+    if (!module) return
+
+    const R = Math.max(1, Math.min(50, Math.floor(rows) || 1))
+    const C = Math.max(1, Math.min(20, Math.floor(cols) || 1))
+
+    const cells: TableCell[][] = []
+    for (let r = 0; r < R; r++) {
+      const row: TableCell[] = []
+      for (let c = 0; c < C; c++) {
+        // 첫 열 = 제목(th) '항목 N', 나머지 = 내용(td) '내용'
+        const isHeader = c === 0
+        row.push({
+          id: generateUniqueId('cell'),
+          type: isHeader ? 'th' : 'td',
+          content: isHeader ? `항목 ${r + 1}` : '내용',
+          colspan: 1,
+          rowspan: 1,
+        })
+      }
+      cells.push(row)
+    }
+
+    module.properties.tableCells = cells
+    // 정렬은 타입 공통값(headerAlign/cellAlign)에 맡긴다 — tableColAligns를 채우지 않는 이유는
+    // initializeTableCells 주석 참고
+    // 열 너비는 기본(자동)
+    module.properties.tableColWidths = Array.from({ length: C }, () => '')
+    triggerRef(modules)
+    isDirty.value = true
+  }
+
+  // ============= Table Cell Selection (캔버스 미리보기 셀 선택) =============
+  /** 단일 선택(클릭) */
+  const selectTableCell = (moduleId: string, row: number, col: number): void => {
+    tableCellSelection.value = { moduleId, cells: [{ row, col }], anchor: { row, col } }
+  }
+  /** 개별 토글(⌘/Ctrl+클릭) — 이미 있으면 빼고 없으면 더한다 */
+  const toggleTableCell = (moduleId: string, row: number, col: number): void => {
+    const sel = tableCellSelection.value
+    if (!sel || sel.moduleId !== moduleId) {
+      tableCellSelection.value = { moduleId, cells: [{ row, col }], anchor: { row, col } }
+      return
+    }
+    const idx = sel.cells.findIndex((c) => c.row === row && c.col === col)
+    const cells =
+      idx >= 0 ? sel.cells.filter((_, i) => i !== idx) : [...sel.cells, { row, col }]
+    tableCellSelection.value = cells.length
+      ? { moduleId, cells, anchor: { row, col } }
+      : null
+  }
+  /** 범위 선택(Shift+클릭) — anchor에서 현재 셀까지 사각형 */
+  const rangeSelectTableCell = (moduleId: string, row: number, col: number): void => {
+    const sel = tableCellSelection.value
+    const anchor = sel && sel.moduleId === moduleId && sel.anchor ? sel.anchor : { row, col }
+    const r0 = Math.min(anchor.row, row)
+    const r1 = Math.max(anchor.row, row)
+    const c0 = Math.min(anchor.col, col)
+    const c1 = Math.max(anchor.col, col)
+    const cells: { row: number; col: number }[] = []
+    for (let r = r0; r <= r1; r++) {
+      for (let c = c0; c <= c1; c++) cells.push({ row: r, col: c })
+    }
+    tableCellSelection.value = { moduleId, cells, anchor }
+  }
+  const clearTableCellSelection = (): void => {
+    tableCellSelection.value = null
+  }
+  const isTableCellSelected = (moduleId: string, row: number, col: number): boolean => {
+    const sel = tableCellSelection.value
+    return !!sel && sel.moduleId === moduleId && sel.cells.some((c) => c.row === row && c.col === col)
+  }
+  /** 선택된 여러 셀에 같은 속성을 일괄 적용(제목/내용·정렬·색상 등) */
+  const applyToTableCells = (
+    moduleId: string,
+    cells: { row: number; col: number }[],
+    updates: Partial<TableCell>,
+  ): void => {
+    for (const { row, col } of cells) updateTableCell(moduleId, row, col, updates)
+  }
+  /** 현재 선택이 빈틈 없는 사각형이면 병합. 성공 시 true */
+  const mergeSelectedTableCells = (moduleId: string): boolean => {
+    const sel = tableCellSelection.value
+    if (!sel || sel.moduleId !== moduleId || sel.cells.length < 2) return false
+    const rows = sel.cells.map((c) => c.row)
+    const cols = sel.cells.map((c) => c.col)
+    const r0 = Math.min(...rows)
+    const r1 = Math.max(...rows)
+    const c0 = Math.min(...cols)
+    const c1 = Math.max(...cols)
+    // 선택이 사각형을 정확히 채우는지 확인
+    if (sel.cells.length !== (r1 - r0 + 1) * (c1 - c0 + 1)) return false
+    mergeCells(moduleId, r0, c0, r1 - r0 + 1, c1 - c0 + 1)
+    tableCellSelection.value = { moduleId, cells: [{ row: r0, col: c0 }], anchor: { row: r0, col: c0 } }
+    return true
+  }
+  /** 선택이 병합셀 1개면 병합 해제. 성공 시 true */
+  const unmergeSelectedTableCell = (moduleId: string): boolean => {
+    const sel = tableCellSelection.value
+    if (!sel || sel.moduleId !== moduleId || sel.cells.length !== 1) return false
+    const { row, col } = sel.cells[0]
+    const module = modules.value.find((m) => m.id === moduleId)
+    const cell = (module?.properties.tableCells as TableCell[][] | undefined)?.[row]?.[col]
+    if (!cell || (cell.colspan <= 1 && cell.rowspan <= 1)) return false
+    unmergeCell(moduleId, row, col)
+    tableCellSelection.value = { moduleId, cells: [{ row, col }], anchor: { row, col } }
+    return true
   }
 
   /**
@@ -858,10 +3138,11 @@ export const useModuleStore = defineStore('module', () => {
           hidden: true,
         })
       } else {
+        // 새 행 셀은 항상 td + '내용'(제목은 '테이블 내용' 탭의 제목 지정으로만 변경)
         newRow.push({
           id: generateUniqueId('cell'),
           type: 'td',
-          content: '',
+          content: '내용',
           colspan: 1,
           rowspan: 1,
         })
@@ -910,10 +3191,11 @@ export const useModuleStore = defineStore('module', () => {
           hidden: true,
         })
       } else {
+        // 새 열 셀은 항상 td + '내용'(제목은 '테이블 내용' 탭의 제목 지정으로만 변경)
         row.splice(idx, 0, {
           id: generateUniqueId('cell'),
-          type: r === 0 ? 'th' : 'td',
-          content: '',
+          type: 'td',
+          content: '내용',
           colspan: 1,
           rowspan: 1,
         })
@@ -929,9 +3211,10 @@ export const useModuleStore = defineStore('module', () => {
       module.properties.tableColWidths = next
     }
 
-    // 열 공통 정렬 배열도 동기화 (첫 열은 가운데, 나머지는 왼쪽 기본)
+    // 열 공통 정렬 배열은 **이미 값이 있는 테이블(레거시)만** 동기화한다.
+    // 없는 테이블에 새로 만들면 타입 공통값(headerAlign/cellAlign)이 가려진다.
     const colAligns = (module.properties.tableColAligns as string[] | undefined) || []
-    {
+    if (colAligns.length > 0) {
       const next = [...colAligns]
       while (next.length < colCount) next.push('left')
       next.splice(idx, 0, idx === 0 ? 'center' : 'left')
@@ -1179,13 +3462,43 @@ export const useModuleStore = defineStore('module', () => {
     if (colIndex < 0 || colIndex >= cells[rowIndex].length) return
 
     const cell = cells[rowIndex][colIndex]
-    const newType = cell.type === 'th' ? 'td' : 'th'
-    cell.type = newType
-    // 타입 변경 시 기본 정렬 적용 (TH: center, TD: left)
-    cell.align = newType === 'th' ? 'center' : 'left'
+    cell.type = cell.type === 'th' ? 'td' : 'th'
+    // 셀별 정렬은 지운다 — 바뀐 타입의 공통 정렬(headerAlign/cellAlign)을 따르게 한다.
+    // (여기서 셀에 값을 박아 두면 '테이블 스타일'의 공통 정렬이 그 셀에 영영 먹지 않는다)
+    delete cell.align
 
     module.properties.tableCells = [...cells]
     triggerRef(modules)
+  }
+
+  /**
+   * 타입(제목/내용) 공통 정렬 적용 — '테이블 스타일' 탭의 텍스트 정렬.
+   *
+   * 말 그대로 '공통'이 되도록, 그 타입 셀에 남아 있는 **셀별 정렬을 함께 지운다**.
+   * 셀별 값이 남아 있으면(예전 UI나 옛 파일에서 채워진 값) 공통값을 가려 아무 변화가 없다.
+   * 지운 뒤 개별 셀에 다시 지정하면 종전대로 그 값이 우선한다.
+   * 레거시 열 공통 정렬(tableColAligns)은 지우지 않는다 — 열 단위라 다른 타입까지
+   * 건드리게 된다. 대신 렌더러가 '직접 고른 타입 공통값'을 그보다 우선한다.
+   */
+  const setTableTypeAlign = (
+    moduleId: string,
+    type: 'th' | 'td',
+    align: 'left' | 'center' | 'right',
+  ): void => {
+    const module = modules.value.find((m) => m.id === moduleId)
+    if (!module) return
+
+    module.properties[type === 'th' ? 'headerAlign' : 'cellAlign'] = align
+    const cells = (module.properties.tableCells as TableCell[][]) || []
+    for (const row of cells) {
+      for (const cell of row) {
+        if (cell?.type === type) delete cell.align
+      }
+    }
+
+    module.properties.tableCells = [...cells]
+    triggerRef(modules)
+    isDirty.value = true
   }
 
   /**
@@ -1251,8 +3564,7 @@ export const useModuleStore = defineStore('module', () => {
     module.properties.tableCells = newCells
     module.properties.tablePresetId = presetId
     module.properties.tableColWidths = Array.from({ length: cols }, () => '')
-    // 열 공통 정렬: 1열 가운데, 나머지 왼쪽
-    module.properties.tableColAligns = Array.from({ length: cols }, (_, i) => (i === 0 ? 'center' : 'left'))
+    // 정렬은 타입 공통값(headerAlign/cellAlign)에 맡긴다 (tableColAligns 미사용)
     triggerRef(modules)
   }
 
@@ -1541,7 +3853,7 @@ export const useModuleStore = defineStore('module', () => {
     const editorStore = useEditorStore()
     const { moduleId } = module
     // '포인트 색상 사용'으로 체크된 색상 속성을 전역 포인트 색상으로 해소
-    const properties = resolvePointColors(module.properties, editorStore.wrapSettings.pointColor)
+    const properties = resolvePointColors(module.properties, editorStore.wrapSettings.pointColors)
 
     switch (moduleId) {
       case 'ModuleNewsHeader':
@@ -1556,14 +3868,26 @@ export const useModuleStore = defineStore('module', () => {
       case 'ModuleDescText':
         return replaceModuleDescTextContent(html, properties)
 
+      case 'ModuleInlineText':
+        return replaceModuleInlineTextContent(html, properties)
+
       case 'ModuleImg':
         return replaceModuleImgContent(html, properties)
+
+      case 'ModuleSnsIcons':
+        return replaceModuleSnsIconsContent(html, properties)
+
+      case 'ModuleContactInfo':
+        return replaceModuleContactInfoContent(html, properties)
 
       case 'ModuleOneButton':
         return replaceModuleOneButtonContent(html, properties)
 
       case 'ModuleTwoButton':
         return replaceModuleTwoButtonContent(html, properties)
+
+      case 'ModuleSmallButton':
+        return replaceModuleSmallButtonContent(html, properties)
 
       case 'TopLanguageButton':
         return replaceTopLanguageButtonContent(html, properties)
@@ -1637,15 +3961,32 @@ export const useModuleStore = defineStore('module', () => {
    * 전체 HTML 생성
    * @param wrapWithDocument - true면 완전한 HTML 문서로 감싸고, false면 콘텐츠만 반환
    */
-  const generateHtml = async (wrapWithDocument: boolean = false): Promise<string> => {
+  const generateHtml = async (
+    wrapWithDocument: boolean = false,
+    source?: {
+      modules: ModuleInstance[]
+      groups: ModuleGroup[]
+      wrapSettings: ReturnType<typeof useEditorStore>['wrapSettings']
+    },
+  ): Promise<string> => {
     const editorStore = useEditorStore()
-    const wrapSettings = editorStore.wrapSettings
+    // source가 주어지면 그 데이터를 렌더(템플릿 썸네일 등), 없으면 현재 스토어 상태를 렌더
+    const wrapSettings = source?.wrapSettings ?? editorStore.wrapSettings
+    const srcModules = source?.modules ?? modules.value
+    const srcGroups = source?.groups ?? groups.value
 
     const basePath = import.meta.env.BASE_URL || '/'
 
-    // 1) 모듈별 HTML을 순서대로 생성 (그룹 정보와 함께 보관)
-    const rendered: Array<{ html: string; groupId?: string }> = []
-    for (const module of [...modules.value].sort((a, b) => a.order - b.order)) {
+    // 1) 모듈별 HTML을 순서대로 생성 (그룹/컬럼 정보와 함께 보관)
+    const rendered: Array<{
+      id: string
+      html: string
+      groupId?: string
+      rowIndex?: number
+      columnIndex?: number
+      fullWidth?: boolean
+    }> = []
+    for (const module of [...srcModules].sort((a, b) => a.order - b.order)) {
       try {
         const modulePath = normalizePath(`${basePath}modules/${module.moduleId}.html`)
 
@@ -1658,8 +3999,8 @@ export const useModuleStore = defineStore('module', () => {
 
         html = await replaceModuleContent(html, module)
 
-        // 본문 인라인 '포인트 색상'(var(--point-color)) → 실제 색상값 (이메일은 CSS 변수 미지원)
-        html = resolvePointColorVar(html, wrapSettings.pointColor)
+        // 본문 인라인 '포인트 색상'(var(--point-color-N)) → 실제 색상값 (이메일은 CSS 변수 미지원)
+        html = resolvePointColorVars(html, wrapSettings.pointColors)
 
         // 이메일용: Quill 리스트(<ol><li data-list>)를 인라인 스타일 <ul>/<ol>로 변환
         html = convertQuillListsToEmailHtml(html)
@@ -1674,7 +4015,14 @@ export const useModuleStore = defineStore('module', () => {
         // 다국어 폰트: 선택 언어에 따라 기본 폰트 스택을 일괄 치환
         html = applyFontFamily(html, wrapSettings.fontLanguage)
 
-        rendered.push({ html, groupId: module.groupId })
+        rendered.push({
+          id: module.id,
+          html,
+          groupId: module.groupId,
+          rowIndex: module.rowIndex,
+          columnIndex: module.columnIndex,
+          fullWidth: module.fullWidth,
+        })
       } catch (error) {
         console.error(
           `[generateHtml] Failed to generate HTML for module ${module.moduleId}:`,
@@ -1688,14 +4036,41 @@ export const useModuleStore = defineStore('module', () => {
     let i = 0
     while (i < rendered.length) {
       const gid = rendered[i].groupId
-      const group = gid ? groups.value.find((g) => g.id === gid) : undefined
+      const group = gid ? srcGroups.find((g) => g.id === gid) : undefined
       if (gid && group) {
-        let inner = ''
+        // 그룹 멤버 수집 (행/컬럼 배치 정보 포함) — html을 실어 layoutGroupRows로 격자 배치
+        const htmlById: Record<string, string> = {}
+        const groupMembers: ModuleInstance[] = []
         while (i < rendered.length && rendered[i].groupId === gid) {
-          inner += rendered[i].html + '\n'
+          const r = rendered[i]
+          htmlById[r.id] = r.html
+          groupMembers.push({
+            id: r.id,
+            moduleId: '',
+            order: 0,
+            properties: {},
+            styles: {},
+            rowIndex: r.rowIndex,
+            columnIndex: r.columnIndex,
+            fullWidth: r.fullWidth,
+          })
           i++
         }
-        const resolvedGroupStyles = resolveGroupStyles(group.styles, wrapSettings.pointColor)
+        // 행별 독립 컬럼 레이아웃: 각 행이 자기 컬럼 수를 갖는다
+        const layoutRows = computeGroupLayout(group, groupMembers)
+        let inner = ''
+        for (const row of layoutRows) {
+          if (row.columns <= 1) {
+            // 전체폭 행: 그 컬럼의 멤버들을 세로 스택
+            inner += row.cells[0].map((m) => htmlById[m.id]).join('\n') + '\n'
+          } else {
+            // 다단 행: 컬럼별 HTML로 fluid-hybrid 레이아웃(모바일 100% 세로 스택).
+            // '모바일에서도 가로 유지'(keepInline) 행은 좁은 폭에서도 나란히 남는다.
+            const columnHtml = row.cells.map((cell) => cell.map((m) => htmlById[m.id]).join('\n') + '\n')
+            inner += buildColumnLayoutHtml(columnHtml, row.widths, row.keepInline)
+          }
+        }
+        const resolvedGroupStyles = resolveGroupStyles(group.styles, wrapSettings.pointColors)
         fullHtml +=
           wrapGroupHtmlForEmail(inner, resolvedGroupStyles, wrapSettings.backgroundColor) + '\n'
       } else {
@@ -1706,7 +4081,7 @@ export const useModuleStore = defineStore('module', () => {
 
     // wrap 스타일 생성 (래퍼 자체의 배경/테두리 알파는 이메일 본문(흰색) 기준으로 평탄화)
     const wrapStyle = flattenAlphaColorsInHtml(
-      `width:100%; max-width:680px; margin:0 auto; background-color:${wrapSettings.backgroundColor}; border:${wrapSettings.borderWidth} ${wrapSettings.borderStyle} ${wrapSettings.borderColor};`,
+      `width:100%; max-width:680px; margin:0 auto; background-color:${wrapSettings.backgroundColor}; border:${resolveWrapBorderCss(wrapSettings)};`,
       '#ffffff',
     )
     // 아웃룩(Word 엔진)은 max-width/margin:auto를 무시하므로, 고정폭(680) + align=center +
@@ -1714,7 +4089,12 @@ export const useModuleStore = defineStore('module', () => {
     // style의 width:100%/max-width로 반응형 동작한다. (div 래퍼 → 테이블 래퍼)
     const wrapBgHex = /background-color:\s*(#[0-9a-fA-F]{6})/.exec(wrapStyle)?.[1] || '#ffffff'
 
-    const wrapOpen = `<table role="presentation" class="wrap" align="center" width="680" cellpadding="0" cellspacing="0" border="0" bgcolor="${wrapBgHex}" style="${wrapStyle}">
+    // "전체 스타일 > 뉴스레터 요약" → 래퍼 테이블의 summary 속성 (검색 엔진·스크린 리더용 한 줄 설명).
+    // 비어 있으면 속성 자체를 넣지 않는다(빈 summary=""는 의미가 없다).
+    const summaryText = (wrapSettings.summary || '').trim()
+    const summaryAttr = summaryText ? ` summary="${escapeForHtml(summaryText)}"` : ''
+
+    const wrapOpen = `<table role="presentation" class="wrap" align="center" width="680" cellpadding="0" cellspacing="0" border="0" bgcolor="${wrapBgHex}"${summaryAttr} style="${wrapStyle}">
 <tr><td style="padding:0;">`
     const wrapClose = `</td></tr></table>`
 
@@ -1750,6 +4130,35 @@ ${fullHtml}
   }
 
   /**
+   * 템플릿 썸네일용 콘텐츠 HTML 생성.
+   * - store를 건드리지 않고(clearAll 없이) 템플릿의 modules/groups/wrapSettings를 렌더한다.
+   * - 템플릿 선택 화면의 iframe 썸네일에서 사용(680px 렌더 → CSS scale로 축소).
+   */
+  const renderTemplateHtml = async (template: NewsletterTemplate): Promise<string> => {
+    if (availableModules.value.length === 0) {
+      await loadAvailableModules()
+    }
+    const editorStore = useEditorStore()
+    // 템플릿 modules → 임시 ModuleInstance[] (스토어에 추가하지 않음, id는 그룹 매핑용으로만 유일하면 됨)
+    const mods: ModuleInstance[] = template.modules.map((md, idx) => ({
+      id: `tpl-${idx}`,
+      moduleId: md.moduleId,
+      order: md.order ?? idx,
+      properties: migrateModuleProperties(md.moduleId, md.properties || {}),
+      styles: (md.styles as ModuleStyles) || {},
+      ...(md.groupId ? { groupId: md.groupId } : {}),
+      ...(md.rowIndex != null ? { rowIndex: md.rowIndex } : {}),
+      ...(md.columnIndex != null ? { columnIndex: md.columnIndex } : {}),
+      ...(md.fullWidth ? { fullWidth: true } : {}),
+    }))
+    const grps: ModuleGroup[] = template.groups
+      ? JSON.parse(JSON.stringify(template.groups))
+      : []
+    const wrapSettings = { ...editorStore.wrapSettings, ...(template.wrapSettings || {}) }
+    return generateHtml(false, { modules: mods, groups: grps, wrapSettings })
+  }
+
+  /**
    * 모듈 미리보기용 콘텐츠 HTML 생성 (기본 속성으로 단발 렌더)
    * - store에 추가하지 않고 모듈 템플릿을 기본값으로 렌더한 콘텐츠만 반환
    * - ModulePanel 호버 미리보기(iframe srcdoc)에서 사용. 기존 replaceModuleContent 스위치 재사용
@@ -1775,7 +4184,7 @@ ${fullHtml}
       styles: {},
     }
     html = await replaceModuleContent(html, tempModule)
-    html = resolvePointColorVar(html, useEditorStore().wrapSettings.pointColor)
+    html = resolvePointColorVars(html, useEditorStore().wrapSettings.pointColors)
     html = convertQuillListsToEmailHtml(html)
     html = flattenAlphaColorsInHtml(html, useEditorStore().wrapSettings.backgroundColor)
     html = applyFontFamily(html, useEditorStore().wrapSettings.fontLanguage)
@@ -1807,7 +4216,8 @@ ${fullHtml}
           props[prop.key] = prop.defaultRows || []
           break
         case 'table-editor':
-          // 커스텀 테이블의 기본 2x2 셀 생성 (정렬은 열 공통값 tableColAligns로 관리)
+          // 커스텀 테이블의 기본 2x2 셀 생성
+          // (정렬은 타입 공통값 headerAlign/cellAlign로 관리 — tableColAligns는 채우지 않는다)
           props[prop.key] = [
             [
               { id: generateUniqueId('cell'), type: 'th', content: '항목', colspan: 1, rowspan: 1 },
@@ -1818,8 +4228,6 @@ ${fullHtml}
               { id: generateUniqueId('cell'), type: 'td', content: '내용', colspan: 1, rowspan: 1 },
             ],
           ]
-          // 열 공통 정렬 기본값: 1열 가운데, 2열 왼쪽
-          props.tableColAligns = ['center', 'left']
           break
         case 'content-titles':
         case 'content-texts':
@@ -1833,6 +4241,120 @@ ${fullHtml}
     return props
   }
 
+  // 조립형 헬퍼: 폰트 크기·굵기를 지정한 한 줄 DescText 내용 HTML
+  const weightedTextHtml = (text: string, fontSize: string, weight: number, align = 'left'): string =>
+    `<p style="margin:0; padding:0; line-height:1.7; text-align:${align};"><span style="font-size:${fontSize}; font-weight:${weight};">${text}</span></p>`
+
+  /**
+   * 조립형 '타이틀 추가' — 구분선(여백) + 강조 타이틀 텍스트(18px/700) + 본문 텍스트(16px/500)를
+   * 하나의 세로 스택 그룹으로 조립한다. (섹션 도입부: 구분선 아래 제목 + 설명 패턴)
+   */
+  const addComposedTitleSection = (): string | null =>
+    buildComposedGroup([
+      {
+        id: 'ModuleDivider',
+        row: 0,
+        col: 0,
+        overrides: {
+          borderWidth: '2px',
+          borderStyle: 'solid',
+          borderColor: '#000000',
+          paddingTop: '0px',
+          paddingRight: '0px',
+          paddingBottom: '0px',
+          paddingLeft: '0px',
+        },
+      },
+      {
+        id: 'ModuleDescText',
+        row: 1,
+        col: 0,
+        overrides: {
+          descriptionText: weightedTextHtml('타이틀을 입력하세요', '18px', 700),
+          fontSize: '18px',
+          paddingTop: '15px',
+          paddingRight: '20px',
+          paddingBottom: '15px',
+          paddingLeft: '20px',
+        },
+      },
+      {
+        id: 'ModuleDescText',
+        row: 2,
+        col: 0,
+        overrides: {
+          descriptionText: weightedTextHtml('내용을 입력하세요', '16px', 500),
+          fontSize: '16px',
+          paddingTop: '0px',
+          paddingRight: '20px',
+          paddingBottom: '0px',
+          paddingLeft: '20px',
+        },
+      },
+    ])
+
+  /**
+   * 모듈 01번 — 회색 배경 박스 텍스트 모듈(설명 텍스트 재사용).
+   * 배경 #f5f5f5 / 안쪽 여백 15·20 / 바깥 하단 10, 내용은 강조 타이틀(700, #eb2a25) + 본문(#333333).
+   * 그룹으로 묶지 않고 단일 모듈로 추가한 뒤 기본값을 그 모듈에 직접 적용하고 null을 반환한다.
+   */
+  const addComposedModule01 = (): string | null => {
+    const meta = availableModules.value.find((m) => m.id === 'ModuleDescText')
+    if (!meta) return null
+    addModule(meta) // 추가 직후 새 모듈이 선택됨 → updateModuleProperty가 이 모듈에 적용된다
+    const titleP =
+      '<p style="margin:0; padding:0; line-height:1.7; text-align:left;"><span style="font-weight:700; color:#eb2a25;">콘텐츠 타이틀</span></p>'
+    const bodyP =
+      '<p style="margin:0; padding:0; line-height:1.7; text-align:left;"><span style="color:#333333;">콘텐츠 텍스트</span></p>'
+    const overrides: Record<string, unknown> = {
+      descriptionText: titleP + bodyP,
+      textColor: '#333333',
+      bgColor: '#f5f5f5',
+      paddingTop: '15px',
+      paddingRight: '20px',
+      paddingBottom: '15px',
+      paddingLeft: '20px',
+      marginBottom: '10px',
+      // 바깥 좌우 여백 20px
+      marginLeft: '20px',
+      marginRight: '20px',
+      // 패널 타이틀바에 카드 이름을 노출하기 위한 표시 라벨(HTML 플레이스홀더가 없어 렌더에는 영향 없음)
+      __moduleLabel: '모듈 01번',
+    }
+    for (const [k, v] of Object.entries(overrides)) updateModuleProperty(k, v)
+    return null // 단일 모듈 → 그룹 생성·이름 지정 없음
+  }
+
+  // 카테고리 갤러리(텍스트/이미지/버튼 레일 메뉴)에서 레거시 번호 모듈 카드를 클릭했을 때,
+  // v2 조립형 템플릿이 있으면 그걸 우선 사용한다("모듈 v2를 새 UI의 기본으로" 방침).
+  // 여기 없는 항목(01-2/11/12/ModuleTable/ModuleSnsIcons/ModuleDivider/
+  // TopLanguageButton 등)은 v2 템플릿이 아직 없어 폴백으로 기존 addModule(metadata)를 그대로 쓴다
+  // (레거시 유지 — figma-builder 스킬 6-1 참고).
+  // ComposedTitleSection은 실제 모듈 id가 아니라 '타이틀 추가' 빠른추가 전용 조립 키다
+  // (같은 SectionTitle을 쓰는 '서브타이틀 추가'는 이 빌더를 타지 않도록 별도 키로 분리).
+  // 갤러리에 노출되는 '모듈 05번'은 Module05-3(레거시 Module05는 hidden)이므로 v2 빌더를 이 id에도 매핑한다.
+  const composedBuilderMap: Record<string, () => string | null> = {
+    ComposedTitleSection: addComposedTitleSection,
+    Module01: addComposedModule01,
+    Module02: addComposedModule02,
+    Module04: addComposedModule04,
+    'Module01-1': addComposedModule011,
+    Module05: addComposedModule05,
+    'Module05-3': addComposedModule05,
+    'Module05-1': addComposedModule051,
+    Module06: addComposedModule06,
+    Module07: () => addComposedModule07(false),
+    Module07_reverse: () => addComposedModule07(true),
+    Module10: addComposedModule10,
+    'Module10-1': addComposedModule101,
+    ModuleNewsHeader: addComposedNewsHeader,
+    ModuleBasicHeader: addComposedBasicHeader,
+    ModuleImageHeader: addComposedImageHeader,
+    ModuleMultiImage: addComposedMultiImage,
+    ModuleFooter: addComposedFooter,
+    ModuleTwoButton: addComposedTwoButton,
+  }
+
   return {
     modules,
     selectedModuleId,
@@ -1840,26 +4362,72 @@ ${fullHtml}
     selectedModuleMetadata,
     availableModules,
     availableTemplates,
+    availableDepartments,
     isDirty,
     // 그룹
     groups,
     selectedGroupId,
     selectedGroup,
+    activeGroup,
     displayItems,
     createGroup,
+    mergeModulesIntoGroup,
     duplicateGroup,
     ungroup,
     deleteGroup,
     selectGroup,
+    clearSelection,
     updateGroupStyle,
+    setGroupName,
+    ensureGroupNames,
+    ensureKeepInlineDefaults,
+    rowKeepsInline,
+    setRowKeepInline,
+    swapRowColumns,
+    duplicateRow,
+    deleteRow,
+    columnTarget,
+    splitModuleColumns,
+    unsplitModuleColumns,
+    removeColumn,
+    setColumnTarget,
+    clearColumnTarget,
+    duplicateIntoColumn,
+    hasColumnElement,
+    setColumnElement,
+    columnElements,
+    reorderColumnElements,
+    moveModuleColumn,
+    columnWidthOf,
+    setColumnWidth,
+    setGroupSidePadding,
     setDisplayOrder,
+    reorderGroupMembers,
     moveGroup,
+    reorderGroupRows,
     normalizeGroupContiguity,
     loadAvailableModules,
     loadAvailableTemplates,
     loadTemplate,
     exportCurrentAsTemplate,
     addModule,
+    addComposedModule02,
+    addComposedModule04,
+    addComposedModule011,
+    addComposedModule05,
+    addComposedModule051,
+    addComposedModule06,
+    addComposedModule07,
+    addComposedModule10,
+    addComposedModule101,
+    addComposedNewsHeader,
+    addComposedBasicHeader,
+    addComposedImageHeader,
+    addComposedMultiImage,
+    addComposedFooter,
+    addComposedTwoButton,
+    addComposedConversion,
+    composedBuilderMap,
     selectModule,
     updateModuleProperty,
     updateModuleStyle,
@@ -1871,11 +4439,23 @@ ${fullHtml}
     markAsSaved,
     generateHtml,
     renderModulePreview,
+    renderTemplateHtml,
     addTableRow,
     updateTableRow,
     removeTableRow,
     // 커스텀 테이블 셀 관리
     initializeTableCells,
+    setCustomTableSize,
+    // 테이블 셀 선택(캔버스 미리보기)
+    tableCellSelection,
+    selectTableCell,
+    toggleTableCell,
+    rangeSelectTableCell,
+    clearTableCellSelection,
+    isTableCellSelected,
+    applyToTableCells,
+    mergeSelectedTableCells,
+    unmergeSelectedTableCell,
     addTableCellRow,
     addTableCellColumn,
     insertTableCellRow,
@@ -1888,6 +4468,7 @@ ${fullHtml}
     mergeCells,
     unmergeCell,
     toggleCellType,
+    setTableTypeAlign,
     applyTablePreset,
     addContentTitle,
     updateContentTitle,
