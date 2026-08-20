@@ -4,9 +4,22 @@
   <tbody>
     <tr>
       <td align="center" style="padding:{{paddingTop}} {{paddingRight}} {{paddingBottom}} {{paddingLeft}}; box-sizing: border-box;">
-        <a href="{{buttonUrl}}"
-          style="width:100%; text-decoration:none; display: block; padding:{{buttonPaddingV}} 0px; box-sizing: border-box; background-color:{{buttonBgColor}}; border:{{buttonBorderWidth}} {{buttonBorderStyle}} {{buttonBorderColor}}; border-radius:{{buttonBorderRadius}}; text-align:center; font-family: AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif; color:{{buttonTextColor}}; font-size:{{buttonFontSize}}; font-weight:700;"
-          target="_blank">{{buttonText}}</a>
+        <!-- 버튼 안쪽 여백·배경·테두리는 <a>가 아니라 <td>에 둔다.
+             <a>는 인라인 요소라 아웃룩 등 일부 메일 클라이언트가 위아래 여백을 무시해
+             버튼이 납작하게 나온다. <td> 여백은 모든 클라이언트가 지킨다. -->
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%"
+          style="width:100%; border-collapse:separate; border-spacing:0;">
+          <tbody>
+            <tr>
+              <td align="center"
+                style="padding:{{buttonPaddingTop}} {{buttonPaddingRight}} {{buttonPaddingBottom}} {{buttonPaddingLeft}}; background-color:{{buttonBgColor}}; border:{{buttonBorderWidth}} {{buttonBorderStyle}} {{buttonBorderColor}}; border-radius:{{buttonBorderRadiusCss}}; text-align:center; box-sizing: border-box;">
+                <a href="{{buttonUrl}}"
+                  style="display: block; text-decoration:none; font-family: AppleSDGothic, malgun gothic, nanum gothic, Noto Sans KR, sans-serif; color:{{buttonTextColor}}; font-size:{{buttonFontSize}}; font-weight:700;"
+                  target="_blank">{{buttonText}}</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </td>
     </tr>
   </tbody>

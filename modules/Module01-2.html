@@ -2,15 +2,17 @@
   style="width:100%; max-width: 680px; border-collapse:collapse;" width="100%">
   <tbody>
     <tr>
-      <td style="width:100%; padding: 0 20px 20px;">
+      <td style="width:100%; padding:{{marginTop}} {{marginRight}} {{marginBottom}} {{marginLeft}}; box-sizing: border-box;">
         <div
-          style="width:100%; padding:20px; background-color: #fcfcfc; border: 1px solid #cccccc; box-sizing: border-box;">
+          style="width:100%; padding:{{paddingTop}} {{paddingRight}} {{paddingBottom}} {{paddingLeft}}; background-color:{{bgColor}}; border-radius:{{borderRadiusCss}}; box-sizing: border-box;{{borderCss}}">
+          <!-- 카테고리 -->
           <span
-            style="text-decoration:none; background-color:{{categoryBgColor}}; border-radius:30px; padding:4px 16px 3px; color:{{categoryTextColor}}; font-size:{{categoryTextFontSize}}; font-weight:700; line-height:1.7em; box-sizing: border-box; display: inline-block; margin-bottom: 10px;">
+            style="text-decoration:none; background-color:{{categoryBgColor}}; border-radius:{{categoryBorderRadius}}; padding:4px 16px 3px; color:{{categoryTextColor}}; font-size:{{categoryTextFontSize}}; font-weight:700; line-height:1.7em; box-sizing: border-box; display: inline-block; margin-bottom: 10px;">
             {{categoryText}}
           </span>
+          <!-- //카테고리 -->
           <div
-            style="font-size: {{contentTextFontSize}}; padding: 0 3px;">
+            style="font-size: {{contentTextFontSize}}; color:{{textColor}}; padding: 0 3px;">
             {{contentText}}
           </div>
         </div>
