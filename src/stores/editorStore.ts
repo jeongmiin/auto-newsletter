@@ -87,6 +87,7 @@ export const useEditorStore = defineStore('editor', () => {
     pointColors: ['#2563eb'],
     fontLanguage: 'default',
     summary: '',
+    volume: '',
   })
 
   // 뉴스레터 wrap 설정 (전체 스타일 / 포인트 색상)

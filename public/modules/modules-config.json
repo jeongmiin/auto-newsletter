@@ -26,7 +26,7 @@
         {
           "key": "logoImageUrl",
           "label": "이미지 URL",
-          "type": "url",
+          "type": "image",
           "default": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/newsletter/images/logo-gray.png",
           "placeholder": "이미지 URL을 입력하세요",
           "showWhen": "showLogo",
@@ -208,7 +208,7 @@
         {
           "key": "logoImageUrl",
           "label": "이미지 URL",
-          "type": "url",
+          "type": "image",
           "default": "https://design.messeesang.com/e-dm/newsletter/images/logo-gray.png",
           "placeholder": "이미지 URL을 입력하세요",
           "group": "로고"
@@ -374,7 +374,7 @@
         {
           "key": "imageUrl",
           "label": "이미지 URL",
-          "type": "url",
+          "type": "image",
           "default": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/newsletter/images/img-visual.png",
           "placeholder": "이미지 URL을 입력하세요",
           "group": "이미지"
@@ -1052,7 +1052,7 @@
         {
           "key": "sectionImageUrl",
           "label": "이미지 URL",
-          "type": "url",
+          "type": "image",
           "default": "https://design.messeesang.com/e-dm/newsletter/images/img-1column.png",
           "placeholder": "이미지 URL을 입력하세요",
           "showWhen": "showSectionImage",
@@ -1485,7 +1485,7 @@
         {
           "key": "imageUrl",
           "label": "이미지 URL",
-          "type": "url",
+          "type": "image",
           "default": "https://design.messeesang.com/e-dm/newsletter/images/img-1column.png",
           "placeholder": "이미지 URL을 입력하세요",
           "group": "이미지 파일"
@@ -1658,7 +1658,7 @@
         {
           "key": "leftImageUrl",
           "label": "URL",
-          "type": "url",
+          "type": "image",
           "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
           "placeholder": "왼쪽 이미지 URL",
           "group": "왼쪽 이미지"
@@ -1745,7 +1745,7 @@
         {
           "key": "rightImageUrl",
           "label": "URL",
-          "type": "url",
+          "type": "image",
           "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
           "placeholder": "오른쪽 이미지 URL",
           "group": "오른쪽 이미지"
@@ -4055,7 +4055,7 @@
         {
           "key": "imageUrl",
           "label": "URL",
-          "type": "url",
+          "type": "image",
           "default": "https://design.messeesang.com/e-dm/newsletter/images/img-1column.png",
           "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-1column.png",
           "group": "이미지"
@@ -4293,7 +4293,7 @@
         {
           "key": "leftImageUrl",
           "label": "URL",
-          "type": "url",
+          "type": "image",
           "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
           "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
           "group": "왼쪽 이미지"
@@ -4755,7 +4755,7 @@
         {
           "key": "rightImageUrl",
           "label": "URL",
-          "type": "url",
+          "type": "image",
           "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
           "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
           "group": "오른쪽 이미지"
@@ -5244,7 +5244,7 @@
         {
           "key": "imageUrl",
           "label": "URL",
-          "type": "url",
+          "type": "image",
           "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
           "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
           "group": "이미지"
@@ -5534,7 +5534,7 @@
         {
           "key": "ImageUrl",
           "label": "URL",
-          "type": "url",
+          "type": "image",
           "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
           "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
           "group": "이미지"
@@ -5931,7 +5931,7 @@
         {
           "key": "topLeftImageUrl",
           "label": "URL",
-          "type": "url",
+          "type": "image",
           "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
           "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
           "group": "이미지"
@@ -6406,7 +6406,7 @@
         {
           "key": "leftImageUrl",
           "label": "URL",
-          "type": "url",
+          "type": "image",
           "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
           "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
           "group": "왼쪽 이미지"
@@ -6697,7 +6697,7 @@
         {
           "key": "rightImageUrl",
           "label": "URL",
-          "type": "url",
+          "type": "image",
           "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
           "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
           "group": "오른쪽 이미지"
@@ -6978,7 +6978,7 @@
         {
           "key": "imageUrl",
           "label": "URL",
-          "type": "url",
+          "type": "image",
           "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
           "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
           "group": "이미지"
@@ -7323,7 +7323,7 @@
         {
           "key": "imageUrl",
           "label": "URL",
-          "type": "url",
+          "type": "image",
           "default": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
           "placeholder": "https://design.messeesang.com/e-dm/newsletter/images/img-2column.png",
           "group": "이미지"
@@ -7704,7 +7704,7 @@
         {
           "key": "imageUrl",
           "label": "URL",
-          "type": "url",
+          "type": "image",
           "default": "https://design.messeesang.com/e-dm/newsletter/images/img-speaker.png",
           "showWhen": "showImage",
           "group": "이미지"
@@ -7847,7 +7847,7 @@
         {
           "key": "leftImageUrl",
           "label": "이미지 URL",
-          "type": "url",
+          "type": "image",
           "default": "https://design.messeesang.com/e-dm/newsletter/images/img-speaker.png",
           "group": "왼쪽"
         },
@@ -7942,7 +7942,7 @@
         {
           "key": "rightImageUrl",
           "label": "이미지 URL",
-          "type": "url",
+          "type": "image",
           "default": "https://design.messeesang.com/e-dm/newsletter/images/img-speaker.png",
           "group": "오른쪽"
         },

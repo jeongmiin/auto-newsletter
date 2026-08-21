@@ -93,6 +93,24 @@
 
     <div class="divider"></div>
 
+    <!-- 뉴스레터 회차 — 이미지 업로드 폴더의 마지막 단계라 비어 있으면 업로드가 막힌다 -->
+    <div class="flex flex-col gap-[10px]">
+      <span class="row-label">뉴스레터 회차</span>
+      <input
+        type="text"
+        class="summary-field"
+        :class="{ 'is-empty': !(wrapSettings.volume ?? '').trim() }"
+        :value="wrapSettings.volume ?? ''"
+        @input="onVolumeInput"
+        placeholder="vol01"
+      />
+    </div>
+    <p class="hint-text !-mt-3">
+      *이미지가 <code>{{ volumePreview }}</code> 폴더에 정리돼요. 입력해야 이미지를 올릴 수 있어요.
+    </p>
+
+    <div class="divider"></div>
+
     <!-- 뉴스레터 요약 -->
     <div class="flex flex-col gap-[10px]">
       <span class="row-label">뉴스레터 요약</span>
@@ -114,6 +132,7 @@ import { computed } from 'vue'
 import { useEditorStore } from '@/stores/editorStore'
 import { normalizePxLength } from '@/utils/cssUnit'
 import { FONT_LANGUAGE_OPTIONS } from '@/utils/fontFamily'
+import { buildUploadDirectory } from '@/utils/s3Upload'
 import ColorPopoverPicker from './ColorPopoverPicker.vue'
 
 const editorStore = useEditorStore()
@@ -146,6 +165,17 @@ const onWidthSlideEvent = (event: Event) => {
 const onSummaryInput = (event: Event) => {
   update('summary', (event.target as HTMLInputElement).value)
 }
+
+const onVolumeInput = (event: Event) => {
+  update('volume', (event.target as HTMLInputElement).value)
+}
+
+/** 입력한 회차가 어떤 폴더가 되는지 그대로 보여준다 — 아직 안 적었으면 자리를 vol01로 흉내 낸다 */
+const volumePreview = computed(
+  () =>
+    buildUploadDirectory(editorStore.currentTemplateId, wrapSettings.value.volume) ??
+    buildUploadDirectory(editorStore.currentTemplateId, 'vol01'),
+)
 </script>
 
 <style scoped>
@@ -218,6 +248,10 @@ const onSummaryInput = (event: Event) => {
   font-size: 15px;
   color: var(--gray-800);
   width: 100%;
+}
+/* 회차 미입력 — 이미지 업로드가 막혀 있으므로 채워야 할 칸임을 표시한다 */
+.summary-field.is-empty {
+  box-shadow: inset 0 0 0 1px var(--yellow-400);
 }
 .summary-field::placeholder {
   color: var(--gray-500);
