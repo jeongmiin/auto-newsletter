@@ -35,13 +35,13 @@
 
       <!-- 우측: 제목 + 검색 + 카드 그리드 -->
       <main class="tpl-main">
-        <h1 class="tpl-title">템플릿을 선택해주세요.</h1>
+        <h1 class="tpl-title">전시회를 선택해주세요.</h1>
 
         <div class="tpl-search">
           <i class="pi pi-search"></i>
           <InputText
             v-model="search"
-            placeholder="전시명 / 템플릿명을 입력하세요"
+            placeholder="전시명을 입력하세요"
             class="tpl-search-input"
             aria-label="템플릿 검색"
           />
