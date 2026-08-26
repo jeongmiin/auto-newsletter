@@ -67,6 +67,7 @@
           v-model="displayList"
           item-key="id"
           handle=".dh-top"
+          :group="{ name: 'canvas-top', pull: false, put: false }"
           filter=".no-drag"
           :prevent-on-filter="false"
           ghost-class="dragging-ghost"
@@ -161,6 +162,7 @@
                   :list="groupRows(item)"
                   :item-key="rowItemKey"
                   handle=".dh-member"
+                  :group="{ name: `group-rows-${item.id}`, pull: false, put: false }"
                   filter=".no-drag"
                   :prevent-on-filter="false"
                   ghost-class="dragging-ghost"
@@ -236,9 +238,17 @@
                        클래스는 .dh-member 그대로 — 그룹 내부 draggable의 handle 선택자다. -->
                   <div
                     v-if="row.columns > 1"
-                    class="dh-member module-drag-handle dh-row"
-                    :class="{ 'is-visible': isRowSelected(item.id, rowIdx) }"
-                    title="마우스로 끌어서 그룹 안에서 순서를 변경하세요"
+                    class="module-drag-handle dh-row"
+                    :class="{
+                      'dh-member': canDragGroupRow(item),
+                      'is-disabled': !canDragGroupRow(item),
+                      'is-visible': isRowSelected(item.id, rowIdx),
+                    }"
+                    :title="
+                      canDragGroupRow(item)
+                        ? '마우스로 끌어서 그룹 안에서 순서를 변경하세요'
+                        : '이 그룹에는 행이 하나뿐이라 옮길 자리가 없어요'
+                    "
                   >
                     <span class="material-symbols-outlined">drag_indicator</span>
                   </div>
@@ -334,9 +344,17 @@
                     >
                       <!-- 그룹 안 모듈에도 드래그 핸들 노출 (선택/호버 시). 이 핸들로 그룹 내부에서 재배치. -->
                       <div
-                        class="dh-member module-drag-handle"
-                        :class="{ 'is-visible': selectedModuleId === member.id }"
-                        title="마우스로 끌어서 그룹 안에서 순서를 변경하세요"
+                        class="module-drag-handle"
+                        :class="{
+                          'dh-member': canDragGroupRow(item),
+                          'is-disabled': !canDragGroupRow(item),
+                          'is-visible': selectedModuleId === member.id,
+                        }"
+                        :title="
+                          canDragGroupRow(item)
+                            ? '마우스로 끌어서 그룹 안에서 순서를 변경하세요'
+                            : '이 그룹에는 행이 하나뿐이라 옮길 자리가 없어요'
+                        "
                       >
                         <span class="material-symbols-outlined">drag_indicator</span>
                       </div>
@@ -375,10 +393,14 @@
               >
                 <span class="material-symbols-outlined">drag_indicator</span>
               </div>
+              <!-- 단독 모듈의 위/아래 이동 기준은 전역 order가 아니라 '표시 목록' 위치다.
+                   (위가 그룹이면 그룹 통째를 건너뛰므로, 그룹이 위에 있어도 이동 가능) -->
               <ModuleRenderer
                 :module="item.module"
                 :index="item.module.order"
                 :is-selected="selectedModuleId === item.module.id"
+                :can-move-up="!isFirstDisplayItem(item.id)"
+                :can-move-down="!isLastDisplayItem(item.id)"
                 @select="selectModule"
                 @move-up="moveModuleUp"
                 @move-down="moveModuleDown"
@@ -667,6 +689,13 @@ const groupRows = (item: DisplayItem): GroupRowLayout<ModuleInstance>[] => {
 }
 
 /**
+ * 그룹 안에서 '행'을 끌어 옮길 수 있는가 — 행이 둘 이상일 때만.
+ * 행이 하나뿐이면 위/아래 버튼이 둘 다 잠기는데 핸들만 살아 있으면 헷갈리므로
+ * 드래그 핸들도 같은 조건으로 잠근다(멤버는 그룹 밖으로 나갈 수 없다).
+ */
+const canDragGroupRow = (item: DisplayItem): boolean => groupRows(item).length > 1
+
+/**
  * 행 단위 호버/선택 (Figma 1125-3629).
  *
  * 2단 행은 "행 전체"와 "그 안의 열" 두 단계로 선택된다:
@@ -906,6 +935,12 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
 .module-drag-handle.is-visible {
   opacity: 1;
   pointer-events: auto;
+}
+/* 옮길 자리가 없는 핸들 (그룹에 행이 하나뿐) — 툴바의 잠긴 위/아래 버튼과 같은 회색으로 맞춘다.
+   .dh-member 클래스를 빼서 SortableJS의 handle 선택자에도 걸리지 않는다(끌어도 안 잡힘). */
+.module-drag-handle.is-disabled {
+  cursor: not-allowed;
+  color: var(--gray-300);
 }
 
 /* 그룹 전용 좌측 통합 카드: 드래그 핸들 + 액션(복제·해제·그룹 스타일·삭제)을 한 장으로 병합.

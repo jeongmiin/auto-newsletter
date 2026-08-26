@@ -257,6 +257,30 @@ describe('moduleStore - 그룹', () => {
     expect(store.modules[0].id).toBe(ids[0])
   })
 
+  it('단독 모듈은 위에 그룹이 있어도 그룹 통째를 건너뛰고 위로 이동한다', () => {
+    const store = useModuleStore()
+    const ids = addModules(store, 3) // m0, m1, m2
+    store.createGroup([ids[0], ids[1]])! // [(m0,m1), m2]
+
+    // m2는 단독 모듈 — 위가 그룹이라 예전엔 막혔다. 이제 그룹 위로 올라간다.
+    store.moveModuleUp(ids[2])
+
+    expect(store.modules.map((m) => m.id)).toEqual([ids[2], ids[0], ids[1]])
+    // 그룹 안으로 끌려 들어가지 않는다
+    expect(store.modules.find((m) => m.id === ids[2])?.groupId).toBeUndefined()
+  })
+
+  it('단독 모듈은 아래에 그룹이 있어도 그룹 통째를 건너뛰고 아래로 이동한다', () => {
+    const store = useModuleStore()
+    const ids = addModules(store, 3) // m0, m1, m2
+    store.createGroup([ids[1], ids[2]])! // [m0, (m1,m2)]
+
+    store.moveModuleDown(ids[0])
+
+    expect(store.modules.map((m) => m.id)).toEqual([ids[1], ids[2], ids[0]])
+    expect(store.modules.find((m) => m.id === ids[0])?.groupId).toBeUndefined()
+  })
+
   it('normalizeGroupContiguity가 흩어진 그룹 멤버를 다시 모은다', () => {
     const store = useModuleStore()
     const ids = addModules(store, 4)
