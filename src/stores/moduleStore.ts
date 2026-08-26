@@ -2069,12 +2069,18 @@ export const useModuleStore = defineStore('module', () => {
 
   /**
    * 모듈 위로 이동
+   *
+   * - 단독 모듈: **표시 단위**로 한 칸 올라간다. 바로 위가 그룹이면 그룹 안으로 파고들지 않고
+   *   그룹 전체를 건너뛰어 그 위로 간다(moveDisplayItem).
+   * - 그룹 멤버: 그룹 경계를 넘지 않는다 — 그룹 안에서만 교환하고, 그룹 통째 이동은 moveGroup.
    */
   const moveModuleUp = (moduleId: string): void => {
     const index = modules.value.findIndex((m) => m.id === moduleId)
     if (index <= 0) return
-    // 그룹 연속성 보호: 위 이웃과 그룹 소속이 같을 때만 교환
-    // (그룹 경계에서는 동작하지 않음 — 그룹 통째 이동은 드래그/그룹 이동 사용)
+    if (!modules.value[index].groupId) {
+      moveDisplayItem(moduleId, 'up')
+      return
+    }
     if ((modules.value[index].groupId ?? null) !== (modules.value[index - 1].groupId ?? null)) {
       return
     }
@@ -2087,11 +2093,15 @@ export const useModuleStore = defineStore('module', () => {
   }
 
   /**
-   * 모듈 아래로 이동
+   * 모듈 아래로 이동 (규칙은 moveModuleUp과 대칭)
    */
   const moveModuleDown = (moduleId: string): void => {
     const index = modules.value.findIndex((m) => m.id === moduleId)
     if (index < 0 || index >= modules.value.length - 1) return
+    if (!modules.value[index].groupId) {
+      moveDisplayItem(moduleId, 'down')
+      return
+    }
     // 그룹 연속성 보호: 아래 이웃과 그룹 소속이 같을 때만 교환
     if ((modules.value[index].groupId ?? null) !== (modules.value[index + 1].groupId ?? null)) {
       return
@@ -2621,17 +2631,29 @@ export const useModuleStore = defineStore('module', () => {
   }
 
   /**
-   * 그룹을 표시 단위로 위/아래 한 칸 이동 (그룹 통째 이동)
+   * 표시 단위(그룹 통째 또는 단독 모듈)를 위/아래 한 칸 이동.
+   *
+   * 이웃이 그룹이면 그 그룹은 '한 덩어리'라 통째로 건너뛴다 —
+   * 단독 모듈이 이 경로로 그룹 안에 끼어들 일은 없다.
+   * @param itemId displayItems의 id (그룹이면 groupId, 단독 모듈이면 moduleId)
    */
-  const moveGroup = (groupId: string, direction: 'up' | 'down'): void => {
+  const moveDisplayItem = (itemId: string, direction: 'up' | 'down'): void => {
     const items = displayItems.value
-    const idx = items.findIndex((it) => it.type === 'group' && it.id === groupId)
+    const idx = items.findIndex((it) => it.id === itemId)
     if (idx === -1) return
     const swapWith = direction === 'up' ? idx - 1 : idx + 1
     if (swapWith < 0 || swapWith >= items.length) return
     const next = [...items]
     ;[next[idx], next[swapWith]] = [next[swapWith], next[idx]]
     setDisplayOrder(next)
+  }
+
+  /**
+   * 그룹을 표시 단위로 위/아래 한 칸 이동 (그룹 통째 이동)
+   */
+  const moveGroup = (groupId: string, direction: 'up' | 'down'): void => {
+    if (!displayItems.value.some((it) => it.type === 'group' && it.id === groupId)) return
+    moveDisplayItem(groupId, direction)
   }
 
   /**
@@ -4402,6 +4424,7 @@ ${fullHtml}
     setColumnWidth,
     setGroupSidePadding,
     setDisplayOrder,
+    moveDisplayItem,
     reorderGroupMembers,
     moveGroup,
     reorderGroupRows,
