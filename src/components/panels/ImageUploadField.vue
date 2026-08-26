@@ -10,6 +10,7 @@
  */
 import { computed, onBeforeUnmount, ref } from 'vue'
 import InputText from 'primevue/inputtext'
+import Checkbox from 'primevue/checkbox'
 import { useEditorStore } from '@/stores/editorStore'
 import { DEFAULT_IMAGE_URL, isPlaceholderImage } from '@/constants/defaults'
 import { useToast } from 'primevue/usetoast'
@@ -19,6 +20,7 @@ import {
   MISSING_VOLUME_MESSAGE,
   UploadError,
   buildUploadDirectory,
+  buildUploadFileName,
   formatBytes,
   isUploadEnabled,
   uploadImage,
@@ -52,6 +54,15 @@ const uploading = ref(false)
 const errorText = ref('')
 const previewFailed = ref(false)
 let controller: AbortController | null = null
+
+/**
+ * 같은 이름의 이미지를 다시 올렸을 때 덮어쓸지.
+ *
+ * 켜짐(기본): 파일 이름 그대로 올려 같은 이름이면 이전 것을 대체한다 — 시안을 고쳐 다시
+ *   올리는 게 대부분이라, 회차 폴더에 비슷한 파일이 쌓이지 않게 이쪽을 기본으로 둔다.
+ * 꺼짐: 이름 뒤에 날짜·시각을 붙여 새 파일로 올린다(이전 이미지는 그대로 남는다).
+ */
+const overwrite = ref(true)
 
 const showUploader = computed(() => !props.urlOnly && isUploadEnabled())
 
@@ -107,6 +118,22 @@ const startUpload = async (file: File) => {
     return
   }
 
+  // 덮어쓰기는 '이름이 같으면 대체한다'는 뜻인데, 한글·공백이 든 이름은 올릴 때 다듬어진다
+  // ('메인배너.png' → 'image.png', '배너-01.png' → '01.png'). 그래서 화면에서 다른 이름으로
+  // 보이던 이미지끼리도 겹칠 수 있다. 막지는 않고(사용자가 고른 동작이다) 바뀐 이름만 알린다.
+  const saveAs = buildUploadFileName(file.name, new Date(), false)
+  if (overwrite.value && saveAs !== file.name) {
+    toast.add({
+      severity: 'warn',
+      summary: '파일 이름이 바뀌어 올라가요',
+      detail:
+        `'${file.name}' → '${saveAs}'. 같은 폴더에 같은 이름이 있으면 덮어씁니다. ` +
+        '다른 이미지를 지우고 싶지 않다면 파일 이름을 영문으로 바꾸거나 ' +
+        '"같은 이름이면 덮어쓰기"를 꺼 주세요.',
+      life: 8000,
+    })
+  }
+
   uploading.value = true
   progress.value = 0
   controller = new AbortController()
@@ -114,6 +141,7 @@ const startUpload = async (file: File) => {
     const { url } = await uploadImage(file, directory, {
       onProgress: (p) => (progress.value = p),
       signal: controller.signal,
+      overwrite: overwrite.value,
     })
     setValue(url)
   } catch (err) {
@@ -208,6 +236,19 @@ onBeforeUnmount(() => controller?.abort())
         class="hidden"
         @change="onFilePicked"
       />
+
+      <!-- 같은 이름 처리 방식 — 올리는 중에 바꿔도 이번 건에는 반영되지 않으므로 그동안 감춘다 -->
+      <label v-if="!uploading" class="iu-overwrite">
+        <Checkbox v-model="overwrite" :binary="true" />
+        <span class="iu-overwrite-body">
+          <span class="iu-overwrite-title">같은 이름이면 덮어쓰기</span>
+          <span class="iu-overwrite-hint">{{
+            overwrite
+              ? '파일 이름 그대로 올려 먼저 올린 같은 이름의 이미지를 대체해요'
+              : '이름 뒤에 날짜·시각을 붙여 새 파일로 올려요 (기존 이미지는 그대로)'
+          }}</span>
+        </span>
+      </label>
 
       <p v-if="errorText" class="iu-error">{{ errorText }}</p>
       <p v-if="targetDirectory" class="iu-target">저장 위치 <code>{{ targetDirectory }}</code></p>
@@ -373,6 +414,30 @@ onBeforeUnmount(() => controller?.abort())
 }
 .iu-link-btn--danger {
   color: var(--red-400);
+}
+
+/* 같은 이름이면 덮어쓰기 */
+.iu-overwrite {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  cursor: pointer;
+}
+.iu-overwrite-body {
+  /* min-width:0 이 없으면 안내 문구가 상자를 밀어 패널이 가로로 잘린다 */
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.iu-overwrite-title {
+  font-size: 13px;
+  color: var(--gray-700);
+}
+.iu-overwrite-hint {
+  font-size: 12px;
+  color: var(--gray-500);
+  line-height: 1.5;
 }
 
 .iu-error {

@@ -51,6 +51,43 @@ describe('buildUploadFileName', () => {
     const b = buildUploadFileName('main.png', new Date(2026, 7, 20, 14, 30, 53))
     expect(a).not.toBe(b)
   })
+
+  describe('덮어쓰기(unique=false)', () => {
+    it('날짜·시각을 붙이지 않아 같은 파일은 같은 이름이 된다', () => {
+      expect(buildUploadFileName('main.png', at, false)).toBe('main.png')
+      expect(buildUploadFileName('main.png', new Date(2027, 0, 1), false)).toBe('main.png')
+    })
+
+    it('이름 다듬기는 그대로 적용한다', () => {
+      expect(buildUploadFileName('main image.png', at, false)).toBe('main-image.png')
+      expect(buildUploadFileName('한글.png', at, false)).toBe('image.png')
+      expect(buildUploadFileName('logo', at, false)).toBe('logo')
+    })
+  })
+})
+
+/**
+ * 덮어쓰기를 켠 상태에서 화면은 이름이 그대로일 것처럼 보이지만 실제로는 다듬어져 올라간다.
+ * ImageUploadField는 `unique=false`로 만든 이름이 원본과 다르면 사용자에게 알린다 —
+ * 그 판단이 성립하는지(=다듬어지는 이름을 실제로 구분해내는지) 여기서 못박아 둔다.
+ */
+describe('덮어쓰기 이름 경고 판단', () => {
+  const saveAs = (name: string) => buildUploadFileName(name, new Date(), false)
+  const changed = (name: string) => saveAs(name) !== name
+
+  it('한글·공백이 든 이름은 달라진다', () => {
+    expect(saveAs('메인배너.jpg')).toBe('image.jpg')
+    expect(saveAs('배너-01.png')).toBe('01.png')
+    expect(saveAs('main image.png')).toBe('main-image.png')
+    expect(changed('메인배너.jpg')).toBe(true)
+    expect(changed('배너-01.png')).toBe(true)
+  })
+
+  it('영문·숫자로만 된 이름은 그대로라 알리지 않는다', () => {
+    expect(changed('main.png')).toBe(false)
+    expect(changed('banner_01.png')).toBe(false)
+    expect(changed('logo')).toBe(false)
+  })
 })
 
 describe('normalizeVolume', () => {

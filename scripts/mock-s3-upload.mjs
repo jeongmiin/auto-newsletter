@@ -4,7 +4,8 @@
  * 실제 서버(fmstest.e-sang.net 등)는 사내망에서만 닿기 때문에, 밖에서도 업로드 화면 전체를
  * 확인할 수 있도록 같은 계약을 흉내 낸다.
  *
- *   POST /api/files/s3upload   multipart(file, directory) → { savedFileName: '<URL>' }
+ *   POST /api/files/s3upload   multipart(file, directory, override) → { savedFileName: '<URL>' }
+ *     override='N'이면 같은 이름이 이미 있을 때 덮어쓰지 않고 이름을 비켜 저장한다
  *   GET  /files/<경로>          업로드된 파일을 그대로 돌려준다 (미리보기가 실제로 뜨도록)
  *
  * 실행: npm run mock:upload    (Vite 프록시의 기본 대상이 이 포트다)
@@ -105,10 +106,27 @@ function handleUpload(req, res) {
   })
 }
 
+/**
+ * 덮어쓰기를 끈 상태에서 이름이 겹치면 `main.png` → `main_1.png` → `main_2.png`로 비켜 간다.
+ * (실제 서버가 어떤 규칙으로 이름을 바꾸는지는 모르므로, '덮어쓰지 않는다'는 것만 흉내 낸다)
+ */
+function nonCollidingName(dir, fileName) {
+  if (!fs.existsSync(path.join(dir, fileName))) return fileName
+  const dot = fileName.lastIndexOf('.')
+  const base = dot === -1 ? fileName : fileName.slice(0, dot)
+  const ext = dot === -1 ? '' : fileName.slice(dot)
+  for (let i = 1; i < 1000; i++) {
+    const candidate = `${base}_${i}${ext}`
+    if (!fs.existsSync(path.join(dir, candidate))) return candidate
+  }
+  return `${base}_${Date.now()}${ext}`
+}
+
 function saveUpload(res, body, boundary) {
   const parts = parseMultipart(body, boundary)
   const filePart = parts.find((p) => p.name === 'file' && p.filename)
   const dirPart = parts.find((p) => p.name === 'directory')
+  const overridePart = parts.find((p) => p.name === 'override')
 
   if (!filePart) {
     sendJson(res, 400, { message: '파일이 없습니다.' })
@@ -119,12 +137,18 @@ function saveUpload(res, body, boundary) {
     sendJson(res, 400, { message: '업로드 경로를 입력하세요.' })
     return
   }
+  // 값이 안 오면 덮어쓰는 쪽으로 본다 (기존 동작과 같다)
+  const override = (overridePart ? overridePart.content.toString('utf8') : 'Y').trim() !== 'N'
 
   // 파일명에도 경로가 섞여 올 수 있으니 마지막 조각만 쓴다
-  const fileName = safeSegments(filePart.filename).pop() || 'upload.bin'
+  const requested = safeSegments(filePart.filename).pop() || 'upload.bin'
   const segments = safeSegments(directory)
   const dir = path.join(ROOT, ...segments)
   fs.mkdirSync(dir, { recursive: true })
+  const fileName = override ? requested : nonCollidingName(dir, requested)
+  if (fileName !== requested) {
+    console.log(`  ← 이름 겹침, 덮어쓰기 꺼짐 → ${requested} 대신 ${fileName}`)
+  }
   fs.writeFileSync(path.join(dir, fileName), filePart.content)
 
   const url = `http://localhost:${PORT}/files/${[...segments, fileName].join('/')}`

@@ -6,6 +6,7 @@
  *   Content-Type: multipart/form-data
  *     file      — 업로드할 파일
  *     directory — 저장할 폴더 경로 (예: '/e-dm/2026/vms/')
+ *     override  — 'Y'면 같은 이름의 파일을 덮어쓰고, 'N'이면 서버가 이름을 바꿔 새로 저장한다
  *   200 → { savedFileName: '<저장된 파일의 URL>' }
  *   그 외 → { message | Message: '<사유>' }
  *
@@ -83,24 +84,44 @@ export function validateImageFile(file: File): string | null {
   return null
 }
 
+/** 이름에 쓸 글자가 하나도 안 남았을 때 대신 쓰는 이름 */
+const FALLBACK_BASE = 'image'
+
 /**
- * 업로드용 파일 이름을 만든다 — `원본이름_20260820_143052.png`.
- *
- * 같은 폴더에 같은 이름을 다시 올렸을 때 서버가 덮어쓰는지 이름을 바꿔주는지 아직 모른다.
- * 덮어쓴다면 이전 뉴스레터의 이미지가 소리 없이 바뀌므로, 확인 전까지는 항상 고유하게 만든다.
+ * 파일 이름에서 서버·URL에 안전한 부분만 남긴다.
+ * 경로 구분자·공백·한글 등은 '-'로 바꾸고, 남는 게 없으면 'image'.
  */
-export function buildUploadFileName(originalName: string, now: Date = new Date()): string {
+function sanitizeBaseName(originalName: string): string {
   const ext = extensionOf(originalName)
   const base = (ext ? originalName.slice(0, -(ext.length + 1)) : originalName)
-    // 경로 구분자·공백·한글 등 서버/URL에서 문제될 수 있는 문자는 '-'로 (빈 이름이면 'image')
     .replace(/[^a-zA-Z0-9._-]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .slice(0, 60)
+  return base || FALLBACK_BASE
+}
+
+/**
+ * 업로드용 파일 이름을 만든다.
+ *
+ * @param unique true면 `원본이름_20260820_143052.png`처럼 날짜·시각을 붙여 **항상 새 파일**이 되게 하고,
+ *               false면 `원본이름.png` 그대로 둬 같은 이름이면 **서버가 덮어쓰게** 한다
+ *               (덮어쓰기 여부는 form의 `override` 값이 정하고, 이름은 그 선택과 짝이 맞아야 한다 —
+ *                이름에 매번 시각을 붙이면 겹칠 일이 없어 덮어쓰기가 무의미해진다).
+ */
+export function buildUploadFileName(
+  originalName: string,
+  now: Date = new Date(),
+  unique = true,
+): string {
+  const ext = extensionOf(originalName)
+  const base = sanitizeBaseName(originalName)
+  const suffix = ext ? `.${ext}` : ''
+  if (!unique) return `${base}${suffix}`
   const p = (n: number) => String(n).padStart(2, '0')
   const stamp =
     `${now.getFullYear()}${p(now.getMonth() + 1)}${p(now.getDate())}` +
     `_${p(now.getHours())}${p(now.getMinutes())}${p(now.getSeconds())}`
-  return `${base || 'image'}_${stamp}${ext ? `.${ext}` : ''}`
+  return `${base}_${stamp}${suffix}`
 }
 
 /** 회차를 입력하지 않았을 때 사용자에게 보여줄 문구 — 알림과 필드 오류에서 함께 쓴다 */
@@ -180,6 +201,13 @@ export interface UploadOptions {
   onProgress?: (percent: number) => void
   /** 취소용 — abort()를 호출하면 요청이 끊긴다 */
   signal?: AbortSignal
+  /**
+   * 같은 이름의 파일이 이미 있을 때 덮어쓸지 여부. 기본값 true(덮어쓴다).
+   *
+   * true면 파일 이름을 원본 그대로 보내고 `override=Y`를,
+   * false면 이름에 날짜·시각을 붙여 겹치지 않게 만든 뒤 `override=N`을 보낸다.
+   */
+  overwrite?: boolean
 }
 
 export interface UploadResult {
@@ -217,11 +245,15 @@ export function uploadImage(
     return Promise.reject(new UploadError(invalid))
   }
 
+  const overwrite = options.overwrite ?? true
+
   return new Promise<UploadResult>((resolve, reject) => {
     const form = new FormData()
-    // 원본 File을 그대로 넣으면 파일명을 바꿀 수 없어 세 번째 인자로 이름을 지정한다
-    form.append('file', file, buildUploadFileName(file.name))
+    // 원본 File을 그대로 넣으면 파일명을 바꿀 수 없어 세 번째 인자로 이름을 지정한다.
+    // 덮어쓸 때는 이름을 원본 그대로 둬야 같은 이름끼리 만난다(위 buildUploadFileName 주석 참고).
+    form.append('file', file, buildUploadFileName(file.name, new Date(), !overwrite))
     form.append('directory', directory)
+    form.append('override', overwrite ? 'Y' : 'N')
 
     const xhr = new XMLHttpRequest()
     xhr.open('POST', endpoint, true)
