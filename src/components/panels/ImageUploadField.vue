@@ -83,7 +83,7 @@ const hasValue = computed(() => !isPlaceholderImage(props.modelValue))
  * 회차('전체 스타일' → 뉴스레터 회차)를 아직 안 적었으면 null이다.
  */
 const targetDirectory = computed(() =>
-  buildUploadDirectory(editorStore.currentTemplateId, editorStore.wrapSettings.volume),
+  buildUploadDirectory(editorStore.uploadFolder, editorStore.wrapSettings.volume),
 )
 
 const setValue = (url: string) => {

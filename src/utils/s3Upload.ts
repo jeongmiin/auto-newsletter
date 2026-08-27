@@ -168,23 +168,54 @@ export function normalizeVolume(volume?: string | null): string {
 }
 
 /**
- * 업로드 폴더 경로를 만든다 — `/e-dm/{연도}/{템플릿id}/{회차}/`.
+ * 빈 문서로 만든 뉴스레터의 이미지를 모으는 자리.
  *
- * 템플릿 id는 이미 S3 폴더명과 같게 맞춰 두었다(templates-config.json).
- * 템플릿을 고르지 않고 빈 문서로 시작한 경우 id가 없으므로 'common'에 모은다.
+ * 전시회 폴더 옆에 나란히 두되 이름으로 성격이 드러나게 한다 — S3에서 `bfs/`·`kadex/` 사이에
+ * `blank/`이 보이면 '전시회가 아직 안 정해진 것들'임을 바로 알 수 있다.
+ */
+export const BLANK_FOLDER = 'blank'
+
+/** 폴더 한 조각을 S3 키에 안전하게 — 소문자·숫자·하이픈·밑줄만 남긴다 */
+const folderSegment = (value?: string | null): string =>
+  (value ?? '').trim().toLowerCase().replace(/[^a-z0-9_-]+/g, '')
+
+/**
+ * 업로드 폴더의 전시회 단계를 정한다.
  *
- * @returns 회차가 비어 있으면 **null** — 어느 회차 폴더에 넣을지 정할 수 없으므로
+ * - 템플릿으로 시작했으면 그 **템플릿 id**가 곧 전시회 폴더다(S3 폴더명과 이미 통일돼 있다).
+ * - 빈 문서로 시작했으면 전시회를 알 수 없으므로 `blank/{팀}`에 모은다.
+ *   팀까지 나누는 이유는, 한 자리에 다 쌓으면 서로 다른 뉴스레터의 `main_visual.png`가
+ *   같은 회차 폴더에서 만나 말없이 덮어써지기 때문이다(`override=Y`).
+ *
+ * @returns 팀도 템플릿도 없으면 빈 문자열 — 호출한 쪽이 업로드를 막는다.
+ */
+export function uploadFolderOf(templateId?: string | null, teamId?: string | null): string {
+  const template = folderSegment(templateId)
+  if (template) return template
+  const team = folderSegment(teamId)
+  return team ? `${BLANK_FOLDER}/${team}` : ''
+}
+
+/**
+ * 업로드 폴더 경로를 만든다 — `/e-dm/{연도}/{전시회 폴더}/{회차}/`.
+ *
+ * @param folder `uploadFolderOf`가 정한 폴더. 빈 문서면 `blank/{팀}`처럼 두 단계일 수 있다.
+ * @returns 폴더나 회차 중 하나라도 비어 있으면 **null** — 어디에 넣을지 정할 수 없으므로
  *          경로를 지어내지 않고 호출한 쪽이 업로드를 막게 한다.
  */
 export function buildUploadDirectory(
-  templateId?: string | null,
+  folder?: string | null,
   volume?: string | null,
   now: Date = new Date(),
 ): string | null {
   const vol = normalizeVolume(volume)
-  if (!vol) return null
-  const folder = (templateId ?? '').trim() || 'common'
-  return `/e-dm/${now.getFullYear()}/${folder}/${vol}/`
+  const dir = (folder ?? '')
+    .split('/')
+    .map(folderSegment)
+    .filter(Boolean)
+    .join('/')
+  if (!vol || !dir) return null
+  return `/e-dm/${now.getFullYear()}/${dir}/${vol}/`
 }
 
 /** 서버가 돌려준 값을 화면에 바로 쓸 수 있는 URL로 정리한다 */

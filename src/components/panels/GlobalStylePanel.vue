@@ -225,15 +225,16 @@ const stepVolume = (delta: number) => {
 /**
  * 지금 회차가 어떤 폴더가 되는지 보여준다 — 아직 안 정했으면 자리를 vol01로 흉내 낸다.
  *
- * 앞의 `/e-dm/{연도}/`는 모든 뉴스레터가 똑같아서 알려줄 게 없다.
- * 사용자가 확인해야 하는 건 뒤의 두 조각(전시회 폴더 / 회차)뿐이라 그것만 남긴다.
- *   '/e-dm/2026/handarty/vol01/' → 'handarty/vol01'
+ * 앞의 `/e-dm/{연도}/`는 모든 뉴스레터가 똑같아서 알려줄 게 없으니 그 두 조각만 걷어낸다.
+ * 뒤쪽은 통째로 남긴다 — 빈 문서는 `blank/{팀}/vol01`처럼 세 조각이라 개수를 못 박으면 잘린다.
+ *   '/e-dm/2026/handarty/vol01/'   → 'handarty/vol01'
+ *   '/e-dm/2026/blank/mice/vol01/' → 'blank/mice/vol01'
  */
 const volumePreview = computed(() => {
   const directory =
-    buildUploadDirectory(editorStore.currentTemplateId, wrapSettings.value.volume) ??
-    buildUploadDirectory(editorStore.currentTemplateId, formatVolume(MIN_VOLUME))
-  return (directory ?? '').split('/').filter(Boolean).slice(-2).join('/')
+    buildUploadDirectory(editorStore.uploadFolder, wrapSettings.value.volume) ??
+    buildUploadDirectory(editorStore.uploadFolder, formatVolume(MIN_VOLUME))
+  return (directory ?? '').split('/').filter(Boolean).slice(2).join('/')
 })
 </script>
 

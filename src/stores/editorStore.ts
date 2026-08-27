@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import type { CanvasSettings, WrapSettings } from '@/types'
 import { EDITOR_CONFIG } from '@/constants/defaults'
+import { uploadFolderOf } from '@/utils/s3Upload'
 
 export const useEditorStore = defineStore('editor', () => {
   const canvasWidth = ref<'mobile' | 'desktop'>('desktop')
@@ -31,6 +32,14 @@ export const useEditorStore = defineStore('editor', () => {
    */
   const currentTeamId = ref<string | null>(null)
   const currentTemplateId = ref<string | null>(null)
+
+  /**
+   * 이미지 업로드 폴더의 전시회 단계 — 템플릿으로 시작했으면 그 전시회, 빈 문서면 `blank/{팀}`.
+   * (규칙은 s3Upload.uploadFolderOf에 있다 — 업로드하는 쪽과 미리보기가 같은 값을 쓰게 한다)
+   */
+  const uploadFolder = computed(() =>
+    uploadFolderOf(currentTemplateId.value, currentTeamId.value),
+  )
 
   /** 템플릿을 골라 에디터로 들어올 때 한 번에 지정한다 */
   const setCurrentTemplate = (info: {
@@ -242,6 +251,7 @@ export const useEditorStore = defineStore('editor', () => {
     setCurrentTemplateName,
     currentTeamId,
     currentTemplateId,
+    uploadFolder,
     setCurrentTemplate,
     activeMenu,
     forceRailPanel,

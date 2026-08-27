@@ -8,6 +8,7 @@ import {
   formatVolume,
   normalizeVolume,
   parseVolumeNumber,
+  uploadFolderOf,
   validateImageFile,
   MAX_VOLUME,
 } from '../s3Upload'
@@ -162,22 +163,26 @@ describe('formatVolume', () => {
 describe('buildUploadDirectory', () => {
   const at = new Date(2026, 7, 20)
 
-  it('연도·템플릿 id·회차로 경로를 만든다', () => {
+  it('연도·전시회 폴더·회차로 경로를 만든다', () => {
     expect(buildUploadDirectory('nextcon', 'vol01', at)).toBe('/e-dm/2026/nextcon/vol01/')
+  })
+
+  it('빈 문서 폴더처럼 두 단계여도 그대로 살린다', () => {
+    expect(buildUploadDirectory('blank/mice', 'vol01', at)).toBe('/e-dm/2026/blank/mice/vol01/')
   })
 
   it('회차 표기가 흔들려도 같은 폴더로 간다', () => {
     expect(buildUploadDirectory('nextcon', 'Vol 01', at)).toBe('/e-dm/2026/nextcon/vol01/')
   })
 
-  it('템플릿이 없으면(빈 문서) common으로 모은다', () => {
-    expect(buildUploadDirectory(null, 'vol01', at)).toBe('/e-dm/2026/common/vol01/')
-    expect(buildUploadDirectory('', 'vol01', at)).toBe('/e-dm/2026/common/vol01/')
-    expect(buildUploadDirectory('   ', 'vol01', at)).toBe('/e-dm/2026/common/vol01/')
-    expect(buildUploadDirectory(undefined, 'vol01', at)).toBe('/e-dm/2026/common/vol01/')
+  it('폴더가 없으면 경로를 지어내지 않고 null (업로드를 막기 위함)', () => {
+    expect(buildUploadDirectory(null, 'vol01', at)).toBeNull()
+    expect(buildUploadDirectory('', 'vol01', at)).toBeNull()
+    expect(buildUploadDirectory('   ', 'vol01', at)).toBeNull()
+    expect(buildUploadDirectory(undefined, 'vol01', at)).toBeNull()
   })
 
-  it('회차가 없으면 경로를 지어내지 않고 null (업로드를 막기 위함)', () => {
+  it('회차가 없으면 경로를 지어내지 않고 null', () => {
     expect(buildUploadDirectory('nextcon', '', at)).toBeNull()
     expect(buildUploadDirectory('nextcon', '   ', at)).toBeNull()
     expect(buildUploadDirectory('nextcon', null, at)).toBeNull()
@@ -186,6 +191,32 @@ describe('buildUploadDirectory', () => {
 
   it('폴더명이 될 수 없는 회차도 null로 본다', () => {
     expect(buildUploadDirectory('nextcon', '회차', at)).toBeNull()
+  })
+})
+
+describe('uploadFolderOf', () => {
+  it('템플릿으로 시작했으면 그 템플릿 id가 곧 전시회 폴더다', () => {
+    expect(uploadFolderOf('nextcon', 'arch-plan')).toBe('nextcon')
+    expect(uploadFolderOf('c-uas', 'growth-plan')).toBe('c-uas')
+    expect(uploadFolderOf('space_design', 'arch-strategy')).toBe('space_design')
+  })
+
+  it('빈 문서면 blank/{팀}에 모은다 — 팀까지 나눠 파일명 충돌을 줄인다', () => {
+    expect(uploadFolderOf(null, 'mice')).toBe('blank/mice')
+    expect(uploadFolderOf('', 'conv-industry-1')).toBe('blank/conv-industry-1')
+    expect(uploadFolderOf(undefined, 'arch-plan')).toBe('blank/arch-plan')
+  })
+
+  it('팀도 템플릿도 없으면 빈 문자열 — 올릴 자리를 지어내지 않는다', () => {
+    expect(uploadFolderOf(null, null)).toBe('')
+    expect(uploadFolderOf('', '')).toBe('')
+    expect(uploadFolderOf('   ', '   ')).toBe('')
+    expect(uploadFolderOf('한글', '한글')).toBe('') // S3 키로 쓸 글자가 안 남는다
+  })
+
+  it('S3 키에 안전한 글자만 남긴다', () => {
+    expect(uploadFolderOf('Next Con', null)).toBe('nextcon')
+    expect(uploadFolderOf(null, 'MICE 팀')).toBe('blank/mice')
   })
 })
 

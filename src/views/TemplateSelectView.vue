@@ -48,8 +48,26 @@
         </div>
 
         <div class="tpl-grid">
-          <!-- 빈 템플릿 카드는 두지 않는다 — 항상 팀·템플릿을 고른 뒤 에디터로 들어온다.
-               빈 상태로 시작하려면 에디터의 '빈 템플릿'(레일)·'전체 삭제'(헤더)를 쓴다. -->
+          <!-- 빈 템플릿 카드 — **팀을 고른 상태에서만** 보여준다.
+               '전체'에 두면 어느 팀의 빈 문서인지 알 수 없고, 그러면 이미지가 올라갈
+               전시회 폴더도 정할 수 없다. 눌렀을 때 그 팀의 전시회를 고르게 하는 이유도 같다. -->
+          <button
+            v-if="selectedTeam"
+            class="tpl-card"
+            @click="startBlank"
+          >
+            <div class="tpl-thumb tpl-thumb--blank">
+              <!-- 내용 없는 문서를 뜻하는 회색 뼈대 (이미지 한 장 + 글줄 + 버튼) -->
+              <div class="blank-image"></div>
+              <div class="blank-line blank-line--short"></div>
+              <div class="blank-line"></div>
+              <div class="blank-line"></div>
+              <div class="blank-line"></div>
+              <div class="blank-button"></div>
+            </div>
+            <div class="tpl-card-name">빈 템플릿</div>
+          </button>
+
           <!-- 템플릿 카드 -->
           <button
             v-for="t in filteredTemplates"
@@ -201,6 +219,26 @@ onMounted(async () => {
     }
   }
 })
+
+/**
+ * 빈 문서로 시작 — 고른 팀만 들고 곧장 에디터로 간다.
+ *
+ * 전시회를 고르게 하지 않는다. S3에는 전시회 폴더가 47개인데 빌더 템플릿은 19종뿐이라,
+ * 템플릿 목록에서 고르라고 하면 정작 만들려는 전시회가 목록에 없는 경우가 더 많다.
+ * 그래서 templateId를 비우고, 이미지는 `blank/{팀}/vol{NN}/`에 모은다(s3Upload.uploadFolderOf).
+ */
+const startBlank = () => {
+  moduleStore.clearAll()
+  // 앞서 둘러본 템플릿의 배경색·요약이 묻어나지 않도록 전체 스타일도 처음 값으로
+  editorStore.resetWrapSettings()
+  getHistoryInstance().clearHistory()
+  editorStore.setCurrentTemplate({
+    templateId: null,
+    templateName: '빈 템플릿',
+    teamId: selectedTeam.value,
+  })
+  router.push('/editor')
+}
 
 // 템플릿 선택 → 적용 후 에디터로
 const pickTemplate = async (t: NewsletterTemplate) => {
@@ -385,6 +423,44 @@ const pickTemplate = async (t: NewsletterTemplate) => {
   border-color: var(--blue-400);
   box-shadow: 0 4px 14px rgba(64, 131, 243, 0.18);
 }
+
+/* ===== 빈 템플릿 카드 =====
+   실제 미리보기가 없으니 '내용 없는 문서'를 회색 뼈대로 그린다.
+   (다른 카드와 같은 190×223 박스 안에 들어가도록 크기를 고정값으로 맞춘다) */
+.tpl-thumb--blank {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 16px;
+}
+.blank-image {
+  width: 100%;
+  height: 84px;
+  border-radius: 4px;
+  background: var(--gray-100);
+  /* 사진 자리임을 알리는 아이콘 — 배경으로 그려 넣어 마크업을 늘리지 않는다 */
+  background-image: radial-gradient(circle at 34% 38%, var(--gray-200) 7px, transparent 7px);
+  margin-bottom: 6px;
+}
+.blank-line {
+  width: 100%;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--gray-100);
+}
+.blank-line--short {
+  width: 58%;
+  margin-right: auto;
+}
+.blank-button {
+  width: 62%;
+  height: 18px;
+  border-radius: 9px;
+  background: var(--gray-100);
+  margin-top: 10px;
+}
+
 /* 미리 만들어 둔 썸네일 이미지 — 680×800으로 캡처한 것을 박스 안쪽(188×221)에 맞춰 크롭.
    비율이 조금 어긋나도 윗부분이 남도록 object-position:top. */
 .tpl-thumb-img {
