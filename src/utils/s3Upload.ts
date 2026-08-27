@@ -126,7 +126,34 @@ export function buildUploadFileName(
 
 /** 회차를 입력하지 않았을 때 사용자에게 보여줄 문구 — 알림과 필드 오류에서 함께 쓴다 */
 export const MISSING_VOLUME_MESSAGE =
-  '뉴스레터 회차를 먼저 입력해 주세요. 왼쪽 "전체 스타일" 메뉴에서 vol01 처럼 적으면 회차별 폴더에 정리됩니다.'
+  '뉴스레터 회차를 먼저 입력해 주세요. 왼쪽 "전체 스타일" 메뉴에서 회차 숫자를 고르면 회차별 폴더에 정리됩니다.'
+
+/**
+ * 회차 표기의 고정 접두사. 화면에서는 이 글자를 고칠 수 없고 숫자만 오르내린다.
+ * (저장 값은 예전과 같은 'vol01' 형태 그대로라 기존 저장 파일도 그대로 열린다)
+ */
+export const VOLUME_PREFIX = 'vol'
+export const MIN_VOLUME = 1
+/** 세 자리까지 — 'vol100'도 폴더명으로 문제없다 */
+export const MAX_VOLUME = 999
+
+/**
+ * 회차 표기에서 숫자만 뽑는다 — 'vol01' → 1, 'Vol 12' → 12, '3' → 3.
+ * 숫자가 없거나 0이면 **null**(아직 회차를 안 정한 상태).
+ */
+export function parseVolumeNumber(volume?: string | null): number | null {
+  const digits = (volume ?? '').replace(/\D/g, '')
+  if (!digits) return null
+  const n = Number(digits)
+  if (!Number.isFinite(n) || n < MIN_VOLUME) return null
+  return Math.min(n, MAX_VOLUME)
+}
+
+/** 숫자를 저장·폴더용 표기로 — 1 → 'vol01', 12 → 'vol12', 100 → 'vol100' */
+export function formatVolume(n: number): string {
+  const clamped = Math.min(Math.max(Math.floor(n) || MIN_VOLUME, MIN_VOLUME), MAX_VOLUME)
+  return `${VOLUME_PREFIX}${String(clamped).padStart(2, '0')}`
+}
 
 /**
  * 회차 표기를 폴더명으로 다듬는다 — 'Vol 01' · 'vol-01' → 'vol01'.

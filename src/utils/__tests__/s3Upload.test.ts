@@ -5,8 +5,11 @@ import {
   extractErrorMessage,
   buildUploadFileName,
   formatBytes,
+  formatVolume,
   normalizeVolume,
+  parseVolumeNumber,
   validateImageFile,
+  MAX_VOLUME,
 } from '../s3Upload'
 
 /** 크기·형식만 흉내 내는 가짜 File (내용은 검사하지 않는다) */
@@ -109,6 +112,50 @@ describe('normalizeVolume', () => {
 
   it('지나치게 긴 값은 잘라낸다', () => {
     expect(normalizeVolume('v'.repeat(50))).toHaveLength(30)
+  })
+})
+
+describe('parseVolumeNumber', () => {
+  it('저장 표기에서 숫자만 뽑는다', () => {
+    expect(parseVolumeNumber('vol01')).toBe(1)
+    expect(parseVolumeNumber('vol12')).toBe(12)
+    expect(parseVolumeNumber('Vol 3')).toBe(3)
+    expect(parseVolumeNumber('vol100')).toBe(100)
+    expect(parseVolumeNumber('7')).toBe(7)
+  })
+
+  it('회차를 아직 안 정했으면 null', () => {
+    expect(parseVolumeNumber('')).toBeNull()
+    expect(parseVolumeNumber('   ')).toBeNull()
+    expect(parseVolumeNumber('vol')).toBeNull()
+    expect(parseVolumeNumber('vol00')).toBeNull() // 0회차는 없다
+    expect(parseVolumeNumber(null)).toBeNull()
+    expect(parseVolumeNumber(undefined)).toBeNull()
+  })
+
+  it('최댓값을 넘으면 최댓값으로 잡아둔다', () => {
+    expect(parseVolumeNumber('vol12345')).toBe(MAX_VOLUME)
+  })
+})
+
+describe('formatVolume', () => {
+  it('두 자리로 채운 저장 표기를 만든다', () => {
+    expect(formatVolume(1)).toBe('vol01')
+    expect(formatVolume(9)).toBe('vol09')
+    expect(formatVolume(12)).toBe('vol12')
+    expect(formatVolume(100)).toBe('vol100')
+  })
+
+  it('범위를 벗어난 값은 잡아둔다', () => {
+    expect(formatVolume(0)).toBe('vol01')
+    expect(formatVolume(-5)).toBe('vol01')
+    expect(formatVolume(9999)).toBe(`vol${MAX_VOLUME}`)
+  })
+
+  it('폴더명(normalizeVolume)과 왕복해도 값이 유지된다', () => {
+    for (const n of [1, 9, 10, 99, 100]) {
+      expect(parseVolumeNumber(normalizeVolume(formatVolume(n)))).toBe(n)
+    }
   })
 })
 

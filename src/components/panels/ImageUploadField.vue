@@ -258,8 +258,8 @@ onBeforeUnmount(() => controller?.abort())
       </p>
     </template>
 
-    <!-- ── URL 직접 입력 (업로드 가능 여부와 무관하게 항상 제공) ── -->
-    <div class="gg-text-input space-y-2">
+    <!-- ── URL 이미지 직접 입력 숨김 (업로드 가능 여부와 무관하게 항상 제공) ── -->
+    <!-- <div class="gg-text-input space-y-2">
       <label v-if="showUploader" class="gg-field-label">또는 이미지 주소 직접 입력</label>
       <InputText
         :modelValue="modelValue"
@@ -267,7 +267,7 @@ onBeforeUnmount(() => controller?.abort())
         :placeholder="placeholder"
         class="w-full"
       />
-    </div>
+    </div> -->
   </div>
 </template>
 
