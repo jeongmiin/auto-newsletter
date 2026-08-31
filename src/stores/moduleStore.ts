@@ -62,6 +62,7 @@ import { defaultContactItems } from '@/constants/contactItems'
 import { sanitizeHtml } from '@/utils/sanitize'
 import { DEFAULT_GROUP_STYLES, wrapGroupHtmlForEmail, resolveGroupStyles, buildColumnLayoutHtml } from '@/utils/groupStyle'
 import { resolveWrapBorderCss } from '@/utils/wrapBorder'
+import { TEXT_FONT_SIZES, TEXT_PADDING } from '@/utils/quickAddItems'
 import { computeGroupLayout, resolveGroupRows, clampColumns, type GroupRowLayout } from '@/utils/groupLayout'
 import type { ComposedConversion } from '@/utils/legacyToComposed'
 
@@ -4268,8 +4269,9 @@ ${fullHtml}
     `<p style="margin:0; padding:0; line-height:1.7; text-align:${align};"><span style="font-size:${fontSize}; font-weight:${weight};">${text}</span></p>`
 
   /**
-   * 조립형 '타이틀 추가' — 구분선(여백) + 강조 타이틀 텍스트(18px/700) + 본문 텍스트(16px/500)를
+   * 조립형 '타이틀 추가' — 구분선(여백) + 강조 타이틀 텍스트(24px/700) + 본문 텍스트(16px/500)를
    * 하나의 세로 스택 그룹으로 조립한다. (섹션 도입부: 구분선 아래 제목 + 설명 패턴)
+   * 폰트 크기·여백 기준은 빠른추가 텍스트 모듈과 동일하다(@/utils/quickAddItems의 TEXT_FONT_SIZES·TEXT_PADDING).
    */
   const addComposedTitleSection = (): string | null =>
     buildComposedGroup([
@@ -4292,12 +4294,9 @@ ${fullHtml}
         row: 1,
         col: 0,
         overrides: {
-          descriptionText: weightedTextHtml('타이틀을 입력하세요', '18px', 700),
-          fontSize: '18px',
-          paddingTop: '15px',
-          paddingRight: '20px',
-          paddingBottom: '15px',
-          paddingLeft: '20px',
+          descriptionText: weightedTextHtml('타이틀을 입력하세요', TEXT_FONT_SIZES.title, 700),
+          fontSize: TEXT_FONT_SIZES.title,
+          ...TEXT_PADDING,
         },
       },
       {
@@ -4305,12 +4304,9 @@ ${fullHtml}
         row: 2,
         col: 0,
         overrides: {
-          descriptionText: weightedTextHtml('내용을 입력하세요', '16px', 500),
-          fontSize: '16px',
-          paddingTop: '0px',
-          paddingRight: '20px',
-          paddingBottom: '0px',
-          paddingLeft: '20px',
+          descriptionText: weightedTextHtml('내용을 입력하세요', TEXT_FONT_SIZES.body, 500),
+          fontSize: TEXT_FONT_SIZES.body,
+          ...TEXT_PADDING,
         },
       },
     ])

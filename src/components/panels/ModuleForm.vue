@@ -269,14 +269,56 @@
           <div class="tbl-divider tbl-divider--wide"></div>
         </template>
 
+        <!-- 작은 버튼 '버튼 내용' 칩 (Figma 1227-42350) — 버튼 2~4 노출 스위치를 대신한다.
+             칩 = 지금 있는 버튼(클릭해서 편집 대상 전환), '+ 추가' = 다음 버튼 켜기,
+             활성 칩의 ✕ = 그 버튼 삭제. 아래 '버튼 N' 속성 그룹은 고른 칩 하나만 펼쳐 보여준다. -->
+        <div v-if="isSmallButtonModule" class="sbtn-block">
+          <div class="sbtn-head">
+            <span class="gg-acc-label">버튼 내용</span>
+            <span class="sbtn-max">(최대 {{ SMALL_BTN_MAX }}개)</span>
+          </div>
+          <div class="sbtn-chips">
+            <!-- 칩 하나에 '선택'과 '삭제' 두 동작이 있어 컨테이너는 div, 안에 버튼 둘을 둔다 -->
+            <div
+              v-for="slot in smallBtnSlots"
+              :key="`sbtn-${slot}`"
+              class="sbtn-chip"
+              :class="{ 'is-active': slot === activeSmallBtn }"
+            >
+              <button type="button" class="sbtn-chip-main" @click="activeSmallBtn = slot">
+                {{ smallBtnLabel(slot) }}
+              </button>
+              <!-- 활성 칩에만 ✕ (버튼이 하나만 남으면 지울 수 없다) -->
+              <button
+                v-if="slot === activeSmallBtn && smallBtnSlots.length > 1"
+                type="button"
+                class="sbtn-chip-x"
+                :aria-label="`${smallBtnLabel(slot)} 삭제`"
+                v-tooltip.top="'이 버튼 삭제'"
+                @click="removeSmallBtn(slot)"
+              >
+                <span class="material-symbols-outlined">close_small</span>
+              </button>
+            </div>
+            <button
+              v-if="smallBtnSlots.length < SMALL_BTN_MAX"
+              type="button"
+              class="sbtn-chip sbtn-chip--add"
+              @click="addSmallBtn"
+            >+ 추가</button>
+          </div>
+        </div>
+
         <div
           v-for="(group, gIdx) in propGroups"
-          v-show="isGroupInActiveTab(group)"
+          v-show="isGroupInActiveTab(group) && isSmallBtnGroupVisible(group)"
           :key="`grp-${gIdx}-${group.name || 'flat'}`"
           class="gg-acc-section"
           :class="{
             'gg-acc-section--flat': !group.name,
             'gg-acc-section--quad': isQuadSelfLabeledGroup(group) && !isStyleSection(group),
+            'gg-acc-section--btn': isSmallBtnGroup(group),
+            'gg-acc-section--divider': gIdx === smallBtnCommonStart,
           }"
         >
         <!-- 이름 있는 prop 그룹(레거시 모듈의 로고/타이틀 등 섹션) — Figma 352-1138의 접이식 헤더 패턴.
@@ -286,7 +328,7 @@
              · 스위치 on→off: 펼침 상태는 그대로 두고 내용만 흐리게(조작 불가)
              · chevron/라벨 클릭: 스위치와 무관하게 열고 닫는다 (기본 닫힘) -->
         <div
-          v-if="hasSectionHeader(group) || (gIdx === 0 && !isTableModule)"
+          v-if="hasSectionHeader(group) || (gIdx === 0 && !isTableModule && !isSmallBtnGroup(group))"
           class="gg-acc-header"
           :class="{ 'is-static': !isCollapsibleSection(group) }"
         >
@@ -342,7 +384,7 @@
         >
           <!-- 리치텍스트(textarea)는 위에 '폰트 크기'와 서식 툴바가 바로 붙으므로 별도 라벨을 두지 않는다(Figma 640-3689) -->
           <label
-            v-show="prop.type !== 'boolean' && prop.type !== 'checkbox' && prop.type !== 'textarea' && prop.type !== 'table-editor' && !isColorBlock(prop) && !isQuadStart(prop, group.props, index) && !isSingleSpacingField(prop) && !isBorderWidthField(prop) && !isPxWidthField(prop) && !isBorderStyleStart(prop)"
+            v-show="prop.type !== 'boolean' && prop.type !== 'checkbox' && prop.type !== 'textarea' && prop.type !== 'table-editor' && !isColorBlock(prop) && !isQuadStart(prop, group.props, index) && !isSingleSpacingField(prop) && !isBorderWidthField(prop) && !isPxWidthField(prop) && !isBtnWidthField(prop) && !isBorderStyleStart(prop)"
             class="gg-field-label"
             :class="{ 'fs-label-row': isFontSizeField(prop) }"
           >
@@ -712,6 +754,38 @@
                   class="gg-margin-value-input"
                 />
                 <span class="gg-margin-value-unit">px</span>
+              </div>
+            </div>
+            <p v-if="prop.hint" class="hint-text" v-html="prop.hint"></p>
+          </div>
+
+          <!-- 작은 버튼 '버튼 너비' (Figma 1245-45052) — 여백과 같은 슬라이더 + 값 필드.
+               기본값이 'auto'라 px 슬라이더 판별(isPxWidthField)에 걸리지 않아 따로 그린다.
+               저장돼 있던 단위(%·px)는 그대로 유지한다(옛 템플릿의 '100%'가 px로 바뀌지 않도록). -->
+          <div v-else-if="isBtnWidthField(prop)" class="gg-margin-quad">
+            <div class="gg-margin-quad-head">
+              <span class="gg-field-label !mb-0">{{ prop.label }}</span>
+            </div>
+            <div class="gg-margin-slider-row">
+              <input
+                type="range"
+                min="0"
+                :max="btnWidthMax"
+                step="1"
+                :value="btnWidthNumber"
+                @input="onBtnWidthInput($event)"
+                class="gg-margin-slider"
+              />
+              <div class="gg-margin-value-field">
+                <input
+                  type="number"
+                  min="0"
+                  :max="btnWidthMax"
+                  :value="btnWidthNumber"
+                  @input="onBtnWidthInput($event)"
+                  class="gg-margin-value-input"
+                />
+                <span class="gg-margin-value-unit">{{ btnWidthUnit }}</span>
               </div>
             </div>
             <p v-if="prop.hint" class="hint-text" v-html="prop.hint"></p>
@@ -2589,6 +2663,106 @@ const onAlignSegmentPick = (prop: EditableProp, value: string) => {
   updateProperty(prop.key, value)
 }
 
+// ===== 작은 버튼 '버튼 내용' 칩 (Figma 1209-40180 / 1227-42350) =====
+// 버튼 2~4의 노출 스위치(showBtn2/3/4)를 칩 목록으로 바꾼 UI. 데이터 모델은 그대로라
+// 렌더·내보내기 경로(removeSmallButtonsProcessor)는 손대지 않는다.
+//  · 칩 = 지금 있는 버튼 (클릭 = 편집 대상 전환)
+//  · '+ 추가' = 다음 슬롯을 켠다 (최대 4개)
+//  · 활성 칩의 ✕ = 그 버튼 삭제 (뒤 버튼 내용을 한 칸씩 당기고 마지막 슬롯을 끈다)
+const SMALL_BTN_MAX = 4
+/** 토글을 켤 때 넣어 줄 기본 버튼 너비 — 'auto'인 채로 켜면 토글이 아무 일도 안 한 것처럼 보인다 */
+const SMALL_BTN_DEFAULT_WIDTH = '120px'
+const isSmallButtonModule = computed(() => selectedModule.value?.moduleId === 'ModuleSmallButton')
+const activeSmallBtn = ref(1)
+watch(() => selectedModule.value?.id, () => { activeSmallBtn.value = 1 })
+
+/** 지금 있는 버튼 슬롯 — 1번은 항상, 2~4는 showBtnN이 켜진 것만 (캔버스 렌더 순서와 동일) */
+const smallBtnSlots = computed<number[]>(() => {
+  const props = selectedModule.value?.properties ?? {}
+  const slots = [1]
+  for (let n = 2; n <= SMALL_BTN_MAX; n++) if (props[`showBtn${n}`] === true) slots.push(n)
+  return slots
+})
+// 활성 칩이 사라졌으면(삭제 등) 마지막 칩으로 되돌린다
+watch(smallBtnSlots, (slots) => {
+  if (!slots.includes(activeSmallBtn.value)) activeSmallBtn.value = slots[slots.length - 1] ?? 1
+})
+
+/** 칩 라벨 = 그 버튼의 텍스트(끝의 화살표는 떼고), 비어 있으면 '버튼 N' */
+const smallBtnLabel = (slot: number): string => {
+  const raw = String(selectedModule.value?.properties[`btn${slot}Text`] ?? '')
+    .replace(/[→>\s]+$/, '')
+    .trim()
+  return raw || `버튼 ${slot}`
+}
+
+const SMALL_BTN_FIELDS = ['Text', 'Url', 'BgColor', 'TextColor'] as const
+const readSmallBtn = (slot: number): unknown[] =>
+  SMALL_BTN_FIELDS.map((f) => selectedModule.value?.properties[`btn${slot}${f}`])
+const writeSmallBtn = (slot: number, values: unknown[]): void => {
+  SMALL_BTN_FIELDS.forEach((f, i) => {
+    const key = `btn${slot}${f}`
+    if (selectedModule.value?.properties[key] !== values[i]) updateProperty(key, values[i])
+  })
+}
+/** 그 슬롯을 설정 기본값으로 되돌린다 — 다시 추가했을 때 앞 버튼 내용이 남아 있지 않도록 */
+const resetSmallBtn = (slot: number): void =>
+  writeSmallBtn(
+    slot,
+    SMALL_BTN_FIELDS.map((f) => editableProps.value.find((p) => p.key === `btn${slot}${f}`)?.default ?? ''),
+  )
+
+const addSmallBtn = (): void => {
+  const next = [2, 3, 4].find((n) => !smallBtnSlots.value.includes(n))
+  if (!next) return
+  resetSmallBtn(next)
+  updateProperty(`showBtn${next}`, true)
+  activeSmallBtn.value = next
+}
+
+const removeSmallBtn = (slot: number): void => {
+  const slots = smallBtnSlots.value
+  const idx = slots.indexOf(slot)
+  if (slots.length <= 1 || idx === -1) return
+  const data = slots.map(readSmallBtn)
+  data.splice(idx, 1)
+  data.forEach((values, i) => writeSmallBtn(slots[i], values))
+  updateProperty(`showBtn${slots[slots.length - 1]}`, false)
+  activeSmallBtn.value = slots[Math.max(0, idx - 1)]
+}
+
+/** '버튼 1'~'버튼 4' 그룹(작은 버튼 전용) — 헤더 없이, 고른 칩 하나만 펼쳐서 보여준다 */
+const smallBtnGroupSlot = (group: PropGroup): number | null => {
+  if (!isSmallButtonModule.value || !group.name) return null
+  const m = /^버튼 ([1-4])$/.exec(group.name)
+  return m ? Number(m[1]) : null
+}
+const isSmallBtnGroup = (group: PropGroup): boolean => smallBtnGroupSlot(group) !== null
+const isSmallBtnGroupVisible = (group: PropGroup): boolean => {
+  const slot = smallBtnGroupSlot(group)
+  return slot === null || slot === activeSmallBtn.value
+}
+/** 버튼 칩 묶음과 공통 옵션(정렬·여백…) 사이의 구분선 위치 = 첫 '버튼 N' 아닌 섹션 */
+const smallBtnCommonStart = computed(() =>
+  isSmallButtonModule.value ? propGroups.value.findIndex((g) => !isSmallBtnGroup(g)) : -1,
+)
+
+// '버튼 너비' — 기본값이 'auto'라 px 슬라이더 판별(isPxWidthField)에 안 걸려 따로 그린다.
+const isBtnWidthField = (prop: EditableProp): boolean =>
+  isSmallButtonModule.value && prop.key === 'btnWidth'
+const btnWidthRaw = computed(() => String(selectedModule.value?.properties.btnWidth ?? '').trim())
+/** 저장된 단위를 그대로 유지한다 — 옛 템플릿의 '100%'를 px로 바꿔 버리지 않도록 */
+const btnWidthUnit = computed(() => (btnWidthRaw.value.endsWith('%') ? '%' : 'px'))
+const btnWidthMax = computed(() => (btnWidthUnit.value === '%' ? 100 : PX_WIDTH_MAX))
+const btnWidthNumber = computed(() => {
+  const n = Number.parseInt(btnWidthRaw.value, 10)
+  return Number.isFinite(n) ? Math.min(Math.max(n, 0), btnWidthMax.value) : 0
+})
+const onBtnWidthInput = (event: Event): void => {
+  const raw = Number.parseInt((event.target as HTMLInputElement).value, 10) || 0
+  updateProperty('btnWidth', `${Math.min(Math.max(raw, 0), btnWidthMax.value)}${btnWidthUnit.value}`)
+}
+
 // ===== 폰트 크기: 모듈 기본값 ↔ 선택 영역 크기 통합 컨트롤 (Figma 640-3689) =====
 // 드래그 선택이 있으면 그 범위의 인라인 크기를, 없으면 모듈 기본값(prop)을 대상으로 한다.
 // 어느 쪽을 바꾸는지는 라벨 옆 '선택 영역' 배지로 드러낸다.
@@ -2855,7 +3029,9 @@ const STYLE_SECTION_RULES: Record<string, '*' | { exclude: string } | Set<string
   // 버튼: 핵심 입력(텍스트·링크·폰트·배경색·글자색)은 항상 펼친 채 두고 스타일만 접이식 카드로
   ModuleOneButton: { exclude: '버튼' },
   ModuleTwoButton: new Set(['테두리', '모서리 둥글기', '여백']),
-  ModuleSmallButton: { exclude: '공통' },
+  // 작은 버튼: 버튼 1~4는 '버튼 내용' 칩이 대신 관리하므로(헤더·아코디언 없이 항상 펼침)
+  // 4개 버튼에 공통으로 걸리는 옵션만 접이식 카드로 (Figma 1227-42350)
+  ModuleSmallButton: new Set(['정렬', '여백', '글자 크기', '버튼 너비 직접 설정', '모서리 둥글기']),
   // 연락처: 핵심 입력('연락처')은 항상 펼친 채 두고 여백만 접이식 카드로
   ModuleContactInfo: new Set(['여백']),
   // SNS 아이콘: 핵심 입력(배경색·정렬·구성 요소)은 항상 펼친 채 두고 여백만 접이식 카드로
@@ -2898,8 +3074,9 @@ const fieldChunks = (group: PropGroup): FieldChunk[] => {
   return chunks
 }
 
+// (작은 버튼의 '버튼 N' 그룹은 칩이 헤더 역할을 하므로 섹션 헤더를 두지 않는다 → 항상 펼침)
 const hasSectionHeader = (group: PropGroup): boolean =>
-  !!group.name && (!isQuadSelfLabeledGroup(group) || isStyleSection(group))
+  !!group.name && !isSmallBtnGroup(group) && (!isQuadSelfLabeledGroup(group) || isStyleSection(group))
 // 헤더 우측에 on/off 토글이 있는 그룹인지 — boolean 토글 또는 테두리 블록(on/off) 토글.
 const groupHasHeaderToggle = (group: PropGroup): boolean =>
   !!groupHeaderToggle(group) || !!groupBorderToggleProp(group)
@@ -2929,6 +3106,13 @@ const isSectionEnabled = (group: PropGroup): boolean => {
 const onSectionSwitch = (group: PropGroup, index: number, on: boolean): void => {
   const t = groupHeaderToggle(group)
   if (t) updateProperty(t.key, on)
+  // '버튼 너비 직접 설정'은 실제 너비 값과 짝이다 — 끄면 자동(auto)으로, 켜면 기본 너비로
+  // 함께 맞춰야 토글 상태와 캔버스 결과가 어긋나지 않는다.
+  if (t?.key === 'showBtnWidth') {
+    if (!on) updateProperty('btnWidth', 'auto')
+    else if (!btnWidthRaw.value || btnWidthRaw.value === 'auto')
+      updateProperty('btnWidth', SMALL_BTN_DEFAULT_WIDTH)
+  }
   else {
     const b = groupBorderToggleProp(group)
     if (b) toggleBorderOn(b, on)

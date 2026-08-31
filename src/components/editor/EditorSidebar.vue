@@ -102,6 +102,7 @@ const isActive = (key: RailKey): boolean => {
   padding: 37px 6px;
   overflow-y: auto;
 }
+.editor-rail::-webkit-scrollbar { display: none; }
 /* 항목 68×60 (아이콘 24 + 5 + 라벨 12), 위아래 8 여백 */
 .rail-item {
   width: 100%;

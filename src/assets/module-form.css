@@ -552,6 +552,104 @@
   gap: 26px;
 }
 
+/* ── 작은 버튼 '버튼 내용' 칩 (Figma 1227-42350) ─────────────────────────
+   칩 = 지금 있는 버튼. 활성 칩은 파란 채움 + ✕(삭제), 마지막은 점선 '+ 추가'. */
+.module-form .sbtn-block {
+  padding-top: 26px;
+  margin-bottom: 26px;
+}
+.module-form .sbtn-head {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.module-form .sbtn-max {
+  font-size: 15px;
+  color: var(--gray-600);
+  letter-spacing: -0.15px;
+}
+.module-form .sbtn-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.module-form .sbtn-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 40px;
+  padding: 0 16px;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 32px;
+}
+.module-form .sbtn-chip:hover {
+  border-color: var(--gray-300);
+}
+.module-form .sbtn-chip.is-active,
+.module-form .sbtn-chip.is-active:hover {
+  background: var(--blue-400);
+  border-color: var(--blue-400);
+}
+.module-form .sbtn-chip-main {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gray-700);
+  background: none;
+  border: none;
+  padding: 0;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.module-form .sbtn-chip.is-active .sbtn-chip-main {
+  color: var(--white);
+  cursor: default;
+}
+.module-form .sbtn-chip-x {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--white);
+  cursor: pointer;
+}
+.module-form .sbtn-chip-x:hover {
+  background: rgb(255 255 255 / 25%);
+}
+.module-form .sbtn-chip-x .material-symbols-outlined {
+  font-size: 24px;
+}
+/* '+ 추가' — 점선 테두리 (Figma Button/Ghost/Medium, dashed) */
+.module-form .sbtn-chip--add {
+  border-style: dashed;
+  border-color: var(--gray-300);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gray-600);
+  cursor: pointer;
+}
+.module-form .sbtn-chip--add:hover {
+  border-color: var(--gray-400);
+  background: var(--gray-50);
+}
+/* 칩으로 고른 '버튼 N' 속성 그룹 — 섹션 헤더가 없으므로 구분선도 두지 않는다 */
+.module-form .gg-acc-section--btn {
+  border-top: none;
+}
+/* 버튼 내용과 공통 옵션(정렬·여백…) 사이 구분선 (Figma Line 45) */
+.module-form .gg-acc-section--divider {
+  border-top: 1px solid var(--gray-100);
+}
+
 /* flat 모듈의 인라인 토글(이미지 링크 사용·테두리 등) 위 구분선 —
    이름 있는 섹션의 gg-acc-section 구분선과 동일하게 토글 섹션을 시각적으로 분리한다. */
 .module-form .mf-toggle-divider {

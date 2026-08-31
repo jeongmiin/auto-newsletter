@@ -16,6 +16,10 @@ export interface QuickAddItem {
   overrides?: Record<string, unknown>
   /** 미리보기 카드 표시(선택) — 이미지: 플레이스홀더, 버튼: 스타일 버튼 미리보기 */
   preview?: 'single-image' | 'double-image' | 'single-button' | 'double-button' | 'small-button'
+  /** 카드 라벨을 실제 모듈 폰트 크기 위계대로 보이게 하는 표시용 값(선택).
+   *  패널 폭에 맞춰 실제 크기(24/20/16px)를 축소한 값이다 — 렌더 결과에는 영향 없음. */
+  labelFontSize?: string
+  labelFontWeight?: number
 }
 
 export type QuickAddCategory = 'text' | 'image' | 'button' | 'table'
@@ -24,32 +28,62 @@ export type QuickAddCategory = 'text' | 'image' | 'button' | 'table'
 const weightedTextHtml = (text: string, fontSize: string, weight: number, align = 'left'): string =>
   `<p style="margin:0; padding:0; line-height:1.7; text-align:${align};"><span style="font-size:${fontSize}; font-weight:${weight};">${text}</span></p>`
 
+/** 텍스트 모듈 폰트 크기 기준 — 타이틀 24 / 서브타이틀 20 / 텍스트·강조 태그 16px.
+ *  여백은 네 항목 모두 8px 20px(상하 8 · 좌우 20)로 통일한다. */
+export const TEXT_FONT_SIZES = {
+  title: '24px',
+  subTitle: '20px',
+  body: '16px',
+} as const
+
+/** 텍스트 모듈 공통 안쪽 여백 = 8px 20px */
+export const TEXT_PADDING = {
+  paddingTop: '8px',
+  paddingRight: '20px',
+  paddingBottom: '8px',
+  paddingLeft: '20px',
+} as const
+
 export const QUICK_ADD_ITEMS: Record<QuickAddCategory, QuickAddItem[]> = {
   text: [
-    { label: '타이틀 추가', moduleId: 'SectionTitle', composedBuilderId: 'ComposedTitleSection' },
     {
-      // 서브타이틀 = '타이틀 추가' 그룹의 타이틀 텍스트와 같은 속성(18px/700, 여백 15/20/15/20)을 가진 단일 텍스트 모듈
+      label: '타이틀 추가',
+      moduleId: 'SectionTitle',
+      composedBuilderId: 'ComposedTitleSection',
+      labelFontSize: '22px',
+      labelFontWeight: 700,
+    },
+    {
+      // 서브타이틀 = '타이틀 추가' 그룹의 타이틀 텍스트와 같은 속성(20px/700, 여백 8/20)을 가진 단일 텍스트 모듈
       label: '서브타이틀 추가',
       moduleId: 'ModuleDescText',
+      labelFontSize: '18px',
+      labelFontWeight: 600,
       overrides: {
-        descriptionText: weightedTextHtml('서브 타이틀을 입력하세요', '18px', 700),
-        fontSize: '18px',
-        paddingTop: '15px',
-        paddingRight: '20px',
-        paddingBottom: '15px',
-        paddingLeft: '20px',
+        descriptionText: weightedTextHtml('서브 타이틀을 입력하세요', TEXT_FONT_SIZES.subTitle, 700),
+        fontSize: TEXT_FONT_SIZES.subTitle,
+        ...TEXT_PADDING,
       },
     },
-    // 텍스트 = 좌우 20px 여백을 기본으로 얹은 설명 텍스트 모듈
+    // 텍스트 = 16px · 여백 8/20을 기본으로 얹은 설명 텍스트 모듈
     {
       label: '텍스트 추가',
       moduleId: 'ModuleDescText',
-      overrides: { paddingLeft: '20px', paddingRight: '20px' },
+      labelFontSize: '16px',
+      overrides: { fontSize: TEXT_FONT_SIZES.body, ...TEXT_PADDING },
     },
     {
-      label: '인라인 텍스트 추가',
+      // 강조 태그 = 인라인 텍스트 4칸 모두 16px, 바깥 여백 8/20
+      label: '강조 태그 추가',
       moduleId: 'ModuleInlineText',
-      overrides: { paddingLeft: '20px', paddingRight: '20px' },
+      labelFontSize: '16px',
+      overrides: {
+        text1FontSize: TEXT_FONT_SIZES.body,
+        text2FontSize: TEXT_FONT_SIZES.body,
+        text3FontSize: TEXT_FONT_SIZES.body,
+        text4FontSize: TEXT_FONT_SIZES.body,
+        ...TEXT_PADDING,
+      },
     },
   ],
   image: [

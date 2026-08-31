@@ -30,14 +30,12 @@
 
         <!-- 리사이즈 핸들 (좌측 패널 오른쪽 가장자리, 오른쪽으로 끌면 넓어짐) -->
         <div
-          class="resize-handle w-2 cursor-col-resize flex-shrink-0 relative group"
+          class="resize-handle cursor-col-resize flex-shrink-0 relative group"
           :class="{ 'is-resizing': isLeftResizing }"
           @mousedown="startLeftResize"
         >
           <div class="absolute inset-0 bg-gray-200 group-hover:bg-blue-100 transition-colors"></div>
-          <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center gap-1 opacity-40 group-hover:opacity-100 transition-opacity">
-            <div class="w-0.5 h-6 bg-gray-600 group-hover:bg-blue-500 rounded-full transition-colors"></div>
-          </div>
+          <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center gap-1 opacity-40 group-hover:opacity-100 transition-opacity"></div>
           <div
             class="absolute right-0 top-0 bottom-0 w-0.5 bg-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"
             :class="{ 'opacity-100': isLeftResizing }"

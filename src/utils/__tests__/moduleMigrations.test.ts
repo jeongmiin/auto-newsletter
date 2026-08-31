@@ -178,6 +178,36 @@ describe('migrateModuleProperties — 모서리 둥글기 토글', () => {
   })
 })
 
+describe('migrateModuleProperties — 작은 버튼 너비 토글', () => {
+  it('토글이 없던 시절 파일에 너비가 지정돼 있으면 켜진 것으로 본다', () => {
+    const next = migrateModuleProperties('ModuleSmallButton', { btnWidth: '100%' })
+    expect(next.showBtnWidth).toBe(true)
+    expect(next.btnWidth).toBe('100%') // 값 자체는 건드리지 않는다
+  })
+
+  it('자동(auto)이면 켜지 않는다', () => {
+    const next = migrateModuleProperties('ModuleSmallButton', { btnWidth: 'auto' })
+    expect(next.showBtnWidth).toBeUndefined()
+  })
+
+  it('사용자가 꺼 둔 파일(toggle=false)은 그대로 둔다', () => {
+    const next = migrateModuleProperties('ModuleSmallButton', {
+      btnWidth: '120px',
+      showBtnWidth: false,
+    })
+    expect(next.showBtnWidth).toBe(false)
+  })
+
+  it('둥글기 보정과 함께 걸려도 두 토글을 모두 켠다', () => {
+    const next = migrateModuleProperties('ModuleSmallButton', {
+      btnWidth: '120px',
+      btnBorderRadius: '30px',
+    })
+    expect(next.showBtnWidth).toBe(true)
+    expect(next.showBorderRadius).toBe(true)
+  })
+})
+
 describe('migrateModuleProperties — 옛 테이블 셀 내용(굵게 마커·줄바꿈)', () => {
   it('**굵게** 마커와 \n 줄바꿈을 HTML로 바꾼다', () => {
     const next = migrateModuleProperties('ModuleTable', {
