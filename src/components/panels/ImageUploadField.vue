@@ -21,6 +21,7 @@ import {
   UploadError,
   buildUploadDirectory,
   buildUploadFileName,
+  displayUploadDirectory,
   formatBytes,
   isUploadEnabled,
   uploadImage,
@@ -251,7 +252,10 @@ onBeforeUnmount(() => controller?.abort())
       </label>
 
       <p v-if="errorText" class="iu-error">{{ errorText }}</p>
-      <p v-if="targetDirectory" class="iu-target">저장 위치 <code>{{ targetDirectory }}</code></p>
+      <!-- 앞의 /e-dm/{연도}/는 모든 업로드가 같아서 표시에서 뺀다(올라가는 경로는 그대로) -->
+      <p v-if="targetDirectory" class="iu-target">
+        저장 위치 <code>{{ displayUploadDirectory(targetDirectory) }}</code>
+      </p>
       <!-- 회차 미입력 안내는 오류 문구와 내용이 같다 — 오류가 떠 있으면 반복하지 않는다 -->
       <p v-else-if="!errorText" class="iu-target iu-target--missing">
         저장 위치를 정하려면 <strong>전체 스타일 → 뉴스레터 회차</strong>를 먼저 입력해 주세요.

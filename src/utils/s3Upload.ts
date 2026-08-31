@@ -46,6 +46,19 @@ export const ALLOWED_IMAGE_EXT = ['jpg', 'jpeg', 'png', 'gif', 'webp']
 /** 업로드 허용 최대 크기 (10MB) — 서버 제한이 확인되면 그 값에 맞춘다 */
 export const MAX_IMAGE_BYTES = 10 * 1024 * 1024
 
+/**
+ * 업로드를 허용할 HTML 형식 — 'HTML 웹 링크 생성'(AI 도구)에서 쓴다.
+ *
+ * ⚠ HTML은 올린 주소를 브라우저에서 열면 그 도메인에서 스크립트가 실행된다.
+ *   SVG를 막은 것과 같은 성격이지만, 이쪽은 **웹에서 열리는 것 자체가 목적**이라 허용한다.
+ *   대신 올리는 사람이 스스로 만든 뉴스레터 문서라는 전제가 있고, 실제 방어선은 서버다.
+ */
+export const ALLOWED_HTML_MIME = ['text/html'] as const
+export const ALLOWED_HTML_EXT = ['html', 'htm']
+
+/** HTML 업로드 허용 최대 크기 (5MB) — 이미지가 다 들어간 뉴스레터도 보통 1MB 안쪽이다 */
+export const MAX_HTML_BYTES = 5 * 1024 * 1024
+
 /** 사람이 읽는 용량 표기 */
 export const formatBytes = (bytes: number): string =>
   bytes >= 1024 * 1024
@@ -84,20 +97,41 @@ export function validateImageFile(file: File): string | null {
   return null
 }
 
+/**
+ * HTML 파일을 업로드 전에 검사한다.
+ * @returns 문제가 있으면 사용자에게 보여줄 문구, 없으면 null
+ */
+export function validateHtmlFile(file: File): string | null {
+  const ext = extensionOf(file.name)
+  const mimeOk = (ALLOWED_HTML_MIME as readonly string[]).includes(file.type)
+  const extOk = ALLOWED_HTML_EXT.includes(ext)
+  // 이미지와 같은 이유로 둘 중 하나만 맞아도 통과시킨다(브라우저가 MIME을 비워 보내기도 한다)
+  if (!mimeOk && !extOk) {
+    return `HTML 파일만 올릴 수 있어요 (${ALLOWED_HTML_EXT.join(', ')})`
+  }
+  if (file.size > MAX_HTML_BYTES) {
+    return `파일이 너무 커요 — ${formatBytes(file.size)} (최대 ${formatBytes(MAX_HTML_BYTES)})`
+  }
+  if (file.size === 0) {
+    return '빈 파일이에요'
+  }
+  return null
+}
+
 /** 이름에 쓸 글자가 하나도 안 남았을 때 대신 쓰는 이름 */
 const FALLBACK_BASE = 'image'
 
 /**
  * 파일 이름에서 서버·URL에 안전한 부분만 남긴다.
- * 경로 구분자·공백·한글 등은 '-'로 바꾸고, 남는 게 없으면 'image'.
+ * 경로 구분자·공백·한글 등은 '-'로 바꾸고, 남는 게 없으면 fallback('image').
  */
-function sanitizeBaseName(originalName: string): string {
+function sanitizeBaseName(originalName: string, fallback = FALLBACK_BASE): string {
   const ext = extensionOf(originalName)
   const base = (ext ? originalName.slice(0, -(ext.length + 1)) : originalName)
     .replace(/[^a-zA-Z0-9._-]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .slice(0, 60)
-  return base || FALLBACK_BASE
+  return base || fallback
 }
 
 /**
@@ -112,9 +146,10 @@ export function buildUploadFileName(
   originalName: string,
   now: Date = new Date(),
   unique = true,
+  fallbackBase = FALLBACK_BASE,
 ): string {
   const ext = extensionOf(originalName)
-  const base = sanitizeBaseName(originalName)
+  const base = sanitizeBaseName(originalName, fallbackBase)
   const suffix = ext ? `.${ext}` : ''
   if (!unique) return `${base}${suffix}`
   const p = (n: number) => String(n).padStart(2, '0')
@@ -218,6 +253,16 @@ export function buildUploadDirectory(
   return `/e-dm/${now.getFullYear()}/${dir}/${vol}/`
 }
 
+/**
+ * 화면에 보여줄 저장 위치 — 앞의 `/e-dm/{연도}/`를 뗀 나머지(`hobanexpo/vol99/`).
+ *
+ * 이 앞부분은 모든 업로드가 똑같이 쓰는 고정 경로라 매번 읽어봐야 알 수 있는 게 없다.
+ * **표시만 줄이는 것이고, 실제로 올리는 경로는 buildUploadDirectory가 만든 값 그대로다.**
+ */
+export function displayUploadDirectory(directory?: string | null): string {
+  return (directory ?? '').replace(/^\/e-dm\/\d{4}\//, '')
+}
+
 /** 서버가 돌려준 값을 화면에 바로 쓸 수 있는 URL로 정리한다 */
 function toPublicUrl(savedFileName: string): string {
   const value = savedFileName.trim()
@@ -266,6 +311,8 @@ export interface UploadOptions {
    * false면 이름에 날짜·시각을 붙여 겹치지 않게 만든 뒤 `override=N`을 보낸다.
    */
   overwrite?: boolean
+  /** 이름에 쓸 글자가 하나도 안 남았을 때(예: '뉴스레터.html') 대신 쓸 이름 */
+  fallbackBaseName?: string
 }
 
 export interface UploadResult {
@@ -295,12 +342,33 @@ export function uploadImage(
   directory: string,
   options: UploadOptions = {},
 ): Promise<UploadResult> {
+  const invalid = validateImageFile(file)
+  if (invalid) return Promise.reject(new UploadError(invalid))
+  return postUpload(file, directory, options)
+}
+
+/**
+ * HTML 문서 하나를 업로드하고 웹에서 열 수 있는 URL을 돌려준다 (AI 도구 → HTML 웹 링크 생성).
+ * 서버 계약·전송 방식은 이미지와 완전히 같고, 검사 규칙만 다르다.
+ */
+export function uploadHtml(
+  file: File,
+  directory: string,
+  options: UploadOptions = {},
+): Promise<UploadResult> {
+  const invalid = validateHtmlFile(file)
+  if (invalid) return Promise.reject(new UploadError(invalid))
+  return postUpload(file, directory, { fallbackBaseName: 'newsletter', ...options })
+}
+
+/** 실제 전송 — 검사를 통과한 파일을 서버 계약대로 올린다 (이미지·HTML 공용) */
+function postUpload(
+  file: File,
+  directory: string,
+  options: UploadOptions = {},
+): Promise<UploadResult> {
   if (!endpoint) {
     return Promise.reject(new UploadError('업로드 주소가 설정되지 않았어요'))
-  }
-  const invalid = validateImageFile(file)
-  if (invalid) {
-    return Promise.reject(new UploadError(invalid))
   }
 
   const overwrite = options.overwrite ?? true
@@ -309,7 +377,11 @@ export function uploadImage(
     const form = new FormData()
     // 원본 File을 그대로 넣으면 파일명을 바꿀 수 없어 세 번째 인자로 이름을 지정한다.
     // 덮어쓸 때는 이름을 원본 그대로 둬야 같은 이름끼리 만난다(위 buildUploadFileName 주석 참고).
-    form.append('file', file, buildUploadFileName(file.name, new Date(), !overwrite))
+    form.append(
+      'file',
+      file,
+      buildUploadFileName(file.name, new Date(), !overwrite, options.fallbackBaseName),
+    )
     form.append('directory', directory)
     form.append('override', overwrite ? 'Y' : 'N')
 

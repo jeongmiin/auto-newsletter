@@ -19,8 +19,8 @@
           v-else-if="!hasSelection && activeCategory"
           :category="activeCategory"
         />
-        <!-- AI 도구 — 아직 준비 중(안내 패널) -->
-        <ComingSoonPanel v-else-if="!hasSelection && editorStore.activeMenu === 'ai'" />
+        <!-- AI 도구 — HTML 웹 링크 생성 -->
+        <AiToolsPanel v-else-if="!hasSelection && editorStore.activeMenu === 'ai'" />
         <SelectedItemPanel v-else-if="hasSelection" />
         <ModulePanel
           v-else
@@ -78,7 +78,7 @@ import PointColorPanel from '@/components/panels/PointColorPanel.vue'
 import CategoryModulePanel from '@/components/panels/CategoryModulePanel.vue'
 import SelectedItemPanel from '@/components/panels/SelectedItemPanel.vue'
 import ColumnComposePanel from '@/components/panels/ColumnComposePanel.vue'
-import ComingSoonPanel from '@/components/panels/ComingSoonPanel.vue'
+import AiToolsPanel from '@/components/panels/AiToolsPanel.vue'
 import { useEditorStore } from '@/stores/editorStore'
 import { useModuleStore } from '@/stores/moduleStore'
 

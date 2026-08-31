@@ -28,6 +28,10 @@ const MIME = {
   '.jpeg': 'image/jpeg',
   '.gif': 'image/gif',
   '.webp': 'image/webp',
+  // HTML은 'HTML 웹 링크 생성'(AI 도구)이 올리는 형식이다 — 만든 주소를 열면 뉴스레터가
+  // 실제로 보여야 하므로 text/html로 내려준다(개발용 목 서버라 오리진도 로컬이다).
+  '.html': 'text/html; charset=utf-8',
+  '.htm': 'text/html; charset=utf-8',
   // .svg는 일부러 없다 — 업로드 허용 목록에서 뺀 형식이라(s3Upload.ts 참고),
   // 어떤 경로로든 들어오면 이미지가 아닌 application/octet-stream으로 내려가 실행되지 않는다.
 }

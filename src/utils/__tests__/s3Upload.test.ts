@@ -1,7 +1,9 @@
 import { describe, it, expect } from 'vitest'
 import {
+  MAX_HTML_BYTES,
   MAX_IMAGE_BYTES,
   buildUploadDirectory,
+  displayUploadDirectory,
   extractErrorMessage,
   buildUploadFileName,
   formatBytes,
@@ -9,6 +11,7 @@ import {
   normalizeVolume,
   parseVolumeNumber,
   uploadFolderOf,
+  validateHtmlFile,
   validateImageFile,
   MAX_VOLUME,
 } from '../s3Upload'
@@ -194,6 +197,24 @@ describe('buildUploadDirectory', () => {
   })
 })
 
+describe('displayUploadDirectory', () => {
+  it('모든 업로드가 공유하는 /e-dm/{연도}/ 앞부분만 뗀다', () => {
+    expect(displayUploadDirectory('/e-dm/2026/hobanexpo/vol99/')).toBe('hobanexpo/vol99/')
+    expect(displayUploadDirectory('/e-dm/2026/blank/conv-industry-1/vol01/')).toBe(
+      'blank/conv-industry-1/vol01/',
+    )
+  })
+
+  it('모양이 다르면 그대로 보여준다 (임의로 잘라내지 않는다)', () => {
+    expect(displayUploadDirectory('/other/2026/vms/vol01/')).toBe('/other/2026/vms/vol01/')
+  })
+
+  it('값이 없으면 빈 문자열', () => {
+    expect(displayUploadDirectory(null)).toBe('')
+    expect(displayUploadDirectory(undefined)).toBe('')
+  })
+})
+
 describe('uploadFolderOf', () => {
   it('템플릿으로 시작했으면 그 템플릿 id가 곧 전시회 폴더다', () => {
     expect(uploadFolderOf('nextcon', 'arch-plan')).toBe('nextcon')
@@ -258,6 +279,47 @@ describe('validateImageFile', () => {
 
   it('빈 파일은 막는다', () => {
     expect(validateImageFile(fakeFile('a.png', 0, 'image/png'))).toBe('빈 파일이에요')
+  })
+})
+
+describe('validateHtmlFile', () => {
+  it('html·htm은 통과시킨다', () => {
+    expect(validateHtmlFile(fakeFile('a.html', 1024, 'text/html'))).toBeNull()
+    expect(validateHtmlFile(fakeFile('a.htm', 1024, 'text/html'))).toBeNull()
+  })
+
+  it('MIME이 비어 있어도 확장자가 맞으면 통과시킨다', () => {
+    expect(validateHtmlFile(fakeFile('newsletter.html', 1024, ''))).toBeNull()
+  })
+
+  it('HTML이 아니면 막는다', () => {
+    expect(validateHtmlFile(fakeFile('a.png', 1024, 'image/png'))).toMatch(/HTML 파일만/)
+    expect(validateHtmlFile(fakeFile('a.txt', 1024, 'text/plain'))).toMatch(/HTML 파일만/)
+  })
+
+  it('최대 크기를 넘으면 막고, 경계값은 통과시킨다', () => {
+    expect(validateHtmlFile(fakeFile('a.html', MAX_HTML_BYTES + 1, 'text/html'))).toMatch(/너무 커요/)
+    expect(validateHtmlFile(fakeFile('a.html', MAX_HTML_BYTES, 'text/html'))).toBeNull()
+  })
+
+  it('빈 파일은 막는다', () => {
+    expect(validateHtmlFile(fakeFile('a.html', 0, 'text/html'))).toBe('빈 파일이에요')
+  })
+})
+
+describe('HTML 업로드 이름 — 한글 이름이면 newsletter로 채운다', () => {
+  it('이름에 쓸 글자가 남지 않으면 넘긴 이름을 쓴다', () => {
+    // 이미지(기본값 image)와 달리 HTML은 'newsletter.html'이 되도록 uploadHtml이 넘긴다
+    expect(buildUploadFileName('뉴스레터.html', new Date(), false, 'newsletter')).toBe(
+      'newsletter.html',
+    )
+    expect(buildUploadFileName('뉴스레터.png', new Date(), false)).toBe('image.png')
+  })
+
+  it('영문 이름은 그대로 살린다', () => {
+    expect(buildUploadFileName('kpex-vol04.html', new Date(), false, 'newsletter')).toBe(
+      'kpex-vol04.html',
+    )
   })
 })
 
