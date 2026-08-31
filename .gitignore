@@ -29,6 +29,9 @@ coverage
 
 *.tsbuildinfo
 
+# 목 업로드 서버(scripts/mock-s3-upload.mjs)가 저장하는 파일 — 개발 중 임시 산출물
+.mock-uploads/
+
 # 템플릿 원본 작업 파일 (재편집용 HTML) — 템플릿은 public/templates/templates-config.json에
 # 이미 담겨 있어 앱 실행에 필요 없다. 용량이 커서 이력에 남기지 않는다.
 temp/

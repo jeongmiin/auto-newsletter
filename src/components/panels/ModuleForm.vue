@@ -916,6 +916,19 @@
             </Editor>
           </div>
 
+          <!-- 이미지 주소 — 업로드 + URL 직접 입력.
+               링크 URL(type:'url')과 달리 이미지 '원본'을 가리키는 필드만 여기로 온다
+               (modules-config.json에서 type:'image'로 표시). -->
+          <div v-else-if="prop.type === 'image'" class="space-y-2">
+            <ImageUploadField
+              :modelValue="String(selectedModule.properties[prop.key] || '')"
+              @update:modelValue="updateProperty(prop.key, $event)"
+              :placeholder="prop.placeholder || 'https://...'"
+              :placeholderUrl="imagePlaceholderUrl(prop)"
+            />
+            <p v-if="prop.hint" class="hint-text" v-html="prop.hint"></p>
+          </div>
+
           <!-- URL 입력 -->
           <div v-else-if="prop.type === 'url'" class="space-y-2 gg-text-input">
             <InputText
@@ -1598,14 +1611,7 @@
                   <div class="tbl-divider"></div>
                   <div class="gg-field">
                     <label class="tbl-sec-label">이미지 파일</label>
-                    <div class="gg-text-input space-y-2">
-                      <label class="gg-field-label">이미지 파일 URL</label>
-                      <InputText
-                        :modelValue="selImageUrl"
-                        @update:modelValue="setSelImageUrl"
-                        placeholder="https://..."
-                      />
-                    </div>
+                    <ImageUploadField :modelValue="selImageUrl" @update:modelValue="setSelImageUrl" />
                     <div class="gg-text-input space-y-2 !mt-3">
                       <label class="gg-field-label">이미지 설명</label>
                       <InputText
@@ -1871,7 +1877,9 @@ import {
 } from '@/utils/quillLetterSpacing'
 import { POINT_COLOR_SUFFIX, POINT_COLOR_INDEX_SUFFIX, POINT_COLOR_CSS_VAR, pointColorCssVar, getPointColorIndex, pointColorAt } from '@/utils/pointColor'
 import { processQuillHtml } from '@/utils/quillHtmlProcessor'
+import { DEFAULT_IMAGE_URL } from '@/constants/defaults'
 import TableCellEditor from './TableCellEditor.vue'
+import ImageUploadField from './ImageUploadField.vue'
 import ColorAlphaPicker from '@/components/ColorAlphaPicker.vue'
 import HexColorInput from '@/components/HexColorInput.vue'
 import PointColorSwatchRow from '@/components/PointColorSwatchRow.vue'
@@ -2645,7 +2653,17 @@ const isAlignSegment = (prop: EditableProp): boolean => {
   return vals.includes('left') && vals.includes('center') && vals.includes('right')
 }
 /** 세그먼트에서 활성으로 보일 값 — 저장값이 없으면 그 속성의 기본값(제목 center / 내용 left 등) */
-const alignValueOf = (prop: EditableProp): string =>
+/**
+ * 이미지 필드에서 '삭제'했을 때 되돌릴 자리표시 이미지.
+ * modules-config.json에 적힌 그 필드의 기본 이미지를 쓴다 — 2단 이미지는 2단 자리표시로,
+ * 로고는 회색 로고로 돌아가야 모양이 어긋나지 않는다. 기본값이 없으면 1단 자리표시.
+ */
+const imagePlaceholderUrl = (prop: EditableProp): string => {
+  const fallback = typeof prop.default === 'string' ? prop.default.trim() : ''
+  return fallback || DEFAULT_IMAGE_URL
+}
+
+const alignValueOf =(prop: EditableProp): string =>
   String(selectedModule.value?.properties[prop.key] || prop.default || 'center')
 
 /**

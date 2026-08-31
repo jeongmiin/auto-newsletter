@@ -40,6 +40,8 @@ export interface ProjectMetadata {
     borderStyle: string
     /** 전체 스타일의 '뉴스레터 요약' — 내보내기 때 래퍼 표의 summary 속성이 된다 */
     summary?: string
+    /** 전체 스타일의 '뉴스레터 회차'(예: vol01) — 이미지 업로드 폴더의 마지막 단계 */
+    volume?: string
     /** 실제 적용되는 포인트 색상(팔레트 [0]번). 팔레트가 생기기 전 파일에는 이것만 있다. */
     pointColor?: string
     /** 포인트 색상 팔레트(최대 3개) */

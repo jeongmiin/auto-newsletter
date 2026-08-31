@@ -15,6 +15,7 @@
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix",
     "format": "prettier --write src/",
+    "mock:upload": "node scripts/mock-s3-upload.mjs",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",

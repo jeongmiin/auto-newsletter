@@ -14,6 +14,23 @@ export default defineConfig(({ command }) => {
   // DEPLOY_BASE가 없으면 기존 동작(로컬='/', GH Actions='/auto-newsletter/')을 유지한다.
   const deployBase = process.env.DEPLOY_BASE || (isGitHubActionsBuild ? '/auto-newsletter/' : '/')
 
+  // 이미지 업로드 API 프록시 대상 (개발/미리보기 전용).
+  //
+  // CORS는 **브라우저가 거는 규칙**이라 서버↔서버 호출에는 적용되지 않는다. 브라우저가
+  // localhost로만 요청하고 Vite가 뒤에서 대신 부르면, 업로드 서버에
+  // Access-Control-Allow-Origin이 없어도 개발 중에는 그대로 쓸 수 있다.
+  // (배포본은 프록시가 없어 브라우저가 직접 부르므로 서버 쪽 허용이 필요하다.)
+  //
+  // 기본값은 로컬 목 서버 — `npm run mock:upload`로 띄운다. 실제 서버를 붙이려면
+  //   S3_UPLOAD_TARGET=https://fmstest.e-sang.net npm run dev
+  const uploadTarget = process.env.S3_UPLOAD_TARGET || 'http://localhost:5174'
+  const uploadProxy = {
+    '/api/files': {
+      target: uploadTarget,
+      changeOrigin: true,
+    },
+  }
+
   return {
     base: deployBase,
     plugins: [
@@ -35,6 +52,11 @@ export default defineConfig(({ command }) => {
     server: {
       port: 5173,
       strictPort: true,
+      proxy: uploadProxy,
+    },
+    // 빌드본 확인(vite preview)에서도 같은 프록시를 쓴다 — 배포 전 마지막 점검용
+    preview: {
+      proxy: uploadProxy,
     },
     // public 폴더 처리 명시
     publicDir: 'public',

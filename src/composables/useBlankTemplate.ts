@@ -20,10 +20,12 @@ export function useBlankTemplate() {
     // 전체 스타일(배경색·테두리·포인트 색상·뉴스레터 요약)도 처음 값으로 —
     // 모듈만 지우면 앞 작업물의 배경색·요약이 빈 템플릿에 그대로 묻어난다.
     editorStore.resetWrapSettings()
-    // 템플릿만 비우고 소속 팀(teamId)은 유지한다 — 담당자가 바뀐 게 아니라 내용만 지운 것이라,
-    // 이후 이미지 업로드 경로 등이 계속 같은 팀을 가리켜야 한다.
+    // 내용만 지운 것이지 '어느 전시의 뉴스레터인가'가 바뀐 건 아니다 —
+    // 소속 팀(teamId)과 템플릿 id를 모두 유지해, 이미지 업로드 경로가 계속 같은 폴더를
+    // 가리키게 한다(예: /e-dm/2026/hobanexpo/). 보이는 이름만 '빈 템플릿'으로 바꾼다.
+    // 다른 전시로 옮기려면 템플릿 선택 화면에서 고르면 그때 id가 교체된다.
     editorStore.setCurrentTemplate({
-      templateId: null,
+      templateId: editorStore.currentTemplateId,
       templateName: '빈 템플릿',
       teamId: editorStore.currentTeamId,
     })

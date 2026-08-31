@@ -35,6 +35,8 @@ const router = createRouter({
  */
 router.beforeEach((to) => {
   if (to.name !== 'editor') return true
+  // 팀만 본다 — 빈 문서로 시작하면 템플릿 id가 없고, 그때 업로드 폴더는 팀으로 정해진다
+  // (`blank/{팀}` — s3Upload.uploadFolderOf). 팀조차 없으면 올릴 자리를 만들 수 없다.
   return useEditorStore().currentTeamId ? true : { name: 'templates' }
 })
 

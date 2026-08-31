@@ -93,6 +93,52 @@
 
     <div class="divider"></div>
 
+    <!-- 뉴스레터 회차 — 이미지 업로드 폴더의 마지막 단계라 비어 있으면 업로드가 막힌다.
+         'vol'은 모든 회차에 공통이라 고정해 두고 숫자만 오르내리게 한다. -->
+    <div class="flex flex-col gap-[10px]">
+      <div class="row-label">뉴스레터 회차 <span class="text-red-500">*</span></div>
+      <div class="vol-field" :class="{ 'is-empty': volumeNumber === null }">
+        <span class="vol-prefix">{{ VOLUME_PREFIX }}</span>
+        <input
+          type="number"
+          class="vol-number"
+          :min="MIN_VOLUME"
+          :max="MAX_VOLUME"
+          step="1"
+          inputmode="numeric"
+          :value="volumeNumber ?? ''"
+          placeholder="숫자"
+          aria-label="뉴스레터 회차 숫자"
+          @input="onVolumeInput"
+        />
+        <button
+          type="button"
+          class="vol-step"
+          :disabled="(volumeNumber ?? MIN_VOLUME) <= MIN_VOLUME"
+          v-tooltip.top="'이전 회차'"
+          aria-label="회차 1 줄이기"
+          @click="stepVolume(-1)"
+        >
+          <span class="material-symbols-outlined">remove</span>
+        </button>
+        <button
+          type="button"
+          class="vol-step"
+          :disabled="(volumeNumber ?? 0) >= MAX_VOLUME"
+          v-tooltip.top="'다음 회차'"
+          aria-label="회차 1 늘리기"
+          @click="stepVolume(1)"
+        >
+          <span class="material-symbols-outlined">add</span>
+        </button>
+      </div>
+    </div>
+    <p class="hint-text !-mt-3">
+      *이미지가 <code>{{ volumePreview }}</code> 폴더에 정리돼요. 회차를 정해야 이미지를 올릴 수 있어요.
+    </p>
+
+    <div class="divider"></div>
+
     <!-- 뉴스레터 요약 -->
     <div class="flex flex-col gap-[10px]">
       <span class="row-label">뉴스레터 요약</span>
@@ -114,6 +160,14 @@ import { computed } from 'vue'
 import { useEditorStore } from '@/stores/editorStore'
 import { normalizePxLength } from '@/utils/cssUnit'
 import { FONT_LANGUAGE_OPTIONS } from '@/utils/fontFamily'
+import {
+  buildUploadDirectory,
+  formatVolume,
+  parseVolumeNumber,
+  MAX_VOLUME,
+  MIN_VOLUME,
+  VOLUME_PREFIX,
+} from '@/utils/s3Upload'
 import ColorPopoverPicker from './ColorPopoverPicker.vue'
 
 const editorStore = useEditorStore()
@@ -146,6 +200,42 @@ const onWidthSlideEvent = (event: Event) => {
 const onSummaryInput = (event: Event) => {
   update('summary', (event.target as HTMLInputElement).value)
 }
+
+/**
+ * 회차는 저장 값('vol01')과 화면 값(1)의 형태가 다르다.
+ * 저장 형태는 예전 그대로 두고(기존 저장 파일 호환) 화면에서는 숫자만 다룬다.
+ */
+const volumeNumber = computed(() => parseVolumeNumber(wrapSettings.value.volume))
+
+/** null이면 '아직 안 정함' — 업로드가 막힌 상태로 되돌린다 */
+const setVolume = (n: number | null) => {
+  update('volume', n === null ? '' : formatVolume(n))
+}
+
+const onVolumeInput = (event: Event) => {
+  const raw = (event.target as HTMLInputElement).value.trim()
+  setVolume(raw ? parseVolumeNumber(raw) : null)
+}
+
+/** 아직 안 정했으면 0에서 시작 — +를 누르면 vol01, -는 formatVolume이 최솟값으로 잡아준다 */
+const stepVolume = (delta: number) => {
+  setVolume((volumeNumber.value ?? 0) + delta)
+}
+
+/**
+ * 지금 회차가 어떤 폴더가 되는지 보여준다 — 아직 안 정했으면 자리를 vol01로 흉내 낸다.
+ *
+ * 앞의 `/e-dm/{연도}/`는 모든 뉴스레터가 똑같아서 알려줄 게 없으니 그 두 조각만 걷어낸다.
+ * 뒤쪽은 통째로 남긴다 — 빈 문서는 `blank/{팀}/vol01`처럼 세 조각이라 개수를 못 박으면 잘린다.
+ *   '/e-dm/2026/handarty/vol01/'   → 'handarty/vol01'
+ *   '/e-dm/2026/blank/mice/vol01/' → 'blank/mice/vol01'
+ */
+const volumePreview = computed(() => {
+  const directory =
+    buildUploadDirectory(editorStore.uploadFolder, wrapSettings.value.volume) ??
+    buildUploadDirectory(editorStore.uploadFolder, formatVolume(MIN_VOLUME))
+  return (directory ?? '').split('/').filter(Boolean).slice(2).join('/')
+})
 </script>
 
 <style scoped>
@@ -221,6 +311,73 @@ const onSummaryInput = (event: Event) => {
 }
 .summary-field::placeholder {
   color: var(--gray-500);
+}
+
+/* ===== 뉴스레터 회차 =====
+   'vol'은 고정 접두사라 글자로만 두고, 숫자 칸과 -/+ 버튼만 조작할 수 있게 한다.
+   껍데기는 .summary-field와 같은 회색 라운드 박스. */
+.vol-field {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 40px;
+  padding: 0 6px 0 12px;
+  background: var(--gray-100);
+  border-radius: 8px;
+}
+
+.vol-prefix {
+  font-size: 15px;
+  color: var(--gray-600);
+  font-weight: 600;
+  user-select: none;
+}
+.vol-number {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  color: var(--gray-800);
+  /* 네이티브 스핀 버튼은 숨긴다 — 옆의 -/+ 버튼이 그 역할을 한다 (.width-field와 동일) */
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+.vol-number::-webkit-outer-spin-button,
+.vol-number::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.vol-number::placeholder {
+  color: var(--gray-500);
+}
+.vol-step {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 6px;
+  background: var(--white);
+  color: var(--gray-700);
+  cursor: pointer;
+  transition:
+    background 0.12s,
+    color 0.12s;
+}
+.vol-step:hover:not(:disabled) {
+  background: var(--gray-200);
+}
+.vol-step:disabled {
+  background: transparent;
+  color: var(--gray-300);
+  cursor: not-allowed;
+}
+.vol-step .material-symbols-outlined {
+  font-size: 18px;
 }
 
 </style>
