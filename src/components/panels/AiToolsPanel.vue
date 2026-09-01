@@ -72,7 +72,7 @@ const startUpload = async (file: File) => {
     errorText.value = MISSING_VOLUME_MESSAGE
     toast.add({
       severity: 'warn',
-      summary: '뉴스레터 회차가 필요해요',
+      summary: '저장할 폴더가 필요해요',
       detail: MISSING_VOLUME_MESSAGE,
       life: 6000,
     })

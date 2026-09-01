@@ -21,7 +21,6 @@ import {
   UploadError,
   buildUploadDirectory,
   buildUploadFileName,
-  displayUploadDirectory,
   formatBytes,
   isUploadEnabled,
   uploadImage,
@@ -80,8 +79,8 @@ const allowedFormatsLabel = [...new Set(ALLOWED_IMAGE_EXT.filter((e) => e !== 'j
 const hasValue = computed(() => !isPlaceholderImage(props.modelValue))
 
 /**
- * 업로드될 폴더 — 사용자에게 미리 보여줘 어디에 쌓이는지 알 수 있게 한다.
- * 회차('전체 스타일' → 뉴스레터 회차)를 아직 안 적었으면 null이다.
+ * 올라갈 폴더 — '폴더 선택' 걸음에서 정해진다(화면에는 보여주지 않는다).
+ * 어쩌다 폴더가 비어 있으면 null이고, 그때는 업로드를 막고 안내만 띄운다.
  */
 const targetDirectory = computed(() =>
   buildUploadDirectory(editorStore.uploadFolder, editorStore.wrapSettings.volume),
@@ -100,13 +99,13 @@ const openPicker = () => {
 const startUpload = async (file: File) => {
   errorText.value = ''
 
-  // 회차를 안 적었으면 올릴 폴더가 정해지지 않는다 — 알림을 띄우고 여기서 멈춘다.
+  // 올릴 폴더가 정해지지 않았으면 알림을 띄우고 여기서 멈춘다.
   const directory = targetDirectory.value
   if (!directory) {
     errorText.value = MISSING_VOLUME_MESSAGE
     toast.add({
       severity: 'warn',
-      summary: '뉴스레터 회차가 필요해요',
+      summary: '저장할 폴더가 필요해요',
       detail: MISSING_VOLUME_MESSAGE,
       life: 6000,
     })
@@ -251,15 +250,10 @@ onBeforeUnmount(() => controller?.abort())
         </span>
       </label>
 
+      <!-- 저장 위치는 보여주지 않는다 — 폴더는 에디터에 들어오기 전 '폴더 선택' 걸음에서
+           이미 정해졌고, 확인이 필요하면 '전체 스타일 → 뉴스레터 회차'에 그대로 적혀 있다.
+           (올릴 자리가 없는 경우는 위 errorText가 알린다) -->
       <p v-if="errorText" class="iu-error">{{ errorText }}</p>
-      <!-- 앞의 /e-dm/{연도}/는 모든 업로드가 같아서 표시에서 뺀다(올라가는 경로는 그대로) -->
-      <p v-if="targetDirectory" class="iu-target">
-        저장 위치 <code>{{ displayUploadDirectory(targetDirectory) }}</code>
-      </p>
-      <!-- 회차 미입력 안내는 오류 문구와 내용이 같다 — 오류가 떠 있으면 반복하지 않는다 -->
-      <p v-else-if="!errorText" class="iu-target iu-target--missing">
-        저장 위치를 정하려면 <strong>전체 스타일 → 뉴스레터 회차</strong>를 먼저 입력해 주세요.
-      </p>
     </template>
 
     <!-- ── URL 이미지 직접 입력 숨김 (업로드 가능 여부와 무관하게 항상 제공) ── -->
@@ -448,21 +442,5 @@ onBeforeUnmount(() => controller?.abort())
   margin: 0;
   font-size: 13px;
   color: var(--red-700);
-}
-.iu-target {
-  margin: 0;
-  font-size: 12px;
-  color: var(--gray-500);
-}
-.iu-target code {
-  font-size: 12px;
-  color: var(--gray-600);
-}
-/* 회차 미입력 — 업로드가 막혀 있다는 걸 눈에 띄게 */
-.iu-target--missing {
-  color: var(--yellow-700);
-}
-.iu-target--missing strong {
-  font-weight: 600;
 }
 </style>
