@@ -10,6 +10,7 @@ import { setActivePinia, createPinia } from 'pinia'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
 import {
+  buildDownloadFileName,
   serializeModule,
   extractProjectMetadata,
   restoreProject,
@@ -52,6 +53,34 @@ const serializeProject = (): ProjectMetadata => {
 
 const findByLabel = (label: string): ModuleInstance | undefined =>
   useModuleStore().modules.find((m) => m.properties.label === label)
+
+describe('내려받을 파일 이름', () => {
+  it('전시회_폴더_성격.html — 저장용과 발송용이 나란히 붙는다', () => {
+    expect(buildDownloadFileName('police', 'vol01', 'edit')).toBe('police_vol01_edit.html')
+    expect(buildDownloadFileName('police', 'vol01', 'send')).toBe('police_vol01_send.html')
+  })
+
+  // 빈 문서는 전시회가 없다 — 업로드 폴더(`{팀}/blank`)와 같은 이름을 쓴다
+  it('빈 문서로 시작했으면 blank', () => {
+    expect(buildDownloadFileName(null, 'vol07', 'edit')).toBe('blank_vol07_edit.html')
+    expect(buildDownloadFileName(undefined, 'vol07', 'send')).toBe('blank_vol07_send.html')
+  })
+
+  it('한글·공백·대문자는 남기지 않는다 (메일·S3를 오가며 깨지는 이름 방지)', () => {
+    expect(buildDownloadFileName('Space Design', 'VOL 01', 'edit')).toBe('spacedesign_vol01_edit.html')
+    expect(buildDownloadFileName('국제치안', 'vol01', 'edit')).toBe('blank_vol01_edit.html')
+  })
+
+  it('밑줄·하이픈이 든 전시회 id는 그대로 살린다', () => {
+    expect(buildDownloadFileName('space_design', 'vol01', 'edit')).toBe('space_design_vol01_edit.html')
+    expect(buildDownloadFileName('c-uas', 'vol02', 'send')).toBe('c-uas_vol02_send.html')
+  })
+
+  it('폴더가 없으면 그 자리만 빠진다 (이름이 __ 로 벌어지지 않게)', () => {
+    expect(buildDownloadFileName('police', '', 'edit')).toBe('police_edit.html')
+    expect(buildDownloadFileName('police', null, 'send')).toBe('police_send.html')
+  })
+})
 
 describe('projectFile — 메타데이터 추출', () => {
   it('저장 주석에서 메타데이터를 읽는다', () => {

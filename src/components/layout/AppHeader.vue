@@ -93,8 +93,21 @@
       <!-- 우측 (1125-3080): 저장상태 ↔ 버튼 그룹 10px, 버튼끼리도 10px -->
       <div class="hright">
         <span v-if="lastDownload" class="hsaved">
-          {{ lastDownloadDateLabel }}<span class="font-bold">{{ lastDownload.type }}</span> 다운 완료
+          {{ lastDownloadDateLabel }}<span class="font-bold">{{ lastDownload.type }}</span> 완료
         </span>
+        <!-- 임시 저장 — 지금 작업을 회차 폴더에 올려 둔다(같은 이름으로 덮어써 최신 하나만 남는다).
+             업로드 주소가 없으면 눌러도 실패할 버튼을 아예 감춘다(이미지 업로드와 같은 규칙). -->
+        <button
+          v-if="canSaveToFolder"
+          type="button"
+          class="hbtn hbtn--muted"
+          :disabled="savingToFolder"
+          @click="saveToFolder"
+          v-tooltip.bottom="'회차 폴더에 올려 둡니다 — 다른 자리에서 이어서 편집할 수 있어요'"
+        >
+          <span class="material-symbols-outlined">cloud_upload</span>
+          <span>{{ savingToFolder ? '올리는 중…' : '임시 저장' }}</span>
+        </button>
         <button
           type="button"
           class="hbtn hbtn--tint"
@@ -149,7 +162,15 @@ import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
 import { processQuillHtml } from '@/utils/quillHtmlProcessor'
 import { useNewsletterImport } from '@/composables/useNewsletterImport'
-import { serializeModule } from '@/utils/projectFile'
+import { buildDownloadFileName, serializeModule } from '@/utils/projectFile'
+import {
+  MISSING_VOLUME_MESSAGE,
+  UploadError,
+  buildUploadDirectory,
+  displayUploadDirectory,
+  isUploadEnabled,
+  uploadHtml,
+} from '@/utils/s3Upload'
 import { getHistoryInstance } from '@/composables/useHistory'
 import { useBlankTemplate } from '@/composables/useBlankTemplate'
 import { useToast } from 'primevue/usetoast'
@@ -214,8 +235,15 @@ const goHome = () => {
   router.push('/')
 }
 
-// 최근 내려받음 표시 (메모리 상태 — 새로고침 시 초기화)
-const lastDownload = ref<{ time: Date; type: '저장용' | '발송용' } | null>(null)
+// 최근 저장/내려받음 표시 (메모리 상태 — 새로고침 시 초기화).
+// label은 화면에 그대로 나가는 말이라 '…완료' 앞에 붙여 읽히는 형태로 둔다.
+const lastDownload = ref<{ time: Date; type: '저장용 다운' | '발송용 다운' | '임시 저장' } | null>(
+  null,
+)
+
+/** 임시 저장이 가능한 상태인지 — 업로드 주소가 설정돼 있어야 한다 */
+const canSaveToFolder = isUploadEnabled()
+const savingToFolder = ref(false)
 
 // 날짜 부분 ("2026.08.12 11:19:39 ") — 타입은 템플릿에서 굵게 별도 렌더.
 // 자리를 0으로 채워 폭이 흔들리지 않게 한다(시각이 바뀔 때마다 옆 버튼이 밀리지 않도록).
@@ -619,12 +647,12 @@ const downloadHtml = async (includeMetadata: boolean): Promise<void> => {
     const fullHtmlDocument = buildHtmlDocument(finalHtml, includeMetadata)
 
     const now = new Date()
-    const pad = (n: number): string => String(n).padStart(2, '0')
-    const timestamp =
-      `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}` +
-      `_${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}`
-    const prefix = includeMetadata ? '재편집용' : '발송용'
-    const filename = `${prefix}_newsletter_${timestamp}.html`
+    // 파일 이름은 전시회·폴더로 짓는다 — 어느 뉴스레터의 몇 회차인지가 이름만으로 드러난다
+    const filename = buildDownloadFileName(
+      editorStore.currentTemplateId,
+      editorStore.wrapSettings.volume,
+      includeMetadata ? 'edit' : 'send',
+    )
 
     const result = await triggerDownload(fullHtmlDocument, filename)
 
@@ -632,7 +660,7 @@ const downloadHtml = async (includeMetadata: boolean): Promise<void> => {
     if (result === 'cancelled') return
 
     // 최근 내려받음 기록 (메모리)
-    lastDownload.value = { time: now, type: includeMetadata ? '저장용' : '발송용' }
+    lastDownload.value = { time: now, type: includeMetadata ? '저장용 다운' : '발송용 다운' }
 
     // 저장용만 '저장됨'으로 표시 (발송용은 재편집 불가 → dirty 상태 유지)
     if (includeMetadata) {
@@ -654,6 +682,60 @@ const downloadHtml = async (includeMetadata: boolean): Promise<void> => {
       '저장 실패',
       error instanceof Error ? error.message : '디스크 공간 부족·권한 등으로 저장하지 못했습니다',
     )
+  }
+}
+
+/**
+ * 임시 저장 — 지금 작업을 **회차 폴더에** 저장용(재편집 가능) HTML로 올린다.
+ *
+ * '저장용 내려받기'는 내 PC로만 받기 때문에 담당자나 PC가 바뀌면 이어서 편집할 방법이 없다.
+ * 같은 이름(`{전시회}_{폴더}_edit.html`)으로 덮어써 **폴더에는 최신 한 개만** 남는다.
+ * (이미지와 같은 폴더에 두는 이유: 파일이 하나뿐이라 하위 폴더를 팔 이유가 없고,
+ *  폴더 선택 화면이 이미 그 폴더의 목록을 받아오므로 '이어서 편집'을 바로 알아볼 수 있다)
+ */
+const saveToFolder = async (): Promise<void> => {
+  if (savingToFolder.value) return
+
+  if (!moduleStore.modules?.length) {
+    showWarn('임시 저장 불가', '먼저 모듈을 추가해주세요')
+    return
+  }
+  const directory = buildUploadDirectory(editorStore.uploadFolder, editorStore.wrapSettings.volume)
+  if (!directory) {
+    showWarn('저장할 폴더가 필요해요', MISSING_VOLUME_MESSAGE)
+    return
+  }
+
+  savingToFolder.value = true
+  try {
+    let finalHtml = await moduleStore.generateHtml()
+    finalHtml = processQuillHtml(finalHtml)
+    // 재편집 메타데이터를 담아 올린다 — 나중에 그대로 불러와 이어서 편집하기 위함
+    const document = buildHtmlDocument(finalHtml, true)
+    const filename = buildDownloadFileName(
+      editorStore.currentTemplateId,
+      editorStore.wrapSettings.volume,
+      'edit',
+    )
+
+    await uploadHtml(new File([document], filename, { type: 'text/html' }), directory, {
+      overwrite: true,
+    })
+
+    const now = new Date()
+    lastDownload.value = { time: now, type: '임시 저장' }
+    // 폴더에 남았으니 '저장됨'으로 본다 — 내려받기와 같은 기준
+    moduleStore.markAsSaved()
+    showSuccess('임시 저장 완료', `${displayUploadDirectory(directory)}${filename}`)
+  } catch (error) {
+    showError(
+      '임시 저장 실패',
+      error instanceof UploadError
+        ? error.message
+        : '저장 중 문제가 생겼어요. 잠시 후 다시 시도해 주세요.',
+    )
+  } finally {
+    savingToFolder.value = false
   }
 }
 

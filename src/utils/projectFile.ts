@@ -18,6 +18,34 @@ import type { ModuleGroup, ModuleInstance } from '@/types'
 export const METADATA_START = '<!-- AUTO_NEWSLETTER_METADATA_START -->'
 export const METADATA_END = '<!-- AUTO_NEWSLETTER_METADATA_END -->'
 
+/** 내려받는 HTML의 성격 — 저장용(다시 편집 가능) / 발송용(메타데이터 제거) */
+export type DownloadKind = 'edit' | 'send'
+
+/**
+ * 내려받을 파일 이름 — `{전시회}_{폴더}_{edit|send}.html`.
+ *
+ *   police_vol01_edit.html   저장용
+ *   police_vol01_send.html   발송용
+ *
+ * 한글은 쓰지 않는다. 메일·S3·윈도우를 오가며 이름이 깨지거나 다듬어지기 때문이다
+ * (실제로 '재편집용_…' 파일이 다른 곳을 거치며 글자가 깨져 온 적이 있다).
+ * 앞에 전시회를 두어 같은 뉴스레터끼리 목록에서 모이고, 그 다음 회차라 회차순으로 정렬된다.
+ *
+ * @param templateId 전시회(템플릿 id). 빈 문서로 시작했으면 없으므로 업로드 폴더와 같은 규칙으로 'blank'
+ * @param volume '폴더 선택'에서 정한 폴더명(`vol01`)
+ */
+export function buildDownloadFileName(
+  templateId: string | null | undefined,
+  volume: string | null | undefined,
+  kind: DownloadKind,
+): string {
+  // S3 키·URL과 같은 기준으로 다듬는다 — 소문자 영숫자와 -_ 만 남긴다
+  const safe = (value?: string | null): string =>
+    (value ?? '').trim().toLowerCase().replace(/[^a-z0-9_-]+/g, '')
+  const parts = [safe(templateId) || 'blank', safe(volume), kind].filter(Boolean)
+  return `${parts.join('_')}.html`
+}
+
 /** 저장 파일에 담기는 모듈 한 개 */
 export interface ProjectModuleData {
   moduleId: string
