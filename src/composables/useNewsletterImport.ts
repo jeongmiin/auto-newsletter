@@ -88,7 +88,10 @@ export function useNewsletterImport() {
     projectData: ProjectMetadata,
     toComposed: boolean,
   ): Promise<void> => {
-    const { restoredCount, convertedCount, warnings } = restoreProject(projectData, toComposed)
+    // 템플릿 로드와 같은 이유로 감시를 멈추고 한 번에 복원한다 (useHistory.runBulk 주석 참고)
+    const { restoredCount, convertedCount, warnings } = await getHistoryInstance().runBulk(() =>
+      restoreProject(projectData, toComposed),
+    )
     // 파일을 열면 실행취소 기록도 새로 시작한다 — 안 지우면 Ctrl+Z가 **열기 전 작업물**을
     // 되살려 방금 연 파일과 뒤섞인다(실행취소 인스턴스는 화면 이동과 무관하게 살아 있다).
     getHistoryInstance().clearHistory()

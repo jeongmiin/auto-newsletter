@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed, triggerRef, watch } from 'vue'
+import { ref, computed, shallowRef, triggerRef, watch } from 'vue'
 import type {
   ModuleInstance,
   ModuleMetadata,
@@ -73,7 +73,15 @@ export const useModuleStore = defineStore('module', () => {
   const modules = ref<ModuleInstance[]>([])
   const selectedModuleId = ref<string | null>(null)
   const availableModules = ref<ModuleMetadata[]>([])
-  const availableTemplates = ref<NewsletterTemplate[]>([])
+  /**
+   * 템플릿 카탈로그(templates-config.json) — **읽기 전용 자료라 얕게 담는다.**
+   *
+   * 0.9MB·객체 4천여 개짜리라, 보통 ref로 담으면 Vue가 그 전부를 반응형으로 감싼다.
+   * 카탈로그는 화면에서 고르기만 할 뿐 고쳐 쓰지 않으므로 감쌀 이유가 없고, 감싸면
+   * 읽을 때마다 프록시를 거치는 데다 개발 도구가 스토어 상태를 훑을 때도 이 전부를 따라간다.
+   * (통째로 갈아끼우는 대입만 하므로 얕은 ref로 충분하다)
+   */
+  const availableTemplates = shallowRef<NewsletterTemplate[]>([])
   // 템플릿 선택 화면의 본부/팀 트리 (templates-config.json의 departments)
   const availableDepartments = ref<TemplateDepartment[]>([])
   const isDirty = ref(false) // 변경사항 추적
@@ -2743,9 +2751,13 @@ export const useModuleStore = defineStore('module', () => {
       return false
     }
 
+    // 어디서 시간을 쓰는지 개발 중에만 콘솔에 남긴다 — '템플릿을 불러오는 중'이 길어질 때
+    // 모듈 자료를 받아오는 쪽인지, 모듈을 붙여 넣는 쪽인지 바로 갈라 보기 위한 것
+    const startedAt = performance.now()
     if (availableModules.value.length === 0) {
       await loadAvailableModules()
     }
+    const fetchedAt = performance.now()
 
     const editorStore = useEditorStore()
 
@@ -2807,6 +2819,15 @@ export const useModuleStore = defineStore('module', () => {
       selectedModuleId.value = modules.value[0].id
     }
     isDirty.value = false
+
+    if (import.meta.env.DEV) {
+      const now = performance.now()
+      console.info(
+        `[템플릿] ${templateId} 모듈 ${modules.value.length}개 — ` +
+          `모듈 자료 ${Math.round(fetchedAt - startedAt)}ms · ` +
+          `붙여 넣기 ${Math.round(now - fetchedAt)}ms · 합계 ${Math.round(now - startedAt)}ms`,
+      )
+    }
     return true
   }
 

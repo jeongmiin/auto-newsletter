@@ -245,7 +245,9 @@ const pickTemplate = async (t: NewsletterTemplate) => {
   if (applying.value) return
   applying.value = true
   try {
-    await moduleStore.loadTemplate(t.id)
+    // 불러오는 동안 실행취소 감시를 멈춘다 — 모듈 수십 개가 연달아 들어오는 구간이라
+    // 감시를 켜 둔 채로 하면 배열 전체를 매번 다시 훑어 눈에 띄게 느려진다
+    await getHistoryInstance().runBulk(() => moduleStore.loadTemplate(t.id))
     // 실행취소 기록은 템플릿마다 새로 시작한다 — 안 지우면 Ctrl+Z가 **직전에 열었던 템플릿**의
     // 내용을 되살린다(실행취소 인스턴스는 화면 이동과 무관하게 살아 있다).
     getHistoryInstance().clearHistory()
