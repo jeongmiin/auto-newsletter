@@ -1,7 +1,7 @@
 <template>
   <div class="tpl-page">
     <!-- 상단 바: 에디터와 공통 헤더. 단, 파일 관리 버튼들은 숨김 -->
-    <AppHeader :show-actions="false" />
+    <FlowStepsHeader :current="1" />
 
     <div class="tpl-body">
       <!-- 좌측: 부서/팀 트리 -->
@@ -122,7 +122,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
-import AppHeader from '@/components/layout/AppHeader.vue'
+import FlowStepsHeader from '@/components/layout/FlowStepsHeader.vue'
 import { getHistoryInstance } from '@/composables/useHistory'
 import type { NewsletterTemplate } from '@/types'
 
@@ -237,7 +237,7 @@ const startBlank = () => {
     templateName: '빈 템플릿',
     teamId: selectedTeam.value,
   })
-  router.push('/editor')
+  router.push({ name: 'folder' })
 }
 
 // 템플릿 선택 → 적용 후 에디터로
@@ -255,7 +255,10 @@ const pickTemplate = async (t: NewsletterTemplate) => {
       templateName: t.name,
       teamId: t.teamId ?? null,
     })
-    router.push('/editor')
+    // 폴더는 다음 걸음에서 고른다 — 앞서 만들던 뉴스레터의 회차가 남아 있으면
+    // 그 폴더로 조용히 올라가므로 여기서 비운다(가드도 이 값이 비면 폴더 선택으로 돌린다).
+    editorStore.updateWrapSettings({ volume: '' })
+    router.push({ name: 'folder' })
   } finally {
     applying.value = false
   }

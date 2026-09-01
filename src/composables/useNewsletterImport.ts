@@ -115,24 +115,34 @@ export function useNewsletterImport() {
   /**
    * 예전 편집 방식 모듈이 있으면 변환 여부를 묻고, 없으면 그대로 복원한다.
    */
-  const restoreWithPrompt = (projectData: ProjectMetadata): void => {
-    const count = convertibleCount(projectData)
-    if (count === 0) {
-      void finishRestore(projectData, false)
-      return
-    }
-    confirm.require({
-      header: '새 편집 방식으로 열까요?',
-      message:
-        `모듈 ${count}개를 이미지·제목·본문·버튼으로 나눠 하나씩 따로 고칠 수 있습니다. ` +
-        '디자인은 그대로 유지됩니다.',
-      acceptLabel: '새 방식으로 열기',
-      rejectLabel: '예전 방식으로 열기',
-      rejectClass: 'p-button-outlined p-button-secondary',
-      accept: () => void finishRestore(projectData, true),
-      reject: () => void finishRestore(projectData, false),
+  /**
+   * @returns 복원을 마쳤으면 true. 확인 대화상자를 그냥 닫으면(바깥 클릭·Esc) 복원하지 않고 false.
+   *
+   * ⚠ **반드시 기다린 뒤에 다음 동작을 해야 한다.** 폴더 선택의 '이어서 편집'처럼
+   *   복원 직후 화면을 옮기는 쪽에서, 기다리지 않으면 대화상자가 뜬 채로 에디터로 넘어가
+   *   복원 전(템플릿) 상태가 그대로 보인다.
+   */
+  const restoreWithPrompt = (projectData: ProjectMetadata): Promise<boolean> =>
+    new Promise((resolve) => {
+      const count = convertibleCount(projectData)
+      if (count === 0) {
+        void finishRestore(projectData, false).then(() => resolve(true))
+        return
+      }
+      confirm.require({
+        header: '새 편집 방식으로 열까요?',
+        message:
+          `모듈 ${count}개를 이미지·제목·본문·버튼으로 나눠 하나씩 따로 고칠 수 있습니다. ` +
+          '디자인은 그대로 유지됩니다.',
+        acceptLabel: '새 방식으로 열기',
+        rejectLabel: '예전 방식으로 열기',
+        rejectClass: 'p-button-outlined p-button-secondary',
+        accept: () => void finishRestore(projectData, true).then(() => resolve(true)),
+        reject: () => void finishRestore(projectData, false).then(() => resolve(true)),
+        // 고르지 않고 닫은 경우 — 위 두 콜백이 먼저 resolve했으면 이 호출은 무시된다
+        onHide: () => resolve(false),
+      })
     })
-  }
 
   /**
    * 파일 선택 다이얼로그를 열고, 선택된 재편집용 HTML을 복원한다.
@@ -157,18 +167,7 @@ export function useNewsletterImport() {
             return
           }
 
-          const projectData = extractProjectMetadata(htmlContent)
-
-          if (!projectData || projectData.modules.length === 0) {
-            showError('가져오기 실패', '이 에디터에서 내보낸 파일만 가져올 수 있습니다')
-            return
-          }
-
-          if (moduleStore.availableModules.length === 0) {
-            await moduleStore.loadAvailableModules()
-          }
-
-          restoreWithPrompt(projectData)
+          await restoreFromHtml(htmlContent)
         }
 
         reader.onerror = () => {
@@ -184,5 +183,24 @@ export function useNewsletterImport() {
     }
   }
 
-  return { importHtmlFile }
+  /**
+   * 이미 읽어 둔 HTML 문자열에서 복원한다 — '파일 열기'와 폴더 선택의 '이어서 편집'이 함께 쓴다.
+   * @returns 복원을 시작했으면 true (메타데이터가 없으면 안내만 하고 false)
+   */
+  const restoreFromHtml = async (htmlContent: string): Promise<boolean> => {
+    const projectData = extractProjectMetadata(htmlContent)
+    if (!projectData || projectData.modules.length === 0) {
+      showError('가져오기 실패', '이 에디터에서 내보낸 파일만 가져올 수 있습니다')
+      return false
+    }
+
+    if (moduleStore.availableModules.length === 0) {
+      await moduleStore.loadAvailableModules()
+    }
+
+    // 복원이 끝날 때까지 기다린다 — 호출부가 곧바로 화면을 옮겨도 안전하도록
+    return await restoreWithPrompt(projectData)
+  }
+
+  return { importHtmlFile, restoreFromHtml }
 }
