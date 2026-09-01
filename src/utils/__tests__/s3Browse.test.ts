@@ -44,7 +44,9 @@ describe('parseFolderList', () => {
   // S3에는 빈 폴더가 없어 '자리를 잡는' 0바이트 키가 폴더 이름으로 남는다 — 항목으로 세면 안 된다
   it('폴더 자리를 잡는 키는 폴더로만 잡고 항목 수엔 넣지 않는다', () => {
     const list = parseFolderList(xml([{ key: `${PREFIX}vol03/` }]), PREFIX)
-    expect(list).toEqual([{ name: 'vol03', itemCount: 0, lastModified: null }])
+    expect(list).toEqual([
+      { name: 'vol03', itemCount: 0, hasChildren: false, lastModified: null },
+    ])
   })
 
   it('폴더 안에서 가장 최근 수정 시각을 남긴다', () => {
@@ -62,6 +64,42 @@ describe('parseFolderList', () => {
     const list = parseFolderList(xml([{ key: `${PREFIX}vol01/sub/deep.png` }]), PREFIX)
     expect(list).toHaveLength(1)
     expect(list[0].name).toBe('vol01')
+  })
+
+  // 폴더 안에 폴더를 둘 수 있어(eng/vol01), 화면이 '고를 자리'와 '들어갈 자리'를 갈라야 한다
+  describe('폴더 안의 폴더', () => {
+    it('안에 폴더가 있으면 hasChildren', () => {
+      const list = parseFolderList(
+        xml([
+          { key: `${PREFIX}eng/vol01/main.jpg` },
+          { key: `${PREFIX}vol53/main.jpg` },
+        ]),
+        PREFIX,
+      )
+      expect(list.map((f) => [f.name, f.hasChildren])).toEqual([
+        ['eng', true],
+        ['vol53', false],
+      ])
+    })
+
+    it('항목 수는 바로 아래만 센다 — 하위 폴더는 그 안의 파일 수와 무관하게 하나', () => {
+      const list = parseFolderList(
+        xml([
+          { key: `${PREFIX}eng/vol01/a.jpg` },
+          { key: `${PREFIX}eng/vol01/b.jpg` },
+          { key: `${PREFIX}eng/vol02/c.jpg` },
+          { key: `${PREFIX}eng/memo.html` },
+        ]),
+        PREFIX,
+      )
+      // 하위 폴더 2개(vol01·vol02) + 바로 아래 파일 1개
+      expect(list[0]).toMatchObject({ name: 'eng', itemCount: 3, hasChildren: true })
+    })
+
+    it('폴더 자리를 잡는 키만 있어도 하위 폴더로 센다', () => {
+      const list = parseFolderList(xml([{ key: `${PREFIX}eng/vol01/` }]), PREFIX)
+      expect(list[0]).toMatchObject({ name: 'eng', itemCount: 1, hasChildren: true })
+    })
   })
 
   it('폴더 바로 아래 파일(회차 없이 놓인 것)은 목록에 넣지 않는다', () => {
@@ -113,6 +151,26 @@ describe('parseFolderList', () => {
     it('더 깊은 곳의 파일은 보지 않는다', () => {
       const list = parseFolderList(xml([{ key: `${PREFIX}vol01/old/a_edit.html` }]), PREFIX)
       expect(list[0].editFile).toBeUndefined()
+    })
+
+    // 발송용이 있으면 '이미 나간 회차'라는 뜻 — 화면이 '발송 완료'로 알린다
+    it('발송용(_send.html)은 sendFile로 따로 잡는다', () => {
+      const list = parseFolderList(
+        xml([
+          { key: `${PREFIX}vol01/police_vol01_edit.html` },
+          { key: `${PREFIX}vol01/police_vol01_send.html`, at: '2026-09-02T05:00:00.000Z' },
+        ]),
+        PREFIX,
+      )
+      expect(list[0].sendFile?.name).toBe('police_vol01_send.html')
+      expect(list[0].sendFile?.lastModified?.toISOString()).toBe('2026-09-02T05:00:00.000Z')
+      // 이어서 편집은 그대로 임시 저장 파일이 맡는다
+      expect(list[0].editFile?.name).toBe('police_vol01_edit.html')
+    })
+
+    it('발송용이 없으면 sendFile도 없다', () => {
+      const list = parseFolderList(xml([{ key: `${PREFIX}vol01/a_edit.html` }]), PREFIX)
+      expect(list[0].sendFile).toBeUndefined()
     })
 
     it('여러 개면 가장 최근 것을 남긴다', () => {

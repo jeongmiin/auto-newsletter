@@ -27,19 +27,29 @@ const MAX_PAGES = 5
 export interface S3Folder {
   /** 폴더 이름 (뒤 슬래시 없음) — 'vol01' */
   name: string
-  /** 그 안의 파일 수 (폴더 자리를 잡는 0바이트 키는 세지 않는다) */
+  /** 바로 아래 항목 수 — 파일과 하위 폴더를 합한 값 (폴더 자리를 잡는 0바이트 키는 빼고) */
   itemCount: number
+  /**
+   * 안에 폴더가 또 있는지 — 있으면 화면에서 고르는 대신 **들어간다**.
+   * 저장은 언제나 맨 안쪽 폴더에 하므로, 폴더를 품은 폴더는 고를 대상이 아니다.
+   */
+  hasChildren: boolean
   /** 가장 최근에 바뀐 파일 시각. 파일이 없으면 null */
   lastModified: Date | null
   /**
    * 그 폴더에 놓인 임시 저장 파일(`…_edit.html`) — 있으면 '이어서 편집'을 띄운다.
    * 여러 개면 가장 최근 것 하나. (헤더의 '임시 저장'이 같은 이름으로 덮어써서 보통 한 개다)
    */
-  editFile?: S3EditFile
+  editFile?: S3FileRef
+  /**
+   * 그 폴더에 놓인 발송용 파일(`…_send.html`) — 있으면 '이 회차는 이미 나갔다'는 뜻이다.
+   * 이어서 편집할 수는 없다(재편집 메타데이터가 빠진 파일이라). 무엇이 나갔는지 열어 볼 수만 있다.
+   */
+  sendFile?: S3FileRef
 }
 
-/** 이어서 편집할 수 있는 임시 저장 파일 */
-export interface S3EditFile {
+/** 폴더 안에서 알아본 파일 한 개 */
+export interface S3FileRef {
   /** 버킷 기준 전체 키 — 그대로 이어 붙이면 내려받을 주소가 된다 */
   key: string
   /** 파일 이름만 — 'hobanexpo_vol12_edit.html' */
@@ -49,6 +59,8 @@ export interface S3EditFile {
 
 /** 임시 저장 파일인지 — 헤더의 '임시 저장'과 '저장용 내려받기'가 쓰는 이름 규칙(`…_edit.html`) */
 const isEditFileName = (name: string): boolean => /_edit\.html?$/i.test(name)
+/** 발송용 파일인지 — '발송용 내려받기'와 AI 도구의 웹 링크가 쓰는 이름 규칙(`…_send.html`) */
+const isSendFileName = (name: string): boolean => /_send\.html?$/i.test(name)
 
 /** 목록을 읽지 못했을 때 — 화면이 '못 읽었다'와 '비었다'를 구분해 안내한다 */
 export class BrowseError extends Error {
@@ -68,7 +80,19 @@ export function parseFolderList(xml: string, prefix: string): S3Folder[] {
   const doc = new DOMParser().parseFromString(xml, 'application/xml')
   if (doc.querySelector('parsererror')) throw new BrowseError('목록을 읽지 못했어요')
 
-  const folders = new Map<string, Omit<S3Folder, 'name'>>()
+  /** 폴더별로 모으는 중간 형태 — 하위 폴더는 이름을 모아 두었다가 마지막에 개수로 바꾼다 */
+  interface Bucket {
+    files: number
+    childDirs: Set<string>
+    lastModified: Date | null
+    editFile?: S3FileRef
+    sendFile?: S3FileRef
+  }
+  /** 같은 종류의 파일이 여러 개면 가장 최근 것만 남긴다 */
+  const keepNewer = (prev: S3FileRef | undefined, next: S3FileRef): S3FileRef =>
+    !prev?.lastModified || (next.lastModified && next.lastModified > prev.lastModified) ? next : prev
+  const folders = new Map<string, Bucket>()
+
   for (const node of Array.from(doc.getElementsByTagName('Contents'))) {
     const key = node.getElementsByTagName('Key')[0]?.textContent ?? ''
     if (!key.startsWith(prefix)) continue
@@ -77,30 +101,48 @@ export function parseFolderList(xml: string, prefix: string): S3Folder[] {
     if (slash <= 0) continue // 폴더 자리를 잡는 키('…/')와 바로 아래 파일은 건너뛴다
 
     const name = rest.slice(0, slash)
-    const entry = folders.get(name) ?? { itemCount: 0, lastModified: null }
-    // 폴더 자체를 나타내는 0바이트 키('vol01/')는 항목으로 세지 않는다
-    const isFolderMarker = rest.length === slash + 1
-    if (!isFolderMarker) {
-      entry.itemCount += 1
-      const raw = node.getElementsByTagName('LastModified')[0]?.textContent
-      const at = raw ? new Date(raw) : null
-      if (at && !Number.isNaN(at.getTime()) && (!entry.lastModified || at > entry.lastModified)) {
-        entry.lastModified = at
-      }
-      // 폴더 **바로 아래**의 임시 저장 파일만 본다(더 깊은 곳은 이어서 편집 대상이 아니다)
-      const fileName = rest.slice(slash + 1)
-      if (!fileName.includes('/') && isEditFileName(fileName)) {
-        const isNewer = !entry.editFile?.lastModified || (at && at > entry.editFile.lastModified)
-        if (isNewer) entry.editFile = { key, name: fileName, lastModified: at }
-      }
-    }
+    const entry = folders.get(name) ?? { files: 0, childDirs: new Set<string>(), lastModified: null }
     folders.set(name, entry)
+
+    // 폴더 자체를 나타내는 0바이트 키('vol01/')는 항목으로 세지 않는다
+    const tail = rest.slice(slash + 1)
+    if (!tail) continue
+
+    const raw = node.getElementsByTagName('LastModified')[0]?.textContent
+    const at = raw ? new Date(raw) : null
+    if (at && !Number.isNaN(at.getTime()) && (!entry.lastModified || at > entry.lastModified)) {
+      entry.lastModified = at
+    }
+
+    const nextSlash = tail.indexOf('/')
+    if (nextSlash >= 0) {
+      // 'eng/vol01/…' — 바로 아래 폴더 이름만 모은다(그 안의 파일까지 세지는 않는다)
+      entry.childDirs.add(tail.slice(0, nextSlash))
+      continue
+    }
+
+    entry.files += 1
+    // 폴더 **바로 아래**의 파일만 본다(더 깊은 곳은 이 폴더의 상태가 아니다)
+    const found: S3FileRef = { key, name: tail, lastModified: at }
+    if (isEditFileName(tail)) entry.editFile = keepNewer(entry.editFile, found)
+    else if (isSendFileName(tail)) entry.sendFile = keepNewer(entry.sendFile, found)
   }
 
   return [...folders.entries()]
-    .map(([name, v]) => ({ name, ...v }))
+    .map(([name, v]) => ({
+      name,
+      itemCount: v.files + v.childDirs.size,
+      hasChildren: v.childDirs.size > 0,
+      lastModified: v.lastModified,
+      ...(v.editFile ? { editFile: v.editFile } : {}),
+      ...(v.sendFile ? { sendFile: v.sendFile } : {}),
+    }))
     .sort((a, b) => a.name.localeCompare(b.name, 'en', { numeric: true }))
 }
+
+/** 둘 중 더 최근 것 — 페이지가 나뉘어 같은 폴더가 두 번 나올 때 쓴다 */
+const newerOf = (a: S3FileRef | undefined, b: S3FileRef): S3FileRef =>
+  !a?.lastModified || (b.lastModified && b.lastModified > a.lastModified) ? b : a
 
 /** 이어받기 토큰 — 키가 1000개를 넘으면 나눠서 온다 */
 function continuationTokenOf(xml: string): string | null {
@@ -146,16 +188,12 @@ export async function listFolders(prefix: string, signal?: AbortSignal): Promise
       }
       // 페이지가 나뉘면 같은 폴더가 두 번 나온다 — 개수는 더하고 시각·임시 저장 파일은 최근 것을 남긴다
       prev.itemCount += folder.itemCount
+      prev.hasChildren = prev.hasChildren || folder.hasChildren
       if (folder.lastModified && (!prev.lastModified || folder.lastModified > prev.lastModified)) {
         prev.lastModified = folder.lastModified
       }
-      if (
-        folder.editFile &&
-        (!prev.editFile?.lastModified ||
-          (folder.editFile.lastModified && folder.editFile.lastModified > prev.editFile.lastModified))
-      ) {
-        prev.editFile = folder.editFile
-      }
+      if (folder.editFile) prev.editFile = newerOf(prev.editFile, folder.editFile)
+      if (folder.sendFile) prev.sendFile = newerOf(prev.sendFile, folder.sendFile)
     }
 
     token = continuationTokenOf(xml)
@@ -164,6 +202,9 @@ export async function listFolders(prefix: string, signal?: AbortSignal): Promise
 
   return [...merged.values()].sort((a, b) => a.name.localeCompare(b.name, 'en', { numeric: true }))
 }
+
+/** 버킷 키를 웹에서 바로 열 수 있는 주소로 — '발송본 열기'처럼 새 창으로 띄울 때 쓴다 */
+export const objectUrl = (key: string): string => `${BUCKET_URL}/${key.replace(/^\/+/, '')}`
 
 /** 경로 앞의 '/'를 떼어 S3 prefix 형태로 — buildUploadDirectory는 '/'로 시작한다 */
 export const toPrefix = (directory: string): string => directory.replace(/^\/+/, '')

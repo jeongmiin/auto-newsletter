@@ -8,20 +8,21 @@
  *
  * 폴더를 고르지 않으면 에디터로 넘어갈 수 없다(router 가드가 한 번 더 막는다).
  */
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import InputText from 'primevue/inputtext'
 import FlowStepsHeader from '@/components/layout/FlowStepsHeader.vue'
 import emptyIcon from '@/assets/img/empty_icon.png'
 import { useEditorStore } from '@/stores/editorStore'
 import { useModuleStore } from '@/stores/moduleStore'
-import { buildUploadDirectory, normalizeVolume } from '@/utils/s3Upload'
+import { buildUploadDirectory, MAX_VOLUME_DEPTH, normalizeVolume } from '@/utils/s3Upload'
 import {
   BrowseError,
   fetchText,
   formatModified,
   isUsableFolderName,
   listFolders,
+  objectUrl,
   toPrefix,
   validateFolderName,
   type S3Folder,
@@ -51,12 +52,33 @@ const teamName = computed(
       .find((t) => t.id === editorStore.currentTeamId)?.name ?? '',
 )
 const templateName = computed(() => editorStore.currentTemplateName || '빈 템플릿')
+/** 경로에 쓰이는 전시회 폴더 이름 — 'gocaf' (템플릿 없이 시작하면 'blank') */
+const rootFolderName = computed(() => editorStore.currentTemplateId || 'blank')
 
 /** 읽어올 자리 — 업로드 경로에서 회차만 뺀 앞부분 (`…/newsletterbuilder/{팀}/{전시회}/`) */
 const basePrefix = computed(() => {
   const sample = buildUploadDirectory(editorStore.uploadFolder, 'vol01')
   return sample ? toPrefix(sample.replace(/vol01\/$/, '')) : ''
 })
+
+/**
+ * 지금 들어와 있는 폴더 — 전시회 폴더 바로 아래면 빈 값, 한 겹 들어가면 'eng'.
+ *
+ * 폴더 안에 폴더를 둘 수 있어(gocaf/eng/vol01) 목록이 한 층에서 끝나지 않는다.
+ * 저장은 언제나 맨 안쪽 폴더에 하므로, 폴더를 품은 폴더는 고르는 대신 들어간다.
+ */
+const openedPath = ref<string[]>([])
+/** 지금 보고 있는 자리의 전체 prefix */
+const currentPrefix = computed(() =>
+  openedPath.value.length ? `${basePrefix.value}${openedPath.value.join('/')}/` : basePrefix.value,
+)
+/** 여기서 폴더를 더 만들 수 있는지 — 허용 깊이(2단계)를 넘지 않을 때만 */
+const canNest = computed(() => openedPath.value.length < MAX_VOLUME_DEPTH)
+/**
+ * 여기 있는 폴더 안으로 들어갈 수 있는지.
+ * 들어가면 그 안에 만들 폴더가 한 겹 더 깊어지므로, 그 깊이까지 허용될 때만 열어 준다.
+ */
+const canEnter = computed(() => openedPath.value.length + 2 <= MAX_VOLUME_DEPTH)
 
 const load = async () => {
   if (!basePrefix.value) {
@@ -69,7 +91,7 @@ const load = async () => {
   controller?.abort()
   controller = new AbortController()
   try {
-    folders.value = await listFolders(basePrefix.value, controller.signal)
+    folders.value = await listFolders(currentPrefix.value, controller.signal)
   } catch (err) {
     if (err instanceof DOMException && err.name === 'AbortError') return
     loadError.value = err instanceof BrowseError ? err.message : '목록을 읽지 못했어요'
@@ -79,13 +101,48 @@ const load = async () => {
   }
 }
 
+/**
+ * 폴더 안으로 들어간다 — 목록·검색·고른 것을 그 자리 기준으로 새로 시작한다.
+ *
+ * 아직 서버에 없는(방금 만든) 폴더로도 들어갈 수 있다. S3는 첫 파일이 올라갈 때
+ * 폴더가 생기므로, 'eng'을 만들고 그 안에 'vol01'을 만들면 저장하는 순간 두 겹이 함께 생긴다.
+ */
+const openFolder = (name: string) => {
+  openedPath.value = [...openedPath.value, name]
+  pendingFolder.value = null
+  picked.value = null
+  query.value = ''
+  creating.value = false
+  void load()
+}
+
+/** 위로 — 인수 없이 부르면 맨 위(전시회 폴더)로 */
+const goUp = (depth = 0) => {
+  openedPath.value = openedPath.value.slice(0, depth)
+  pendingFolder.value = null
+  picked.value = null
+  query.value = ''
+  creating.value = false
+  void load()
+}
+
 onMounted(load)
 onBeforeUnmount(() => controller?.abort())
+
+/** 화면에 그릴 목록 — 방금 만든 폴더를 맨 위에 얹는다 */
+const allFolders = computed<S3Folder[]>(() =>
+  pendingFolder.value
+    ? [
+        { name: pendingFolder.value, itemCount: 0, hasChildren: false, lastModified: null },
+        ...folders.value.filter((f) => f.name !== pendingFolder.value),
+      ]
+    : folders.value,
+)
 
 /** 검색어로 걸러낸 목록 */
 const visibleFolders = computed(() => {
   const q = query.value.trim().toLowerCase()
-  return q ? folders.value.filter((f) => f.name.toLowerCase().includes(q)) : folders.value
+  return q ? allFolders.value.filter((f) => f.name.toLowerCase().includes(q)) : allFolders.value
 })
 
 /**
@@ -95,6 +152,13 @@ const visibleFolders = computed(() => {
 const creating = ref(false)
 const newName = ref('')
 const newNameInput = ref<InstanceType<typeof InputText> | null>(null)
+/**
+ * 방금 만든 폴더 — 아직 서버에는 없고 화면에만 있는 한 줄.
+ *
+ * 목록의 다른 폴더와 똑같이 다룬다(고를 수도, 안으로 들어갈 수도 있다).
+ * 그래야 'eng'을 만들고 그 안에 'vol01'을 만드는 길이 열린다.
+ */
+const pendingFolder = ref<string | null>(null)
 
 const focusInput = (holder: { $el?: HTMLInputElement } | null) => holder?.$el?.focus()
 
@@ -108,54 +172,80 @@ const startCreate = async () => {
 const cancelCreate = () => {
   creating.value = false
   newName.value = ''
-  if (picked.value?.isNew) picked.value = null
 }
 
 /** 적어 넣은 이름으로 새로 만들 수 있는지 — 이미 있으면 만들기 대신 고르면 된다 */
-const newNameError = computed(() =>
-  newName.value.trim() ? validateFolderName(newName.value, folders.value.map((f) => f.name)) : null,
-)
+const newNameError = computed(() => {
+  if (!newName.value.trim()) return null
+  const taken = folders.value.map((f) => f.name)
+  if (pendingFolder.value) taken.push(pendingFolder.value)
+  return validateFolderName(newName.value, taken)
+})
 const canCreate = computed(() => !!newName.value.trim() && !newNameError.value)
-/** 적은 이름이 그대로 골라져 있는 상태 — 줄에 선택 표시를 준다 */
-const isNewPicked = computed(
-  () => picked.value?.isNew && picked.value.name === newName.value.trim().toLowerCase(),
-)
 
+/**
+ * 폴더 한 줄을 눌렀을 때 — 안에 폴더가 또 있으면 **들어가고**, 아니면 고른다.
+ * 저장은 언제나 맨 안쪽 폴더에 하므로, 폴더를 품은 폴더는 고를 대상이 아니다.
+ * (안이 빈 폴더는 줄 오른쪽의 열기 버튼으로 들어간다)
+ */
 const pickExisting = (folder: S3Folder) => {
   if (!isUsableFolderName(folder.name)) return
-  picked.value = { name: folder.name, isNew: false }
+  if (folder.hasChildren && canEnter.value) {
+    openFolder(folder.name)
+    return
+  }
+  picked.value = { name: folder.name, isNew: folder.name === pendingFolder.value }
 }
 
+/** 적어 넣은 이름으로 한 줄을 만든다 — 여기서 고르거나, 열기로 들어가 그 안에 또 만들 수 있다 */
 const createFolder = () => {
   if (!canCreate.value) return
-  picked.value = { name: newName.value.trim().toLowerCase(), isNew: true }
+  const name = newName.value.trim().toLowerCase()
+  pendingFolder.value = name
+  picked.value = { name, isNew: true }
+  creating.value = false
+  newName.value = ''
 }
 
-// 이름을 고치면 방금 고른 것과 화면의 글자가 어긋난다 — 다시 '만들기'를 누르게 한다
-watch(newName, () => {
-  if (picked.value?.isNew) picked.value = null
-})
 
 /**
  * 폴더가 하나도 없는 상태 — 이때는 표 대신 일러스트와 '폴더 만들기' 버튼만 보여준다(Figma 1347-9429).
  * 만들기를 누른 뒤에는 표 안의 입력 줄로 이어지므로 빈 화면이 아니다.
  */
 const isEmptyState = computed(
-  () => !loading.value && !loadError.value && !folders.value.length && !creating.value,
+  () => !loading.value && !loadError.value && !allFolders.value.length && !creating.value,
 )
 
 /** 폴더는 있는데 검색어와 맞는 게 하나도 없는 상태 — 같은 빈 화면을 문구만 바꿔 재사용한다 */
 const isNoMatch = computed(
-  () => !loading.value && !loadError.value && !!folders.value.length && !visibleFolders.value.length,
+  () =>
+    !loading.value && !loadError.value && !!allFolders.value.length && !visibleFolders.value.length,
 )
 
+/** 고른 폴더 — 서버에서 읽어 온 것일 때만(방금 만든 폴더에는 아직 아무것도 없다) */
+const pickedFolder = computed(() =>
+  picked.value && !picked.value.isNew
+    ? (folders.value.find((f) => f.name === picked.value?.name) ?? null)
+    : null,
+)
 /** 고른 폴더에 놓인 임시 저장 파일 — 있으면 '이어서 편집'을 내민다 */
-const pickedEditFile = computed(() => {
-  if (!picked.value || picked.value.isNew) return null
-  return folders.value.find((f) => f.name === picked.value?.name)?.editFile ?? null
-})
+const pickedEditFile = computed(() => pickedFolder.value?.editFile ?? null)
+/** 고른 폴더에 놓인 발송용 파일 — 이 회차가 이미 나갔다는 표시 */
+const pickedSendFile = computed(() => pickedFolder.value?.sendFile ?? null)
+/** 발송본을 새 창에서 열 주소 */
+const sendFileUrl = computed(() =>
+  pickedSendFile.value ? objectUrl(pickedSendFile.value.key) : undefined,
+)
+
+/** 안이 빈 폴더에 들어와 있는지 — 빈 화면 문구를 그 자리에 맞게 바꾼다 */
+const isInsideEmpty = computed(() => isEmptyState.value && openedPath.value.length > 0)
 
 const goBack = () => router.push({ name: 'templates' })
+
+/** 저장할 자리 — 들어와 있는 폴더까지 포함한 경로 ('eng/vol01') */
+const pickedVolume = computed(() =>
+  picked.value ? normalizeVolume([...openedPath.value, picked.value.name].join('/')) : '',
+)
 
 /**
  * 고른 폴더를 회차로 저장하고 에디터로.
@@ -163,7 +253,7 @@ const goBack = () => router.push({ name: 'templates' })
  */
 const goNext = () => {
   if (!picked.value) return
-  editorStore.updateWrapSettings({ volume: normalizeVolume(picked.value.name) })
+  editorStore.updateWrapSettings({ volume: pickedVolume.value })
   router.push({ name: 'editor' })
 }
 
@@ -182,7 +272,7 @@ const continueEditing = async () => {
     const html = await fetchText(file.key)
     const ok = await restoreFromHtml(html)
     if (!ok) return // 안내는 restoreFromHtml이 띄운다
-    editorStore.updateWrapSettings({ volume: normalizeVolume(picked.value!.name) })
+    editorStore.updateWrapSettings({ volume: pickedVolume.value })
     router.push({ name: 'editor' })
   } catch (err) {
     toast.add({
@@ -225,7 +315,7 @@ const continueEditing = async () => {
           </div>
           <!-- 빈 화면일 때는 그쪽 버튼 하나만 남긴다 — 같은 일을 하는 버튼이 둘이면 헷갈린다 -->
           <button
-            v-if="!creating && !isEmptyState && !isNoMatch"
+            v-if="canNest && !creating && !isEmptyState && !isNoMatch"
             type="button"
             class="fd-create-btn fd-create-btn--top"
             @click="startCreate"
@@ -235,14 +325,37 @@ const continueEditing = async () => {
           </button>
         </div>
 
+        <!-- 어느 폴더 안에 들어와 있는지 (Figma 1359-610) — 눌러서 위로 나간다 -->
+        <nav v-if="openedPath.length" class="fd-crumbs">
+          <button type="button" class="fd-crumb fd-crumb--link" @click="goUp(0)">
+            {{ rootFolderName }}
+          </button>
+          <template v-for="(segment, i) in openedPath" :key="segment">
+            <span class="fd-crumb-sep">&gt;</span>
+            <button
+              v-if="i < openedPath.length - 1"
+              type="button"
+              class="fd-crumb fd-crumb--link"
+              @click="goUp(i + 1)"
+            >
+              {{ segment }}
+            </button>
+            <span v-else class="fd-crumb">{{ segment }}</span>
+          </template>
+        </nav>
+
         <!-- 폴더가 없을 때는 표 대신 일러스트만 (Figma 1347-9429) -->
         <div v-if="isEmptyState" class="fd-empty">
           <img :src="emptyIcon" alt="" class="fd-empty-img" />
-          <p class="fd-empty-text">
+          <p v-if="isInsideEmpty" class="fd-empty-text">
+            이 폴더 안에는 아직 폴더가 없어요.<br />
+            여기에 새로 만들거나, 위 경로를 눌러 되돌아갈 수 있어요.
+          </p>
+          <p v-else class="fd-empty-text">
             아직 저장할 폴더가 없어요.<br />
             폴더를 새로 만들어 시작해 주세요.
           </p>
-          <button type="button" class="fd-create-btn" @click="startCreate">
+          <button v-if="canNest" type="button" class="fd-create-btn" @click="startCreate">
             <span class="material-symbols-outlined">create_new_folder</span>
             폴더 만들기
           </button>
@@ -261,6 +374,8 @@ const continueEditing = async () => {
             <span class="fd-col-name">이름</span>
             <span class="fd-col-type">유형</span>
             <span class="fd-col-at">마지막 수정</span>
+            <!-- 줄 오른쪽 열기 버튼만큼 비워 둔다 — 없으면 머리글과 아래 값이 어긋난다 -->
+            <span v-if="canEnter" class="fd-thead-enter" aria-hidden="true"></span>
           </div>
 
           <p v-if="loading" class="fd-state">폴더를 읽는 중…</p>
@@ -268,7 +383,7 @@ const continueEditing = async () => {
 
           <template v-else>
             <!-- 새 폴더 이름 — 목록 맨 위에서 바로 적는다 (검색창은 검색만 한다) -->
-            <div v-if="creating" class="fd-row fd-row--new" :class="{ 'is-picked': isNewPicked }">
+            <div v-if="creating" class="fd-row fd-row--new">
               <span class="fd-row-left">
                 <span class="material-symbols-outlined fd-folder-icon">create_new_folder</span>
                 <span class="fd-row-text">
@@ -281,7 +396,7 @@ const continueEditing = async () => {
                     @keydown.esc="cancelCreate"
                   />
                   <span class="fd-row-sub" :class="{ 'fd-row-sub--error': newNameError }">
-                    {{ newNameError ?? (isNewPicked ? '이 폴더로 시작해요' : '새로 만들 폴더') }}
+                    {{ newNameError ?? '새로 만들 폴더' }}
                   </span>
                 </span>
               </span>
@@ -300,38 +415,65 @@ const continueEditing = async () => {
               </span>
             </div>
 
-            <button
+            <!--
+              한 줄에 두 가지 일이 붙는다 — 왼쪽 넓은 자리는 '여기에 저장'(선택),
+              오른쪽 화살표는 '이 폴더 안으로'. 버튼 안에 버튼을 넣을 수 없어 줄은 div로 둔다.
+            -->
+            <div
               v-for="folder in visibleFolders"
               :key="folder.name"
-              type="button"
               class="fd-row"
               :class="{
-                'is-picked': picked && !picked.isNew && picked.name === folder.name,
+                'is-picked': picked && picked.name === folder.name,
                 'is-disabled': !isUsableFolderName(folder.name),
               }"
-              :disabled="!isUsableFolderName(folder.name)"
-              @click="pickExisting(folder)"
             >
-              <span class="fd-row-left">
-                <span class="material-symbols-outlined fd-folder-icon">folder</span>
-                <span class="fd-row-text">
-                  <span class="fd-row-name">
-                    {{ folder.name }}/
-                    <!-- 임시 저장 파일이 있으면 여기서 이어서 편집할 수 있다고 미리 알린다 -->
-                    <span v-if="folder.editFile" class="fd-row-badge">이어서 편집</span>
-                  </span>
-                  <span class="fd-row-sub">
-                    {{ isUsableFolderName(folder.name)
-                      ? `${folder.itemCount}개 항목`
-                      : '주소 규칙과 맞지 않아 고를 수 없어요' }}
+              <button
+                type="button"
+                class="fd-row-main"
+                :disabled="!isUsableFolderName(folder.name)"
+                @click="pickExisting(folder)"
+              >
+                <span class="fd-row-left">
+                  <span class="material-symbols-outlined fd-folder-icon">folder</span>
+                  <span class="fd-row-text">
+                    <span class="fd-row-name">
+                      {{ folder.name }}/
+                      <!-- 임시 저장 파일이 있으면 여기서 이어서 편집할 수 있다고 미리 알린다 -->
+                      <!-- 이미 나간 회차 — 손대기 전에 알아볼 수 있게 앞에 둔다 -->
+                      <span v-if="folder.sendFile" class="fd-row-badge fd-row-badge--sent">
+                        발송 완료
+                      </span>
+                      <span v-if="folder.editFile" class="fd-row-badge">이어서 편집</span>
+                      <span v-if="folder.name === pendingFolder" class="fd-row-badge fd-row-badge--new">
+                        새 폴더
+                      </span>
+                    </span>
+                    <span class="fd-row-sub">
+                      {{ isUsableFolderName(folder.name)
+                        ? (folder.name === pendingFolder
+                          ? '저장할 때 만들어져요'
+                          : `${folder.itemCount}개 항목`)
+                        : '주소 규칙과 맞지 않아 고를 수 없어요' }}
+                    </span>
                   </span>
                 </span>
-              </span>
-              <span class="fd-row-right">
-                <span class="fd-col-type">폴더</span>
-                <span class="fd-col-at">{{ formatModified(folder.lastModified) }}</span>
-              </span>
-            </button>
+                <span class="fd-row-right">
+                  <span class="fd-col-type">폴더</span>
+                  <span class="fd-col-at">{{ formatModified(folder.lastModified) }}</span>
+                </span>
+              </button>
+              <!-- 안으로 들어가기 — 방금 만든 빈 폴더도 여기로 들어가 그 안에 또 만든다 -->
+              <button
+                v-if="canEnter && isUsableFolderName(folder.name)"
+                type="button"
+                class="fd-row-enter"
+                :title="`${folder.name} 폴더 열기`"
+                @click="openFolder(folder.name)"
+              >
+                <span class="material-symbols-outlined">chevron_right</span>
+              </button>
+            </div>
 
             <!-- 검색어와 맞는 폴더가 없을 때 — 폴더가 아예 없을 때와 같은 빈 화면을 문구만 바꿔 쓴다 -->
             <div v-if="isNoMatch" class="fd-empty fd-empty--inline">
@@ -340,7 +482,7 @@ const continueEditing = async () => {
                 검색한 폴더가 없어요.<br />
                 폴더를 새로 만들거나 다시 검색해주세요.
               </p>
-              <button v-if="!creating" type="button" class="fd-create-btn" @click="startCreate">
+              <button v-if="canNest && !creating" type="button" class="fd-create-btn" @click="startCreate">
                 <span class="material-symbols-outlined">create_new_folder</span>
                 폴더 만들기
               </button>
@@ -352,11 +494,24 @@ const continueEditing = async () => {
     </div>
 
     <footer class="fd-footer">
-      <!-- 고른 폴더에 임시 저장 파일이 있으면 '이어서 편집'을 기본 동작으로 내민다 -->
-      <p v-if="pickedEditFile" class="fd-footer-note">
-        <span class="material-symbols-outlined">cloud_upload</span>
-        {{ pickedEditFile.name }} · {{ formatModified(pickedEditFile.lastModified) }}
-      </p>
+      <div v-if="pickedEditFile || pickedSendFile" class="fd-footer-notes">
+        <!-- 고른 폴더에 임시 저장 파일이 있으면 '이어서 편집'을 기본 동작으로 내민다 -->
+        <p v-if="pickedEditFile" class="fd-footer-note">
+          <span class="material-symbols-outlined">cloud_upload</span>
+          {{ pickedEditFile.name }} · {{ formatModified(pickedEditFile.lastModified) }}
+        </p>
+        <!--
+          이미 나간 회차 — 무엇이 나갔는지 열어 볼 수 있게 한다.
+          발송용 파일은 재편집 메타데이터가 없어 불러올 수 없다(이어서 편집은 임시 저장 파일이 맡는다).
+        -->
+        <p v-if="pickedSendFile" class="fd-footer-note fd-footer-note--sent">
+          <span class="material-symbols-outlined">send</span>
+          {{ formatModified(pickedSendFile.lastModified) }}에 발송용 파일이 올라갔어요 ·
+          <a :href="sendFileUrl" target="_blank" rel="noopener noreferrer">발송본 열기</a>
+          <template v-if="pickedEditFile">— 이어서 편집한 뒤 링크를 다시 만들면 덮어써요</template>
+          <template v-else>— 임시 저장 파일이 없어 이어서 편집은 할 수 없어요</template>
+        </p>
+      </div>
       <button type="button" class="fd-btn fd-btn--ghost" @click="goBack">이전으로</button>
       <button
         type="button"
@@ -548,6 +703,37 @@ const continueEditing = async () => {
 
 }
 
+/* 어느 폴더 안에 들어와 있는지 — gocaf > eng (Figma 1359-610) */
+.fd-crumbs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 40px;
+  font-size: 15px;
+  color: var(--gray-600);
+}
+.fd-crumb {
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 15px;
+  color: var(--gray-600);
+}
+.fd-crumb--link {
+  text-decoration: underline;
+  cursor: pointer;
+}
+.fd-crumb--link:hover {
+  color: var(--blue-500);
+}
+.fd-crumb-sep {
+  color: var(--gray-400);
+}
+/* 바로 뒤에 오는 제목 줄의 위 여백은 breadcrumb이 대신 잡는다 */
+.fd-crumbs + .fd-context {
+  margin-top: 10px;
+}
+
 /* 어느 전시회의 폴더를 보고 있는지 */
 .fd-context {
   display: flex;
@@ -593,31 +779,52 @@ const continueEditing = async () => {
   flex-shrink: 0;
   text-align: center;
 }
+/* 머리글 끝의 빈자리 — .fd-row-enter(40px + 오른쪽 여백 12px)와 같은 폭 */
+.fd-thead-enter {
+  width: 40px;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
 
+/* 줄은 테두리와 배경만 맡고, 안의 두 버튼(선택·열기)이 자리를 나눠 쓴다 */
 .fd-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   width: 100%;
-  padding: 18px 20px;
-  border: none;
   border-top: 1px solid var(--gray-200);
-  background: none;
-  text-align: left;
-  cursor: pointer;
 }
 .fd-row:last-of-type {
   border-bottom: 1px solid var(--gray-200);
 }
-.fd-row:hover:not(:disabled) {
+.fd-row:hover {
   background: var(--gray-50);
 }
 .fd-row.is-picked {
   background: var(--blue-50);
 }
 .fd-row.is-disabled {
-  cursor: not-allowed;
   opacity: 0.55;
+}
+/* 넓은 왼쪽 — 이 폴더에 저장하기 */
+.fd-row-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+.fd-row-main:disabled {
+  cursor: not-allowed;
+}
+/* 새 폴더 줄(입력)은 안에 버튼이 없어 자기 여백을 스스로 잡는다 */
+.fd-row--new {
+  justify-content: space-between;
+  padding: 18px 20px;
 }
 .fd-row-left {
   display: flex;
@@ -666,6 +873,16 @@ const continueEditing = async () => {
   font-weight: 500;
   vertical-align: middle;
 }
+/* 아직 서버에 없는 폴더 — 저장할 때 만들어진다 */
+.fd-row-badge--new {
+  background: var(--gray-100);
+  color: var(--gray-700);
+}
+/* 이미 나간 회차 */
+.fd-row-badge--sent {
+  background: var(--green-50);
+  color: var(--green-700);
+}
 .fd-row-right {
   display: flex;
   align-items: center;
@@ -675,6 +892,27 @@ const continueEditing = async () => {
 }
 .fd-row-right .fd-col-type {
   font-size: 16px;
+}
+/* 오른쪽 끝 — 이 폴더 안으로 */
+.fd-row-enter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin-right: 12px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: var(--gray-500);
+  cursor: pointer;
+}
+.fd-row-enter:hover {
+  background: var(--gray-200);
+  color: var(--blue-500);
+}
+.fd-row-enter .material-symbols-outlined {
+  font-size: 24px;
 }
 
 .fd-state {
@@ -759,17 +997,31 @@ const continueEditing = async () => {
   cursor: not-allowed;
 }
 
-/* 이어서 편집할 파일 안내 — 버튼 왼쪽에 파일명·시각 */
+/* 고른 폴더의 상태 — 버튼 왼쪽에 파일명·시각 */
+.fd-footer-notes {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0 auto 0 0;
+  min-width: 0;
+}
 .fd-footer-note {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin: 0 auto 0 0;
+  margin: 0;
   font-size: 14px;
   color: var(--gray-600);
 }
 .fd-footer-note .material-symbols-outlined {
   font-size: 20px;
+  color: var(--blue-500);
+}
+/* 이미 나간 회차 — 되돌릴 수 없는 쪽이라 눈에 띄게 */
+.fd-footer-note--sent .material-symbols-outlined {
+  color: var(--green-700);
+}
+.fd-footer-note--sent a {
   color: var(--blue-500);
 }
 </style>

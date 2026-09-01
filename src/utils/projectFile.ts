@@ -39,9 +39,17 @@ export function buildDownloadFileName(
   volume: string | null | undefined,
   kind: DownloadKind,
 ): string {
-  // S3 키·URL과 같은 기준으로 다듬는다 — 소문자 영숫자와 -_ 만 남긴다
+  // S3 키·URL과 같은 기준으로 다듬는다 — 소문자 영숫자와 -_ 만 남긴다.
+  // 폴더 안의 폴더('eng/vol01')는 칸 구분을 '_'로 바꿔 살린다 — 그냥 지우면 'engvol01'이 돼
+  // 서로 다른 폴더의 파일이 같은 이름으로 내려받아진다.
   const safe = (value?: string | null): string =>
-    (value ?? '').trim().toLowerCase().replace(/[^a-z0-9_-]+/g, '')
+    (value ?? '')
+      .trim()
+      .toLowerCase()
+      .split('/')
+      .map((part) => part.replace(/[^a-z0-9_-]+/g, ''))
+      .filter(Boolean)
+      .join('_')
   const parts = [safe(templateId) || 'blank', safe(volume), kind].filter(Boolean)
   return `${parts.join('_')}.html`
 }

@@ -191,15 +191,29 @@ export function formatVolume(n: number): string {
 }
 
 /**
+ * 폴더 안에 폴더를 둘 수 있는 깊이 — 'eng/vol01'까지.
+ *
+ * 더 깊이 들어가면 경로가 길어지는 만큼 지금 어디에 저장 중인지 알아보기 어려워지고,
+ * 올려 둔 파일을 잃어버리기 쉽다.
+ */
+export const MAX_VOLUME_DEPTH = 2
+
+/**
  * 회차 표기를 폴더명으로 다듬는다 — 'Vol 01' · 'vol-01' → 'vol01'.
  * 폴더명으로 쓸 수 없는 문자를 걸러내되, 사용자가 적은 표기를 최대한 살린다.
+ *
+ * 폴더 안의 폴더는 '/'로 잇는다 — 'eng/vol01'. 칸마다 따로 다듬으므로
+ * 사이의 구분은 살아남고, 허용 깊이를 넘는 뒷부분은 버린다.
  */
 export function normalizeVolume(volume?: string | null): string {
   return (volume ?? '')
     .trim()
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '')
-    .slice(0, 30)
+    .split('/')
+    .map((segment) => segment.replace(/[^a-z0-9]+/g, '').slice(0, 30))
+    .filter(Boolean)
+    .slice(0, MAX_VOLUME_DEPTH)
+    .join('/')
 }
 
 /**

@@ -117,6 +117,23 @@ describe('normalizeVolume', () => {
   it('지나치게 긴 값은 잘라낸다', () => {
     expect(normalizeVolume('v'.repeat(50))).toHaveLength(30)
   })
+
+  // 폴더 안에 폴더를 둘 수 있다 — 'eng/vol01'
+  describe('폴더 안의 폴더', () => {
+    it('칸 구분은 살리고 칸마다 다듬는다', () => {
+      expect(normalizeVolume('eng/vol01')).toBe('eng/vol01')
+      expect(normalizeVolume('ENG / Vol 01')).toBe('eng/vol01')
+    })
+
+    it('빈 칸은 접는다 — 앞뒤·가운데 슬래시가 남지 않는다', () => {
+      expect(normalizeVolume('/eng//vol01/')).toBe('eng/vol01')
+      expect(normalizeVolume('eng/회차')).toBe('eng')
+    })
+
+    it('허용 깊이를 넘는 뒷부분은 버린다', () => {
+      expect(normalizeVolume('eng/2026/q1/vol01')).toBe('eng/2026')
+    })
+  })
 })
 
 describe('parseVolumeNumber', () => {
@@ -169,6 +186,13 @@ describe('buildUploadDirectory', () => {
   it('연도·빌더 폴더·팀/전시회·회차로 경로를 만든다', () => {
     expect(buildUploadDirectory('arch-plan/nextcon', 'vol01', at)).toBe(
       '/e-dm/2026/newsletterbuilder/arch-plan/nextcon/vol01/',
+    )
+  })
+
+  // 이미지·HTML이 실제로 어디로 올라가는지 — 폴더 안의 폴더를 고른 경우
+  it('폴더 안의 폴더까지 경로에 담는다', () => {
+    expect(buildUploadDirectory('leisure-ind/gocaf', 'eng/vol01', at)).toBe(
+      '/e-dm/2026/newsletterbuilder/leisure-ind/gocaf/eng/vol01/',
     )
   })
 

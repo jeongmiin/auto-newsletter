@@ -76,6 +76,12 @@ describe('내려받을 파일 이름', () => {
     expect(buildDownloadFileName('c-uas', 'vol02', 'send')).toBe('c-uas_vol02_send.html')
   })
 
+  // 'eng/vol01'을 그냥 지우면 'engvol01'이 돼, 다른 폴더의 파일이 같은 이름으로 내려온다
+  it('폴더 안의 폴더는 칸 구분을 밑줄로 살린다', () => {
+    expect(buildDownloadFileName('gocaf', 'eng/vol01', 'edit')).toBe('gocaf_eng_vol01_edit.html')
+    expect(buildDownloadFileName('gocaf', 'vol01', 'edit')).toBe('gocaf_vol01_edit.html')
+  })
+
   it('폴더가 없으면 그 자리만 빠진다 (이름이 __ 로 벌어지지 않게)', () => {
     expect(buildDownloadFileName('police', '', 'edit')).toBe('police_edit.html')
     expect(buildDownloadFileName('police', null, 'send')).toBe('police_send.html')
