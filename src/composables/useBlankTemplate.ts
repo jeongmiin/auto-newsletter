@@ -17,13 +17,17 @@ export function useBlankTemplate() {
   /** 확인 없이 즉시 비운다 (확인은 호출부에서 이미 받은 상태) */
   const clearToBlank = (): void => {
     moduleStore.clearAll()
-    // 전체 스타일(배경색·테두리·포인트 색상·뉴스레터 요약)도 처음 값으로 —
+    // 저장 폴더는 '무엇을 만드는가'가 아니라 '어디에 쌓는가'라 내용과 함께 지우면 안 된다.
+    // 지우면 업로드가 막히고(회차 없음) 다시 폴더 선택 걸음으로 돌아가야 한다.
+    const folder = editorStore.wrapSettings.volume
+    // 전체 스타일(배경색·테두리·포인트 색상·뉴스레터 요약)은 처음 값으로 —
     // 모듈만 지우면 앞 작업물의 배경색·요약이 빈 템플릿에 그대로 묻어난다.
     editorStore.resetWrapSettings()
+    editorStore.updateWrapSettings({ volume: folder })
     // 내용만 지운 것이지 '어느 전시의 뉴스레터인가'가 바뀐 건 아니다 —
-    // 소속 팀(teamId)과 템플릿 id를 모두 유지해, 이미지 업로드 경로가 계속 같은 폴더를
-    // 가리키게 한다(예: /e-dm/2026/hobanexpo/). 보이는 이름만 '빈 템플릿'으로 바꾼다.
-    // 다른 전시로 옮기려면 템플릿 선택 화면에서 고르면 그때 id가 교체된다.
+    // 소속 팀(teamId)과 템플릿 id를 모두 유지해, 업로드 경로가 계속 같은 폴더를 가리키게 한다.
+    // 보이는 이름만 '빈 템플릿'으로 바꾼다. 다른 전시로 옮기려면 템플릿 선택 화면에서 고른다.
+    // (`blank/` 폴더는 처음부터 팀에서 '빈 템플릿'으로 시작했을 때만 쓴다 — 그때만 템플릿 id가 없다)
     editorStore.setCurrentTemplate({
       templateId: editorStore.currentTemplateId,
       templateName: '빈 템플릿',

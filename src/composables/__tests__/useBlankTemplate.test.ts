@@ -2,7 +2,7 @@
  * '빈 템플릿'·'전체 삭제'가 무엇을 지우고 무엇을 남기는지.
  *
  * 내용은 전부 지우되 **'어느 전시의 뉴스레터인가'는 남긴다** — 소속 팀과 템플릿 id.
- * 이미지 업로드 폴더(`/e-dm/{연도}/{템플릿id}/{회차}/`)가 계속 같은 전시를 가리켜야 하기 때문.
+ * 이미지 업로드 폴더(`/e-dm/{연도}/newsletterbuilder/{팀}/{전시회}/{회차}/`)가 계속 같은 전시를 가리켜야 하기 때문.
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
@@ -58,11 +58,12 @@ describe('useBlankTemplate — 비울 때 남기는 것', () => {
     expect(moduleStore.modules).toHaveLength(0)
     expect(editorStore.wrapSettings.backgroundColor).toBe('#f9f9f9')
     expect(editorStore.wrapSettings.summary).toBe('')
-    // 회차는 발행 건마다 다르므로 비운다 — 앞 회차 폴더에 새 이미지가 섞이지 않도록
-    expect(editorStore.wrapSettings.volume).toBe('')
+    // 저장 폴더는 '무엇을 만드는가'가 아니라 '어디에 쌓는가'라 내용과 함께 지우지 않는다 —
+    // 지우면 이어지는 업로드가 막히고 폴더 선택 걸음으로 되돌아가야 한다
+    expect(editorStore.wrapSettings.volume).toBe('vol07')
   })
 
-  it('업로드 폴더는 전시 폴더까지 유지되고 회차만 다시 받는다', async () => {
+  it('비운 뒤에도 고른 폴더에 그대로 저장된다 (팀·전시회·회차 모두 유지)', async () => {
     const { buildUploadDirectory } = await import('@/utils/s3Upload')
     const editorStore = useEditorStore()
     editorStore.setCurrentTemplate({
@@ -70,18 +71,48 @@ describe('useBlankTemplate — 비울 때 남기는 것', () => {
       templateName: '호반',
       teamId: 'arch-plan',
     })
+    editorStore.updateWrapSettings({ volume: 'vol08' })
 
     useBlankTemplate().confirmBlankTemplate()
 
     const at = new Date(2026, 7, 20)
-    // 회차를 비워 둔 동안에는 업로드가 막힌다
+    // 업로드 화면이 실제로 쓰는 값(uploadFolder = {팀}/{전시회})으로 확인한다
     expect(
-      buildUploadDirectory(editorStore.currentTemplateId, editorStore.wrapSettings.volume, at),
-    ).toBeNull()
-    // 회차를 새로 적으면 같은 전시 폴더 아래로 이어진다
-    editorStore.updateWrapSettings({ volume: 'vol08' })
-    expect(
-      buildUploadDirectory(editorStore.currentTemplateId, editorStore.wrapSettings.volume, at),
-    ).toBe('/e-dm/2026/hobanexpo/vol08/')
+      buildUploadDirectory(editorStore.uploadFolder, editorStore.wrapSettings.volume, at),
+    ).toBe('/e-dm/2026/newsletterbuilder/arch-plan/hobanexpo/vol08/')
+  })
+
+  // `blank/`는 처음부터 팀에서 '빈 템플릿'으로 시작했을 때만 쓴다 —
+  // 에디터 안에서 비우는 것은 '어느 전시인가'를 바꾸지 않는다
+  it('에디터에서 비워도 blank 폴더로 옮겨가지 않는다', async () => {
+    const { buildUploadDirectory } = await import('@/utils/s3Upload')
+    const editorStore = useEditorStore()
+    editorStore.setCurrentTemplate({
+      templateId: 'kpet',
+      templateName: '케이펫',
+      teamId: 'pet-ind',
+    })
+    editorStore.updateWrapSettings({ volume: 'vol03' })
+
+    useBlankTemplate().confirmBlankTemplate()
+
+    expect(editorStore.currentTemplateId).toBe('kpet')
+    expect(buildUploadDirectory(editorStore.uploadFolder, editorStore.wrapSettings.volume)).toContain(
+      '/pet-ind/kpet/vol03/',
+    )
+  })
+
+  it('팀에서 빈 템플릿으로 시작했을 때만 blank 폴더를 쓴다', async () => {
+    const { buildUploadDirectory } = await import('@/utils/s3Upload')
+    const editorStore = useEditorStore()
+    // 템플릿 선택 화면의 '빈 템플릿' 카드 = 템플릿 id 없이 팀만 들고 온다
+    editorStore.setCurrentTemplate({ templateId: null, templateName: '빈 템플릿', teamId: 'mice' })
+    editorStore.updateWrapSettings({ volume: 'vol01' })
+
+    useBlankTemplate().confirmBlankTemplate()
+
+    expect(buildUploadDirectory(editorStore.uploadFolder, editorStore.wrapSettings.volume)).toContain(
+      '/mice/blank/vol01/',
+    )
   })
 })
