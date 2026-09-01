@@ -9,7 +9,7 @@
           "name": "건축기획팀"
         },
         {
-          "id": "arch-strategy",
+          "id": "arch-str",
           "name": "건축전략팀"
         }
       ]
@@ -19,16 +19,16 @@
       "name": "신성장산업본부",
       "teams": [
         {
-          "id": "growth-strategy",
+          "id": "growth-plan",
+          "name": "신성장기획팀"
+        },
+        {
+          "id": "growth-str",
           "name": "신성장전략팀"
         },
         {
           "id": "mice",
           "name": "MICE사업팀"
-        },
-        {
-          "id": "growth-plan",
-          "name": "신성장기획팀"
         }
       ]
     },
@@ -37,7 +37,7 @@
       "name": "융합사업본부",
       "teams": [
         {
-          "id": "conv-industry-1",
+          "id": "conv1",
           "name": "융합산업1팀"
         }
       ]
@@ -47,7 +47,7 @@
       "name": "문화콘텐츠사업본부",
       "teams": [
         {
-          "id": "life-content",
+          "id": "life",
           "name": "라이프콘텐츠팀"
         }
       ]
@@ -57,7 +57,7 @@
       "name": "펫사업본부",
       "teams": [
         {
-          "id": "pet-industry",
+          "id": "pet-ind",
           "name": "펫산업팀"
         }
       ]
@@ -67,7 +67,7 @@
       "name": "레저사업본부",
       "teams": [
         {
-          "id": "leisure-industry",
+          "id": "leisure-ind",
           "name": "레저산업팀"
         }
       ]
@@ -4226,7 +4226,7 @@
       "name": "공간디자인페어",
       "description": "공간디자인페어 뉴스레터 구성",
       "divisionId": "arch",
-      "teamId": "arch-strategy",
+      "teamId": "arch-str",
       "thumbnail": "spacedesign_temp.png",
       "wrapSettings": {
         "backgroundColor": "#f9f9f9",
@@ -6658,7 +6658,7 @@
       "name": "코리아빌드",
       "description": "코리아빌드 뉴스레터 구성",
       "divisionId": "arch",
-      "teamId": "arch-strategy",
+      "teamId": "arch-str",
       "thumbnail": "koreabuild_temp.png",
       "wrapSettings": {
         "backgroundColor": "#ffffff",
@@ -8901,11 +8901,1845 @@
       ]
     },
     {
+      "id": "c-uas",
+      "name": "대드론",
+      "description": "대드론 뉴스레터 구성",
+      "divisionId": "growth",
+      "teamId": "growth-plan",
+      "thumbnail": "korea-c-uas_temp.png",
+      "wrapSettings": {
+        "backgroundColor": "#FFFFFF",
+        "borderEnabled": false,
+        "borderWidth": "0px",
+        "borderColor": "#dddddd",
+        "borderStyle": "solid",
+        "pointColor": "#fb4007",
+        "pointColors": [
+          "#fb4007"
+        ],
+        "fontLanguage": "default",
+        "summary": "대드론 전시 뉴스레터 입니다."
+      },
+      "modules": [
+        {
+          "moduleId": "ModuleDivider",
+          "properties": {
+            "borderColor": "#000000",
+            "borderWidth": "3px",
+            "borderStyle": "solid",
+            "dividerWidth": "100%",
+            "paddingTop": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "paddingRight": "0px",
+            "borderColor__usePoint": false
+          },
+          "styles": {},
+          "groupId": "group-1786614292866-6fmlpzn7n",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleImg",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2025/c-uas/vol01/logo.png",
+            "imageAlt": "로고",
+            "imageMaxWidth": "311px",
+            "imageAlign": "center",
+            "paddingTop": "30px",
+            "paddingRight": "20px",
+            "paddingBottom": "20px",
+            "paddingLeft": "20px",
+            "showImageLink": false,
+            "imageLinkUrl": "#",
+            "showBorderRadius": false,
+            "imageBorderRadius": "0px",
+            "imageBorderStyle": "none",
+            "imageBorderWidth": "1px",
+            "imageBorderColor": "#000000"
+          },
+          "styles": {},
+          "groupId": "group-1786614292866-6fmlpzn7n",
+          "rowIndex": 1,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDivider",
+          "properties": {
+            "borderColor": "#dddddd",
+            "borderWidth": "0",
+            "borderStyle": "solid",
+            "dividerWidth": "100%",
+            "paddingTop": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "20px",
+            "paddingRight": "20px"
+          },
+          "styles": {},
+          "groupId": "group-1786614292866-6fmlpzn7n",
+          "rowIndex": 2,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "20px",
+            "descriptionText": "<p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">NEWSLETTER&nbsp;<strong>VOL.1</strong></p>",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "marginTop": "0",
+            "marginRight": "20px",
+            "marginBottom": "15px",
+            "marginLeft": "20px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#111111",
+            "textAlign": "center"
+          },
+          "styles": {},
+          "groupId": "group-1786614292866-6fmlpzn7n",
+          "rowIndex": 3,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleImg",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/01.jpg",
+            "imageAlt": "이미지",
+            "imageMaxWidth": "100%",
+            "imageAlign": "center",
+            "paddingTop": "0px",
+            "paddingRight": "20px",
+            "paddingBottom": "20px",
+            "paddingLeft": "20px",
+            "showImageLink": false,
+            "imageLinkUrl": "#",
+            "showBorderRadius": true,
+            "imageBorderRadius": "10px",
+            "imageBorderStyle": "none",
+            "imageBorderWidth": "1px",
+            "imageBorderColor": "#000000"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "22px",
+            "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\"><strong style=\"font-size: 24px;\">‘안전한&nbsp;대한민국&nbsp;하늘을&nbsp;위한&nbsp;방패’</strong></p><p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\"><strong style=\"font-size: 18px;\">SKY&nbsp;SHIELD&nbsp;:&nbsp;New&nbsp;Era&nbsp;of&nbsp;Air&nbsp;Safety</strong></p>",
+            "paddingTop": "0px",
+            "paddingRight": "20px",
+            "paddingBottom": "0px",
+            "paddingLeft": "20px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#333333",
+            "lineHeight": "1.65"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "14px",
+            "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">하늘의&nbsp;위협에&nbsp;맞서는&nbsp;첨단&nbsp;대드론&nbsp;기술의&nbsp;장,&nbsp;세계&nbsp;최초·유일의&nbsp;대드론&nbsp;전문&nbsp;박람회,&nbsp;</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">대한민국&nbsp;대드론박람회는&nbsp;최신&nbsp;UAS&nbsp;대응&nbsp;솔루션을&nbsp;한자리에서&nbsp;소개합니다.</p>",
+            "paddingTop": "20px",
+            "paddingRight": "20px",
+            "paddingBottom": "0px",
+            "paddingLeft": "20px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#333333",
+            "lineHeight": "1.7"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleDivider",
+          "properties": {
+            "borderColor": "#999999",
+            "borderWidth": "1px",
+            "borderStyle": "dotted",
+            "dividerWidth": "100%",
+            "paddingTop": "20px",
+            "paddingBottom": "20px",
+            "paddingLeft": "20px",
+            "paddingRight": "20px"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "14px",
+            "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">📆&nbsp;<strong>일&nbsp;시</strong>&nbsp;:&nbsp;2026.&nbsp;12.&nbsp;1(화)&nbsp;–&nbsp;12.&nbsp;3(목),&nbsp;3&nbsp;일간</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">🚩&nbsp;<strong>장&nbsp;소</strong>&nbsp;:&nbsp;청주&nbsp;OSCO</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">✅&nbsp;<strong>주&nbsp;최</strong>&nbsp;:&nbsp;(사)한국대드론산업협회</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">🤝&nbsp;<strong>특별후원</strong>&nbsp;:&nbsp;육군방공학교</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">☑️&nbsp;<strong>주&nbsp;관</strong>&nbsp;:&nbsp;(주)&nbsp;메쎄이상</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">💡&nbsp;<strong>공식행사</strong>&nbsp;:&nbsp;개막식,&nbsp;개막오찬,&nbsp;환영만찬,&nbsp;VIP전시장&nbsp;투어,&nbsp;KOREA&nbsp;C-UAS&nbsp;Summit</p><p style=\"word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; line-height: 1.7;\">🏅&nbsp;<strong>조기신청할인</strong>&nbsp;:&nbsp;부스당&nbsp;500,000원&nbsp;(~2026.08.14까지)</p>",
+            "paddingTop": "0px",
+            "paddingRight": "20px",
+            "paddingBottom": "0px",
+            "paddingLeft": "20px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#333333",
+            "lineHeight": "2em"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleOneButton",
+          "properties": {
+            "buttonText": "홈페이지 바로가기 →",
+            "buttonUrl": "https://c-uas.ai.kr/",
+            "buttonFontSize": "15px",
+            "buttonBgColor": "#058bae",
+            "buttonTextColor": "#ffffff",
+            "buttonPaddingTop": "15px",
+            "buttonPaddingRight": "0px",
+            "buttonPaddingBottom": "15px",
+            "buttonPaddingLeft": "0px",
+            "paddingTop": "15px",
+            "paddingRight": "20px",
+            "paddingBottom": "40px",
+            "paddingLeft": "20px",
+            "showBorderRadius": true,
+            "buttonBorderRadius": "5px",
+            "buttonBorderStyle": "none",
+            "buttonBorderWidth": "1px",
+            "buttonBorderColor": "#000000",
+            "buttonBgColor__usePoint": true
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleDivider",
+          "properties": {
+            "borderColor": "#000000",
+            "borderWidth": "2px",
+            "borderStyle": "solid",
+            "dividerWidth": "100%",
+            "paddingTop": "20px",
+            "paddingBottom": "20px",
+            "paddingLeft": "20px",
+            "paddingRight": "20px"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleImg",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/02.jpg",
+            "imageAlt": "이미지",
+            "imageMaxWidth": "100%",
+            "imageAlign": "center",
+            "paddingTop": "0px",
+            "paddingRight": "20px",
+            "paddingBottom": "20px",
+            "paddingLeft": "20px",
+            "showImageLink": false,
+            "imageLinkUrl": "#",
+            "showBorderRadius": true,
+            "imageBorderRadius": "10px",
+            "imageBorderStyle": "none",
+            "imageBorderWidth": "1px",
+            "imageBorderColor": "#000000"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "14px",
+            "descriptionText": "<p style=\"word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere; line-height: 1.7;\">한국대드론산업협회가&nbsp;주최하고&nbsp;육군방공학교가&nbsp;특별&nbsp;후원하는&nbsp;&#39;2026&nbsp;대한민국&nbsp;대드론박람회(KOREA&nbsp;C-UAS&nbsp;2026)&#39;가&nbsp;올해&nbsp;12월&nbsp;OSCO(오스코)에서&nbsp;개최됩니다.</p><p style=\"word-break: keep-all; margin: 0; padding: 0; line-height: 1.7; min-height: 1.5em; word-wrap: break-word; overflow-wrap: anywhere;\">&nbsp;</p><p style=\"word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere; line-height: 1.7;\">본&nbsp;박람회는&nbsp;대드론&nbsp;기술의&nbsp;최신&nbsp;트렌드를&nbsp;공유하고&nbsp;실질적인&nbsp;비즈니스&nbsp;성과를&nbsp;도출하는&nbsp;전문&nbsp;전시회입니다.&nbsp;특히&nbsp;육군방공학교의&nbsp;특별후원에&nbsp;따라&nbsp;군&nbsp;핵심&nbsp;관계자&nbsp;및&nbsp;국내외&nbsp;주요&nbsp;바이어를&nbsp;현장에서&nbsp;직접&nbsp;만나&nbsp;실효성&nbsp;있는&nbsp;네트워크를&nbsp;구축할&nbsp;수&nbsp;있습니다.&nbsp;</p><p style=\"word-break: break-all; margin: 0; padding: 0; line-height: 1.7; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word;\">&nbsp;</p><p style=\"word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; line-height: 1.7;\">국내외&nbsp;주요&nbsp;바이어&nbsp;및&nbsp;군·관&nbsp;관계자들과의&nbsp;네트워크&nbsp;형성을&nbsp;희망하는&nbsp;기업들을&nbsp;위해&nbsp;조기&nbsp;참가신청을&nbsp;안내해&nbsp;드립니다.</p><p style=\"margin: 0; padding: 0; line-height: 1.7; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">[조기&nbsp;참가신청&nbsp;안내]</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">■&nbsp;신청&nbsp;기한:&nbsp;~&nbsp;2026년&nbsp;8월&nbsp;14일(금)까지</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">■&nbsp;혜택:&nbsp;부스당&nbsp;500,000&nbsp;원&nbsp;할인</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">■&nbsp;신청&nbsp;방법:&nbsp;공식&nbsp;홈페이지&nbsp;접수</p>",
+            "paddingTop": "15px",
+            "paddingRight": "20px",
+            "paddingBottom": "15px",
+            "paddingLeft": "20px",
+            "marginTop": "0px",
+            "marginRight": "20px",
+            "marginBottom": "10px",
+            "marginLeft": "20px",
+            "bgColor": "#f5f5f5",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#333333",
+            "textAlign": "left",
+            "__moduleLabel": "모듈 01번"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "22px",
+            "descriptionText": "<div style=\"font-weight:700;\"><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\">참가비용</p></div>",
+            "paddingTop": "15px",
+            "paddingRight": "20px",
+            "paddingBottom": "15px",
+            "paddingLeft": "20px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#111111"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleImg",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/03.jpg",
+            "imageAlt": "이미지",
+            "imageMaxWidth": "100%",
+            "imageAlign": "center",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "showImageLink": false,
+            "imageLinkUrl": "#",
+            "showBorderRadius": false,
+            "imageBorderRadius": "0px",
+            "imageBorderStyle": "none",
+            "imageBorderWidth": "1px",
+            "imageBorderColor": "#000000"
+          },
+          "styles": {},
+          "groupId": "group-1786614294493-cikl7m6wp",
+          "rowIndex": 0,
+          "columnIndex": 1
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "16px",
+            "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7; text-align:center;\"><span style=\"font-weight:700;\">독립부스</span></p>",
+            "paddingTop": "5px",
+            "paddingRight": "10px",
+            "paddingBottom": "5px",
+            "paddingLeft": "10px",
+            "marginTop": "25px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "0px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#111111",
+            "textAlign": "center"
+          },
+          "styles": {},
+          "groupId": "group-1786614294493-cikl7m6wp",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "14px",
+            "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\"><s>3,000,000원&nbsp;(1ea)</s>&nbsp;&nbsp;<strong style=\"font-size: 18px;\">2,500,000원&nbsp;(1ea)</strong></p>",
+            "paddingTop": "0px",
+            "paddingRight": "10px",
+            "paddingBottom": "0px",
+            "paddingLeft": "10px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "25px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "0px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#333333",
+            "textAlign": "center"
+          },
+          "styles": {},
+          "groupId": "group-1786614294493-cikl7m6wp",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleImg",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/04.jpg",
+            "imageAlt": "이미지",
+            "imageMaxWidth": "100%",
+            "imageAlign": "center",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "showImageLink": false,
+            "imageLinkUrl": "#",
+            "showBorderRadius": false,
+            "imageBorderRadius": "0px",
+            "imageBorderStyle": "none",
+            "imageBorderWidth": "1px",
+            "imageBorderColor": "#000000"
+          },
+          "styles": {},
+          "groupId": "group-1786614294780-1ow5cgas3",
+          "rowIndex": 0,
+          "columnIndex": 1
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "16px",
+            "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7; text-align:center;\"><span style=\"font-weight:700;\">독립부스</span></p>",
+            "paddingTop": "5px",
+            "paddingRight": "10px",
+            "paddingBottom": "5px",
+            "paddingLeft": "10px",
+            "marginTop": "25px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "0px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#111111",
+            "textAlign": "center"
+          },
+          "styles": {},
+          "groupId": "group-1786614294780-1ow5cgas3",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "14px",
+            "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\"><s>3,000,000원&nbsp;(1ea)</s>&nbsp;&nbsp;<strong style=\"font-size: 18px;\">2,500,000원&nbsp;(1ea)</strong></p>",
+            "paddingTop": "0px",
+            "paddingRight": "10px",
+            "paddingBottom": "0px",
+            "paddingLeft": "10px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "25px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "0px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#333333",
+            "textAlign": "center"
+          },
+          "styles": {},
+          "groupId": "group-1786614294780-1ow5cgas3",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDivider",
+          "properties": {
+            "borderColor": "#333333",
+            "borderWidth": "2px",
+            "borderStyle": "solid",
+            "dividerWidth": "100%",
+            "paddingTop": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "paddingRight": "0px"
+          },
+          "styles": {},
+          "groupId": "group-1786614295046-jq4lcm81e",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "22px",
+            "descriptionText": "<div style=\"font-weight:700;\"><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\">Why&nbsp;KOREA&nbsp;C-UAS&nbsp;?</p></div>",
+            "paddingTop": "15px",
+            "paddingRight": "20px",
+            "paddingBottom": "15px",
+            "paddingLeft": "20px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#111111"
+          },
+          "styles": {},
+          "groupId": "group-1786614295046-jq4lcm81e",
+          "rowIndex": 1,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "14px",
+            "descriptionText": "<p style=\"word-break: keep-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\"><strong style=\"font-size: 16px;\">1.&nbsp;세계&nbsp;최초·유일의&nbsp;대드론&nbsp;전문&nbsp;박람회</strong></p><p style=\"word-break: keep-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">일반&nbsp;드론&nbsp;전시가&nbsp;아닌,&nbsp;드론&nbsp;위협&nbsp;대응&nbsp;기술에&nbsp;특화된&nbsp;전문&nbsp;전시회</p><p style=\"word-break: keep-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">&nbsp;</p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\"><strong style=\"font-size: 16px;\">2.&nbsp;군·공공·민간&nbsp;실수요자와&nbsp;직접&nbsp;만나는&nbsp;자리</strong></p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">&nbsp;국방,&nbsp;경찰,&nbsp;소방,&nbsp;지자체,&nbsp;국가중요시설,&nbsp;주요&nbsp;산업시설,&nbsp;방산·보안기업&nbsp;관계자를&nbsp;대상으로&nbsp;기술을&nbsp;소개</p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">&nbsp;</p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\"><strong style=\"font-size: 16px;\">3.&nbsp;탐지부터&nbsp;무력화까지&nbsp;All-in-One&nbsp;전시&nbsp;구성</strong></p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">&nbsp;레이더,&nbsp;RF&nbsp;센서,&nbsp;EO/IR,&nbsp;AI&nbsp;분석,&nbsp;C2&nbsp;시스템,&nbsp;재밍,&nbsp;스푸핑,&nbsp;요격&nbsp;드론,&nbsp;레이저,&nbsp;HPM&nbsp;등&nbsp;대드론&nbsp;전&nbsp;주기&nbsp;기술을&nbsp;함께&nbsp;선보이는&nbsp;자리</p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">&nbsp;</p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\"><strong style=\"font-size: 16px;\">4.&nbsp;AI&nbsp;기반&nbsp;통합&nbsp;지휘·통제&nbsp;특별관&nbsp;운영</strong></p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">AI&nbsp;관제,&nbsp;디지털트윈,&nbsp;COP,&nbsp;통합&nbsp;플랫폼&nbsp;등&nbsp;차세대&nbsp;대드론&nbsp;운영&nbsp;체계를&nbsp;집중&nbsp;조명</p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">&nbsp;</p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\"><strong style=\"font-size: 16px;\">5.&nbsp;전시를&nbsp;넘어&nbsp;상담·발표·네트워킹으로&nbsp;연결</strong></p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">KOREA&nbsp;C-UAS&nbsp;Summit,&nbsp;참가기업&nbsp;기술발표회,&nbsp;VIP&nbsp;전시장&nbsp;투어,&nbsp;군&nbsp;활용성&nbsp;컨설팅&nbsp;등&nbsp;부대행사를&nbsp;통한&nbsp;참가기업&nbsp;노출&nbsp;및&nbsp;상담&nbsp;기회&nbsp;확대</p>",
+            "paddingTop": "15px",
+            "paddingRight": "20px",
+            "paddingBottom": "15px",
+            "paddingLeft": "20px",
+            "marginTop": "0px",
+            "marginRight": "20px",
+            "marginBottom": "20px",
+            "marginLeft": "20px",
+            "bgColor": "#f5f5f5",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#333333",
+            "textAlign": "left",
+            "__moduleLabel": "모듈 01번"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleImg",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/05.jpg",
+            "imageAlt": "이미지",
+            "imageMaxWidth": "100%",
+            "imageAlign": "center",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "showImageLink": false,
+            "imageLinkUrl": "#",
+            "showBorderRadius": false,
+            "imageBorderRadius": "0px",
+            "imageBorderStyle": "none",
+            "imageBorderWidth": "1px",
+            "imageBorderColor": "#000000"
+          },
+          "styles": {},
+          "groupId": "group-1786614295334-9llrticmi",
+          "rowIndex": 0,
+          "columnIndex": 1
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "18px",
+            "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7; text-align:center;\"><span style=\"font-weight:700;\">1. Detection : 탐지</span></p>",
+            "paddingTop": "5px",
+            "paddingRight": "10px",
+            "paddingBottom": "5px",
+            "paddingLeft": "10px",
+            "marginTop": "25px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "0px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#111111",
+            "textAlign": "center"
+          },
+          "styles": {},
+          "groupId": "group-1786614295334-9llrticmi",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "14px",
+            "descriptionText": "<p style=\"word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere; line-height: 1.7;; text-align: justify;\">#드론의&nbsp;존재를&nbsp;빠르게&nbsp;인지</p><p style=\"word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere; line-height: 1.7;; text-align: justify;\">#레이더&nbsp;시스템,&nbsp;RF센서,&nbsp;EO/OR센서,&nbsp;음향센서,&nbsp;센서&nbsp;융합,&nbsp;방향탐지기&nbsp;등</p>",
+            "paddingTop": "0px",
+            "paddingRight": "10px",
+            "paddingBottom": "0px",
+            "paddingLeft": "10px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "0px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#333333",
+            "textAlign": "center"
+          },
+          "styles": {},
+          "groupId": "group-1786614295334-9llrticmi",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleImg",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/06.jpg",
+            "imageAlt": "이미지",
+            "imageMaxWidth": "100%",
+            "imageAlign": "center",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "showImageLink": false,
+            "imageLinkUrl": "#",
+            "showBorderRadius": false,
+            "imageBorderRadius": "0px",
+            "imageBorderStyle": "none",
+            "imageBorderWidth": "1px",
+            "imageBorderColor": "#000000"
+          },
+          "styles": {},
+          "groupId": "group-1786614295623-rjyxznpy0",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "18px",
+            "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7; text-align:center;\"><span style=\"font-weight:700;\">2. Identification : 식별</span></p>",
+            "paddingTop": "5px",
+            "paddingRight": "10px",
+            "paddingBottom": "5px",
+            "paddingLeft": "10px",
+            "marginTop": "25px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "0px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#111111",
+            "textAlign": "center"
+          },
+          "styles": {},
+          "groupId": "group-1786614295623-rjyxznpy0",
+          "rowIndex": 0,
+          "columnIndex": 1
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "14px",
+            "descriptionText": "<p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">#드론&nbsp;종류&nbsp;및&nbsp;위협수준&nbsp;판단</p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">#고해상도&nbsp;카메라,&nbsp;AI영상&nbsp;분석,&nbsp;RF신호&nbsp;분석,&nbsp;항적&nbsp;추적,&nbsp;주파수·신호&nbsp;데이터베이스,&nbsp;자동식별&nbsp;기술&nbsp;등</p>",
+            "paddingTop": "0px",
+            "paddingRight": "10px",
+            "paddingBottom": "0px",
+            "paddingLeft": "10px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "0px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#333333",
+            "textAlign": "center"
+          },
+          "styles": {},
+          "groupId": "group-1786614295623-rjyxznpy0",
+          "rowIndex": 0,
+          "columnIndex": 1
+        },
+        {
+          "moduleId": "ModuleImg",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/07.jpg",
+            "imageAlt": "이미지",
+            "imageMaxWidth": "100%",
+            "imageAlign": "center",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "showImageLink": false,
+            "imageLinkUrl": "#",
+            "showBorderRadius": false,
+            "imageBorderRadius": "0px",
+            "imageBorderStyle": "none",
+            "imageBorderWidth": "1px",
+            "imageBorderColor": "#000000"
+          },
+          "styles": {},
+          "groupId": "group-1786614295912-a4ilytfkf",
+          "rowIndex": 0,
+          "columnIndex": 1
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "18px",
+            "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7; text-align:center;\"><span style=\"font-weight:700;\">3. Command & Control : 지휘통제</span></p>",
+            "paddingTop": "5px",
+            "paddingRight": "10px",
+            "paddingBottom": "5px",
+            "paddingLeft": "10px",
+            "marginTop": "25px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "0px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#111111",
+            "textAlign": "center"
+          },
+          "styles": {},
+          "groupId": "group-1786614295912-a4ilytfkf",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "14px",
+            "descriptionText": "<p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;; text-align: justify;\">#모든&nbsp;단계를&nbsp;통합&nbsp;운영·관리</p><p style=\"word-break: keep-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;; text-align: justify;\">#C2시스템,&nbsp;대응&nbsp;자동화,&nbsp;통신&nbsp;네트워크,&nbsp;상황판&nbsp;소프트웨어,&nbsp;모바일&nbsp;지휘차량,&nbsp;통합관제&nbsp;플랫폼&nbsp;소프트웨어&nbsp;개발,&nbsp;시스템&nbsp;통합,&nbsp;사이버&nbsp;보안&nbsp;등</p>",
+            "paddingTop": "0px",
+            "paddingRight": "10px",
+            "paddingBottom": "0px",
+            "paddingLeft": "10px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "0px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#333333",
+            "textAlign": "center"
+          },
+          "styles": {},
+          "groupId": "group-1786614295912-a4ilytfkf",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleImg",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/08.jpg",
+            "imageAlt": "이미지",
+            "imageMaxWidth": "100%",
+            "imageAlign": "center",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "showImageLink": false,
+            "imageLinkUrl": "#",
+            "showBorderRadius": false,
+            "imageBorderRadius": "0px",
+            "imageBorderStyle": "none",
+            "imageBorderWidth": "1px",
+            "imageBorderColor": "#000000"
+          },
+          "styles": {},
+          "groupId": "group-1786614296201-np6v2u5mt",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "18px",
+            "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7; text-align:center;\"><span style=\"font-weight:700;\">4. Neutralization  : 무력화</span></p>",
+            "paddingTop": "5px",
+            "paddingRight": "10px",
+            "paddingBottom": "5px",
+            "paddingLeft": "10px",
+            "marginTop": "25px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "0px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#111111",
+            "textAlign": "center"
+          },
+          "styles": {},
+          "groupId": "group-1786614296201-np6v2u5mt",
+          "rowIndex": 0,
+          "columnIndex": 1
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "14px",
+            "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">#기능의 저해 및 물리적 제거</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">#RF재머, GNSS 스푸핑, 전자기 펄스, 그물발사기, 요격 드론, 레이저 무기, 유도 무기, 산탄총, 소화기, 대공포, 고출력 마이크로파 등</p>",
+            "paddingTop": "0px",
+            "paddingRight": "20px",
+            "paddingBottom": "0px",
+            "paddingLeft": "20px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999"
+          },
+          "styles": {},
+          "groupId": "group-1786614296201-np6v2u5mt",
+          "rowIndex": 0,
+          "columnIndex": 1
+        },
+        {
+          "moduleId": "ModuleImg",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/09.jpg",
+            "imageAlt": "이미지",
+            "imageMaxWidth": "100%",
+            "imageAlign": "center",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "showImageLink": false,
+            "imageLinkUrl": "#",
+            "showBorderRadius": false,
+            "imageBorderRadius": "0px",
+            "imageBorderStyle": "none",
+            "imageBorderWidth": "1px",
+            "imageBorderColor": "#000000"
+          },
+          "styles": {},
+          "groupId": "group-1786614296491-81h7o0rix",
+          "rowIndex": 0,
+          "columnIndex": 1
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "18px",
+            "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7; text-align:center;\"><span style=\"font-weight:700;\">5. Future-Innovation Technology : 미래·혁신 기술</span></p>",
+            "paddingTop": "5px",
+            "paddingRight": "10px",
+            "paddingBottom": "5px",
+            "paddingLeft": "10px",
+            "marginTop": "25px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "0px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#111111",
+            "textAlign": "center"
+          },
+          "styles": {},
+          "groupId": "group-1786614296491-81h7o0rix",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "14px",
+            "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">#&nbsp;차세대&nbsp;대드론&nbsp;핵심&nbsp;기술</p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;; text-align: justify;\">#AI&nbsp;영상·신호&nbsp;분석,&nbsp;디지털&nbsp;트윈·시뮬레이션,&nbsp;엣지&nbsp;컴퓨팅/임베디드&nbsp;소프트웨어,&nbsp;지능형&nbsp;관제&nbsp;플랫폼,&nbsp;교육&nbsp;훈련·시뮬레이터,&nbsp;신소재&nbsp;등</p>",
+            "paddingTop": "0px",
+            "paddingRight": "10px",
+            "paddingBottom": "0px",
+            "paddingLeft": "10px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "0px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#333333",
+            "textAlign": "center"
+          },
+          "styles": {},
+          "groupId": "group-1786614296491-81h7o0rix",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDivider",
+          "properties": {
+            "borderColor": "#333333",
+            "borderWidth": "2px",
+            "borderStyle": "solid",
+            "dividerWidth": "100%",
+            "paddingTop": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "paddingRight": "0px"
+          },
+          "styles": {},
+          "groupId": "group-1786614296756-2tq9uxyut",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "22px",
+            "descriptionText": "<div style=\"font-weight:700;\"><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">KOREA&nbsp;C-UAS&nbsp;2025&nbsp;Review</p></div>",
+            "paddingTop": "15px",
+            "paddingRight": "20px",
+            "paddingBottom": "15px",
+            "paddingLeft": "20px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#111111"
+          },
+          "styles": {},
+          "groupId": "group-1786614296756-2tq9uxyut",
+          "rowIndex": 1,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleImg",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/10.jpg",
+            "imageAlt": "이미지",
+            "imageMaxWidth": "100%",
+            "imageAlign": "center",
+            "paddingTop": "0px",
+            "paddingRight": "20px",
+            "paddingBottom": "20px",
+            "paddingLeft": "20px",
+            "showImageLink": false,
+            "imageLinkUrl": "#",
+            "showBorderRadius": false,
+            "imageBorderRadius": "0px",
+            "imageBorderStyle": "none",
+            "imageBorderWidth": "1px",
+            "imageBorderColor": "#000000"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleImg",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/11.jpg",
+            "imageAlt": "이미지",
+            "imageMaxWidth": "100%",
+            "imageAlign": "center",
+            "paddingTop": "0px",
+            "paddingRight": "20px",
+            "paddingBottom": "20px",
+            "paddingLeft": "20px",
+            "showImageLink": false,
+            "imageLinkUrl": "#",
+            "showBorderRadius": false,
+            "imageBorderRadius": "0px",
+            "imageBorderStyle": "none",
+            "imageBorderWidth": "1px",
+            "imageBorderColor": "#000000"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleDivider",
+          "properties": {
+            "borderColor": "#333333",
+            "borderWidth": "2px",
+            "borderStyle": "solid",
+            "dividerWidth": "100%",
+            "paddingTop": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "paddingRight": "0px"
+          },
+          "styles": {},
+          "groupId": "group-1786614297262-5ucfzhjdm",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "22px",
+            "descriptionText": "<div style=\"font-weight:700;\"><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">KOREA&nbsp;C-UAS&nbsp;2025&nbsp;현장사진</p></div>",
+            "paddingTop": "15px",
+            "paddingRight": "20px",
+            "paddingBottom": "15px",
+            "paddingLeft": "20px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#111111"
+          },
+          "styles": {},
+          "groupId": "group-1786614297262-5ucfzhjdm",
+          "rowIndex": 1,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleImg",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/12.jpg",
+            "imageAlt": "이미지",
+            "imageMaxWidth": "100%",
+            "imageAlign": "center",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "showImageLink": false,
+            "imageLinkUrl": "#",
+            "showBorderRadius": true,
+            "imageBorderRadius": "10px",
+            "imageBorderStyle": "none",
+            "imageBorderWidth": "1px",
+            "imageBorderColor": "#000000"
+          },
+          "styles": {},
+          "groupId": "group-1786614297494-f7c24jgpu",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleImg",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/13.jpg",
+            "imageAlt": "이미지",
+            "imageMaxWidth": "100%",
+            "imageAlign": "center",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "showImageLink": false,
+            "imageLinkUrl": "#",
+            "showBorderRadius": true,
+            "imageBorderRadius": "10px",
+            "imageBorderStyle": "none",
+            "imageBorderWidth": "1px",
+            "imageBorderColor": "#000000"
+          },
+          "styles": {},
+          "groupId": "group-1786614297494-f7c24jgpu",
+          "rowIndex": 0,
+          "columnIndex": 1
+        },
+        {
+          "moduleId": "ModuleImg",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/14.jpg",
+            "imageAlt": "이미지",
+            "imageMaxWidth": "100%",
+            "imageAlign": "center",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "showImageLink": false,
+            "imageLinkUrl": "#",
+            "showBorderRadius": true,
+            "imageBorderRadius": "10px",
+            "imageBorderStyle": "none",
+            "imageBorderWidth": "1px",
+            "imageBorderColor": "#000000"
+          },
+          "styles": {},
+          "groupId": "group-1786614297731-h8eeincv4",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleImg",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/15.jpg",
+            "imageAlt": "이미지",
+            "imageMaxWidth": "100%",
+            "imageAlign": "center",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "showImageLink": false,
+            "imageLinkUrl": "#",
+            "showBorderRadius": true,
+            "imageBorderRadius": "10px",
+            "imageBorderStyle": "none",
+            "imageBorderWidth": "1px",
+            "imageBorderColor": "#000000"
+          },
+          "styles": {},
+          "groupId": "group-1786614297731-h8eeincv4",
+          "rowIndex": 0,
+          "columnIndex": 1
+        },
+        {
+          "moduleId": "ModuleImg",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/16.jpg",
+            "imageAlt": "이미지",
+            "imageMaxWidth": "100%",
+            "imageAlign": "center",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "showImageLink": false,
+            "imageLinkUrl": "#",
+            "showBorderRadius": true,
+            "imageBorderRadius": "10px",
+            "imageBorderStyle": "none",
+            "imageBorderWidth": "1px",
+            "imageBorderColor": "#000000"
+          },
+          "styles": {},
+          "groupId": "group-1786614297967-34kawsvn1",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleImg",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/17.jpg",
+            "imageAlt": "이미지",
+            "imageMaxWidth": "100%",
+            "imageAlign": "center",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "showImageLink": false,
+            "imageLinkUrl": "#",
+            "showBorderRadius": true,
+            "imageBorderRadius": "10px",
+            "imageBorderStyle": "none",
+            "imageBorderWidth": "1px",
+            "imageBorderColor": "#000000"
+          },
+          "styles": {},
+          "groupId": "group-1786614297967-34kawsvn1",
+          "rowIndex": 0,
+          "columnIndex": 1
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "14px",
+            "descriptionText": "<p style=\"word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; line-height: 1.7;\"><strong style=\"font-size: 18px;\">2026&nbsp;대한민국&nbsp;대드론&nbsp;박람회&nbsp;사무국</strong></p><p style=\"word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; line-height: 1.7;\">서울시&nbsp;마포구&nbsp;월드컵북로&nbsp;58길&nbsp;9&nbsp;ES타워&nbsp;(03922)</p>",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "10px",
+            "paddingLeft": "0px",
+            "marginTop": "30px",
+            "marginRight": "25px",
+            "marginBottom": "0px",
+            "marginLeft": "25px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#333333",
+            "textAlign": "center"
+          },
+          "styles": {},
+          "groupId": "group-1786614298260-dccd09zuc",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleContactInfo",
+          "properties": {
+            "contactItems": [
+              {
+                "key": "website",
+                "show": true,
+                "value": "www.c-uas.ai.kr"
+              },
+              {
+                "key": "phone",
+                "show": true,
+                "value": "02-6121-6360"
+              },
+              {
+                "key": "email",
+                "show": true,
+                "value": "c-uas@esgroup.net"
+              },
+              {
+                "key": "fax",
+                "show": false,
+                "value": "02-6121-6363"
+              }
+            ],
+            "contactFontSize": "13px",
+            "contactTextColor": "#333333",
+            "contactAlign": "center",
+            "paddingTop": "0px",
+            "paddingRight": "25px",
+            "paddingBottom": "30px",
+            "paddingLeft": "25px"
+          },
+          "styles": {},
+          "groupId": "group-1786614298260-dccd09zuc",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDivider",
+          "properties": {
+            "borderColor": "#aaaaaa",
+            "borderWidth": "1px",
+            "borderStyle": "solid",
+            "dividerWidth": "100%",
+            "paddingTop": "0px",
+            "paddingBottom": "15px",
+            "paddingLeft": "0px",
+            "paddingRight": "0px"
+          },
+          "styles": {},
+          "groupId": "group-1786614298260-dccd09zuc",
+          "rowIndex": 1,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleSnsIcons",
+          "properties": {
+            "snsIconBgColor": "#333333",
+            "snsAlign": "center",
+            "snsIcons": [
+              {
+                "key": "home",
+                "show": true,
+                "url": "https://c-uas.ai.kr/"
+              },
+              {
+                "key": "facebook",
+                "show": false,
+                "url": "https://www.facebook.com/kpetfair"
+              },
+              {
+                "key": "x",
+                "show": false,
+                "url": ""
+              },
+              {
+                "key": "blog",
+                "show": false,
+                "url": "https://blog.naver.com/kpetfair"
+              },
+              {
+                "key": "youtube",
+                "show": false,
+                "url": ""
+              },
+              {
+                "key": "instagram",
+                "show": false,
+                "url": "https://www.instagram.com/kpetfair/"
+              },
+              {
+                "key": "kakao",
+                "show": false,
+                "url": ""
+              },
+              {
+                "key": "linkedin",
+                "show": false,
+                "url": ""
+              },
+              {
+                "key": "zuzuzu",
+                "show": false,
+                "url": "https://kcoupet.com/"
+              },
+              {
+                "key": "en",
+                "show": false,
+                "url": ""
+              },
+              {
+                "key": "jp",
+                "show": false,
+                "url": ""
+              },
+              {
+                "key": "th",
+                "show": false,
+                "url": ""
+              }
+            ],
+            "paddingTop": "0px",
+            "paddingRight": "5px",
+            "paddingBottom": "15px",
+            "paddingLeft": "5px"
+          },
+          "styles": {},
+          "groupId": "group-1786614298260-dccd09zuc",
+          "rowIndex": 2,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "12px",
+            "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7em;\">본 메일은 회원님의 수신동의 여부를 확인한 결과 회원님께서 수신동의를 하셨기에 발송되었습니다.</p><p style=\"margin:0; padding:0; line-height:1.7em;\">메일 수신을 원치 않으시면 <a href=\"http://edm.esfair.kr/RejectMail.aspx?code=DRON\" target=\"_blank\" style=\"text-decoration:none; color:#333333; font-weight:700;\">[수신거부]</a> 를 클릭하십시오.</p><p style=\"margin:0; padding:0; line-height:1.7em;\">본 메일은 발신전용 메일이므로 문의사항은 <strong>02-6121-6360/ c-uas@esgroup.net </strong>으로 문의 바랍니다</p>",
+            "paddingTop": "10px",
+            "paddingRight": "25px",
+            "paddingBottom": "40px",
+            "paddingLeft": "25px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#333333",
+            "textAlign": "center"
+          },
+          "styles": {},
+          "groupId": "group-1786614298260-dccd09zuc",
+          "rowIndex": 3,
+          "columnIndex": 0
+        }
+      ],
+      "groups": [
+        {
+          "id": "group-1786614292866-6fmlpzn7n",
+          "name": "기본 헤더",
+          "styles": {
+            "backgroundColor": "",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "0px",
+            "margin": "0px"
+          },
+          "rows": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "id": "group-1786614294493-cikl7m6wp",
+          "name": "모듈 07번(좌우 반전)",
+          "styles": {
+            "backgroundColor": "",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "0px",
+            "margin": "0px",
+            "paddingLeft": "15px",
+            "paddingRight": "15px"
+          },
+          "rows": [
+            2
+          ],
+          "colWidths": [
+            [
+              55,
+              45
+            ]
+          ]
+        },
+        {
+          "id": "group-1786614294780-1ow5cgas3",
+          "name": "모듈 07번(좌우 반전)",
+          "styles": {
+            "backgroundColor": "",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "0px",
+            "margin": "0px",
+            "paddingLeft": "15px",
+            "paddingRight": "15px"
+          },
+          "rows": [
+            2
+          ],
+          "colWidths": [
+            [
+              55,
+              45
+            ]
+          ]
+        },
+        {
+          "id": "group-1786614295046-jq4lcm81e",
+          "name": "섹션 타이틀",
+          "styles": {
+            "backgroundColor": "",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "0px",
+            "margin": "0px"
+          },
+          "rows": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "group-1786614295334-9llrticmi",
+          "name": "모듈 07번(좌우 반전)",
+          "styles": {
+            "backgroundColor": "",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "0px",
+            "margin": "0px",
+            "paddingLeft": "15px",
+            "paddingRight": "15px"
+          },
+          "rows": [
+            2
+          ],
+          "colWidths": [
+            [
+              50,
+              51
+            ]
+          ]
+        },
+        {
+          "id": "group-1786614295623-rjyxznpy0",
+          "name": "모듈 07번",
+          "styles": {
+            "backgroundColor": "",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "0px",
+            "margin": "0px",
+            "paddingLeft": "15px",
+            "paddingRight": "15px"
+          },
+          "rows": [
+            2
+          ],
+          "colWidths": [
+            [
+              51,
+              50
+            ]
+          ]
+        },
+        {
+          "id": "group-1786614295912-a4ilytfkf",
+          "name": "모듈 07번(좌우 반전)",
+          "styles": {
+            "backgroundColor": "",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "0px",
+            "margin": "0px",
+            "paddingLeft": "15px",
+            "paddingRight": "15px"
+          },
+          "rows": [
+            2
+          ],
+          "colWidths": [
+            [
+              50,
+              51
+            ]
+          ]
+        },
+        {
+          "id": "group-1786614296201-np6v2u5mt",
+          "name": "모듈 07번",
+          "styles": {
+            "backgroundColor": "",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "0px",
+            "margin": "0px",
+            "paddingLeft": "15px",
+            "paddingRight": "15px"
+          },
+          "rows": [
+            2
+          ],
+          "colWidths": [
+            [
+              51,
+              50
+            ]
+          ]
+        },
+        {
+          "id": "group-1786614296491-81h7o0rix",
+          "name": "모듈 07번(좌우 반전)",
+          "styles": {
+            "backgroundColor": "",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "0px",
+            "margin": "0px",
+            "paddingLeft": "15px",
+            "paddingRight": "15px"
+          },
+          "rows": [
+            2
+          ],
+          "colWidths": [
+            [
+              50,
+              51
+            ]
+          ]
+        },
+        {
+          "id": "group-1786614296756-2tq9uxyut",
+          "name": "섹션 타이틀",
+          "styles": {
+            "backgroundColor": "",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "0px",
+            "margin": "0px"
+          },
+          "rows": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "group-1786614297262-5ucfzhjdm",
+          "name": "섹션 타이틀",
+          "styles": {
+            "backgroundColor": "",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "0px",
+            "margin": "0px"
+          },
+          "rows": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "group-1786614297494-f7c24jgpu",
+          "name": "복수 이미지",
+          "styles": {
+            "backgroundColor": "",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "0px",
+            "margin": "0px",
+            "paddingLeft": "15px",
+            "paddingRight": "15px"
+          },
+          "rows": [
+            2
+          ]
+        },
+        {
+          "id": "group-1786614297731-h8eeincv4",
+          "name": "복수 이미지",
+          "styles": {
+            "backgroundColor": "",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "0px",
+            "margin": "0px",
+            "paddingLeft": "15px",
+            "paddingRight": "15px"
+          },
+          "rows": [
+            2
+          ]
+        },
+        {
+          "id": "group-1786614297967-34kawsvn1",
+          "name": "복수 이미지",
+          "styles": {
+            "backgroundColor": "",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "0px",
+            "margin": "0px",
+            "paddingLeft": "15px",
+            "paddingRight": "15px"
+          },
+          "rows": [
+            2
+          ]
+        },
+        {
+          "id": "group-1786614298260-dccd09zuc",
+          "name": "하단 푸터",
+          "styles": {
+            "backgroundColor": "#e9e9e9",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "0px",
+            "margin": "0px"
+          },
+          "rows": [
+            1,
+            1,
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    {
       "id": "lawexposeoul",
       "name": "법률 산업 박람회",
       "description": "법률 산업 박람회 뉴스레터 구성",
       "divisionId": "growth",
-      "teamId": "growth-strategy",
+      "teamId": "growth-str",
       "thumbnail": "lawexpo_temp.png",
       "wrapSettings": {
         "backgroundColor": "#ffffff",
@@ -9806,11 +11640,11 @@
       ]
     },
     {
-      "id": "beautysumkorea",
+      "id": "beautysum",
       "name": "뷰티썸",
       "description": "뷰티썸 뉴스레터 구성",
       "divisionId": "growth",
-      "teamId": "growth-strategy",
+      "teamId": "growth-str",
       "thumbnail": "beautysumindia_temp.png",
       "wrapSettings": {
         "backgroundColor": "#ffffff",
@@ -10836,7 +12670,7 @@
       "name": "KHF",
       "description": "KHF 뉴스레터 구성",
       "divisionId": "growth",
-      "teamId": "growth-strategy",
+      "teamId": "growth-str",
       "thumbnail": "KHF_temp.png",
       "wrapSettings": {
         "backgroundColor": "#ffffff",
@@ -16599,1845 +18433,11 @@
       ]
     },
     {
-      "id": "c-uas",
-      "name": "대드론",
-      "description": "대드론 뉴스레터 구성",
-      "divisionId": "growth",
-      "teamId": "growth-plan",
-      "thumbnail": "korea-c-uas_temp.png",
-      "wrapSettings": {
-        "backgroundColor": "#FFFFFF",
-        "borderEnabled": false,
-        "borderWidth": "0px",
-        "borderColor": "#dddddd",
-        "borderStyle": "solid",
-        "pointColor": "#fb4007",
-        "pointColors": [
-          "#fb4007"
-        ],
-        "fontLanguage": "default",
-        "summary": "대드론 전시 뉴스레터 입니다."
-      },
-      "modules": [
-        {
-          "moduleId": "ModuleDivider",
-          "properties": {
-            "borderColor": "#000000",
-            "borderWidth": "3px",
-            "borderStyle": "solid",
-            "dividerWidth": "100%",
-            "paddingTop": "0px",
-            "paddingBottom": "0px",
-            "paddingLeft": "0px",
-            "paddingRight": "0px",
-            "borderColor__usePoint": false
-          },
-          "styles": {},
-          "groupId": "group-1786614292866-6fmlpzn7n",
-          "rowIndex": 0,
-          "columnIndex": 0
-        },
-        {
-          "moduleId": "ModuleImg",
-          "properties": {
-            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2025/c-uas/vol01/logo.png",
-            "imageAlt": "로고",
-            "imageMaxWidth": "311px",
-            "imageAlign": "center",
-            "paddingTop": "30px",
-            "paddingRight": "20px",
-            "paddingBottom": "20px",
-            "paddingLeft": "20px",
-            "showImageLink": false,
-            "imageLinkUrl": "#",
-            "showBorderRadius": false,
-            "imageBorderRadius": "0px",
-            "imageBorderStyle": "none",
-            "imageBorderWidth": "1px",
-            "imageBorderColor": "#000000"
-          },
-          "styles": {},
-          "groupId": "group-1786614292866-6fmlpzn7n",
-          "rowIndex": 1,
-          "columnIndex": 0
-        },
-        {
-          "moduleId": "ModuleDivider",
-          "properties": {
-            "borderColor": "#dddddd",
-            "borderWidth": "0",
-            "borderStyle": "solid",
-            "dividerWidth": "100%",
-            "paddingTop": "0px",
-            "paddingBottom": "0px",
-            "paddingLeft": "20px",
-            "paddingRight": "20px"
-          },
-          "styles": {},
-          "groupId": "group-1786614292866-6fmlpzn7n",
-          "rowIndex": 2,
-          "columnIndex": 0
-        },
-        {
-          "moduleId": "ModuleDescText",
-          "properties": {
-            "fontSize": "20px",
-            "descriptionText": "<p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">NEWSLETTER&nbsp;<strong>VOL.1</strong></p>",
-            "paddingTop": "0px",
-            "paddingRight": "0px",
-            "paddingBottom": "0px",
-            "paddingLeft": "0px",
-            "marginTop": "0",
-            "marginRight": "20px",
-            "marginBottom": "15px",
-            "marginLeft": "20px",
-            "bgColor": "transparent",
-            "showBorderRadius": false,
-            "borderRadius": "8px",
-            "showBorder": false,
-            "borderPosition": "bottom",
-            "borderStyle": "solid",
-            "borderWidth": "1px",
-            "borderColor": "#999999",
-            "textColor": "#111111",
-            "textAlign": "center"
-          },
-          "styles": {},
-          "groupId": "group-1786614292866-6fmlpzn7n",
-          "rowIndex": 3,
-          "columnIndex": 0
-        },
-        {
-          "moduleId": "ModuleImg",
-          "properties": {
-            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/01.jpg",
-            "imageAlt": "이미지",
-            "imageMaxWidth": "100%",
-            "imageAlign": "center",
-            "paddingTop": "0px",
-            "paddingRight": "20px",
-            "paddingBottom": "20px",
-            "paddingLeft": "20px",
-            "showImageLink": false,
-            "imageLinkUrl": "#",
-            "showBorderRadius": true,
-            "imageBorderRadius": "10px",
-            "imageBorderStyle": "none",
-            "imageBorderWidth": "1px",
-            "imageBorderColor": "#000000"
-          },
-          "styles": {}
-        },
-        {
-          "moduleId": "ModuleDescText",
-          "properties": {
-            "fontSize": "22px",
-            "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\"><strong style=\"font-size: 24px;\">‘안전한&nbsp;대한민국&nbsp;하늘을&nbsp;위한&nbsp;방패’</strong></p><p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\"><strong style=\"font-size: 18px;\">SKY&nbsp;SHIELD&nbsp;:&nbsp;New&nbsp;Era&nbsp;of&nbsp;Air&nbsp;Safety</strong></p>",
-            "paddingTop": "0px",
-            "paddingRight": "20px",
-            "paddingBottom": "0px",
-            "paddingLeft": "20px",
-            "marginTop": "0px",
-            "marginRight": "0px",
-            "marginBottom": "0px",
-            "marginLeft": "0px",
-            "bgColor": "transparent",
-            "showBorderRadius": false,
-            "borderRadius": "8px",
-            "showBorder": false,
-            "borderPosition": "bottom",
-            "borderStyle": "solid",
-            "borderWidth": "1px",
-            "borderColor": "#999999",
-            "textColor": "#333333",
-            "lineHeight": "1.65"
-          },
-          "styles": {}
-        },
-        {
-          "moduleId": "ModuleDescText",
-          "properties": {
-            "fontSize": "14px",
-            "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">하늘의&nbsp;위협에&nbsp;맞서는&nbsp;첨단&nbsp;대드론&nbsp;기술의&nbsp;장,&nbsp;세계&nbsp;최초·유일의&nbsp;대드론&nbsp;전문&nbsp;박람회,&nbsp;</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">대한민국&nbsp;대드론박람회는&nbsp;최신&nbsp;UAS&nbsp;대응&nbsp;솔루션을&nbsp;한자리에서&nbsp;소개합니다.</p>",
-            "paddingTop": "20px",
-            "paddingRight": "20px",
-            "paddingBottom": "0px",
-            "paddingLeft": "20px",
-            "marginTop": "0px",
-            "marginRight": "0px",
-            "marginBottom": "0px",
-            "marginLeft": "0px",
-            "bgColor": "transparent",
-            "showBorderRadius": false,
-            "borderRadius": "8px",
-            "showBorder": false,
-            "borderPosition": "bottom",
-            "borderStyle": "solid",
-            "borderWidth": "1px",
-            "borderColor": "#999999",
-            "textColor": "#333333",
-            "lineHeight": "1.7"
-          },
-          "styles": {}
-        },
-        {
-          "moduleId": "ModuleDivider",
-          "properties": {
-            "borderColor": "#999999",
-            "borderWidth": "1px",
-            "borderStyle": "dotted",
-            "dividerWidth": "100%",
-            "paddingTop": "20px",
-            "paddingBottom": "20px",
-            "paddingLeft": "20px",
-            "paddingRight": "20px"
-          },
-          "styles": {}
-        },
-        {
-          "moduleId": "ModuleDescText",
-          "properties": {
-            "fontSize": "14px",
-            "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">📆&nbsp;<strong>일&nbsp;시</strong>&nbsp;:&nbsp;2026.&nbsp;12.&nbsp;1(화)&nbsp;–&nbsp;12.&nbsp;3(목),&nbsp;3&nbsp;일간</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">🚩&nbsp;<strong>장&nbsp;소</strong>&nbsp;:&nbsp;청주&nbsp;OSCO</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">✅&nbsp;<strong>주&nbsp;최</strong>&nbsp;:&nbsp;(사)한국대드론산업협회</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">🤝&nbsp;<strong>특별후원</strong>&nbsp;:&nbsp;육군방공학교</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">☑️&nbsp;<strong>주&nbsp;관</strong>&nbsp;:&nbsp;(주)&nbsp;메쎄이상</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">💡&nbsp;<strong>공식행사</strong>&nbsp;:&nbsp;개막식,&nbsp;개막오찬,&nbsp;환영만찬,&nbsp;VIP전시장&nbsp;투어,&nbsp;KOREA&nbsp;C-UAS&nbsp;Summit</p><p style=\"word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; line-height: 1.7;\">🏅&nbsp;<strong>조기신청할인</strong>&nbsp;:&nbsp;부스당&nbsp;500,000원&nbsp;(~2026.08.14까지)</p>",
-            "paddingTop": "0px",
-            "paddingRight": "20px",
-            "paddingBottom": "0px",
-            "paddingLeft": "20px",
-            "marginTop": "0px",
-            "marginRight": "0px",
-            "marginBottom": "0px",
-            "marginLeft": "0px",
-            "bgColor": "transparent",
-            "showBorderRadius": false,
-            "borderRadius": "8px",
-            "showBorder": false,
-            "borderPosition": "bottom",
-            "borderStyle": "solid",
-            "borderWidth": "1px",
-            "borderColor": "#999999",
-            "textColor": "#333333",
-            "lineHeight": "2em"
-          },
-          "styles": {}
-        },
-        {
-          "moduleId": "ModuleOneButton",
-          "properties": {
-            "buttonText": "홈페이지 바로가기 →",
-            "buttonUrl": "https://c-uas.ai.kr/",
-            "buttonFontSize": "15px",
-            "buttonBgColor": "#058bae",
-            "buttonTextColor": "#ffffff",
-            "buttonPaddingTop": "15px",
-            "buttonPaddingRight": "0px",
-            "buttonPaddingBottom": "15px",
-            "buttonPaddingLeft": "0px",
-            "paddingTop": "15px",
-            "paddingRight": "20px",
-            "paddingBottom": "40px",
-            "paddingLeft": "20px",
-            "showBorderRadius": true,
-            "buttonBorderRadius": "5px",
-            "buttonBorderStyle": "none",
-            "buttonBorderWidth": "1px",
-            "buttonBorderColor": "#000000",
-            "buttonBgColor__usePoint": true
-          },
-          "styles": {}
-        },
-        {
-          "moduleId": "ModuleDivider",
-          "properties": {
-            "borderColor": "#000000",
-            "borderWidth": "2px",
-            "borderStyle": "solid",
-            "dividerWidth": "100%",
-            "paddingTop": "20px",
-            "paddingBottom": "20px",
-            "paddingLeft": "20px",
-            "paddingRight": "20px"
-          },
-          "styles": {}
-        },
-        {
-          "moduleId": "ModuleImg",
-          "properties": {
-            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/02.jpg",
-            "imageAlt": "이미지",
-            "imageMaxWidth": "100%",
-            "imageAlign": "center",
-            "paddingTop": "0px",
-            "paddingRight": "20px",
-            "paddingBottom": "20px",
-            "paddingLeft": "20px",
-            "showImageLink": false,
-            "imageLinkUrl": "#",
-            "showBorderRadius": true,
-            "imageBorderRadius": "10px",
-            "imageBorderStyle": "none",
-            "imageBorderWidth": "1px",
-            "imageBorderColor": "#000000"
-          },
-          "styles": {}
-        },
-        {
-          "moduleId": "ModuleDescText",
-          "properties": {
-            "fontSize": "14px",
-            "descriptionText": "<p style=\"word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere; line-height: 1.7;\">한국대드론산업협회가&nbsp;주최하고&nbsp;육군방공학교가&nbsp;특별&nbsp;후원하는&nbsp;&#39;2026&nbsp;대한민국&nbsp;대드론박람회(KOREA&nbsp;C-UAS&nbsp;2026)&#39;가&nbsp;올해&nbsp;12월&nbsp;OSCO(오스코)에서&nbsp;개최됩니다.</p><p style=\"word-break: keep-all; margin: 0; padding: 0; line-height: 1.7; min-height: 1.5em; word-wrap: break-word; overflow-wrap: anywhere;\">&nbsp;</p><p style=\"word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere; line-height: 1.7;\">본&nbsp;박람회는&nbsp;대드론&nbsp;기술의&nbsp;최신&nbsp;트렌드를&nbsp;공유하고&nbsp;실질적인&nbsp;비즈니스&nbsp;성과를&nbsp;도출하는&nbsp;전문&nbsp;전시회입니다.&nbsp;특히&nbsp;육군방공학교의&nbsp;특별후원에&nbsp;따라&nbsp;군&nbsp;핵심&nbsp;관계자&nbsp;및&nbsp;국내외&nbsp;주요&nbsp;바이어를&nbsp;현장에서&nbsp;직접&nbsp;만나&nbsp;실효성&nbsp;있는&nbsp;네트워크를&nbsp;구축할&nbsp;수&nbsp;있습니다.&nbsp;</p><p style=\"word-break: break-all; margin: 0; padding: 0; line-height: 1.7; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word;\">&nbsp;</p><p style=\"word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; line-height: 1.7;\">국내외&nbsp;주요&nbsp;바이어&nbsp;및&nbsp;군·관&nbsp;관계자들과의&nbsp;네트워크&nbsp;형성을&nbsp;희망하는&nbsp;기업들을&nbsp;위해&nbsp;조기&nbsp;참가신청을&nbsp;안내해&nbsp;드립니다.</p><p style=\"margin: 0; padding: 0; line-height: 1.7; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">[조기&nbsp;참가신청&nbsp;안내]</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">■&nbsp;신청&nbsp;기한:&nbsp;~&nbsp;2026년&nbsp;8월&nbsp;14일(금)까지</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">■&nbsp;혜택:&nbsp;부스당&nbsp;500,000&nbsp;원&nbsp;할인</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">■&nbsp;신청&nbsp;방법:&nbsp;공식&nbsp;홈페이지&nbsp;접수</p>",
-            "paddingTop": "15px",
-            "paddingRight": "20px",
-            "paddingBottom": "15px",
-            "paddingLeft": "20px",
-            "marginTop": "0px",
-            "marginRight": "20px",
-            "marginBottom": "10px",
-            "marginLeft": "20px",
-            "bgColor": "#f5f5f5",
-            "showBorderRadius": false,
-            "borderRadius": "8px",
-            "showBorder": false,
-            "borderPosition": "bottom",
-            "borderStyle": "solid",
-            "borderWidth": "1px",
-            "borderColor": "#999999",
-            "textColor": "#333333",
-            "textAlign": "left",
-            "__moduleLabel": "모듈 01번"
-          },
-          "styles": {}
-        },
-        {
-          "moduleId": "ModuleDescText",
-          "properties": {
-            "fontSize": "22px",
-            "descriptionText": "<div style=\"font-weight:700;\"><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\">참가비용</p></div>",
-            "paddingTop": "15px",
-            "paddingRight": "20px",
-            "paddingBottom": "15px",
-            "paddingLeft": "20px",
-            "marginTop": "0px",
-            "marginRight": "0px",
-            "marginBottom": "0px",
-            "marginLeft": "0px",
-            "bgColor": "transparent",
-            "showBorderRadius": false,
-            "borderRadius": "8px",
-            "showBorder": false,
-            "borderPosition": "bottom",
-            "borderStyle": "solid",
-            "borderWidth": "1px",
-            "borderColor": "#999999",
-            "textColor": "#111111"
-          },
-          "styles": {}
-        },
-        {
-          "moduleId": "ModuleImg",
-          "properties": {
-            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/03.jpg",
-            "imageAlt": "이미지",
-            "imageMaxWidth": "100%",
-            "imageAlign": "center",
-            "paddingTop": "0px",
-            "paddingRight": "0px",
-            "paddingBottom": "0px",
-            "paddingLeft": "0px",
-            "showImageLink": false,
-            "imageLinkUrl": "#",
-            "showBorderRadius": false,
-            "imageBorderRadius": "0px",
-            "imageBorderStyle": "none",
-            "imageBorderWidth": "1px",
-            "imageBorderColor": "#000000"
-          },
-          "styles": {},
-          "groupId": "group-1786614294493-cikl7m6wp",
-          "rowIndex": 0,
-          "columnIndex": 1
-        },
-        {
-          "moduleId": "ModuleDescText",
-          "properties": {
-            "fontSize": "16px",
-            "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7; text-align:center;\"><span style=\"font-weight:700;\">독립부스</span></p>",
-            "paddingTop": "5px",
-            "paddingRight": "10px",
-            "paddingBottom": "5px",
-            "paddingLeft": "10px",
-            "marginTop": "25px",
-            "marginRight": "0px",
-            "marginBottom": "0px",
-            "marginLeft": "0px",
-            "bgColor": "transparent",
-            "showBorderRadius": false,
-            "borderRadius": "0px",
-            "showBorder": false,
-            "borderPosition": "bottom",
-            "borderStyle": "solid",
-            "borderWidth": "1px",
-            "borderColor": "#999999",
-            "textColor": "#111111",
-            "textAlign": "center"
-          },
-          "styles": {},
-          "groupId": "group-1786614294493-cikl7m6wp",
-          "rowIndex": 0,
-          "columnIndex": 0
-        },
-        {
-          "moduleId": "ModuleDescText",
-          "properties": {
-            "fontSize": "14px",
-            "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\"><s>3,000,000원&nbsp;(1ea)</s>&nbsp;&nbsp;<strong style=\"font-size: 18px;\">2,500,000원&nbsp;(1ea)</strong></p>",
-            "paddingTop": "0px",
-            "paddingRight": "10px",
-            "paddingBottom": "0px",
-            "paddingLeft": "10px",
-            "marginTop": "0px",
-            "marginRight": "0px",
-            "marginBottom": "25px",
-            "marginLeft": "0px",
-            "bgColor": "transparent",
-            "showBorderRadius": false,
-            "borderRadius": "0px",
-            "showBorder": false,
-            "borderPosition": "bottom",
-            "borderStyle": "solid",
-            "borderWidth": "1px",
-            "borderColor": "#999999",
-            "textColor": "#333333",
-            "textAlign": "center"
-          },
-          "styles": {},
-          "groupId": "group-1786614294493-cikl7m6wp",
-          "rowIndex": 0,
-          "columnIndex": 0
-        },
-        {
-          "moduleId": "ModuleImg",
-          "properties": {
-            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/04.jpg",
-            "imageAlt": "이미지",
-            "imageMaxWidth": "100%",
-            "imageAlign": "center",
-            "paddingTop": "0px",
-            "paddingRight": "0px",
-            "paddingBottom": "0px",
-            "paddingLeft": "0px",
-            "showImageLink": false,
-            "imageLinkUrl": "#",
-            "showBorderRadius": false,
-            "imageBorderRadius": "0px",
-            "imageBorderStyle": "none",
-            "imageBorderWidth": "1px",
-            "imageBorderColor": "#000000"
-          },
-          "styles": {},
-          "groupId": "group-1786614294780-1ow5cgas3",
-          "rowIndex": 0,
-          "columnIndex": 1
-        },
-        {
-          "moduleId": "ModuleDescText",
-          "properties": {
-            "fontSize": "16px",
-            "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7; text-align:center;\"><span style=\"font-weight:700;\">독립부스</span></p>",
-            "paddingTop": "5px",
-            "paddingRight": "10px",
-            "paddingBottom": "5px",
-            "paddingLeft": "10px",
-            "marginTop": "25px",
-            "marginRight": "0px",
-            "marginBottom": "0px",
-            "marginLeft": "0px",
-            "bgColor": "transparent",
-            "showBorderRadius": false,
-            "borderRadius": "0px",
-            "showBorder": false,
-            "borderPosition": "bottom",
-            "borderStyle": "solid",
-            "borderWidth": "1px",
-            "borderColor": "#999999",
-            "textColor": "#111111",
-            "textAlign": "center"
-          },
-          "styles": {},
-          "groupId": "group-1786614294780-1ow5cgas3",
-          "rowIndex": 0,
-          "columnIndex": 0
-        },
-        {
-          "moduleId": "ModuleDescText",
-          "properties": {
-            "fontSize": "14px",
-            "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\"><s>3,000,000원&nbsp;(1ea)</s>&nbsp;&nbsp;<strong style=\"font-size: 18px;\">2,500,000원&nbsp;(1ea)</strong></p>",
-            "paddingTop": "0px",
-            "paddingRight": "10px",
-            "paddingBottom": "0px",
-            "paddingLeft": "10px",
-            "marginTop": "0px",
-            "marginRight": "0px",
-            "marginBottom": "25px",
-            "marginLeft": "0px",
-            "bgColor": "transparent",
-            "showBorderRadius": false,
-            "borderRadius": "0px",
-            "showBorder": false,
-            "borderPosition": "bottom",
-            "borderStyle": "solid",
-            "borderWidth": "1px",
-            "borderColor": "#999999",
-            "textColor": "#333333",
-            "textAlign": "center"
-          },
-          "styles": {},
-          "groupId": "group-1786614294780-1ow5cgas3",
-          "rowIndex": 0,
-          "columnIndex": 0
-        },
-        {
-          "moduleId": "ModuleDivider",
-          "properties": {
-            "borderColor": "#333333",
-            "borderWidth": "2px",
-            "borderStyle": "solid",
-            "dividerWidth": "100%",
-            "paddingTop": "0px",
-            "paddingBottom": "0px",
-            "paddingLeft": "0px",
-            "paddingRight": "0px"
-          },
-          "styles": {},
-          "groupId": "group-1786614295046-jq4lcm81e",
-          "rowIndex": 0,
-          "columnIndex": 0
-        },
-        {
-          "moduleId": "ModuleDescText",
-          "properties": {
-            "fontSize": "22px",
-            "descriptionText": "<div style=\"font-weight:700;\"><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\">Why&nbsp;KOREA&nbsp;C-UAS&nbsp;?</p></div>",
-            "paddingTop": "15px",
-            "paddingRight": "20px",
-            "paddingBottom": "15px",
-            "paddingLeft": "20px",
-            "marginTop": "0px",
-            "marginRight": "0px",
-            "marginBottom": "0px",
-            "marginLeft": "0px",
-            "bgColor": "transparent",
-            "showBorderRadius": false,
-            "borderRadius": "8px",
-            "showBorder": false,
-            "borderPosition": "bottom",
-            "borderStyle": "solid",
-            "borderWidth": "1px",
-            "borderColor": "#999999",
-            "textColor": "#111111"
-          },
-          "styles": {},
-          "groupId": "group-1786614295046-jq4lcm81e",
-          "rowIndex": 1,
-          "columnIndex": 0
-        },
-        {
-          "moduleId": "ModuleDescText",
-          "properties": {
-            "fontSize": "14px",
-            "descriptionText": "<p style=\"word-break: keep-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\"><strong style=\"font-size: 16px;\">1.&nbsp;세계&nbsp;최초·유일의&nbsp;대드론&nbsp;전문&nbsp;박람회</strong></p><p style=\"word-break: keep-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">일반&nbsp;드론&nbsp;전시가&nbsp;아닌,&nbsp;드론&nbsp;위협&nbsp;대응&nbsp;기술에&nbsp;특화된&nbsp;전문&nbsp;전시회</p><p style=\"word-break: keep-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">&nbsp;</p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\"><strong style=\"font-size: 16px;\">2.&nbsp;군·공공·민간&nbsp;실수요자와&nbsp;직접&nbsp;만나는&nbsp;자리</strong></p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">&nbsp;국방,&nbsp;경찰,&nbsp;소방,&nbsp;지자체,&nbsp;국가중요시설,&nbsp;주요&nbsp;산업시설,&nbsp;방산·보안기업&nbsp;관계자를&nbsp;대상으로&nbsp;기술을&nbsp;소개</p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">&nbsp;</p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\"><strong style=\"font-size: 16px;\">3.&nbsp;탐지부터&nbsp;무력화까지&nbsp;All-in-One&nbsp;전시&nbsp;구성</strong></p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">&nbsp;레이더,&nbsp;RF&nbsp;센서,&nbsp;EO/IR,&nbsp;AI&nbsp;분석,&nbsp;C2&nbsp;시스템,&nbsp;재밍,&nbsp;스푸핑,&nbsp;요격&nbsp;드론,&nbsp;레이저,&nbsp;HPM&nbsp;등&nbsp;대드론&nbsp;전&nbsp;주기&nbsp;기술을&nbsp;함께&nbsp;선보이는&nbsp;자리</p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">&nbsp;</p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\"><strong style=\"font-size: 16px;\">4.&nbsp;AI&nbsp;기반&nbsp;통합&nbsp;지휘·통제&nbsp;특별관&nbsp;운영</strong></p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">AI&nbsp;관제,&nbsp;디지털트윈,&nbsp;COP,&nbsp;통합&nbsp;플랫폼&nbsp;등&nbsp;차세대&nbsp;대드론&nbsp;운영&nbsp;체계를&nbsp;집중&nbsp;조명</p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">&nbsp;</p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\"><strong style=\"font-size: 16px;\">5.&nbsp;전시를&nbsp;넘어&nbsp;상담·발표·네트워킹으로&nbsp;연결</strong></p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">KOREA&nbsp;C-UAS&nbsp;Summit,&nbsp;참가기업&nbsp;기술발표회,&nbsp;VIP&nbsp;전시장&nbsp;투어,&nbsp;군&nbsp;활용성&nbsp;컨설팅&nbsp;등&nbsp;부대행사를&nbsp;통한&nbsp;참가기업&nbsp;노출&nbsp;및&nbsp;상담&nbsp;기회&nbsp;확대</p>",
-            "paddingTop": "15px",
-            "paddingRight": "20px",
-            "paddingBottom": "15px",
-            "paddingLeft": "20px",
-            "marginTop": "0px",
-            "marginRight": "20px",
-            "marginBottom": "20px",
-            "marginLeft": "20px",
-            "bgColor": "#f5f5f5",
-            "showBorderRadius": false,
-            "borderRadius": "8px",
-            "showBorder": false,
-            "borderPosition": "bottom",
-            "borderStyle": "solid",
-            "borderWidth": "1px",
-            "borderColor": "#999999",
-            "textColor": "#333333",
-            "textAlign": "left",
-            "__moduleLabel": "모듈 01번"
-          },
-          "styles": {}
-        },
-        {
-          "moduleId": "ModuleImg",
-          "properties": {
-            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/05.jpg",
-            "imageAlt": "이미지",
-            "imageMaxWidth": "100%",
-            "imageAlign": "center",
-            "paddingTop": "0px",
-            "paddingRight": "0px",
-            "paddingBottom": "0px",
-            "paddingLeft": "0px",
-            "showImageLink": false,
-            "imageLinkUrl": "#",
-            "showBorderRadius": false,
-            "imageBorderRadius": "0px",
-            "imageBorderStyle": "none",
-            "imageBorderWidth": "1px",
-            "imageBorderColor": "#000000"
-          },
-          "styles": {},
-          "groupId": "group-1786614295334-9llrticmi",
-          "rowIndex": 0,
-          "columnIndex": 1
-        },
-        {
-          "moduleId": "ModuleDescText",
-          "properties": {
-            "fontSize": "18px",
-            "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7; text-align:center;\"><span style=\"font-weight:700;\">1. Detection : 탐지</span></p>",
-            "paddingTop": "5px",
-            "paddingRight": "10px",
-            "paddingBottom": "5px",
-            "paddingLeft": "10px",
-            "marginTop": "25px",
-            "marginRight": "0px",
-            "marginBottom": "0px",
-            "marginLeft": "0px",
-            "bgColor": "transparent",
-            "showBorderRadius": false,
-            "borderRadius": "0px",
-            "showBorder": false,
-            "borderPosition": "bottom",
-            "borderStyle": "solid",
-            "borderWidth": "1px",
-            "borderColor": "#999999",
-            "textColor": "#111111",
-            "textAlign": "center"
-          },
-          "styles": {},
-          "groupId": "group-1786614295334-9llrticmi",
-          "rowIndex": 0,
-          "columnIndex": 0
-        },
-        {
-          "moduleId": "ModuleDescText",
-          "properties": {
-            "fontSize": "14px",
-            "descriptionText": "<p style=\"word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere; line-height: 1.7;; text-align: justify;\">#드론의&nbsp;존재를&nbsp;빠르게&nbsp;인지</p><p style=\"word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere; line-height: 1.7;; text-align: justify;\">#레이더&nbsp;시스템,&nbsp;RF센서,&nbsp;EO/OR센서,&nbsp;음향센서,&nbsp;센서&nbsp;융합,&nbsp;방향탐지기&nbsp;등</p>",
-            "paddingTop": "0px",
-            "paddingRight": "10px",
-            "paddingBottom": "0px",
-            "paddingLeft": "10px",
-            "marginTop": "0px",
-            "marginRight": "0px",
-            "marginBottom": "0px",
-            "marginLeft": "0px",
-            "bgColor": "transparent",
-            "showBorderRadius": false,
-            "borderRadius": "0px",
-            "showBorder": false,
-            "borderPosition": "bottom",
-            "borderStyle": "solid",
-            "borderWidth": "1px",
-            "borderColor": "#999999",
-            "textColor": "#333333",
-            "textAlign": "center"
-          },
-          "styles": {},
-          "groupId": "group-1786614295334-9llrticmi",
-          "rowIndex": 0,
-          "columnIndex": 0
-        },
-        {
-          "moduleId": "ModuleImg",
-          "properties": {
-            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/06.jpg",
-            "imageAlt": "이미지",
-            "imageMaxWidth": "100%",
-            "imageAlign": "center",
-            "paddingTop": "0px",
-            "paddingRight": "0px",
-            "paddingBottom": "0px",
-            "paddingLeft": "0px",
-            "showImageLink": false,
-            "imageLinkUrl": "#",
-            "showBorderRadius": false,
-            "imageBorderRadius": "0px",
-            "imageBorderStyle": "none",
-            "imageBorderWidth": "1px",
-            "imageBorderColor": "#000000"
-          },
-          "styles": {},
-          "groupId": "group-1786614295623-rjyxznpy0",
-          "rowIndex": 0,
-          "columnIndex": 0
-        },
-        {
-          "moduleId": "ModuleDescText",
-          "properties": {
-            "fontSize": "18px",
-            "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7; text-align:center;\"><span style=\"font-weight:700;\">2. Identification : 식별</span></p>",
-            "paddingTop": "5px",
-            "paddingRight": "10px",
-            "paddingBottom": "5px",
-            "paddingLeft": "10px",
-            "marginTop": "25px",
-            "marginRight": "0px",
-            "marginBottom": "0px",
-            "marginLeft": "0px",
-            "bgColor": "transparent",
-            "showBorderRadius": false,
-            "borderRadius": "0px",
-            "showBorder": false,
-            "borderPosition": "bottom",
-            "borderStyle": "solid",
-            "borderWidth": "1px",
-            "borderColor": "#999999",
-            "textColor": "#111111",
-            "textAlign": "center"
-          },
-          "styles": {},
-          "groupId": "group-1786614295623-rjyxznpy0",
-          "rowIndex": 0,
-          "columnIndex": 1
-        },
-        {
-          "moduleId": "ModuleDescText",
-          "properties": {
-            "fontSize": "14px",
-            "descriptionText": "<p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">#드론&nbsp;종류&nbsp;및&nbsp;위협수준&nbsp;판단</p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">#고해상도&nbsp;카메라,&nbsp;AI영상&nbsp;분석,&nbsp;RF신호&nbsp;분석,&nbsp;항적&nbsp;추적,&nbsp;주파수·신호&nbsp;데이터베이스,&nbsp;자동식별&nbsp;기술&nbsp;등</p>",
-            "paddingTop": "0px",
-            "paddingRight": "10px",
-            "paddingBottom": "0px",
-            "paddingLeft": "10px",
-            "marginTop": "0px",
-            "marginRight": "0px",
-            "marginBottom": "0px",
-            "marginLeft": "0px",
-            "bgColor": "transparent",
-            "showBorderRadius": false,
-            "borderRadius": "0px",
-            "showBorder": false,
-            "borderPosition": "bottom",
-            "borderStyle": "solid",
-            "borderWidth": "1px",
-            "borderColor": "#999999",
-            "textColor": "#333333",
-            "textAlign": "center"
-          },
-          "styles": {},
-          "groupId": "group-1786614295623-rjyxznpy0",
-          "rowIndex": 0,
-          "columnIndex": 1
-        },
-        {
-          "moduleId": "ModuleImg",
-          "properties": {
-            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/07.jpg",
-            "imageAlt": "이미지",
-            "imageMaxWidth": "100%",
-            "imageAlign": "center",
-            "paddingTop": "0px",
-            "paddingRight": "0px",
-            "paddingBottom": "0px",
-            "paddingLeft": "0px",
-            "showImageLink": false,
-            "imageLinkUrl": "#",
-            "showBorderRadius": false,
-            "imageBorderRadius": "0px",
-            "imageBorderStyle": "none",
-            "imageBorderWidth": "1px",
-            "imageBorderColor": "#000000"
-          },
-          "styles": {},
-          "groupId": "group-1786614295912-a4ilytfkf",
-          "rowIndex": 0,
-          "columnIndex": 1
-        },
-        {
-          "moduleId": "ModuleDescText",
-          "properties": {
-            "fontSize": "18px",
-            "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7; text-align:center;\"><span style=\"font-weight:700;\">3. Command & Control : 지휘통제</span></p>",
-            "paddingTop": "5px",
-            "paddingRight": "10px",
-            "paddingBottom": "5px",
-            "paddingLeft": "10px",
-            "marginTop": "25px",
-            "marginRight": "0px",
-            "marginBottom": "0px",
-            "marginLeft": "0px",
-            "bgColor": "transparent",
-            "showBorderRadius": false,
-            "borderRadius": "0px",
-            "showBorder": false,
-            "borderPosition": "bottom",
-            "borderStyle": "solid",
-            "borderWidth": "1px",
-            "borderColor": "#999999",
-            "textColor": "#111111",
-            "textAlign": "center"
-          },
-          "styles": {},
-          "groupId": "group-1786614295912-a4ilytfkf",
-          "rowIndex": 0,
-          "columnIndex": 0
-        },
-        {
-          "moduleId": "ModuleDescText",
-          "properties": {
-            "fontSize": "14px",
-            "descriptionText": "<p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;; text-align: justify;\">#모든&nbsp;단계를&nbsp;통합&nbsp;운영·관리</p><p style=\"word-break: keep-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;; text-align: justify;\">#C2시스템,&nbsp;대응&nbsp;자동화,&nbsp;통신&nbsp;네트워크,&nbsp;상황판&nbsp;소프트웨어,&nbsp;모바일&nbsp;지휘차량,&nbsp;통합관제&nbsp;플랫폼&nbsp;소프트웨어&nbsp;개발,&nbsp;시스템&nbsp;통합,&nbsp;사이버&nbsp;보안&nbsp;등</p>",
-            "paddingTop": "0px",
-            "paddingRight": "10px",
-            "paddingBottom": "0px",
-            "paddingLeft": "10px",
-            "marginTop": "0px",
-            "marginRight": "0px",
-            "marginBottom": "0px",
-            "marginLeft": "0px",
-            "bgColor": "transparent",
-            "showBorderRadius": false,
-            "borderRadius": "0px",
-            "showBorder": false,
-            "borderPosition": "bottom",
-            "borderStyle": "solid",
-            "borderWidth": "1px",
-            "borderColor": "#999999",
-            "textColor": "#333333",
-            "textAlign": "center"
-          },
-          "styles": {},
-          "groupId": "group-1786614295912-a4ilytfkf",
-          "rowIndex": 0,
-          "columnIndex": 0
-        },
-        {
-          "moduleId": "ModuleImg",
-          "properties": {
-            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/08.jpg",
-            "imageAlt": "이미지",
-            "imageMaxWidth": "100%",
-            "imageAlign": "center",
-            "paddingTop": "0px",
-            "paddingRight": "0px",
-            "paddingBottom": "0px",
-            "paddingLeft": "0px",
-            "showImageLink": false,
-            "imageLinkUrl": "#",
-            "showBorderRadius": false,
-            "imageBorderRadius": "0px",
-            "imageBorderStyle": "none",
-            "imageBorderWidth": "1px",
-            "imageBorderColor": "#000000"
-          },
-          "styles": {},
-          "groupId": "group-1786614296201-np6v2u5mt",
-          "rowIndex": 0,
-          "columnIndex": 0
-        },
-        {
-          "moduleId": "ModuleDescText",
-          "properties": {
-            "fontSize": "18px",
-            "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7; text-align:center;\"><span style=\"font-weight:700;\">4. Neutralization  : 무력화</span></p>",
-            "paddingTop": "5px",
-            "paddingRight": "10px",
-            "paddingBottom": "5px",
-            "paddingLeft": "10px",
-            "marginTop": "25px",
-            "marginRight": "0px",
-            "marginBottom": "0px",
-            "marginLeft": "0px",
-            "bgColor": "transparent",
-            "showBorderRadius": false,
-            "borderRadius": "0px",
-            "showBorder": false,
-            "borderPosition": "bottom",
-            "borderStyle": "solid",
-            "borderWidth": "1px",
-            "borderColor": "#999999",
-            "textColor": "#111111",
-            "textAlign": "center"
-          },
-          "styles": {},
-          "groupId": "group-1786614296201-np6v2u5mt",
-          "rowIndex": 0,
-          "columnIndex": 1
-        },
-        {
-          "moduleId": "ModuleDescText",
-          "properties": {
-            "fontSize": "14px",
-            "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">#기능의 저해 및 물리적 제거</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">#RF재머, GNSS 스푸핑, 전자기 펄스, 그물발사기, 요격 드론, 레이저 무기, 유도 무기, 산탄총, 소화기, 대공포, 고출력 마이크로파 등</p>",
-            "paddingTop": "0px",
-            "paddingRight": "20px",
-            "paddingBottom": "0px",
-            "paddingLeft": "20px",
-            "marginTop": "0px",
-            "marginRight": "0px",
-            "marginBottom": "0px",
-            "marginLeft": "0px",
-            "bgColor": "transparent",
-            "showBorderRadius": false,
-            "borderRadius": "8px",
-            "showBorder": false,
-            "borderPosition": "bottom",
-            "borderStyle": "solid",
-            "borderWidth": "1px",
-            "borderColor": "#999999"
-          },
-          "styles": {},
-          "groupId": "group-1786614296201-np6v2u5mt",
-          "rowIndex": 0,
-          "columnIndex": 1
-        },
-        {
-          "moduleId": "ModuleImg",
-          "properties": {
-            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/09.jpg",
-            "imageAlt": "이미지",
-            "imageMaxWidth": "100%",
-            "imageAlign": "center",
-            "paddingTop": "0px",
-            "paddingRight": "0px",
-            "paddingBottom": "0px",
-            "paddingLeft": "0px",
-            "showImageLink": false,
-            "imageLinkUrl": "#",
-            "showBorderRadius": false,
-            "imageBorderRadius": "0px",
-            "imageBorderStyle": "none",
-            "imageBorderWidth": "1px",
-            "imageBorderColor": "#000000"
-          },
-          "styles": {},
-          "groupId": "group-1786614296491-81h7o0rix",
-          "rowIndex": 0,
-          "columnIndex": 1
-        },
-        {
-          "moduleId": "ModuleDescText",
-          "properties": {
-            "fontSize": "18px",
-            "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7; text-align:center;\"><span style=\"font-weight:700;\">5. Future-Innovation Technology : 미래·혁신 기술</span></p>",
-            "paddingTop": "5px",
-            "paddingRight": "10px",
-            "paddingBottom": "5px",
-            "paddingLeft": "10px",
-            "marginTop": "25px",
-            "marginRight": "0px",
-            "marginBottom": "0px",
-            "marginLeft": "0px",
-            "bgColor": "transparent",
-            "showBorderRadius": false,
-            "borderRadius": "0px",
-            "showBorder": false,
-            "borderPosition": "bottom",
-            "borderStyle": "solid",
-            "borderWidth": "1px",
-            "borderColor": "#999999",
-            "textColor": "#111111",
-            "textAlign": "center"
-          },
-          "styles": {},
-          "groupId": "group-1786614296491-81h7o0rix",
-          "rowIndex": 0,
-          "columnIndex": 0
-        },
-        {
-          "moduleId": "ModuleDescText",
-          "properties": {
-            "fontSize": "14px",
-            "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">#&nbsp;차세대&nbsp;대드론&nbsp;핵심&nbsp;기술</p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;; text-align: justify;\">#AI&nbsp;영상·신호&nbsp;분석,&nbsp;디지털&nbsp;트윈·시뮬레이션,&nbsp;엣지&nbsp;컴퓨팅/임베디드&nbsp;소프트웨어,&nbsp;지능형&nbsp;관제&nbsp;플랫폼,&nbsp;교육&nbsp;훈련·시뮬레이터,&nbsp;신소재&nbsp;등</p>",
-            "paddingTop": "0px",
-            "paddingRight": "10px",
-            "paddingBottom": "0px",
-            "paddingLeft": "10px",
-            "marginTop": "0px",
-            "marginRight": "0px",
-            "marginBottom": "0px",
-            "marginLeft": "0px",
-            "bgColor": "transparent",
-            "showBorderRadius": false,
-            "borderRadius": "0px",
-            "showBorder": false,
-            "borderPosition": "bottom",
-            "borderStyle": "solid",
-            "borderWidth": "1px",
-            "borderColor": "#999999",
-            "textColor": "#333333",
-            "textAlign": "center"
-          },
-          "styles": {},
-          "groupId": "group-1786614296491-81h7o0rix",
-          "rowIndex": 0,
-          "columnIndex": 0
-        },
-        {
-          "moduleId": "ModuleDivider",
-          "properties": {
-            "borderColor": "#333333",
-            "borderWidth": "2px",
-            "borderStyle": "solid",
-            "dividerWidth": "100%",
-            "paddingTop": "0px",
-            "paddingBottom": "0px",
-            "paddingLeft": "0px",
-            "paddingRight": "0px"
-          },
-          "styles": {},
-          "groupId": "group-1786614296756-2tq9uxyut",
-          "rowIndex": 0,
-          "columnIndex": 0
-        },
-        {
-          "moduleId": "ModuleDescText",
-          "properties": {
-            "fontSize": "22px",
-            "descriptionText": "<div style=\"font-weight:700;\"><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">KOREA&nbsp;C-UAS&nbsp;2025&nbsp;Review</p></div>",
-            "paddingTop": "15px",
-            "paddingRight": "20px",
-            "paddingBottom": "15px",
-            "paddingLeft": "20px",
-            "marginTop": "0px",
-            "marginRight": "0px",
-            "marginBottom": "0px",
-            "marginLeft": "0px",
-            "bgColor": "transparent",
-            "showBorderRadius": false,
-            "borderRadius": "8px",
-            "showBorder": false,
-            "borderPosition": "bottom",
-            "borderStyle": "solid",
-            "borderWidth": "1px",
-            "borderColor": "#999999",
-            "textColor": "#111111"
-          },
-          "styles": {},
-          "groupId": "group-1786614296756-2tq9uxyut",
-          "rowIndex": 1,
-          "columnIndex": 0
-        },
-        {
-          "moduleId": "ModuleImg",
-          "properties": {
-            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/10.jpg",
-            "imageAlt": "이미지",
-            "imageMaxWidth": "100%",
-            "imageAlign": "center",
-            "paddingTop": "0px",
-            "paddingRight": "20px",
-            "paddingBottom": "20px",
-            "paddingLeft": "20px",
-            "showImageLink": false,
-            "imageLinkUrl": "#",
-            "showBorderRadius": false,
-            "imageBorderRadius": "0px",
-            "imageBorderStyle": "none",
-            "imageBorderWidth": "1px",
-            "imageBorderColor": "#000000"
-          },
-          "styles": {}
-        },
-        {
-          "moduleId": "ModuleImg",
-          "properties": {
-            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/11.jpg",
-            "imageAlt": "이미지",
-            "imageMaxWidth": "100%",
-            "imageAlign": "center",
-            "paddingTop": "0px",
-            "paddingRight": "20px",
-            "paddingBottom": "20px",
-            "paddingLeft": "20px",
-            "showImageLink": false,
-            "imageLinkUrl": "#",
-            "showBorderRadius": false,
-            "imageBorderRadius": "0px",
-            "imageBorderStyle": "none",
-            "imageBorderWidth": "1px",
-            "imageBorderColor": "#000000"
-          },
-          "styles": {}
-        },
-        {
-          "moduleId": "ModuleDivider",
-          "properties": {
-            "borderColor": "#333333",
-            "borderWidth": "2px",
-            "borderStyle": "solid",
-            "dividerWidth": "100%",
-            "paddingTop": "0px",
-            "paddingBottom": "0px",
-            "paddingLeft": "0px",
-            "paddingRight": "0px"
-          },
-          "styles": {},
-          "groupId": "group-1786614297262-5ucfzhjdm",
-          "rowIndex": 0,
-          "columnIndex": 0
-        },
-        {
-          "moduleId": "ModuleDescText",
-          "properties": {
-            "fontSize": "22px",
-            "descriptionText": "<div style=\"font-weight:700;\"><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">KOREA&nbsp;C-UAS&nbsp;2025&nbsp;현장사진</p></div>",
-            "paddingTop": "15px",
-            "paddingRight": "20px",
-            "paddingBottom": "15px",
-            "paddingLeft": "20px",
-            "marginTop": "0px",
-            "marginRight": "0px",
-            "marginBottom": "0px",
-            "marginLeft": "0px",
-            "bgColor": "transparent",
-            "showBorderRadius": false,
-            "borderRadius": "8px",
-            "showBorder": false,
-            "borderPosition": "bottom",
-            "borderStyle": "solid",
-            "borderWidth": "1px",
-            "borderColor": "#999999",
-            "textColor": "#111111"
-          },
-          "styles": {},
-          "groupId": "group-1786614297262-5ucfzhjdm",
-          "rowIndex": 1,
-          "columnIndex": 0
-        },
-        {
-          "moduleId": "ModuleImg",
-          "properties": {
-            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/12.jpg",
-            "imageAlt": "이미지",
-            "imageMaxWidth": "100%",
-            "imageAlign": "center",
-            "paddingTop": "0px",
-            "paddingRight": "0px",
-            "paddingBottom": "0px",
-            "paddingLeft": "0px",
-            "showImageLink": false,
-            "imageLinkUrl": "#",
-            "showBorderRadius": true,
-            "imageBorderRadius": "10px",
-            "imageBorderStyle": "none",
-            "imageBorderWidth": "1px",
-            "imageBorderColor": "#000000"
-          },
-          "styles": {},
-          "groupId": "group-1786614297494-f7c24jgpu",
-          "rowIndex": 0,
-          "columnIndex": 0
-        },
-        {
-          "moduleId": "ModuleImg",
-          "properties": {
-            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/13.jpg",
-            "imageAlt": "이미지",
-            "imageMaxWidth": "100%",
-            "imageAlign": "center",
-            "paddingTop": "0px",
-            "paddingRight": "0px",
-            "paddingBottom": "0px",
-            "paddingLeft": "0px",
-            "showImageLink": false,
-            "imageLinkUrl": "#",
-            "showBorderRadius": true,
-            "imageBorderRadius": "10px",
-            "imageBorderStyle": "none",
-            "imageBorderWidth": "1px",
-            "imageBorderColor": "#000000"
-          },
-          "styles": {},
-          "groupId": "group-1786614297494-f7c24jgpu",
-          "rowIndex": 0,
-          "columnIndex": 1
-        },
-        {
-          "moduleId": "ModuleImg",
-          "properties": {
-            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/14.jpg",
-            "imageAlt": "이미지",
-            "imageMaxWidth": "100%",
-            "imageAlign": "center",
-            "paddingTop": "0px",
-            "paddingRight": "0px",
-            "paddingBottom": "0px",
-            "paddingLeft": "0px",
-            "showImageLink": false,
-            "imageLinkUrl": "#",
-            "showBorderRadius": true,
-            "imageBorderRadius": "10px",
-            "imageBorderStyle": "none",
-            "imageBorderWidth": "1px",
-            "imageBorderColor": "#000000"
-          },
-          "styles": {},
-          "groupId": "group-1786614297731-h8eeincv4",
-          "rowIndex": 0,
-          "columnIndex": 0
-        },
-        {
-          "moduleId": "ModuleImg",
-          "properties": {
-            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/15.jpg",
-            "imageAlt": "이미지",
-            "imageMaxWidth": "100%",
-            "imageAlign": "center",
-            "paddingTop": "0px",
-            "paddingRight": "0px",
-            "paddingBottom": "0px",
-            "paddingLeft": "0px",
-            "showImageLink": false,
-            "imageLinkUrl": "#",
-            "showBorderRadius": true,
-            "imageBorderRadius": "10px",
-            "imageBorderStyle": "none",
-            "imageBorderWidth": "1px",
-            "imageBorderColor": "#000000"
-          },
-          "styles": {},
-          "groupId": "group-1786614297731-h8eeincv4",
-          "rowIndex": 0,
-          "columnIndex": 1
-        },
-        {
-          "moduleId": "ModuleImg",
-          "properties": {
-            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/16.jpg",
-            "imageAlt": "이미지",
-            "imageMaxWidth": "100%",
-            "imageAlign": "center",
-            "paddingTop": "0px",
-            "paddingRight": "0px",
-            "paddingBottom": "0px",
-            "paddingLeft": "0px",
-            "showImageLink": false,
-            "imageLinkUrl": "#",
-            "showBorderRadius": true,
-            "imageBorderRadius": "10px",
-            "imageBorderStyle": "none",
-            "imageBorderWidth": "1px",
-            "imageBorderColor": "#000000"
-          },
-          "styles": {},
-          "groupId": "group-1786614297967-34kawsvn1",
-          "rowIndex": 0,
-          "columnIndex": 0
-        },
-        {
-          "moduleId": "ModuleImg",
-          "properties": {
-            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/c-uas/vol01/17.jpg",
-            "imageAlt": "이미지",
-            "imageMaxWidth": "100%",
-            "imageAlign": "center",
-            "paddingTop": "0px",
-            "paddingRight": "0px",
-            "paddingBottom": "0px",
-            "paddingLeft": "0px",
-            "showImageLink": false,
-            "imageLinkUrl": "#",
-            "showBorderRadius": true,
-            "imageBorderRadius": "10px",
-            "imageBorderStyle": "none",
-            "imageBorderWidth": "1px",
-            "imageBorderColor": "#000000"
-          },
-          "styles": {},
-          "groupId": "group-1786614297967-34kawsvn1",
-          "rowIndex": 0,
-          "columnIndex": 1
-        },
-        {
-          "moduleId": "ModuleDescText",
-          "properties": {
-            "fontSize": "14px",
-            "descriptionText": "<p style=\"word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; line-height: 1.7;\"><strong style=\"font-size: 18px;\">2026&nbsp;대한민국&nbsp;대드론&nbsp;박람회&nbsp;사무국</strong></p><p style=\"word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; line-height: 1.7;\">서울시&nbsp;마포구&nbsp;월드컵북로&nbsp;58길&nbsp;9&nbsp;ES타워&nbsp;(03922)</p>",
-            "paddingTop": "0px",
-            "paddingRight": "0px",
-            "paddingBottom": "10px",
-            "paddingLeft": "0px",
-            "marginTop": "30px",
-            "marginRight": "25px",
-            "marginBottom": "0px",
-            "marginLeft": "25px",
-            "bgColor": "transparent",
-            "showBorderRadius": false,
-            "borderRadius": "8px",
-            "showBorder": false,
-            "borderPosition": "bottom",
-            "borderStyle": "solid",
-            "borderWidth": "1px",
-            "borderColor": "#999999",
-            "textColor": "#333333",
-            "textAlign": "center"
-          },
-          "styles": {},
-          "groupId": "group-1786614298260-dccd09zuc",
-          "rowIndex": 0,
-          "columnIndex": 0
-        },
-        {
-          "moduleId": "ModuleContactInfo",
-          "properties": {
-            "contactItems": [
-              {
-                "key": "website",
-                "show": true,
-                "value": "www.c-uas.ai.kr"
-              },
-              {
-                "key": "phone",
-                "show": true,
-                "value": "02-6121-6360"
-              },
-              {
-                "key": "email",
-                "show": true,
-                "value": "c-uas@esgroup.net"
-              },
-              {
-                "key": "fax",
-                "show": false,
-                "value": "02-6121-6363"
-              }
-            ],
-            "contactFontSize": "13px",
-            "contactTextColor": "#333333",
-            "contactAlign": "center",
-            "paddingTop": "0px",
-            "paddingRight": "25px",
-            "paddingBottom": "30px",
-            "paddingLeft": "25px"
-          },
-          "styles": {},
-          "groupId": "group-1786614298260-dccd09zuc",
-          "rowIndex": 0,
-          "columnIndex": 0
-        },
-        {
-          "moduleId": "ModuleDivider",
-          "properties": {
-            "borderColor": "#aaaaaa",
-            "borderWidth": "1px",
-            "borderStyle": "solid",
-            "dividerWidth": "100%",
-            "paddingTop": "0px",
-            "paddingBottom": "15px",
-            "paddingLeft": "0px",
-            "paddingRight": "0px"
-          },
-          "styles": {},
-          "groupId": "group-1786614298260-dccd09zuc",
-          "rowIndex": 1,
-          "columnIndex": 0
-        },
-        {
-          "moduleId": "ModuleSnsIcons",
-          "properties": {
-            "snsIconBgColor": "#333333",
-            "snsAlign": "center",
-            "snsIcons": [
-              {
-                "key": "home",
-                "show": true,
-                "url": "https://c-uas.ai.kr/"
-              },
-              {
-                "key": "facebook",
-                "show": false,
-                "url": "https://www.facebook.com/kpetfair"
-              },
-              {
-                "key": "x",
-                "show": false,
-                "url": ""
-              },
-              {
-                "key": "blog",
-                "show": false,
-                "url": "https://blog.naver.com/kpetfair"
-              },
-              {
-                "key": "youtube",
-                "show": false,
-                "url": ""
-              },
-              {
-                "key": "instagram",
-                "show": false,
-                "url": "https://www.instagram.com/kpetfair/"
-              },
-              {
-                "key": "kakao",
-                "show": false,
-                "url": ""
-              },
-              {
-                "key": "linkedin",
-                "show": false,
-                "url": ""
-              },
-              {
-                "key": "zuzuzu",
-                "show": false,
-                "url": "https://kcoupet.com/"
-              },
-              {
-                "key": "en",
-                "show": false,
-                "url": ""
-              },
-              {
-                "key": "jp",
-                "show": false,
-                "url": ""
-              },
-              {
-                "key": "th",
-                "show": false,
-                "url": ""
-              }
-            ],
-            "paddingTop": "0px",
-            "paddingRight": "5px",
-            "paddingBottom": "15px",
-            "paddingLeft": "5px"
-          },
-          "styles": {},
-          "groupId": "group-1786614298260-dccd09zuc",
-          "rowIndex": 2,
-          "columnIndex": 0
-        },
-        {
-          "moduleId": "ModuleDescText",
-          "properties": {
-            "fontSize": "12px",
-            "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7em;\">본 메일은 회원님의 수신동의 여부를 확인한 결과 회원님께서 수신동의를 하셨기에 발송되었습니다.</p><p style=\"margin:0; padding:0; line-height:1.7em;\">메일 수신을 원치 않으시면 <a href=\"http://edm.esfair.kr/RejectMail.aspx?code=DRON\" target=\"_blank\" style=\"text-decoration:none; color:#333333; font-weight:700;\">[수신거부]</a> 를 클릭하십시오.</p><p style=\"margin:0; padding:0; line-height:1.7em;\">본 메일은 발신전용 메일이므로 문의사항은 <strong>02-6121-6360/ c-uas@esgroup.net </strong>으로 문의 바랍니다</p>",
-            "paddingTop": "10px",
-            "paddingRight": "25px",
-            "paddingBottom": "40px",
-            "paddingLeft": "25px",
-            "marginTop": "0px",
-            "marginRight": "0px",
-            "marginBottom": "0px",
-            "marginLeft": "0px",
-            "bgColor": "transparent",
-            "showBorderRadius": false,
-            "borderRadius": "8px",
-            "showBorder": false,
-            "borderPosition": "bottom",
-            "borderStyle": "solid",
-            "borderWidth": "1px",
-            "borderColor": "#999999",
-            "textColor": "#333333",
-            "textAlign": "center"
-          },
-          "styles": {},
-          "groupId": "group-1786614298260-dccd09zuc",
-          "rowIndex": 3,
-          "columnIndex": 0
-        }
-      ],
-      "groups": [
-        {
-          "id": "group-1786614292866-6fmlpzn7n",
-          "name": "기본 헤더",
-          "styles": {
-            "backgroundColor": "",
-            "borderWidth": "0px",
-            "borderStyle": "solid",
-            "borderColor": "#dddddd",
-            "borderSides": [
-              "top",
-              "right",
-              "bottom",
-              "left"
-            ],
-            "padding": "0px",
-            "margin": "0px"
-          },
-          "rows": [
-            1,
-            1,
-            1,
-            1
-          ]
-        },
-        {
-          "id": "group-1786614294493-cikl7m6wp",
-          "name": "모듈 07번(좌우 반전)",
-          "styles": {
-            "backgroundColor": "",
-            "borderWidth": "0px",
-            "borderStyle": "solid",
-            "borderColor": "#dddddd",
-            "borderSides": [
-              "top",
-              "right",
-              "bottom",
-              "left"
-            ],
-            "padding": "0px",
-            "margin": "0px",
-            "paddingLeft": "15px",
-            "paddingRight": "15px"
-          },
-          "rows": [
-            2
-          ],
-          "colWidths": [
-            [
-              55,
-              45
-            ]
-          ]
-        },
-        {
-          "id": "group-1786614294780-1ow5cgas3",
-          "name": "모듈 07번(좌우 반전)",
-          "styles": {
-            "backgroundColor": "",
-            "borderWidth": "0px",
-            "borderStyle": "solid",
-            "borderColor": "#dddddd",
-            "borderSides": [
-              "top",
-              "right",
-              "bottom",
-              "left"
-            ],
-            "padding": "0px",
-            "margin": "0px",
-            "paddingLeft": "15px",
-            "paddingRight": "15px"
-          },
-          "rows": [
-            2
-          ],
-          "colWidths": [
-            [
-              55,
-              45
-            ]
-          ]
-        },
-        {
-          "id": "group-1786614295046-jq4lcm81e",
-          "name": "섹션 타이틀",
-          "styles": {
-            "backgroundColor": "",
-            "borderWidth": "0px",
-            "borderStyle": "solid",
-            "borderColor": "#dddddd",
-            "borderSides": [
-              "top",
-              "right",
-              "bottom",
-              "left"
-            ],
-            "padding": "0px",
-            "margin": "0px"
-          },
-          "rows": [
-            1,
-            1
-          ]
-        },
-        {
-          "id": "group-1786614295334-9llrticmi",
-          "name": "모듈 07번(좌우 반전)",
-          "styles": {
-            "backgroundColor": "",
-            "borderWidth": "0px",
-            "borderStyle": "solid",
-            "borderColor": "#dddddd",
-            "borderSides": [
-              "top",
-              "right",
-              "bottom",
-              "left"
-            ],
-            "padding": "0px",
-            "margin": "0px",
-            "paddingLeft": "15px",
-            "paddingRight": "15px"
-          },
-          "rows": [
-            2
-          ],
-          "colWidths": [
-            [
-              50,
-              51
-            ]
-          ]
-        },
-        {
-          "id": "group-1786614295623-rjyxznpy0",
-          "name": "모듈 07번",
-          "styles": {
-            "backgroundColor": "",
-            "borderWidth": "0px",
-            "borderStyle": "solid",
-            "borderColor": "#dddddd",
-            "borderSides": [
-              "top",
-              "right",
-              "bottom",
-              "left"
-            ],
-            "padding": "0px",
-            "margin": "0px",
-            "paddingLeft": "15px",
-            "paddingRight": "15px"
-          },
-          "rows": [
-            2
-          ],
-          "colWidths": [
-            [
-              51,
-              50
-            ]
-          ]
-        },
-        {
-          "id": "group-1786614295912-a4ilytfkf",
-          "name": "모듈 07번(좌우 반전)",
-          "styles": {
-            "backgroundColor": "",
-            "borderWidth": "0px",
-            "borderStyle": "solid",
-            "borderColor": "#dddddd",
-            "borderSides": [
-              "top",
-              "right",
-              "bottom",
-              "left"
-            ],
-            "padding": "0px",
-            "margin": "0px",
-            "paddingLeft": "15px",
-            "paddingRight": "15px"
-          },
-          "rows": [
-            2
-          ],
-          "colWidths": [
-            [
-              50,
-              51
-            ]
-          ]
-        },
-        {
-          "id": "group-1786614296201-np6v2u5mt",
-          "name": "모듈 07번",
-          "styles": {
-            "backgroundColor": "",
-            "borderWidth": "0px",
-            "borderStyle": "solid",
-            "borderColor": "#dddddd",
-            "borderSides": [
-              "top",
-              "right",
-              "bottom",
-              "left"
-            ],
-            "padding": "0px",
-            "margin": "0px",
-            "paddingLeft": "15px",
-            "paddingRight": "15px"
-          },
-          "rows": [
-            2
-          ],
-          "colWidths": [
-            [
-              51,
-              50
-            ]
-          ]
-        },
-        {
-          "id": "group-1786614296491-81h7o0rix",
-          "name": "모듈 07번(좌우 반전)",
-          "styles": {
-            "backgroundColor": "",
-            "borderWidth": "0px",
-            "borderStyle": "solid",
-            "borderColor": "#dddddd",
-            "borderSides": [
-              "top",
-              "right",
-              "bottom",
-              "left"
-            ],
-            "padding": "0px",
-            "margin": "0px",
-            "paddingLeft": "15px",
-            "paddingRight": "15px"
-          },
-          "rows": [
-            2
-          ],
-          "colWidths": [
-            [
-              50,
-              51
-            ]
-          ]
-        },
-        {
-          "id": "group-1786614296756-2tq9uxyut",
-          "name": "섹션 타이틀",
-          "styles": {
-            "backgroundColor": "",
-            "borderWidth": "0px",
-            "borderStyle": "solid",
-            "borderColor": "#dddddd",
-            "borderSides": [
-              "top",
-              "right",
-              "bottom",
-              "left"
-            ],
-            "padding": "0px",
-            "margin": "0px"
-          },
-          "rows": [
-            1,
-            1
-          ]
-        },
-        {
-          "id": "group-1786614297262-5ucfzhjdm",
-          "name": "섹션 타이틀",
-          "styles": {
-            "backgroundColor": "",
-            "borderWidth": "0px",
-            "borderStyle": "solid",
-            "borderColor": "#dddddd",
-            "borderSides": [
-              "top",
-              "right",
-              "bottom",
-              "left"
-            ],
-            "padding": "0px",
-            "margin": "0px"
-          },
-          "rows": [
-            1,
-            1
-          ]
-        },
-        {
-          "id": "group-1786614297494-f7c24jgpu",
-          "name": "복수 이미지",
-          "styles": {
-            "backgroundColor": "",
-            "borderWidth": "0px",
-            "borderStyle": "solid",
-            "borderColor": "#dddddd",
-            "borderSides": [
-              "top",
-              "right",
-              "bottom",
-              "left"
-            ],
-            "padding": "0px",
-            "margin": "0px",
-            "paddingLeft": "15px",
-            "paddingRight": "15px"
-          },
-          "rows": [
-            2
-          ]
-        },
-        {
-          "id": "group-1786614297731-h8eeincv4",
-          "name": "복수 이미지",
-          "styles": {
-            "backgroundColor": "",
-            "borderWidth": "0px",
-            "borderStyle": "solid",
-            "borderColor": "#dddddd",
-            "borderSides": [
-              "top",
-              "right",
-              "bottom",
-              "left"
-            ],
-            "padding": "0px",
-            "margin": "0px",
-            "paddingLeft": "15px",
-            "paddingRight": "15px"
-          },
-          "rows": [
-            2
-          ]
-        },
-        {
-          "id": "group-1786614297967-34kawsvn1",
-          "name": "복수 이미지",
-          "styles": {
-            "backgroundColor": "",
-            "borderWidth": "0px",
-            "borderStyle": "solid",
-            "borderColor": "#dddddd",
-            "borderSides": [
-              "top",
-              "right",
-              "bottom",
-              "left"
-            ],
-            "padding": "0px",
-            "margin": "0px",
-            "paddingLeft": "15px",
-            "paddingRight": "15px"
-          },
-          "rows": [
-            2
-          ]
-        },
-        {
-          "id": "group-1786614298260-dccd09zuc",
-          "name": "하단 푸터",
-          "styles": {
-            "backgroundColor": "#e9e9e9",
-            "borderWidth": "0px",
-            "borderStyle": "solid",
-            "borderColor": "#dddddd",
-            "borderSides": [
-              "top",
-              "right",
-              "bottom",
-              "left"
-            ],
-            "padding": "0px",
-            "margin": "0px"
-          },
-          "rows": [
-            1,
-            1,
-            1,
-            1
-          ]
-        }
-      ]
-    },
-    {
       "id": "bfs",
       "name": "건축 소방 안전 산업전",
       "description": "건축 소방 안전 산업전 뉴스레터 구성",
       "divisionId": "conv",
-      "teamId": "conv-industry-1",
+      "teamId": "conv1",
       "thumbnail": "bfs_temp.png",
       "wrapSettings": {
         "backgroundColor": "#ffffff",
@@ -20773,7 +20773,7 @@
       "name": "국제치안산업대전",
       "description": "국제치안산업대전 뉴스레터 구성",
       "divisionId": "conv",
-      "teamId": "conv-industry-1",
+      "teamId": "conv1",
       "thumbnail": "police_temp.png",
       "wrapSettings": {
         "backgroundColor": "#ffffff",
@@ -23195,7 +23195,7 @@
       "name": "전기차 충전인프라 산업전",
       "description": "전기차 충전인프라 산업전 뉴스레터 구성",
       "divisionId": "conv",
-      "teamId": "conv-industry-1",
+      "teamId": "conv1",
       "thumbnail": "evinfra_temp.png",
       "wrapSettings": {
         "backgroundColor": "#ffffff",
@@ -25200,7 +25200,7 @@
       "name": "ISSA",
       "description": "ISSA 뉴스레터 구성",
       "divisionId": "conv",
-      "teamId": "conv-industry-1",
+      "teamId": "conv1",
       "thumbnail": "issa_temp.png",
       "wrapSettings": {
         "backgroundColor": "#ffffff",
@@ -27832,7 +27832,7 @@
       "name": "핸드아티코리아",
       "description": "핸드아티코리아 뉴스레터 구성",
       "divisionId": "culture",
-      "teamId": "life-content",
+      "teamId": "life",
       "thumbnail": "handartykorea_temp.png",
       "wrapSettings": {
         "backgroundColor": "#ffffff",
@@ -29592,7 +29592,7 @@
       "name": "메가주",
       "description": "메가주 뉴스레터 구성",
       "divisionId": "pet",
-      "teamId": "pet-industry",
+      "teamId": "pet-ind",
       "thumbnail": "megazoo_temp.png",
       "wrapSettings": {
         "backgroundColor": "#f9f9f9",
@@ -30661,7 +30661,7 @@
       "name": "케이펫",
       "description": "케이펫 뉴스레터 구성",
       "divisionId": "pet",
-      "teamId": "pet-industry",
+      "teamId": "pet-ind",
       "thumbnail": "kpet_temp.png",
       "wrapSettings": {
         "backgroundColor": "#f9f9f9",
@@ -32904,7 +32904,7 @@
       "name": "고카프",
       "description": "고카프 뉴스레터 구성",
       "divisionId": "leisure",
-      "teamId": "leisure-industry",
+      "teamId": "leisure-ind",
       "thumbnail": "gcaf_temp.png",
       "wrapSettings": {
         "backgroundColor": "#ffffff",
@@ -35210,7 +35210,7 @@
       "name": "케이팜",
       "description": "케이팜 뉴스레터 구성",
       "divisionId": "leisure",
-      "teamId": "leisure-industry",
+      "teamId": "leisure-ind",
       "thumbnail": "kfarm_temp.png",
       "wrapSettings": {
         "backgroundColor": "#f9f9f9",

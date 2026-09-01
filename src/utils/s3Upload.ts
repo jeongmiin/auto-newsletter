@@ -161,7 +161,7 @@ export function buildUploadFileName(
 
 /** 회차를 입력하지 않았을 때 사용자에게 보여줄 문구 — 알림과 필드 오류에서 함께 쓴다 */
 export const MISSING_VOLUME_MESSAGE =
-  '뉴스레터 회차를 먼저 입력해 주세요. 왼쪽 "전체 스타일" 메뉴에서 회차 숫자를 고르면 회차별 폴더에 정리됩니다.'
+  '저장할 폴더가 정해지지 않았어요. 처음(전시회 선택)부터 다시 시작해 폴더를 골라 주세요.'
 
 /**
  * 회차 표기의 고정 접두사. 화면에서는 이 글자를 고칠 수 없고 숫자만 오르내린다.
@@ -203,10 +203,18 @@ export function normalizeVolume(volume?: string | null): string {
 }
 
 /**
- * 빈 문서로 만든 뉴스레터의 이미지를 모으는 자리.
+ * 빌더가 올린 파일이 모이는 자리 — `/e-dm/{연도}/newsletterbuilder/…`.
  *
- * 전시회 폴더 옆에 나란히 두되 이름으로 성격이 드러나게 한다 — S3에서 `bfs/`·`kadex/` 사이에
- * `blank/`이 보이면 '전시회가 아직 안 정해진 것들'임을 바로 알 수 있다.
+ * 이 한 단계가 있어야 전시회가 직접 만들어 온 폴더(`e-dm/2026/police/` 등)와 섞이지 않는다.
+ * S3에 이 이름으로 팀 폴더가 이미 준비돼 있다.
+ */
+export const BUILDER_ROOT = 'newsletterbuilder'
+
+/**
+ * 아직 전시회를 못 정한 뉴스레터의 자리 — `{팀}/blank/`.
+ *
+ * 팀 폴더 안에서 전시회 폴더들과 나란히 놓이므로, 이름만 봐도
+ * '전시회가 아직 안 정해진 것들'임을 알 수 있다.
  */
 export const BLANK_FOLDER = 'blank'
 
@@ -215,26 +223,24 @@ const folderSegment = (value?: string | null): string =>
   (value ?? '').trim().toLowerCase().replace(/[^a-z0-9_-]+/g, '')
 
 /**
- * 업로드 폴더의 전시회 단계를 정한다.
+ * 업로드 폴더의 `{팀}/{전시회}` 단계를 정한다 — S3에 준비된 구조와 같은 순서다.
  *
- * - 템플릿으로 시작했으면 그 **템플릿 id**가 곧 전시회 폴더다(S3 폴더명과 이미 통일돼 있다).
- * - 빈 문서로 시작했으면 전시회를 알 수 없으므로 `blank/{팀}`에 모은다.
- *   팀까지 나누는 이유는, 한 자리에 다 쌓으면 서로 다른 뉴스레터의 `main_visual.png`가
- *   같은 회차 폴더에서 만나 말없이 덮어써지기 때문이다(`override=Y`).
+ * - 팀은 항상 앞에 온다. 담당이 곧 폴더 주인이라 남의 회차 폴더에 덮어쓸 일이 없다.
+ * - 템플릿으로 시작했으면 그 **템플릿 id**가 곧 전시회 폴더다(S3 폴더명과 통일돼 있다).
+ * - 빈 문서로 시작했으면 전시회를 알 수 없으므로 그 팀의 `blank`에 모은다.
  *
- * @returns 팀도 템플릿도 없으면 빈 문자열 — 호출한 쪽이 업로드를 막는다.
+ * @returns 팀이 없으면 빈 문자열 — 올릴 자리를 지어내지 않고 호출한 쪽이 업로드를 막는다.
  */
 export function uploadFolderOf(templateId?: string | null, teamId?: string | null): string {
-  const template = folderSegment(templateId)
-  if (template) return template
   const team = folderSegment(teamId)
-  return team ? `${BLANK_FOLDER}/${team}` : ''
+  if (!team) return ''
+  return `${team}/${folderSegment(templateId) || BLANK_FOLDER}`
 }
 
 /**
- * 업로드 폴더 경로를 만든다 — `/e-dm/{연도}/{전시회 폴더}/{회차}/`.
+ * 업로드 폴더 경로를 만든다 — `/e-dm/{연도}/newsletterbuilder/{팀}/{전시회}/{회차}/`.
  *
- * @param folder `uploadFolderOf`가 정한 폴더. 빈 문서면 `blank/{팀}`처럼 두 단계일 수 있다.
+ * @param folder `uploadFolderOf`가 정한 `{팀}/{전시회}`.
  * @returns 폴더나 회차 중 하나라도 비어 있으면 **null** — 어디에 넣을지 정할 수 없으므로
  *          경로를 지어내지 않고 호출한 쪽이 업로드를 막게 한다.
  */
@@ -250,17 +256,18 @@ export function buildUploadDirectory(
     .filter(Boolean)
     .join('/')
   if (!vol || !dir) return null
-  return `/e-dm/${now.getFullYear()}/${dir}/${vol}/`
+  return `/e-dm/${now.getFullYear()}/${BUILDER_ROOT}/${dir}/${vol}/`
 }
 
 /**
- * 화면에 보여줄 저장 위치 — 앞의 `/e-dm/{연도}/`를 뗀 나머지(`hobanexpo/vol99/`).
+ * 화면에 보여줄 저장 위치 — 앞의 `/e-dm/{연도}/newsletterbuilder/`를 뗀 나머지
+ * (`conv1/police/vol99/`).
  *
  * 이 앞부분은 모든 업로드가 똑같이 쓰는 고정 경로라 매번 읽어봐야 알 수 있는 게 없다.
  * **표시만 줄이는 것이고, 실제로 올리는 경로는 buildUploadDirectory가 만든 값 그대로다.**
  */
 export function displayUploadDirectory(directory?: string | null): string {
-  return (directory ?? '').replace(/^\/e-dm\/\d{4}\//, '')
+  return (directory ?? '').replace(new RegExp(String.raw`^/e-dm/\d{4}/${BUILDER_ROOT}/`), '')
 }
 
 /** 서버가 돌려준 값을 화면에 바로 쓸 수 있는 URL로 정리한다 */
