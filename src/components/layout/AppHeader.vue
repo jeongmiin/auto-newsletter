@@ -162,7 +162,7 @@ import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
 import { processQuillHtml } from '@/utils/quillHtmlProcessor'
 import { useNewsletterImport } from '@/composables/useNewsletterImport'
-import { buildDownloadFileName, serializeModule } from '@/utils/projectFile'
+import { buildDownloadFileName } from '@/utils/projectFile'
 import {
   MISSING_VOLUME_MESSAGE,
   UploadError,
@@ -173,6 +173,7 @@ import {
 } from '@/utils/s3Upload'
 import { getHistoryInstance } from '@/composables/useHistory'
 import { useBlankTemplate } from '@/composables/useBlankTemplate'
+import { useNewsletterDocument } from '@/composables/useNewsletterDocument'
 import { useToast } from 'primevue/usetoast'
 
 // showActions=false면 오른쪽 파일 관리 버튼들을 숨긴다(예: 템플릿 선택 화면)
@@ -185,6 +186,8 @@ const router = useRouter()
 const confirm = useConfirm()
 const { importHtmlFile } = useNewsletterImport()
 const { confirmBlankTemplate } = useBlankTemplate()
+// 내려받기·복사·임시 저장·웹 링크가 모두 같은 문서를 쓰도록 한 곳에서 만든다
+const { buildDocument } = useNewsletterDocument()
 
 // 실행취소/다시실행 (전역 히스토리 싱글턴)
 const history = getHistoryInstance()
@@ -505,69 +508,13 @@ const previewEmail = async (): Promise<void> => {
  */
 const exportHtml = async (): Promise<void> => {
   try {
-    let finalHtml = await moduleStore.generateHtml()
-    finalHtml = processQuillHtml(finalHtml)
     // 다운로드(발송용)와 동일하게 완전한 HTML 문서로 감싸 복사 (메타데이터 제외)
-    const html = buildHtmlDocument(finalHtml, false)
+    const html = await buildDocument(false)
     await navigator.clipboard.writeText(html)
     showSuccess('복사 완료', 'HTML이 클립보드에 복사되었습니다')
   } catch (error) {
     showError('복사 실패', 'HTML을 복사하지 못했습니다')
   }
-}
-
-/**
- * 최종 HTML 문서 생성
- * @param finalHtml 렌더링된 본문 HTML
- * @param includeMetadata true이면 재편집용 메타데이터(주석) 포함, false이면 제거(발송용)
- */
-const buildHtmlDocument = (finalHtml: string, includeMetadata: boolean): string => {
-  let metadataBlock = ''
-  if (includeMetadata) {
-    const projectState = {
-      // 직렬화는 파일 열기(복원)와 짝이라 utils/projectFile에 공용으로 둔다 —
-      // 여기서 필드를 빠뜨리면 다시 열었을 때 그대로 유실된다.
-      modules: moduleStore.modules.map(serializeModule),
-      groups: moduleStore.groups,
-      wrapSettings: editorStore.wrapSettings,
-      // 만든 팀을 기록해 둔다(표시명이 아니라 불변 id).
-      // 다시 열 때 현재 작업 팀을 덮어쓰지는 않는다 — projectFile.ts의 teamId 주석 참고.
-      teamId: editorStore.currentTeamId,
-    }
-    // 콘텐츠의 '-->' 등으로 HTML 주석이 조기 종료되어 파일이 깨지는 것을 방지.
-    // <, > 를 < / > 로 치환 → JSON 문자열 값 안에서만 등장하므로 JSON.parse가 복원(import 변경 불필요).
-    const BACKSLASH = String.fromCharCode(92)
-    const moduleMetadataJson = JSON.stringify(projectState)
-      .replace(/</g, BACKSLASH + 'u003c')
-      .replace(/>/g, BACKSLASH + 'u003e')
-    metadataBlock = `
-<!-- AUTO_NEWSLETTER_METADATA_START -->
-<!-- ${moduleMetadataJson} -->
-<!-- AUTO_NEWSLETTER_METADATA_END -->`
-  }
-
-  return `<!DOCTYPE html>
-<html lang="ko" xmlns:o="urn:schemas-microsoft-com:office:office">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="format-detection" content="telephone=no">
-  <!--[if mso]>
-  <noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
-  <![endif]-->
-  <title>Newsletter</title>
-  <style>
-    /* 아웃룩(Word 엔진) 보정: 테이블 간격 제거, 이미지 보간/테두리 정리 */
-    table { border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
-    img { -ms-interpolation-mode: bicubic; border: 0; outline: none; text-decoration: none; }
-    body { margin: 0; padding: 0; }
-  </style>
-</head>
-<body style="margin:0; padding:0; background-color: #f2f2f2;">
-${finalHtml}${metadataBlock}
-</body>
-</html>`
 }
 
 type DownloadResult =
@@ -641,10 +588,7 @@ const downloadHtml = async (includeMetadata: boolean): Promise<void> => {
       return
     }
 
-    let finalHtml = await moduleStore.generateHtml()
-    finalHtml = processQuillHtml(finalHtml)
-
-    const fullHtmlDocument = buildHtmlDocument(finalHtml, includeMetadata)
+    const fullHtmlDocument = await buildDocument(includeMetadata)
 
     const now = new Date()
     // 파일 이름은 전시회·폴더로 짓는다 — 어느 뉴스레터의 몇 회차인지가 이름만으로 드러난다
@@ -708,10 +652,8 @@ const saveToFolder = async (): Promise<void> => {
 
   savingToFolder.value = true
   try {
-    let finalHtml = await moduleStore.generateHtml()
-    finalHtml = processQuillHtml(finalHtml)
     // 재편집 메타데이터를 담아 올린다 — 나중에 그대로 불러와 이어서 편집하기 위함
-    const document = buildHtmlDocument(finalHtml, true)
+    const document = await buildDocument(true)
     const filename = buildDownloadFileName(
       editorStore.currentTemplateId,
       editorStore.wrapSettings.volume,
