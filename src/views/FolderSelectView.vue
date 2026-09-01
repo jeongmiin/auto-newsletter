@@ -223,8 +223,15 @@ const continueEditing = async () => {
               class="fd-search-input"
             />
           </div>
-          <button type="button" class="fd-new-btn" title="새 폴더 만들기" @click="startCreate">
+          <!-- 빈 화면일 때는 그쪽 버튼 하나만 남긴다 — 같은 일을 하는 버튼이 둘이면 헷갈린다 -->
+          <button
+            v-if="!creating && !isEmptyState && !isNoMatch"
+            type="button"
+            class="fd-create-btn fd-create-btn--top"
+            @click="startCreate"
+          >
             <span class="material-symbols-outlined">create_new_folder</span>
+            폴더 만들기
           </button>
         </div>
 
@@ -235,7 +242,7 @@ const continueEditing = async () => {
             아직 저장할 폴더가 없어요.<br />
             폴더를 새로 만들어 시작해 주세요.
           </p>
-          <button type="button" class="fd-empty-btn" @click="startCreate">
+          <button type="button" class="fd-create-btn" @click="startCreate">
             <span class="material-symbols-outlined">create_new_folder</span>
             폴더 만들기
           </button>
@@ -333,7 +340,7 @@ const continueEditing = async () => {
                 검색한 폴더가 없어요.<br />
                 폴더를 새로 만들거나 다시 검색해주세요.
               </p>
-              <button v-if="!creating" type="button" class="fd-empty-btn" @click="startCreate">
+              <button v-if="!creating" type="button" class="fd-create-btn" @click="startCreate">
                 <span class="material-symbols-outlined">create_new_folder</span>
                 폴더 만들기
               </button>
@@ -476,24 +483,30 @@ const continueEditing = async () => {
 .fd-search-input::placeholder {
   color: var(--gray-600);
 }
-.fd-new-btn {
-  display: flex;
+/* 폴더 만들기 — 검색줄 오른쪽과 빈 화면 가운데에서 같은 모양으로 쓴다 */
+.fd-create-btn {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
+  gap: 6px;
+  padding: 12px 24px;
   border: none;
   border-radius: 8px;
-  background: none;
-  color: var(--gray-700);
+  background: var(--blue-400);
+  color: var(--white);
+  font-size: 16px;
+  font-weight: 500;
+  white-space: nowrap;
   cursor: pointer;
 }
-.fd-new-btn:hover {
-  background: var(--gray-100);
-  color: var(--blue-500);
+.fd-create-btn:hover {
+  background: var(--blue-500);
 }
-.fd-new-btn .material-symbols-outlined {
-  font-size: 32px;
+.fd-create-btn .material-symbols-outlined {
+  font-size: 20px;
+}
+/* 검색줄에서는 오른쪽 끝으로 민다 */
+.fd-create-btn--top {
+  margin-left: auto;
 }
 /* 새 폴더 줄 — 이름 입력과 만들기/취소 */
 .fd-new-input {
@@ -702,25 +715,8 @@ const continueEditing = async () => {
   color: var(--gray-600);
   text-align: center;
 }
-.fd-empty-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+.fd-empty .fd-create-btn {
   margin-top: 6px;
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  background: var(--blue-400);
-  color: var(--white);
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
-}
-.fd-empty-btn:hover {
-  background: var(--blue-500);
-}
-.fd-empty-btn .material-symbols-outlined {
-  font-size: 20px;
 }
 
 /* 하단 — 다음/이전 */
