@@ -100,22 +100,13 @@
         <button
           v-if="canSaveToFolder"
           type="button"
-          class="hbtn hbtn--muted"
+          class="hbtn hbtn--tint"
           :disabled="savingToFolder"
           @click="saveToFolder"
           v-tooltip.bottom="'회차 폴더에 올려 둡니다 — 다른 자리에서 이어서 편집할 수 있어요'"
         >
           <span class="material-symbols-outlined">cloud_upload</span>
           <span>{{ savingToFolder ? '올리는 중…' : '임시 저장' }}</span>
-        </button>
-        <button
-          type="button"
-          class="hbtn hbtn--tint"
-          @click="downloadForSave"
-          v-tooltip.bottom="'재편집용 — 다시 불러와 편집 가능'"
-        >
-          <span class="material-symbols-outlined">download</span>
-          <span>저장용 내려받기</span>
         </button>
         <button
           type="button"
@@ -215,9 +206,16 @@ const currentTeamName = computed(() => {
   return ''
 })
 
-// 우측 '더 보기' 메뉴 — 자주 쓰지 않는 동작만 모은다
+/**
+ * 우측 '더 보기' 메뉴 — 자주 쓰지 않는 동작만 모은다.
+ *
+ * '저장용 내려받기'도 여기로 들어왔다. 폴더에 올려 두는 '임시 저장'이 생기면서
+ * 이어서 편집할 파일을 내 PC로 받아 둘 일이 드물어졌기 때문이다.
+ * 겉에 남는 것은 늘 쓰는 셋 — 임시 저장 · 미리보기 · 발송용 내려받기.
+ */
 const moreMenu = ref<InstanceType<typeof Menu> | null>(null)
 const moreMenuItems = computed(() => [
+  { label: '저장용 내려받기', icon: 'pi pi-download', command: () => void downloadForSave() },
   { label: '코드 복사', icon: 'pi pi-copy', command: () => void exportHtml() },
   { label: '파일 열기', icon: 'pi pi-folder-open', command: () => void importHtmlFile() },
 ])
@@ -787,7 +785,7 @@ const downloadForSend = (): Promise<void> => downloadHtml(false)
 .hbtn .material-symbols-outlined {
   font-size: 22px;
 }
-/* 저장용 — blue/50 배경 + blue/600 글자 */
+/* 임시저장 */
 .hbtn--tint {
   background: var(--blue-50);
   color: var(--blue-600);
