@@ -52,12 +52,15 @@
 
         <span class="hbar"></span>
 
-        <!-- 전체 삭제 = 빈 템플릿으로 시작 (레일의 '빈 템플릿'과 같은 확인 모달) -->
+        <!--
+          전체 삭제 = 이 폴더에 머문 채 내용만 비우기.
+          팀·폴더부터 다시 고르는 '새로 시작'은 레일의 '빈 템플릿'이 맡는다.
+        -->
         <button
           type="button"
           class="hclear"
-          @click="confirmBlankTemplate"
-          v-tooltip.bottom="'작업 내용을 모두 지우고 빈 템플릿으로 시작합니다'"
+          @click="confirmClearHere"
+          v-tooltip.bottom="'저장할 폴더는 그대로 두고 작업 내용만 모두 지웁니다'"
         >
           <span class="material-symbols-outlined">delete</span>
           <span>전체 삭제</span>
@@ -176,7 +179,7 @@ const toast = useToast()
 const router = useRouter()
 const confirm = useConfirm()
 const { importHtmlFile } = useNewsletterImport()
-const { confirmBlankTemplate } = useBlankTemplate()
+const { confirmClearHere } = useBlankTemplate()
 // 내려받기·복사·임시 저장·웹 링크가 모두 같은 문서를 쓰도록 한 곳에서 만든다
 const { buildDocument } = useNewsletterDocument()
 

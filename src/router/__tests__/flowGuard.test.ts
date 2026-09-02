@@ -33,6 +33,23 @@ describe('흐름 가드', () => {
     expect(router.currentRoute.value.name).toBe('templates')
   })
 
+  it('빈 템플릿으로 시작했으면 팀이 없어도 폴더 선택은 열어 준다 (거기서 팀을 고른다)', async () => {
+    const router = await freshRouter()
+    const editorStore = useEditorStore()
+    editorStore.setCurrentTemplate({
+      templateId: null,
+      templateName: '빈 템플릿',
+      teamId: null,
+    })
+
+    await router.push('/folder')
+    expect(router.currentRoute.value.name).toBe('folder')
+
+    // 팀이 정해지기 전에는 에디터로 갈 수 없다 — 이미지를 올릴 자리가 없다
+    await router.push('/editor')
+    expect(router.currentRoute.value.name).toBe('templates')
+  })
+
   it('팀은 있고 폴더를 아직 안 골랐으면 에디터 대신 폴더 선택으로 보낸다', async () => {
     const router = await freshRouter()
     const editorStore = useEditorStore()

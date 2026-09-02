@@ -42,9 +42,12 @@ router.beforeEach((to) => {
   if (to.name !== 'editor' && to.name !== 'folder') return true
 
   const editorStore = useEditorStore()
-  // 팀이 있어야 올릴 자리(`{팀}/{전시회}`)가 정해진다 — 빈 문서로 시작해도 팀은 반드시 있다
+  // 폴더 선택은 팀을 고르는 자리이기도 하다 — 빈 템플릿으로 시작했으면 팀 없이도 들여보낸다
+  if (to.name === 'folder') {
+    return editorStore.currentTeamId || editorStore.isBlankStart ? true : { name: 'templates' }
+  }
+  // 에디터는 팀이 있어야 한다 — 그래야 올릴 자리(`{팀}/{전시회}`)가 정해진다
   if (!editorStore.currentTeamId) return { name: 'templates' }
-  if (to.name === 'folder') return true
 
   // 폴더(회차)를 고르지 않았으면 에디터로 넘기지 않는다 — 올린 이미지가 갈 곳이 없다
   return editorStore.wrapSettings.volume ? true : { name: 'folder' }

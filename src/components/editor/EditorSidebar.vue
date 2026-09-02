@@ -27,7 +27,7 @@ import { useBlankTemplate } from '@/composables/useBlankTemplate'
 
 type MenuKey = 'style' | 'point' | 'modules' | 'text' | 'image' | 'button' | 'table' | 'ai'
 // 좌측 패널을 전환하지 않는 별도 동작들 —
-// 'order'는 캔버스 오른쪽 패널을 여닫고, 'blank'는 확인 후 작업 영역을 비운다.
+// 'order'는 캔버스 오른쪽 패널을 여닫고, 'blank'는 확인 후 폴더 선택으로 되돌아가 새로 시작한다.
 type RailKey = MenuKey | 'order' | 'blank'
 
 const editorStore = useEditorStore()
@@ -73,7 +73,7 @@ const select = (key: RailKey) => {
     editorStore.toggleOrderPanel()
     return
   }
-  // '빈 템플릿'은 패널 전환이 아니라 확인 후 작업 영역을 비우는 액션이다.
+  // '빈 템플릿'은 패널 전환이 아니라, 확인 후 폴더 선택으로 되돌아가 새 뉴스레터를 시작하는 액션이다.
   if (key === 'blank') {
     confirmBlankTemplate()
     return

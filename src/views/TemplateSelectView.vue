@@ -4,34 +4,13 @@
     <FlowStepsHeader :current="1" />
 
     <div class="tpl-body">
-      <!-- 좌측: 부서/팀 트리 -->
-      <aside class="tpl-sidebar">
-        <button
-          class="tpl-team tpl-team--top"
-          :class="{ 'is-active': selectedTeam === '' }"
-          @click="selectedTeam = ''"
-        >
-          전체
-        </button>
-
-        <div v-for="dept in departments" :key="dept.id" class="tpl-dept">
-          <button class="tpl-dept-head" @click="toggle(dept.id)">
-            <span>{{ dept.name }}</span>
-            <i class="pi text-xs text-gray-400" :class="isOpen(dept.id) ? 'pi-angle-down' : 'pi-angle-right'"></i>
-          </button>
-          <div v-show="isOpen(dept.id)" class="tpl-team-list">
-            <button
-              v-for="team in dept.teams"
-              :key="team.id"
-              class="tpl-team"
-              :class="{ 'is-active': selectedTeam === team.id }"
-              @click="selectedTeam = team.id"
-            >
-              {{ team.name }}
-            </button>
-          </div>
-        </div>
-      </aside>
+      <!-- 좌측: 부서/팀 트리 (폴더 선택 화면과 같은 메뉴를 쓴다) -->
+      <TeamTreeSidebar
+        v-model="selectedTeam"
+        top-label="전체"
+        :top-active="selectedTeam === ''"
+        @top="selectedTeam = ''"
+      />
 
       <!-- 우측: 제목 + 검색 + 카드 그리드 -->
       <main class="tpl-main">
@@ -48,11 +27,11 @@
         </div>
 
         <div class="tpl-grid">
-          <!-- 빈 템플릿 카드 — **팀을 고른 상태에서만** 보여준다.
-               '전체'에 두면 어느 팀의 빈 문서인지 알 수 없고, 그러면 이미지가 올라갈
-               전시회 폴더도 정할 수 없다. 눌렀을 때 그 팀의 전시회를 고르게 하는 이유도 같다. -->
+          <!-- 빈 템플릿 카드 — '전체'에 하나만 둔다.
+               어느 팀의 빈 문서인지는 다음 걸음(폴더 선택)에서 고른다. 팀마다 카드를 두면
+               같은 빈 문서가 팀 수만큼 늘어서고, 팀을 잘못 골랐을 때 되돌릴 자리도 없다. -->
           <button
-            v-if="selectedTeam"
+            v-if="selectedTeam === ''"
             class="tpl-card"
             @click="startBlank"
           >
@@ -123,6 +102,7 @@ import { useRouter } from 'vue-router'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
 import FlowStepsHeader from '@/components/layout/FlowStepsHeader.vue'
+import TeamTreeSidebar from '@/components/layout/TeamTreeSidebar.vue'
 import { getHistoryInstance } from '@/composables/useHistory'
 import type { NewsletterTemplate } from '@/types'
 
@@ -130,29 +110,10 @@ const router = useRouter()
 const moduleStore = useModuleStore()
 const editorStore = useEditorStore()
 
-// 좌측 부서/팀 트리 — templates-config.json의 departments에서 온다.
-// (화면·검사 테스트·등록 스크립트가 모두 그 한 곳을 보므로 여기에 따로 적지 않는다)
-// 배열 순서가 곧 표시 순서. 필터는 template.teamId와 id로 매칭한다(표시명이 아니다).
-//
-// 폐지된 조직(active: false)은 트리에서 감춘다. 정의는 지우지 않으므로 그 팀의
-// 옛 템플릿은 '전체'에서 계속 보이고, 저장된 teamId도 여전히 이름을 찾을 수 있다.
-const departments = computed(() =>
-  moduleStore.availableDepartments
-    .filter((d) => d.active !== false)
-    .map((d) => ({ ...d, teams: d.teams.filter((t) => t.active !== false) }))
-    .filter((d) => d.teams.length > 0),
-)
-
+// 좌측 부서/팀 트리는 TeamTreeSidebar가 그린다(폴더 선택 화면과 공용).
+// 여기서는 고른 팀 id만 들고 카드 목록을 거른다 — 표시명이 아니라 id로 매칭한다.
 const selectedTeam = ref<string>('') // '' = 전체, 그 외엔 팀 id
 const search = ref('')
-
-// 부서 접기/펼치기 — 기본 펼침(기록에 없으면 열린 것으로 본다).
-// 트리를 비동기로 받아오므로 목록을 미리 채우지 않는다.
-const openDepts = reactive<Record<string, boolean>>({})
-const isOpen = (deptId: string) => openDepts[deptId] !== false
-const toggle = (deptId: string) => {
-  openDepts[deptId] = !isOpen(deptId)
-}
 
 const templates = ref<NewsletterTemplate[]>([])
 const srcdocs = reactive<Record<string, string>>({})
@@ -221,11 +182,14 @@ onMounted(async () => {
 })
 
 /**
- * 빈 문서로 시작 — 고른 팀만 들고 곧장 에디터로 간다.
+ * 빈 문서로 시작 — 아직 아무것도 정하지 않은 채 폴더 선택으로 간다.
  *
  * 전시회를 고르게 하지 않는다. S3에는 전시회 폴더가 47개인데 빌더 템플릿은 19종뿐이라,
  * 템플릿 목록에서 고르라고 하면 정작 만들려는 전시회가 목록에 없는 경우가 더 많다.
- * 그래서 templateId를 비우고, 이미지는 `blank/{팀}/vol{NN}/`에 모은다(s3Upload.uploadFolderOf).
+ * 그래서 templateId를 비우고, 이미지는 `{팀}/blank/vol{NN}/`에 모은다(s3Upload.uploadFolderOf).
+ *
+ * **팀도 여기서 정하지 않는다** — 폴더 선택 화면의 팀 메뉴에서 고른다. 그래야 빈 템플릿
+ * 카드가 '전체'에 하나만 있어도 되고, 팀을 잘못 골랐을 때 그 자리에서 바꿀 수 있다.
  */
 const startBlank = () => {
   moduleStore.clearAll()
@@ -235,7 +199,7 @@ const startBlank = () => {
   editorStore.setCurrentTemplate({
     templateId: null,
     templateName: '빈 템플릿',
-    teamId: selectedTeam.value,
+    teamId: null,
   })
   router.push({ name: 'folder' })
 }
@@ -279,69 +243,6 @@ const pickTemplate = async (t: NewsletterTemplate) => {
   display: flex;
   min-height: 0;
 }
-
-/* 좌측 사이드바 */
-.tpl-sidebar {
-  width: 225px;
-  flex-shrink: 0;
-  border-right: 1px solid #f5f5f5;
-  padding: 20px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-}
-.tpl-dept {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-.tpl-dept-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: 7px 20px;
-  font-size: 16px;
-  font-weight: 500;
-  color: var(--gray-800);
-  letter-spacing: -0.16px;
-  background: none;
-  border: 0;
-  cursor: pointer;
-}
-.tpl-team-list {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-.tpl-team {
-  text-align: left;
-  width: 100%;
-  padding: 7px 20px;
-  font-size: 16px;
-  font-weight: 400;
-  color: var(--gray-600);
-  letter-spacing: -0.16px;
-  background: none;
-  border: 0;
-  border-radius: 25px;
-  cursor: pointer;
-  transition: background 0.12s, color 0.12s;
-}
-.tpl-team:hover {
-  background: var(--gray-50);
-}
-.tpl-team--top {
-  font-weight: 500;
-  color: var(--gray-800);
-}
-.tpl-team.is-active {
-  position: relative;
-  background: var(--blue-50);
-  color: var(--gray-800);
-  font-weight: 500;
-}
-.tpl-team.is-active::before{content: ""; display: block; width: 5px; height: 100%; background-color: var(--p-primary-500); position: absolute; top: 0; left: -16px; border-radius: 0 5px 5px 0;}
 
 /* 우측 메인 */
 .tpl-main {

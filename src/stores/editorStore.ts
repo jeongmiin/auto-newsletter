@@ -41,7 +41,15 @@ export const useEditorStore = defineStore('editor', () => {
     uploadFolderOf(currentTemplateId.value, currentTeamId.value),
   )
 
-  /** 템플릿을 골라 에디터로 들어올 때 한 번에 지정한다 */
+  /**
+   * 빈 템플릿으로 시작했는지 — 팀을 **폴더 선택 화면에서** 고른다.
+   *
+   * 그 사이에는 팀이 비어 있어서, 라우터 가드가 이 상태와 '새로고침으로 흘러 들어온 상태'를
+   * 구분할 수 없다(둘 다 팀이 없다). 이 표시가 있어야 빈 템플릿만 폴더 선택에 들여보낸다.
+   */
+  const isBlankStart = ref(false)
+
+  /** 템플릿을 골라 폴더 선택으로 넘어갈 때 한 번에 지정한다 */
   const setCurrentTemplate = (info: {
     templateId: string | null
     templateName: string
@@ -49,7 +57,13 @@ export const useEditorStore = defineStore('editor', () => {
   }): void => {
     currentTemplateId.value = info.templateId
     currentTeamId.value = info.teamId
+    isBlankStart.value = info.templateId === null
     setCurrentTemplateName(info.templateName)
+  }
+
+  /** 폴더 선택 화면에서 팀을 고를 때 — 빈 템플릿은 소속 팀을 여기서 정한다 */
+  const setCurrentTeam = (teamId: string | null): void => {
+    currentTeamId.value = teamId
   }
 
   // 좌측 아이콘 레일 활성 메뉴 (신규 디자인 IA)
@@ -251,8 +265,10 @@ export const useEditorStore = defineStore('editor', () => {
     setCurrentTemplateName,
     currentTeamId,
     currentTemplateId,
+    isBlankStart,
     uploadFolder,
     setCurrentTemplate,
+    setCurrentTeam,
     activeMenu,
     forceRailPanel,
     setActiveMenu,

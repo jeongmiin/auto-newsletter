@@ -12,6 +12,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import InputText from 'primevue/inputtext'
 import FlowStepsHeader from '@/components/layout/FlowStepsHeader.vue'
+import TeamTreeSidebar from '@/components/layout/TeamTreeSidebar.vue'
 import emptyIcon from '@/assets/img/empty_icon.png'
 import { useEditorStore } from '@/stores/editorStore'
 import { useModuleStore } from '@/stores/moduleStore'
@@ -51,6 +52,13 @@ const teamName = computed(
       .flatMap((d) => d.teams)
       .find((t) => t.id === editorStore.currentTeamId)?.name ?? '',
 )
+/** 소속 팀이 정해졌는지 — 빈 템플릿은 이 화면에서 고르므로 처음에는 비어 있다 */
+const hasTeam = computed(() => !!editorStore.currentTeamId)
+/**
+ * 여기서 팀을 고를 수 있는지 — 빈 템플릿일 때만.
+ * 템플릿으로 시작했으면 그 템플릿의 팀이 곧 소속이라, 트리는 어디에 저장되는지만 보여준다.
+ */
+const canPickTeam = computed(() => !editorStore.currentTemplateId)
 const templateName = computed(() => editorStore.currentTemplateName || '빈 템플릿')
 /** 경로에 쓰이는 전시회 폴더 이름 — 'gocaf' (템플릿 없이 시작하면 'blank') */
 const rootFolderName = computed(() => editorStore.currentTemplateId || 'blank')
@@ -72,6 +80,8 @@ const openedPath = ref<string[]>([])
 const currentPrefix = computed(() =>
   openedPath.value.length ? `${basePrefix.value}${openedPath.value.join('/')}/` : basePrefix.value,
 )
+/** 폴더 안으로 한 겹이라도 들어와 있는지 — 이때는 화면 머리가 통째로 바뀐다 (Figma 1359-610) */
+const isNested = computed(() => openedPath.value.length > 0)
 /** 여기서 폴더를 더 만들 수 있는지 — 허용 깊이(2단계)를 넘지 않을 때만 */
 const canNest = computed(() => openedPath.value.length < MAX_VOLUME_DEPTH)
 /**
@@ -81,6 +91,13 @@ const canNest = computed(() => openedPath.value.length < MAX_VOLUME_DEPTH)
 const canEnter = computed(() => openedPath.value.length + 2 <= MAX_VOLUME_DEPTH)
 
 const load = async () => {
+  // 팀을 아직 안 골랐으면 읽을 자리가 없다 — 오류가 아니라 '팀부터 고르는' 화면을 보여준다
+  if (!hasTeam.value) {
+    folders.value = []
+    loadError.value = ''
+    loading.value = false
+    return
+  }
   if (!basePrefix.value) {
     loadError.value = '올릴 자리를 정할 수 없어요. 템플릿을 다시 골라 주세요.'
     loading.value = false
@@ -126,7 +143,26 @@ const goUp = (depth = 0) => {
   void load()
 }
 
-onMounted(load)
+/**
+ * 팀을 고른다 — 빈 템플릿 전용. 팀이 바뀌면 보고 있던 자리도 통째로 바뀌므로
+ * 들어와 있던 폴더·고른 폴더·검색어를 모두 처음으로 돌리고 다시 읽는다.
+ */
+const pickTeam = (teamId: string) => {
+  if (!canPickTeam.value || teamId === editorStore.currentTeamId) return
+  editorStore.setCurrentTeam(teamId)
+  openedPath.value = []
+  pendingFolder.value = null
+  picked.value = null
+  query.value = ''
+  creating.value = false
+  void load()
+}
+
+onMounted(async () => {
+  // 팀 트리는 템플릿 목록과 같은 파일에서 온다 — 빈 템플릿으로 곧장 들어오면 아직 비어 있다
+  if (!moduleStore.availableDepartments.length) await moduleStore.loadAvailableTemplates()
+  await load()
+})
 onBeforeUnmount(() => controller?.abort())
 
 /** 화면에 그릴 목록 — 방금 만든 폴더를 맨 위에 얹는다 */
@@ -213,7 +249,12 @@ const createFolder = () => {
  * 만들기를 누른 뒤에는 표 안의 입력 줄로 이어지므로 빈 화면이 아니다.
  */
 const isEmptyState = computed(
-  () => !loading.value && !loadError.value && !allFolders.value.length && !creating.value,
+  () =>
+    hasTeam.value &&
+    !loading.value &&
+    !loadError.value &&
+    !allFolders.value.length &&
+    !creating.value,
 )
 
 /** 폴더는 있는데 검색어와 맞는 게 하나도 없는 상태 — 같은 빈 화면을 문구만 바꿔 재사용한다 */
@@ -293,40 +334,26 @@ const continueEditing = async () => {
     <FlowStepsHeader :current="2" />
 
     <div class="fd-body">
-      <!-- 좌측: 어디에 저장되는지 맥락 (팀·전시회). 바꾸려면 이전 단계로 -->
-      <aside class="fd-side">
-        <p class="fd-side-label">저장 위치</p>
-        <p class="fd-side-team">{{ teamName }}</p>
-        <p class="fd-side-tpl">{{ templateName }}</p>
-        <button type="button" class="fd-side-change" @click="goBack">전시회 바꾸기</button>
-      </aside>
+      <!--
+        좌측: 템플릿 선택과 같은 팀 메뉴.
+        빈 템플릿이면 여기서 팀을 골라 폴더를 나누고, 템플릿으로 들어왔으면 그 팀만 켜 둔다.
+        맨 윗칸('전체' 자리)은 템플릿을 다시 고르러 나가는 길이다.
+      -->
+      <TeamTreeSidebar
+        :model-value="editorStore.currentTeamId ?? ''"
+        top-label="다른 템플릿 선택하기"
+        top-back
+        :selectable="canPickTeam"
+        @update:model-value="pickTeam"
+        @top="goBack"
+      />
 
-      <main class="fd-main">
-        <h1 class="fd-title">저장할 폴더를 선택해주세요.</h1>
-
-        <div class="fd-search-row">
-          <div class="fd-search">
-            <span class="material-symbols-outlined">search</span>
-            <InputText
-              v-model="query"
-              placeholder="폴더명을 검색하세요"
-              class="fd-search-input"
-            />
-          </div>
-          <!-- 빈 화면일 때는 그쪽 버튼 하나만 남긴다 — 같은 일을 하는 버튼이 둘이면 헷갈린다 -->
-          <button
-            v-if="canNest && !creating && !isEmptyState && !isNoMatch"
-            type="button"
-            class="fd-create-btn fd-create-btn--top"
-            @click="startCreate"
-          >
-            <span class="material-symbols-outlined">create_new_folder</span>
-            폴더 만들기
-          </button>
-        </div>
-
-        <!-- 어느 폴더 안에 들어와 있는지 (Figma 1359-610) — 눌러서 위로 나간다 -->
-        <nav v-if="openedPath.length" class="fd-crumbs">
+      <main class="fd-main" :class="{ 'fd-main--nested': isNested }">
+        <!--
+          폴더 안에 들어와 있으면 머리가 통째로 바뀐다 (Figma 1359-610):
+          맨 위에 지나온 경로, 그 아래 전시회 이름이 제목을 겸하고, 검색줄 대신 만들기 아이콘만 남는다.
+        -->
+        <nav v-if="isNested" class="fd-crumbs">
           <button type="button" class="fd-crumb fd-crumb--link" @click="goUp(0)">
             {{ rootFolderName }}
           </button>
@@ -344,8 +371,70 @@ const continueEditing = async () => {
           </template>
         </nav>
 
+        <template v-if="!isNested">
+          <h1 class="fd-title">저장할 폴더를 선택해주세요.</h1>
+
+          <!-- 팀을 고르기 전에는 훑을 폴더도, 만들 자리도 없다 -->
+          <div v-if="hasTeam" class="fd-search-row">
+            <div class="fd-search">
+              <span class="material-symbols-outlined">search</span>
+              <InputText
+                v-model="query"
+                placeholder="폴더명을 검색하세요"
+                class="fd-search-input"
+              />
+            </div>
+            <!-- 빈 화면일 때는 그쪽 버튼 하나만 남긴다 — 같은 일을 하는 버튼이 둘이면 헷갈린다 -->
+            <button
+              v-if="canNest && !creating && !isEmptyState && !isNoMatch"
+              type="button"
+              class="fd-create-btn fd-create-btn--top"
+              @click="startCreate"
+            >
+              <span class="material-symbols-outlined">create_new_folder</span>
+              폴더 만들기
+            </button>
+          </div>
+        </template>
+
+        <!--
+          어느 전시회의 폴더를 보고 있는지. 폴더 안에서는 이 줄이 제목 자리(34px)를 대신하므로
+          빈 화면에서도 남는다 — 경로만 덩그러니 남으면 여기가 어디인지 알 수 없다.
+        -->
+        <div
+          v-if="hasTeam && (isNested || !isEmptyState)"
+          class="fd-context"
+          :class="{ 'fd-context--title': isNested }"
+        >
+          <span class="fd-context-name">{{ templateName }}</span>
+          <span v-if="teamName" class="fd-context-team">{{ teamName }}</span>
+          <span v-if="!isNested" class="ml-auto text-gray-500">*폴더 삭제는 UXD팀에게 문의해주세요.</span>
+          <!-- 폴더 안에는 검색줄이 없어 만들기 버튼이 이 줄 오른쪽 끝에 붙는다 (모양은 검색줄의 것과 같다) -->
+          <button
+            v-if="isNested && canNest && !creating && !isEmptyState"
+            type="button"
+            class="fd-create-btn fd-create-btn--top"
+            @click="startCreate"
+          >
+            <span class="material-symbols-outlined">create_new_folder</span>
+            폴더 만들기
+          </button>
+        </div>
+
+        <!--
+          빈 템플릿으로 들어와 아직 팀을 안 골랐을 때 — 폴더는 팀 아래에 나뉘어 있어
+          팀부터 골라야 보여줄 것이 생긴다. 고르고 나면 아래 '폴더 만들기' 흐름으로 이어진다.
+        -->
+        <div v-if="!hasTeam" class="fd-empty">
+          <img :src="emptyIcon" alt="" class="fd-empty-img" />
+          <p class="fd-empty-text">
+            팀을 먼저 선택해 주세요.<br />
+            왼쪽에서 팀을 고르면 그 팀의 폴더를 보여드려요.
+          </p>
+        </div>
+
         <!-- 폴더가 없을 때는 표 대신 일러스트만 (Figma 1347-9429) -->
-        <div v-if="isEmptyState" class="fd-empty">
+        <div v-else-if="isEmptyState" class="fd-empty">
           <img :src="emptyIcon" alt="" class="fd-empty-img" />
           <p v-if="isInsideEmpty" class="fd-empty-text">
             이 폴더 안에는 아직 폴더가 없어요.<br />
@@ -362,12 +451,6 @@ const continueEditing = async () => {
         </div>
 
         <template v-else>
-        <div class="fd-context">
-          <span class="fd-context-name">{{ templateName }}</span>
-          <span v-if="teamName" class="fd-context-team">{{ teamName }}</span>
-          <span class="ml-auto text-gray-500">*폴더 삭제는 UXD팀에게 문의해주세요.</span>
-        </div>
-
         <!-- 목록 -->
         <div class="fd-table">
           <div class="fd-thead">
@@ -548,47 +631,6 @@ const continueEditing = async () => {
   min-height: 0;
 }
 
-/* 좌측 — 어디에 저장되는지만 알려주는 좁은 기둥 (Figma의 트리 자리) */
-.fd-side {
-  width: 223px;
-  flex-shrink: 0;
-  padding: 40px 24px;
-  border-right: 1px solid var(--gray-200);
-  display: flex;
-  flex-direction: column;
-  gap: 0.875rem;
-}
-.fd-side-label {
-  margin: 0 0 6px;
-  font-size: 13px;
-  color: var(--gray-500);
-}
-.fd-side-team {
-  margin: 0;
-  font-size: 14px;
-  color: var(--gray-600);
-}
-.fd-side-tpl {
-  margin: 0;
-  font-size: 17px;
-  font-weight: 500;
-  color: var(--gray-900);
-  word-break: keep-all;
-}
-.fd-side-change {
-  margin-top: 10px;
-  align-self: flex-start;
-  padding: 0;
-  border: none;
-  background: none;
-  font-size: 1rem;
-  color: var(--blue-500);
-  cursor: pointer;
-}
-.fd-side-change:hover {
-  text-decoration: underline;
-}
-
 .fd-main {
   flex: 1;
   min-width: 0;
@@ -703,20 +745,22 @@ const continueEditing = async () => {
 
 }
 
-/* 어느 폴더 안에 들어와 있는지 — gocaf > eng (Figma 1359-610) */
+/* 어느 폴더 안에 들어와 있는지 — gocaf > eng, 화면 맨 위 (Figma 1359-610) */
 .fd-crumbs {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-top: 40px;
-  font-size: 15px;
+  margin: 0 0 5px;
+  font-size: 17px;
+  line-height: 20px;
   color: var(--gray-600);
 }
 .fd-crumb {
   padding: 0;
   border: none;
   background: none;
-  font-size: 15px;
+  font-size: 17px;
+  line-height: 20px;
   color: var(--gray-600);
 }
 .fd-crumb--link {
@@ -727,11 +771,11 @@ const continueEditing = async () => {
   color: var(--blue-500);
 }
 .fd-crumb-sep {
-  color: var(--gray-400);
+  color: var(--gray-600);
 }
-/* 바로 뒤에 오는 제목 줄의 위 여백은 breadcrumb이 대신 잡는다 */
-.fd-crumbs + .fd-context {
-  margin-top: 10px;
+/* 경로가 제목 위로 올라오는 만큼 위 여백을 줄인다 (경로 가운데가 nav에서 47px) */
+.fd-main--nested {
+  padding-top: 37px;
 }
 
 /* 어느 전시회의 폴더를 보고 있는지 */
@@ -755,9 +799,23 @@ const continueEditing = async () => {
   font-size: 14px;
   font-weight: 500;
 }
-
+/* 폴더 안에서는 이 줄이 곧 제목이다 — 크기·색을 fd-title과 맞춘다 (Figma 1359-610) */
+.fd-context--title {
+  margin-top: 0;
+}
+.fd-context--title .fd-context-name {
+  font-size: 34px;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: -0.34px;
+  color: var(--black);
+}
 .fd-table {
   margin-top: 22px;
+}
+/* 제목(34px)과 머리글 사이는 62px */
+.fd-main--nested .fd-table {
+  margin-top: 62px;
 }
 .fd-thead {
   display: flex;

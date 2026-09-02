@@ -1,8 +1,11 @@
 /**
- * '빈 템플릿'·'전체 삭제'가 무엇을 지우고 무엇을 남기는지.
+ * 비우는 두 가지 길이 무엇을 지우고 무엇을 남기는지.
  *
- * 내용은 전부 지우되 **'어느 전시의 뉴스레터인가'는 남긴다** — 소속 팀과 템플릿 id.
- * 이미지 업로드 폴더(`/e-dm/{연도}/newsletterbuilder/{팀}/{전시회}/{회차}/`)가 계속 같은 전시를 가리켜야 하기 때문.
+ * · 헤더 '전체 삭제'(`confirmClearHere`) — 이 폴더에 머문다. 내용은 전부 지우되
+ *   **'어느 전시의 뉴스레터인가'는 남긴다**(소속 팀·템플릿 id·회차). 이미지 업로드 폴더
+ *   (`/e-dm/{연도}/newsletterbuilder/{팀}/{전시회}/{회차}/`)가 계속 같은 자리를 가리켜야 하기 때문.
+ * · 레일 '빈 템플릿'(`confirmBlankTemplate`) — 새 뉴스레터. 전시회·회차까지 비우고
+ *   폴더 선택으로 되돌아간다. 팀만 남겨 그 화면이 지금 팀을 켠 채 열리게 한다.
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
@@ -14,6 +17,10 @@ vi.mock('primevue/useconfirm', () => ({
   }),
 }))
 
+/** 화면 이동은 라우터 없이 확인한다 — 어디로 보내는지만 보면 된다 */
+const push = vi.fn()
+vi.mock('vue-router', () => ({ useRouter: () => ({ push }) }))
+
 import { useBlankTemplate } from '@/composables/useBlankTemplate'
 import { useEditorStore } from '@/stores/editorStore'
 import { useModuleStore } from '@/stores/moduleStore'
@@ -21,6 +28,7 @@ import { useModuleStore } from '@/stores/moduleStore'
 describe('useBlankTemplate — 비울 때 남기는 것', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
+    push.mockClear()
   })
 
   it('템플릿 id와 팀 id는 남긴다 — 업로드 폴더가 같은 전시를 계속 가리키도록', () => {
@@ -31,7 +39,7 @@ describe('useBlankTemplate — 비울 때 남기는 것', () => {
       teamId: 'arch-plan',
     })
 
-    useBlankTemplate().confirmBlankTemplate()
+    useBlankTemplate().confirmClearHere()
 
     expect(editorStore.currentTemplateId).toBe('hobanexpo')
     expect(editorStore.currentTeamId).toBe('arch-plan')
@@ -53,7 +61,7 @@ describe('useBlankTemplate — 비울 때 남기는 것', () => {
       volume: 'vol07',
     })
 
-    useBlankTemplate().confirmBlankTemplate()
+    useBlankTemplate().confirmClearHere()
 
     expect(moduleStore.modules).toHaveLength(0)
     expect(editorStore.wrapSettings.backgroundColor).toBe('#f9f9f9')
@@ -73,7 +81,7 @@ describe('useBlankTemplate — 비울 때 남기는 것', () => {
     })
     editorStore.updateWrapSettings({ volume: 'vol08' })
 
-    useBlankTemplate().confirmBlankTemplate()
+    useBlankTemplate().confirmClearHere()
 
     const at = new Date(2026, 7, 20)
     // 업로드 화면이 실제로 쓰는 값(uploadFolder = {팀}/{전시회})으로 확인한다
@@ -94,7 +102,7 @@ describe('useBlankTemplate — 비울 때 남기는 것', () => {
     })
     editorStore.updateWrapSettings({ volume: 'vol03' })
 
-    useBlankTemplate().confirmBlankTemplate()
+    useBlankTemplate().confirmClearHere()
 
     expect(editorStore.currentTemplateId).toBe('kpet')
     expect(buildUploadDirectory(editorStore.uploadFolder, editorStore.wrapSettings.volume)).toContain(
@@ -109,10 +117,70 @@ describe('useBlankTemplate — 비울 때 남기는 것', () => {
     editorStore.setCurrentTemplate({ templateId: null, templateName: '빈 템플릿', teamId: 'mice' })
     editorStore.updateWrapSettings({ volume: 'vol01' })
 
-    useBlankTemplate().confirmBlankTemplate()
+    useBlankTemplate().confirmClearHere()
 
     expect(buildUploadDirectory(editorStore.uploadFolder, editorStore.wrapSettings.volume)).toContain(
       '/mice/blank/vol01/',
     )
+  })
+})
+
+describe('useBlankTemplate — 레일 빈 템플릿(새로 시작)', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+    push.mockClear()
+  })
+
+  it('전시회와 저장 폴더를 비우고 폴더 선택으로 보낸다 — 팀은 남긴다', () => {
+    const editorStore = useEditorStore()
+    const moduleStore = useModuleStore()
+    editorStore.setCurrentTemplate({
+      templateId: 'hobanexpo',
+      templateName: '호반',
+      teamId: 'arch-plan',
+    })
+    editorStore.updateWrapSettings({ volume: 'vol08', summary: '앞 작업물 요약' })
+
+    useBlankTemplate().confirmBlankTemplate()
+
+    expect(moduleStore.modules).toHaveLength(0)
+    expect(editorStore.wrapSettings.summary).toBe('')
+    // 어디에 쌓을지 다시 고르러 가므로 회차도 비운다
+    expect(editorStore.wrapSettings.volume).toBe('')
+    expect(editorStore.currentTemplateId).toBeNull()
+    // 팀은 그대로 — 폴더 선택 화면이 이 팀을 켠 채 열린다
+    expect(editorStore.currentTeamId).toBe('arch-plan')
+    expect(editorStore.currentTemplateName).toBe('빈 템플릿')
+    expect(push).toHaveBeenCalledWith({ name: 'folder' })
+  })
+
+  it('팀만 남으므로 다음 저장 자리는 그 팀의 blank 폴더다', async () => {
+    const { buildUploadDirectory } = await import('@/utils/s3Upload')
+    const editorStore = useEditorStore()
+    editorStore.setCurrentTemplate({
+      templateId: 'kpet',
+      templateName: '케이펫',
+      teamId: 'pet-ind',
+    })
+    editorStore.updateWrapSettings({ volume: 'vol03' })
+
+    useBlankTemplate().confirmBlankTemplate()
+
+    // 폴더 선택에서 vol01을 고르면 이 자리가 된다
+    expect(buildUploadDirectory(editorStore.uploadFolder, 'vol01')).toContain('/pet-ind/blank/vol01/')
+  })
+
+  it('빈 템플릿 표시가 서 있어야 폴더 선택 가드를 통과한다', () => {
+    const editorStore = useEditorStore()
+    editorStore.setCurrentTemplate({
+      templateId: 'kpet',
+      templateName: '케이펫',
+      teamId: 'pet-ind',
+    })
+    expect(editorStore.isBlankStart).toBe(false)
+
+    useBlankTemplate().confirmBlankTemplate()
+
+    expect(editorStore.isBlankStart).toBe(true)
   })
 })
