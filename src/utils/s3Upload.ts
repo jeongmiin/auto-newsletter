@@ -43,8 +43,8 @@ export const ALLOWED_IMAGE_MIME = ['image/jpeg', 'image/png', 'image/gif', 'imag
 /** 확장자만 보고 거르는 폴백 — 브라우저가 MIME을 비워 보내는 경우가 있다 */
 export const ALLOWED_IMAGE_EXT = ['jpg', 'jpeg', 'png', 'gif', 'webp']
 
-/** 업로드 허용 최대 크기 (10MB) — 서버 제한이 확인되면 그 값에 맞춘다 */
-export const MAX_IMAGE_BYTES = 10 * 1024 * 1024
+/** 업로드 허용 최대 크기 (20MB) — 서버 제한이 확인되면 그 값에 맞춘다 */
+export const MAX_IMAGE_BYTES = 20 * 1024 * 1024
 
 /**
  * 업로드를 허용할 HTML 형식 — 'HTML 웹 링크 생성'(AI 도구)에서 쓴다.
@@ -157,6 +157,33 @@ export function buildUploadFileName(
     `${now.getFullYear()}${p(now.getMonth() + 1)}${p(now.getDate())}` +
     `_${p(now.getHours())}${p(now.getMinutes())}${p(now.getSeconds())}`
   return `${base}_${stamp}${suffix}`
+}
+
+/** 번호를 붙여도 자리를 못 찾을 때까지 시도할 횟수 — 여기까지 갈 일은 사실상 없다 */
+const MAX_NAME_ATTEMPTS = 999
+
+/**
+ * 같은 이름이 이미 있으면 뒤에 번호를 붙여 **비어 있는 이름**을 찾는다 —
+ * 'img01.png' → 'img01(1).png' → 'img01(2).png'.
+ *
+ * 서버에 맡기면(override=N) 이름 뒤에 날짜·시각이 붙어 'img01_20260820_143052.png'처럼
+ * 길어진다. 폴더에서 사람이 알아보는 쪽은 번호라서, 겹치지 않는 이름은 여기서 정해 보낸다.
+ *
+ * @param desired 올리려는 이름(이미 다듬어진 이름이어야 한다 — `buildUploadFileName(..., false)`)
+ * @param taken   그 폴더에 이미 있는 이름들
+ */
+export function uniqueFileName(desired: string, taken: readonly string[]): string {
+  if (!taken.includes(desired)) return desired
+
+  const dot = desired.lastIndexOf('.')
+  const base = dot > 0 ? desired.slice(0, dot) : desired
+  const ext = dot > 0 ? desired.slice(dot) : ''
+  for (let n = 1; n <= MAX_NAME_ATTEMPTS; n += 1) {
+    const candidate = `${base}(${n})${ext}`
+    if (!taken.includes(candidate)) return candidate
+  }
+  // 번호로는 못 피하는 자리 — 시각을 붙여서라도 새 파일이 되게 한다
+  return buildUploadFileName(desired, new Date(), true)
 }
 
 /** 회차를 입력하지 않았을 때 사용자에게 보여줄 문구 — 알림과 필드 오류에서 함께 쓴다 */
@@ -332,6 +359,12 @@ export interface UploadOptions {
    * false면 이름에 날짜·시각을 붙여 겹치지 않게 만든 뒤 `override=N`을 보낸다.
    */
   overwrite?: boolean
+  /**
+   * 올릴 때 쓸 파일 이름 — 원본 이름 대신 이 이름이 **그대로** 올라간다.
+   * 겹치는 이름을 피해 'img01(1).png'처럼 미리 정해 둔 경우에 쓴다.
+   * ⚠ 다시 다듬지 않으므로 이미 안전한 이름이어야 한다(`uniqueFileName`이 만들어 준다).
+   */
+  fileName?: string
   /** 이름에 쓸 글자가 하나도 안 남았을 때(예: '뉴스레터.html') 대신 쓸 이름 */
   fallbackBaseName?: string
 }
@@ -398,10 +431,13 @@ function postUpload(
     const form = new FormData()
     // 원본 File을 그대로 넣으면 파일명을 바꿀 수 없어 세 번째 인자로 이름을 지정한다.
     // 덮어쓸 때는 이름을 원본 그대로 둬야 같은 이름끼리 만난다(위 buildUploadFileName 주석 참고).
+    // 이름을 직접 정해 넘겼으면(uniqueFileName이 고른 'img01(1).png' 등) **그대로** 올린다 —
+    // 겹치지 않는 자리를 이미 찾아 둔 이름이라, 다시 다듬으면 괄호가 지워져 원본과 또 겹친다.
     form.append(
       'file',
       file,
-      buildUploadFileName(file.name, new Date(), !overwrite, options.fallbackBaseName),
+      options.fileName ??
+        buildUploadFileName(file.name, new Date(), !overwrite, options.fallbackBaseName),
     )
     form.append('directory', directory)
     form.append('override', overwrite ? 'Y' : 'N')

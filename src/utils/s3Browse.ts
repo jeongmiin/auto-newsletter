@@ -140,6 +140,53 @@ export function parseFolderList(xml: string, prefix: string): S3Folder[] {
     .sort((a, b) => a.name.localeCompare(b.name, 'en', { numeric: true }))
 }
 
+/**
+ * `prefix` **바로 아래** 있는 파일 이름들을 뽑는다 — 'banner.png'.
+ *
+ * 하위 폴더 안의 파일은 세지 않는다. 덮어쓰기는 같은 자리에 같은 이름이 있을 때만 일어나므로,
+ * 한 겹 아래의 이름은 이 판단과 무관하다.
+ */
+export function parseFileNames(xml: string, prefix: string): string[] {
+  const doc = new DOMParser().parseFromString(xml, 'application/xml')
+  if (doc.querySelector('parsererror')) throw new BrowseError('목록을 읽지 못했어요')
+
+  const names: string[] = []
+  for (const node of Array.from(doc.getElementsByTagName('Contents'))) {
+    const key = node.getElementsByTagName('Key')[0]?.textContent ?? ''
+    if (!key.startsWith(prefix)) continue
+    const rest = key.slice(prefix.length)
+    // 폴더 자리를 잡는 0바이트 키('vol01/')와 하위 폴더의 파일은 건너뛴다
+    if (!rest || rest.includes('/')) continue
+    names.push(rest)
+  }
+  return names
+}
+
+/**
+ * 한 폴더에 이미 있는 파일 이름들 — 이미지를 올리기 전에 같은 이름이 있는지 확인할 때 쓴다.
+ *
+ * 회차 폴더 하나에 파일이 1000개를 넘을 일이 없어 한 장만 읽는다
+ * (폴더 목록과 달리 이어받기를 돌지 않는다).
+ * @param prefix 슬래시로 끝나는 경로 — 'e-dm/2026/newsletterbuilder/conv1/police/vol01/'
+ */
+export async function listFileNames(prefix: string, signal?: AbortSignal): Promise<string[]> {
+  const params = new URLSearchParams({
+    'list-type': '2',
+    prefix,
+    'max-keys': String(PAGE_SIZE),
+  })
+  try {
+    // no-store: 방금 올린 파일이 목록에 안 보이면 같은 이름을 조용히 덮어쓰게 된다
+    const res = await fetch(`${BUCKET_URL}/?${params}`, { signal, cache: 'no-store' })
+    if (!res.ok) throw new BrowseError(`목록을 읽지 못했어요 (HTTP ${res.status})`)
+    return parseFileNames(await res.text(), prefix)
+  } catch (err) {
+    if (err instanceof BrowseError) throw err
+    if (err instanceof DOMException && err.name === 'AbortError') throw err
+    throw new BrowseError('저장소에 연결하지 못했어요. 네트워크 상태를 확인해 주세요.')
+  }
+}
+
 /** 둘 중 더 최근 것 — 페이지가 나뉘어 같은 폴더가 두 번 나올 때 쓴다 */
 const newerOf = (a: S3FileRef | undefined, b: S3FileRef): S3FileRef =>
   !a?.lastModified || (b.lastModified && b.lastModified > a.lastModified) ? b : a

@@ -106,7 +106,7 @@
           class="hbtn hbtn--tint"
           :disabled="savingToFolder"
           @click="saveToFolder"
-          v-tooltip.bottom="'회차 폴더에 올려 둡니다 — 다른 자리에서 이어서 편집할 수 있어요'"
+          v-tooltip.bottom="'해당 폴더에 올려 둡니다 — 이어서 편집할 수 있어요'"
         >
           <span class="material-symbols-outlined">cloud_upload</span>
           <span>{{ savingToFolder ? '올리는 중…' : '임시 저장' }}</span>
@@ -124,7 +124,7 @@
           type="button"
           class="hbtn hbtn--primary"
           @click="downloadForSend"
-          v-tooltip.bottom="'메일 발송용 — 다시 불러와 편집 불가능'"
+          v-tooltip.bottom="'메일 발송용 HTML을 내려받습니다'"
         >
           <span class="material-symbols-outlined">send</span>
           <span>발송용 내려받기</span>
@@ -228,10 +228,12 @@ const toggleMoreMenu = (event: Event) => moreMenu.value?.toggle(event)
 const goHome = () => {
   if (moduleStore.modules.length > 0 && moduleStore.isDirty) {
     confirm.require({
+      group:"wide",
       message: '저장하지 않은 변경사항이 있습니다. 홈으로 나가시겠어요?',
       header: '홈으로 이동',
       acceptLabel: '나가기',
       rejectLabel: '취소',
+      rejectClass: 'p-button-secondary p-button-outlined',
       accept: () => router.push('/'),
     })
     return

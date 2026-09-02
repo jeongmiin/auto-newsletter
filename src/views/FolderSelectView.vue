@@ -13,6 +13,7 @@ import { useRouter } from 'vue-router'
 import InputText from 'primevue/inputtext'
 import FlowStepsHeader from '@/components/layout/FlowStepsHeader.vue'
 import TeamTreeSidebar from '@/components/layout/TeamTreeSidebar.vue'
+import SearchField from '@/components/SearchField.vue'
 import emptyIcon from '@/assets/img/empty_icon.png'
 import { useEditorStore } from '@/stores/editorStore'
 import { useModuleStore } from '@/stores/moduleStore'
@@ -341,7 +342,7 @@ const continueEditing = async () => {
       -->
       <TeamTreeSidebar
         :model-value="editorStore.currentTeamId ?? ''"
-        top-label="다른 템플릿 선택하기"
+        top-label="다른 템플릿 선택"
         top-back
         :selectable="canPickTeam"
         @update:model-value="pickTeam"
@@ -376,14 +377,13 @@ const continueEditing = async () => {
 
           <!-- 팀을 고르기 전에는 훑을 폴더도, 만들 자리도 없다 -->
           <div v-if="hasTeam" class="fd-search-row">
-            <div class="fd-search">
-              <span class="material-symbols-outlined">search</span>
-              <InputText
-                v-model="query"
-                placeholder="폴더명을 검색하세요"
-                class="fd-search-input"
-              />
-            </div>
+            <SearchField
+              v-model="query"
+              class="fd-search"
+              size="lg"
+              placeholder="폴더명을 검색하세요"
+              aria-label="폴더 검색"
+            />
             <!-- 빈 화면일 때는 그쪽 버튼 하나만 남긴다 — 같은 일을 하는 버튼이 둘이면 헷갈린다 -->
             <button
               v-if="canNest && !creating && !isEmptyState && !isNoMatch"
@@ -652,33 +652,10 @@ const continueEditing = async () => {
   align-items: center;
   gap: 16px;
 }
+/* 모양은 공용 SearchField(lg)가 갖고, 여기서는 폭만 잡는다 */
 .fd-search {
-  display: flex;
-  align-items: center;
-  gap: 8px;
   width: 630px;
   max-width: 100%;
-  height: 48px;
-  padding: 0 20px;
-  border-radius: 50px;
-  background: var(--gray-100);
-}
-.fd-search .material-symbols-outlined {
-  font-size: 22px;
-  color: var(--gray-600);
-}
-.fd-search-input {
-  flex: 1;
-  min-width: 0;
-  border: none !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  font-size: 17px;
-  color: var(--gray-900);
-  padding: 0;
-}
-.fd-search-input::placeholder {
-  color: var(--gray-600);
 }
 /* 폴더 만들기 — 검색줄 오른쪽과 빈 화면 가운데에서 같은 모양으로 쓴다 */
 .fd-create-btn {
@@ -789,7 +766,7 @@ const continueEditing = async () => {
   font-size: 24px;
   font-weight: 500;
   letter-spacing: -0.24px;
-  color: var(--gray-900);
+  color: var(--gray-800);
 }
 .fd-context-team {
   padding: 8px 10px;
@@ -811,7 +788,7 @@ const continueEditing = async () => {
   color: var(--black);
 }
 .fd-table {
-  margin-top: 22px;
+  margin-top: 32px;
 }
 /* 제목(34px)과 머리글 사이는 62px */
 .fd-main--nested .fd-table {
@@ -912,7 +889,7 @@ const continueEditing = async () => {
 }
 .fd-row-name {
   font-size: 17px;
-  color: var(--gray-900);
+  color: var(--gray-800);
   overflow: hidden;
   text-overflow: ellipsis;
 }

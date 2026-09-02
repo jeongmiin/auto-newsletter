@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import {
   formatModified,
   isUsableFolderName,
+  parseFileNames,
   parseFolderList,
   toPrefix,
   validateFolderName,
@@ -24,6 +25,39 @@ const xml = (keys: { key: string; at?: string }[]) => `<?xml version="1.0" encod
 </ListBucketResult>`
 
 const PREFIX = 'e-dm/2026/newsletterbuilder/conv1/police/'
+
+/** 이미지를 올리기 전에 '같은 이름이 이미 있는지' 보는 자리 — 그 폴더 바로 아래만 본다 */
+describe('parseFileNames', () => {
+  const VOL = `${PREFIX}vol01/`
+
+  it('prefix 바로 아래 파일 이름만 돌려준다', () => {
+    const names = parseFileNames(
+      xml([{ key: `${VOL}banner.png` }, { key: `${VOL}main.jpg` }]),
+      VOL,
+    )
+    expect(names).toEqual(['banner.png', 'main.jpg'])
+  })
+
+  it('하위 폴더 안의 파일은 세지 않는다 — 덮어쓰기는 같은 자리에서만 일어난다', () => {
+    const names = parseFileNames(
+      xml([{ key: `${VOL}banner.png` }, { key: `${VOL}eng/banner.png` }]),
+      VOL,
+    )
+    expect(names).toEqual(['banner.png'])
+  })
+
+  it('폴더 자리를 잡는 0바이트 키는 이름이 아니다', () => {
+    expect(parseFileNames(xml([{ key: VOL }]), VOL)).toEqual([])
+  })
+
+  it('다른 폴더의 키는 건너뛴다', () => {
+    const names = parseFileNames(
+      xml([{ key: `${PREFIX}vol02/banner.png` }, { key: `${VOL}main.jpg` }]),
+      VOL,
+    )
+    expect(names).toEqual(['main.jpg'])
+  })
+})
 
 describe('parseFolderList', () => {
   it('prefix 바로 아래 폴더로 묶고 파일 수를 센다', () => {

@@ -10,6 +10,7 @@ import {
   formatVolume,
   normalizeVolume,
   parseVolumeNumber,
+  uniqueFileName,
   uploadFolderOf,
   validateHtmlFile,
   validateImageFile,
@@ -22,6 +23,34 @@ const fakeFile = (name: string, size: number, type = ''): File => {
   Object.defineProperty(file, 'size', { value: size })
   return file
 }
+
+describe('uniqueFileName', () => {
+  it('겹치지 않으면 그대로 쓴다', () => {
+    expect(uniqueFileName('img01.png', ['other.png'])).toBe('img01.png')
+  })
+
+  it('겹치면 괄호 번호를 붙인다 — 서버가 붙이는 날짜·시각보다 짧고 알아보기 쉽다', () => {
+    expect(uniqueFileName('img01.png', ['img01.png'])).toBe('img01(1).png')
+  })
+
+  it('번호도 차 있으면 다음 번호로 넘어간다', () => {
+    expect(uniqueFileName('img01.png', ['img01.png', 'img01(1).png', 'img01(2).png'])).toBe(
+      'img01(3).png',
+    )
+  })
+
+  it('중간이 비어 있으면 그 자리를 쓴다', () => {
+    expect(uniqueFileName('img01.png', ['img01.png', 'img01(2).png'])).toBe('img01(1).png')
+  })
+
+  it('확장자가 없어도 번호를 붙인다', () => {
+    expect(uniqueFileName('logo', ['logo'])).toBe('logo(1)')
+  })
+
+  it('확장자가 여러 개면 마지막 것만 확장자로 본다', () => {
+    expect(uniqueFileName('archive.tar.gz', ['archive.tar.gz'])).toBe('archive.tar(1).gz')
+  })
+})
 
 describe('buildUploadFileName', () => {
   const at = new Date(2026, 7, 20, 14, 30, 52) // 2026-08-20 14:30:52

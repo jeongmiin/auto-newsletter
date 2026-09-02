@@ -16,15 +16,13 @@
       <main class="tpl-main">
         <h1 class="tpl-title">전시회를 선택해주세요.</h1>
 
-        <div class="tpl-search">
-          <i class="pi pi-search"></i>
-          <InputText
-            v-model="search"
-            placeholder="전시명을 입력하세요"
-            class="tpl-search-input"
-            aria-label="템플릿 검색"
-          />
-        </div>
+        <SearchField
+          v-model="search"
+          class="tpl-search"
+          size="lg"
+          placeholder="전시명을 입력하세요"
+          aria-label="템플릿 검색"
+        />
 
         <div class="tpl-grid">
           <!-- 빈 템플릿 카드 — '전체'에 하나만 둔다.
@@ -103,6 +101,7 @@ import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
 import FlowStepsHeader from '@/components/layout/FlowStepsHeader.vue'
 import TeamTreeSidebar from '@/components/layout/TeamTreeSidebar.vue'
+import SearchField from '@/components/SearchField.vue'
 import { getHistoryInstance } from '@/composables/useHistory'
 import type { NewsletterTemplate } from '@/types'
 
@@ -258,44 +257,10 @@ const pickTemplate = async (t: NewsletterTemplate) => {
   letter-spacing: -0.34px;
   margin: 0 0 28px;
 }
+/* 모양은 공용 SearchField(lg)가 갖고, 여기서는 자리만 잡는다 */
 .tpl-search {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  height: 48px;
   max-width: 630px;
-  padding: 0 20px;
-  background: var(--gray-100);
-  border-radius: 50px;
   margin-bottom: 40px;
-}
-.tpl-search > .pi-search {
-  font-size: 20px;
-  color: var(--gray-600);
-  flex-shrink: 0;
-}
-/* PrimeVue InputText를 알약 배경 안에서 테두리/배경 없이 평평하게 */
-.tpl-search-input {
-  flex: 1;
-  min-width: 0;
-}
-.tpl-search :deep(.p-inputtext) {
-  width: 100%;
-  border: 0;
-  background: transparent;
-  outline: none;
-  box-shadow: none;
-  padding: 0;
-  font-size: 17px;
-  color: var(--gray-800);
-}
-.tpl-search :deep(.p-inputtext:enabled:focus),
-.tpl-search :deep(.p-inputtext:enabled:hover) {
-  border: 0;
-  box-shadow: none;
-}
-.tpl-search :deep(.p-inputtext::placeholder) {
-  color: var(--gray-600);
 }
 
 /* 카드 그리드 */
