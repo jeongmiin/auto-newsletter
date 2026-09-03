@@ -35,6 +35,7 @@
             class="hicon"
             :disabled="!canUndo"
             @click="doUndo"
+            data-umami-event="undo"
             v-tooltip.bottom="'이전으로'"
           >
             <span class="material-symbols-outlined">undo</span>
@@ -44,6 +45,7 @@
             class="hicon"
             :disabled="!canRedo"
             @click="doRedo"
+            data-umami-event="redo"
             v-tooltip.bottom="'다음으로'"
           >
             <span class="material-symbols-outlined">redo</span>
@@ -57,6 +59,7 @@
           type="button"
           class="hclear"
           @click="confirmBlankTemplate"
+          data-umami-event="blank_template"
           v-tooltip.bottom="'작업 내용을 모두 지우고 빈 템플릿으로 시작합니다'"
         >
           <span class="material-symbols-outlined">delete</span>
@@ -74,6 +77,8 @@
             class="seg-btn"
             :class="{ 'is-active': canvasWidth === 'desktop' }"
             @click="editorStore.setCanvasWidth('desktop')"
+            data-umami-event="canvas_width"
+            data-umami-event-width="desktop"
             v-tooltip.bottom="'PC 화면'"
           >
             <span class="material-symbols-outlined">desktop_windows</span>
@@ -83,6 +88,8 @@
             class="seg-btn"
             :class="{ 'is-active': canvasWidth === 'mobile' }"
             @click="editorStore.setCanvasWidth('mobile')"
+            data-umami-event="canvas_width"
+            data-umami-event-width="mobile"
             v-tooltip.bottom="'모바일 화면'"
           >
             <span class="material-symbols-outlined">smartphone</span>
@@ -99,6 +106,7 @@
           type="button"
           class="hbtn hbtn--tint"
           @click="downloadForSave"
+          data-umami-event="download_for_save"
           v-tooltip.bottom="'재편집용 — 다시 불러와 편집 가능'"
         >
           <span class="material-symbols-outlined">download</span>
@@ -108,6 +116,7 @@
           type="button"
           class="hbtn hbtn--muted"
           @click="previewEmail"
+          data-umami-event="preview_email"
           v-tooltip.bottom="'새 창에서 완성된 모습을 확인합니다'"
         >
           <span class="material-symbols-outlined">visibility</span>
@@ -117,6 +126,7 @@
           type="button"
           class="hbtn hbtn--primary"
           @click="downloadForSend"
+          data-umami-event="download_for_send"
           v-tooltip.bottom="'메일 발송용 — 다시 불러와 편집 불가능'"
         >
           <span class="material-symbols-outlined">send</span>
@@ -130,6 +140,7 @@
           aria-haspopup="true"
           aria-controls="header-more-menu"
           @click="toggleMoreMenu"
+          data-umami-event="more_menu"
           v-tooltip.bottom="'더 보기'"
         >
           <span class="material-symbols-outlined">more_horiz</span>
@@ -153,6 +164,7 @@ import { serializeModule } from '@/utils/projectFile'
 import { getHistoryInstance } from '@/composables/useHistory'
 import { useBlankTemplate } from '@/composables/useBlankTemplate'
 import { useToast } from 'primevue/usetoast'
+import { track } from '@/analytics/umami'
 
 // showActions=false면 오른쪽 파일 관리 버튼들을 숨긴다(예: 템플릿 선택 화면)
 withDefaults(defineProps<{ showActions?: boolean }>(), { showActions: true })
@@ -194,8 +206,22 @@ const currentTeamName = computed(() => {
 // 우측 '더 보기' 메뉴 — 자주 쓰지 않는 동작만 모은다
 const moreMenu = ref<InstanceType<typeof Menu> | null>(null)
 const moreMenuItems = computed(() => [
-  { label: '코드 복사', icon: 'pi pi-copy', command: () => void exportHtml() },
-  { label: '파일 열기', icon: 'pi pi-folder-open', command: () => void importHtmlFile() },
+  {
+    label: '코드 복사',
+    icon: 'pi pi-copy',
+    command: () => {
+      track('copy_html')
+      void exportHtml()
+    },
+  },
+  {
+    label: '파일 열기',
+    icon: 'pi pi-folder-open',
+    command: () => {
+      track('open_file')
+      void importHtmlFile()
+    },
+  },
 ])
 const toggleMoreMenu = (event: Event) => moreMenu.value?.toggle(event)
 
