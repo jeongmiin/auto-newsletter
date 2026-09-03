@@ -42,7 +42,7 @@
               <div class="blank-line"></div>
               <div class="blank-button"></div>
             </div>
-            <div class="tpl-card-name">빈 템플릿</div>
+            <div class="tpl-card-name">빈 화면</div>
           </button>
 
           <!-- 템플릿 카드 -->

@@ -2,6 +2,23 @@
   <div class="side-panel global-style-panel">
     <h2 class="panel-title">전체 스타일</h2>
 
+    <!-- 저장 폴더 — 에디터에 들어오기 전 '폴더 선택' 걸음에서 이미 정해진 값이라 여기선 보여주기만 한다.
+         지금 만드는 것이 어느 회차인지가 스타일보다 먼저 알아야 할 사실이라 맨 위에 둔다.
+         (예전에는 여기서 회차 숫자를 올렸는데, 이미 있는 폴더를 모른 채 새로 만들어
+          같은 회차가 두 군데로 갈라지는 일이 있었다) -->
+    <div class="flex flex-col gap-[10px]">
+      <div class="row-label">뉴스레터 회차</div>
+      <div class="vol-field is-readonly">
+        <span class="material-symbols-outlined vol-folder-icon">folder</span>
+        <code class="vol-path">{{ volumePreview || '아직 정하지 않음' }}</code>
+      </div>
+    </div>
+    <p class="hint-text !-mt-3">
+      *바꾸려면 처음(전시회 선택)부터 다시 골라 주세요.
+    </p>
+
+    <div class="divider"></div>
+
     <!-- 배경 색상 -->
     <div class="row-between">
       <span class="row-label">배경 색상</span>
@@ -90,22 +107,6 @@
         </div>
       </div>
     </div>
-
-    <div class="divider"></div>
-
-    <!-- 저장 폴더 — 에디터에 들어오기 전 '폴더 선택' 걸음에서 이미 정해진 값이라 여기선 보여주기만 한다.
-         (예전에는 여기서 회차 숫자를 올렸는데, 이미 있는 폴더를 모른 채 새로 만들어
-          같은 회차가 두 군데로 갈라지는 일이 있었다) -->
-    <div class="flex flex-col gap-[10px]">
-      <div class="row-label">뉴스레터 회차</div>
-      <div class="vol-field is-readonly">
-        <span class="material-symbols-outlined vol-folder-icon">folder</span>
-        <code class="vol-path">{{ volumePreview || '아직 정하지 않음' }}</code>
-      </div>
-    </div>
-    <p class="hint-text !-mt-3">
-      *바꾸려면 처음(전시회 선택)부터 다시 골라 주세요.
-    </p>
 
     <div class="divider"></div>
 

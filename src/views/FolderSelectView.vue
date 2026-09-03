@@ -336,13 +336,13 @@ const continueEditing = async () => {
 
     <div class="fd-body">
       <!--
-        좌측: 템플릿 선택과 같은 팀 메뉴.
+        좌측: 전시회 선택과 같은 팀 메뉴.
         빈 템플릿이면 여기서 팀을 골라 폴더를 나누고, 템플릿으로 들어왔으면 그 팀만 켜 둔다.
         맨 윗칸('전체' 자리)은 템플릿을 다시 고르러 나가는 길이다.
       -->
       <TeamTreeSidebar
         :model-value="editorStore.currentTeamId ?? ''"
-        top-label="다른 템플릿 선택"
+        top-label="다른 전시회 선택"
         top-back
         :selectable="canPickTeam"
         @update:model-value="pickTeam"
