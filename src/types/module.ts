@@ -17,7 +17,10 @@ export interface ModuleMetadata {
 export interface EditableProp {
   key: string
   label: string
-  type: 'text' | 'textarea' | 'color' | 'number' | 'url' | 'image' | 'select' | 'boolean' | 'checkbox' | 'table-rows' | 'content-titles' | 'content-texts' | 'additional-contents' | 'table-editor' | 'sns-icons' | 'contact-items'
+  // 'image-crop' — 값이 없는 동작 버튼. `target`이 가리키는 image 필드의 다듬기 모달을 연다.
+  type: 'text' | 'textarea' | 'color' | 'number' | 'url' | 'image' | 'image-crop' | 'select' | 'boolean' | 'checkbox' | 'table-rows' | 'content-titles' | 'content-texts' | 'additional-contents' | 'table-editor' | 'sns-icons' | 'contact-items'
+  /** (image-crop 한정) 다듬을 이미지 필드의 key */
+  target?: string
   options?: { label: string; value: string }[]
   placeholder?: string
   // 입력 필드 아래 표시할 안내 문구 (text 타입 한정)
@@ -29,6 +32,12 @@ export interface EditableProp {
   showWhen?: string | { key: string; equals?: unknown; notEquals?: unknown }
   // 속성 패널 아코디언 그룹 라벨 (모든 prop에 group이 지정되면 아코디언 모드)
   group?: string
+  /**
+   * (image 타입 한정) 이 이미지가 메일에서 차지하는 가로 폭(px).
+   * 자르기 다이얼로그가 저장 해상도를 정할 때 쓴다(폭 × 2로 저장). 없으면 본문 폭 680.
+   * 예: 단일 이미지 680, 2단 이미지 320.
+   */
+  cropWidth?: number
 }
 
 export interface ModuleStyles {

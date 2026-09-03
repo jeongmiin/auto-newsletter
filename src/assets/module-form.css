@@ -177,6 +177,36 @@
   cursor: not-allowed;
 }
 
+/* 이미지 다듬기(type:'image-crop') — '이미지 크기 조정' 그룹 맨 아래의 전체 폭 기본 버튼.
+   정렬 세그먼트와 같은 높이·둥글기로 한 묶음처럼 보이게 한다. */
+.module-form .gg-crop-btn {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--blue-400);
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+.module-form .gg-crop-btn .material-symbols-outlined {
+  font-size: 18px;
+}
+.module-form .gg-crop-btn:hover {
+  background: var(--blue-500);
+}
+.module-form .gg-crop-btn:disabled {
+  background: var(--gray-200);
+  color: var(--gray-400);
+  cursor: not-allowed;
+}
+
 /* Quill 에디터를 이메일 기본 폰트로 통일 (입력 시 결과물과 동일하게 보이도록) */
 .module-form .ql-editor {
   font-family: AppleSDGothic, 'malgun gothic', 'nanum gothic', 'Noto Sans KR', sans-serif;

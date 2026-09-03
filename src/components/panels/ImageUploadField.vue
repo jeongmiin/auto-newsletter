@@ -9,6 +9,12 @@
  * 올린 뒤에는 **삭제만** 둔다. 바꾸려면 지우고 다시 올린다 — '교체'가 따로 있으면
  * 지금 무엇이 올라가 있는지와 무엇으로 바뀌는지가 한 줄에 겹쳐 읽기 어렵다.
  *
+ * 올린 뒤에는 **다듬기**가 있다(버튼은 속성 패널 쪽, 열기는 `openCrop`) — 자르기 모달(ImageCropDialog)이
+ * 뜨고, '적용하기'를 누르면 잘라낸 파일이 **바로 다시 올라간다**. 이름은 원본과 같으므로 보통
+ * '같은 이름' 확인이 뜨고, 덮어쓰거나 'img(1).png'처럼 새 이름으로 남길 수 있다.
+ * 자를 원본은 방금 올린 File 을 그대로 쓰고, 그게 없으면(불러온 문서·URL 직접 입력) 주소에서
+ * 받아 온다 — 서버가 CORS 를 막으면 받지 못하니 그때는 다시 올려 달라고 안내한다.
+ *
  * 업로드 주소(VITE_S3_UPLOAD_URL)가 비어 있으면 업로드 영역을 통째로 숨긴다 —
  * 서버 CORS 허용 전에 배포해도 눌러서 실패하는 버튼이 보이지 않게 하려는 것.
  */
@@ -16,6 +22,9 @@ import { computed, onBeforeUnmount, ref } from 'vue'
 import { useEditorStore } from '@/stores/editorStore'
 import { DEFAULT_IMAGE_URL, isPlaceholderImage } from '@/constants/defaults'
 import { useToast } from 'primevue/usetoast'
+import ImageCropDialog from './ImageCropDialog.vue'
+import SameNameDialog from './SameNameDialog.vue'
+import { DEFAULT_CROP_WIDTH } from '@/utils/imageCrop'
 import { listFileNames, toPrefix } from '@/utils/s3Browse'
 import {
   MAX_IMAGE_BYTES,
@@ -41,8 +50,18 @@ const props = withDefaults(
      * 이 모듈 필드의 기본 이미지를 넘기면(1단/2단/발표자 등) 그 모양에 맞는 자리표시로 돌아간다.
      */
     placeholderUrl?: string
+    /**
+     * 이 이미지가 메일에서 차지하는 가로 폭(px) — 자르기 다이얼로그가 저장 해상도를 정하는 기준.
+     * modules-config.json 의 `cropWidth` 에서 온다. 없으면 본문 폭 680.
+     */
+    cropWidth?: number
   }>(),
-  { placeholder: 'https://...', urlOnly: false, placeholderUrl: DEFAULT_IMAGE_URL },
+  {
+    placeholder: 'https://...',
+    urlOnly: false,
+    placeholderUrl: DEFAULT_IMAGE_URL,
+    cropWidth: DEFAULT_CROP_WIDTH,
+  },
 )
 
 const emit = defineEmits<{ 'update:modelValue': [string] }>()
@@ -72,6 +91,16 @@ let controller: AbortController | null = null
  */
 const conflict = ref<{ file: File; saveAs: string; taken: string[] } | null>(null)
 
+/** 자르기 모달에 올라가 있는 파일 — null 이면 닫힌 상태 */
+const cropSource = ref<File | null>(null)
+/** 주소에서 원본을 받아 오는 중(다듬기 버튼을 눌렀을 때) */
+const loadingCrop = ref(false)
+/**
+ * 마지막으로 올린 파일과 그 주소 — 다듬기의 원본으로 쓴다.
+ * 값이 이 주소와 같을 때만 믿는다(그 사이 URL 을 직접 바꿨으면 다른 이미지다).
+ */
+let lastUploaded: { file: File; url: string } | null = null
+
 const showUploader = computed(() => !props.urlOnly && isUploadEnabled())
 
 /** '20MB' — 안내에 소수점(20.0MB)까지 적으면 눈에 걸린다 */
@@ -91,9 +120,11 @@ const hasValue = computed(() => !isPlaceholderImage(props.modelValue))
 const targetDirectory = computed(() =>
   buildUploadDirectory(editorStore.uploadFolder, editorStore.wrapSettings.volume),
 )
+/** 쿼리·해시를 뗀 주소 — 같은 파일인지 비교할 때 쓴다 */
+const stripQuery = (url: string): string => url.split(/[?#]/)[0]
 /** 주소에서 파일 이름만 — 'banner_main.jpg' */
 const nameFromUrl = (url: string): string => {
-  const path = url.split(/[?#]/)[0]
+  const path = stripQuery(url)
   const last = path.slice(path.lastIndexOf('/') + 1)
   try {
     return decodeURIComponent(last)
@@ -133,7 +164,7 @@ const takenNames = async (directory: string): Promise<string[]> => {
 }
 
 /** 파일을 받아 검사하고, 겹치는 이름이면 먼저 물어본다 */
-const requestUpload = async (file: File) => {
+const requestUpload = (file: File) => {
   errorText.value = ''
   conflict.value = null
 
@@ -155,6 +186,93 @@ const requestUpload = async (file: File) => {
     errorText.value = invalid
     return
   }
+
+  void checkNameAndUpload(file)
+}
+
+/**
+ * '다듬기' — 지금 올라가 있는 이미지를 자르기 모달에 올린다.
+ * 방금 올린 File 이 있으면 그걸 쓰고, 없으면 주소에서 받아 온다.
+ */
+const openCrop = async () => {
+  if (uploading.value || loadingCrop.value) return
+  errorText.value = ''
+  conflict.value = null
+
+  const url = props.modelValue
+  if (lastUploaded && lastUploaded.url === url) {
+    cropSource.value = lastUploaded.file
+    return
+  }
+
+  loadingCrop.value = true
+  try {
+    const res = await fetch(url, { mode: 'cors' })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    const blob = await res.blob()
+    const file = new File([blob], nameFromUrl(url) || 'image.png', {
+      type: blob.type || 'image/png',
+    })
+    const invalid = validateImageFile(file)
+    if (invalid) throw new Error(invalid)
+    cropSource.value = file
+  } catch {
+    // 다른 서버의 이미지는 CORS 로 막히는 경우가 대부분 — 받지 못하면 다시 올리라고만 안내한다
+    errorText.value = '이 이미지는 불러올 수 없어요. 삭제하고 다시 올린 뒤 다듬어 주세요.'
+  } finally {
+    loadingCrop.value = false
+  }
+}
+
+/**
+ * 자르기 모달의 '적용하기' — 같은 이름이 있으면 자르기 모달을 **닫지 않고** 그 위에 확인 모달을
+ * 띄운다. '취소'하면 자르던 화면으로 돌아가고, 나머지 둘은 모달을 다 닫고 바로 올린다.
+ */
+const applying = ref(false)
+const cropConflict = ref<{ file: File; saveAs: string; taken: string[] } | null>(null)
+
+const onCropApply = async (file: File) => {
+  const directory = targetDirectory.value
+  if (!directory || applying.value) return
+  applying.value = true
+  try {
+    const saveAs = buildUploadFileName(file.name, new Date(), false)
+    const taken = await takenNames(directory)
+    if (taken.includes(saveAs)) {
+      cropConflict.value = { file, saveAs, taken }
+      return
+    }
+    cropSource.value = null
+    await startUpload(file)
+  } finally {
+    applying.value = false
+  }
+}
+const onCropCancel = () => {
+  cropSource.value = null
+}
+
+/** 확인 모달 — 취소는 자르기 화면으로, 나머지는 모달을 다 닫고 올린다 */
+const cropConflictCancel = () => {
+  cropConflict.value = null
+}
+const cropConflictOverwrite = () => {
+  const pending = cropConflict.value
+  cropConflict.value = null
+  cropSource.value = null
+  if (pending) void startUpload(pending.file)
+}
+const cropConflictNewName = () => {
+  const pending = cropConflict.value
+  cropConflict.value = null
+  cropSource.value = null
+  if (pending) void startUpload(pending.file, uniqueFileName(pending.saveAs, pending.taken))
+}
+
+/** 겹치는 이름이면 먼저 물어보고, 아니면 바로 올린다 */
+const checkNameAndUpload = async (file: File) => {
+  const directory = targetDirectory.value
+  if (!directory) return
 
   // 올라갈 때 이름이 다듬어진다('메인배너.png' → 'image.png'). 겹치는지는 **다듬은 이름**으로 봐야
   // 화면에서 다른 이름으로 보이던 파일끼리 조용히 덮어쓰는 일을 막을 수 있다.
@@ -192,7 +310,12 @@ const startUpload = async (file: File, fileName?: string) => {
       // (다른 이름으로 올리는 쪽은 겹칠 자리가 없어 이 값과 무관하다)
       overwrite: true,
     })
-    setValue(url)
+    // 같은 주소를 덮어썼으면(다듬기 → 덮어쓰기) 브라우저가 캐시한 예전 그림을 계속 보여 준다.
+    // 그때만 뒤에 버전 값을 붙여 새로 받게 한다 — S3 는 쿼리를 무시하므로 메일에서도 같은 파일이다.
+    const next = stripQuery(url) === stripQuery(props.modelValue) ? `${stripQuery(url)}?v=${Date.now()}` : url
+    // 다듬기의 원본으로 쓰려고 들고 있는다 — 주소에서 다시 받아 오지 않아도 된다
+    lastUploaded = { file, url: next }
+    setValue(next)
   } catch (err) {
     errorText.value =
       err instanceof UploadError ? err.message : '업로드 중 문제가 생겼어요. 다시 시도해 주세요.'
@@ -224,14 +347,14 @@ const onFilePicked = (event: Event) => {
   const file = input.files?.[0]
   // 같은 파일을 다시 골라도 change가 일어나도록 값을 비운다
   input.value = ''
-  if (file) void requestUpload(file)
+  if (file) requestUpload(file)
 }
 
 const onDrop = (event: DragEvent) => {
   isDragOver.value = false
   if (uploading.value) return
   const file = event.dataTransfer?.files?.[0]
-  if (file) void requestUpload(file)
+  if (file) requestUpload(file)
 }
 
 /**
@@ -242,6 +365,9 @@ const onDrop = (event: DragEvent) => {
 const clearImage = () => {
   errorText.value = ''
   conflict.value = null
+  cropSource.value = null
+  cropConflict.value = null
+  lastUploaded = null
   setValue(props.placeholderUrl)
 }
 
@@ -249,6 +375,13 @@ onBeforeUnmount(() => {
   controller?.abort()
   releasePreview()
 })
+
+/**
+ * 다듬기 버튼은 이 필드 안이 아니라 속성 패널의 '이미지 크기 조정' 그룹에 있다(ModuleForm 의
+ * image-crop 타입). 그쪽에서 이 메서드를 불러 모달을 연다 — 원본 File·같은 이름 확인·재업로드는
+ * 전부 여기서 이어진다.
+ */
+defineExpose({ openCrop, loadingCrop })
 </script>
 
 <template>
@@ -277,7 +410,25 @@ onBeforeUnmount(() => {
         </div>
       </div>
 
-      <!-- 올린 뒤 — 삭제만 둔다 (Figma 1420-1115) -->
+      <!-- 같은 이름의 파일이 이미 있을 때 (Figma 1412-683).
+           '올린 뒤'보다 앞에 둔다 — 다듬기 뒤 다시 올릴 때는 이미 값이 있는 상태에서 묻기 때문. -->
+      <div v-else-if="conflict" class="iu-box iu-box--alert">
+        <span class="material-symbols-outlined iu-alert-icon">warning</span>
+        <p class="iu-alert-text">
+          같은 이름의 파일이 이미 있어요<br />
+          기존 파일을 덮어쓸까요?
+        </p>
+        <!--
+          '취소'가 아니라 '새 이름으로 저장' — 어느 쪽을 눌러도 이미지는 올라간다.
+          갈리는 것은 먼저 올린 파일을 남기느냐(번호를 붙인 새 이름) 대체하느냐뿐이다.
+        -->
+        <div class="iu-alert-actions">
+          <button type="button" class="iu-ghost-btn" @click="uploadAsNewName">새 이름으로 저장</button>
+          <button type="button" class="iu-ghost-btn" @click="confirmOverwrite">덮어쓰기</button>
+        </div>
+      </div>
+
+      <!-- 올린 뒤 — 다듬기와 삭제 (Figma 1420-1115) -->
       <div v-else-if="hasValue" class="iu-done">
         <div class="iu-done-body">
           <span class="material-symbols-outlined iu-done-check">check_circle</span>
@@ -296,23 +447,6 @@ onBeforeUnmount(() => {
         <button type="button" class="iu-icon-btn" title="이미지 삭제" @click="clearImage">
           <span class="material-symbols-outlined">delete</span>
         </button>
-      </div>
-
-      <!-- 같은 이름의 파일이 이미 있을 때 (Figma 1412-683) -->
-      <div v-else-if="conflict" class="iu-box iu-box--alert">
-        <span class="material-symbols-outlined iu-alert-icon">warning</span>
-        <p class="iu-alert-text">
-          같은 이름의 파일이 이미 있어요<br />
-          기존 파일을 덮어쓸까요?
-        </p>
-        <!--
-          '취소'가 아니라 '새 이름으로 저장' — 어느 쪽을 눌러도 이미지는 올라간다.
-          갈리는 것은 먼저 올린 파일을 남기느냐(번호를 붙인 새 이름) 대체하느냐뿐이다.
-        -->
-        <div class="iu-alert-actions">
-          <button type="button" class="iu-ghost-btn" @click="uploadAsNewName">새 이름으로 저장</button>
-          <button type="button" class="iu-ghost-btn" @click="confirmOverwrite">덮어쓰기</button>
-        </div>
       </div>
 
       <!-- 올리기 전 (Figma 1398-6701) -->
@@ -343,6 +477,23 @@ onBeforeUnmount(() => {
            이미 정해졌고, 올리는 동안·올린 뒤에는 위 줄에 그 자리가 적힌다.
            (올릴 자리가 없는 경우는 아래 errorText가 알린다) -->
       <p v-if="errorText" class="iu-error">{{ errorText }}</p>
+
+      <!-- 다듬기 모달 — '적용하기'면 잘라낸 파일을 바로 다시 올린다.
+           같은 이름이 있으면 이 모달 위에 확인 모달(SameNameDialog)이 겹쳐 뜬다. -->
+      <ImageCropDialog
+        :file="cropSource"
+        :cropWidth="cropWidth"
+        :applying="applying"
+        @apply="onCropApply"
+        @cancel="onCropCancel"
+      />
+      <SameNameDialog
+        :visible="cropConflict !== null"
+        :fileName="cropConflict?.saveAs"
+        @cancel="cropConflictCancel"
+        @newName="cropConflictNewName"
+        @overwrite="cropConflictOverwrite"
+      />
     </template>
   </div>
 </template>

@@ -190,9 +190,6 @@ onBeforeUnmount(() => {
       </button>
 
       <div v-if="isOpen" class="ai-tool-body">
-        <p class="ai-tool-desc">
-          지금 작업물을 발송용 HTML로 만들어 저장 폴더에 올리고, 웹에서 열 수 있는 주소를 만들어 드려요.
-        </p>
 
         <!-- 업로드 주소가 없으면(서버 미설정) 눌러도 실패할 UI를 아예 감춘다 — 이미지 업로드와 같은 규칙 -->
         <p v-if="!uploadEnabled" class="ht-note">
