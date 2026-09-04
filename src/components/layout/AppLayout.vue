@@ -43,6 +43,11 @@
         </div>
       </div>
 
+      <!-- 번역 결과 도크 — '모듈 순서'의 왼쪽 버전. AI 도구 메뉴에서 번역을 돌려 둔 동안만 붙어 있고,
+           다른 메뉴로 가면 숨고 돌아오면 다시 펼쳐진다(결과는 translationStore에 남아 있다).
+           캔버스에서 모듈을 골라도 그대로다 — 카드를 눌러 모듈로 이동하는 흐름을 끊지 않기 위해. -->
+      <TranslationPreviewPanel v-if="showTranslationPreview" />
+
       <!-- 중앙 캔버스 (화면 크기 토글·실행취소는 상단 헤더로 이동 · 전체 삭제는 추후 추가 예정) -->
       <div class="flex-1 flex flex-col min-w-0">
         <!-- 캔버스 영역 -->
@@ -77,11 +82,14 @@ import CategoryModulePanel from '@/components/panels/CategoryModulePanel.vue'
 import SelectedItemPanel from '@/components/panels/SelectedItemPanel.vue'
 import ColumnComposePanel from '@/components/panels/ColumnComposePanel.vue'
 import AiToolsPanel from '@/components/panels/AiToolsPanel.vue'
+import TranslationPreviewPanel from '@/components/editor/TranslationPreviewPanel.vue'
 import { useEditorStore } from '@/stores/editorStore'
 import { useModuleStore } from '@/stores/moduleStore'
+import { useTranslationStore } from '@/stores/translationStore'
 
 const editorStore = useEditorStore()
 const moduleStore = useModuleStore()
+const translationStore = useTranslationStore()
 
 // 캔버스에서 모듈/그룹을 선택 중이면 좌측 컨텍스트 패널이 그 속성 편집으로 전환된다(레일 메뉴보다 우선).
 // 단, 레일 메뉴를 방금 명시적으로 클릭했으면(forceRailPanel) 선택이 남아있어도 그 메뉴를 그대로 보여준다
@@ -95,6 +103,11 @@ const hasSelection = computed(
 //  단, 레일 메뉴를 명시적으로 클릭했으면 그 메뉴가 우선 — 거기서 추가하는 모듈도 이 컬럼으로 들어간다.)
 const showComposePanel = computed(
   () => !!moduleStore.columnTarget && !hasSelection.value && !editorStore.forceRailPanel,
+)
+
+// 번역 결과 도크 — AI 도구 메뉴에 있고 번역 결과가 있을 때만. 번역 전에는 아예 없다.
+const showTranslationPreview = computed(
+  () => editorStore.activeMenu === 'ai' && translationStore.preview.length > 0,
 )
 
 const CATEGORY_MENUS = ['text', 'image', 'button', 'table'] as const

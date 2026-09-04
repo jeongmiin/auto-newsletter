@@ -34,7 +34,8 @@ export async function translateUnits(
     body: JSON.stringify({
       sourceLanguage: 'ko',
       targetLanguage,
-      items: units.map(({ id, source, format }) => ({ id, text: source, format })),
+      // 문장은 텍스트 노드 단위로 뽑혀 태그가 없다 — 항상 일반 텍스트로 보낸다
+      items: units.map(({ id, source }) => ({ id, text: source, format: 'plain' })),
     }),
     signal,
   })
