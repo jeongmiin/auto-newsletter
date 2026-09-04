@@ -7,6 +7,10 @@
   "main": "azure-translate-worker.mjs",
   "compatibility_date": "2026-09-01",
   "observability": { "enabled": true },
+  // 공개 주소: https://auto-newsletter-translate.newsletter-builder.workers.dev (계정 서브도메인 newsletter-builder)
+  "workers_dev": true,
+  // 버전별 미리보기 주소는 쓰지 않는다 — 같은 Worker가 다른 주소로도 열리는 걸 막는다
+  "preview_urls": false,
   "vars": {
     // Translator 리소스를 만든 지역. Global로 만들었으면 빈 문자열.
     "AZURE_TRANSLATOR_REGION": "koreacentral",
