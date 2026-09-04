@@ -16,6 +16,7 @@
     "lint": "eslint . --fix",
     "format": "prettier --write src/",
     "mock:upload": "node scripts/mock-s3-upload.mjs",
+    "proxy:translate": "node scripts/azure-translate-proxy.mjs",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",

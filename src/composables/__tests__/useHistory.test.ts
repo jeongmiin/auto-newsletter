@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { nextTick, effectScope } from 'vue'
 import { useModuleStore } from '@/stores/moduleStore'
+import { useEditorStore } from '@/stores/editorStore'
 import { useHistory, getHistoryInstance, disposeHistoryInstance } from '../useHistory'
 import type { ModuleInstance } from '@/types'
 
@@ -104,6 +105,20 @@ describe('useHistory - 실행 취소/다시 실행', () => {
     history.undo() // -> 편집 직전([A])
     await flushApply()
     expect(store.modules[0].properties.title).toBe('A')
+  })
+
+  it('번역과 함께 바뀌는 언어별 폰트 설정도 실행 취소한다', async () => {
+    const editorStore = useEditorStore()
+    const history = useHistory()
+    history.saveState()
+
+    editorStore.updateWrapSettings({ fontLanguage: 'ja' })
+    await flushSave()
+    expect(editorStore.wrapSettings.fontLanguage).toBe('ja')
+
+    expect(history.undo()).toBe(true)
+    await flushApply()
+    expect(editorStore.wrapSettings.fontLanguage).toBe('default')
   })
 })
 

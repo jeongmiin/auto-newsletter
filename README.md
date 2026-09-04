@@ -19,6 +19,7 @@ HTML 뉴스레터 모듈 편집기 - Vue 3 + TypeScript + PrimeVue 기반
 - **속성 편집** - 각 모듈별 상세 속성 커스터마이징
 - **HTML 코드 복사** - 완성된 뉴스레터 HTML 즉시 복사
 - **SNS 링크 관리** - 홈, 인스타그램, 페이스북, X, 블로그, 유튜브, 카카오톡
+- **Azure 다국어 번역** - 전체/그룹/모듈 범위의 영어·일본어·중국어(간체) 번역 및 적용 전 검토
 
 ## 모듈 카테고리
 
@@ -73,7 +74,9 @@ npm run test:run
 npm run test:coverage
 ```
 
-**테스트 현황**: 82개 테스트 통과
+**테스트 현황**: `npm run test:run`으로 전체 자동 테스트 확인
+
+Azure Translator 연결과 키 보관 방식은 [`docs/azure-translator.md`](docs/azure-translator.md)를 참고하세요.
 
 ## 배포
 

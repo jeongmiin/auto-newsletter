@@ -31,6 +31,15 @@ export default defineConfig(({ command }) => {
     },
   }
 
+  // Azure 키를 숨기는 번역 프록시. 로컬 기본 서버는 `npm run proxy:translate`로 띄운다.
+  const translateTarget = process.env.TRANSLATE_PROXY_TARGET || 'http://localhost:5175'
+  const translateProxy = {
+    '/api/translate': {
+      target: translateTarget,
+      changeOrigin: true,
+    },
+  }
+
   return {
     base: deployBase,
     plugins: [
@@ -52,7 +61,7 @@ export default defineConfig(({ command }) => {
     server: {
       port: 5173,
       strictPort: true,
-      proxy: uploadProxy,
+      proxy: { ...uploadProxy, ...translateProxy },
       // 화면을 옮길 때 멈추지 않도록, 뒤에 나올 화면들을 미리 변환해 둔다.
       //
       // dev 서버는 빌드본과 달리 **필요할 때 한 파일씩** 변환한다. 라우트가 지연 로딩이라
@@ -97,7 +106,7 @@ export default defineConfig(({ command }) => {
     },
     // 빌드본 확인(vite preview)에서도 같은 프록시를 쓴다 — 배포 전 마지막 점검용
     preview: {
-      proxy: uploadProxy,
+      proxy: { ...uploadProxy, ...translateProxy },
     },
     // public 폴더 처리 명시
     publicDir: 'public',

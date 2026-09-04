@@ -25,6 +25,8 @@ interface ImportMetaEnv {
    * 비워 두면 코드의 기본값(운영 버킷)을 쓴다 — 이미지 주소에 이미 공개된 값이다.
    */
   readonly VITE_S3_BUCKET_URL?: string
+  /** Azure 키를 보관하는 서버 프록시의 공개 주소. 비밀키 자체를 넣지 않는다. */
+  readonly VITE_AZURE_TRANSLATE_URL?: string
 }
 
 interface ImportMeta {

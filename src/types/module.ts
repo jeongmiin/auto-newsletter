@@ -25,6 +25,8 @@ export interface EditableProp {
   placeholder?: string
   // 입력 필드 아래 표시할 안내 문구 (text 타입 한정)
   hint?: string
+  /** 번역 도구 대상 여부. 미지정이면 타입과 키 이름의 안전한 기본 규칙을 사용한다. */
+  translatable?: boolean
   required?: boolean
   default?: string | number | boolean | TableCell[][]  // default 값 지원 (테이블 셀 포함)
   defaultRows?: TableRow[]

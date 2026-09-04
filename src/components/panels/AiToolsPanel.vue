@@ -21,6 +21,19 @@ import { useEditorStore } from '@/stores/editorStore'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useNewsletterDocument } from '@/composables/useNewsletterDocument'
 import { buildDownloadFileName } from '@/utils/projectFile'
+import { getHistoryInstance } from '@/composables/useHistory'
+import {
+  applyTranslationChanges,
+  collectTranslationUnits,
+  type TranslationChange,
+  type TranslationLanguage,
+  type TranslationScope,
+} from '@/utils/newsletterTranslation'
+import {
+  isTranslationEnabled,
+  translateUnits,
+  TranslationError,
+} from '@/utils/azureTranslator'
 import {
   MISSING_VOLUME_MESSAGE,
   UploadError,
@@ -35,6 +48,114 @@ const moduleStore = useModuleStore()
 const toast = useToast()
 // 발송용 내려받기와 **같은 문서**를 만든다 — 링크로 열리는 것과 메일에 싣는 것이 달라지면 안 된다
 const { buildDocument } = useNewsletterDocument()
+const history = getHistoryInstance()
+
+// ── Azure 뉴스레터 번역 ────────────────────────────────────────────────
+const translationOpen = ref(false)
+const translationEnabled = isTranslationEnabled()
+const targetLanguage = ref<TranslationLanguage>('en')
+const translationScope = ref<TranslationScope>('all')
+const translating = ref(false)
+const translationError = ref('')
+const translationPreview = ref<TranslationChange[]>([])
+let translationController: AbortController | null = null
+
+const translationLanguages: Array<{ value: TranslationLanguage; label: string }> = [
+  { value: 'en', label: '영어' },
+  { value: 'ja', label: '일본어' },
+  { value: 'zh-Hans', label: '중국어(간체)' },
+]
+
+const activeGroupId = computed(
+  () => moduleStore.selectedGroupId ?? moduleStore.selectedModule?.groupId ?? null,
+)
+const canTranslateModule = computed(() => !!moduleStore.selectedModuleId)
+const canTranslateGroup = computed(() => !!activeGroupId.value)
+const selectedScopeLabel = computed(() => {
+  if (translationScope.value === 'module') {
+    return moduleStore.selectedModuleMetadata?.name ?? '선택 모듈'
+  }
+  if (translationScope.value === 'group') return moduleStore.activeGroup?.name ?? '선택 그룹'
+  return `전체 모듈 ${moduleStore.modules.length}개`
+})
+
+const unitsToTranslate = computed(() =>
+  collectTranslationUnits(moduleStore.modules, moduleStore.availableModules, {
+    scope: translationScope.value,
+    selectedModuleId: moduleStore.selectedModuleId,
+    selectedGroupId: activeGroupId.value,
+  }),
+)
+const translationCharacters = computed(() =>
+  unitsToTranslate.value.reduce((sum, unit) => sum + unit.source.length, 0),
+)
+const previewPlainText = (value: string): string =>
+  value.replace(/<[^>]*>/g, ' ').replace(/&nbsp;/gi, ' ').replace(/\s+/g, ' ').trim()
+
+watch([targetLanguage, translationScope], () => {
+  translationPreview.value = []
+  translationError.value = ''
+})
+
+const requestTranslation = async (): Promise<void> => {
+  if (translating.value) return
+  translationError.value = ''
+  translationPreview.value = []
+  if (!moduleStore.availableModules.length) await moduleStore.loadAvailableModules()
+  const units = unitsToTranslate.value
+  if (!units.length) {
+    translationError.value = '선택한 범위에서 번역할 한국어 문장을 찾지 못했어요.'
+    return
+  }
+
+  translating.value = true
+  translationController = new AbortController()
+  try {
+    translationPreview.value = await translateUnits(
+      units,
+      targetLanguage.value,
+      translationController.signal,
+    )
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'AbortError') return
+    translationError.value =
+      error instanceof TranslationError || error instanceof Error
+        ? error.message
+        : '번역 중 문제가 생겼어요. 다시 시도해 주세요.'
+  } finally {
+    translating.value = false
+    translationController = null
+  }
+}
+
+const cancelTranslation = (): void => translationController?.abort()
+
+const applyTranslation = async (): Promise<void> => {
+  if (!translationPreview.value.length) return
+  // 적용 전과 적용 후를 각각 남겨 Ctrl+Z 한 번으로 번역 전 상태가 복원되게 한다.
+  history.saveState()
+  const next = applyTranslationChanges(moduleStore.modules, translationPreview.value)
+  await history.runBulk(() => {
+    moduleStore.replaceModulesForBulkEdit(next)
+    editorStore.updateWrapSettings({
+      fontLanguage:
+        targetLanguage.value === 'ja'
+          ? 'ja'
+          : targetLanguage.value === 'zh-Hans'
+            ? 'zh'
+            : 'default',
+    })
+  })
+  history.saveState()
+  const count = translationPreview.value.length
+  translationPreview.value = []
+  toast.add({
+    severity: 'success',
+    summary: '번역을 적용했어요',
+    detail: `${count}개 문장을 적용했습니다. Ctrl+Z로 되돌릴 수 있어요.`,
+    life: 4000,
+  })
+}
 
 /** 도구 카드를 눌러 내용을 펼쳤는지 (기본 접힘 — 목록에서 도구를 고르는 흐름) */
 const isOpen = ref(false)
@@ -234,6 +355,7 @@ const existingSub = computed(() => {
 
 onBeforeUnmount(() => {
   controller?.abort()
+  translationController?.abort()
   checkController?.abort()
   if (copiedTimer) clearTimeout(copiedTimer)
   if (updatedTimer) clearTimeout(updatedTimer)
@@ -243,6 +365,93 @@ onBeforeUnmount(() => {
 <template>
   <div class="side-panel ai-tools-panel">
     <h2 class="panel-title">AI 도구</h2>
+
+    <!-- ── Azure 다국어 번역 ── -->
+    <section class="ai-tool">
+      <button
+        type="button"
+        class="ui-card ai-tool-card"
+        :class="{ 'is-open': translationOpen }"
+        :aria-expanded="translationOpen"
+        @click="translationOpen = !translationOpen"
+      >
+        <span class="ai-tool-card-label">다국어 번역</span>
+        <span class="material-symbols-outlined ai-tool-card-icon">
+          {{ translationOpen ? 'remove' : 'add' }}
+        </span>
+      </button>
+
+      <div v-if="translationOpen" class="ai-tool-body tr-body">
+        <p v-if="!translationEnabled" class="ht-note">
+          번역 서버 주소가 설정되지 않아 지금은 번역할 수 없어요.
+        </p>
+
+        <template v-else>
+          <label class="tr-field">
+            <span class="tr-label">번역 언어</span>
+            <select v-model="targetLanguage" class="tr-select" :disabled="translating">
+              <option v-for="language in translationLanguages" :key="language.value" :value="language.value">
+                {{ language.label }}
+              </option>
+            </select>
+          </label>
+
+          <fieldset class="tr-fieldset" :disabled="translating">
+            <legend class="tr-label">번역 범위</legend>
+            <label class="tr-radio">
+              <input v-model="translationScope" type="radio" value="all" /> 전체 뉴스레터
+            </label>
+            <label class="tr-radio" :class="{ 'is-disabled': !canTranslateGroup }">
+              <input v-model="translationScope" type="radio" value="group" :disabled="!canTranslateGroup" />
+              선택한 그룹
+            </label>
+            <label class="tr-radio" :class="{ 'is-disabled': !canTranslateModule }">
+              <input v-model="translationScope" type="radio" value="module" :disabled="!canTranslateModule" />
+              선택한 모듈
+            </label>
+          </fieldset>
+
+          <div class="tr-summary">
+            <strong>{{ selectedScopeLabel }}</strong>
+            <span>한국어 {{ unitsToTranslate.length }}개 · {{ translationCharacters.toLocaleString() }}자</span>
+          </div>
+
+          <div v-if="translating" class="ht-box ht-box--busy">
+            <div class="tr-spinner-row">
+              <span class="material-symbols-outlined tr-spin">progress_activity</span>
+              <span class="ht-busy-text">Azure에서 번역하는 중…</span>
+              <button type="button" class="ht-link-btn" @click="cancelTranslation">취소</button>
+            </div>
+          </div>
+
+          <template v-else-if="translationPreview.length">
+            <div class="tr-preview-head">
+              <strong>번역 결과 확인</strong>
+              <span>{{ translationPreview.length }}개</span>
+            </div>
+            <div class="tr-preview-list">
+              <article v-for="change in translationPreview" :key="change.id" class="tr-preview-item">
+                <p class="tr-item-label">{{ change.moduleName }} · {{ change.propertyLabel }}</p>
+                <div class="tr-source">{{ previewPlainText(change.source) }}</div>
+                <textarea v-model="change.translated" class="tr-result" rows="3" aria-label="번역문 수정"></textarea>
+              </article>
+            </div>
+            <div class="tr-actions">
+              <button type="button" class="ht-btn" @click="translationPreview = []">취소</button>
+              <button type="button" class="ht-btn ht-btn--primary" @click="applyTranslation">캔버스에 적용</button>
+            </div>
+          </template>
+
+          <button v-else type="button" class="ht-make-btn" @click="requestTranslation">
+            <span class="material-symbols-outlined">translate</span>
+            번역하고 미리보기
+          </button>
+
+          <p v-if="translationError" class="ht-error">{{ translationError }}</p>
+          <p class="ht-note">URL·색상·크기 등은 제외하고 한국어가 있는 텍스트만 번역해요.</p>
+        </template>
+      </div>
+    </section>
 
     <!-- ── HTML 웹 링크 생성 ──
          도구 목록은 빠른추가 카드(QuickAddCard)와 같은 모양의 버튼이고,
@@ -343,6 +552,138 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+.ai-tools-panel {
+  gap: 18px;
+}
+.tr-body {
+  padding: 2px 0 8px;
+}
+.tr-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.tr-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gray-700);
+}
+.tr-select {
+  width: 100%;
+  height: 40px;
+  padding: 0 10px;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  background: var(--white);
+  color: var(--gray-800);
+  font-size: 14px;
+}
+.tr-fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.tr-fieldset .tr-label {
+  margin-bottom: 2px;
+}
+.tr-radio {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 14px;
+  color: var(--gray-700);
+}
+.tr-radio.is-disabled {
+  color: var(--gray-400);
+}
+.tr-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--gray-50);
+  font-size: 13px;
+  color: var(--gray-600);
+}
+.tr-summary strong {
+  color: var(--gray-800);
+}
+.tr-spinner-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tr-spinner-row .ht-link-btn {
+  margin-left: auto;
+}
+.tr-spin {
+  font-size: 20px;
+  color: var(--blue-500);
+  animation: tr-rotate 1s linear infinite;
+}
+@keyframes tr-rotate {
+  to { transform: rotate(360deg); }
+}
+.tr-preview-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--gray-600);
+}
+.tr-preview-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 360px;
+  overflow-y: auto;
+  padding-right: 3px;
+}
+.tr-preview-item {
+  padding: 10px;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+}
+.tr-item-label {
+  margin: 0 0 7px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--gray-600);
+}
+.tr-source {
+  max-height: 70px;
+  overflow: hidden;
+  margin-bottom: 8px;
+  padding: 8px;
+  border-radius: 6px;
+  background: var(--gray-50);
+  font-size: 12px;
+  color: var(--gray-600);
+}
+.tr-source :deep(*) {
+  margin: 0;
+  font-size: inherit !important;
+}
+.tr-result {
+  width: 100%;
+  min-height: 68px;
+  padding: 8px;
+  resize: vertical;
+  border: 1px solid var(--blue-200);
+  border-radius: 6px;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--gray-800);
+  box-sizing: border-box;
+}
+.tr-actions {
+  display: flex;
+  gap: 8px;
 }
 
 /* 도구 버튼 — 빠른추가 카드(QuickAddCard)와 같은 모양(테두리·호버는 공용 .ui-card) */

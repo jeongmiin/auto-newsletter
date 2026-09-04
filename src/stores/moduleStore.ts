@@ -2716,6 +2716,13 @@ export const useModuleStore = defineStore('module', () => {
     isDirty.value = false
   }
 
+  /** 번역처럼 여러 속성을 한 번에 바꿀 때 완성된 모듈 배열을 한 번에 반영한다. */
+  const replaceModulesForBulkEdit = (nextModules: ModuleInstance[]): void => {
+    modules.value.splice(0, modules.value.length, ...nextModules)
+    triggerRef(modules)
+    isDirty.value = true
+  }
+
   // ============= Newsletter Templates =============
   /**
    * 사용 가능한 뉴스레터 템플릿 카탈로그 로드
@@ -4492,6 +4499,7 @@ ${fullHtml}
     duplicateModule,
     clearAll,
     markAsSaved,
+    replaceModulesForBulkEdit,
     generateHtml,
     renderModulePreview,
     renderTemplateHtml,
