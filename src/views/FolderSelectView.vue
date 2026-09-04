@@ -430,17 +430,14 @@ const continueEditing = async () => {
 
     <div class="fd-body">
       <!--
-        좌측: 전시회 선택과 같은 팀 메뉴.
+        좌측: 전시회 선택과 같은 팀 메뉴(맨 윗칸 없음 — 되돌아가는 길은 하단 '이전으로').
         빈 템플릿이면 여기서 팀을 골라 폴더를 나누고, 템플릿으로 들어왔으면 그 팀만 켜 둔다.
-        맨 윗칸('전체' 자리)은 템플릿을 다시 고르러 나가는 길이다.
       -->
       <TeamTreeSidebar
+        class="fd-team-nav"
         :model-value="editorStore.currentTeamId ?? ''"
-        top-label="다른 전시회 선택"
-        top-back
         :selectable="canPickTeam"
         @update:model-value="pickTeam"
-        @top="goBack"
       />
 
       <!-- 우측 열 — 스크롤되는 본문 + 고정 하단. 하단선은 사이드바 오른쪽에서만 긋는다 (Figma 1468-8970) -->
@@ -706,6 +703,10 @@ const continueEditing = async () => {
   flex: 1;
   display: flex;
   min-height: 0;
+}
+/* 좌측 팀 메뉴 — 맨 윗칸('전체'·'뒤로가기')이 없어 첫 본부가 위에서 80px에 오도록 여백을 준다 */
+.fd-team-nav {
+  padding-top: 83px;
 }
 /* 우측 열 — 본문이 스크롤되고 하단 바는 늘 보인다 */
 .fd-column {

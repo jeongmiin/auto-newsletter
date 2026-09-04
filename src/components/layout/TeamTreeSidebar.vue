@@ -2,8 +2,8 @@
 /**
  * 좌측 본부·팀 트리 — 템플릿 선택과 폴더 선택이 같은 메뉴를 나눠 쓴다.
  *
- * 맨 윗칸이 하는 일만 화면마다 다르다(템플릿 선택: '전체' 필터 / 폴더 선택: 템플릿 다시 고르기).
- * 그래서 문구·아이콘·눌린 상태는 부모가 정하고, 여기서는 눌렸다는 것만 알린다.
+ * 맨 윗칸은 부모가 문구를 주었을 때만 그린다(템플릿 선택: '전체' 필터 / 폴더 선택: 없음).
+ * 문구·눌린 상태는 부모가 정하고, 여기서는 눌렸다는 것만 알린다.
  *
  * 폐지된 조직(active: false)은 트리에서 감춘다. 정의는 지우지 않으므로 그 팀의 옛 템플릿은
  * '전체'에서 계속 보이고, 저장된 teamId도 여전히 이름을 찾을 수 있다.
@@ -15,16 +15,14 @@ withDefaults(
   defineProps<{
     /** 고른 팀 id — ''면 아직 아무 팀도 고르지 않은 상태 */
     modelValue: string
-    /** 맨 윗칸 문구 */
-    topLabel: string
-    /** 맨 윗칸이 앞 단계로 되돌아가는 길이면 true — 앞에 '<' 를 붙여 나가는 길임을 알린다 */
-    topBack?: boolean
+    /** 맨 윗칸 문구 — 없으면 맨 윗칸 자체를 그리지 않는다 */
+    topLabel?: string
     /** 맨 윗칸을 눌린 상태로 보일지 */
     topActive?: boolean
     /** 팀을 눌러 고를 수 있는지 — 끄면 지금 팀이 어디인지 보여주기만 한다 */
     selectable?: boolean
   }>(),
-  { topBack: false, topActive: false, selectable: true },
+  { topLabel: '', topActive: false, selectable: true },
 )
 
 const emit = defineEmits<{
@@ -53,12 +51,12 @@ const toggle = (deptId: string) => {
 <template>
   <aside class="team-nav">
     <button
+      v-if="topLabel"
       type="button"
       class="team-nav-item team-nav-item--top"
       :class="{ 'is-active': topActive }"
       @click="emit('top')"
     >
-      <span v-if="topBack" class="material-symbols-outlined">chevron_left</span>
       {{ topLabel }}
     </button>
 
@@ -145,11 +143,6 @@ const toggle = (deptId: string) => {
 .team-nav-item--top {
   font-weight: 500;
   color: var(--gray-800);
-}
-.team-nav-item--top .material-symbols-outlined {
-  font-size: 20px;
-  margin-left: -4px;
-  margin-top: -2px;
 }
 .team-nav-item.is-active {
   position: relative;

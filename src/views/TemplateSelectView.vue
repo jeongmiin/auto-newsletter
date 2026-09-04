@@ -40,15 +40,17 @@
               @dblclick="selectBlank(), goNext()"
             >
               <div class="tpl-thumb tpl-thumb--blank">
-                <!-- 내용 없는 문서를 뜻하는 회색 뼈대 (이미지 한 장 + 글줄 + 버튼) -->
-                <div class="blank-image"></div>
+                <!-- 내용 없는 문서를 뜻하는 회색 뼈대 — 사진 자리(산·해 아이콘) + 글줄 넷 + 알약 버튼 -->
+                <div class="blank-image">
+                  <span class="material-symbols-outlined blank-image-icon" aria-hidden="true">landscape</span>
+                </div>
                 <div class="blank-line blank-line--short"></div>
                 <div class="blank-line"></div>
                 <div class="blank-line"></div>
                 <div class="blank-line"></div>
                 <div class="blank-button"></div>
               </div>
-              <div class="tpl-card-name">빈 화면</div>
+              <div class="tpl-card-name">빈 템플릿</div>
             </button>
 
             <!-- 템플릿 카드 — 올리면 '미리보기'·'템플릿 선택하기'가 썸네일 위에 뜬다 (Figma 1468-9267).
@@ -186,7 +188,7 @@ const isTemplateSelected = (t: NewsletterTemplate) =>
 const selectedName = computed(() => {
   const pick = selected.value
   if (!pick) return ''
-  return pick.kind === 'blank' ? '빈 화면' : pick.template.name
+  return pick.kind === 'blank' ? '빈 템플릿' : pick.template.name
 })
 
 const selectBlank = () => {
@@ -475,23 +477,30 @@ const goNext = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 18px 16px;
+  gap: 9px;
+  padding: 20px 16px;
 }
+/* 사진 자리 — 회색 판 위에 흰 산·해 아이콘 */
 .blank-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  height: 84px;
-  border-radius: 4px;
-  background: var(--gray-100);
-  /* 사진 자리임을 알리는 아이콘 — 배경으로 그려 넣어 마크업을 늘리지 않는다 */
-  background-image: radial-gradient(circle at 34% 38%, var(--gray-200) 7px, transparent 7px);
-  margin-bottom: 6px;
+  height: 70px;
+  border-radius: 6px;
+  background: var(--gray-200);
+  margin-bottom: 10px;
+}
+.blank-image-icon {
+  font-size: 64px;
+  color: var(--white);
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48;
 }
 .blank-line {
   width: 100%;
   height: 5px;
   border-radius: 3px;
-  background: var(--gray-100);
+  background: var(--gray-200);
 }
 .blank-line--short {
   width: 58%;
@@ -501,7 +510,7 @@ const goNext = () => {
   width: 62%;
   height: 18px;
   border-radius: 9px;
-  background: var(--gray-100);
+  background: var(--gray-200);
   margin-top: 10px;
 }
 
