@@ -2,7 +2,14 @@
 /**
  * AI 도구 패널 (좌측 레일 'AI 도구').
  *
- * 지금 들어 있는 도구는 하나 — **HTML 웹 링크 생성**.
+ * 도구는 둘이다.
+ *
+ * **다국어 번역** — 캔버스 전체의 한국어 문장을 영어·일본어·중국어(간체)로 번역해 미리 보여주고,
+ * 확인·수정한 뒤 캔버스에 적용한다. 문장은 태그를 뺀 텍스트 노드 단위라 굵게·색상·링크 같은
+ * 서식은 그대로 남고 글자만 바뀐다. Azure 키는 서버 프록시에만 있다(src/utils/azureTranslator.ts).
+ *
+ * **HTML 웹 링크 생성** — 아래 설명.
+ *
  * 버튼 한 번으로 지금 작업물을 발송용 HTML(`{전시회}_{폴더}_send.html`)로 만들어
  * 저장 폴더에 올리고, 웹에서 바로 열 수 있는 주소를 돌려준다.
  * '웹으로 보기' 링크에 넣을 주소를 만드는 용도다.
@@ -21,6 +28,7 @@ import { useEditorStore } from '@/stores/editorStore'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useNewsletterDocument } from '@/composables/useNewsletterDocument'
 import { buildDownloadFileName } from '@/utils/projectFile'
+import { TRANSLATION_LANGUAGES, useTranslationStore } from '@/stores/translationStore'
 import {
   MISSING_VOLUME_MESSAGE,
   UploadError,
@@ -35,6 +43,21 @@ const moduleStore = useModuleStore()
 const toast = useToast()
 // 발송용 내려받기와 **같은 문서**를 만든다 — 링크로 열리는 것과 메일에 싣는 것이 달라지면 안 된다
 const { buildDocument } = useNewsletterDocument()
+
+// ── Azure 뉴스레터 번역 ────────────────────────────────────────────────
+// 상태와 동작은 translationStore에 있다 — 결과는 캔버스 옆 TranslationPreviewPanel에 뜨고,
+// 메뉴를 옮겨도 남아 있다. 여기는 언어 고르기·대상 요약·번역 요청만 맡는다.
+const translation = useTranslationStore()
+const translationLanguages = TRANSLATION_LANGUAGES
+
+// 문장 수·글자 수는 모듈 메타데이터(어떤 속성이 번역 대상인지)가 있어야 셀 수 있다 — 펼칠 때 미리 읽어 둔다
+watch(
+  () => translation.panelOpen,
+  (open) => {
+    if (open && !moduleStore.availableModules.length) void moduleStore.loadAvailableModules()
+  },
+  { immediate: true },
+)
 
 /** 도구 카드를 눌러 내용을 펼쳤는지 (기본 접힘 — 목록에서 도구를 고르는 흐름) */
 const isOpen = ref(false)
@@ -244,6 +267,103 @@ onBeforeUnmount(() => {
   <div class="side-panel ai-tools-panel">
     <h2 class="panel-title">AI 도구</h2>
 
+    <!-- ── Azure 다국어 번역 ── -->
+    <section class="ai-tool">
+      <button
+        type="button"
+        class="ui-card ai-tool-card"
+        :class="{ 'is-open': translation.panelOpen }"
+        :aria-expanded="translation.panelOpen"
+        @click="translation.panelOpen = !translation.panelOpen"
+      >
+        <span class="ai-tool-card-label">
+          다국어 번역
+          <!-- 접혀 있어도 확인 중인 결과가 있다는 걸 알 수 있게 -->
+          <span v-if="translation.preview.length" class="ai-tool-badge ai-tool-badge--blue">
+            결과 {{ translation.preview.length }}
+          </span>
+        </span>
+        <span class="material-symbols-outlined ai-tool-card-icon">
+          {{ translation.panelOpen ? 'remove' : 'add' }}
+        </span>
+      </button>
+
+      <div v-if="translation.panelOpen" class="ai-tool-body tr-body">
+        <p v-if="!translation.enabled" class="ht-note">
+          번역 서버 주소가 설정되지 않아 지금은 번역할 수 없어요.
+        </p>
+
+        <template v-else>
+          <!-- 번역 언어 — 전체 설정의 '폰트' 셀렉트와 같은 모양 -->
+          <div class="tr-field">
+            <span class="tr-label">번역 언어</span>
+            <Select
+              :modelValue="translation.targetLanguage"
+              @update:modelValue="translation.setTargetLanguage($event)"
+              :options="translationLanguages"
+              optionLabel="label"
+              optionValue="value"
+              :disabled="translation.translating"
+              class="w-full text-sm"
+            />
+          </div>
+
+          <!-- 대상 요약 — 캔버스 전체가 대상이라 고를 건 없고, 무엇을 몇 자 보내는지만 알려준다 -->
+          <p class="tr-scope-line">
+            <span class="tr-scope-name">전체 모듈 {{ moduleStore.modules.length }}개</span>
+            <span class="tr-scope-count">
+              문장 {{ translation.units.length }}개 · {{ translation.characterCount.toLocaleString() }}자
+            </span>
+          </p>
+
+          <!-- 번역 중 — 웹 링크 만들기와 같은 상자에 흐르는 막대 -->
+          <div v-if="translation.translating" class="ht-box ht-box--busy">
+            <div class="ht-progress">
+              <div class="ht-progress-bar tr-progress-bar--flow"></div>
+            </div>
+            <div class="ht-busy-row">
+              <span class="ht-busy-text">{{ translation.targetLanguageLabel }}로 번역하는 중…</span>
+              <button type="button" class="ht-link-btn" @click="translation.cancel()">취소</button>
+            </div>
+          </div>
+
+          <!-- 결과가 있음 — 내용은 캔버스 옆 패널에서 본다. 여기서는 그 사실과 다시 돌리기만 -->
+          <div v-else-if="translation.preview.length" class="ht-box ht-box--result">
+            <div class="tr-status">
+              <span class="material-symbols-outlined tr-status-icon">check_circle</span>
+              <span class="ht-link-text">
+                <span class="ht-link-name">번역 결과 {{ translation.preview.length }}개</span>
+                <span class="ht-link-sub">캔버스 왼쪽에서 확인하고 고친 뒤 적용하세요.</span>
+              </span>
+            </div>
+            <div class="ht-result-actions">
+              <button type="button" class="ht-btn" @click="translation.request()">
+                <span class="material-symbols-outlined">restart_alt</span>
+                다시 번역
+              </button>
+              <button type="button" class="ht-btn" @click="translation.clear()">결과 지우기</button>
+            </div>
+          </div>
+
+          <button
+            v-else
+            type="button"
+            class="ht-make-btn"
+            :disabled="!translation.units.length"
+            @click="translation.request()"
+          >
+            <span class="material-symbols-outlined">translate</span>
+            번역하고 미리보기
+          </button>
+
+          <p v-if="translation.error" class="ht-error">{{ translation.error }}</p>
+          <p v-if="!translation.preview.length" class="hint-text tr-note">
+            *글자만 번역하고 굵게·색상 같은 서식과 링크는 그대로 둬요. URL·색상·크기 값은 빼요.
+          </p>
+        </template>
+      </div>
+    </section>
+
     <!-- ── HTML 웹 링크 생성 ──
          도구 목록은 빠른추가 카드(QuickAddCard)와 같은 모양의 버튼이고,
          누르면 그 아래로 업로드 입력이 펼쳐진다. 도구가 늘면 이 section을 이어 붙인다. -->
@@ -343,6 +463,88 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+.ai-tools-panel {
+  gap: 18px;
+}
+/* ── 다국어 번역 ─────────────────────────────────────────────
+   입력부(언어·범위)는 전체 설정 패널, 결과부는 표 편집 패널의 카드·칩 톤을 따른다. */
+.tr-body {
+  gap: 18px;
+  padding-bottom: 4px;
+}
+.tr-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.tr-label {
+  font-size: 15px;
+  color: var(--gray-700);
+}
+
+/* 대상 요약 한 줄 — 무엇을 몇 자 번역하는지 */
+.tr-scope-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0;
+  min-width: 0;
+}
+.tr-scope-name {
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gray-750);
+  letter-spacing: -0.14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tr-scope-count {
+  flex-shrink: 0;
+  font-size: 13px;
+  color: var(--gray-500);
+}
+
+/* 번역 중 — 진행률을 모르므로 막대가 흐른다 */
+.tr-progress-bar--flow {
+  width: 40%;
+  animation: tr-flow 1.2s ease-in-out infinite;
+}
+@keyframes tr-flow {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(250%); }
+}
+
+/* 결과 있음 — 내용은 캔버스 옆 TranslationPreviewPanel에. 여기선 링크 카드와 같은 톤의 상태 줄 */
+.tr-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--gray-50);
+}
+.tr-status-icon {
+  flex-shrink: 0;
+  font-size: 22px;
+  color: var(--green-400);
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+/* 카드 제목 옆 '결과 N' 배지 — '생성됨' 배지와 같은 모양, 색만 파랑 */
+.ai-tool-badge--blue {
+  background: var(--blue-50);
+  color: var(--blue-500);
+}
+.tr-note {
+  margin-top: 0;
+}
+.ht-make-btn:disabled {
+  background: var(--gray-200);
+  color: var(--gray-400);
+  cursor: not-allowed;
 }
 
 /* 도구 버튼 — 빠른추가 카드(QuickAddCard)와 같은 모양(테두리·호버는 공용 .ui-card) */

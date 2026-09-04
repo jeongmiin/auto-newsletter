@@ -1,12 +1,14 @@
 import { ref, watch, computed, onScopeDispose, effectScope } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useModuleStore } from '@/stores/moduleStore'
-import type { ModuleInstance, ModuleGroup } from '@/types'
+import { useEditorStore } from '@/stores/editorStore'
+import type { ModuleInstance, ModuleGroup, WrapSettings } from '@/types'
 
 interface HistoryState {
   modules: ModuleInstance[]
   groups: ModuleGroup[]
   selectedModuleId: string | null
+  wrapSettings: WrapSettings
 }
 
 const MAX_HISTORY_SIZE = 50
@@ -16,7 +18,9 @@ const MAX_HISTORY_SIZE = 50
  */
 export function useHistory() {
   const moduleStore = useModuleStore()
+  const editorStore = useEditorStore()
   const { modules, groups, selectedModuleId } = storeToRefs(moduleStore)
+  const { wrapSettings } = storeToRefs(editorStore)
 
   // 히스토리 스택
   const undoStack = ref<HistoryState[]>([])
@@ -31,6 +35,7 @@ export function useHistory() {
       modules: JSON.parse(JSON.stringify(modules.value)),
       groups: JSON.parse(JSON.stringify(groups.value)),
       selectedModuleId: selectedModuleId.value,
+      wrapSettings: JSON.parse(JSON.stringify(wrapSettings.value)),
     }
   }
 
@@ -46,6 +51,9 @@ export function useHistory() {
     const restoredGroups: ModuleGroup[] = JSON.parse(JSON.stringify(snapshot.groups || []))
     groups.value.splice(0, groups.value.length, ...restoredGroups)
     selectedModuleId.value = snapshot.selectedModuleId
+    if (snapshot.wrapSettings) {
+      editorStore.applyLoadedWrapSettings(JSON.parse(JSON.stringify(snapshot.wrapSettings)))
+    }
 
     // debounce 시간(300ms)보다 길게 대기하여 watcher가 이 변경을 무시하도록 함
     setTimeout(() => {
@@ -122,7 +130,7 @@ export function useHistory() {
   let debounceTimer: ReturnType<typeof setTimeout> | null = null
 
   const stopWatcher = watch(
-    [modules, groups],
+    [modules, groups, wrapSettings],
     () => {
       if (isApplyingHistory.value) return
 
