@@ -1,10 +1,17 @@
 <script setup lang="ts">
 /**
- * 폴더 선택 (템플릿 선택 → **폴더 선택** → 에디터) — Figma 1347-9429 / 1334-7951.
+ * 폴더 선택 (템플릿 선택 → **폴더 선택** → 에디터) — Figma 1468-8970 / 1484-1081 / 1488-1333.
  *
  * 이미지·HTML이 어느 회차 폴더에 쌓일지를 여기서 한 번 정하고 들어간다.
  * 예전에는 에디터 안 '전체 스타일 → 뉴스레터 회차'에서 숫자를 올렸는데,
  * 그러면 이미 있는 폴더를 모른 채 새 폴더를 만들어 같은 회차가 두 군데로 갈라졌다.
+ *
+ * 줄을 다루는 규칙(화살표 버튼 없음):
+ *   - 클릭으로 **고르고, 한 번 더 클릭하면 푼다** (안에 폴더가 있어도 같다)
+ *   - **더블클릭**하면 안으로 들어간다 (빈 폴더에 또 폴더를 만들 때)
+ *   - 1단계의 '여기로 저장'은 고른 폴더 **안으로 들어간다**(비어 있어도). 저장은 2단계에서 한다
+ *   - 들어간 폴더가 비어 있으면 새 폴더를 만들거나 **그 자리에 바로 저장**할 수 있다 (1488-1333)
+ *   - '이전으로'는 폴더 안이면 한 겹 위로, 맨 위면 템플릿 선택으로
  *
  * 폴더를 고르지 않으면 에디터로 넘어갈 수 없다(router 가드가 한 번 더 막는다).
  */
@@ -12,19 +19,22 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import InputText from 'primevue/inputtext'
 import FlowStepsHeader from '@/components/layout/FlowStepsHeader.vue'
+import FlowFooter from '@/components/layout/FlowFooter.vue'
 import TeamTreeSidebar from '@/components/layout/TeamTreeSidebar.vue'
 import SearchField from '@/components/SearchField.vue'
 import emptyIcon from '@/assets/img/empty_icon.png'
+import emptyFolderIcon from '@/assets/img/empty_folder_icon.png'
+import emptyTeamIcon from '@/assets/img/empty_team_icon.png'
 import { useEditorStore } from '@/stores/editorStore'
 import { useModuleStore } from '@/stores/moduleStore'
-import { buildUploadDirectory, MAX_VOLUME_DEPTH, normalizeVolume } from '@/utils/s3Upload'
+import { BLANK_FOLDER, buildUploadDirectory, MAX_VOLUME_DEPTH, normalizeVolume } from '@/utils/s3Upload'
 import {
   BrowseError,
   fetchText,
   formatModified,
+  isFreshEditFile,
   isUsableFolderName,
   listFolders,
-  objectUrl,
   toPrefix,
   validateFolderName,
   type S3Folder,
@@ -61,12 +71,35 @@ const hasTeam = computed(() => !!editorStore.currentTeamId)
  */
 const canPickTeam = computed(() => !editorStore.currentTemplateId)
 const templateName = computed(() => editorStore.currentTemplateName || '빈 템플릿')
-/** 경로에 쓰이는 전시회 폴더 이름 — 'gocaf' (템플릿 없이 시작하면 'blank') */
-const rootFolderName = computed(() => editorStore.currentTemplateId || 'blank')
+/**
+ * 빈 템플릿은 전시회 폴더를 모른 채 들어온다 — 그때는 **팀 폴더 안의 전시회 폴더 목록**을 먼저
+ * 보여주고 하나를 고르게 한다(Figma 1500-9394). 고르면 그 폴더가 전시회 자리가 되어
+ * 템플릿으로 들어왔을 때와 같은 화면(회차 폴더 목록)으로 이어진다.
+ */
+const atTeamLevel = computed(() => hasTeam.value && editorStore.isBlankStart && !editorStore.blankFolder)
+/** 경로에 쓰이는 전시회 폴더 이름 — 'gocaf' (빈 템플릿이면 팀 폴더에서 고른 이름) */
+const rootFolderName = computed(
+  () => editorStore.currentTemplateId || editorStore.blankFolder || BLANK_FOLDER,
+)
+/**
+ * 화면에 적는 전시회 이름.
+ * 템플릿으로 들어왔으면 그 이름. 빈 템플릿이면 고른 폴더 이름과 **id가 같은 템플릿의 이름**을
+ * 찾아 쓴다('nextcon' → '넥스트콘'). 짝이 없는 폴더(space_design 등)는 폴더 이름 그대로.
+ */
+const contextName = computed(() => {
+  if (editorStore.currentTemplateId) return templateName.value
+  const folder = editorStore.blankFolder
+  if (!folder) return templateName.value
+  return moduleStore.availableTemplates.find((t) => t.id === folder)?.name ?? folder
+})
 
-/** 읽어올 자리 — 업로드 경로에서 회차만 뺀 앞부분 (`…/newsletterbuilder/{팀}/{전시회}/`) */
+/**
+ * 읽어올 자리 — 업로드 경로에서 회차만 뺀 앞부분.
+ * 전시회 단계: `…/newsletterbuilder/{팀}/{전시회}/` · 팀 폴더 단계: `…/newsletterbuilder/{팀}/`
+ */
 const basePrefix = computed(() => {
-  const sample = buildUploadDirectory(editorStore.uploadFolder, 'vol01')
+  const folder = atTeamLevel.value ? editorStore.currentTeamId : editorStore.uploadFolder
+  const sample = buildUploadDirectory(folder, 'vol01')
   return sample ? toPrefix(sample.replace(/vol01\/$/, '')) : ''
 })
 
@@ -81,7 +114,7 @@ const openedPath = ref<string[]>([])
 const currentPrefix = computed(() =>
   openedPath.value.length ? `${basePrefix.value}${openedPath.value.join('/')}/` : basePrefix.value,
 )
-/** 폴더 안으로 한 겹이라도 들어와 있는지 — 이때는 화면 머리가 통째로 바뀐다 (Figma 1359-610) */
+/** 폴더 안으로 한 겹이라도 들어와 있는지 — 이때는 화면 머리가 통째로 바뀐다 (Figma 1484-1140) */
 const isNested = computed(() => openedPath.value.length > 0)
 /** 여기서 폴더를 더 만들 수 있는지 — 허용 깊이(2단계)를 넘지 않을 때만 */
 const canNest = computed(() => openedPath.value.length < MAX_VOLUME_DEPTH)
@@ -144,6 +177,16 @@ const goUp = (depth = 0) => {
   void load()
 }
 
+/** 보고 있던 자리를 처음으로 — 팀이나 전시회 폴더가 바뀌었을 때 */
+const resetBrowsing = () => {
+  openedPath.value = []
+  pendingFolder.value = null
+  picked.value = null
+  query.value = ''
+  creating.value = false
+  void load()
+}
+
 /**
  * 팀을 고른다 — 빈 템플릿 전용. 팀이 바뀌면 보고 있던 자리도 통째로 바뀌므로
  * 들어와 있던 폴더·고른 폴더·검색어를 모두 처음으로 돌리고 다시 읽는다.
@@ -151,12 +194,18 @@ const goUp = (depth = 0) => {
 const pickTeam = (teamId: string) => {
   if (!canPickTeam.value || teamId === editorStore.currentTeamId) return
   editorStore.setCurrentTeam(teamId)
-  openedPath.value = []
-  pendingFolder.value = null
-  picked.value = null
-  query.value = ''
-  creating.value = false
-  void load()
+  resetBrowsing()
+}
+
+/** 팀 폴더 목록에서 전시회 폴더를 골라 들어간다 — 그 안이 회차 폴더 목록이다 */
+const enterExhibition = (name: string) => {
+  editorStore.setBlankFolder(name)
+  resetBrowsing()
+}
+/** 전시회 폴더에서 나와 팀 폴더 목록으로 */
+const leaveExhibition = () => {
+  editorStore.setBlankFolder(null)
+  resetBrowsing()
 }
 
 onMounted(async () => {
@@ -220,21 +269,28 @@ const newNameError = computed(() => {
 })
 const canCreate = computed(() => !!newName.value.trim() && !newNameError.value)
 
-/**
- * 폴더 한 줄을 눌렀을 때 — 안에 폴더가 또 있으면 **들어가고**, 아니면 고른다.
- * 저장은 언제나 맨 안쪽 폴더에 하므로, 폴더를 품은 폴더는 고를 대상이 아니다.
- * (안이 빈 폴더는 줄 오른쪽의 열기 버튼으로 들어간다)
- */
-const pickExisting = (folder: S3Folder) => {
+const isPicked = (folder: S3Folder) => picked.value?.name === folder.name
+
+/** 폴더 한 줄을 눌렀을 때 — 고르고, 다시 누르면 푼다 (안에 폴더가 있어도 똑같다) */
+const onRowClick = (folder: S3Folder) => {
   if (!isUsableFolderName(folder.name)) return
-  if (folder.hasChildren && canEnter.value) {
-    openFolder(folder.name)
-    return
-  }
-  picked.value = { name: folder.name, isNew: folder.name === pendingFolder.value }
+  picked.value = isPicked(folder)
+    ? null
+    : { name: folder.name, isNew: folder.name === pendingFolder.value }
 }
 
-/** 적어 넣은 이름으로 한 줄을 만든다 — 여기서 고르거나, 열기로 들어가 그 안에 또 만들 수 있다 */
+/** 더블클릭 — 안으로 들어간다(빈 폴더라도. 그 안에 또 폴더를 만들거나 그 자리에 저장하려고) */
+const onRowDblClick = (folder: S3Folder) => {
+  if (!isUsableFolderName(folder.name)) return
+  if (atTeamLevel.value) {
+    enterExhibition(folder.name)
+    return
+  }
+  if (canEnter.value) openFolder(folder.name)
+}
+
+
+/** 적어 넣은 이름으로 한 줄을 만든다 — 여기서 고르거나, 더블클릭으로 들어가 그 안에 또 만들 수 있다 */
 const createFolder = () => {
   if (!canCreate.value) return
   const name = newName.value.trim().toLowerCase()
@@ -244,9 +300,8 @@ const createFolder = () => {
   newName.value = ''
 }
 
-
 /**
- * 폴더가 하나도 없는 상태 — 이때는 표 대신 일러스트와 '폴더 만들기' 버튼만 보여준다(Figma 1347-9429).
+ * 폴더가 하나도 없는 상태 — 이때는 표 대신 일러스트만 보여준다.
  * 만들기를 누른 뒤에는 표 안의 입력 줄로 이어지므로 빈 화면이 아니다.
  */
 const isEmptyState = computed(
@@ -270,33 +325,73 @@ const pickedFolder = computed(() =>
     ? (folders.value.find((f) => f.name === picked.value?.name) ?? null)
     : null,
 )
-/** 고른 폴더에 놓인 임시 저장 파일 — 있으면 '이어서 편집'을 내민다 */
-const pickedEditFile = computed(() => pickedFolder.value?.editFile ?? null)
-/** 고른 폴더에 놓인 발송용 파일 — 이 회차가 이미 나갔다는 표시 */
-const pickedSendFile = computed(() => pickedFolder.value?.sendFile ?? null)
-/** 발송본을 새 창에서 열 주소 */
-const sendFileUrl = computed(() =>
-  pickedSendFile.value ? objectUrl(pickedSendFile.value.key) : undefined,
-)
+/** 고른 폴더에 놓인 **최근** 임시 저장 파일 — 있으면 '이어서 편집'을 내민다 (배지와 같은 기준) */
+const pickedEditFile = computed(() => {
+  const file = pickedFolder.value?.editFile
+  return file && isFreshEditFile(file) ? file : null
+})
 
-/** 안이 빈 폴더에 들어와 있는지 — 빈 화면 문구를 그 자리에 맞게 바꾼다 */
+/** 안이 빈 폴더에 들어와 있는지 — 이때는 새 폴더 없이 그 자리에 바로 저장할 수도 있다 (Figma 1488-1333) */
 const isInsideEmpty = computed(() => isEmptyState.value && openedPath.value.length > 0)
+/** 지금 들어와 있는 자리 — 'gocaf/ vol53/' (빈 폴더 안내 문구용) */
+const currentLocationLabel = computed(() => `${[rootFolderName.value, ...openedPath.value].join('/ ')}/`)
 
 const goBack = () => router.push({ name: 'templates' })
 
-/** 저장할 자리 — 들어와 있는 폴더까지 포함한 경로 ('eng/vol01') */
-const pickedVolume = computed(() =>
-  picked.value ? normalizeVolume([...openedPath.value, picked.value.name].join('/')) : '',
-)
+/**
+ * 저장할 자리 — 고른 폴더까지 포함한 경로 ('eng/vol01').
+ * 빈 폴더 안에서는 고른 것이 없어도 **그 자리**('vol53')가 곧 저장할 자리다.
+ */
+const targetVolume = computed(() => {
+  if (atTeamLevel.value) return ''
+  if (picked.value) return normalizeVolume([...openedPath.value, picked.value.name].join('/'))
+  if (isInsideEmpty.value) return normalizeVolume(openedPath.value.join('/'))
+  return ''
+})
+/** '여기로 저장'을 누를 수 있는지 — 팀 폴더 단계에서는 고른 전시회 폴더로 들어가는 버튼이다 */
+const canSave = computed(() => (atTeamLevel.value ? !!picked.value : !!targetVolume.value))
+/**
+ * 하단 '저장위치' 표기 — 'gocaf / eng / vol01 /' (Figma 1468-9089).
+ * 들어와 있는 폴더까지는 늘 보이고, 고른 폴더가 있으면 그 이름이 맨 뒤에 붙는다.
+ * 팀 폴더 단계에서는 아직 전시회를 못 정했으니 비워 둔다(Figma 1500-9394).
+ */
+const savePathLabel = computed(() => {
+  if (!hasTeam.value || atTeamLevel.value) return ''
+  const parts = [rootFolderName.value, ...openedPath.value]
+  if (picked.value) parts.push(picked.value.name)
+  return `${parts.join(' / ')} /`
+})
 
 /**
- * 고른 폴더를 회차로 저장하고 에디터로.
+ * '여기로 저장'.
+ *   - 팀 폴더 단계(빈 템플릿)에서는 고른 전시회 폴더 **안으로 들어간다**.
+ *   - 1단계(전시회 폴더 바로 아래)에서는 고른 폴더 **안으로 들어간다** — 안이 비어 있어도 마찬가지.
+ *     2단계에서 폴더를 더 만들지, 그 자리에 바로 저장할지를 보고 정하게 하려는 것.
+ *   - 2단계에서는 고른 자리(또는 비어 있으면 지금 자리)를 회차로 저장하고 에디터로.
  * 새 폴더는 여기서 만들지 않는다 — S3에는 빈 폴더가 없고, 첫 파일이 올라가면 그 자리가 곧 폴더다.
  */
 const goNext = () => {
-  if (!picked.value) return
-  editorStore.updateWrapSettings({ volume: pickedVolume.value })
+  if (!canSave.value) return
+  if (atTeamLevel.value) {
+    if (picked.value) enterExhibition(picked.value.name)
+    return
+  }
+  if (picked.value && canEnter.value) {
+    openFolder(picked.value.name)
+    return
+  }
+  editorStore.updateWrapSettings({ volume: targetVolume.value })
   router.push({ name: 'editor' })
+}
+
+/**
+ * '이전으로' — 폴더 안이면 한 겹 위로, 전시회 폴더 맨 위면(빈 템플릿) 팀 폴더 목록으로,
+ * 그것도 아니면 템플릿 선택으로.
+ */
+const goPrev = () => {
+  if (openedPath.value.length) goUp(openedPath.value.length - 1)
+  else if (editorStore.isBlankStart && editorStore.blankFolder) leaveExhibition()
+  else goBack()
 }
 
 /**
@@ -314,7 +409,7 @@ const continueEditing = async () => {
     const html = await fetchText(file.key)
     const ok = await restoreFromHtml(html)
     if (!ok) return // 안내는 restoreFromHtml이 띄운다
-    editorStore.updateWrapSettings({ volume: pickedVolume.value })
+    editorStore.updateWrapSettings({ volume: targetVolume.value })
     router.push({ name: 'editor' })
   } catch (err) {
     toast.add({
@@ -327,7 +422,6 @@ const continueEditing = async () => {
     restoring.value = false
   }
 }
-
 </script>
 
 <template>
@@ -349,34 +443,34 @@ const continueEditing = async () => {
         @top="goBack"
       />
 
-      <main class="fd-main" :class="{ 'fd-main--nested': isNested }">
-        <!--
-          폴더 안에 들어와 있으면 머리가 통째로 바뀐다 (Figma 1359-610):
-          맨 위에 지나온 경로, 그 아래 전시회 이름이 제목을 겸하고, 검색줄 대신 만들기 아이콘만 남는다.
-        -->
-        <nav v-if="isNested" class="fd-crumbs">
-          <button type="button" class="fd-crumb fd-crumb--link" @click="goUp(0)">
-            {{ rootFolderName }}
-          </button>
-          <template v-for="(segment, i) in openedPath" :key="segment">
-            <span class="fd-crumb-sep">&gt;</span>
-            <button
-              v-if="i < openedPath.length - 1"
-              type="button"
-              class="fd-crumb fd-crumb--link"
-              @click="goUp(i + 1)"
-            >
-              {{ segment }}
+      <!-- 우측 열 — 스크롤되는 본문 + 고정 하단. 하단선은 사이드바 오른쪽에서만 긋는다 (Figma 1468-8970) -->
+      <div class="fd-column">
+        <main class="fd-main" :class="{ 'fd-main--nested': isNested }">
+          <!--
+            폴더 안에 들어와 있으면 머리가 통째로 바뀐다 (Figma 1484-1140):
+            맨 위에 지나온 경로, 그 아래 전시회 이름이 제목을 겸하고, 검색줄은 없다.
+          -->
+          <nav v-if="isNested" class="fd-crumbs">
+            <button type="button" class="fd-crumb fd-crumb--link" @click="goUp(0)">
+              {{ rootFolderName }}
             </button>
-            <span v-else class="fd-crumb">{{ segment }}</span>
-          </template>
-        </nav>
+            <template v-for="(segment, i) in openedPath" :key="segment">
+              <span class="fd-crumb-sep">&gt;</span>
+              <button
+                v-if="i < openedPath.length - 1"
+                type="button"
+                class="fd-crumb fd-crumb--link"
+                @click="goUp(i + 1)"
+              >
+                {{ segment }}
+              </button>
+              <span v-else class="fd-crumb">{{ segment }}</span>
+            </template>
+          </nav>
 
-        <template v-if="!isNested">
-          <h1 class="fd-title">저장할 폴더를 선택해주세요.</h1>
-
-          <!-- 팀을 고르기 전에는 훑을 폴더도, 만들 자리도 없다 -->
-          <div v-if="hasTeam" class="fd-search-row">
+          <!-- 팀을 고르기 전에는 제목·검색 없이 안내만 (Figma 1488-2128) -->
+          <template v-if="!isNested && hasTeam">
+            <h1 class="fd-title">저장할 폴더를 선택해주세요.</h1>
             <SearchField
               v-model="query"
               class="fd-search"
@@ -384,237 +478,220 @@ const continueEditing = async () => {
               placeholder="폴더명을 검색하세요"
               aria-label="폴더 검색"
             />
-            <!-- 빈 화면일 때는 그쪽 버튼 하나만 남긴다 — 같은 일을 하는 버튼이 둘이면 헷갈린다 -->
+          </template>
+
+          <!--
+            어느 폴더를 보고 있는지 + 오른쪽 끝의 '폴더 만들기' 아이콘.
+            팀 폴더 단계에서는 팀 이름만(1500-9394), 전시회 단계에서는 전시회 이름 + 팀 배지.
+            폴더 안에서는 이 줄이 제목 자리(34px)를 대신한다.
+          -->
+          <div v-if="hasTeam" class="fd-context" :class="{ 'fd-context--title': isNested }">
+            <template v-if="atTeamLevel">
+              <span class="fd-context-name">{{ teamName }}</span>
+            </template>
+            <template v-else>
+              <span class="fd-context-name">{{ contextName }}</span>
+              <span v-if="teamName" class="fd-context-team">{{ teamName }}</span>
+            </template>
             <button
-              v-if="canNest && !creating && !isEmptyState && !isNoMatch"
+              v-if="canNest && !creating"
               type="button"
-              class="fd-create-btn fd-create-btn--top"
+              class="fd-create-icon"
+              :class="{ 'is-accent': isEmptyState || isNoMatch }"
+              title="폴더 만들기"
               @click="startCreate"
             >
               <span class="material-symbols-outlined">create_new_folder</span>
-              폴더 만들기
             </button>
           </div>
-        </template>
 
-        <!--
-          어느 전시회의 폴더를 보고 있는지. 폴더 안에서는 이 줄이 제목 자리(34px)를 대신하므로
-          빈 화면에서도 남는다 — 경로만 덩그러니 남으면 여기가 어디인지 알 수 없다.
-        -->
-        <div
-          v-if="hasTeam && (isNested || !isEmptyState)"
-          class="fd-context"
-          :class="{ 'fd-context--title': isNested }"
-        >
-          <span class="fd-context-name">{{ templateName }}</span>
-          <span v-if="teamName" class="fd-context-team">{{ teamName }}</span>
-          <span v-if="!isNested" class="ml-auto text-gray-500">*폴더 삭제는 UXD팀에게 문의해주세요.</span>
-          <!-- 폴더 안에는 검색줄이 없어 만들기 버튼이 이 줄 오른쪽 끝에 붙는다 (모양은 검색줄의 것과 같다) -->
-          <button
-            v-if="isNested && canNest && !creating && !isEmptyState"
-            type="button"
-            class="fd-create-btn fd-create-btn--top"
-            @click="startCreate"
-          >
-            <span class="material-symbols-outlined">create_new_folder</span>
-            폴더 만들기
-          </button>
-        </div>
-
-        <!--
-          빈 템플릿으로 들어와 아직 팀을 안 골랐을 때 — 폴더는 팀 아래에 나뉘어 있어
-          팀부터 골라야 보여줄 것이 생긴다. 고르고 나면 아래 '폴더 만들기' 흐름으로 이어진다.
-        -->
-        <div v-if="!hasTeam" class="fd-empty">
-          <img :src="emptyIcon" alt="" class="fd-empty-img" />
-          <p class="fd-empty-text">
-            팀을 먼저 선택해 주세요.<br />
-            왼쪽에서 팀을 고르면 그 팀의 폴더를 보여드려요.
-          </p>
-        </div>
-
-        <!-- 폴더가 없을 때는 표 대신 일러스트만 (Figma 1347-9429) -->
-        <div v-else-if="isEmptyState" class="fd-empty">
-          <img :src="emptyIcon" alt="" class="fd-empty-img" />
-          <p v-if="isInsideEmpty" class="fd-empty-text">
-            이 폴더 안에는 아직 폴더가 없어요.<br />
-            여기에 새로 만들거나, 위 경로를 눌러 되돌아갈 수 있어요.
-          </p>
-          <p v-else class="fd-empty-text">
-            아직 저장할 폴더가 없어요.<br />
-            폴더를 새로 만들어 시작해 주세요.
-          </p>
-          <button v-if="canNest" type="button" class="fd-create-btn" @click="startCreate">
-            <span class="material-symbols-outlined">create_new_folder</span>
-            폴더 만들기
-          </button>
-        </div>
-
-        <template v-else>
-        <!-- 목록 -->
-        <div class="fd-table">
-          <div class="fd-thead">
-            <span class="fd-col-name">이름</span>
-            <span class="fd-col-type">유형</span>
-            <span class="fd-col-at">마지막 수정</span>
-            <!-- 줄 오른쪽 열기 버튼만큼 비워 둔다 — 없으면 머리글과 아래 값이 어긋난다 -->
-            <span v-if="canEnter" class="fd-thead-enter" aria-hidden="true"></span>
+          <!--
+            빈 템플릿으로 들어와 아직 팀을 안 골랐을 때 — 폴더는 팀 아래에 나뉘어 있어
+            팀부터 골라야 보여줄 것이 생긴다. 고르고 나면 아래 '폴더 만들기' 흐름으로 이어진다.
+          -->
+          <div v-if="!hasTeam" class="fd-empty fd-empty--folder fd-empty--team">
+            <img :src="emptyTeamIcon" alt="" class="fd-empty-folder-img fd-empty-team-img" />
+            <p class="fd-empty-title">어느 팀 소속이신가요?</p>
+            <p class="fd-empty-text">
+              좌측 메뉴에 소속된 팀을 선택 후에<br />
+              뉴스레터를 저장할 폴더를 선택할 수 있어요
+            </p>
           </div>
 
-          <p v-if="loading" class="fd-state">폴더를 읽는 중…</p>
-          <p v-else-if="loadError" class="fd-state fd-state--error">{{ loadError }}</p>
+          <!-- 들어간 폴더가 비어 있을 때 — 새로 만들거나 그 자리에 바로 저장 (Figma 1488-1333) -->
+          <div v-else-if="isInsideEmpty" class="fd-empty fd-empty--folder">
+            <img :src="emptyFolderIcon" alt="" class="fd-empty-folder-img" />
+            <p class="fd-empty-title">아직 폴더가 없어요</p>
+            <p class="fd-empty-text">
+              새 폴더를 만들거나,<br />
+              현재 위치 <strong>{{ currentLocationLabel }}</strong> 에 저장할 수 있어요.
+            </p>
+          </div>
+
+          <!-- 전시회 폴더(또는 팀 폴더) 자체가 비어 있을 때 -->
+          <div v-else-if="isEmptyState" class="fd-empty">
+            <img :src="emptyIcon" alt="" class="fd-empty-img" />
+            <p v-if="atTeamLevel" class="fd-empty-text">
+              이 팀에는 아직 전시회 폴더가 없어요.<br />
+              오른쪽 위 아이콘으로 전시회 폴더를 만들어 시작해 주세요.
+            </p>
+            <p v-else class="fd-empty-text">
+              아직 저장할 폴더가 없어요.<br />
+              오른쪽 위 아이콘으로 폴더를 새로 만들어 시작해 주세요.
+            </p>
+          </div>
 
           <template v-else>
-            <!-- 새 폴더 이름 — 목록 맨 위에서 바로 적는다 (검색창은 검색만 한다) -->
-            <div v-if="creating" class="fd-row fd-row--new">
-              <span class="fd-row-left">
-                <span class="material-symbols-outlined fd-folder-icon">create_new_folder</span>
-                <span class="fd-row-text">
-                  <InputText
-                    ref="newNameInput"
-                    v-model="newName"
-                    placeholder="새 폴더 이름 (예: vol01)"
-                    class="fd-new-input"
-                    @keydown.enter="createFolder"
-                    @keydown.esc="cancelCreate"
-                  />
-                  <span class="fd-row-sub" :class="{ 'fd-row-sub--error': newNameError }">
-                    {{ newNameError ?? '새로 만들 폴더' }}
-                  </span>
+            <!-- 목록 -->
+            <div class="fd-table">
+              <div class="fd-thead">
+                <span class="fd-col-name">이름</span>
+                <span class="fd-right">
+                  <span class="fd-col-type">유형</span>
+                  <span class="fd-col-at">마지막 수정</span>
                 </span>
-              </span>
-              <span class="fd-row-right fd-new-actions">
+              </div>
+
+              <p v-if="loading" class="fd-state">폴더를 읽는 중…</p>
+              <p v-else-if="loadError" class="fd-state fd-state--error">{{ loadError }}</p>
+
+              <template v-else>
+                <!-- 새 폴더 이름 — 목록 맨 위에서 바로 적는다 (검색창은 검색만 한다) (Figma 1488-1463).
+                     [폴더 아이콘][10px][채움형 입력 300×40][30px][확인][12px][취소] … 오른쪽엔 '폴더'만.
+                     이름이 규칙에 안 맞을 때만 입력 아래 한 줄로 알린다(디자인엔 없는 줄 — 안 알리면 왜 안 되는지 모른다). -->
+                <div v-if="creating" class="fd-row fd-row--new">
+                  <span class="fd-row-left">
+                    <span class="material-symbols-outlined fd-folder-icon">folder</span>
+                    <span class="fd-new-field">
+                      <InputText
+                        ref="newNameInput"
+                        v-model="newName"
+                        placeholder="폴더명을 입력하세요"
+                        class="fd-new-input"
+                        aria-label="새 폴더 이름"
+                        @keydown.enter="createFolder"
+                        @keydown.esc="cancelCreate"
+                      />
+                      <span v-if="newNameError" class="fd-new-error">{{ newNameError }}</span>
+                    </span>
+                    <span class="fd-new-actions">
+                      <button
+                        type="button"
+                        class="fd-new-action"
+                        :disabled="!canCreate"
+                        @click="createFolder"
+                      >
+                        확인
+                      </button>
+                      <button type="button" class="fd-new-action fd-new-action--ghost" @click="cancelCreate">
+                        취소
+                      </button>
+                    </span>
+                  </span>
+                  <span class="fd-right">
+                    <span class="fd-col-type">폴더</span>
+                    <span class="fd-col-at"></span>
+                  </span>
+                </div>
+
+                <!--
+                  한 줄 = 버튼 하나. 클릭으로 고르거나 풀고, 더블클릭이면 안으로 들어간다.
+                  고른 줄은 왼쪽에 체크가 붙고 파랗게 칠해진다 (Figma 1484-1081).
+                -->
                 <button
+                  v-for="folder in visibleFolders"
+                  :key="folder.name"
                   type="button"
-                  class="fd-new-action"
-                  :disabled="!canCreate"
-                  @click="createFolder"
+                  class="fd-row"
+                  :class="{
+                    'is-picked': isPicked(folder),
+                    'is-disabled': !isUsableFolderName(folder.name),
+                  }"
+                  :disabled="!isUsableFolderName(folder.name)"
+                  :aria-pressed="isPicked(folder)"
+                  :title="atTeamLevel || canEnter ? '클릭: 선택 · 더블클릭: 폴더 열기' : '클릭: 선택'"
+                  @click="onRowClick(folder)"
+                  @dblclick="onRowDblClick(folder)"
                 >
-                  만들기
-                </button>
-                <button type="button" class="fd-new-action fd-new-action--ghost" @click="cancelCreate">
-                  취소
-                </button>
-              </span>
-            </div>
-
-            <!--
-              한 줄에 두 가지 일이 붙는다 — 왼쪽 넓은 자리는 '여기에 저장'(선택),
-              오른쪽 화살표는 '이 폴더 안으로'. 버튼 안에 버튼을 넣을 수 없어 줄은 div로 둔다.
-            -->
-            <div
-              v-for="folder in visibleFolders"
-              :key="folder.name"
-              class="fd-row"
-              :class="{
-                'is-picked': picked && picked.name === folder.name,
-                'is-disabled': !isUsableFolderName(folder.name),
-              }"
-            >
-              <button
-                type="button"
-                class="fd-row-main"
-                :disabled="!isUsableFolderName(folder.name)"
-                @click="pickExisting(folder)"
-              >
-                <span class="fd-row-left">
-                  <span class="material-symbols-outlined fd-folder-icon">folder</span>
-                  <span class="fd-row-text">
-                    <span class="fd-row-name">
-                      {{ folder.name }}/
-                      <!-- 임시 저장 파일이 있으면 여기서 이어서 편집할 수 있다고 미리 알린다 -->
-                      <!-- 이미 나간 회차 — 손대기 전에 알아볼 수 있게 앞에 둔다 -->
-                      <span v-if="folder.sendFile" class="fd-row-badge fd-row-badge--sent">
-                        발송 완료
-                      </span>
-                      <span v-if="folder.editFile" class="fd-row-badge">이어서 편집</span>
-                      <span v-if="folder.name === pendingFolder" class="fd-row-badge fd-row-badge--new">
-                        새 폴더
-                      </span>
+                  <span class="fd-row-left">
+                    <span v-if="isPicked(folder)" class="material-symbols-outlined fd-row-check">
+                      check_circle
                     </span>
-                    <span class="fd-row-sub">
-                      {{ isUsableFolderName(folder.name)
-                        ? (folder.name === pendingFolder
-                          ? '저장할 때 만들어져요'
-                          : `${folder.itemCount}개 항목`)
-                        : '주소 규칙과 맞지 않아 고를 수 없어요' }}
+                    <span class="material-symbols-outlined fd-folder-icon">folder</span>
+                    <span class="fd-row-text">
+                      <span class="fd-row-name">
+                        {{ folder.name }}/
+                        <!-- 최근(EDIT_FILE_FRESH_DAYS) 임시 저장 파일이 있으면 이어서 편집할 수 있다고 미리 알린다.
+                             오래된 것은 지난 회차의 흔적이라 접는다. 발송 여부는 여기서 알리지 않는다
+                             (AI 도구의 웹 링크 카드가 맡는다). -->
+                        <span v-if="isFreshEditFile(folder.editFile)" class="fd-row-badge">이어서 편집</span>
+                        <span v-if="folder.name === pendingFolder" class="fd-row-badge fd-row-badge--new">
+                          새 폴더
+                        </span>
+                      </span>
+                      <span class="fd-row-sub">
+                        {{ isUsableFolderName(folder.name)
+                          ? (folder.name === pendingFolder
+                            ? '저장할 때 만들어져요'
+                            : `${folder.itemCount}개 항목`)
+                          : '주소 규칙과 맞지 않아 고를 수 없어요' }}
+                      </span>
                     </span>
                   </span>
-                </span>
-                <span class="fd-row-right">
-                  <span class="fd-col-type">폴더</span>
-                  <span class="fd-col-at">{{ formatModified(folder.lastModified) }}</span>
-                </span>
-              </button>
-              <!-- 안으로 들어가기 — 방금 만든 빈 폴더도 여기로 들어가 그 안에 또 만든다 -->
-              <button
-                v-if="canEnter && isUsableFolderName(folder.name)"
-                type="button"
-                class="fd-row-enter"
-                :title="`${folder.name} 폴더 열기`"
-                @click="openFolder(folder.name)"
-              >
-                <span class="material-symbols-outlined">chevron_right</span>
-              </button>
-            </div>
+                  <span class="fd-right">
+                    <span class="fd-col-type">폴더</span>
+                    <span class="fd-col-at">{{ formatModified(folder.lastModified) }}</span>
+                  </span>
+                </button>
 
-            <!-- 검색어와 맞는 폴더가 없을 때 — 폴더가 아예 없을 때와 같은 빈 화면을 문구만 바꿔 쓴다 -->
-            <div v-if="isNoMatch" class="fd-empty fd-empty--inline">
-              <img :src="emptyIcon" alt="" class="fd-empty-img" />
-              <p class="fd-empty-text">
-                검색한 폴더가 없어요.<br />
-                폴더를 새로 만들거나 다시 검색해주세요.
-              </p>
-              <button v-if="canNest && !creating" type="button" class="fd-create-btn" @click="startCreate">
-                <span class="material-symbols-outlined">create_new_folder</span>
-                폴더 만들기
-              </button>
+                <!-- 검색어와 맞는 폴더가 없을 때 -->
+                <div v-if="isNoMatch" class="fd-empty fd-empty--inline">
+                  <img :src="emptyIcon" alt="" class="fd-empty-img" />
+                  <p class="fd-empty-text">
+                    검색한 폴더가 없어요.<br />
+                    오른쪽 위 아이콘으로 새로 만들거나 다시 검색해주세요.
+                  </p>
+                </div>
+              </template>
             </div>
           </template>
-        </div>
-        </template>
-      </main>
-    </div>
+        </main>
 
-    <footer class="fd-footer">
-      <div v-if="pickedEditFile || pickedSendFile" class="fd-footer-notes">
-        <!-- 고른 폴더에 임시 저장 파일이 있으면 '이어서 편집'을 기본 동작으로 내민다 -->
-        <p v-if="pickedEditFile" class="fd-footer-note">
-          <span class="material-symbols-outlined">cloud_upload</span>
-          {{ pickedEditFile.name }} · {{ formatModified(pickedEditFile.lastModified) }}
-        </p>
-        <!--
-          이미 나간 회차 — 무엇이 나갔는지 열어 볼 수 있게 한다.
-          발송용 파일은 재편집 메타데이터가 없어 불러올 수 없다(이어서 편집은 임시 저장 파일이 맡는다).
-        -->
-        <p v-if="pickedSendFile" class="fd-footer-note fd-footer-note--sent">
-          <span class="material-symbols-outlined">send</span>
-          {{ formatModified(pickedSendFile.lastModified) }}에 발송용 파일이 올라갔어요 ·
-          <a :href="sendFileUrl" target="_blank" rel="noopener noreferrer">발송본 열기</a>
-          <template v-if="pickedEditFile">— 이어서 편집한 뒤 링크를 다시 만들면 덮어써요</template>
-          <template v-else>— 임시 저장 파일이 없어 이어서 편집은 할 수 없어요</template>
-        </p>
+        <!-- 하단 — 왼쪽에 저장 위치만, 오른쪽에 이전/여기로 저장 (템플릿 선택 화면과 같은 FlowFooter).
+             최근 임시 저장은 줄의 배지가 알리고, 여기서는 그 폴더를 골랐을 때 버튼만 달라진다. -->
+        <FlowFooter>
+          <template #info>
+            <!-- 라벨은 늘 두고, 전시회 폴더가 정해진 뒤에만 경로를 적는다 (Figma 1488-2128 / 1500-9394) -->
+            <p class="flow-info">
+              <span class="flow-info-label">
+                <span class="material-symbols-outlined">drive_file_move</span>
+                저장위치
+              </span>
+              <span v-if="savePathLabel" class="flow-info-value">{{ savePathLabel }}</span>
+            </p>
+          </template>
+          <button type="button" class="flow-btn flow-btn--ghost" @click="goPrev">이전으로</button>
+          <button
+            type="button"
+            class="flow-btn"
+            :class="pickedEditFile ? 'flow-btn--ghost' : 'flow-btn--primary'"
+            :disabled="!canSave || restoring"
+            @click="goNext"
+          >
+            {{ pickedEditFile ? '새로 시작' : '여기로 저장' }}
+          </button>
+          <button
+            v-if="pickedEditFile"
+            type="button"
+            class="flow-btn flow-btn--primary"
+            :disabled="restoring"
+            @click="continueEditing"
+          >
+            {{ restoring ? '불러오는 중…' : '이어서 편집' }}
+          </button>
+        </FlowFooter>
       </div>
-      <button type="button" class="fd-btn fd-btn--ghost" @click="goBack">이전으로</button>
-      <button
-        type="button"
-        class="fd-btn"
-        :class="pickedEditFile ? 'fd-btn--ghost' : 'fd-btn--primary'"
-        :disabled="!picked || restoring"
-        @click="goNext"
-      >
-        {{ pickedEditFile ? '새로 시작' : '다음' }}
-      </button>
-      <button
-        v-if="pickedEditFile"
-        type="button"
-        class="fd-btn fd-btn--primary"
-        :disabled="restoring"
-        @click="continueEditing"
-      >
-        {{ restoring ? '불러오는 중…' : '이어서 편집' }}
-      </button>
-    </footer>
+    </div>
   </div>
 </template>
 
@@ -630,107 +707,45 @@ const continueEditing = async () => {
   display: flex;
   min-height: 0;
 }
+/* 우측 열 — 본문이 스크롤되고 하단 바는 늘 보인다 */
+.fd-column {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
 
+/* 본문 — 제목이 위에서 122px(헤더 60 + 62), 좌우는 사이드바에서 67px·오른쪽 115px (Figma 1468-8970) */
 .fd-main {
   flex: 1;
   min-width: 0;
-  padding: 60px 68px 40px;
+  padding: 62px 115px 40px 67px;
   overflow-y: auto;
 }
 .fd-title {
-  margin: 0 0 32px;
+  margin: 0 0 22px;
   font-size: 34px;
   font-weight: 500;
   line-height: 1.5;
   letter-spacing: -0.34px;
   color: var(--black);
 }
-
-/* 검색 = 필터 + 새 폴더 이름 입력 */
-.fd-search-row {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
 /* 모양은 공용 SearchField(lg)가 갖고, 여기서는 폭만 잡는다 */
 .fd-search {
   width: 630px;
   max-width: 100%;
 }
-/* 폴더 만들기 — 검색줄 오른쪽과 빈 화면 가운데에서 같은 모양으로 쓴다 */
-.fd-create-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  background: var(--blue-400);
-  color: var(--white);
-  font-size: 16px;
-  font-weight: 500;
-  white-space: nowrap;
-  cursor: pointer;
-}
-.fd-create-btn:hover {
-  background: var(--blue-500);
-}
-.fd-create-btn .material-symbols-outlined {
-  font-size: 20px;
-}
-/* 검색줄에서는 오른쪽 끝으로 민다 */
-.fd-create-btn--top {
-  margin-left: auto;
-}
-/* 새 폴더 줄 — 이름 입력과 만들기/취소 */
-.fd-new-input {
-  width: 260px;
-  max-width: 100%;
-  height: 34px;
-  padding: 0 10px;
-  font-size: 17px;
-}
-.fd-row-sub--error {
-  color: var(--red-700);
-}
-.fd-new-actions {
-  gap: 8px;
-}
-.fd-new-action {
-  padding: 9px 18px;
-  border: none;
-  border-radius: 8px;
-  background: var(--blue-400);
-  color: var(--white);
-  font-size: 15px;
-  font-weight: 500;
-  cursor: pointer;
-}
-.fd-new-action:hover:not(:disabled) {
-  background: var(--blue-500);
-}
-.fd-new-action:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-.fd-new-action--ghost {
-  background: var(--gray-100);
-  color: var(--gray-800);
-}
-.fd-new-action--ghost:hover {
-  background: var(--gray-200) !important;
 
-}
-
-/* 어느 폴더 안에 들어와 있는지 — gocaf > eng, 화면 맨 위 (Figma 1359-610) */
+/* 어느 폴더 안에 들어와 있는지 — gocaf > eng, 화면 맨 위(헤더 아래 40px) (Figma 1484-1140) */
 .fd-crumbs {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin: 0 0 5px;
+  margin: 0 0 25px;
   font-size: 17px;
   line-height: 20px;
-  color: var(--gray-600);
+  color: var(--gray-700);
 }
 .fd-crumb {
   padding: 0;
@@ -738,33 +753,34 @@ const continueEditing = async () => {
   background: none;
   font-size: 17px;
   line-height: 20px;
-  color: var(--gray-600);
+  color: var(--gray-700);
 }
 .fd-crumb--link {
+  color: var(--blue-500);
   text-decoration: underline;
   cursor: pointer;
 }
 .fd-crumb--link:hover {
-  color: var(--blue-500);
+  color: var(--blue-600);
 }
 .fd-crumb-sep {
-  color: var(--gray-600);
+  color: var(--gray-700);
 }
-/* 경로가 제목 위로 올라오는 만큼 위 여백을 줄인다 (경로 가운데가 nav에서 47px) */
 .fd-main--nested {
-  padding-top: 37px;
+  padding-top: 40px;
 }
 
-/* 어느 전시회의 폴더를 보고 있는지 */
+/* 어느 전시회의 폴더를 보고 있는지 + 오른쪽 끝 '폴더 만들기' 아이콘 — 검색줄 아래 50px */
 .fd-context {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-top: 46px;
+  gap: 12px;
+  margin-top: 50px;
 }
 .fd-context-name {
   font-size: 24px;
   font-weight: 500;
+  line-height: 1.5;
   letter-spacing: -0.24px;
   color: var(--gray-800);
 }
@@ -776,28 +792,49 @@ const continueEditing = async () => {
   font-size: 14px;
   font-weight: 500;
 }
-/* 폴더 안에서는 이 줄이 곧 제목이다 — 크기·색을 fd-title과 맞춘다 (Figma 1359-610) */
+/* 폴더 안에서는 이 줄이 곧 제목이다 — 크기·색을 fd-title과 맞춘다 */
 .fd-context--title {
   margin-top: 0;
 }
 .fd-context--title .fd-context-name {
   font-size: 34px;
-  font-weight: 500;
-  line-height: 1.5;
   letter-spacing: -0.34px;
   color: var(--black);
 }
-.fd-table {
-  margin-top: 32px;
+/* 폴더 만들기 — 줄 오른쪽 끝의 아이콘 버튼. 폴더가 없을 때는 채워서 눈에 띄게 (Figma 1488-1333) */
+.fd-create-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  margin-left: auto;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: var(--gray-800);
+  cursor: pointer;
 }
-/* 제목(34px)과 머리글 사이는 62px */
+.fd-create-icon:hover,
+.fd-create-icon.is-accent {
+  background: var(--gray-100);
+}
+.fd-create-icon .material-symbols-outlined {
+  font-size: 28px;
+}
+
+/* 표 — 머리글은 전시회 줄 아래 50px(폴더 안에서는 60px), 줄은 머리글 아래 22px */
+.fd-table {
+  margin-top: 50px;
+}
 .fd-main--nested .fd-table {
-  margin-top: 62px;
+  margin-top: 60px;
 }
 .fd-thead {
   display: flex;
   align-items: center;
-  padding: 0 20px 12px;
+  justify-content: space-between;
+  padding: 0 20px 22px 0;
   font-size: 15px;
   color: var(--gray-600);
 }
@@ -805,61 +842,51 @@ const continueEditing = async () => {
   flex: 1;
   min-width: 0;
 }
+/* 오른쪽 묶음 — 유형은 왼쪽 끝, 마지막 수정은 오른쪽 213px 칸 가운데 (머리글·줄이 같은 폭을 쓴다) */
+.fd-right {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 387px;
+  flex-shrink: 0;
+}
 .fd-col-type {
-  width: 120px;
   flex-shrink: 0;
 }
 .fd-col-at {
-  width: 260px;
+  width: 213px;
   flex-shrink: 0;
   text-align: center;
 }
-/* 머리글 끝의 빈자리 — .fd-row-enter(40px + 오른쪽 여백 12px)와 같은 폭 */
-.fd-thead-enter {
-  width: 40px;
-  margin-right: 12px;
-  flex-shrink: 0;
-}
 
-/* 줄은 테두리와 배경만 맡고, 안의 두 버튼(선택·열기)이 자리를 나눠 쓴다 */
+/* 줄 = 버튼 하나. 위아래 선, 18/20 안쪽 여백 (Figma 1468-8976) */
 .fd-row {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   width: 100%;
+  padding: 18px 20px;
+  border: 0;
   border-top: 1px solid var(--gray-200);
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.12s;
 }
 .fd-row:last-of-type {
   border-bottom: 1px solid var(--gray-200);
 }
-.fd-row:hover {
+.fd-row:hover:not(:disabled) {
   background: var(--gray-50);
 }
-.fd-row.is-picked {
+/* 고른 줄 — 파란 바탕 + 왼쪽 체크 (Figma 1484-1081) */
+.fd-row.is-picked,
+.fd-row.is-picked:hover {
   background: var(--blue-50);
 }
 .fd-row.is-disabled {
   opacity: 0.55;
-}
-/* 넓은 왼쪽 — 이 폴더에 저장하기 */
-.fd-row-main {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 18px 20px;
-  border: none;
-  background: none;
-  text-align: left;
-  cursor: pointer;
-}
-.fd-row-main:disabled {
   cursor: not-allowed;
-}
-/* 새 폴더 줄(입력)은 안에 버튼이 없어 자기 여백을 스스로 잡는다 */
-.fd-row--new {
-  justify-content: space-between;
-  padding: 18px 20px;
 }
 .fd-row-left {
   display: flex;
@@ -867,9 +894,16 @@ const continueEditing = async () => {
   gap: 10px;
   min-width: 0;
 }
+.fd-row-check {
+  flex-shrink: 0;
+  margin-right: 10px;
+  font-size: 28px;
+  color: var(--blue-500);
+}
 .fd-folder-icon {
   display: flex;
-  align-items: center; justify-content: center;
+  align-items: center;
+  justify-content: center;
   width: 48px;
   aspect-ratio: 1/1;
   font-size: 26px;
@@ -877,9 +911,11 @@ const continueEditing = async () => {
   flex-shrink: 0;
   border-radius: 8px;
   border: 1px solid var(--gray-300);
+  background: var(--white);
 }
-.fd-row--new .fd-folder-icon {
-  color: var(--blue-400);
+/* 고른 줄의 폴더 아이콘 상자는 회색으로 채운다 (Figma 1484-1127) */
+.fd-row.is-picked .fd-folder-icon {
+  background: var(--blue-50);
 }
 .fd-row-text {
   display: flex;
@@ -897,6 +933,9 @@ const continueEditing = async () => {
   font-size: 15px;
   color: var(--gray-600);
 }
+.fd-row-sub--error {
+  color: var(--red-700);
+}
 /* 이어서 편집할 파일이 있는 폴더 표시 */
 .fd-row-badge {
   margin-left: 6px;
@@ -908,46 +947,94 @@ const continueEditing = async () => {
   font-weight: 500;
   vertical-align: middle;
 }
+
 /* 아직 서버에 없는 폴더 — 저장할 때 만들어진다 */
 .fd-row-badge--new {
   background: var(--gray-100);
   color: var(--gray-700);
 }
-/* 이미 나간 회차 */
-.fd-row-badge--sent {
-  background: var(--green-50);
-  color: var(--green-700);
-}
-.fd-row-right {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
+.fd-row .fd-right {
   font-size: 15px;
-  color: var(--gray-800);
+  color: var(--gray-750);
 }
-.fd-row-right .fd-col-type {
+.fd-row .fd-col-type {
   font-size: 16px;
 }
-/* 오른쪽 끝 — 이 폴더 안으로 */
-.fd-row-enter {
+
+/* 새 폴더 줄 — 이름 입력과 확인/취소 (버튼이 아니라 div) (Figma 1488-1463) */
+.fd-row--new {
+  cursor: default;
+}
+.fd-row--new .fd-row-left {
+  gap: 10px;
+}
+.fd-new-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  /* 입력 → 버튼 사이 30px */
+  margin-right: 20px;
+}
+/* 채움형 입력 300×40 — 테두리 없이 gray/100, 15px medium, 자리글 gray/500 */
+.fd-new-input {
+  width: 300px;
+  max-width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--gray-100);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--gray-800);
+  box-shadow: none;
+}
+.fd-new-input::placeholder {
+  color: var(--gray-500);
+  font-weight: 500;
+}
+.fd-new-input:focus {
+  outline: none;
+  box-shadow: inset 0 0 0 1px var(--blue-400);
+}
+.fd-new-error {
+  font-size: 13px;
+  color: var(--red-700);
+}
+.fd-new-actions {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 40px;
+  gap: 12px;
+  flex-shrink: 0;
+}
+/* 확인 — gray/700 채움 · 취소 — 흰 배경 + gray/200 테두리. 둘 다 h40 px16 14px medium */
+.fd-new-action {
   height: 40px;
-  margin-right: 12px;
-  border: none;
+  padding: 0 16px;
+  border: 1px solid var(--gray-700);
   border-radius: 8px;
-  background: none;
-  color: var(--gray-500);
+  background: var(--gray-700);
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
 }
-.fd-row-enter:hover {
-  background: var(--gray-200);
-  color: var(--blue-500);
+.fd-new-action:hover:not(:disabled) {
+  border-color: var(--gray-750);
+  background: var(--gray-750);
 }
-.fd-row-enter .material-symbols-outlined {
-  font-size: 24px;
+.fd-new-action:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.fd-new-action--ghost {
+  border-color: var(--gray-200);
+  background: var(--white);
+  color: var(--gray-600);
+}
+.fd-new-action--ghost:hover {
+  border-color: var(--gray-300) !important;
+  background: var(--gray-50) !important;
 }
 
 .fd-state {
@@ -961,7 +1048,7 @@ const continueEditing = async () => {
   color: var(--red-700);
 }
 
-/* 빈 상태 — 검색창 아래 87px 띄우고 289px 일러스트만 가운데에 (Figma 1347-9429) */
+/* 빈 상태 — 일러스트를 가운데에 */
 .fd-empty {
   display: flex;
   justify-content: center;
@@ -980,7 +1067,6 @@ const continueEditing = async () => {
   margin-top: 4rem;
   padding-bottom: 2rem;
 }
-/* 디자인엔 문구가 없지만, 여기서 할 일(폴더 만들기)을 알려주는 안내를 일러스트 아래 둔다 */
 .fd-empty-text {
   margin: 0;
   font-size: 16px;
@@ -988,75 +1074,34 @@ const continueEditing = async () => {
   color: var(--gray-600);
   text-align: center;
 }
-.fd-empty .fd-create-btn {
-  margin-top: 6px;
+/* 들어간 폴더가 비어 있을 때 — 제목 아래 79px, 284×245 일러스트 + 28px 제목 + 안내 (Figma 1488-1416) */
+.fd-empty--folder {
+  margin-top: 79px;
+  gap: 0;
 }
-
-/* 하단 — 다음/이전 */
-.fd-footer {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 12px;
-  height: 96px;
-  padding: 0 68px;
-  border-top: 1px solid var(--gray-200);
-  background: var(--white);
-  flex-shrink: 0;
+.fd-empty-folder-img {
+  width: 284px;
+  height: 245px;
+  object-fit: contain;
+  margin-bottom: 20px;
 }
-.fd-btn {
-  padding: 14px 36px;
-  border: none;
-  border-radius: 8px;
-  font-size: 17px;
+.fd-empty-title {
+  margin: 0 0 12px;
+  font-size: 28px;
   font-weight: 500;
-  cursor: pointer;
+  color: var(--gray-800);
+  text-align: center;
 }
-.fd-btn--ghost {
-  background: var(--gray-100);
+.fd-empty--folder .fd-empty-text strong {
+  font-weight: 500;
   color: var(--gray-800);
 }
-.fd-btn--ghost:hover {
-  background: var(--gray-200);
+/* 팀을 고르기 전 — 제목·검색이 없어 위에서 211px(헤더 60 + 본문 여백 62 + 89) (Figma 1488-2128) */
+.fd-empty--team {
+  margin-top: 150px;
 }
-.fd-btn--primary {
-  background: var(--blue-400);
-  color: var(--white);
-}
-.fd-btn--primary:hover:not(:disabled) {
-  background: var(--blue-500);
-}
-.fd-btn--primary:disabled,
-.fd-btn--ghost:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.fd-empty-team-img {
+  height: 253px;
 }
 
-/* 고른 폴더의 상태 — 버튼 왼쪽에 파일명·시각 */
-.fd-footer-notes {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin: 0 auto 0 0;
-  min-width: 0;
-}
-.fd-footer-note {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin: 0;
-  font-size: 14px;
-  color: var(--gray-600);
-}
-.fd-footer-note .material-symbols-outlined {
-  font-size: 20px;
-  color: var(--blue-500);
-}
-/* 이미 나간 회차 — 되돌릴 수 없는 쪽이라 눈에 띄게 */
-.fd-footer-note--sent .material-symbols-outlined {
-  color: var(--green-700);
-}
-.fd-footer-note--sent a {
-  color: var(--blue-500);
-}
 </style>

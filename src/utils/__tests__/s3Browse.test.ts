@@ -229,13 +229,15 @@ describe('toPrefix', () => {
 })
 
 describe('isUsableFolderName', () => {
-  // 경로를 만들 때 normalizeVolume이 영숫자만 남기므로, 그 밖의 이름은 실제 폴더와 어긋난다
-  it('소문자 영숫자만 통과시킨다', () => {
+  // 경로를 만들 때 normalizeVolume이 소문자 영숫자·하이픈·밑줄만 남기므로, 그 밖의 이름은 실제 폴더와 어긋난다
+  it('소문자 영숫자·하이픈·밑줄만 통과시킨다', () => {
     expect(isUsableFolderName('vol01')).toBe(true)
     expect(isUsableFolderName('common')).toBe(true)
-    expect(isUsableFolderName('vol-56')).toBe(false)
-    expect(isUsableFolderName('vol_56')).toBe(false)
+    expect(isUsableFolderName('vol-56')).toBe(true)
+    expect(isUsableFolderName('vol_56')).toBe(true)
+    expect(isUsableFolderName('space_design')).toBe(true)
     expect(isUsableFolderName('Vol01')).toBe(false)
+    expect(isUsableFolderName('vol 01')).toBe(false)
     expect(isUsableFolderName('회차')).toBe(false)
   })
 })
@@ -244,13 +246,15 @@ describe('validateFolderName', () => {
   it('쓸 수 있는 이름이면 null', () => {
     expect(validateFolderName('vol01')).toBeNull()
     expect(validateFolderName('VOL01')).toBeNull() // 저장할 때 소문자로 눕힌다
+    expect(validateFolderName('vol-01')).toBeNull()
+    expect(validateFolderName('space_design')).toBeNull()
   })
 
-  it('빈 값·기호·한글은 막는다', () => {
+  it('빈 값·공백·한글·다른 기호는 막는다', () => {
     expect(validateFolderName('   ')).toBe('폴더명을 입력해 주세요')
-    expect(validateFolderName('vol 01')).toMatch(/영문 소문자와 숫자/)
-    expect(validateFolderName('회차1')).toMatch(/영문 소문자와 숫자/)
-    expect(validateFolderName('vol-01')).toMatch(/영문 소문자와 숫자/)
+    expect(validateFolderName('vol 01')).toMatch(/영문 소문자·숫자/)
+    expect(validateFolderName('회차1')).toMatch(/영문 소문자·숫자/)
+    expect(validateFolderName('vol.01')).toMatch(/영문 소문자·숫자/)
   })
 
   it('이미 있는 이름은 막는다 (대소문자 무관)', () => {

@@ -226,8 +226,9 @@ export function formatVolume(n: number): string {
 export const MAX_VOLUME_DEPTH = 2
 
 /**
- * 회차 표기를 폴더명으로 다듬는다 — 'Vol 01' · 'vol-01' → 'vol01'.
- * 폴더명으로 쓸 수 없는 문자를 걸러내되, 사용자가 적은 표기를 최대한 살린다.
+ * 회차 표기를 폴더명으로 다듬는다 — 'Vol 01' → 'vol01', 'VOL-01' → 'vol-01'.
+ * 폴더명으로 쓸 수 없는 문자(공백·한글·기타 기호)만 걸러내고, 하이픈·밑줄은 살린다 —
+ * S3 키와 주소에 그대로 실려도 안전하고, 폴더 선택 화면에 보이는 이름과 실제 경로가 같아야 한다.
  *
  * 폴더 안의 폴더는 '/'로 잇는다 — 'eng/vol01'. 칸마다 따로 다듬으므로
  * 사이의 구분은 살아남고, 허용 깊이를 넘는 뒷부분은 버린다.
@@ -237,7 +238,7 @@ export function normalizeVolume(volume?: string | null): string {
     .trim()
     .toLowerCase()
     .split('/')
-    .map((segment) => segment.replace(/[^a-z0-9]+/g, '').slice(0, 30))
+    .map((segment) => segment.replace(/[^a-z0-9_-]+/g, '').slice(0, 30))
     .filter(Boolean)
     .slice(0, MAX_VOLUME_DEPTH)
     .join('/')
@@ -309,6 +310,21 @@ export function buildUploadDirectory(
  */
 export function displayUploadDirectory(directory?: string | null): string {
   return (directory ?? '').replace(new RegExp(String.raw`^/e-dm/\d{4}/${BUILDER_ROOT}/`), '')
+}
+
+/**
+ * 사람이 읽는 저장 위치 — 'gocaf / eng / vol01 /' (Figma 1527-9088 / 1534-6097).
+ *
+ * 전시회 폴더부터 회차까지만 적는다. 팀은 헤더 배지에 이미 있고, 그 앞의 고정 경로는
+ * 모든 업로드가 같아서 읽어 봐야 알 수 있는 게 없다. 회차가 아직 없으면 전시회까지만.
+ * @param uploadFolder editorStore.uploadFolder — '{팀}/{전시회}'
+ */
+export function savePathLabel(uploadFolder?: string | null, volume?: string | null): string {
+  const exhibition = (uploadFolder ?? '').split('/')[1] ?? ''
+  // 전시회 폴더가 없으면 회차만으로는 어디인지 알 수 없다 — 아예 비운다
+  if (!exhibition) return ''
+  const parts = [exhibition, ...normalizeVolume(volume).split('/')].filter(Boolean)
+  return `${parts.join(' / ')} /`
 }
 
 /** 서버가 돌려준 값을 화면에 바로 쓸 수 있는 URL로 정리한다 */

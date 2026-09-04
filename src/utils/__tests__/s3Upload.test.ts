@@ -130,14 +130,19 @@ describe('normalizeVolume', () => {
   it('표기가 흔들려도 같은 폴더명으로 모은다', () => {
     expect(normalizeVolume('vol01')).toBe('vol01')
     expect(normalizeVolume('Vol 01')).toBe('vol01')
-    expect(normalizeVolume('VOL-01')).toBe('vol01')
-    expect(normalizeVolume(' vol_01 ')).toBe('vol01')
+    expect(normalizeVolume('Vol/01')).toBe('vol/01')
+  })
+
+  it('하이픈·밑줄은 살린다 — 폴더 선택 화면의 이름과 실제 경로가 같아야 한다', () => {
+    expect(normalizeVolume('VOL-01')).toBe('vol-01')
+    expect(normalizeVolume(' vol_01 ')).toBe('vol_01')
+    expect(normalizeVolume('space_design')).toBe('space_design')
   })
 
   it('폴더명이 될 수 없으면 빈 문자열', () => {
     expect(normalizeVolume('')).toBe('')
     expect(normalizeVolume('   ')).toBe('')
-    expect(normalizeVolume('---')).toBe('')
+    expect(normalizeVolume('!!!')).toBe('')
     expect(normalizeVolume('회차')).toBe('')
     expect(normalizeVolume(null)).toBe('')
     expect(normalizeVolume(undefined)).toBe('')

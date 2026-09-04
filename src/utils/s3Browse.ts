@@ -250,6 +250,26 @@ export async function listFolders(prefix: string, signal?: AbortSignal): Promise
   return [...merged.values()].sort((a, b) => a.name.localeCompare(b.name, 'en', { numeric: true }))
 }
 
+/**
+ * 임시 저장 파일을 '이어서 편집' 대상으로 보여주는 기간(일).
+ *
+ * 뉴스레터는 한두 주 단위로 나가므로, 그보다 오래된 임시 저장은 이미 발송이 끝난 회차의 흔적일 때가
+ * 대부분이다. 그때까지 '이어서 편집'을 내밀면 지난 회차를 실수로 다시 여는 길이 된다.
+ * 파일 자체는 폴더에 그대로 있고, 표시만 접는다.
+ */
+export const EDIT_FILE_FRESH_DAYS = 14
+
+/** 임시 저장 파일이 아직 '이어서 편집'할 만큼 최근 것인지. 수정 시각을 모르면 보여준다(막는 쪽이 더 나쁘다) */
+export function isFreshEditFile(
+  file: S3FileRef | null | undefined,
+  now: Date = new Date(),
+  days: number = EDIT_FILE_FRESH_DAYS,
+): boolean {
+  if (!file) return false
+  if (!file.lastModified) return true
+  return now.getTime() - file.lastModified.getTime() <= days * 24 * 60 * 60 * 1000
+}
+
 /** 버킷 키를 웹에서 바로 열 수 있는 주소로 — '발송본 열기'처럼 새 창으로 띄울 때 쓴다 */
 export const objectUrl = (key: string): string => `${BUCKET_URL}/${key.replace(/^\/+/, '')}`
 
@@ -291,11 +311,11 @@ export function formatModified(at: Date | null): string {
 /**
  * 폴더 이름이 업로드 경로에 그대로 실릴 수 있는지.
  *
- * 경로를 만들 때 `normalizeVolume`이 영문·숫자만 남기므로(`vol-56` → `vol56`),
- * 하이픈·밑줄이 든 이름을 고르면 **화면에 보이는 폴더와 실제로 올라가는 폴더가 어긋난다.**
- * 그래서 고르기·만들기 모두 소문자 영숫자만 받는다.
+ * 경로를 만들 때 `normalizeVolume`(회차)과 `uploadFolderOf`(팀·전시회)가 소문자 영숫자와
+ * 하이픈·밑줄만 남긴다. 그 밖의 글자(대문자·공백·한글·기타 기호)가 든 이름을 고르면
+ * **화면에 보이는 폴더와 실제로 올라가는 폴더가 어긋나므로** 고르기·만들기 모두 막는다.
  */
-export const isUsableFolderName = (name: string): boolean => /^[a-z0-9]+$/.test(name)
+export const isUsableFolderName = (name: string): boolean => /^[a-z0-9_-]+$/.test(name)
 
 /**
  * 새 폴더 이름으로 쓸 수 있는지.
@@ -305,7 +325,7 @@ export function validateFolderName(name: string, existing: string[] = []): strin
   const value = name.trim()
   if (!value) return '폴더명을 입력해 주세요'
   if (!isUsableFolderName(value.toLowerCase())) {
-    return '영문 소문자와 숫자만 쓸 수 있어요 (한글·공백·기호는 주소에서 깨져요)'
+    return '영문 소문자·숫자·하이픈(-)·밑줄(_)만 쓸 수 있어요 (한글·공백·다른 기호는 주소에서 깨져요)'
   }
   if (value.length > 40) return '폴더명이 너무 길어요 (40자까지)'
   if (existing.some((e) => e.toLowerCase() === value.toLowerCase())) {
