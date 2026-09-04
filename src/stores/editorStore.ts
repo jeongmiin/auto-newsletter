@@ -34,14 +34,32 @@ export const useEditorStore = defineStore('editor', () => {
   const currentTemplateId = ref<string | null>(null)
 
   /**
-   * 이미지 업로드 폴더의 전시회 단계 — 템플릿으로 시작했으면 그 전시회, 빈 문서면 `blank/{팀}`.
+   * 빈 템플릿으로 시작했을 때 폴더 선택에서 고른 **전시회 폴더** — 'hobanexpo'.
+   *
+   * 빈 템플릿은 템플릿 id가 없어 전시회 폴더를 모른다. 예전에는 전부 `{팀}/blank/`에 모았지만,
+   * 이제 팀 폴더 안의 전시회 폴더 목록에서 하나를 고르게 한다(없으면 만든다).
+   * 아직 안 골랐으면 null — 그때는 `blank/`로 떨어진다(uploadFolderOf).
+   */
+  const blankFolder = ref<string | null>(null)
+
+  /**
+   * 이미지 업로드 폴더의 전시회 단계 — 템플릿으로 시작했으면 그 전시회,
+   * 빈 문서면 폴더 선택에서 고른 전시회 폴더(못 골랐으면 `blank`).
    * (규칙은 s3Upload.uploadFolderOf에 있다 — 업로드하는 쪽과 미리보기가 같은 값을 쓰게 한다)
    */
   const uploadFolder = computed(() =>
-    uploadFolderOf(currentTemplateId.value, currentTeamId.value),
+    uploadFolderOf(currentTemplateId.value ?? blankFolder.value, currentTeamId.value),
   )
 
-  /** 템플릿을 골라 에디터로 들어올 때 한 번에 지정한다 */
+  /**
+   * 빈 템플릿으로 시작했는지 — 팀을 **폴더 선택 화면에서** 고른다.
+   *
+   * 그 사이에는 팀이 비어 있어서, 라우터 가드가 이 상태와 '새로고침으로 흘러 들어온 상태'를
+   * 구분할 수 없다(둘 다 팀이 없다). 이 표시가 있어야 빈 템플릿만 폴더 선택에 들여보낸다.
+   */
+  const isBlankStart = ref(false)
+
+  /** 템플릿을 골라 폴더 선택으로 넘어갈 때 한 번에 지정한다 */
   const setCurrentTemplate = (info: {
     templateId: string | null
     templateName: string
@@ -49,7 +67,22 @@ export const useEditorStore = defineStore('editor', () => {
   }): void => {
     currentTemplateId.value = info.templateId
     currentTeamId.value = info.teamId
+    isBlankStart.value = info.templateId === null
+    // 전시회 폴더는 팀·템플릿과 함께 정해지는 값이라 새로 고르기 전까지 비운다
+    blankFolder.value = null
     setCurrentTemplateName(info.templateName)
+  }
+
+  /** 폴더 선택 화면에서 팀을 고를 때 — 빈 템플릿은 소속 팀을 여기서 정한다 */
+  const setCurrentTeam = (teamId: string | null): void => {
+    currentTeamId.value = teamId
+    // 팀이 바뀌면 그 팀 폴더 안에서 다시 골라야 한다
+    blankFolder.value = null
+  }
+
+  /** 빈 템플릿의 전시회 폴더 — 폴더 선택의 팀 폴더 목록에서 고른다(null이면 다시 팀 폴더 목록으로) */
+  const setBlankFolder = (folder: string | null): void => {
+    blankFolder.value = folder
   }
 
   // 좌측 아이콘 레일 활성 메뉴 (신규 디자인 IA)
@@ -251,8 +284,12 @@ export const useEditorStore = defineStore('editor', () => {
     setCurrentTemplateName,
     currentTeamId,
     currentTemplateId,
+    isBlankStart,
+    blankFolder,
+    setBlankFolder,
     uploadFolder,
     setCurrentTemplate,
+    setCurrentTeam,
     activeMenu,
     forceRailPanel,
     setActiveMenu,

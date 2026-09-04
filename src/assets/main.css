@@ -20,6 +20,54 @@ html, body{
   color:var(--gray-600);
 }
 
+/* 여러 줄 확인창(group="wide") — Figma 1542-6722 '확인 팝업'.
+   둥글기 16 · 안쪽 28/28/24 · 제목 24px medium · 본문 17px/1.8 gray-700 · 버튼 h40 px16 16px medium.
+   대화상자는 body로 텔레포트되어 App.vue의 scoped 스타일이 닿지 않으므로 여기 둔다. */
+.confirm-wide.p-dialog {
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.16);
+}
+.confirm-wide .p-dialog-header {
+  padding: 28px 28px 0;
+}
+.confirm-wide .p-dialog-title {
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: -0.24px;
+  line-height: 1.5;
+  color: var(--gray-800);
+}
+.confirm-wide .p-dialog-content {
+  padding: 10px 28px 0;
+}
+.confirm-wide .p-confirmdialog-message {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.8;
+  letter-spacing: -0.17px;
+  color: var(--gray-700);
+}
+.confirm-wide .p-dialog-footer {
+  gap: 16px;
+  padding: 24px 28px 24px;
+}
+.confirm-wide .p-dialog-footer .p-button {
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+}
+/* 취소 — 흰 배경 + gray/200 테두리 + gray/700 글자 */
+.confirm-wide .p-dialog-footer .p-button.p-button-secondary.p-button-outlined {
+  border-color: var(--gray-200);
+  background: var(--white);
+  color: var(--gray-700);
+}
+.confirm-wide .p-dialog-footer .p-button.p-button-secondary.p-button-outlined:hover {
+  background: var(--gray-50);
+}
+
 /* 헤더 '더 보기' 메뉴 (Figma 1125-3110).
    PrimeVue 팝업 Menu는 body로 텔레포트되어 컴포넌트 scoped 스타일이 닿지 않으므로 여기 둔다. */
 .hmore-menu.p-menu {
@@ -40,6 +88,16 @@ html, body{
 .hmore-menu .p-menu-item-icon {
   font-size: 18px;
   color: inherit;
+}
+/* 헤더 '파일 저장 위치' 말풍선 — 두 줄(제목 / 경로) 가운데 정렬, 16px medium (Figma 1534-6097).
+   툴팁도 body로 텔레포트되어 컴포넌트 scoped 스타일이 닿지 않는다. */
+.htip-path .p-tooltip-text {
+  padding: 12px 20px;
+  white-space: pre-line;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
 }
 
 /* 모듈 카드 그리드 — ModulePanel(카테고리 아코디언)·CategoryModulePanel(갤러리) 공용 레이아웃.

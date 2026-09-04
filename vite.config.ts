@@ -53,6 +53,47 @@ export default defineConfig(({ command }) => {
       port: 5173,
       strictPort: true,
       proxy: uploadProxy,
+      // 화면을 옮길 때 멈추지 않도록, 뒤에 나올 화면들을 미리 변환해 둔다.
+      //
+      // dev 서버는 빌드본과 달리 **필요할 때 한 파일씩** 변환한다. 라우트가 지연 로딩이라
+      // (router/index.ts의 `import(...)`) 템플릿을 고른 그 순간에야 폴더·에디터 화면과
+      // 딸린 컴포넌트 수백 개를 처음 변환하게 되고, 그 시간이 그대로 전환 지연으로 보인다.
+      // 서버가 뜬 직후 미리 해 두면 클릭 시점에는 이미 준비돼 있다.
+      warmup: {
+        clientFiles: ['./src/views/*.vue', './src/components/**/*.vue', './src/main.ts'],
+      },
+    },
+    // 지연 로딩되는 화면에서만 쓰는 바깥 라이브러리도 서버가 뜰 때 함께 묶어 둔다.
+    //
+    // 안 적어 두면 에디터로 들어가는 순간 Vite가 "새 의존성을 찾았다"며 다시 묶고
+    // **페이지를 통째로 새로고침**한다 — 화면 전환 중에 한 번씩 길게 멎는 원인이다.
+    // (quill·vuedraggable처럼 무거운 것이 여기 다 걸린다)
+    optimizeDeps: {
+      include: [
+        'quill',
+        'vuedraggable',
+        'dompurify',
+        'primevue/button',
+        'primevue/checkbox',
+        'primevue/colorpicker',
+        'primevue/confirmdialog',
+        'primevue/dialog',
+        'primevue/editor',
+        'primevue/inputnumber',
+        'primevue/inputtext',
+        'primevue/menu',
+        'primevue/panel',
+        'primevue/select',
+        'primevue/tab',
+        'primevue/tablist',
+        'primevue/tabs',
+        'primevue/textarea',
+        'primevue/toast',
+        'primevue/toggleswitch',
+        'primevue/tooltip',
+        'primevue/useconfirm',
+        'primevue/usetoast',
+      ],
     },
     // 빌드본 확인(vite preview)에서도 같은 프록시를 쓴다 — 배포 전 마지막 점검용
     preview: {

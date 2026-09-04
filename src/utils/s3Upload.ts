@@ -43,8 +43,8 @@ export const ALLOWED_IMAGE_MIME = ['image/jpeg', 'image/png', 'image/gif', 'imag
 /** 확장자만 보고 거르는 폴백 — 브라우저가 MIME을 비워 보내는 경우가 있다 */
 export const ALLOWED_IMAGE_EXT = ['jpg', 'jpeg', 'png', 'gif', 'webp']
 
-/** 업로드 허용 최대 크기 (10MB) — 서버 제한이 확인되면 그 값에 맞춘다 */
-export const MAX_IMAGE_BYTES = 10 * 1024 * 1024
+/** 업로드 허용 최대 크기 (20MB) — 서버 제한이 확인되면 그 값에 맞춘다 */
+export const MAX_IMAGE_BYTES = 20 * 1024 * 1024
 
 /**
  * 업로드를 허용할 HTML 형식 — 'HTML 웹 링크 생성'(AI 도구)에서 쓴다.
@@ -159,9 +159,36 @@ export function buildUploadFileName(
   return `${base}_${stamp}${suffix}`
 }
 
+/** 번호를 붙여도 자리를 못 찾을 때까지 시도할 횟수 — 여기까지 갈 일은 사실상 없다 */
+const MAX_NAME_ATTEMPTS = 999
+
+/**
+ * 같은 이름이 이미 있으면 뒤에 번호를 붙여 **비어 있는 이름**을 찾는다 —
+ * 'img01.png' → 'img01(1).png' → 'img01(2).png'.
+ *
+ * 서버에 맡기면(override=N) 이름 뒤에 날짜·시각이 붙어 'img01_20260820_143052.png'처럼
+ * 길어진다. 폴더에서 사람이 알아보는 쪽은 번호라서, 겹치지 않는 이름은 여기서 정해 보낸다.
+ *
+ * @param desired 올리려는 이름(이미 다듬어진 이름이어야 한다 — `buildUploadFileName(..., false)`)
+ * @param taken   그 폴더에 이미 있는 이름들
+ */
+export function uniqueFileName(desired: string, taken: readonly string[]): string {
+  if (!taken.includes(desired)) return desired
+
+  const dot = desired.lastIndexOf('.')
+  const base = dot > 0 ? desired.slice(0, dot) : desired
+  const ext = dot > 0 ? desired.slice(dot) : ''
+  for (let n = 1; n <= MAX_NAME_ATTEMPTS; n += 1) {
+    const candidate = `${base}(${n})${ext}`
+    if (!taken.includes(candidate)) return candidate
+  }
+  // 번호로는 못 피하는 자리 — 시각을 붙여서라도 새 파일이 되게 한다
+  return buildUploadFileName(desired, new Date(), true)
+}
+
 /** 회차를 입력하지 않았을 때 사용자에게 보여줄 문구 — 알림과 필드 오류에서 함께 쓴다 */
 export const MISSING_VOLUME_MESSAGE =
-  '뉴스레터 회차를 먼저 입력해 주세요. 왼쪽 "전체 스타일" 메뉴에서 회차 숫자를 고르면 회차별 폴더에 정리됩니다.'
+  '저장할 폴더가 정해지지 않았어요. 처음(전시회 선택)부터 다시 시작해 폴더를 골라 주세요.'
 
 /**
  * 회차 표기의 고정 접두사. 화면에서는 이 글자를 고칠 수 없고 숫자만 오르내린다.
@@ -191,22 +218,45 @@ export function formatVolume(n: number): string {
 }
 
 /**
- * 회차 표기를 폴더명으로 다듬는다 — 'Vol 01' · 'vol-01' → 'vol01'.
- * 폴더명으로 쓸 수 없는 문자를 걸러내되, 사용자가 적은 표기를 최대한 살린다.
+ * 폴더 안에 폴더를 둘 수 있는 깊이 — 'eng/vol01'까지.
+ *
+ * 더 깊이 들어가면 경로가 길어지는 만큼 지금 어디에 저장 중인지 알아보기 어려워지고,
+ * 올려 둔 파일을 잃어버리기 쉽다.
+ */
+export const MAX_VOLUME_DEPTH = 2
+
+/**
+ * 회차 표기를 폴더명으로 다듬는다 — 'Vol 01' → 'vol01', 'VOL-01' → 'vol-01'.
+ * 폴더명으로 쓸 수 없는 문자(공백·한글·기타 기호)만 걸러내고, 하이픈·밑줄은 살린다 —
+ * S3 키와 주소에 그대로 실려도 안전하고, 폴더 선택 화면에 보이는 이름과 실제 경로가 같아야 한다.
+ *
+ * 폴더 안의 폴더는 '/'로 잇는다 — 'eng/vol01'. 칸마다 따로 다듬으므로
+ * 사이의 구분은 살아남고, 허용 깊이를 넘는 뒷부분은 버린다.
  */
 export function normalizeVolume(volume?: string | null): string {
   return (volume ?? '')
     .trim()
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '')
-    .slice(0, 30)
+    .split('/')
+    .map((segment) => segment.replace(/[^a-z0-9_-]+/g, '').slice(0, 30))
+    .filter(Boolean)
+    .slice(0, MAX_VOLUME_DEPTH)
+    .join('/')
 }
 
 /**
- * 빈 문서로 만든 뉴스레터의 이미지를 모으는 자리.
+ * 빌더가 올린 파일이 모이는 자리 — `/e-dm/{연도}/newsletterbuilder/…`.
  *
- * 전시회 폴더 옆에 나란히 두되 이름으로 성격이 드러나게 한다 — S3에서 `bfs/`·`kadex/` 사이에
- * `blank/`이 보이면 '전시회가 아직 안 정해진 것들'임을 바로 알 수 있다.
+ * 이 한 단계가 있어야 전시회가 직접 만들어 온 폴더(`e-dm/2026/police/` 등)와 섞이지 않는다.
+ * S3에 이 이름으로 팀 폴더가 이미 준비돼 있다.
+ */
+export const BUILDER_ROOT = 'newsletterbuilder'
+
+/**
+ * 아직 전시회를 못 정한 뉴스레터의 자리 — `{팀}/blank/`.
+ *
+ * 팀 폴더 안에서 전시회 폴더들과 나란히 놓이므로, 이름만 봐도
+ * '전시회가 아직 안 정해진 것들'임을 알 수 있다.
  */
 export const BLANK_FOLDER = 'blank'
 
@@ -215,26 +265,24 @@ const folderSegment = (value?: string | null): string =>
   (value ?? '').trim().toLowerCase().replace(/[^a-z0-9_-]+/g, '')
 
 /**
- * 업로드 폴더의 전시회 단계를 정한다.
+ * 업로드 폴더의 `{팀}/{전시회}` 단계를 정한다 — S3에 준비된 구조와 같은 순서다.
  *
- * - 템플릿으로 시작했으면 그 **템플릿 id**가 곧 전시회 폴더다(S3 폴더명과 이미 통일돼 있다).
- * - 빈 문서로 시작했으면 전시회를 알 수 없으므로 `blank/{팀}`에 모은다.
- *   팀까지 나누는 이유는, 한 자리에 다 쌓으면 서로 다른 뉴스레터의 `main_visual.png`가
- *   같은 회차 폴더에서 만나 말없이 덮어써지기 때문이다(`override=Y`).
+ * - 팀은 항상 앞에 온다. 담당이 곧 폴더 주인이라 남의 회차 폴더에 덮어쓸 일이 없다.
+ * - 템플릿으로 시작했으면 그 **템플릿 id**가 곧 전시회 폴더다(S3 폴더명과 통일돼 있다).
+ * - 빈 문서로 시작했으면 전시회를 알 수 없으므로 그 팀의 `blank`에 모은다.
  *
- * @returns 팀도 템플릿도 없으면 빈 문자열 — 호출한 쪽이 업로드를 막는다.
+ * @returns 팀이 없으면 빈 문자열 — 올릴 자리를 지어내지 않고 호출한 쪽이 업로드를 막는다.
  */
 export function uploadFolderOf(templateId?: string | null, teamId?: string | null): string {
-  const template = folderSegment(templateId)
-  if (template) return template
   const team = folderSegment(teamId)
-  return team ? `${BLANK_FOLDER}/${team}` : ''
+  if (!team) return ''
+  return `${team}/${folderSegment(templateId) || BLANK_FOLDER}`
 }
 
 /**
- * 업로드 폴더 경로를 만든다 — `/e-dm/{연도}/{전시회 폴더}/{회차}/`.
+ * 업로드 폴더 경로를 만든다 — `/e-dm/{연도}/newsletterbuilder/{팀}/{전시회}/{회차}/`.
  *
- * @param folder `uploadFolderOf`가 정한 폴더. 빈 문서면 `blank/{팀}`처럼 두 단계일 수 있다.
+ * @param folder `uploadFolderOf`가 정한 `{팀}/{전시회}`.
  * @returns 폴더나 회차 중 하나라도 비어 있으면 **null** — 어디에 넣을지 정할 수 없으므로
  *          경로를 지어내지 않고 호출한 쪽이 업로드를 막게 한다.
  */
@@ -250,17 +298,33 @@ export function buildUploadDirectory(
     .filter(Boolean)
     .join('/')
   if (!vol || !dir) return null
-  return `/e-dm/${now.getFullYear()}/${dir}/${vol}/`
+  return `/e-dm/${now.getFullYear()}/${BUILDER_ROOT}/${dir}/${vol}/`
 }
 
 /**
- * 화면에 보여줄 저장 위치 — 앞의 `/e-dm/{연도}/`를 뗀 나머지(`hobanexpo/vol99/`).
+ * 화면에 보여줄 저장 위치 — 앞의 `/e-dm/{연도}/newsletterbuilder/`를 뗀 나머지
+ * (`conv1/police/vol99/`).
  *
  * 이 앞부분은 모든 업로드가 똑같이 쓰는 고정 경로라 매번 읽어봐야 알 수 있는 게 없다.
  * **표시만 줄이는 것이고, 실제로 올리는 경로는 buildUploadDirectory가 만든 값 그대로다.**
  */
 export function displayUploadDirectory(directory?: string | null): string {
-  return (directory ?? '').replace(/^\/e-dm\/\d{4}\//, '')
+  return (directory ?? '').replace(new RegExp(String.raw`^/e-dm/\d{4}/${BUILDER_ROOT}/`), '')
+}
+
+/**
+ * 사람이 읽는 저장 위치 — 'gocaf / eng / vol01 /' (Figma 1527-9088 / 1534-6097).
+ *
+ * 전시회 폴더부터 회차까지만 적는다. 팀은 헤더 배지에 이미 있고, 그 앞의 고정 경로는
+ * 모든 업로드가 같아서 읽어 봐야 알 수 있는 게 없다. 회차가 아직 없으면 전시회까지만.
+ * @param uploadFolder editorStore.uploadFolder — '{팀}/{전시회}'
+ */
+export function savePathLabel(uploadFolder?: string | null, volume?: string | null): string {
+  const exhibition = (uploadFolder ?? '').split('/')[1] ?? ''
+  // 전시회 폴더가 없으면 회차만으로는 어디인지 알 수 없다 — 아예 비운다
+  if (!exhibition) return ''
+  const parts = [exhibition, ...normalizeVolume(volume).split('/')].filter(Boolean)
+  return `${parts.join(' / ')} /`
 }
 
 /** 서버가 돌려준 값을 화면에 바로 쓸 수 있는 URL로 정리한다 */
@@ -311,6 +375,12 @@ export interface UploadOptions {
    * false면 이름에 날짜·시각을 붙여 겹치지 않게 만든 뒤 `override=N`을 보낸다.
    */
   overwrite?: boolean
+  /**
+   * 올릴 때 쓸 파일 이름 — 원본 이름 대신 이 이름이 **그대로** 올라간다.
+   * 겹치는 이름을 피해 'img01(1).png'처럼 미리 정해 둔 경우에 쓴다.
+   * ⚠ 다시 다듬지 않으므로 이미 안전한 이름이어야 한다(`uniqueFileName`이 만들어 준다).
+   */
+  fileName?: string
   /** 이름에 쓸 글자가 하나도 안 남았을 때(예: '뉴스레터.html') 대신 쓸 이름 */
   fallbackBaseName?: string
 }
@@ -377,10 +447,13 @@ function postUpload(
     const form = new FormData()
     // 원본 File을 그대로 넣으면 파일명을 바꿀 수 없어 세 번째 인자로 이름을 지정한다.
     // 덮어쓸 때는 이름을 원본 그대로 둬야 같은 이름끼리 만난다(위 buildUploadFileName 주석 참고).
+    // 이름을 직접 정해 넘겼으면(uniqueFileName이 고른 'img01(1).png' 등) **그대로** 올린다 —
+    // 겹치지 않는 자리를 이미 찾아 둔 이름이라, 다시 다듬으면 괄호가 지워져 원본과 또 겹친다.
     form.append(
       'file',
       file,
-      buildUploadFileName(file.name, new Date(), !overwrite, options.fallbackBaseName),
+      options.fileName ??
+        buildUploadFileName(file.name, new Date(), !overwrite, options.fallbackBaseName),
     )
     form.append('directory', directory)
     form.append('override', overwrite ? 'Y' : 'N')

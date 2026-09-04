@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed, triggerRef, watch } from 'vue'
+import { ref, computed, shallowRef, triggerRef, watch } from 'vue'
 import type {
   ModuleInstance,
   ModuleMetadata,
@@ -74,7 +74,15 @@ export const useModuleStore = defineStore('module', () => {
   const modules = ref<ModuleInstance[]>([])
   const selectedModuleId = ref<string | null>(null)
   const availableModules = ref<ModuleMetadata[]>([])
-  const availableTemplates = ref<NewsletterTemplate[]>([])
+  /**
+   * 템플릿 카탈로그(templates-config.json) — **읽기 전용 자료라 얕게 담는다.**
+   *
+   * 0.9MB·객체 4천여 개짜리라, 보통 ref로 담으면 Vue가 그 전부를 반응형으로 감싼다.
+   * 카탈로그는 화면에서 고르기만 할 뿐 고쳐 쓰지 않으므로 감쌀 이유가 없고, 감싸면
+   * 읽을 때마다 프록시를 거치는 데다 개발 도구가 스토어 상태를 훑을 때도 이 전부를 따라간다.
+   * (통째로 갈아끼우는 대입만 하므로 얕은 ref로 충분하다)
+   */
+  const availableTemplates = shallowRef<NewsletterTemplate[]>([])
   // 템플릿 선택 화면의 본부/팀 트리 (templates-config.json의 departments)
   const availableDepartments = ref<TemplateDepartment[]>([])
   const isDirty = ref(false) // 변경사항 추적
@@ -2766,9 +2774,13 @@ export const useModuleStore = defineStore('module', () => {
       return false
     }
 
+    // 어디서 시간을 쓰는지 개발 중에만 콘솔에 남긴다 — '템플릿을 불러오는 중'이 길어질 때
+    // 모듈 자료를 받아오는 쪽인지, 모듈을 붙여 넣는 쪽인지 바로 갈라 보기 위한 것
+    const startedAt = performance.now()
     if (availableModules.value.length === 0) {
       await loadAvailableModules()
     }
+    const fetchedAt = performance.now()
 
     const editorStore = useEditorStore()
 
@@ -2830,6 +2842,15 @@ export const useModuleStore = defineStore('module', () => {
       selectedModuleId.value = modules.value[0].id
     }
     isDirty.value = false
+
+    if (import.meta.env.DEV) {
+      const now = performance.now()
+      console.info(
+        `[템플릿] ${templateId} 모듈 ${modules.value.length}개 — ` +
+          `모듈 자료 ${Math.round(fetchedAt - startedAt)}ms · ` +
+          `붙여 넣기 ${Math.round(now - fetchedAt)}ms · 합계 ${Math.round(now - startedAt)}ms`,
+      )
+    }
     return true
   }
 
@@ -3872,11 +3893,19 @@ export const useModuleStore = defineStore('module', () => {
   /**
    * 모듈별 콘텐츠 교체
    */
-  const replaceModuleContent = async (html: string, module: ModuleInstance): Promise<string> => {
-    const editorStore = useEditorStore()
+  /**
+   * @param pointColors 포인트 색상 팔레트. 템플릿 미리보기처럼 **지금 에디터 상태가 아닌** 데이터를
+   *   렌더할 때 그 데이터의 것을 넘긴다 — 안 넘기면 현재 에디터의 포인트 색상으로 칠해져
+   *   미리보기가 실제 템플릿과 다른 색으로 나온다.
+   */
+  const replaceModuleContent = async (
+    html: string,
+    module: ModuleInstance,
+    pointColors: string[] = useEditorStore().wrapSettings.pointColors,
+  ): Promise<string> => {
     const { moduleId } = module
     // '포인트 색상 사용'으로 체크된 색상 속성을 전역 포인트 색상으로 해소
-    const properties = resolvePointColors(module.properties, editorStore.wrapSettings.pointColors)
+    const properties = resolvePointColors(module.properties, pointColors)
 
     switch (moduleId) {
       case 'ModuleNewsHeader':
@@ -4020,7 +4049,8 @@ export const useModuleStore = defineStore('module', () => {
         }
         let html = await response.text()
 
-        html = await replaceModuleContent(html, module)
+        // 렌더 대상(source)의 포인트 색상으로 — 템플릿 미리보기가 현재 에디터 색으로 물들지 않게
+        html = await replaceModuleContent(html, module, wrapSettings.pointColors)
 
         // 본문 인라인 '포인트 색상'(var(--point-color-N)) → 실제 색상값 (이메일은 CSS 변수 미지원)
         html = resolvePointColorVars(html, wrapSettings.pointColors)
@@ -4177,7 +4207,13 @@ ${fullHtml}
     const grps: ModuleGroup[] = template.groups
       ? JSON.parse(JSON.stringify(template.groups))
       : []
-    const wrapSettings = { ...editorStore.wrapSettings, ...(template.wrapSettings || {}) }
+    const tplSettings = template.wrapSettings || {}
+    // 옛 템플릿은 pointColor(단일)만 있을 수 있다 — loadTemplate(applyLoadedWrapSettings)과 같은 규칙으로
+    // 팔레트를 만든다. 안 그러면 에디터의 현재 팔레트가 섞여 미리보기 색이 템플릿과 달라진다.
+    const pointColors =
+      tplSettings.pointColors ??
+      (tplSettings.pointColor ? [tplSettings.pointColor] : editorStore.wrapSettings.pointColors)
+    const wrapSettings = { ...editorStore.wrapSettings, ...tplSettings, pointColors }
     return generateHtml(false, { modules: mods, groups: grps, wrapSettings })
   }
 

@@ -20,10 +20,42 @@ watch(
   },
   { immediate: true, deep: true },
 )
+
+/**
+ * 확인창 안내의 `**강조**` 표기를 굵은 조각으로 나눈다.
+ *
+ * ConfirmDialog의 message는 **문자열만** 받아 태그를 실을 수 없다. v-html로 넣으면
+ * 안내 문구 전체가 마크업 통로가 되므로, 표기해 둔 자리만 굵게 만들고 나머지는 글자 그대로 둔다.
+ */
+const boldParts = (text?: string): Array<{ text: string; bold: boolean }> =>
+  (text ?? '')
+    .split(/\*\*(.+?)\*\*/g)
+    .map((part, i) => ({ text: part, bold: i % 2 === 1 }))
+    .filter((part) => part.text !== '')
 </script>
 
 <template>
   <Toast position="bottom-right" />
   <ConfirmDialog />
+  <!--
+    안내가 여러 줄인 확인창(새 작업·전체 삭제)은 글줄이 접히지 않도록 내용 폭에 맞추되 460px보다
+    좁아지지 않게 한다. 모양(제목 24px · 본문 17px · 버튼)은 main.css의 .confirm-wide (Figma 1542-6722).
+    (`confirm.require({ group: 'wide' })`로 이 대화상자를 쓴다)
+  -->
+  <ConfirmDialog
+    group="wide"
+    :style="{ width: 'auto', minWidth: '460px', maxWidth: 'min(680px, calc(100vw - 32px))' }"
+    :pt="{ root: { class: 'confirm-wide' } }"
+  >
+    <!-- 기본 슬롯 대신 직접 그린다 — `**…**`로 표기한 자리를 굵게 (클래스는 기본과 같게 유지) -->
+    <template #message="{ message }">
+      <span class="p-confirmdialog-message">
+        <template v-for="(part, i) in boldParts(message.message)" :key="i">
+          <strong v-if="part.bold">{{ part.text }}</strong>
+          <template v-else>{{ part.text }}</template>
+        </template>
+      </span>
+    </template>
+  </ConfirmDialog>
   <RouterView />
 </template>

@@ -13,18 +13,10 @@
         <span class="material-symbols-outlined">home</span>
       </button>
 
-      <!-- 팀·브레드크럼·실행취소·전체삭제 (1125-3059): 항목 간 20px -->
+      <!-- 팀·실행취소·전체삭제·저장 위치 (1500-9764): 항목 간 15px. 브레드크럼은 디자인에서 빠졌다. -->
       <div v-if="showActions" class="hleft-group">
         <!-- 소속 팀 — 표시명은 teamId로 트리에서 찾는다(트리 미로딩 시엔 숨김) -->
         <span v-if="currentTeamName" class="hteam">{{ currentTeamName }}</span>
-
-        <!-- 브레드크럼: 템플릿명(클릭 시 템플릿 선택 페이지로 이동) > 에디터 -->
-        <span class="hcrumb">
-          <button type="button" class="hcrumb-link" @click="goTemplates">
-            {{ currentTemplateName }}
-          </button>
-          &gt; 에디터
-        </span>
 
         <span class="hbar"></span>
 
@@ -52,15 +44,30 @@
 
         <span class="hbar"></span>
 
-        <!-- 전체 삭제 = 빈 템플릿으로 시작 (레일의 '빈 템플릿'과 같은 확인 모달) -->
+        <!--
+          전체 삭제 = 이 폴더에 머문 채 내용만 비우기.
+          팀·폴더부터 다시 고르는 '새로 시작'은 레일의 '빈 템플릿'이 맡는다.
+        -->
         <button
           type="button"
           class="hclear"
-          @click="confirmBlankTemplate"
-          v-tooltip.bottom="'작업 내용을 모두 지우고 빈 템플릿으로 시작합니다'"
+          @click="confirmClearHere"
+          v-tooltip.bottom="'저장할 폴더는 그대로 두고 작업 내용만 모두 지웁니다'"
         >
           <span class="material-symbols-outlined">delete</span>
           <span>전체 삭제</span>
+        </button>
+
+        <span class="hbar"></span>
+
+        <!-- 파일 저장 위치 — 아이콘만 두고, 올리면 두 줄 말풍선으로 경로를 보여준다 (1534-6097) -->
+        <button
+          type="button"
+          class="hicon hpath"
+          aria-label="파일 저장 위치"
+          v-tooltip.bottom="{ value: savePathTooltip, class: 'htip-path' }"
+        >
+          <span class="material-symbols-outlined">drive_file_move</span>
         </button>
       </div>
     </div>
@@ -90,20 +97,28 @@
         </div>
       </div>
 
-      <!-- 우측 (1125-3080): 저장상태 ↔ 버튼 그룹 10px, 버튼끼리도 10px -->
+      <!-- 우측 (1500-9791): 버튼끼리 10px. 저장 시각 문구는 디자인에서 빠졌다(말풍선으로만 알린다). -->
       <div class="hright">
-        <span v-if="lastDownload" class="hsaved">
-          {{ lastDownloadDateLabel }}<span class="font-bold">{{ lastDownload.type }}</span> 다운 완료
+        <!-- 임시 저장 — 지금 작업을 회차 폴더에 올려 둔다(같은 이름으로 덮어써 최신 하나만 남는다).
+             업로드 주소가 없으면 눌러도 실패할 버튼을 아예 감춘다(이미지 업로드와 같은 규칙).
+             말풍선은 두 가지 — 올린 직후 아래에 '저장 완료'(1542-6981), 저장 안 한 편집이 있을 때만
+             마우스를 올리면 '최근 편집 저장 안됨'. -->
+        <span v-if="canSaveToFolder" class="hsave-wrap">
+          <button
+            type="button"
+            class="hbtn hbtn--tint"
+            :disabled="savingToFolder"
+            @click="saveToFolder"
+            v-tooltip.bottom="{ value: '최근 편집 저장 안됨', disabled: !hasUnsavedEdits }"
+          >
+            <!-- 저장 안 한 편집이 있으면 구름 아이콘도 경고형으로 — 툴팁과 같은 조건 -->
+            <span class="material-symbols-outlined">{{ hasUnsavedEdits ? 'cloud_alert' : 'cloud_done' }}</span>
+            <span>{{ savingToFolder ? '올리는 중…' : '임시 저장' }}</span>
+          </button>
+          <Transition name="hbubble">
+            <span v-if="savedFlash" class="hbubble" role="status">저장 완료</span>
+          </Transition>
         </span>
-        <button
-          type="button"
-          class="hbtn hbtn--tint"
-          @click="downloadForSave"
-          v-tooltip.bottom="'재편집용 — 다시 불러와 편집 가능'"
-        >
-          <span class="material-symbols-outlined">download</span>
-          <span>저장용 내려받기</span>
-        </button>
         <button
           type="button"
           class="hbtn hbtn--muted"
@@ -117,10 +132,10 @@
           type="button"
           class="hbtn hbtn--primary"
           @click="downloadForSend"
-          v-tooltip.bottom="'메일 발송용 — 다시 불러와 편집 불가능'"
+          v-tooltip.bottom="'메일 발송용 HTML을 내려받습니다'"
         >
           <span class="material-symbols-outlined">send</span>
-          <span>발송용 내려받기</span>
+          <span>발송용 다운로드</span>
         </button>
 
         <!-- 자주 쓰지 않는 동작은 한 단계 안으로 (Figma 1125-3110) -->
@@ -141,17 +156,29 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import Menu from 'primevue/menu'
 import { useConfirm } from 'primevue/useconfirm'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
 import { processQuillHtml } from '@/utils/quillHtmlProcessor'
+import { buildEmailPreviewDocument } from '@/utils/emailPreviewDoc'
 import { useNewsletterImport } from '@/composables/useNewsletterImport'
-import { serializeModule } from '@/utils/projectFile'
+import { useNewsletterDownload } from '@/composables/useNewsletterDownload'
+import { buildDownloadFileName } from '@/utils/projectFile'
+import {
+  MISSING_VOLUME_MESSAGE,
+  UploadError,
+  buildUploadDirectory,
+  displayUploadDirectory,
+  isUploadEnabled,
+  savePathLabel,
+  uploadHtml,
+} from '@/utils/s3Upload'
 import { getHistoryInstance } from '@/composables/useHistory'
 import { useBlankTemplate } from '@/composables/useBlankTemplate'
+import { useNewsletterDocument } from '@/composables/useNewsletterDocument'
 import { useToast } from 'primevue/usetoast'
 
 // showActions=false면 오른쪽 파일 관리 버튼들을 숨긴다(예: 템플릿 선택 화면)
@@ -163,7 +190,10 @@ const toast = useToast()
 const router = useRouter()
 const confirm = useConfirm()
 const { importHtmlFile } = useNewsletterImport()
-const { confirmBlankTemplate } = useBlankTemplate()
+const { confirmClearHere } = useBlankTemplate()
+// 내려받기·복사·임시 저장·웹 링크가 모두 같은 문서를 쓰도록 한 곳에서 만든다
+const { buildDocument } = useNewsletterDocument()
+const { downloadHtml: downloadNewsletterHtml } = useNewsletterDownload()
 
 // 실행취소/다시실행 (전역 히스토리 싱글턴)
 const history = getHistoryInstance()
@@ -175,9 +205,11 @@ const doRedo = () => history.redo()
 // PC/모바일 토글 상태
 const canvasWidth = computed(() => editorStore.canvasWidth)
 
-// 브레드크럼: 현재 템플릿명(빈 문서면 '빈 템플릿') → 클릭 시 템플릿 선택 페이지로 이동
-const currentTemplateName = computed(() => editorStore.currentTemplateName)
-const goTemplates = () => router.push('/templates')
+// 파일 저장 위치 — 'gocaf / eng / vol01 /'. 폴더 아이콘 말풍선에 두 줄로 보여준다 (1534-6097)
+const savePathTooltip = computed(() => {
+  const path = savePathLabel(editorStore.uploadFolder, editorStore.wrapSettings.volume)
+  return `파일 저장 위치\n${path || '아직 정하지 않음'}`
+})
 
 // 소속 팀 표시명 — 저장된 건 불변 id뿐이라 트리에서 찾아 쓴다.
 // (팀명이 바뀌어도 id는 그대로이므로 항상 최신 이름이 나온다)
@@ -191,9 +223,16 @@ const currentTeamName = computed(() => {
   return ''
 })
 
-// 우측 '더 보기' 메뉴 — 자주 쓰지 않는 동작만 모은다
+/**
+ * 우측 '더 보기' 메뉴 — 자주 쓰지 않는 동작만 모은다.
+ *
+ * '저장용 다운로드'도 여기로 들어왔다. 폴더에 올려 두는 '임시 저장'이 생기면서
+ * 이어서 편집할 파일을 내 PC로 받아 둘 일이 드물어졌기 때문이다.
+ * 겉에 남는 것은 늘 쓰는 셋 — 임시 저장 · 미리보기 · 발송용 다운로드.
+ */
 const moreMenu = ref<InstanceType<typeof Menu> | null>(null)
 const moreMenuItems = computed(() => [
+  { label: '저장용 다운로드', icon: 'pi pi-download', command: () => void downloadForSave() },
   { label: '코드 복사', icon: 'pi pi-copy', command: () => void exportHtml() },
   { label: '파일 열기', icon: 'pi pi-folder-open', command: () => void importHtmlFile() },
 ])
@@ -203,10 +242,12 @@ const toggleMoreMenu = (event: Event) => moreMenu.value?.toggle(event)
 const goHome = () => {
   if (moduleStore.modules.length > 0 && moduleStore.isDirty) {
     confirm.require({
+      group:"wide",
       message: '저장하지 않은 변경사항이 있습니다. 홈으로 나가시겠어요?',
       header: '홈으로 이동',
       acceptLabel: '나가기',
       rejectLabel: '취소',
+      rejectClass: 'p-button-secondary p-button-outlined',
       accept: () => router.push('/'),
     })
     return
@@ -214,19 +255,27 @@ const goHome = () => {
   router.push('/')
 }
 
-// 최근 내려받음 표시 (메모리 상태 — 새로고침 시 초기화)
-const lastDownload = ref<{ time: Date; type: '저장용' | '발송용' } | null>(null)
+/** 임시 저장이 가능한 상태인지 — 업로드 주소가 설정돼 있어야 한다 */
+const canSaveToFolder = isUploadEnabled()
+const savingToFolder = ref(false)
 
-// 날짜 부분 ("2026.08.12 11:19:39 ") — 타입은 템플릿에서 굵게 별도 렌더.
-// 자리를 0으로 채워 폭이 흔들리지 않게 한다(시각이 바뀔 때마다 옆 버튼이 밀리지 않도록).
-const lastDownloadDateLabel = computed(() => {
-  if (!lastDownload.value) return ''
-  const d = lastDownload.value.time
-  const pad = (n: number): string => String(n).padStart(2, '0')
-  return (
-    `${d.getFullYear()}.${pad(d.getMonth() + 1)}.${pad(d.getDate())} ` +
-    `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())} `
-  )
+/**
+ * 저장하지 않은 편집이 있는지 — 마지막 저장(임시 저장·저장용 다운로드) 뒤에 무엇이든 바뀌었으면 true.
+ * 이때만 '임시 저장'에 마우스를 올리면 '최근 편집 저장 안됨'을 띄운다.
+ * (편집은 브라우저 메모리에만 있어 '며칠 전 편집'을 따로 셀 수 없다 — 안 저장한 편집이 있느냐가 전부다)
+ */
+const hasUnsavedEdits = computed(() => moduleStore.modules.length > 0 && moduleStore.isDirty)
+
+/** 임시 저장 직후 버튼 아래에 잠깐 뜨는 '저장 완료' 말풍선 (1542-6981) */
+const savedFlash = ref(false)
+let savedFlashTimer: ReturnType<typeof setTimeout> | null = null
+const flashSaved = () => {
+  savedFlash.value = true
+  if (savedFlashTimer) clearTimeout(savedFlashTimer)
+  savedFlashTimer = setTimeout(() => (savedFlash.value = false), 2200)
+}
+onBeforeUnmount(() => {
+  if (savedFlashTimer) clearTimeout(savedFlashTimer)
 })
 
 // 미리보기 창 재사용용 — 이름 있는 타깃으로 열어 같은 창을 새로고침한다
@@ -265,45 +314,8 @@ const previewEmail = async (): Promise<void> => {
     // 편집 화면의 PC/모바일 선택을 미리보기 초기 모드로 연결
     const initialMode = editorStore.canvasWidth === 'mobile' ? 'mobile' : 'pc'
 
-    // 이메일 본문 문서 (iframe 안에 들어갈 실제 메일) — 반응형 미디어쿼리가
-    // iframe 폭(선택한 기기 해상도) 기준으로 동작하도록 별도 문서로 분리한다
-    const emailDocument = `<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      background-color: #f5f5f5;
-    }
-    .preview-container {
-      max-width: 680px;
-      margin: 0 auto;
-      background-color: white;
-    }
-    .email-content { padding: 0; }
-    @media (max-width: 768px) {
-      .preview-container { max-width: 100%; }
-    }
-    .email-content p, .email-content h1, .email-content h2, .email-content h3 { margin: 0; padding: 0; }
-    .email-content h1 { font-size: 2em; font-weight: bold; }
-    .email-content h2 { font-size: 1.5em; font-weight: bold; }
-    .email-content h3 { font-size: 1.17em; font-weight: bold; }
-    .email-content strong { font-weight: 700; }
-    .email-content em { font-style: italic; }
-    .email-content a { color: #0066cc; text-decoration: underline; }
-  </style>
-</head>
-<body>
-  <div class="preview-container">
-    <div class="email-content">${finalHtml}</div>
-  </div>
-</body>
-</html>`
+    // 이메일 본문 문서 (iframe 안에 들어갈 실제 메일) — 템플릿 선택의 미리보기 모달과 공용
+    const emailDocument = buildEmailPreviewDocument(finalHtml)
 
     // 미리보기 창(바깥 크롬) — 상단 PC/모바일 토글 + 가운데 기기 프레임(iframe)
     const fullHtmlDocument = `<!DOCTYPE html>
@@ -477,10 +489,8 @@ const previewEmail = async (): Promise<void> => {
  */
 const exportHtml = async (): Promise<void> => {
   try {
-    let finalHtml = await moduleStore.generateHtml()
-    finalHtml = processQuillHtml(finalHtml)
     // 다운로드(발송용)와 동일하게 완전한 HTML 문서로 감싸 복사 (메타데이터 제외)
-    const html = buildHtmlDocument(finalHtml, false)
+    const html = await buildDocument(false)
     await navigator.clipboard.writeText(html)
     showSuccess('복사 완료', 'HTML이 클립보드에 복사되었습니다')
   } catch (error) {
@@ -488,172 +498,59 @@ const exportHtml = async (): Promise<void> => {
   }
 }
 
-/**
- * 최종 HTML 문서 생성
- * @param finalHtml 렌더링된 본문 HTML
- * @param includeMetadata true이면 재편집용 메타데이터(주석) 포함, false이면 제거(발송용)
- */
-const buildHtmlDocument = (finalHtml: string, includeMetadata: boolean): string => {
-  let metadataBlock = ''
-  if (includeMetadata) {
-    const projectState = {
-      // 직렬화는 파일 열기(복원)와 짝이라 utils/projectFile에 공용으로 둔다 —
-      // 여기서 필드를 빠뜨리면 다시 열었을 때 그대로 유실된다.
-      modules: moduleStore.modules.map(serializeModule),
-      groups: moduleStore.groups,
-      wrapSettings: editorStore.wrapSettings,
-      // 만든 팀을 기록해 둔다(표시명이 아니라 불변 id).
-      // 다시 열 때 현재 작업 팀을 덮어쓰지는 않는다 — projectFile.ts의 teamId 주석 참고.
-      teamId: editorStore.currentTeamId,
-    }
-    // 콘텐츠의 '-->' 등으로 HTML 주석이 조기 종료되어 파일이 깨지는 것을 방지.
-    // <, > 를 < / > 로 치환 → JSON 문자열 값 안에서만 등장하므로 JSON.parse가 복원(import 변경 불필요).
-    const BACKSLASH = String.fromCharCode(92)
-    const moduleMetadataJson = JSON.stringify(projectState)
-      .replace(/</g, BACKSLASH + 'u003c')
-      .replace(/>/g, BACKSLASH + 'u003e')
-    metadataBlock = `
-<!-- AUTO_NEWSLETTER_METADATA_START -->
-<!-- ${moduleMetadataJson} -->
-<!-- AUTO_NEWSLETTER_METADATA_END -->`
-  }
-
-  return `<!DOCTYPE html>
-<html lang="ko" xmlns:o="urn:schemas-microsoft-com:office:office">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="format-detection" content="telephone=no">
-  <!--[if mso]>
-  <noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
-  <![endif]-->
-  <title>Newsletter</title>
-  <style>
-    /* 아웃룩(Word 엔진) 보정: 테이블 간격 제거, 이미지 보간/테두리 정리 */
-    table { border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
-    img { -ms-interpolation-mode: bicubic; border: 0; outline: none; text-decoration: none; }
-    body { margin: 0; padding: 0; }
-  </style>
-</head>
-<body style="margin:0; padding:0; background-color: #f2f2f2;">
-${finalHtml}${metadataBlock}
-</body>
-</html>`
-}
-
-type DownloadResult =
-  | 'saved' // File System Access API로 디스크 저장 확인됨
-  | 'triggered' // 폴백(anchor) — 브라우저에 다운로드 위임, 실제 쓰기 결과는 앱이 확정 불가
-  | 'cancelled' // 사용자가 저장 대화상자를 취소
-
-/** showSaveFilePicker 최소 타입 (lib.dom 버전 차이 대응) */
-interface SaveFilePickerWindow {
-  showSaveFilePicker?: (opts?: {
-    suggestedName?: string
-    types?: Array<{ description?: string; accept: Record<string, string[]> }>
-  }) => Promise<{
-    createWritable: () => Promise<{
-      write: (data: Blob) => Promise<void>
-      close: () => Promise<void>
-    }>
-  }>
-}
-
-/**
- * 파일 저장 트리거
- * - File System Access API 지원 시: 실제 디스크 쓰기 성공/실패(디스크 풀·권한·취소)를 감지
- * - 미지원 시: 기존 anchor 다운로드로 폴백 (URL 해제는 지연시켜 조기 취소로 인한 저장 실패 방지)
- */
-const triggerDownload = async (content: string, filename: string): Promise<DownloadResult> => {
-  const blob = new Blob([content], { type: 'text/html; charset=utf-8' })
-
-  const showSaveFilePicker = (window as unknown as SaveFilePickerWindow).showSaveFilePicker
-  if (typeof showSaveFilePicker === 'function') {
-    let handle
-    try {
-      handle = await showSaveFilePicker({
-        suggestedName: filename,
-        types: [{ description: 'HTML 파일', accept: { 'text/html': ['.html'] } }],
-      })
-    } catch (err) {
-      // 사용자가 대화상자를 취소한 경우는 실패가 아님
-      if (err instanceof DOMException && err.name === 'AbortError') return 'cancelled'
-      throw err
-    }
-    // 쓰기 단계의 실패(디스크 공간 부족 등)는 상위 catch로 전파되어 정확히 안내됨
-    const writable = await handle.createWritable()
-    await writable.write(blob)
-    await writable.close()
-    return 'saved'
-  }
-
-  // 폴백: anchor 다운로드 (쓰기 결과 감지 불가) — revoke를 지연시켜 큰 파일 조기 취소 방지
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.href = url
-  link.download = filename
-  document.body.appendChild(link)
-  link.click()
-  link.remove()
-  setTimeout(() => URL.revokeObjectURL(url), 1000)
-  return 'triggered'
-}
-
-/**
- * HTML 파일 다운로드
- * @param includeMetadata true: 저장용(재편집 메타데이터 포함) / false: 발송용(메타데이터 제거)
- */
+/** HTML 파일 다운로드 — 실제 저장은 useNewsletterDownload(레일 '새 작업'과 공용)가 한다 */
 const downloadHtml = async (includeMetadata: boolean): Promise<void> => {
+  await downloadNewsletterHtml(includeMetadata)
+}
+
+/**
+ * 임시 저장 — 지금 작업을 **회차 폴더에** 저장용(재편집 가능) HTML로 올린다.
+ *
+ * '저장용 내려받기'는 내 PC로만 받기 때문에 담당자나 PC가 바뀌면 이어서 편집할 방법이 없다.
+ * 같은 이름(`{전시회}_{폴더}_edit.html`)으로 덮어써 **폴더에는 최신 한 개만** 남는다.
+ * (이미지와 같은 폴더에 두는 이유: 파일이 하나뿐이라 하위 폴더를 팔 이유가 없고,
+ *  폴더 선택 화면이 이미 그 폴더의 목록을 받아오므로 '이어서 편집'을 바로 알아볼 수 있다)
+ */
+const saveToFolder = async (): Promise<void> => {
+  if (savingToFolder.value) return
+
+  if (!moduleStore.modules?.length) {
+    showWarn('임시 저장 불가', '먼저 모듈을 추가해주세요')
+    return
+  }
+  const directory = buildUploadDirectory(editorStore.uploadFolder, editorStore.wrapSettings.volume)
+  if (!directory) {
+    showWarn('저장할 폴더가 필요해요', MISSING_VOLUME_MESSAGE)
+    return
+  }
+
+  savingToFolder.value = true
   try {
-    const modules = moduleStore.modules
+    // 재편집 메타데이터를 담아 올린다 — 나중에 그대로 불러와 이어서 편집하기 위함
+    const document = await buildDocument(true)
+    const filename = buildDownloadFileName(
+      editorStore.currentTemplateId,
+      editorStore.wrapSettings.volume,
+      'edit',
+    )
 
-    if (!modules || modules.length === 0) {
-      showWarn('내보내기 불가', '먼저 모듈을 추가해주세요')
-      return
-    }
+    await uploadHtml(new File([document], filename, { type: 'text/html' }), directory, {
+      overwrite: true,
+    })
 
-    let finalHtml = await moduleStore.generateHtml()
-    finalHtml = processQuillHtml(finalHtml)
-
-    const fullHtmlDocument = buildHtmlDocument(finalHtml, includeMetadata)
-
-    const now = new Date()
-    const pad = (n: number): string => String(n).padStart(2, '0')
-    const timestamp =
-      `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}` +
-      `_${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}`
-    const prefix = includeMetadata ? '재편집용' : '발송용'
-    const filename = `${prefix}_newsletter_${timestamp}.html`
-
-    const result = await triggerDownload(fullHtmlDocument, filename)
-
-    // 사용자가 저장 대화상자를 취소 → 기록·저장표시·토스트 없이 종료(작업 상태 유지)
-    if (result === 'cancelled') return
-
-    // 최근 내려받음 기록 (메모리)
-    lastDownload.value = { time: now, type: includeMetadata ? '저장용' : '발송용' }
-
-    // 저장용만 '저장됨'으로 표시 (발송용은 재편집 불가 → dirty 상태 유지)
-    if (includeMetadata) {
-      moduleStore.markAsSaved()
-    }
-
-    const kindLabel = includeMetadata
-      ? `${filename} (저장용 · 다시 불러와 편집 가능)`
-      : `${filename} (발송용 · 메타데이터 제거됨)`
-    if (result === 'saved') {
-      // 실제 디스크 저장 확인됨
-      showSuccess('저장 완료', kindLabel)
-    } else {
-      // 폴백 경로 — 앱이 저장 완료를 확정할 수 없으므로 정직하게 안내
-      showSuccess('다운로드 시작됨', `${kindLabel} · 브라우저 다운로드 표시줄을 확인하세요`)
-    }
+    // 폴더에 남았으니 '저장됨'으로 본다 — 내려받기와 같은 기준
+    moduleStore.markAsSaved()
+    flashSaved()
+    showSuccess('임시 저장 완료', `${displayUploadDirectory(directory)}${filename}`)
   } catch (error) {
     showError(
-      '저장 실패',
-      error instanceof Error ? error.message : '디스크 공간 부족·권한 등으로 저장하지 못했습니다',
+      '임시 저장 실패',
+      error instanceof UploadError
+        ? error.message
+        : '저장 중 문제가 생겼어요. 잠시 후 다시 시도해 주세요.',
     )
+  } finally {
+    savingToFolder.value = false
   }
 }
 
@@ -681,11 +578,11 @@ const downloadForSend = (): Promise<void> => downloadHtml(false)
   gap: 25px;
   min-width: 0;
 }
-/* 팀·브레드크럼·구분선·실행취소·전체삭제 사이 20px (1125-3059) */
+/* 팀·구분선·실행취소·전체삭제·저장 위치 사이 15px (1500-9770) */
 .hleft-group {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 15px;
   min-width: 0;
 }
 /* 실행취소 ↔ 다시실행 8px (1125-3064) */
@@ -702,12 +599,6 @@ const downloadForSend = (): Promise<void> => downloadHtml(false)
   gap: 10px;
   flex-shrink: 0;
 }
-.hsaved {
-  font-size: 13px;
-  color: var(--gray-600);
-  white-space: nowrap;
-}
-
 .hbar {
   width: 1px;
   height: 32px;
@@ -763,7 +654,7 @@ const downloadForSend = (): Promise<void> => downloadHtml(false)
 .hbtn .material-symbols-outlined {
   font-size: 22px;
 }
-/* 저장용 — blue/50 배경 + blue/600 글자 */
+/* 임시저장 */
 .hbtn--tint {
   background: var(--blue-50);
   color: var(--blue-600);
@@ -801,30 +692,56 @@ const downloadForSend = (): Promise<void> => downloadHtml(false)
   white-space: nowrap;
   flex-shrink: 0;
 }
-/* 브레드크럼 (Figma 1125-3062: 14px, gray/700, 템플릿명만 밑줄) */
-.hcrumb {
+/* 임시 저장 + '저장 완료' 말풍선 (1542-6981: 버튼 아래 8px, 진회색 카드에 흰 16px medium, 위쪽 꼬리) */
+.hsave-wrap {
+  position: relative;
   display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 14px;
-  color: var(--gray-700);
-  min-width: 0;
+  flex-shrink: 0;
 }
-.hcrumb-link {
-  border: 0;
-  padding: 0;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  cursor: pointer;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.hbubble {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  padding: 12px 20px;
+  border-radius: 8px;
+  background: var(--gray-750);
+  color: var(--white);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
   white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
 }
-.hcrumb-link:hover {
-  color: var(--blue-500);
+.hbubble::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 7px solid transparent;
+  border-bottom-color: var(--gray-750);
+}
+.hbubble-enter-active,
+.hbubble-leave-active {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.hbubble-enter-from,
+.hbubble-leave-to {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-4px);
+}
+
+/* 파일 저장 위치 — 누르는 버튼이 아니라 말풍선만 띄우는 아이콘 (1527-9112) */
+.hpath {
+  cursor: default;
+}
+.hpath:hover,
+.hpath:focus-visible {
+  background: var(--gray-100);
+  outline: none;
 }
 /* 전체 삭제 (Figma 1125-2964: gap 6px, px 10px, rounded 8px, 14px medium, error/400) */
 .hclear {

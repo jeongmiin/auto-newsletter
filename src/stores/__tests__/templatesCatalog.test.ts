@@ -33,7 +33,7 @@ const DEPARTMENT_TEAM_IDS: Record<string, string[]> = Object.fromEntries(
 const ALL_TEAMS = DEPARTMENTS.flatMap((d) => d.teams)
 
 /**
- * 한 번이라도 배포된 팀 id 목록 — **추가만 가능하고 삭제·변경은 금지**한다.
+ * 한 번이라도 배포된 팀 id 목록 — **추가만 가능하고 조용히 사라지는 것은 금지**한다.
  *
  * 이 id는 S3 업로드 경로·저장 파일처럼 되돌릴 수 없는 곳에 박힌다. 지우거나 철자를
  * 바꾸면 과거 데이터가 가리키던 대상이 사라진다. 조직이 폐지되면 설정에서 지우는 대신
@@ -44,14 +44,40 @@ const ALL_TEAMS = DEPARTMENTS.flatMap((d) => d.teams)
 const KNOWN_TEAM_IDS = [
   'arch-plan',
   'arch-strategy',
+  'arch-str',
   'growth-strategy',
+  'growth-str',
   'mice',
   'growth-plan',
   'conv-industry-1',
+  'conv1',
   'life-content',
+  'life',
   'pet-industry',
+  'pet-ind',
   'leisure-industry',
+  'leisure-ind',
 ]
+
+/**
+ * 짧은 id로 갈아탄 기록 (옛 id → 새 id, 2026-09-01).
+ *
+ * 이름표가 아니라 **S3 폴더명**이라 원칙은 '바꾸지 않는다'지만, 운영 요청으로 한 번에 정리했다.
+ * 지운 게 아니라 옮긴 것임을 여기 남겨 둔다 — 옛 id로 쌓인 자리(`blank/{옛 팀id}/`)와
+ * 저장 파일의 `teamId`가 무엇을 가리키는지 나중에도 추적할 수 있어야 하기 때문이다.
+ *
+ * ⚠ 새로 갈아타는 건 여기 한 줄 적는 것으로 끝나지 않는다 —
+ *   S3의 `blank/{옛 팀id}/` 폴더도 새 이름으로 함께 옮겨야 과거 이미지와 이어진다.
+ */
+const RENAMED_TEAM_IDS: Record<string, string> = {
+  'arch-strategy': 'arch-str',
+  'growth-strategy': 'growth-str',
+  'conv-industry-1': 'conv1',
+  'life-content': 'life',
+  // pet·leisure로 줄이면 본부 id와 겹쳐 계층 구분이 사라진다 — 뒤에 -ind를 남긴다
+  'pet-industry': 'pet-ind',
+  'leisure-industry': 'leisure-ind',
+}
 
 /** id 표기 규칙 — 소문자 영숫자와 하이픈만 (URL·S3 키에 그대로 쓰인다) */
 const ID_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/
@@ -100,12 +126,22 @@ describe('템플릿 카탈로그', () => {
   })
 
   it('기존 팀 id가 사라지지 않았다', () => {
-    // ⚠ 이 테스트가 깨졌다면 id를 지웠거나 철자를 바꾼 것이다. 되돌려라 —
+    // ⚠ 이 테스트가 깨졌다면 id를 지웠거나 철자를 바꾼 것이다. 되돌리거나,
+    //   의도한 변경이면 RENAMED_TEAM_IDS에 옛 id → 새 id를 적어 자취를 남겨라 —
     //   과거 업로드 이미지·저장 파일이 그 id를 가리키고 있다.
     //   조직 폐지는 삭제가 아니라 active: false 다.
     const current = new Set(ALL_TEAMS.map((t) => t.id))
-    const lost = KNOWN_TEAM_IDS.filter((id) => !current.has(id))
+    const lost = KNOWN_TEAM_IDS.filter((id) => !current.has(id) && !RENAMED_TEAM_IDS[id])
     expect(lost, `사라진 팀 id: ${lost.join(', ')}`).toEqual([])
+  })
+
+  it('갈아탄 팀 id의 후속 id가 실제로 있다', () => {
+    // 옛 id를 적어 두기만 하고 새 id를 안 만들면 추적이 끊긴다
+    const current = new Set(ALL_TEAMS.map((t) => t.id))
+    const dangling = Object.entries(RENAMED_TEAM_IDS)
+      .filter(([, next]) => !current.has(next))
+      .map(([from, to]) => `${from} → ${to}`)
+    expect(dangling, `후속 팀 id를 찾을 수 없다: ${dangling.join(', ')}`).toEqual([])
   })
 
   it('새로 생긴 팀 id가 KNOWN_TEAM_IDS에 등록돼 있다', () => {

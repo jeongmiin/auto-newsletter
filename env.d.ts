@@ -18,6 +18,13 @@ interface ImportMetaEnv {
    * 응답이 이미 `http(s)://`로 시작하면 무시된다.
    */
   readonly VITE_S3_PUBLIC_BASE?: string
+  /**
+   * 저장소(S3) 버킷 주소 — '폴더 선택'이 이미 있는 회차 폴더를 읽어 오는 데 쓴다.
+   *
+   * 버킷이 ListObjectsV2를 공개하고 CORS도 열어 둬서 브라우저에서 바로 부를 수 있다.
+   * 비워 두면 코드의 기본값(운영 버킷)을 쓴다 — 이미지 주소에 이미 공개된 값이다.
+   */
+  readonly VITE_S3_BUCKET_URL?: string
 }
 
 interface ImportMeta {

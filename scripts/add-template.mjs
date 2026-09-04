@@ -2,7 +2,7 @@
  * 재편집용 HTML 하나를 템플릿 카탈로그(public/templates/templates-config.json)에 등록한다.
  *
  *   node scripts/add-template.mjs <htmlFile> --id kpet-template --name 케이펫 \
- *        --division pet --team pet-industry [--thumbnail kpet_temp.png] [--description "..."] \
+ *        --division pet --team pet-ind [--thumbnail kpet_temp.png] [--description "..."] \
  *        [--summary "표 설명(뉴스레터 요약)"]
  *
  * --summary는 파일의 뉴스레터 요약(wrapSettings.summary)을 덮어쓴다. 요약 없이 내보낸
@@ -48,7 +48,7 @@ if (!htmlArg || !opts.id || !opts.name || !opts.division || !opts.team) {
       '',
       '예:',
       '  node scripts/add-template.mjs temp/kpet_temp_newletter.html \\',
-      '       --id kpet-template --name 케이펫 --division pet --team pet-industry \\',
+      '       --id kpet-template --name 케이펫 --division pet --team pet-ind \\',
       '       --thumbnail kpet_temp.png',
     ].join('\n'),
   )

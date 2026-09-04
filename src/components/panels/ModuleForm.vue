@@ -384,7 +384,7 @@
         >
           <!-- 리치텍스트(textarea)는 위에 '폰트 크기'와 서식 툴바가 바로 붙으므로 별도 라벨을 두지 않는다(Figma 640-3689) -->
           <label
-            v-show="prop.type !== 'boolean' && prop.type !== 'checkbox' && prop.type !== 'textarea' && prop.type !== 'table-editor' && !isColorBlock(prop) && !isQuadStart(prop, group.props, index) && !isSingleSpacingField(prop) && !isBorderWidthField(prop) && !isPxWidthField(prop) && !isBtnWidthField(prop) && !isBorderStyleStart(prop)"
+            v-show="prop.type !== 'boolean' && prop.type !== 'checkbox' && prop.type !== 'textarea' && prop.type !== 'table-editor' && prop.type !== 'image-crop' && !isColorBlock(prop) && !isQuadStart(prop, group.props, index) && !isSingleSpacingField(prop) && !isBorderWidthField(prop) && !isPxWidthField(prop) && !isBtnWidthField(prop) && !isBorderStyleStart(prop)"
             class="gg-field-label"
             :class="{ 'fs-label-row': isFontSizeField(prop) }"
           >
@@ -921,10 +921,12 @@
                (modules-config.json에서 type:'image'로 표시). -->
           <div v-else-if="prop.type === 'image'" class="space-y-2">
             <ImageUploadField
+              :ref="(el) => setImageFieldRef(prop.key, el)"
               :modelValue="String(selectedModule.properties[prop.key] || '')"
               @update:modelValue="updateProperty(prop.key, $event)"
               :placeholder="prop.placeholder || 'https://...'"
               :placeholderUrl="imagePlaceholderUrl(prop)"
+              :cropWidth="prop.cropWidth"
             />
             <p v-if="prop.hint" class="hint-text" v-html="prop.hint"></p>
           </div>
@@ -1033,6 +1035,21 @@
                 {{ opt.label }}
               </button>
             </div>
+          </div>
+
+          <!-- 이미지 다듬기 — 값이 없는 동작 버튼. target 이미지 필드(ImageUploadField)의 모달을 연다.
+               자리표시 이미지뿐이면 자를 게 없으므로 비활성화한다. -->
+          <div v-else-if="prop.type === 'image-crop'">
+            <button
+              type="button"
+              class="gg-crop-btn"
+              :disabled="!canCropImage(prop)"
+              :title="canCropImage(prop) ? '' : '이미지를 먼저 올려 주세요'"
+              @click="openImageCrop(prop)"
+            >
+              <span class="material-symbols-outlined">crop</span>
+              {{ prop.label || '이미지 다듬기' }}
+            </button>
           </div>
 
           <!-- 셀렉트 -->
@@ -1877,7 +1894,7 @@ import {
 } from '@/utils/quillLetterSpacing'
 import { POINT_COLOR_SUFFIX, POINT_COLOR_INDEX_SUFFIX, POINT_COLOR_CSS_VAR, pointColorCssVar, getPointColorIndex, pointColorAt } from '@/utils/pointColor'
 import { processQuillHtml } from '@/utils/quillHtmlProcessor'
-import { DEFAULT_IMAGE_URL } from '@/constants/defaults'
+import { DEFAULT_IMAGE_URL, isPlaceholderImage } from '@/constants/defaults'
 import TableCellEditor from './TableCellEditor.vue'
 import ImageUploadField from './ImageUploadField.vue'
 import ColorAlphaPicker from '@/components/ColorAlphaPicker.vue'
@@ -2661,6 +2678,30 @@ const isAlignSegment = (prop: EditableProp): boolean => {
 const imagePlaceholderUrl = (prop: EditableProp): string => {
   const fallback = typeof prop.default === 'string' ? prop.default.trim() : ''
   return fallback || DEFAULT_IMAGE_URL
+}
+
+/**
+ * 이미지 다듬기(type:'image-crop') — 버튼은 '이미지 크기 조정' 그룹에 있고 모달·재업로드는
+ * 그 이미지의 ImageUploadField 가 맡는다. 그래서 필드 인스턴스를 key 로 붙잡아 둔다.
+ * 그룹은 v-show 로 접히므로 접혀 있어도 인스턴스는 살아 있다.
+ */
+type ImageFieldInstance = InstanceType<typeof ImageUploadField>
+const imageFieldRefs = new Map<string, ImageFieldInstance>()
+const setImageFieldRef = (key: string, el: unknown) => {
+  if (el) imageFieldRefs.set(key, el as ImageFieldInstance)
+  else imageFieldRefs.delete(key)
+}
+/** 다듬을 이미지의 현재 값 — target 이 없으면 같은 그룹의 관례 이름(imageUrl)을 쓴다 */
+const cropTargetValue = (prop: EditableProp): string =>
+  String(selectedModule.value?.properties[prop.target ?? 'imageUrl'] || '')
+/** 자리표시 이미지(모듈 기본 이미지)뿐이면 자를 게 없다 */
+const canCropImage = (prop: EditableProp): boolean => {
+  const value = cropTargetValue(prop)
+  return value !== '' && !isPlaceholderImage(value)
+}
+const openImageCrop = (prop: EditableProp) => {
+  if (!canCropImage(prop)) return
+  void imageFieldRefs.get(prop.target ?? 'imageUrl')?.openCrop()
 }
 
 const alignValueOf =(prop: EditableProp): string =>
