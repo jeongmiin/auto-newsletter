@@ -29,6 +29,11 @@ coverage
 
 *.tsbuildinfo
 
+# Cloudflare Worker(번역 프록시) 로컬 실행·배포 캐시
+.wrangler/
+# wrangler dev용 로컬 시크릿 파일(쓴다면). 키가 들어가므로 절대 커밋하지 않는다
+.dev.vars
+
 # 목 업로드 서버(scripts/mock-s3-upload.mjs)가 저장하는 파일 — 개발 중 임시 산출물
 .mock-uploads/
 

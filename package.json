@@ -17,6 +17,7 @@
     "format": "prettier --write src/",
     "mock:upload": "node scripts/mock-s3-upload.mjs",
     "proxy:translate": "node scripts/azure-translate-proxy.mjs",
+    "deploy:translate": "npx --yes wrangler@4 deploy --config scripts/wrangler.jsonc",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
