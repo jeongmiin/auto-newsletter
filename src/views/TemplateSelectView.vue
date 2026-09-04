@@ -12,79 +12,132 @@
         @top="selectedTeam = ''"
       />
 
-      <!-- 우측: 제목 + 검색 + 카드 그리드 -->
-      <main class="tpl-main">
-        <h1 class="tpl-title">전시회를 선택해주세요.</h1>
+      <!-- 우측: 제목 + 검색 + 카드 그리드, 그 아래 이전/다음 (Figma 1468-8905) -->
+      <div class="tpl-column">
+        <main class="tpl-main">
+          <h1 class="tpl-title">전시회를 선택해주세요.</h1>
 
-        <SearchField
-          v-model="search"
-          class="tpl-search"
-          size="lg"
-          placeholder="전시명을 입력하세요"
-          aria-label="템플릿 검색"
-        />
+          <SearchField
+            v-model="search"
+            class="tpl-search"
+            size="lg"
+            placeholder="전시명을 입력하세요"
+            aria-label="템플릿 검색"
+          />
 
-        <div class="tpl-grid">
-          <!-- 빈 템플릿 카드 — '전체'에 하나만 둔다.
-               어느 팀의 빈 문서인지는 다음 걸음(폴더 선택)에서 고른다. 팀마다 카드를 두면
-               같은 빈 문서가 팀 수만큼 늘어서고, 팀을 잘못 골랐을 때 되돌릴 자리도 없다. -->
-          <button
-            v-if="selectedTeam === ''"
-            class="tpl-card"
-            @click="startBlank"
-          >
-            <div class="tpl-thumb tpl-thumb--blank">
-              <!-- 내용 없는 문서를 뜻하는 회색 뼈대 (이미지 한 장 + 글줄 + 버튼) -->
-              <div class="blank-image"></div>
-              <div class="blank-line blank-line--short"></div>
-              <div class="blank-line"></div>
-              <div class="blank-line"></div>
-              <div class="blank-line"></div>
-              <div class="blank-button"></div>
-            </div>
-            <div class="tpl-card-name">빈 화면</div>
-          </button>
-
-          <!-- 템플릿 카드 -->
-          <button
-            v-for="t in filteredTemplates"
-            :key="t.id"
-            class="tpl-card"
-            @click="pickTemplate(t)"
-          >
-            <div class="tpl-thumb">
-              <!-- 미리 만들어 둔 썸네일 이미지가 있으면 그걸 쓴다(빠름).
-                   없는 템플릿만 실제 렌더해서 iframe으로 보여준다(폴백). -->
-              <img
-                v-if="thumbSrc(t)"
-                :src="thumbSrc(t)"
-                :alt="`${t.name} 미리보기`"
-                class="tpl-thumb-img"
-                loading="lazy"
-                decoding="async"
-              />
-              <iframe
-                v-else-if="srcdocs[t.id]"
-                :srcdoc="srcdocs[t.id]"
-                class="tpl-thumb-iframe"
-                sandbox="allow-same-origin"
-                scrolling="no"
-                loading="lazy"
-              ></iframe>
-              <div v-else class="tpl-thumb-loading">
-                <i class="pi pi-spin pi-spinner text-gray-300"></i>
+          <div class="tpl-grid">
+            <!-- 빈 템플릿 카드 — '전체'에 하나만 둔다.
+                 어느 팀의 빈 문서인지는 다음 걸음(폴더 선택)에서 고른다. 팀마다 카드를 두면
+                 같은 빈 문서가 팀 수만큼 늘어서고, 팀을 잘못 골랐을 때 되돌릴 자리도 없다.
+                 미리 볼 내용이 없으니 호버 버튼 없이 **누르면 바로 골라진다**. -->
+            <button
+              v-if="selectedTeam === ''"
+              type="button"
+              class="tpl-card tpl-card--blank"
+              :class="{ 'is-selected': isBlankSelected }"
+              :aria-pressed="isBlankSelected"
+              @click="selectBlank"
+              @dblclick="selectBlank(), goNext()"
+            >
+              <div class="tpl-thumb tpl-thumb--blank">
+                <!-- 내용 없는 문서를 뜻하는 회색 뼈대 (이미지 한 장 + 글줄 + 버튼) -->
+                <div class="blank-image"></div>
+                <div class="blank-line blank-line--short"></div>
+                <div class="blank-line"></div>
+                <div class="blank-line"></div>
+                <div class="blank-line"></div>
+                <div class="blank-button"></div>
               </div>
-            </div>
-            <div class="tpl-card-name">{{ t.name }}</div>
-          </button>
+              <div class="tpl-card-name">빈 화면</div>
+            </button>
 
-          <!-- 결과 없음 -->
-          <div v-if="filteredTemplates.length === 0" class="tpl-empty">
-            해당 조건의 템플릿이 없습니다.
+            <!-- 템플릿 카드 — 올리면 '미리보기'·'템플릿 선택하기'가 썸네일 위에 뜬다 (Figma 1468-9267).
+                 고른 카드는 파란 테두리(1472-9524). 안에 버튼이 둘이라 카드 자체는 버튼이 아니다.
+                 더블클릭하면 고르고 바로 다음(폴더 선택)으로 간다 — '미리보기' 위에서는 예외. -->
+            <div
+              v-for="t in filteredTemplates"
+              :key="t.id"
+              class="tpl-card"
+              :class="{ 'is-selected': isTemplateSelected(t) }"
+              @dblclick="selectTemplate(t), goNext()"
+            >
+              <div class="tpl-thumb">
+                <!-- 미리 만들어 둔 썸네일 이미지가 있으면 그걸 쓴다(빠름).
+                     없는 템플릿만 실제 렌더해서 iframe으로 보여준다(폴백). -->
+                <img
+                  v-if="thumbSrc(t)"
+                  :src="thumbSrc(t)"
+                  :alt="`${t.name} 미리보기`"
+                  class="tpl-thumb-img"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <iframe
+                  v-else-if="srcdocs[t.id]"
+                  :srcdoc="srcdocs[t.id]"
+                  class="tpl-thumb-iframe"
+                  sandbox="allow-same-origin"
+                  scrolling="no"
+                  loading="lazy"
+                ></iframe>
+                <div v-else class="tpl-thumb-loading">
+                  <i class="pi pi-spin pi-spinner text-gray-300"></i>
+                </div>
+
+                <!-- 호버/포커스 시 덮이는 두 버튼 -->
+                <div class="tpl-hover">
+                  <button type="button" class="tpl-hover-btn" @click="openPreview(t)" @dblclick.stop>
+                    <span class="material-symbols-outlined">search</span>
+                    미리보기
+                  </button>
+                  <button type="button" class="tpl-hover-btn tpl-hover-btn--dark" @click="selectTemplate(t)">
+                    <span class="material-symbols-outlined">check</span>
+                    템플릿 선택하기
+                  </button>
+                </div>
+              </div>
+              <div class="tpl-card-name">{{ t.name }}</div>
+            </div>
+
+            <!-- 결과 없음 -->
+            <div v-if="filteredTemplates.length === 0" class="tpl-empty">
+              해당 조건의 템플릿이 없습니다.
+            </div>
           </div>
-        </div>
-      </main>
+        </main>
+
+        <!-- 하단 — 첫 걸음이라 '이전으로'는 늘 잠겨 있고, 카드를 고르면 '다음'이 켜진다.
+             왼쪽에 고른 이름을 적어 두어, 다른 카드로 바꿨을 때 무엇이 골라졌는지 바로 보이게 한다. -->
+        <FlowFooter>
+          <template #info>
+            <p class="flow-info">
+              <span class="flow-info-label">
+                <span class="material-symbols-outlined">check_circle</span>
+                선택한 템플릿
+              </span>
+              <span v-if="selectedName" class="flow-info-value">{{ selectedName }}</span>
+              <span v-else class="flow-info-value flow-info-value--empty">아직 고르지 않았어요</span>
+            </p>
+          </template>
+          <button type="button" class="flow-btn flow-btn--ghost" disabled>이전으로</button>
+          <button
+            type="button"
+            class="flow-btn flow-btn--primary"
+            :disabled="!selected || applying"
+            @click="goNext"
+          >
+            다음
+          </button>
+        </FlowFooter>
+      </div>
     </div>
+
+    <!-- 미리보기 모달 — '이 템플릿 선택하기'면 고른 뒤 닫는다 -->
+    <TemplatePreviewDialog
+      :template="previewTemplate"
+      @close="previewTemplate = null"
+      @select="selectFromPreview"
+    />
 
     <!-- 템플릿 적용 중 오버레이 -->
     <div v-if="applying" class="tpl-overlay">
@@ -100,8 +153,10 @@ import { useRouter } from 'vue-router'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
 import FlowStepsHeader from '@/components/layout/FlowStepsHeader.vue'
+import FlowFooter from '@/components/layout/FlowFooter.vue'
 import TeamTreeSidebar from '@/components/layout/TeamTreeSidebar.vue'
 import SearchField from '@/components/SearchField.vue'
+import TemplatePreviewDialog from '@/components/TemplatePreviewDialog.vue'
 import { getHistoryInstance } from '@/composables/useHistory'
 import type { NewsletterTemplate } from '@/types'
 
@@ -117,6 +172,39 @@ const search = ref('')
 const templates = ref<NewsletterTemplate[]>([])
 const srcdocs = reactive<Record<string, string>>({})
 const applying = ref(false)
+
+/**
+ * 고른 카드 — 카드를 누르는 순간 적용하지 않고 여기 담아 두었다가 '다음'에서 간다.
+ * 빈 템플릿은 누르면 곧바로 골라지고, 템플릿은 호버 버튼(또는 미리보기 모달)에서 고른다.
+ */
+type Selection = { kind: 'blank' } | { kind: 'template'; template: NewsletterTemplate }
+const selected = ref<Selection | null>(null)
+const isBlankSelected = computed(() => selected.value?.kind === 'blank')
+const isTemplateSelected = (t: NewsletterTemplate) =>
+  selected.value?.kind === 'template' && selected.value.template.id === t.id
+/** 하단 안내에 적을 이름 — 카드 이름과 같은 표기 */
+const selectedName = computed(() => {
+  const pick = selected.value
+  if (!pick) return ''
+  return pick.kind === 'blank' ? '빈 화면' : pick.template.name
+})
+
+const selectBlank = () => {
+  selected.value = { kind: 'blank' }
+}
+const selectTemplate = (t: NewsletterTemplate) => {
+  selected.value = { kind: 'template', template: t }
+}
+
+/** 미리보기 모달에 띄운 템플릿 — null 이면 닫힘 */
+const previewTemplate = ref<NewsletterTemplate | null>(null)
+const openPreview = (t: NewsletterTemplate) => {
+  previewTemplate.value = t
+}
+const selectFromPreview = (t: NewsletterTemplate) => {
+  selectTemplate(t)
+  previewTemplate.value = null
+}
 
 // 카드 정렬: 좌측 트리와 같은 순서(본부 → 팀)로 묶고, 그 안에서는 이름 가나다ABC 순.
 // (localeCompare('ko')가 한글 → 영문 순서를 만든다. JSON 순서에 기대지 않고 화면에서 정렬한다)
@@ -203,8 +291,8 @@ const startBlank = () => {
   router.push({ name: 'folder' })
 }
 
-// 템플릿 선택 → 적용 후 에디터로
-const pickTemplate = async (t: NewsletterTemplate) => {
+// 템플릿 적용 후 폴더 선택으로
+const applyTemplate = async (t: NewsletterTemplate) => {
   if (applying.value) return
   applying.value = true
   try {
@@ -228,11 +316,20 @@ const pickTemplate = async (t: NewsletterTemplate) => {
     applying.value = false
   }
 }
+
+/** '다음' — 고른 것을 그제야 적용한다 */
+const goNext = () => {
+  const pick = selected.value
+  if (!pick) return
+  if (pick.kind === 'blank') startBlank()
+  else void applyTemplate(pick.template)
+}
 </script>
 
 <style scoped>
+/* 화면 높이에 고정 — 카드 목록만 스크롤되고 하단 이전/다음은 늘 보인다 (폴더 선택 화면과 같은 구조) */
 .tpl-page {
-  min-height: 100vh;
+  height: 100vh;
   background: var(--white);
   display: flex;
   flex-direction: column;
@@ -240,6 +337,14 @@ const pickTemplate = async (t: NewsletterTemplate) => {
 .tpl-body {
   flex: 1;
   display: flex;
+  min-height: 0;
+}
+/* 우측 열 — 스크롤되는 본문 + 고정 하단. 하단선은 사이드바 오른쪽에서만 긋는다 (Figma 1468-8905) */
+.tpl-column {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
   min-height: 0;
 }
 
@@ -277,8 +382,10 @@ const pickTemplate = async (t: NewsletterTemplate) => {
   background: none;
   border: 0;
   padding: 0;
-  cursor: pointer;
   text-align: left;
+}
+.tpl-card--blank {
+  cursor: pointer;
 }
 .tpl-thumb {
   width: 190px;
@@ -290,9 +397,75 @@ const pickTemplate = async (t: NewsletterTemplate) => {
   position: relative;
   transition: box-shadow 0.15s, border-color 0.15s;
 }
-.tpl-card:hover .tpl-thumb {
+/* 키보드로 안의 버튼에 갔을 때도 호버와 같게. :focus-within 이 아니라 :focus-visible 인 이유 —
+   마우스로 '템플릿 선택하기'를 누르면 포커스가 버튼에 남아 덮개가 안 걷히고, 고른 카드의
+   파란 테두리(1472-9524)를 볼 수 없다. */
+.tpl-card:hover .tpl-thumb,
+.tpl-card:has(:focus-visible) .tpl-thumb {
   border-color: var(--blue-400);
   box-shadow: 0 4px 14px rgba(64, 131, 243, 0.18);
+}
+/* 고른 카드 — 파란 테두리 (Figma 1472-9524) */
+.tpl-card.is-selected .tpl-thumb {
+  border-color: var(--blue-400);
+}
+.tpl-card--blank.is-selected .tpl-thumb {
+  box-shadow: 0 4px 14px rgba(64, 131, 243, 0.18);
+}
+
+/* 호버 시 썸네일을 덮는 두 버튼 (Figma 1468-9267) — 흰 바탕, 26px 안쪽, 위 31px */
+.tpl-hover {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 21px;
+  padding: 31px 26px;
+  background: var(--white);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+.tpl-card:hover .tpl-hover,
+.tpl-card:has(:focus-visible) .tpl-hover {
+  opacity: 1;
+  pointer-events: auto;
+}
+.tpl-hover-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 24px;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  background: var(--white);
+  color: var(--gray-600);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.tpl-hover-btn .material-symbols-outlined {
+  font-size: 18px;
+}
+.tpl-hover-btn:hover {
+  border-color: var(--gray-300);
+  background: var(--gray-50);
+}
+.tpl-hover-btn--dark {
+  border-color: var(--gray-700);
+  background: var(--gray-700);
+  color: var(--white);
+}
+.tpl-hover-btn--dark .material-symbols-outlined {
+  font-size: 20px;
+}
+.tpl-hover-btn--dark:hover {
+  border-color: var(--gray-800);
+  background: var(--gray-800);
 }
 
 /* ===== 빈 템플릿 카드 =====
@@ -371,6 +544,8 @@ const pickTemplate = async (t: NewsletterTemplate) => {
   font-size: 14px;
   padding: 40px 0;
 }
+
+/* 하단 이전/다음은 FlowFooter(폴더 선택과 공용)가 그린다 */
 
 /* 적용 중 오버레이 */
 .tpl-overlay {

@@ -3870,11 +3870,19 @@ export const useModuleStore = defineStore('module', () => {
   /**
    * 모듈별 콘텐츠 교체
    */
-  const replaceModuleContent = async (html: string, module: ModuleInstance): Promise<string> => {
-    const editorStore = useEditorStore()
+  /**
+   * @param pointColors 포인트 색상 팔레트. 템플릿 미리보기처럼 **지금 에디터 상태가 아닌** 데이터를
+   *   렌더할 때 그 데이터의 것을 넘긴다 — 안 넘기면 현재 에디터의 포인트 색상으로 칠해져
+   *   미리보기가 실제 템플릿과 다른 색으로 나온다.
+   */
+  const replaceModuleContent = async (
+    html: string,
+    module: ModuleInstance,
+    pointColors: string[] = useEditorStore().wrapSettings.pointColors,
+  ): Promise<string> => {
     const { moduleId } = module
     // '포인트 색상 사용'으로 체크된 색상 속성을 전역 포인트 색상으로 해소
-    const properties = resolvePointColors(module.properties, editorStore.wrapSettings.pointColors)
+    const properties = resolvePointColors(module.properties, pointColors)
 
     switch (moduleId) {
       case 'ModuleNewsHeader':
@@ -4018,7 +4026,8 @@ export const useModuleStore = defineStore('module', () => {
         }
         let html = await response.text()
 
-        html = await replaceModuleContent(html, module)
+        // 렌더 대상(source)의 포인트 색상으로 — 템플릿 미리보기가 현재 에디터 색으로 물들지 않게
+        html = await replaceModuleContent(html, module, wrapSettings.pointColors)
 
         // 본문 인라인 '포인트 색상'(var(--point-color-N)) → 실제 색상값 (이메일은 CSS 변수 미지원)
         html = resolvePointColorVars(html, wrapSettings.pointColors)
@@ -4175,7 +4184,13 @@ ${fullHtml}
     const grps: ModuleGroup[] = template.groups
       ? JSON.parse(JSON.stringify(template.groups))
       : []
-    const wrapSettings = { ...editorStore.wrapSettings, ...(template.wrapSettings || {}) }
+    const tplSettings = template.wrapSettings || {}
+    // 옛 템플릿은 pointColor(단일)만 있을 수 있다 — loadTemplate(applyLoadedWrapSettings)과 같은 규칙으로
+    // 팔레트를 만든다. 안 그러면 에디터의 현재 팔레트가 섞여 미리보기 색이 템플릿과 달라진다.
+    const pointColors =
+      tplSettings.pointColors ??
+      (tplSettings.pointColor ? [tplSettings.pointColor] : editorStore.wrapSettings.pointColors)
+    const wrapSettings = { ...editorStore.wrapSettings, ...tplSettings, pointColors }
     return generateHtml(false, { modules: mods, groups: grps, wrapSettings })
   }
 
