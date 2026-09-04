@@ -10,8 +10,12 @@
  * 파일을 직접 골라 올리지 않는 이유: 손으로 고르면 이름이 제각각이라 같은 뉴스레터의
  * HTML이 폴더에 여러 개 쌓이고, 어느 것이 최신인지 알 수 없게 된다.
  * 여기서는 **늘 같은 이름으로 덮어써** 폴더에 발송용 파일이 하나만 남는다(주소도 그대로 유지된다).
+ *
+ * 링크가 있는지는 **폴더를 읽어서** 안다. 화면에 따로 기억하지 않으므로 새로고침하거나
+ * 다른 PC에서 열어도, 폴더에 발송용 파일이 있으면 처음부터 링크 카드가 보인다.
+ * 주소 전체는 길고 읽히지 않아 감추고, 파일 이름·만든 시각만 보여준다(툴팁·새 창 열기로 확인).
  */
-import { computed, onBeforeUnmount, ref } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import { useEditorStore } from '@/stores/editorStore'
 import { useModuleStore } from '@/stores/moduleStore'
@@ -24,6 +28,7 @@ import {
   isUploadEnabled,
   uploadHtml,
 } from '@/utils/s3Upload'
+import { formatModified, listFolders, objectUrl, toPrefix } from '@/utils/s3Browse'
 
 const editorStore = useEditorStore()
 const moduleStore = useModuleStore()
@@ -37,8 +42,6 @@ const isOpen = ref(false)
 const progress = ref(0)
 const uploading = ref(false)
 const errorText = ref('')
-/** 업로드가 끝나 받은 주소 — 이 값이 있으면 링크 상자를 보여준다 */
-const resultUrl = ref('')
 /** 방금 복사했음을 잠깐 알리는 표시 */
 const copied = ref(false)
 let controller: AbortController | null = null
@@ -53,12 +56,71 @@ const targetDirectory = computed(() =>
 
 /** 올라갈 파일 이름 — 발송용 내려받기와 같은 규칙 */
 const targetFileName = computed(() =>
-  buildDownloadFileName(editorStore.currentTemplateId, editorStore.wrapSettings.volume, 'send'),
+  buildDownloadFileName(
+    editorStore.currentTemplateId ?? editorStore.blankFolder,
+    editorStore.wrapSettings.volume,
+    'send',
+  ),
 )
 
 /**
+ * 폴더에 놓인 웹 링크(발송용 파일). 없으면 null.
+ * 폴더를 읽어 채우고, 링크를 새로 만들면 그 결과로 바꾼다.
+ */
+const existing = ref<{ url: string; name: string; at: Date | null } | null>(null)
+/** 폴더를 읽는 중 */
+const checking = ref(false)
+/** 방금 최신 내용을 반영했음을 잠깐 알리는 표시 */
+const justUpdated = ref(false)
+let checkController: AbortController | null = null
+let updatedTimer: ReturnType<typeof setTimeout> | null = null
+
+/**
+ * 폴더에 발송용 파일이 있는지 읽는다.
+ * 폴더 목록 조회(listFolders)가 폴더마다 발송용 파일을 알아내므로, 한 겹 위를 읽어 이 폴더를 찾는다
+ * (폴더 선택 화면의 '발송 완료' 배지와 같은 근거를 쓴다).
+ */
+const loadExisting = async () => {
+  checkController?.abort()
+  const directory = targetDirectory.value
+  if (!directory) {
+    existing.value = null
+    return
+  }
+  const prefix = toPrefix(directory) // 'e-dm/2026/newsletterbuilder/arch-plan/hobanexpo/eng/vol01/'
+  const parts = prefix.replace(/\/$/, '').split('/')
+  const folderName = parts.pop() ?? ''
+  const parentPrefix = `${parts.join('/')}/`
+
+  checkController = new AbortController()
+  checking.value = true
+  try {
+    const folders = await listFolders(parentPrefix, checkController.signal)
+    const file = folders.find((f) => f.name === folderName)?.sendFile
+    existing.value = file
+      ? { url: objectUrl(file.key), name: file.name, at: file.lastModified }
+      : null
+  } catch (err) {
+    if (err instanceof DOMException && err.name === 'AbortError') return
+    // 읽지 못하면(네트워크·CORS) 없는 것으로 둔다 — 만들기 버튼은 그대로 쓸 수 있다
+    existing.value = null
+  } finally {
+    checking.value = false
+  }
+}
+
+// 도구를 펼칠 때, 그리고 펼친 채로 폴더가 바뀔 때 다시 읽는다 (접힌 동안은 읽지 않는다)
+watch(isOpen, (open) => {
+  if (open && uploadEnabled) void loadExisting()
+})
+watch(targetDirectory, () => {
+  if (isOpen.value && uploadEnabled) void loadExisting()
+})
+
+/**
  * 지금 작업물을 발송용 HTML로 만들어 폴더에 올리고 주소를 받는다.
- * 같은 이름으로 덮어쓰므로 몇 번을 눌러도 폴더의 파일과 주소는 하나로 유지된다.
+ * 같은 이름으로 덮어쓰므로 몇 번을 눌러도 폴더의 파일과 주소는 하나로 유지된다 —
+ * 그래서 두 번째부터는 '최신 내용 반영'이다.
  */
 const createLink = async () => {
   if (uploading.value) return
@@ -82,6 +144,7 @@ const createLink = async () => {
     return
   }
 
+  const isUpdate = existing.value !== null
   uploading.value = true
   progress.value = 0
   copied.value = false
@@ -99,11 +162,16 @@ const createLink = async () => {
         overwrite: true,
       },
     )
-    resultUrl.value = url
+    existing.value = { url, name: filename, at: new Date() }
+    if (isUpdate) {
+      justUpdated.value = true
+      if (updatedTimer) clearTimeout(updatedTimer)
+      updatedTimer = setTimeout(() => (justUpdated.value = false), 2500)
+    }
     toast.add({
       severity: 'success',
-      summary: '웹 링크가 만들어졌어요',
-      detail: '아래 주소를 복사해 쓰세요.',
+      summary: isUpdate ? '최신 내용을 반영했어요' : '웹 링크가 만들어졌어요',
+      detail: isUpdate ? '주소는 그대로예요.' : '링크 복사로 주소를 가져가세요.',
       life: 3000,
     })
   } catch (err) {
@@ -118,19 +186,12 @@ const createLink = async () => {
 
 const cancelUpload = () => controller?.abort()
 
-/** 결과를 지우고 처음 상태로 — 주소만 비운다(폴더의 파일은 그대로 있다) */
-const resetResult = () => {
-  resultUrl.value = ''
-  errorText.value = ''
-  copied.value = false
-}
-
 /**
  * 주소 복사.
  * 클립보드 API는 https(또는 localhost)에서만 동작해서, 막히면 예전 방식으로 한 번 더 시도한다.
  */
 const copyLink = async () => {
-  const url = resultUrl.value
+  const url = existing.value?.url
   if (!url) return
   let ok = false
   try {
@@ -154,7 +215,7 @@ const copyLink = async () => {
     toast.add({
       severity: 'warn',
       summary: '복사하지 못했어요',
-      detail: '주소를 직접 선택해 복사해 주세요.',
+      detail: '링크를 새 창에서 연 뒤 주소를 직접 복사해 주세요.',
       life: 4000,
     })
     return
@@ -164,9 +225,18 @@ const copyLink = async () => {
   copiedTimer = setTimeout(() => (copied.value = false), 2000)
 }
 
+/** 링크 카드 아래 줄 — 만든 시각. 방금 반영했으면 그 사실을 먼저 알린다 */
+const existingSub = computed(() => {
+  if (justUpdated.value) return '방금 최신 내용을 반영했어요'
+  const at = existing.value?.at
+  return at ? `${formatModified(at)} 만듦` : '만든 시각을 알 수 없어요'
+})
+
 onBeforeUnmount(() => {
   controller?.abort()
+  checkController?.abort()
   if (copiedTimer) clearTimeout(copiedTimer)
+  if (updatedTimer) clearTimeout(updatedTimer)
 })
 </script>
 
@@ -185,7 +255,11 @@ onBeforeUnmount(() => {
         :aria-expanded="isOpen"
         @click="isOpen = !isOpen"
       >
-        <span class="ai-tool-card-label">HTML 웹 링크 생성</span>
+        <span class="ai-tool-card-label">
+          HTML 웹 링크 생성
+          <!-- 펼치기 전에도 이 폴더에 링크가 있다는 걸 알 수 있게 -->
+          <span v-if="existing" class="ai-tool-badge">생성됨</span>
+        </span>
         <span class="material-symbols-outlined ai-tool-card-icon">{{ isOpen ? 'remove' : 'add' }}</span>
       </button>
 
@@ -203,30 +277,48 @@ onBeforeUnmount(() => {
               <div class="ht-progress-bar" :style="{ width: `${progress}%` }"></div>
             </div>
             <div class="ht-busy-row">
-              <span class="ht-busy-text">링크 만드는 중… {{ progress }}%</span>
+              <span class="ht-busy-text">
+                {{ existing ? '최신 내용 반영 중' : '링크 만드는 중' }}… {{ progress }}%
+              </span>
               <button type="button" class="ht-link-btn" @click="cancelUpload">취소</button>
             </div>
           </div>
 
-          <!-- 만들어진 주소 — 주소 한 줄 + 복사 버튼 -->
-          <div v-else-if="resultUrl" class="ht-box ht-box--result">
+          <!-- 링크 카드 — 파일 이름·만든 시각. 전체 주소는 툴팁과 새 창 열기로만 -->
+          <div v-else-if="existing" class="ht-box ht-box--result">
             <a
-              class="ht-result-url"
-              :href="resultUrl"
-              :title="resultUrl"
+              class="ht-link-card"
+              :href="existing.url"
+              :title="existing.url"
               target="_blank"
               rel="noopener noreferrer"
-            >{{ resultUrl }}</a>
+            >
+              <span class="material-symbols-outlined ht-link-icon">link</span>
+              <span class="ht-link-text">
+                <span class="ht-link-name">{{ existing.name }}</span>
+                <span class="ht-link-sub" :class="{ 'is-fresh': justUpdated }">{{ existingSub }}</span>
+              </span>
+              <span class="material-symbols-outlined ht-link-open" aria-hidden="true">open_in_new</span>
+            </a>
             <div class="ht-result-actions">
-              <button type="button" class="ht-copy-btn" @click="copyLink">
+              <button type="button" class="ht-btn ht-btn--primary" @click="copyLink">
                 <span class="material-symbols-outlined">content_copy</span>
                 {{ copied ? '복사됨' : '링크 복사' }}
               </button>
-              <button type="button" class="ht-link-btn" @click="createLink">다시 만들기</button>
-              <span class="ht-dot">·</span>
-              <button type="button" class="ht-link-btn" @click="resetResult">지우기</button>
+              <!-- 같은 주소에 지금 작업물을 덮어쓴다 — 주소는 바뀌지 않는다 -->
+              <button
+                type="button"
+                class="ht-btn"
+                title="수정한 내용을 같은 주소에 다시 올려요"
+                @click="createLink"
+              >
+                최신 내용 반영
+              </button>
             </div>
           </div>
+
+          <!-- 폴더를 읽는 중 -->
+          <p v-else-if="checking" class="ht-note">이 폴더에 링크가 있는지 확인하는 중…</p>
 
           <!-- 아직 만들기 전 — 버튼 하나 -->
           <button v-else type="button" class="ht-make-btn" @click="createLink">
@@ -267,9 +359,22 @@ onBeforeUnmount(() => {
   background: var(--blue-50);
 }
 .ai-tool-card-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-size: 16px;
   font-weight: 500;
   color: var(--gray-800);
+}
+/* 이 폴더에 링크가 이미 있다 */
+.ai-tool-badge {
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: var(--green-50);
+  color: var(--green-700);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
 }
 .ai-tool-card-icon {
   font-size: 24px;
@@ -282,12 +387,6 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   gap: 12px;
-}
-.ai-tool-desc {
-  margin: 0;
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--gray-600);
 }
 
 /* 업로드 영역 공통 상자 (이미지 업로드와 같은 톤) */
@@ -322,34 +421,75 @@ onBeforeUnmount(() => {
   font-size: 20px;
 }
 
-/* 결과 — 주소 + 복사 */
+/* 결과 — 링크 카드 + 버튼 두 개 */
 .ht-box--result {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   padding: 12px;
 }
-.ht-result-url {
-  /* 주소가 길어도 상자를 넘기지 않는다 */
+.ht-link-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   min-width: 0;
-  font-size: 13px;
-  color: var(--blue-600);
-  overflow-wrap: anywhere;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--gray-50);
+  color: inherit;
   text-decoration: none;
+  transition: background-color 0.12s;
 }
-.ht-result-url:hover {
-  text-decoration: underline;
+.ht-link-card:hover {
+  background: var(--blue-50);
+}
+.ht-link-card:hover .ht-link-name {
+  color: var(--blue-600);
+}
+.ht-link-icon {
+  flex-shrink: 0;
+  font-size: 22px;
+  color: var(--blue-500);
+}
+.ht-link-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+.ht-link-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gray-800);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ht-link-sub {
+  font-size: 12px;
+  color: var(--gray-500);
+}
+.ht-link-sub.is-fresh {
+  color: var(--green-700);
+}
+.ht-link-open {
+  flex-shrink: 0;
+  font-size: 18px;
+  color: var(--gray-500);
 }
 .ht-result-actions {
   display: flex;
   align-items: center;
   gap: 8px;
 }
-.ht-copy-btn {
+.ht-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
-  height: 32px;
+  flex: 1;
+  height: 36px;
   padding: 0 12px;
   border: 1px solid var(--gray-200);
   border-radius: 8px;
@@ -357,14 +497,24 @@ onBeforeUnmount(() => {
   font-size: 13px;
   font-weight: 500;
   color: var(--gray-700);
+  white-space: nowrap;
   cursor: pointer;
 }
-.ht-copy-btn:hover {
-  border-color: var(--blue-400);
-  color: var(--blue-600);
+.ht-btn:hover {
+  border-color: var(--gray-300);
+  background: var(--gray-50);
 }
-.ht-copy-btn .material-symbols-outlined {
+.ht-btn .material-symbols-outlined {
   font-size: 18px;
+}
+.ht-btn--primary {
+  border-color: var(--blue-400);
+  background: var(--blue-400);
+  color: var(--white);
+}
+.ht-btn--primary:hover {
+  border-color: var(--blue-500);
+  background: var(--blue-500);
 }
 
 /* 업로드 중 */
@@ -404,10 +554,6 @@ onBeforeUnmount(() => {
 }
 .ht-link-btn:hover {
   text-decoration: underline;
-}
-.ht-dot {
-  color: var(--gray-300);
-  font-size: 12px;
 }
 
 .ht-error {

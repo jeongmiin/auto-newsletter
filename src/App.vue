@@ -38,11 +38,15 @@ const boldParts = (text?: string): Array<{ text: string; bold: boolean }> =>
   <Toast position="bottom-right" />
   <ConfirmDialog />
   <!--
-    안내가 여러 줄인 확인창(빈 템플릿·전체 삭제)은 폭을 460px로 고정.
-    기본 대화상자는 글자 길이에 따라 폭이 달라져, 나란히 쓰는 두 안내의 크기가 서로 어긋난다.
+    안내가 여러 줄인 확인창(새 작업·전체 삭제)은 글줄이 접히지 않도록 내용 폭에 맞추되 460px보다
+    좁아지지 않게 한다. 모양(제목 24px · 본문 17px · 버튼)은 main.css의 .confirm-wide (Figma 1542-6722).
     (`confirm.require({ group: 'wide' })`로 이 대화상자를 쓴다)
   -->
-  <ConfirmDialog group="wide" :style="{ width: '460px', maxWidth: 'calc(100vw - 32px)' }">
+  <ConfirmDialog
+    group="wide"
+    :style="{ width: 'auto', minWidth: '460px', maxWidth: 'min(680px, calc(100vw - 32px))' }"
+    :pt="{ root: { class: 'confirm-wide' } }"
+  >
     <!-- 기본 슬롯 대신 직접 그린다 — `**…**`로 표기한 자리를 굵게 (클래스는 기본과 같게 유지) -->
     <template #message="{ message }">
       <span class="p-confirmdialog-message">

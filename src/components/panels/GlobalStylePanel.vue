@@ -1,23 +1,15 @@
 <template>
   <div class="side-panel global-style-panel">
-    <h2 class="panel-title">전체 스타일</h2>
-
-    <!-- 저장 폴더 — 에디터에 들어오기 전 '폴더 선택' 걸음에서 이미 정해진 값이라 여기선 보여주기만 한다.
-         지금 만드는 것이 어느 회차인지가 스타일보다 먼저 알아야 할 사실이라 맨 위에 둔다.
-         (예전에는 여기서 회차 숫자를 올렸는데, 이미 있는 폴더를 모른 채 새로 만들어
-          같은 회차가 두 군데로 갈라지는 일이 있었다) -->
-    <div class="flex flex-col gap-[10px]">
-      <div class="row-label">뉴스레터 회차</div>
-      <div class="vol-field is-readonly">
-        <span class="material-symbols-outlined vol-folder-icon">folder</span>
-        <code class="vol-path">{{ volumePreview || '아직 정하지 않음' }}</code>
-      </div>
+    <!-- 제목 아래에 저장 위치 한 줄 (Figma 1527-9088) — 에디터에 들어오기 전 '폴더 선택' 걸음에서
+         이미 정해진 값이라 여기선 보여주기만 한다. 지금 만드는 것이 어느 회차인지가 스타일보다
+         먼저 알아야 할 사실이라 제목 바로 아래에 둔다. 바꾸려면 전시회 선택부터 다시 고른다. -->
+    <div class="panel-head">
+      <h2 class="panel-title">전체 설정</h2>
+      <p class="vol-path" :title="volumePreview ? '바꾸려면 전시회 선택부터 다시 골라 주세요' : undefined">
+        <span class="material-symbols-outlined vol-folder-icon">drive_file_move</span>
+        <span class="vol-path-text">{{ volumePreview || '아직 정하지 않음' }}</span>
+      </p>
     </div>
-    <p class="hint-text !-mt-3">
-      *바꾸려면 처음(전시회 선택)부터 다시 골라 주세요.
-    </p>
-
-    <div class="divider"></div>
 
     <!-- 배경 색상 -->
     <div class="row-between">
@@ -131,7 +123,7 @@ import { computed } from 'vue'
 import { useEditorStore } from '@/stores/editorStore'
 import { normalizePxLength } from '@/utils/cssUnit'
 import { FONT_LANGUAGE_OPTIONS } from '@/utils/fontFamily'
-import { buildUploadDirectory, displayUploadDirectory } from '@/utils/s3Upload'
+import { savePathLabel } from '@/utils/s3Upload'
 import ColorPopoverPicker from './ColorPopoverPicker.vue'
 
 const editorStore = useEditorStore()
@@ -173,11 +165,9 @@ const onSummaryInput = (event: Event) => {
  *   '/e-dm/2026/newsletterbuilder/arch-plan/hobanexpo/vol01/' → 'hobanexpo/vol01'
  *   '/e-dm/2026/newsletterbuilder/mice/blank/vol01/'          → 'blank/vol01'
  */
-const volumePreview = computed(() => {
-  const directory = buildUploadDirectory(editorStore.uploadFolder, wrapSettings.value.volume)
-  // displayUploadDirectory가 '{팀}/{전시회}/{폴더}/'까지 줄여 주면, 앞의 팀 한 조각만 더 뗀다
-  return displayUploadDirectory(directory).replace(/\/$/, '').split('/').slice(1).join('/')
-})
+const volumePreview = computed(() =>
+  savePathLabel(editorStore.uploadFolder, wrapSettings.value.volume),
+)
 </script>
 
 <style scoped>
@@ -255,29 +245,33 @@ const volumePreview = computed(() => {
   color: var(--gray-500);
 }
 
-/* ===== 저장 폴더 =====
-   '폴더 선택' 걸음에서 정해진 값을 보여주기만 한다. 껍데기는 .summary-field와 같은 회색 라운드 박스. */
-.vol-field {
+/* ===== 제목 + 저장 위치 (Figma 1527-9088) =====
+   제목 아래 12px에 [아이콘 22][8px]경로 15px gray-700. '폴더 선택'에서 정해진 값을 보여주기만 한다. */
+.panel-head {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.panel-head .panel-title {
+  margin: 0;
+}
+.vol-path {
   display: flex;
   align-items: center;
   gap: 8px;
-  min-height: 40px;
-  padding: 0 12px;
-  background: var(--gray-100);
-  border-radius: 8px;
-}
-.vol-field.is-readonly {
-  padding: 9px 12px;
+  margin: 0;
+  min-width: 0;
+  line-height: 24px;
 }
 .vol-folder-icon {
-  font-size: 20px;
-  color: var(--gray-500);
+  font-size: 22px;
+  color: var(--gray-700);
   flex-shrink: 0;
 }
-.vol-path {
+.vol-path-text {
   min-width: 0;
-  font-size: 14px;
-  color: var(--gray-800);
+  font-size: 15px;
+  color: var(--gray-700);
   overflow-wrap: anywhere;
 }
 

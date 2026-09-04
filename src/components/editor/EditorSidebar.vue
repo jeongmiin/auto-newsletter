@@ -42,13 +42,13 @@ const hasSelection = computed(
 )
 
 // 레일 메뉴 (Figma node 316-2071 순서/아이콘 기준, Material Symbols)
-// '빈 템플릿'(1125-2964)은 메뉴가 아니라 액션이라 선택 표시를 하지 않고 상시 강조색으로 둔다.
+// '새 작업'(1500-9667, 구 '빈 템플릿')은 메뉴가 아니라 액션이라 선택 표시를 하지 않고 상시 강조색으로 둔다.
 const items = computed<
   Array<{ key: RailKey; label: string; icon: string; divider?: boolean; accent?: boolean }>
 >(() => [
-  { key: 'blank', label: '빈 템플릿', icon: 'note_add', accent: true },
+  { key: 'blank', label: '새 작업', icon: 'draft', accent: true },
   { key: 'blank', label: '', icon: '', divider: true },
-  { key: 'style', label: '전체 스타일', icon: 'design_services' },
+  { key: 'style', label: '전체 설정', icon: 'design_services' },
   { key: 'point', label: '포인트 색상', icon: 'palette' },
   { key: 'point', label: '', icon: '', divider: true },
   { key: 'modules', label: '모듈', icon: 'dashboard' },

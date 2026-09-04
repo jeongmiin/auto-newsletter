@@ -5,8 +5,8 @@
  *
  * · **전체 삭제**(헤더): *이 폴더에서* 내용만 지운다. 팀·전시회·회차는 그대로라
  *   지우자마자 같은 자리에 이어서 올릴 수 있다. 이미 고른 폴더를 다시 고를 일이 없다.
- * · **빈 템플릿**(레일): *새 뉴스레터*를 시작한다. 팀과 저장할 폴더부터 다시 고르므로
- *   폴더 선택 걸음으로 되돌아간다 — 템플릿 선택 화면의 '빈 템플릿' 카드와 같은 흐름이다.
+ * · **새 작업**(레일): *새 뉴스레터*를 시작한다. 먼저 지금 작업을 저장용 HTML로 내려받아
+ *   백업해 두고, 팀과 저장할 폴더부터 다시 고르므로 폴더 선택의 팀 고르기 화면으로 되돌아간다.
  *
  * 둘 다 되돌릴 수 없어 반드시 확인을 거치고, 문구·처리는 여기 한 곳에 둔다.
  */
@@ -15,12 +15,14 @@ import { useConfirm } from 'primevue/useconfirm'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
 import { getHistoryInstance } from '@/composables/useHistory'
+import { useNewsletterDownload } from '@/composables/useNewsletterDownload'
 
 export function useBlankTemplate() {
   const confirm = useConfirm()
   const router = useRouter()
   const moduleStore = useModuleStore()
   const editorStore = useEditorStore()
+  const { downloadHtml } = useNewsletterDownload()
 
   /** 확인 없이 즉시 비운다 — 이 폴더에 그대로 머문다 (확인은 호출부에서 이미 받은 상태) */
   const clearToBlank = (): void => {
@@ -47,11 +49,9 @@ export function useBlankTemplate() {
   }
 
   /**
-   * 확인 없이 즉시 새로 시작한다 — 내용·전시회·저장 폴더를 모두 비우고 폴더 선택으로 되돌아간다.
-   *
-   * **팀은 남긴다.** 에디터에 들어와 있다는 건 이미 팀을 고른 뒤라는 뜻이라,
-   * 폴더 선택 화면이 그 팀을 켜 둔 채 열려 곧바로 폴더만 고르면 된다
-   * (거기서 다른 팀으로 옮기는 것도 열려 있다 — 전시회가 없는 빈 템플릿이라 팀을 바꿀 수 있다).
+   * 확인 없이 즉시 새로 시작한다 — 내용·전시회·저장 폴더·팀을 모두 비우고
+   * 폴더 선택의 **팀 고르기 화면**("어느 팀 소속이신가요?")으로 되돌아간다 (Figma 1542-6722).
+   * 새 작업은 다른 팀의 뉴스레터일 수도 있어 팀부터 다시 고른다.
    */
   const restartBlank = (): void => {
     moduleStore.clearAll()
@@ -61,10 +61,21 @@ export function useBlankTemplate() {
     editorStore.setCurrentTemplate({
       templateId: null,
       templateName: '빈 템플릿',
-      teamId: editorStore.currentTeamId,
+      teamId: null,
     })
     getHistoryInstance().clearHistory()
     router.push({ name: 'folder' })
+  }
+
+  /**
+   * "저장용 파일 받고 새로 시작" — 지금 작업을 저장용 HTML로 먼저 내려받아(백업) 새로 시작한다.
+   * 파일이 실제로 남았을 때만 비운다. 저장 대화상자를 취소했거나 실패하면 작업은 그대로 둔다.
+   * 내려받을 내용이 없으면(모듈 0개) 바로 새로 시작한다.
+   */
+  const backupAndRestart = async (): Promise<void> => {
+    const result = await downloadHtml(true)
+    if (result === 'cancelled' || result === 'failed') return
+    restartBlank()
   }
 
   /** 헤더 '전체 삭제' — 이 폴더에 머문 채 내용만 비운다 */
@@ -82,20 +93,18 @@ export function useBlankTemplate() {
     })
   }
 
-  /** 레일 '빈 템플릿' — 팀·폴더부터 다시 고르는 새 뉴스레터 */
+  /** 레일 '새 작업' — 저장용 파일을 받아 두고, 팀·폴더부터 다시 고르는 새 뉴스레터 (Figma 1542-6722) */
   const confirmBlankTemplate = (): void => {
     confirm.require({
       group: 'wide',
-      header: '빈 템플릿으로 새로 시작할까요?',
+      header: '새 작업을 시작할까요?',
       message:
-        '지금 작업 내용은 저장되지 않고 사라져요.\n' +
-        '팀과 저장할 폴더를 다시 고른 뒤 빈 화면에서 시작해요.\n' +
-        "남겨야 한다면 취소하고 '**임시 저장**'을 먼저 해 주세요.",
+        '지금 작업 내용이 임시 저장됐거나 저장용 파일로 다운됐는지 확인해주세요.\n' +
+        '저장된 경우 나중에 같은 폴더에서 이어서 편집할 수 있어요.',
       rejectLabel: '취소',
-      acceptLabel: '폴더 선택으로 이동',
+      acceptLabel: '저장용 파일 받고 새로 시작',
       rejectClass: 'p-button-secondary p-button-outlined',
-      acceptClass: 'p-button-danger',
-      accept: restartBlank,
+      accept: () => void backupAndRestart(),
     })
   }
 

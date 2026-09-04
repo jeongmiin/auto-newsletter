@@ -21,6 +21,18 @@ vi.mock('primevue/useconfirm', () => ({
 const push = vi.fn()
 vi.mock('vue-router', () => ({ useRouter: () => ({ push }) }))
 
+/** 토스트는 PrimeVue 서비스 없이 무시한다 */
+vi.mock('primevue/usetoast', () => ({ useToast: () => ({ add: () => {} }) }))
+
+/** '새 작업'은 먼저 저장용 파일을 내려받는다 — 파일 대화상자 대신 결과만 흉내 낸다 */
+const downloadResult = vi.fn<() => Promise<string>>(async () => 'saved')
+vi.mock('@/composables/useNewsletterDownload', () => ({
+  useNewsletterDownload: () => ({ downloadHtml: () => downloadResult() }),
+}))
+
+/** 확인 승인이 비동기(내려받기 뒤 비우기)라 마이크로태스크가 끝날 때까지 기다린다 */
+const settle = () => new Promise((r) => setTimeout(r, 0))
+
 import { useBlankTemplate } from '@/composables/useBlankTemplate'
 import { useEditorStore } from '@/stores/editorStore'
 import { useModuleStore } from '@/stores/moduleStore'
@@ -125,13 +137,15 @@ describe('useBlankTemplate — 비울 때 남기는 것', () => {
   })
 })
 
-describe('useBlankTemplate — 레일 빈 템플릿(새로 시작)', () => {
+describe('useBlankTemplate — 레일 새 작업(저장용 파일 받고 새로 시작)', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
     push.mockClear()
+    downloadResult.mockReset()
+    downloadResult.mockResolvedValue('saved')
   })
 
-  it('전시회와 저장 폴더를 비우고 폴더 선택으로 보낸다 — 팀은 남긴다', () => {
+  it('전시회·저장 폴더·팀을 모두 비우고 폴더 선택(팀 고르기)으로 보낸다', async () => {
     const editorStore = useEditorStore()
     const moduleStore = useModuleStore()
     editorStore.setCurrentTemplate({
@@ -142,35 +156,58 @@ describe('useBlankTemplate — 레일 빈 템플릿(새로 시작)', () => {
     editorStore.updateWrapSettings({ volume: 'vol08', summary: '앞 작업물 요약' })
 
     useBlankTemplate().confirmBlankTemplate()
+    await settle()
 
     expect(moduleStore.modules).toHaveLength(0)
     expect(editorStore.wrapSettings.summary).toBe('')
     // 어디에 쌓을지 다시 고르러 가므로 회차도 비운다
     expect(editorStore.wrapSettings.volume).toBe('')
     expect(editorStore.currentTemplateId).toBeNull()
-    // 팀은 그대로 — 폴더 선택 화면이 이 팀을 켠 채 열린다
-    expect(editorStore.currentTeamId).toBe('arch-plan')
+    // 팀도 비운다 — 폴더 선택 화면이 "어느 팀 소속이신가요?"부터 시작한다
+    expect(editorStore.currentTeamId).toBeNull()
     expect(editorStore.currentTemplateName).toBe('빈 템플릿')
     expect(push).toHaveBeenCalledWith({ name: 'folder' })
   })
 
-  it('팀만 남으므로 다음 저장 자리는 그 팀의 blank 폴더다', async () => {
-    const { buildUploadDirectory } = await import('@/utils/s3Upload')
+  it('먼저 저장용 파일을 내려받는다(백업)', async () => {
     const editorStore = useEditorStore()
-    editorStore.setCurrentTemplate({
-      templateId: 'kpet',
-      templateName: '케이펫',
-      teamId: 'pet-ind',
-    })
+    editorStore.setCurrentTemplate({ templateId: 'kpet', templateName: '케이펫', teamId: 'pet-ind' })
+
+    useBlankTemplate().confirmBlankTemplate()
+    await settle()
+
+    expect(downloadResult).toHaveBeenCalledTimes(1)
+    expect(push).toHaveBeenCalledWith({ name: 'folder' })
+  })
+
+  it.each(['cancelled', 'failed'])('내려받기가 %s 이면 작업을 비우지 않는다', async (result) => {
+    downloadResult.mockResolvedValue(result)
+    const editorStore = useEditorStore()
+    editorStore.setCurrentTemplate({ templateId: 'kpet', templateName: '케이펫', teamId: 'pet-ind' })
     editorStore.updateWrapSettings({ volume: 'vol03' })
 
     useBlankTemplate().confirmBlankTemplate()
+    await settle()
 
-    // 폴더 선택에서 vol01을 고르면 이 자리가 된다
-    expect(buildUploadDirectory(editorStore.uploadFolder, 'vol01')).toContain('/pet-ind/blank/vol01/')
+    expect(editorStore.currentTemplateId).toBe('kpet')
+    expect(editorStore.currentTeamId).toBe('pet-ind')
+    expect(editorStore.wrapSettings.volume).toBe('vol03')
+    expect(push).not.toHaveBeenCalled()
   })
 
-  it('빈 템플릿 표시가 서 있어야 폴더 선택 가드를 통과한다', () => {
+  it('내려받을 내용이 없으면(모듈 0개) 바로 새로 시작한다', async () => {
+    downloadResult.mockResolvedValue('empty')
+    const editorStore = useEditorStore()
+    editorStore.setCurrentTemplate({ templateId: 'kpet', templateName: '케이펫', teamId: 'pet-ind' })
+
+    useBlankTemplate().confirmBlankTemplate()
+    await settle()
+
+    expect(editorStore.currentTemplateId).toBeNull()
+    expect(push).toHaveBeenCalledWith({ name: 'folder' })
+  })
+
+  it('빈 템플릿 표시가 서 있어야 폴더 선택 가드를 통과한다', async () => {
     const editorStore = useEditorStore()
     editorStore.setCurrentTemplate({
       templateId: 'kpet',
@@ -180,6 +217,7 @@ describe('useBlankTemplate — 레일 빈 템플릿(새로 시작)', () => {
     expect(editorStore.isBlankStart).toBe(false)
 
     useBlankTemplate().confirmBlankTemplate()
+    await settle()
 
     expect(editorStore.isBlankStart).toBe(true)
   })
