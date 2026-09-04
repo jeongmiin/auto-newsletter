@@ -2372,8 +2372,8 @@
     },
     {
       "id": "hobanexpo",
-      "name": "호반",
-      "description": "호반 뉴스레터 구성",
+      "name": "호반 동반성장 건설 엑스포",
+      "description": "호반 동반성장 건설 엑스포  뉴스레터 구성",
       "divisionId": "arch",
       "teamId": "arch-plan",
       "thumbnail": "hobanexpo_temp.png",
