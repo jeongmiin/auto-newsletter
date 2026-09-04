@@ -138,26 +138,6 @@ export function migrateModuleProperties(
     if (next) return next
   }
 
-  // 작은 버튼: 나중에 생긴 '버튼 너비 직접 설정'(showBtnWidth) 토글은 기본값이 false라,
-  // 토글이 없던 시절 파일에 너비가 지정돼 있으면(auto가 아니면) 패널에서 그 값이 사라진 것처럼 보인다.
-  // → 저장된 값이 있으면 '켜짐'으로 본다. (아래 모서리 둥글기 보정이 먼저 반환해 버리지 않도록 함께 처리)
-  if (moduleId === 'ModuleSmallButton') {
-    const next = { ...properties }
-    let changed = false
-    if (next.showBtnWidth === undefined) {
-      const w = typeof next.btnWidth === 'string' ? next.btnWidth.trim() : ''
-      if (w && w !== 'auto') {
-        next.showBtnWidth = true
-        changed = true
-      }
-    }
-    if (next.showBorderRadius === undefined && !isZeroRadius(next.btnBorderRadius)) {
-      next.showBorderRadius = true
-      changed = true
-    }
-    if (changed) return next
-  }
-
   // 모서리 둥글기: 나중에 생긴 '모서리 둥글기 사용'(showBorderRadius) 토글의 기본값이 false라,
   // 토글이 없던 시절 파일은 저장된 둥글기(예: imageBorderRadius:10px)가 있어도 열 때 0으로 깎였다.
   // 토글 값이 아예 없고 둥글기 값이 남아 있으면 '켜짐'으로 본다(저장 당시 겉모습 그대로).

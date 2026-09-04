@@ -91,9 +91,14 @@ html, body{
 }
 /* 헤더 '파일 저장 위치' 말풍선 — 두 줄(제목 / 경로) 가운데 정렬, 16px medium (Figma 1534-6097).
    툴팁도 body로 텔레포트되어 컴포넌트 scoped 스타일이 닿지 않는다. */
+.htip-path.p-tooltip {
+  /* PrimeVue 기본 max-width(12.5rem)를 풀어 경로 길이만큼 풍선이 늘어나게 한다 */
+  max-width: none;
+}
 .htip-path .p-tooltip-text {
   padding: 12px 20px;
-  white-space: pre-line;
+  /* 줄바꿈은 제목/경로 사이 한 번뿐 — 경로가 길어도 접지 않는다 */
+  white-space: pre;
   text-align: center;
   font-size: 16px;
   font-weight: 500;

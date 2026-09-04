@@ -384,7 +384,7 @@
         >
           <!-- 리치텍스트(textarea)는 위에 '폰트 크기'와 서식 툴바가 바로 붙으므로 별도 라벨을 두지 않는다(Figma 640-3689) -->
           <label
-            v-show="prop.type !== 'boolean' && prop.type !== 'checkbox' && prop.type !== 'textarea' && prop.type !== 'table-editor' && prop.type !== 'image-crop' && !isColorBlock(prop) && !isQuadStart(prop, group.props, index) && !isSingleSpacingField(prop) && !isBorderWidthField(prop) && !isPxWidthField(prop) && !isBtnWidthField(prop) && !isBorderStyleStart(prop)"
+            v-show="prop.type !== 'boolean' && prop.type !== 'checkbox' && prop.type !== 'textarea' && prop.type !== 'table-editor' && prop.type !== 'image-crop' && !isColorBlock(prop) && !isQuadStart(prop, group.props, index) && !isSingleSpacingField(prop) && !isBorderWidthField(prop) && !isPxWidthField(prop) && !isBorderStyleStart(prop)"
             class="gg-field-label"
             :class="{ 'fs-label-row': isFontSizeField(prop) }"
           >
@@ -754,38 +754,6 @@
                   class="gg-margin-value-input"
                 />
                 <span class="gg-margin-value-unit">px</span>
-              </div>
-            </div>
-            <p v-if="prop.hint" class="hint-text" v-html="prop.hint"></p>
-          </div>
-
-          <!-- 작은 버튼 '버튼 너비' (Figma 1245-45052) — 여백과 같은 슬라이더 + 값 필드.
-               기본값이 'auto'라 px 슬라이더 판별(isPxWidthField)에 걸리지 않아 따로 그린다.
-               저장돼 있던 단위(%·px)는 그대로 유지한다(옛 템플릿의 '100%'가 px로 바뀌지 않도록). -->
-          <div v-else-if="isBtnWidthField(prop)" class="gg-margin-quad">
-            <div class="gg-margin-quad-head">
-              <span class="gg-field-label !mb-0">{{ prop.label }}</span>
-            </div>
-            <div class="gg-margin-slider-row">
-              <input
-                type="range"
-                min="0"
-                :max="btnWidthMax"
-                step="1"
-                :value="btnWidthNumber"
-                @input="onBtnWidthInput($event)"
-                class="gg-margin-slider"
-              />
-              <div class="gg-margin-value-field">
-                <input
-                  type="number"
-                  min="0"
-                  :max="btnWidthMax"
-                  :value="btnWidthNumber"
-                  @input="onBtnWidthInput($event)"
-                  class="gg-margin-value-input"
-                />
-                <span class="gg-margin-value-unit">{{ btnWidthUnit }}</span>
               </div>
             </div>
             <p v-if="prop.hint" class="hint-text" v-html="prop.hint"></p>
@@ -2729,8 +2697,6 @@ const onAlignSegmentPick = (prop: EditableProp, value: string) => {
 //  · '+ 추가' = 다음 슬롯을 켠다 (최대 4개)
 //  · 활성 칩의 ✕ = 그 버튼 삭제 (뒤 버튼 내용을 한 칸씩 당기고 마지막 슬롯을 끈다)
 const SMALL_BTN_MAX = 4
-/** 토글을 켤 때 넣어 줄 기본 버튼 너비 — 'auto'인 채로 켜면 토글이 아무 일도 안 한 것처럼 보인다 */
-const SMALL_BTN_DEFAULT_WIDTH = '120px'
 const isSmallButtonModule = computed(() => selectedModule.value?.moduleId === 'ModuleSmallButton')
 const activeSmallBtn = ref(1)
 watch(() => selectedModule.value?.id, () => { activeSmallBtn.value = 1 })
@@ -2805,22 +2771,6 @@ const isSmallBtnGroupVisible = (group: PropGroup): boolean => {
 const smallBtnCommonStart = computed(() =>
   isSmallButtonModule.value ? propGroups.value.findIndex((g) => !isSmallBtnGroup(g)) : -1,
 )
-
-// '버튼 너비' — 기본값이 'auto'라 px 슬라이더 판별(isPxWidthField)에 안 걸려 따로 그린다.
-const isBtnWidthField = (prop: EditableProp): boolean =>
-  isSmallButtonModule.value && prop.key === 'btnWidth'
-const btnWidthRaw = computed(() => String(selectedModule.value?.properties.btnWidth ?? '').trim())
-/** 저장된 단위를 그대로 유지한다 — 옛 템플릿의 '100%'를 px로 바꿔 버리지 않도록 */
-const btnWidthUnit = computed(() => (btnWidthRaw.value.endsWith('%') ? '%' : 'px'))
-const btnWidthMax = computed(() => (btnWidthUnit.value === '%' ? 100 : PX_WIDTH_MAX))
-const btnWidthNumber = computed(() => {
-  const n = Number.parseInt(btnWidthRaw.value, 10)
-  return Number.isFinite(n) ? Math.min(Math.max(n, 0), btnWidthMax.value) : 0
-})
-const onBtnWidthInput = (event: Event): void => {
-  const raw = Number.parseInt((event.target as HTMLInputElement).value, 10) || 0
-  updateProperty('btnWidth', `${Math.min(Math.max(raw, 0), btnWidthMax.value)}${btnWidthUnit.value}`)
-}
 
 // ===== 폰트 크기: 모듈 기본값 ↔ 선택 영역 크기 통합 컨트롤 (Figma 640-3689) =====
 // 드래그 선택이 있으면 그 범위의 인라인 크기를, 없으면 모듈 기본값(prop)을 대상으로 한다.
@@ -3090,7 +3040,7 @@ const STYLE_SECTION_RULES: Record<string, '*' | { exclude: string } | Set<string
   ModuleTwoButton: new Set(['테두리', '모서리 둥글기', '여백']),
   // 작은 버튼: 버튼 1~4는 '버튼 내용' 칩이 대신 관리하므로(헤더·아코디언 없이 항상 펼침)
   // 4개 버튼에 공통으로 걸리는 옵션만 접이식 카드로 (Figma 1227-42350)
-  ModuleSmallButton: new Set(['정렬', '여백', '글자 크기', '버튼 너비 직접 설정', '모서리 둥글기']),
+  ModuleSmallButton: new Set(['정렬', '여백', '글자 크기', '모서리 둥글기']),
   // 연락처: 핵심 입력('연락처')은 항상 펼친 채 두고 여백만 접이식 카드로
   ModuleContactInfo: new Set(['여백']),
   // SNS 아이콘: 핵심 입력(배경색·정렬·구성 요소)은 항상 펼친 채 두고 여백만 접이식 카드로
@@ -3165,17 +3115,8 @@ const isSectionEnabled = (group: PropGroup): boolean => {
 const onSectionSwitch = (group: PropGroup, index: number, on: boolean): void => {
   const t = groupHeaderToggle(group)
   if (t) updateProperty(t.key, on)
-  // '버튼 너비 직접 설정'은 실제 너비 값과 짝이다 — 끄면 자동(auto)으로, 켜면 기본 너비로
-  // 함께 맞춰야 토글 상태와 캔버스 결과가 어긋나지 않는다.
-  if (t?.key === 'showBtnWidth') {
-    if (!on) updateProperty('btnWidth', 'auto')
-    else if (!btnWidthRaw.value || btnWidthRaw.value === 'auto')
-      updateProperty('btnWidth', SMALL_BTN_DEFAULT_WIDTH)
-  }
-  else {
-    const b = groupBorderToggleProp(group)
-    if (b) toggleBorderOn(b, on)
-  }
+  const b = groupBorderToggleProp(group)
+  if (b) toggleBorderOn(b, on)
   if (on) setGroupPanelExpanded(group, index, true)
 }
 

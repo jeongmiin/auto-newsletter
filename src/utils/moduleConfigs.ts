@@ -276,8 +276,8 @@ export const moduleTwoButtonConfig: ModuleConfig = {
 export const moduleSmallButtonConfig: ModuleConfig = {
   defaults: {
     align: 'left',
-    // 버튼 너비는 기본 자동(텍스트 길이에 맞춤) — 직접 설정 토글을 켠 인스턴스만 값을 갖는다
-    showBtnWidth: false,
+    // 버튼 너비는 텍스트 길이에 맞춘 자동 — 패널에서 바꾸는 옵션은 없다.
+    // (옛 파일·레거시 변환에 남은 값은 렌더에서 그대로 존중한다)
     btnWidth: 'auto',
     btnBorderRadius: '30px',
     btnFontSize: '13px',

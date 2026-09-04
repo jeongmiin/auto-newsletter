@@ -607,13 +607,14 @@
 .module-form .sbtn-chip {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
+  gap: 10px;
   height: 40px;
   padding: 0 16px;
   background: var(--white);
   border: 1px solid var(--gray-200);
   border-radius: 32px;
 }
+.module-form .sbtn-chip.is-active{padding: 0 10px 0 16px;}
 .module-form .sbtn-chip:hover {
   border-color: var(--gray-300);
 }

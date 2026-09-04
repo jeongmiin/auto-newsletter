@@ -2606,23 +2606,6 @@
           "group": "글자 크기"
         },
         {
-          "key": "showBtnWidth",
-          "label": "버튼 너비 직접 설정",
-          "type": "boolean",
-          "default": false,
-          "group": "버튼 너비 직접 설정"
-        },
-        {
-          "key": "btnWidth",
-          "label": "버튼 너비",
-          "type": "text",
-          "default": "auto",
-          "placeholder": "예: auto, 120px",
-          "showWhen": "showBtnWidth",
-          "group": "버튼 너비 직접 설정",
-          "hint": "*OFF시, 텍스트 길이에 맞춰 자동 설정돼요"
-        },
-        {
           "key": "showBorderRadius",
           "label": "모서리 둥글기 사용",
           "type": "boolean",
