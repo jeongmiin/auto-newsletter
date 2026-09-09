@@ -6654,6 +6654,1392 @@
       ]
     },
     {
+      "id": "living",
+      "name": "리빙앤라이프스타일",
+      "description": "리빙앤라이프스타일(LiLA) 뉴스레터 구성",
+      "divisionId": "arch",
+      "teamId": "arch-strategy",
+      "thumbnail": "living_temp.png",
+      "wrapSettings": {
+        "backgroundColor": "#f9f9f9",
+        "borderEnabled": false,
+        "borderWidth": "6px",
+        "borderColor": "#dddddd",
+        "borderStyle": "solid",
+        "pointColor": "#FF0066",
+        "pointColors": [
+          "#FF0066"
+        ],
+        "fontLanguage": "default"
+      },
+      "modules": [
+        {
+          "moduleId": "ModuleDivider",
+          "properties": {
+            "borderColor": "#000000",
+            "borderWidth": "3px",
+            "borderStyle": "solid",
+            "dividerWidth": "100%",
+            "paddingTop": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "paddingRight": "0px"
+          },
+          "styles": {},
+          "groupId": "group-1788746009807-5zubpjh5b",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleImg",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/living/busan/vol01/lila_logo.png",
+            "imageAlt": "로고",
+            "imageMaxWidth": "40%",
+            "imageAlign": "center",
+            "paddingTop": "30px",
+            "paddingRight": "0px",
+            "paddingBottom": "20px",
+            "paddingLeft": "0px",
+            "showImageLink": false,
+            "imageLinkUrl": "",
+            "showBorderRadius": false,
+            "imageBorderRadius": "10px",
+            "imageBorderStyle": "none",
+            "imageBorderWidth": "1px",
+            "imageBorderColor": "#000000"
+          },
+          "styles": {},
+          "groupId": "group-1788746009807-5zubpjh5b",
+          "rowIndex": 1,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDivider",
+          "properties": {
+            "borderColor": "#dddddd",
+            "borderWidth": "1px",
+            "borderStyle": "solid",
+            "dividerWidth": "100%",
+            "paddingTop": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "paddingRight": "0px"
+          },
+          "styles": {},
+          "groupId": "group-1788746009807-5zubpjh5b",
+          "rowIndex": 2,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "20px",
+            "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7; text-align:center;\">NEWSLETTER <strong>VOL.1</strong></p>",
+            "paddingTop": "15px",
+            "paddingRight": "0px",
+            "paddingBottom": "15px",
+            "paddingLeft": "0px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#111111"
+          },
+          "styles": {},
+          "groupId": "group-1788746009807-5zubpjh5b",
+          "rowIndex": 3,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleImg",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/living/busan/vol01/title.jpg",
+            "imageAlt": "전시소개글",
+            "imageMaxWidth": "100%",
+            "imageAlign": "center",
+            "paddingTop": "20px",
+            "paddingRight": "0px",
+            "paddingBottom": "20px",
+            "paddingLeft": "0px",
+            "showImageLink": false,
+            "imageLinkUrl": "",
+            "showBorderRadius": false,
+            "imageBorderRadius": "10px",
+            "imageBorderStyle": "none",
+            "imageBorderWidth": "1px",
+            "imageBorderColor": "#000000"
+          },
+          "styles": {},
+          "groupId": "group-1788746014242-1ec9sypp0",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "20px",
+            "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><span style=\"font-size: 20px;\">리빙·인테리어</span>·<span style=\"font-size: 20px;\">라이프스타일 전문 전시회</span></p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"background-color: #ffffff00; color: #ff0066;\">2026 부산 리빙앤라이프스타일</strong>이 돌아왔습니다!</p>",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#111111"
+          },
+          "styles": {},
+          "groupId": "group-1788746014242-1ec9sypp0",
+          "rowIndex": 1,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "14px",
+            "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong>우리 집 분위기, 한 끗 바꿔줄 아이템을 찾는다면? 👀</strong></p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">&nbsp;</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">리빙과 인테리어의 새로운 취향을 더하는<strong>&nbsp;</strong><strong style=\"color: var(--point-color-0, #FF0066);\">LiLA</strong>가 부산으로 돌아왔습니다.</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">지금 바로 사전등록하고, 새로운 브랜드와 트렌드를 직접 만나보세요!</p>",
+            "paddingTop": "12px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#333333"
+          },
+          "styles": {},
+          "groupId": "group-1788746014242-1ec9sypp0",
+          "rowIndex": 2,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDivider",
+          "properties": {
+            "borderColor": "#dddddd",
+            "borderWidth": "1px",
+            "borderStyle": "solid",
+            "dividerWidth": "100%",
+            "paddingTop": "20px",
+            "paddingBottom": "20px",
+            "paddingLeft": "0px",
+            "paddingRight": "0px"
+          },
+          "styles": {},
+          "groupId": "group-1788746014242-1ec9sypp0",
+          "rowIndex": 2,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "14px",
+            "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"background-color: #fff0f8;\">📅기간:</strong><span style=\"background-color: #fff0f8;\"> 2026년 10월 1일(목) ~ 4일(일) / 4일간</span></p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"background-color: #fff0f8;\">⏰시간:</strong><span style=\"background-color: #fff0f8;\"> 10:00 ~ 18:00 (입장마감 17:30)</span></p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"background-color: #fff0f8;\">🚩장소:</strong><span style=\"background-color: #fff0f8;\"> 부산 벡스코(BEXCO) 1전시장 2,3홀</span></p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"background-color: #fff0f8;\">🏢주최:</strong><span style=\"background-color: #fff0f8;\"> (주)메쎄이상</span></p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"background-color: #fff0f8;\">📍동시개최:</strong><span style=\"background-color: #fff0f8;\"> 2026 부산 코리아빌드</span></p>",
+            "paddingTop": "0px",
+            "paddingRight": "20px",
+            "paddingBottom": "0px",
+            "paddingLeft": "20px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999"
+          },
+          "styles": {},
+          "groupId": "group-1788746014242-1ec9sypp0",
+          "rowIndex": 2,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDivider",
+          "properties": {
+            "borderColor": "#dddddd",
+            "borderWidth": "1px",
+            "borderStyle": "solid",
+            "dividerWidth": "100%",
+            "paddingTop": "20px",
+            "paddingBottom": "20px",
+            "paddingLeft": "0px",
+            "paddingRight": "0px"
+          },
+          "styles": {},
+          "groupId": "group-1788746014242-1ec9sypp0",
+          "rowIndex": 2,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleOneButton",
+          "properties": {
+            "buttonText": "사전등록 바로가기 →",
+            "buttonUrl": "https://livinglifestyle.co.kr/busan/registration/#/pre-reg/946",
+            "buttonFontSize": "15px",
+            "buttonBgColor": "#FF0066",
+            "buttonTextColor": "#ffffff",
+            "buttonPaddingTop": "15px",
+            "buttonPaddingRight": "0px",
+            "buttonPaddingBottom": "15px",
+            "buttonPaddingLeft": "0px",
+            "paddingTop": "20px",
+            "paddingRight": "0px",
+            "paddingBottom": "20px",
+            "paddingLeft": "0px",
+            "showBorderRadius": true,
+            "buttonBorderRadius": "5px",
+            "buttonBorderStyle": "none",
+            "buttonBorderWidth": "1px",
+            "buttonBorderColor": "#000000",
+            "buttonBgColor__pointIndex": 0,
+            "buttonBgColor__usePoint": false
+          },
+          "styles": {},
+          "groupId": "group-1788746014242-1ec9sypp0",
+          "rowIndex": 5,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDivider",
+          "properties": {
+            "borderColor": "#000000",
+            "borderWidth": "2px",
+            "borderStyle": "solid",
+            "dividerWidth": "100%",
+            "paddingTop": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "paddingRight": "0px"
+          },
+          "styles": {},
+          "groupId": "group-1788749186173-le56g3hto",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "18px",
+            "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong>🔎CATEGORIES</strong>🔎</p>",
+            "paddingTop": "15px",
+            "paddingRight": "20px",
+            "paddingBottom": "15px",
+            "paddingLeft": "20px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999"
+          },
+          "styles": {},
+          "groupId": "group-1788749186173-le56g3hto",
+          "rowIndex": 1,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleImg",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/living/busan/vol01/category.jpg",
+            "imageAlt": "이미지",
+            "imageMaxWidth": "100%",
+            "imageAlign": "center",
+            "paddingTop": "0px",
+            "paddingRight": "20px",
+            "paddingBottom": "20px",
+            "paddingLeft": "20px",
+            "showImageLink": false,
+            "imageLinkUrl": "",
+            "showBorderRadius": false,
+            "imageBorderRadius": "10px",
+            "imageBorderStyle": "none",
+            "imageBorderWidth": "1px",
+            "imageBorderColor": "#000000"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleDivider",
+          "properties": {
+            "borderColor": "#000000",
+            "borderWidth": "2px",
+            "borderStyle": "solid",
+            "dividerWidth": "100%",
+            "paddingTop": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "paddingRight": "0px"
+          },
+          "styles": {},
+          "groupId": "group-1788749984892-golywd5tj",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "18px",
+            "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong>⭐SPECIAL EXHIBITION⭐</strong></p>",
+            "paddingTop": "15px",
+            "paddingRight": "20px",
+            "paddingBottom": "15px",
+            "paddingLeft": "20px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999"
+          },
+          "styles": {},
+          "groupId": "group-1788749984892-golywd5tj",
+          "rowIndex": 1,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleImg",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/living/busan/vol01/local_street.jpg",
+            "imageAlt": "이미지",
+            "imageMaxWidth": "100%",
+            "imageAlign": "center",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "20px",
+            "paddingLeft": "0px",
+            "showImageLink": false,
+            "imageLinkUrl": "",
+            "showBorderRadius": false,
+            "imageBorderRadius": "10px",
+            "imageBorderStyle": "none",
+            "imageBorderWidth": "1px",
+            "imageBorderColor": "#000000"
+          },
+          "styles": {},
+          "groupId": "group-1788750042833-z8qbzr0u3",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "23px",
+            "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong>⟨DESIGN LOCAL STREET⟩</strong></p>",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#111111"
+          },
+          "styles": {},
+          "groupId": "group-1788750042833-z8qbzr0u3",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "14px",
+            "descriptionText": "<p style=\"line-height: 1.8; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"background-color: #fff0f8;\">영남지역</strong>에서 자신만의 색을 만들어가는 <strong style=\"background-color: #fff0f8;\">로컬 브랜드를 한자리에서</strong> 만나는 특별 기획전입니다.</p><p style=\"line-height: 1.8; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">리빙, 디자인, 라이프스타일 등 다양한 분야의 브랜드를 통해 지역이 가진 고유한 분위기와 새로운 취향을 발견해 보세요!</p><p style=\"line-height: 1.8; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">&nbsp;</p><p style=\"line-height: 1.8; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong>📢 HIGHLIGHTS</strong></p><p style=\"line-height: 1.8; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><span style=\"background-color: #fff0f8;\">🚩지역 핫플 인테리어 편집샵 탐방</span></p><p style=\"line-height: 1.8; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><span style=\"background-color: #fff0f8;\">🚩로컬 리빙 편집샵의 라이프스타일 제안</span></p><p style=\"line-height: 1.8; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><span style=\"background-color: #fff0f8;\">🚩스트릿 브랜드로 보는 도시감성</span></p><p style=\"line-height: 1.8; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">&nbsp;</p>",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999"
+          },
+          "styles": {},
+          "groupId": "group-1788750042833-z8qbzr0u3",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDivider",
+          "properties": {
+            "borderColor": "#000000",
+            "borderWidth": "2px",
+            "borderStyle": "solid",
+            "dividerWidth": "100%",
+            "paddingTop": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "paddingRight": "0px"
+          },
+          "styles": {},
+          "groupId": "group-1788830772607-huw23kn5n",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "18px",
+            "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong>👥CONSULTING</strong>👥</p>",
+            "paddingTop": "15px",
+            "paddingRight": "20px",
+            "paddingBottom": "15px",
+            "paddingLeft": "20px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999"
+          },
+          "styles": {},
+          "groupId": "group-1788830772607-huw23kn5n",
+          "rowIndex": 1,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "14px",
+            "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">인테리어와 리모델링이 고민인 분들을 위한 공간 맞춤형 전문 컨설팅관!</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">인테리어 전문 기업이 제시하는 솔루션으로 고민을 해결해보세요💡</p>",
+            "paddingTop": "0px",
+            "paddingRight": "20px",
+            "paddingBottom": "0px",
+            "paddingLeft": "20px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "16px",
+            "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong>LX Z:IN 인테리어</strong></p>",
+            "paddingTop": "6px",
+            "paddingRight": "10px",
+            "paddingBottom": "6px",
+            "paddingLeft": "10px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "#e5e5e5",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#111111"
+          },
+          "styles": {},
+          "groupId": "group-1788830765546-z4jp6d2r7",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleImg",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/living/busan/vol01/lx_zine.png",
+            "imageAlt": "이미지",
+            "imageMaxWidth": "100%",
+            "imageAlign": "center",
+            "paddingTop": "10px",
+            "paddingRight": "0px",
+            "paddingBottom": "8px",
+            "paddingLeft": "0px",
+            "showImageLink": false,
+            "imageLinkUrl": "",
+            "showBorderRadius": false,
+            "imageBorderRadius": "10px",
+            "imageBorderStyle": "none",
+            "imageBorderWidth": "1px",
+            "imageBorderColor": "#000000"
+          },
+          "styles": {},
+          "groupId": "group-1788830765546-z4jp6d2r7",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "14px",
+            "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong>창호부터 주방, 욕실, 바닥과 벽까지 한자리에서❗</strong></p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">&nbsp;</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong>📍Check Point</strong></p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">✅난방비 걱정 줄여주는 LX지인 창호</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">✅내 일상에 꼭 맞는 프리미엄 LX지인 키친</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">✅쾌적한 라이프를 위한 LX지인 바스</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">✅믿을 수 있는 인테리어 상담</p>",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "10px",
+            "paddingLeft": "0px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#333333"
+          },
+          "styles": {},
+          "groupId": "group-1788830765546-z4jp6d2r7",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "16px",
+            "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\"><strong>한샘리하우스</strong></p>",
+            "paddingTop": "6px",
+            "paddingRight": "10px",
+            "paddingBottom": "6px",
+            "paddingLeft": "10px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "#e5e5e5",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#111111"
+          },
+          "styles": {},
+          "groupId": "group-1788830765546-z4jp6d2r7",
+          "rowIndex": 0,
+          "columnIndex": 1
+        },
+        {
+          "moduleId": "ModuleImg",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/living/busan/vol01/hanssem.png",
+            "imageAlt": "이미지",
+            "imageMaxWidth": "100%",
+            "imageAlign": "center",
+            "paddingTop": "10px",
+            "paddingRight": "0px",
+            "paddingBottom": "8px",
+            "paddingLeft": "0px",
+            "showImageLink": false,
+            "imageLinkUrl": "",
+            "showBorderRadius": false,
+            "imageBorderRadius": "10px",
+            "imageBorderStyle": "none",
+            "imageBorderWidth": "1px",
+            "imageBorderColor": "#000000"
+          },
+          "styles": {},
+          "groupId": "group-1788830765546-z4jp6d2r7",
+          "rowIndex": 0,
+          "columnIndex": 1
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "14px",
+            "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong>고객님께 전하는 모든 경험을 더 깊이 고민하고 연구합니다💬</strong></p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">&nbsp;</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong>📍Check Point</strong></p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">✅한샘 전문 디자이너의 맞춤 인테리어 컨설팅</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">✅숙련된 시공 전문가의 체계적인 시공</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">✅E0 친환경 자재와 엄격한 품질 기준 적용</p>",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "10px",
+            "paddingLeft": "0px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#333333"
+          },
+          "styles": {},
+          "groupId": "group-1788830765546-z4jp6d2r7",
+          "rowIndex": 0,
+          "columnIndex": 1
+        },
+        {
+          "moduleId": "ModuleOneButton",
+          "properties": {
+            "buttonText": "자세히 보기 →",
+            "buttonUrl": "https://livinglifestyle.co.kr/busan/consulting/interior_consulting/",
+            "buttonFontSize": "15px",
+            "buttonBgColor": "#111111",
+            "buttonTextColor": "#ffffff",
+            "buttonPaddingTop": "15px",
+            "buttonPaddingRight": "20px",
+            "buttonPaddingBottom": "15px",
+            "buttonPaddingLeft": "20px",
+            "paddingTop": "15px",
+            "paddingRight": "20px",
+            "paddingBottom": "20px",
+            "paddingLeft": "20px",
+            "showBorderRadius": true,
+            "buttonBorderRadius": "5px",
+            "buttonBorderStyle": "none",
+            "buttonBorderWidth": "1px",
+            "buttonBorderColor": "#000000",
+            "buttonBgColor__pointIndex": 0,
+            "buttonBgColor__usePoint": true
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleDivider",
+          "properties": {
+            "borderColor": "#000000",
+            "borderWidth": "2px",
+            "borderStyle": "solid",
+            "dividerWidth": "100%",
+            "paddingTop": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "paddingRight": "0px"
+          },
+          "styles": {},
+          "groupId": "group-1788831792301-mi2iocjs6",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "18px",
+            "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong>🏗️KOREA BUILD IN BUSAN</strong>🏗️</p>",
+            "paddingTop": "15px",
+            "paddingRight": "20px",
+            "paddingBottom": "15px",
+            "paddingLeft": "20px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999"
+          },
+          "styles": {},
+          "groupId": "group-1788831792301-mi2iocjs6",
+          "rowIndex": 1,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleImg",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/living/busan/vol01/koreabuild.jpg",
+            "imageAlt": "이미지",
+            "imageMaxWidth": "100%",
+            "imageAlign": "center",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "20px",
+            "paddingLeft": "0px",
+            "showImageLink": false,
+            "imageLinkUrl": "",
+            "showBorderRadius": false,
+            "imageBorderRadius": "10px",
+            "imageBorderStyle": "none",
+            "imageBorderWidth": "1px",
+            "imageBorderColor": "#000000"
+          },
+          "styles": {},
+          "groupId": "group-1788831759771-d0palv73a",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "18px",
+            "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong>⟨2026 부산 코리아빌드⟩ 동시 개최!🎉</strong></p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><span style=\"font-size: 14px;\">영남 최초·최대 규모의 건설·건축·인테리어 전문 전시회 ⟨2026 부산 코리아빌드⟩가 동시개최됩니다.</span></p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><span style=\"font-size: 14px;\">국내외 우수 건축자재와 설비, 건설기술, 인테리어 트렌드를 함께 만나보세요!</span></p>",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#111111"
+          },
+          "styles": {},
+          "groupId": "group-1788831759771-d0palv73a",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDivider",
+          "properties": {
+            "borderColor": "#dddddd",
+            "borderWidth": "1px",
+            "borderStyle": "solid",
+            "dividerWidth": "100%",
+            "paddingTop": "20px",
+            "paddingBottom": "20px",
+            "paddingLeft": "0px",
+            "paddingRight": "0px"
+          },
+          "styles": {},
+          "groupId": "group-1788831759771-d0palv73a",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "14px",
+            "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">&nbsp;<strong>📅기간:</strong> 2026년 10월 1일(목) ~ 4일(일) / 4일간</p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong>⏰시간:</strong> 10:00 ~ 18:00 (입장마감 17:30)</p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong>🚩장소:</strong> 부산 벡스코(BEXCO) 1전시장</p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong>🏢주최:</strong> (주)메쎄이상</p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong>📍동시개최:</strong> 2026 부산 리빙앤라이프스타일</p>",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999"
+          },
+          "styles": {},
+          "groupId": "group-1788831759771-d0palv73a",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDivider",
+          "properties": {
+            "borderColor": "#dddddd",
+            "borderWidth": "1px",
+            "borderStyle": "solid",
+            "dividerWidth": "100%",
+            "paddingTop": "20px",
+            "paddingBottom": "20px",
+            "paddingLeft": "0px",
+            "paddingRight": "0px"
+          },
+          "styles": {},
+          "groupId": "group-1788831759771-d0palv73a",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleOneButton",
+          "properties": {
+            "buttonText": "홈페이지 바로가기 →",
+            "buttonUrl": "https://koreabuild.co.kr/bexco/",
+            "buttonFontSize": "15px",
+            "buttonBgColor": "#111111",
+            "buttonTextColor": "#ffffff",
+            "buttonPaddingTop": "15px",
+            "buttonPaddingRight": "0px",
+            "buttonPaddingBottom": "15px",
+            "buttonPaddingLeft": "0px",
+            "paddingTop": "15px",
+            "paddingRight": "0px",
+            "paddingBottom": "20px",
+            "paddingLeft": "0px",
+            "showBorderRadius": true,
+            "buttonBorderRadius": "5px",
+            "buttonBorderStyle": "none",
+            "buttonBorderWidth": "1px",
+            "buttonBorderColor": "#000000",
+            "buttonBgColor__pointIndex": 0,
+            "buttonBgColor__usePoint": true
+          },
+          "styles": {},
+          "groupId": "group-1788831759771-d0palv73a",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDivider",
+          "properties": {
+            "borderColor": "#191f28",
+            "borderWidth": "2px",
+            "borderStyle": "solid",
+            "dividerWidth": "100%",
+            "paddingTop": "20px",
+            "paddingBottom": "20px",
+            "paddingLeft": "0px",
+            "paddingRight": "0px"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleImg",
+          "properties": {
+            "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/living/busan/vol01/register_banner.png",
+            "imageAlt": "이미지",
+            "imageMaxWidth": "100%",
+            "imageAlign": "center",
+            "paddingTop": "0px",
+            "paddingRight": "20px",
+            "paddingBottom": "20px",
+            "paddingLeft": "20px",
+            "showImageLink": true,
+            "imageLinkUrl": "https://exh.messeesang.com/indko/login?redirect=/indko/",
+            "showBorderRadius": false,
+            "imageBorderRadius": "10px",
+            "imageBorderStyle": "none",
+            "imageBorderWidth": "1px",
+            "imageBorderColor": "#000000"
+          },
+          "styles": {}
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "16px",
+            "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>리빙앤라이프스타일 사무국</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">(주)메쎄이상</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><span style=\"font-size: 13px;\">서울시 마포구 월드컵북로 58길 9 ES타워 (03922)</span></p>",
+            "paddingTop": "30px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#333333",
+            "textAlign": "center"
+          },
+          "styles": {},
+          "groupId": "group-1788832746303-nflq4xvj8",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleContactInfo",
+          "properties": {
+            "contactItems": [
+              {
+                "key": "website",
+                "show": true,
+                "value": "https://livinglifestyle.co.kr/"
+              },
+              {
+                "key": "phone",
+                "show": true,
+                "value": "02-6121-6430"
+              },
+              {
+                "key": "email",
+                "show": true,
+                "value": "lila@esgroup.net"
+              },
+              {
+                "key": "fax",
+                "show": false,
+                "value": "02-6121-6363"
+              }
+            ],
+            "contactFontSize": "13px",
+            "contactTextColor": "#333333",
+            "contactAlign": "center",
+            "paddingTop": "8px",
+            "paddingRight": "0px",
+            "paddingBottom": "10px",
+            "paddingLeft": "0px",
+            "websiteUrl": "https://livinglifestyle.co.kr/",
+            "showWebsite": true,
+            "phone": "02-6121-6430",
+            "showPhone": true,
+            "email": "lila@esgroup.net",
+            "showEmail": true,
+            "fax": "02-6121-6363",
+            "showFax": false
+          },
+          "styles": {},
+          "groupId": "group-1788832746303-nflq4xvj8",
+          "rowIndex": 0,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDivider",
+          "properties": {
+            "borderColor": "#aaaaaa",
+            "borderWidth": "1px",
+            "borderStyle": "solid",
+            "dividerWidth": "100%",
+            "paddingTop": "0px",
+            "paddingBottom": "15px",
+            "paddingLeft": "0px",
+            "paddingRight": "0px"
+          },
+          "styles": {},
+          "groupId": "group-1788832746303-nflq4xvj8",
+          "rowIndex": 1,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleSnsIcons",
+          "properties": {
+            "snsIconBgColor": "#333333",
+            "snsAlign": "center",
+            "snsIcons": [
+              {
+                "key": "home",
+                "show": true,
+                "url": "https://livinglifestyle.co.kr/"
+              },
+              {
+                "key": "facebook",
+                "show": false,
+                "url": ""
+              },
+              {
+                "key": "x",
+                "show": false,
+                "url": ""
+              },
+              {
+                "key": "blog",
+                "show": false,
+                "url": ""
+              },
+              {
+                "key": "youtube",
+                "show": false,
+                "url": ""
+              },
+              {
+                "key": "instagram",
+                "show": true,
+                "url": "https://www.instagram.com/lila__fair"
+              },
+              {
+                "key": "kakao",
+                "show": true,
+                "url": "https://pf.kakao.com/_xoPxcGxb"
+              },
+              {
+                "key": "linkedin",
+                "show": false,
+                "url": ""
+              },
+              {
+                "key": "zuzuzu",
+                "show": false,
+                "url": "https://kcoupet.com/"
+              },
+              {
+                "key": "en",
+                "show": false,
+                "url": ""
+              },
+              {
+                "key": "jp",
+                "show": false,
+                "url": ""
+              },
+              {
+                "key": "th",
+                "show": false,
+                "url": ""
+              }
+            ],
+            "paddingTop": "0px",
+            "paddingRight": "5px",
+            "paddingBottom": "10px",
+            "paddingLeft": "5px"
+          },
+          "styles": {},
+          "groupId": "group-1788832746303-nflq4xvj8",
+          "rowIndex": 2,
+          "columnIndex": 0
+        },
+        {
+          "moduleId": "ModuleDescText",
+          "properties": {
+            "fontSize": "12px",
+            "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">본 메일은 회원님의 수신동의 여부를 확인한 결과 회원님께서 수신동의를 하셨기에 발송되었습니다.</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">메일 수신을 원치 않으시면 <strong style=\"color: #333333;\"><a href=\"https://edm.esfair.kr/rejectMail.aspx?code=LIVING\" rel=\"noopener noreferrer\" target=\"_blank\">[수신거부]</a></strong> 를 클릭하십시오.</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">본 메일은 발신전용 메일이므로 문의사항은 <strong>lila@esgroup.net</strong> 으로 문의 바랍니다</p>",
+            "paddingTop": "10px",
+            "paddingRight": "25px",
+            "paddingBottom": "40px",
+            "paddingLeft": "25px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "bgColor": "transparent",
+            "showBorderRadius": false,
+            "borderRadius": "8px",
+            "showBorder": false,
+            "borderPosition": "bottom",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#999999",
+            "textColor": "#333333",
+            "textAlign": "center"
+          },
+          "styles": {},
+          "groupId": "group-1788832746303-nflq4xvj8",
+          "rowIndex": 3,
+          "columnIndex": 0
+        }
+      ],
+      "groups": [
+        {
+          "id": "group-1788746009807-5zubpjh5b",
+          "name": "기본 헤더",
+          "styles": {
+            "backgroundColor": "",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "0px",
+            "margin": "0px"
+          },
+          "rows": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "id": "group-1788746014242-1ec9sypp0",
+          "name": "이미지형 헤더",
+          "styles": {
+            "backgroundColor": "",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "0px",
+            "margin": "0px",
+            "paddingLeft": "20px",
+            "paddingRight": "20px",
+            "marginLeft": "0px",
+            "marginRight": "0px"
+          },
+          "rows": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "id": "group-1788749186173-le56g3hto",
+          "name": "섹션 타이틀",
+          "styles": {
+            "backgroundColor": "",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "0px",
+            "margin": "0px"
+          },
+          "rows": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "id": "group-1788749984892-golywd5tj",
+          "name": "섹션 타이틀",
+          "styles": {
+            "backgroundColor": "",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "0px",
+            "margin": "0px"
+          },
+          "rows": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "id": "group-1788750042833-z8qbzr0u3",
+          "name": "모듈 02번",
+          "styles": {
+            "backgroundColor": "",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "0px",
+            "margin": "0px",
+            "paddingLeft": "20px",
+            "paddingRight": "20px",
+            "marginLeft": "0px",
+            "marginRight": "0px"
+          },
+          "rows": [
+            1
+          ]
+        },
+        {
+          "id": "group-1788830765546-z4jp6d2r7",
+          "name": "모듈 06번",
+          "styles": {
+            "backgroundColor": "",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "0px",
+            "margin": "0px",
+            "paddingLeft": "15px",
+            "paddingRight": "15px",
+            "marginLeft": "0px",
+            "marginRight": "0px"
+          },
+          "rows": [
+            2
+          ]
+        },
+        {
+          "id": "group-1788830772607-huw23kn5n",
+          "name": "섹션 타이틀",
+          "rows": [
+            1,
+            1,
+            1
+          ],
+          "styles": {
+            "backgroundColor": "",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "0px",
+            "margin": "0px"
+          }
+        },
+        {
+          "id": "group-1788831759771-d0palv73a",
+          "name": "모듈 02번",
+          "styles": {
+            "backgroundColor": "",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "0px",
+            "margin": "0px",
+            "paddingLeft": "20px",
+            "paddingRight": "20px",
+            "marginLeft": "0px",
+            "marginRight": "0px"
+          },
+          "rows": [
+            1
+          ]
+        },
+        {
+          "id": "group-1788831792301-mi2iocjs6",
+          "name": "섹션 타이틀",
+          "styles": {
+            "backgroundColor": "",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "0px",
+            "margin": "0px"
+          },
+          "rows": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "id": "group-1788832746303-nflq4xvj8",
+          "name": "하단 푸터",
+          "styles": {
+            "backgroundColor": "#e9e9e9",
+            "borderWidth": "0px",
+            "borderStyle": "solid",
+            "borderColor": "#dddddd",
+            "borderSides": [
+              "top",
+              "right",
+              "bottom",
+              "left"
+            ],
+            "padding": "0px",
+            "margin": "0px"
+          },
+          "rows": [
+            1,
+            1,
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    {
       "id": "koreabuild",
       "name": "코리아빌드",
       "description": "코리아빌드 뉴스레터 구성",
