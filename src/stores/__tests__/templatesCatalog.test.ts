@@ -1,23 +1,63 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /**
- * 템플릿 카탈로그(public/templates/templates-config.json) 무결성 검사.
+ * 템플릿 카탈로그(public/templates/) 무결성 검사.
  *
- * 템플릿은 손으로 고치는 큰 JSON이라, 로드해 보기 전에는 깨진 걸 알기 어렵다.
- * 실제 파일을 읽어 스키마·모듈 id·그룹 참조가 맞는지, 그리고 스토어에 로드했을 때
- * 모듈 수와 그룹 배치가 그대로 살아나는지 확인한다.
+ * 카탈로그는 두 층이다 — 목차 `index.json`(departments + 템플릿 메타·본문 파일 경로)과
+ * 템플릿마다 하나씩인 본문 `{본부}/{팀}/{id}.json`(wrapSettings·modules·groups).
+ * 손으로 고치는 큰 JSON이라 로드해 보기 전에는 깨진 걸 알기 어렵다. 실제 파일을 읽어
+ * 목차와 본문 파일이 서로 맞는지, 스키마·모듈 id·그룹 참조가 맞는지, 그리고 스토어에
+ * 로드했을 때 모듈 수와 그룹 배치가 그대로 살아나는지 확인한다.
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import fs from 'node:fs'
 import path from 'node:path'
 import { useModuleStore } from '@/stores/moduleStore'
-import type { NewsletterTemplate, TemplateDepartment } from '@/types'
+import type {
+  NewsletterTemplate,
+  NewsletterTemplateBody,
+  NewsletterTemplateSummary,
+  TemplateDepartment,
+} from '@/types'
 
 const PUBLIC = path.resolve(__dirname, '../../../public')
+const TEMPLATES_DIR = path.join(PUBLIC, 'templates')
 
-const catalog: { departments: TemplateDepartment[]; templates: NewsletterTemplate[] } = JSON.parse(
-  fs.readFileSync(path.join(PUBLIC, 'templates/templates-config.json'), 'utf8'),
+const index: { departments: TemplateDepartment[]; templates: NewsletterTemplateSummary[] } = JSON.parse(
+  fs.readFileSync(path.join(TEMPLATES_DIR, 'index.json'), 'utf8'),
 )
+
+/** 본문 파일을 읽는다 — 없으면 null (파일 짝 검사는 아래 테스트가 따로 한다) */
+const readBody = (t: NewsletterTemplateSummary): NewsletterTemplateBody | null => {
+  if (!t.file) return null
+  const file = path.join(TEMPLATES_DIR, t.file)
+  return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : null
+}
+
+/** 목차 + 본문을 합친 완전한 템플릿 목록 — 아래 검사들은 예전처럼 이 모양을 본다 */
+const catalog: { departments: TemplateDepartment[]; templates: NewsletterTemplate[] } = {
+  departments: index.departments,
+  templates: index.templates.map((t) => ({
+    ...t,
+    ...(readBody(t) ?? { wrapSettings: {} as NewsletterTemplateBody['wrapSettings'], modules: [] }),
+    id: t.id,
+  })),
+}
+
+/** 본문 폴더에 실제로 있는 JSON 파일들 (index.json 제외) — 목차에 없는 고아 파일을 잡는다 */
+const bodyFilesOnDisk = (): string[] => {
+  const out: string[] = []
+  const walk = (dir: string, rel: string) => {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const relPath = rel ? `${rel}/${entry.name}` : entry.name
+      if (entry.isDirectory()) walk(path.join(dir, entry.name), relPath)
+      else if (entry.name.endsWith('.json') && relPath !== 'index.json') out.push(relPath)
+    }
+  }
+  walk(TEMPLATES_DIR, '')
+  return out
+}
+
 const moduleIds = new Set<string>(
   JSON.parse(fs.readFileSync(path.join(PUBLIC, 'modules/modules-config.json'), 'utf8')).modules.map(
     (m: any) => m.id,
@@ -90,6 +130,37 @@ global.fetch = vi.fn(async (url: any) => {
 describe('템플릿 카탈로그', () => {
   it('20개 전시 템플릿이 있다', () => {
     expect(catalog.templates).toHaveLength(20)
+  })
+
+  it('목차의 file이 {본부}/{팀}/{id}.json 규칙을 따르고 그 파일이 있다', () => {
+    // 경로가 소속과 어긋나면 폴더만 보고 어느 팀 것인지 알 수 없고, 등록 스크립트의 교체 규칙과도 틀어진다
+    index.templates.forEach((t) => {
+      expect(t.file, `${t.name}에 file이 없다`).toBe(`${t.divisionId}/${t.teamId}/${t.id}.json`)
+      expect(fs.existsSync(path.join(TEMPLATES_DIR, t.file!)), `${t.file} 파일이 없다`).toBe(true)
+    })
+  })
+
+  it('본문 파일의 id가 목차와 같다', () => {
+    // 파일을 손으로 옮기다 다른 템플릿 본문을 가리키게 되는 실수를 잡는다
+    index.templates.forEach((t) => {
+      const body = readBody(t)
+      expect(body?.id, `${t.file}의 id`).toBe(t.id)
+    })
+  })
+
+  it('목차에 없는 본문 파일이 남아 있지 않다', () => {
+    // 지우거나 옮긴 템플릿의 옛 파일은 배포본에 그대로 실린다 — 고아 파일은 없어야 한다
+    const listed = new Set(index.templates.map((t) => t.file))
+    const orphans = bodyFilesOnDisk().filter((f) => !listed.has(f))
+    expect(orphans, `목차에 없는 파일: ${orphans.join(', ')}`).toEqual([])
+  })
+
+  it('목차 항목에는 본문이 섞여 있지 않다', () => {
+    // 목차는 첫 화면에서 통째로 읽는다 — 본문이 섞이면 다시 1.6MB짜리 파일이 된다
+    index.templates.forEach((t) => {
+      expect('modules' in t, `${t.name} 목차 항목에 modules가 들어 있다`).toBe(false)
+      expect('groups' in t, `${t.name} 목차 항목에 groups가 들어 있다`).toBe(false)
+    })
   })
 
   it('본부/팀 트리가 설정 파일에 들어 있다', () => {

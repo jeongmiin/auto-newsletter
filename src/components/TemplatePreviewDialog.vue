@@ -10,17 +10,17 @@ import { ref, watch } from 'vue'
 import { useModuleStore } from '@/stores/moduleStore'
 import { processQuillHtml } from '@/utils/quillHtmlProcessor'
 import { buildEmailPreviewDocument } from '@/utils/emailPreviewDoc'
-import type { NewsletterTemplate } from '@/types'
+import type { NewsletterTemplateSummary } from '@/types'
 
 const props = defineProps<{
   /** 보여줄 템플릿. null 이면 닫힌 상태 */
-  template: NewsletterTemplate | null
+  template: NewsletterTemplateSummary | null
 }>()
 
 const emit = defineEmits<{
   close: []
   /** '이 템플릿 선택하기' */
-  select: [NewsletterTemplate]
+  select: [NewsletterTemplateSummary]
 }>()
 
 const moduleStore = useModuleStore()

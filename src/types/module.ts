@@ -251,7 +251,7 @@ export type TemplateTeam = OrgNode
 
 /**
  * 템플릿 선택 화면의 좌측 본부/팀 트리 한 항목.
- * 정의는 `public/templates/templates-config.json`의 `departments`에 있다 —
+ * 정의는 `public/templates/index.json`의 `departments`에 있다 —
  * 화면·검사 테스트·등록 스크립트가 모두 그 한 곳을 본다. 배열 순서가 곧 표시 순서다.
  */
 export interface TemplateDepartment extends OrgNode {
@@ -259,10 +259,14 @@ export interface TemplateDepartment extends OrgNode {
 }
 
 /**
- * 미리 만들어둔 뉴스레터 템플릿
- * 모듈 인스턴스 배열 + wrap 설정의 스냅샷
+ * 템플릿 카탈로그 목차(`public/templates/index.json`)의 한 항목 — 고르는 데 필요한 것만.
+ *
+ * 본문(모듈·그룹·전체 설정)은 `file`이 가리키는 파일에 따로 있고, 템플릿을 실제로 고르거나
+ * 미리보기를 렌더할 때 그 파일만 읽는다(moduleStore.loadTemplateBody). 목차는 수십 KB,
+ * 본문은 하나에 60KB쯤이라 첫 화면에서 전부 읽을 이유가 없고, 파일이 나뉘어 있으면
+ * 템플릿 하나를 고쳐도 다른 템플릿과 머지 충돌이 나지 않는다.
  */
-export interface NewsletterTemplate {
+export interface NewsletterTemplateSummary {
   id: string
   name: string
   description: string
@@ -274,6 +278,14 @@ export interface NewsletterTemplate {
   divisionId?: string
   /** 소속 팀 **id**(좌측 부서/팀 필터용). 미지정이면 '전체'에서만 보인다. */
   teamId?: string
+  /** 본문 파일 — `index.json`이 있는 폴더 기준 상대 경로 (`arch/arch-str/living.json`) */
+  file?: string
+}
+
+/** 템플릿 본문 파일(`{본부}/{팀}/{id}.json`)의 내용 — 모듈 인스턴스 배열 + wrap 설정의 스냅샷 */
+export interface NewsletterTemplateBody {
+  /** 목차 항목의 id와 같다 — 파일만 봐도 무엇인지 알 수 있게 본문에도 적는다 */
+  id?: string
   wrapSettings: {
     backgroundColor: string
     borderWidth: string
@@ -302,3 +314,8 @@ export interface NewsletterTemplate {
   /** 모듈 그룹 정의 (그룹 단위 스타일). 없으면 그룹 없음. */
   groups?: ModuleGroup[]
 }
+
+/** 목차 항목 + 본문을 합친 완전한 템플릿 (내보내기·검사 테스트에서 쓴다) */
+export interface NewsletterTemplate
+  extends NewsletterTemplateSummary,
+    Omit<NewsletterTemplateBody, 'id'> {}

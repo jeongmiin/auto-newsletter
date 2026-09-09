@@ -1,0 +1,258 @@
+{
+  "departments": [
+    {
+      "id": "arch",
+      "name": "건축사업본부",
+      "teams": [
+        {
+          "id": "arch-plan",
+          "name": "건축기획팀"
+        },
+        {
+          "id": "arch-str",
+          "name": "건축전략팀"
+        }
+      ]
+    },
+    {
+      "id": "growth",
+      "name": "신성장산업본부",
+      "teams": [
+        {
+          "id": "growth-plan",
+          "name": "신성장기획팀"
+        },
+        {
+          "id": "growth-str",
+          "name": "신성장전략팀"
+        },
+        {
+          "id": "mice",
+          "name": "MICE사업팀"
+        }
+      ]
+    },
+    {
+      "id": "conv",
+      "name": "융합사업본부",
+      "teams": [
+        {
+          "id": "conv1",
+          "name": "융합산업1팀"
+        }
+      ]
+    },
+    {
+      "id": "culture",
+      "name": "문화콘텐츠사업본부",
+      "teams": [
+        {
+          "id": "life",
+          "name": "라이프콘텐츠팀"
+        }
+      ]
+    },
+    {
+      "id": "pet",
+      "name": "펫사업본부",
+      "teams": [
+        {
+          "id": "pet-ind",
+          "name": "펫산업팀"
+        }
+      ]
+    },
+    {
+      "id": "leisure",
+      "name": "레저사업본부",
+      "teams": [
+        {
+          "id": "leisure-ind",
+          "name": "레저산업팀"
+        }
+      ]
+    }
+  ],
+  "templates": [
+    {
+      "id": "nextcon",
+      "name": "넥스트콘",
+      "description": "넥스트콘 뉴스레터 구성",
+      "divisionId": "arch",
+      "teamId": "arch-plan",
+      "thumbnail": "nextcon_temp.png",
+      "file": "arch/arch-plan/nextcon.json"
+    },
+    {
+      "id": "hobanexpo",
+      "name": "호반 동반성장 건설 엑스포",
+      "description": "호반 동반성장 건설 엑스포  뉴스레터 구성",
+      "divisionId": "arch",
+      "teamId": "arch-plan",
+      "thumbnail": "hobanexpo_temp.png",
+      "file": "arch/arch-plan/hobanexpo.json"
+    },
+    {
+      "id": "space_design",
+      "name": "공간디자인페어",
+      "description": "공간디자인페어 뉴스레터 구성",
+      "divisionId": "arch",
+      "teamId": "arch-str",
+      "thumbnail": "spacedesign_temp.png",
+      "file": "arch/arch-str/space_design.json"
+    },
+    {
+      "id": "living",
+      "name": "리빙앤라이프스타일",
+      "description": "리빙앤라이프스타일(LiLA) 뉴스레터 구성",
+      "divisionId": "arch",
+      "teamId": "arch-str",
+      "thumbnail": "living_temp.png",
+      "file": "arch/arch-str/living.json"
+    },
+    {
+      "id": "koreabuild",
+      "name": "코리아빌드",
+      "description": "코리아빌드 뉴스레터 구성",
+      "divisionId": "arch",
+      "teamId": "arch-str",
+      "thumbnail": "koreabuild_temp.png",
+      "file": "arch/arch-str/koreabuild.json"
+    },
+    {
+      "id": "c-uas",
+      "name": "대드론",
+      "description": "대드론 뉴스레터 구성",
+      "divisionId": "growth",
+      "teamId": "growth-plan",
+      "thumbnail": "korea-c-uas_temp.png",
+      "file": "growth/growth-plan/c-uas.json"
+    },
+    {
+      "id": "lawexposeoul",
+      "name": "법률 산업 박람회",
+      "description": "법률 산업 박람회 뉴스레터 구성",
+      "divisionId": "growth",
+      "teamId": "growth-str",
+      "thumbnail": "lawexpo_temp.png",
+      "file": "growth/growth-str/lawexposeoul.json"
+    },
+    {
+      "id": "beautysum",
+      "name": "뷰티썸",
+      "description": "뷰티썸 뉴스레터 구성",
+      "divisionId": "growth",
+      "teamId": "growth-str",
+      "thumbnail": "beautysumindia_temp.png",
+      "file": "growth/growth-str/beautysum.json"
+    },
+    {
+      "id": "khospital",
+      "name": "KHF",
+      "description": "KHF 뉴스레터 구성",
+      "divisionId": "growth",
+      "teamId": "growth-str",
+      "thumbnail": "KHF_temp.png",
+      "file": "growth/growth-str/khospital.json"
+    },
+    {
+      "id": "smartconexpo",
+      "name": "스마트건설·안전·AI 엑스포",
+      "description": "스마트건설·안전·AI 엑스포 뉴스레터 구성",
+      "divisionId": "growth",
+      "teamId": "mice",
+      "thumbnail": "scx_temp.png",
+      "file": "growth/mice/smartconexpo.json"
+    },
+    {
+      "id": "slw",
+      "name": "SLW",
+      "description": "SLW 뉴스레터 구성",
+      "divisionId": "growth",
+      "teamId": "mice",
+      "thumbnail": "slw_temp.png",
+      "file": "growth/mice/slw.json"
+    },
+    {
+      "id": "bfs",
+      "name": "건축 소방 안전 산업전",
+      "description": "건축 소방 안전 산업전 뉴스레터 구성",
+      "divisionId": "conv",
+      "teamId": "conv1",
+      "thumbnail": "bfs_temp.png",
+      "file": "conv/conv1/bfs.json"
+    },
+    {
+      "id": "police",
+      "name": "국제치안산업대전",
+      "description": "국제치안산업대전 뉴스레터 구성",
+      "divisionId": "conv",
+      "teamId": "conv1",
+      "thumbnail": "police_temp.png",
+      "file": "conv/conv1/police.json"
+    },
+    {
+      "id": "evinfra",
+      "name": "전기차 충전인프라 산업전",
+      "description": "전기차 충전인프라 산업전 뉴스레터 구성",
+      "divisionId": "conv",
+      "teamId": "conv1",
+      "thumbnail": "evinfra_temp.png",
+      "file": "conv/conv1/evinfra.json"
+    },
+    {
+      "id": "issashowasia",
+      "name": "ISSA",
+      "description": "ISSA 뉴스레터 구성",
+      "divisionId": "conv",
+      "teamId": "conv1",
+      "thumbnail": "issa_temp.png",
+      "file": "conv/conv1/issashowasia.json"
+    },
+    {
+      "id": "handarty",
+      "name": "핸드아티코리아",
+      "description": "핸드아티코리아 뉴스레터 구성",
+      "divisionId": "culture",
+      "teamId": "life",
+      "thumbnail": "handartykorea_temp.png",
+      "file": "culture/life/handarty.json"
+    },
+    {
+      "id": "megazoo",
+      "name": "메가주",
+      "description": "메가주 뉴스레터 구성",
+      "divisionId": "pet",
+      "teamId": "pet-ind",
+      "thumbnail": "megazoo_temp.png",
+      "file": "pet/pet-ind/megazoo.json"
+    },
+    {
+      "id": "kpet",
+      "name": "케이펫",
+      "description": "케이펫 뉴스레터 구성",
+      "divisionId": "pet",
+      "teamId": "pet-ind",
+      "thumbnail": "kpet_temp.png",
+      "file": "pet/pet-ind/kpet.json"
+    },
+    {
+      "id": "gocaf",
+      "name": "고카프",
+      "description": "고카프 뉴스레터 구성",
+      "divisionId": "leisure",
+      "teamId": "leisure-ind",
+      "thumbnail": "gcaf_temp.png",
+      "file": "leisure/leisure-ind/gocaf.json"
+    },
+    {
+      "id": "kfarm",
+      "name": "케이팜",
+      "description": "케이팜 뉴스레터 구성",
+      "divisionId": "leisure",
+      "teamId": "leisure-ind",
+      "thumbnail": "kfarm_temp.png",
+      "file": "leisure/leisure-ind/kfarm.json"
+    }
+  ]
+}

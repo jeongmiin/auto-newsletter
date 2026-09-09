@@ -1,17 +1,22 @@
 /**
- * 재편집용 HTML 하나를 템플릿 카탈로그(public/templates/templates-config.json)에 등록한다.
+ * 재편집용 HTML 하나를 템플릿 카탈로그에 등록한다.
  *
  *   node scripts/add-template.mjs <htmlFile> --id kpet-template --name 케이펫 \
  *        --division pet --team pet-ind [--thumbnail kpet_temp.png] [--description "..."] \
  *        [--summary "표 설명(뉴스레터 요약)"]
  *
+ * 카탈로그는 두 층이다(public/templates/):
+ *   index.json                 — departments + 템플릿 목차(id·이름·소속·썸네일·본문 파일 경로)
+ *   {본부}/{팀}/{id}.json       — 본문(wrapSettings·modules·groups). 앱은 고를 때만 이 파일을 읽는다
+ * 이 스크립트는 본문 파일을 쓰고 목차에 한 줄을 넣는다.
+ *
  * --summary는 파일의 뉴스레터 요약(wrapSettings.summary)을 덮어쓴다. 요약 없이 내보낸
  * 파일로 기존 템플릿을 교체할 때 요약이 사라지는 것을 막는 용도다.
  *
- * 같은 id가 이미 있으면 교체한다. 등록 후 목록은 화면과 같은 순서
- * (본부 → 팀 → 이름 가나다ABC)로 다시 정렬한다.
+ * 같은 id가 이미 있으면 교체한다(소속이 바뀌었으면 옛 본문 파일은 지운다).
+ * 등록 후 목차는 화면과 같은 순서(본부 → 팀 → 이름 가나다ABC)로 다시 정렬한다.
  *
- * 본부/팀 목록은 설정 파일의 departments를 그대로 쓴다 — 화면·검사 테스트와 같은 한 곳이다.
+ * 본부/팀 목록은 index.json의 departments를 그대로 쓴다 — 화면·검사 테스트와 같은 한 곳이다.
  * ⚠ --division/--team에는 표시명이 아니라 **id**를 넣는다. 표시명은 조직개편으로 바뀌지만
  *   id는 불변이라, 저장된 값이 나중에도 같은 조직을 가리킨다.
  */
@@ -19,7 +24,8 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 const ROOT = path.resolve(import.meta.dirname, '..')
-const CONFIG = path.join(ROOT, 'public', 'templates', 'templates-config.json')
+const TEMPLATES_DIR = path.join(ROOT, 'public', 'templates')
+const INDEX = path.join(TEMPLATES_DIR, 'index.json')
 const MODULES_CONFIG = path.join(ROOT, 'public', 'modules', 'modules-config.json')
 const THUMB_DIR = path.join(ROOT, 'src', 'assets', 'img', 'thumbnail')
 
@@ -54,24 +60,26 @@ if (!htmlArg || !opts.id || !opts.name || !opts.division || !opts.team) {
   )
   process.exit(2)
 }
+// id는 그대로 파일명·S3 폴더명이 된다
+if (!/^[a-z0-9_-]+$/.test(opts.id)) die(`id는 소문자 영숫자·하이픈·밑줄만 쓸 수 있습니다: "${opts.id}"`)
 
-// ── 설정 읽기 ───────────────────────────────────────────────
-if (!fs.existsSync(CONFIG)) die(`설정 파일이 없습니다: ${CONFIG}`)
-const config = JSON.parse(fs.readFileSync(CONFIG, 'utf-8'))
-if (!Array.isArray(config.templates)) config.templates = []
-if (!Array.isArray(config.departments)) die('설정 파일에 departments가 없습니다')
+// ── 목차 읽기 ───────────────────────────────────────────────
+if (!fs.existsSync(INDEX)) die(`목차 파일이 없습니다: ${INDEX}`)
+const index = JSON.parse(fs.readFileSync(INDEX, 'utf-8'))
+if (!Array.isArray(index.templates)) index.templates = []
+if (!Array.isArray(index.departments)) die('목차에 departments가 없습니다')
 
 // 본부/팀 id가 트리에 있는지 — 오타로 목록에서 사라지는 것을 막는다.
 // 표시명을 넣는 실수가 잦을 자리라, 이름으로 들어오면 해당 id를 짚어 알려준다.
 const listOrg = (nodes) => nodes.map((n) => `${n.id}(${n.name})`).join(', ')
 
-const dept = config.departments.find((d) => d.id === opts.division)
+const dept = index.departments.find((d) => d.id === opts.division)
 if (!dept) {
-  const byName = config.departments.find((d) => d.name === opts.division)
+  const byName = index.departments.find((d) => d.name === opts.division)
   die(
     byName
       ? `--division에는 표시명이 아니라 id를 넣습니다. "${opts.division}" → ${byName.id}`
-      : `본부 id "${opts.division}"가 트리에 없습니다.\n  쓸 수 있는 본부: ${listOrg(config.departments)}`,
+      : `본부 id "${opts.division}"가 트리에 없습니다.\n  쓸 수 있는 본부: ${listOrg(index.departments)}`,
   )
 }
 const team = dept.teams.find((t) => t.id === opts.team)
@@ -122,7 +130,7 @@ const knownModules = new Set(
 const unknown = [...new Set(data.modules.map((m) => m.moduleId))].filter((id) => !knownModules.has(id))
 if (unknown.length) die(`모듈 정의에 없는 moduleId: ${unknown.join(', ')}`)
 
-// ── 템플릿 항목 만들기 ────────────────────────────────────────
+// ── 본문 만들기 ──────────────────────────────────────────────
 /**
  * order는 배열 순서로 대체되므로 뺀다.
  * ⚠ groupId·rowIndex·columnIndex는 반드시 남긴다 — 빠지면 다시 열 때 모든 멤버가
@@ -139,13 +147,8 @@ const toTemplateModule = (m) => ({
 })
 
 const ws = data.wrapSettings || {}
-const entry = {
+const body = {
   id: opts.id,
-  name: opts.name,
-  description: opts.description || `${opts.name} 뉴스레터 구성`,
-  divisionId: dept.id,
-  teamId: team.id,
-  ...(opts.thumbnail ? { thumbnail: opts.thumbnail } : {}),
   wrapSettings: {
     backgroundColor: ws.backgroundColor ?? '#ffffff',
     borderEnabled: ws.borderEnabled ?? false,
@@ -163,37 +166,70 @@ const entry = {
 }
 
 // 그룹 참조 검사 — 정의 없는 groupId가 있으면 로드 시 조용히 풀린다
-const definedGroups = new Set((entry.groups ?? []).map((g) => g.id))
+const definedGroups = new Set((body.groups ?? []).map((g) => g.id))
 const dangling = [
-  ...new Set(entry.modules.map((m) => m.groupId).filter(Boolean)),
+  ...new Set(body.modules.map((m) => m.groupId).filter(Boolean)),
 ].filter((g) => !definedGroups.has(g))
 if (dangling.length) die(`정의 없는 그룹을 참조합니다: ${dangling.join(', ')}`)
 
-// ── 교체 또는 추가 ──────────────────────────────────────────
-const at = config.templates.findIndex((t) => t.id === opts.id)
+// 멤버 1개짜리 그룹은 로드 시 cleanupGroup이 지워 버린다 — 등록 전에 잡는다
+const memberCounts = new Map()
+body.modules.forEach((m) => {
+  if (m.groupId) memberCounts.set(m.groupId, (memberCounts.get(m.groupId) ?? 0) + 1)
+})
+const tooSmall = (body.groups ?? []).filter((g) => (memberCounts.get(g.id) ?? 0) < 2).map((g) => g.id)
+if (tooSmall.length) {
+  die(`멤버가 1개뿐인 그룹이 있습니다(로드 시 사라짐): ${tooSmall.join(', ')}\n  그룹을 풀거나 멤버를 채운 뒤 다시 내보내 주세요.`)
+}
+
+// ── 목차 항목 + 본문 파일 ────────────────────────────────────
+const file = `${dept.id}/${team.id}/${opts.id}.json`
+const entry = {
+  id: opts.id,
+  name: opts.name,
+  description: opts.description || `${opts.name} 뉴스레터 구성`,
+  divisionId: dept.id,
+  teamId: team.id,
+  ...(opts.thumbnail ? { thumbnail: opts.thumbnail } : {}),
+  file,
+}
+
+const at = index.templates.findIndex((t) => t.id === opts.id)
 const replaced = at >= 0
-if (replaced) config.templates[at] = entry
-else config.templates.push(entry)
+if (replaced) {
+  // 소속이 바뀌어 파일 자리가 옮겨지면 옛 파일은 지운다 — 남겨 두면 목차에 없는 고아 파일이 된다
+  const oldFile = index.templates[at].file
+  if (oldFile && oldFile !== file && fs.existsSync(path.join(TEMPLATES_DIR, oldFile))) {
+    fs.unlinkSync(path.join(TEMPLATES_DIR, oldFile))
+  }
+  index.templates[at] = entry
+} else {
+  index.templates.push(entry)
+}
 
 // 화면과 같은 순서로 재정렬 (본부 → 팀 → 이름 가나다ABC)
 const rank = (t) => {
-  const d = config.departments.findIndex((x) => x.id === t.divisionId)
-  if (d === -1) return [config.departments.length, 0]
-  const i = config.departments[d].teams.findIndex((x) => x.id === t.teamId)
-  return [d, i === -1 ? config.departments[d].teams.length : i]
+  const d = index.departments.findIndex((x) => x.id === t.divisionId)
+  if (d === -1) return [index.departments.length, 0]
+  const i = index.departments[d].teams.findIndex((x) => x.id === t.teamId)
+  return [d, i === -1 ? index.departments[d].teams.length : i]
 }
-config.templates.sort((a, b) => {
+index.templates.sort((a, b) => {
   const [ad, at2] = rank(a)
   const [bd, bt] = rank(b)
   return ad - bd || at2 - bt || a.name.localeCompare(b.name, 'ko')
 })
 
-fs.writeFileSync(CONFIG, JSON.stringify(config, null, 2) + '\n', 'utf-8')
+const target = path.join(TEMPLATES_DIR, file)
+fs.mkdirSync(path.dirname(target), { recursive: true })
+fs.writeFileSync(target, JSON.stringify(body, null, 2) + '\n', 'utf-8')
+fs.writeFileSync(INDEX, JSON.stringify(index, null, 2) + '\n', 'utf-8')
 
 // ── 요약 ───────────────────────────────────────────────────
-const counts = entry.modules.reduce((acc, m) => ((acc[m.moduleId] = (acc[m.moduleId] || 0) + 1), acc), {})
+const counts = body.modules.reduce((acc, m) => ((acc[m.moduleId] = (acc[m.moduleId] || 0) + 1), acc), {})
 console.log(`${replaced ? '교체' : '추가'}: ${entry.name} (${entry.id})`)
 console.log(`  ${dept.name} / ${team.name} (${entry.divisionId} / ${entry.teamId})${entry.thumbnail ? ` · 썸네일 ${entry.thumbnail}` : ' · 썸네일 없음(실시간 렌더로 표시)'}`)
-console.log(`  모듈 ${entry.modules.length}개 / 그룹 ${(entry.groups ?? []).length}개`)
+console.log(`  모듈 ${body.modules.length}개 / 그룹 ${(body.groups ?? []).length}개`)
 console.log(`  구성: ${Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k}×${v}`).join(', ')}`)
-console.log(`  카탈로그 총 ${config.templates.length}개 → ${path.relative(ROOT, CONFIG)}`)
+console.log(`  본문 → ${path.relative(ROOT, target)}`)
+console.log(`  목차 총 ${index.templates.length}개 → ${path.relative(ROOT, INDEX)}`)

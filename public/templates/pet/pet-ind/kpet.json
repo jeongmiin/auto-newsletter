@@ -1,0 +1,2238 @@
+{
+  "id": "kpet",
+  "wrapSettings": {
+    "backgroundColor": "#f9f9f9",
+    "borderEnabled": false,
+    "borderWidth": "0px",
+    "borderColor": "#dddddd",
+    "borderStyle": "solid",
+    "pointColor": "#058bae",
+    "pointColors": [
+      "#058bae"
+    ],
+    "fontLanguage": "default",
+    "summary": "케이펫 전시 뉴스레터 입니다."
+  },
+  "modules": [
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#058bae",
+        "borderWidth": "3px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px",
+        "borderColor__usePoint": true
+      },
+      "styles": {},
+      "groupId": "group-1786610457899-9i2w4ztu1",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/kpet/osco/vol01/logo.png",
+        "imageAlt": "로고",
+        "imageMaxWidth": "505px",
+        "imageAlign": "center",
+        "paddingTop": "30px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786610457899-9i2w4ztu1",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#dddddd",
+        "borderWidth": "0",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "20px",
+        "paddingRight": "20px"
+      },
+      "styles": {},
+      "groupId": "group-1786610457899-9i2w4ztu1",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "20px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\">NEWSLETTER&nbsp;<strong>VOL.2</strong></p>",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "marginTop": "0",
+        "marginRight": "20px",
+        "marginBottom": "15px",
+        "marginLeft": "20px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111",
+        "textAlign": "center"
+      },
+      "styles": {},
+      "groupId": "group-1786610457899-9i2w4ztu1",
+      "rowIndex": 3,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/kpet/osco/vol02/01.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "showImageLink": true,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "22px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><strong>&lt;케이펫페어&nbsp;청주&nbsp;시즌1&gt;&nbsp;무료&nbsp;사전등록&nbsp;오늘&nbsp;마감&nbsp;🚨</strong></p>",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "0px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "lineHeight": "1.65"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">충북&nbsp;반려인들이&nbsp;한걸음에&nbsp;달려오는&nbsp;곳,&nbsp;&lt;케이펫페어&nbsp;청주&gt;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">무료&nbsp;사전등록이&nbsp;‘오늘’&nbsp;마감됩니다!</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">충북&nbsp;최대&nbsp;규모인&nbsp;만큼&nbsp;우리&nbsp;아이를&nbsp;위한&nbsp;브랜드&nbsp;라인업도&nbsp;역대급!</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">올해&nbsp;개린이날&nbsp;선물은&nbsp;고민&nbsp;없이&nbsp;여기서&nbsp;준비&nbsp;끝내봐요&nbsp;🎁</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">오늘이&nbsp;지나면&nbsp;입장료&nbsp;1만원,&nbsp;현장&nbsp;결제만&nbsp;가능해요!</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">전시기간&nbsp;3일&nbsp;내내&nbsp;&#39;0원&#39;으로&nbsp;입장할&nbsp;수&nbsp;있는&nbsp;마지막&nbsp;기회,</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">망설이지&nbsp;말고&nbsp;지금&nbsp;바로&nbsp;등록하세요&nbsp;💗</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">무료&nbsp;사전등록&nbsp;진행중!</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">👉<strong><span style=\"background: linear-gradient(transparent 50%, #fff555 50%);\" data-highlight-color=\"#fff555\">&nbsp;~2026.4.30(목)&nbsp;23시&nbsp;59분까지</span></strong></p>",
+        "paddingTop": "20px",
+        "paddingRight": "20px",
+        "paddingBottom": "0px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "lineHeight": "1.7"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#999999",
+        "borderWidth": "1px",
+        "borderStyle": "dotted",
+        "dividerWidth": "100%",
+        "paddingTop": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "paddingRight": "20px"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">📆&nbsp;<strong>일자&nbsp;</strong>:&nbsp;2026년&nbsp;5월&nbsp;1일(금)~3일(일)</p><p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">⏱&nbsp;<strong>시간&nbsp;</strong>:&nbsp;10:00~18:00&nbsp;(입장마감&nbsp;17:30)</p><p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">🚩&nbsp;<strong>장소&nbsp;</strong>:&nbsp;청주오스코&nbsp;(충북&nbsp;청주시&nbsp;오송생명로&nbsp;250)</p><p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">🐶&nbsp;본&nbsp;전시회는&nbsp;반려동물&nbsp;입장이&nbsp;가능합니다.&nbsp;(목줄&nbsp;착용&nbsp;필수)</p>",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "0px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "lineHeight": "2em"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "무료 사전등록 하러가기 →",
+        "buttonUrl": "#",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#058bae",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "0px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "0px",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "40px",
+        "paddingLeft": "20px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "100px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000",
+        "buttonBgColor__usePoint": true
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#333333",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px",
+        "borderColor__usePoint": false
+      },
+      "styles": {},
+      "groupId": "group-1786610459140-5ss3b6bfz",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "22px",
+        "descriptionText": "<div style=\"font-weight:700;\"><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">[행운의&nbsp;뽑기&nbsp;이벤트]</p></div>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "15px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111",
+        "textColor__usePoint": true
+      },
+      "styles": {},
+      "groupId": "group-1786610459140-5ss3b6bfz",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "18px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">뽑기판에서&nbsp;느낌오는&nbsp;뽑기&nbsp;하나만&nbsp;골라도&nbsp;100%&nbsp;당첨!</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">멍집사,&nbsp;냥집사&nbsp;모두&nbsp;참여&nbsp;가능&nbsp;🤗</p>",
+        "paddingTop": "0",
+        "paddingRight": "15px",
+        "paddingBottom": "20px",
+        "paddingLeft": "15px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1786610459140-5ss3b6bfz",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/kpet/osco/vol02/02.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": true,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786610459490-9ougdrggo",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "",
+        "paddingTop": "6px",
+        "paddingRight": "0px",
+        "paddingBottom": "6px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1786610459490-9ougdrggo",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">📆일시&nbsp;:&nbsp;2026.05.01(금)~03(일),&nbsp;14시~</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">📍장소&nbsp;:&nbsp;전시장&nbsp;내&nbsp;&lt;쭈쭈쭈&nbsp;DOG&gt;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">🐶인원&nbsp;:&nbsp;매일&nbsp;선착순&nbsp;100명&nbsp;(총&nbsp;300명)</p>",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1786610459490-9ougdrggo",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "멍뽑기 이벤트 확인하기 →",
+        "buttonUrl": "#",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#058bae",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "10px",
+        "buttonPaddingRight": "0px",
+        "buttonPaddingBottom": "10px",
+        "buttonPaddingLeft": "0px",
+        "paddingTop": "20px",
+        "paddingRight": "0px",
+        "paddingBottom": "40px",
+        "paddingLeft": "0px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "100px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000",
+        "buttonBgColor__usePoint": true
+      },
+      "styles": {},
+      "groupId": "group-1786610459490-9ougdrggo",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/kpet/osco/vol02/03.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": true,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786610459490-9ougdrggo",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "",
+        "paddingTop": "6px",
+        "paddingRight": "0px",
+        "paddingBottom": "6px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1786610459490-9ougdrggo",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><span style=\"color: #333333; background-color: #f9f9f9;\">📆일시&nbsp;:&nbsp;2026.05.01(금)~03(일),&nbsp;14시~</span></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><span style=\"color: #333333; background-color: #f9f9f9;\">📍장소&nbsp;:&nbsp;전시장&nbsp;내&nbsp;&lt;쭈쭈쭈&nbsp;CAT&gt;</span></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><span style=\"color: #333333; background-color: #f9f9f9;\">😺인원&nbsp;:&nbsp;매일&nbsp;선착순&nbsp;100명&nbsp;(총&nbsp;300명)</span></p>",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1786610459490-9ougdrggo",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "냥뽑기 이벤트 확인하기 →",
+        "buttonUrl": "#",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#058bae",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "10px",
+        "buttonPaddingRight": "0px",
+        "buttonPaddingBottom": "10px",
+        "buttonPaddingLeft": "0px",
+        "paddingTop": "20px",
+        "paddingRight": "0px",
+        "paddingBottom": "40px",
+        "paddingLeft": "0px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "100px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000",
+        "buttonBgColor__usePoint": true
+      },
+      "styles": {},
+      "groupId": "group-1786610459490-9ougdrggo",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#333333",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1786610459853-spx3120xt",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "22px",
+        "descriptionText": "<div style=\"font-weight:700;\"><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">[체험클래스&nbsp;&amp;&nbsp;세미나]</p></div>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "15px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111",
+        "textColor__usePoint": true
+      },
+      "styles": {},
+      "groupId": "group-1786610459853-spx3120xt",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "18px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">댕댕이와&nbsp;함께&nbsp;참여할&nbsp;수&nbsp;있어&nbsp;더&nbsp;즐거운&nbsp;시간&nbsp;✨</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">정성&nbsp;가득&nbsp;수제&nbsp;간식&nbsp;만들기부터&nbsp;독피트니스,&nbsp;산책&nbsp;교정까지&nbsp;배워봐요&nbsp;💗</p>",
+        "paddingTop": "0",
+        "paddingRight": "15px",
+        "paddingBottom": "20px",
+        "paddingLeft": "15px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1786610459853-spx3120xt",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/kpet/osco/vol02/04.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": true,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786610460157-ye912aog1",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/kpet/osco/vol02/07.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": true,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786610460157-ye912aog1",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/kpet/osco/vol02/05.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": true,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786610460584-ujhrcrubk",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/kpet/osco/vol02/08.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": true,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786610460584-ujhrcrubk",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/kpet/osco/vol02/06.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": true,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786610461018-yc0vj7rso",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/kpet/osco/vol02/09.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": true,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786610461018-yc0vj7rso",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "체험클래스 & 세미나 신청하기 →",
+        "buttonUrl": "#",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#058bae",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "0px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "0px",
+        "paddingTop": "20px",
+        "paddingRight": "20px",
+        "paddingBottom": "40px",
+        "paddingLeft": "20px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "100px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000",
+        "buttonBgColor__usePoint": true
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#333333",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px",
+        "borderColor__usePoint": false
+      },
+      "styles": {},
+      "groupId": "group-1786610461801-2028w3ihs",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "22px",
+        "descriptionText": "<div style=\"font-weight:700;\"><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">[이벤트&nbsp;모음]</p></div>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111",
+        "textColor__usePoint": true
+      },
+      "styles": {},
+      "groupId": "group-1786610461801-2028w3ihs",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/kpet/osco/vol02/10.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": true,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786610462058-o0l6u4560",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7;\"><strong>네컷사진 이벤트</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "10px",
+        "paddingBottom": "6px",
+        "paddingLeft": "10px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "#e5e5e5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1786610462058-o0l6u4560",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">무료로&nbsp;네컷사진&nbsp;찍고&nbsp;케이펫페어에서</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">댕댕이와&nbsp;행복한&nbsp;추억&nbsp;남기기&nbsp;💝</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">댕댕이와&nbsp;함께&nbsp;방문하지&nbsp;않아도&nbsp;참여&nbsp;가능&nbsp;👌</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">✅경품명&nbsp;:&nbsp;멍멍네컷&nbsp;1회&nbsp;무료&nbsp;촬영권&nbsp;+&nbsp;촬영본&nbsp;2매</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">📍참여장소&nbsp;:&nbsp;전시장&nbsp;내&nbsp;&lt;댕냥사진관&gt;</p>",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "marginTop": "4px",
+        "marginRight": "0px",
+        "marginBottom": "10px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1786610462058-o0l6u4560",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/kpet/osco/vol02/11.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": true,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786610462345-psqiin400",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7;\"><strong>구매영수증 이벤트</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "10px",
+        "paddingBottom": "6px",
+        "paddingLeft": "10px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "#e5e5e5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1786610462345-psqiin400",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">우리집&nbsp;댕냥이를&nbsp;위해&nbsp;10만원&nbsp;이상&nbsp;구매했다면?</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">굿츕스&nbsp;댕댕이&nbsp;간식&nbsp;드려요&nbsp;🐶</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">✅경품명&nbsp;:&nbsp;굿츕스&nbsp;롱덴탈크린볼&nbsp;1개</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">📍참여장소&nbsp;:&nbsp;전시장&nbsp;내&nbsp;&lt;경품지급처&gt;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">💛참여인원&nbsp;:&nbsp;매일&nbsp;선착순&nbsp;100명&nbsp;(총&nbsp;300명)</p>",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "marginTop": "4px",
+        "marginRight": "0px",
+        "marginBottom": "10px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1786610462345-psqiin400",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/kpet/osco/vol02/12.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": true,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786610462632-kfao5jd7u",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7;\"><strong>카카오톡 채널 추가 이벤트</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "10px",
+        "paddingBottom": "6px",
+        "paddingLeft": "10px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "#e5e5e5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1786610462632-kfao5jd7u",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">케이펫페어&nbsp;카톡&nbsp;채널&nbsp;추가하면&nbsp;전시회&nbsp;소식도</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">빠르게&nbsp;받아보고&nbsp;경품도&nbsp;받아가고!&nbsp;🎁</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">✅경품명&nbsp;:&nbsp;내추럴발란스&nbsp;헬스프로텍션&nbsp;4개</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">📍참여장소&nbsp;:&nbsp;전시장&nbsp;내&nbsp;&lt;경품지급처&gt;</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">💛참여인원&nbsp;:&nbsp;매일&nbsp;선착순&nbsp;800명&nbsp;(총&nbsp;2400명)</p>",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "marginTop": "4px",
+        "marginRight": "0px",
+        "marginBottom": "10px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1786610462632-kfao5jd7u",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#dddddd",
+        "borderWidth": "0",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "paddingRight": "20px"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#333333",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px",
+        "borderColor__usePoint": false
+      },
+      "styles": {},
+      "groupId": "group-1786610463040-bvfpbb7rb",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "22px",
+        "descriptionText": "<div style=\"font-weight:700;\"><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">[멍드컵]</p></div>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "15px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111",
+        "textColor__usePoint": true
+      },
+      "styles": {},
+      "groupId": "group-1786610463040-bvfpbb7rb",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "18px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">우리&nbsp;아이&nbsp;숨겨진&nbsp;운동&nbsp;신경&nbsp;폭발!</p><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">댕댕이랑&nbsp;호흡&nbsp;맞춰&nbsp;게임에&nbsp;참여하고&nbsp;경품도&nbsp;받아가기&nbsp;🎁</p>",
+        "paddingTop": "0",
+        "paddingRight": "15px",
+        "paddingBottom": "20px",
+        "paddingLeft": "15px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1786610463040-bvfpbb7rb",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/kpet/osco/vol02/13.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "showImageLink": true,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>📆일시&nbsp;:&nbsp;2026.05.01(금)~03(일)</strong></p><p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>📍장소&nbsp;:&nbsp;케이펫페어&nbsp;청주&nbsp;전시장&nbsp;내&nbsp;&lt;멍드컵존&gt;</strong></p><p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>🏅프로그램&nbsp;안내</strong></p>",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "0px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "lineHeight": "1.7"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleTable",
+      "properties": {
+        "tableCells": [
+          [
+            {
+              "id": "cell-1779271513486-yrf477w92",
+              "type": "th",
+              "content": "12:00~13:00",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1779271513486-5hjdbxp93",
+              "type": "td",
+              "content": "엄마 찾아 삼만리",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            }
+          ],
+          [
+            {
+              "id": "cell-1779271513486-xxxc9vqa4",
+              "type": "th",
+              "content": "13:30~14:30",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1779271513486-bjgml36xr",
+              "type": "td",
+              "content": "아슬아슬 휴지 장애물 경기",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            }
+          ],
+          [
+            {
+              "id": "cell-1779271519733-nfs3f46fv",
+              "type": "th",
+              "content": "15:00~16:00",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1779271519733-drlqo0w14",
+              "type": "td",
+              "content": "와이어 빨리 달리기",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            }
+          ],
+          [
+            {
+              "id": "cell-1779271540561-eljb5iycr",
+              "type": "th",
+              "content": "16:30~17:30",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1779271540561-spllp7yi1",
+              "type": "td",
+              "content": "기다려! 인내심 종이 줄 챌린지",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            }
+          ]
+        ],
+        "borderTopWidth": "2px",
+        "borderTopColor": "#333333",
+        "cellBorderColor": "#dddddd",
+        "headerBgColor": "#058bae",
+        "headerTextColor": "#ffffff",
+        "headerAlign": "center",
+        "cellBgColor": "#ffffff",
+        "cellTextColor": "#333333",
+        "cellAlign": "left",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "tableColAligns": [
+          "center",
+          "left"
+        ],
+        "tableColWidths": [
+          "25%",
+          ""
+        ],
+        "headerBgColor__usePoint": true
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "이벤트 자세히 보기 →",
+        "buttonUrl": "#",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#058bae",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "0px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "0px",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "40px",
+        "paddingLeft": "20px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "100px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000",
+        "buttonBgColor__usePoint": true
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#333333",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px",
+        "borderColor__usePoint": false
+      },
+      "styles": {},
+      "groupId": "group-1786610463988-m92ffdlgd",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "22px",
+        "descriptionText": "<div style=\"font-weight:700;\"><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">[케이펫페어&nbsp;청주&nbsp;오시는길]</p></div>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111",
+        "textColor__usePoint": true
+      },
+      "styles": {},
+      "groupId": "group-1786610463988-m92ffdlgd",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/kpet/osco/vol01/12.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleTable",
+      "properties": {
+        "tableCells": [
+          [
+            {
+              "id": "cell-1779271513486-yrf477w92",
+              "type": "th",
+              "content": "오시는 길",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1779271513486-5hjdbxp93",
+              "type": "td",
+              "content": "충북 청주시 오송생명로 250",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            }
+          ],
+          [
+            {
+              "id": "cell-1779271513486-xxxc9vqa4",
+              "type": "th",
+              "content": "주차 요금",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1779271513486-bjgml36xr",
+              "type": "td",
+              "content": "<strong style=\"font-weight:700;\">■ 일반차량</strong><br>[기본요금-30분] 500원<br>[초과요금-10분당] 200원<br>[일 최대 요금] 8,000원<br>※ 대형차량 및 특대형차량 주차요금은 청주오스코 홈페이지를 참고하여 주시기 바랍니다.<br><br><strong style=\"font-weight:700;\">■ 감면(50%)</strong><br>경차, 친환경 자동차, 장애인, 국가유공자",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            }
+          ]
+        ],
+        "borderTopWidth": "2px",
+        "borderTopColor": "#333333",
+        "cellBorderColor": "#dddddd",
+        "headerBgColor": "#058bae",
+        "headerTextColor": "#ffffff",
+        "headerAlign": "center",
+        "cellBgColor": "#ffffff",
+        "cellTextColor": "#333333",
+        "cellAlign": "left",
+        "paddingTop": "20px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "tableColAligns": [
+          "center",
+          "left"
+        ],
+        "tableColWidths": [
+          "25%",
+          ""
+        ],
+        "headerBgColor__usePoint": true
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "12px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;\"><span style=\"color: #888888;\">※&nbsp;주차장은&nbsp;전시장(청주오스코)&nbsp;자체&nbsp;규정에&nbsp;따라&nbsp;운영되고&nbsp;있습니다.&nbsp;주차&nbsp;요금은&nbsp;전시장&nbsp;사정에&nbsp;따라&nbsp;변경될&nbsp;수&nbsp;있으니&nbsp;자세한&nbsp;내용은&nbsp;전시장&nbsp;홈페이지를&nbsp;참고해&nbsp;주시기&nbsp;바랍니다.</span></p>",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "0px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "lineHeight": "1.65"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "자세히 보기 →",
+        "buttonUrl": "#",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#058bae",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "0px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "0px",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "40px",
+        "paddingLeft": "20px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "100px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000",
+        "buttonBgColor__usePoint": true
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#333333",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1786610464912-bkr5poqo3",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "22px",
+        "descriptionText": "<div style=\"font-weight:700;\"><p style=\"margin: 0; padding: 0; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">[관람수칙&nbsp;&amp;&nbsp;입장절차]</p></div>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "0",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1786610464912-bkr5poqo3",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "18px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.5; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\">&nbsp;</p>",
+        "paddingTop": "0",
+        "paddingRight": "0",
+        "paddingBottom": "0",
+        "paddingLeft": "0",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1786610464912-bkr5poqo3",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "Module11",
+      "properties": {
+        "contentText": "관람수칙 확인하기",
+        "contentTextFontSize": "14px",
+        "bgColor": "#d0e5eb",
+        "paddingTop": "10px",
+        "paddingRight": "10px",
+        "paddingBottom": "10px",
+        "paddingLeft": "10px",
+        "marginTop": "2px",
+        "marginRight": "20px",
+        "marginBottom": "2px",
+        "marginLeft": "20px",
+        "showLabel": true,
+        "labelText": "케이펫페어 청주 시즌1",
+        "labelTextFontSize": "14px",
+        "labelColor": "#111111",
+        "showLink": true,
+        "linkUrl": "#",
+        "showButton": true,
+        "buttonText": "GO →",
+        "buttonBgColor": "#058bae",
+        "buttonTextColor": "#ffffff",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#cccccc",
+        "textColor": "#111111",
+        "labelTextLineHeight": "1.7",
+        "contentTextLineHeight": "1.7",
+        "buttonBgColor__usePoint": true
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "Module11",
+      "properties": {
+        "contentText": "입장절차 확인하기 ",
+        "contentTextFontSize": "14px",
+        "bgColor": "#d0e5eb",
+        "paddingTop": "10px",
+        "paddingRight": "10px",
+        "paddingBottom": "10px",
+        "paddingLeft": "10px",
+        "marginTop": "2px",
+        "marginRight": "20px",
+        "marginBottom": "2px",
+        "marginLeft": "20px",
+        "showLabel": true,
+        "labelText": "케이펫페어 청주 시즌1",
+        "labelTextFontSize": "14px",
+        "labelColor": "#111111",
+        "showLink": true,
+        "linkUrl": "#",
+        "showButton": true,
+        "buttonText": "GO →",
+        "buttonBgColor": "#058bae",
+        "buttonTextColor": "#ffffff",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#cccccc",
+        "textColor": "#111111",
+        "labelTextLineHeight": "1.7",
+        "contentTextLineHeight": "1.7",
+        "buttonBgColor__usePoint": true
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#dddddd",
+        "borderWidth": "0",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "paddingRight": "20px"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong style=\"font-size: 18px;\">케이펫페어&nbsp;전시사무국&nbsp;</strong><span style=\"font-size: 18px;\">(주)&nbsp;메쎄이상</span></p><p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">서울시&nbsp;마포구&nbsp;월드컵북로&nbsp;58길&nbsp;9&nbsp;ES타워&nbsp;(03922)</p>",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "10px",
+        "paddingLeft": "0px",
+        "marginTop": "30px",
+        "marginRight": "25px",
+        "marginBottom": "0px",
+        "marginLeft": "25px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "textAlign": "center"
+      },
+      "styles": {},
+      "groupId": "group-1786610465765-tdmwmv2wu",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleContactInfo",
+      "properties": {
+        "contactItems": [
+          {
+            "key": "website",
+            "show": false,
+            "value": "https://k-pet.co.kr"
+          },
+          {
+            "key": "phone",
+            "show": true,
+            "value": "02-6121-6247"
+          },
+          {
+            "key": "email",
+            "show": true,
+            "value": "pet.es@esgroup.net"
+          },
+          {
+            "key": "fax",
+            "show": false,
+            "value": "02-6121-6363"
+          }
+        ],
+        "contactFontSize": "13px",
+        "contactTextColor": "#333333",
+        "contactAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "25px",
+        "paddingBottom": "30px",
+        "paddingLeft": "25px"
+      },
+      "styles": {},
+      "groupId": "group-1786610465765-tdmwmv2wu",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#aaaaaa",
+        "borderWidth": "1px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "15px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1786610465765-tdmwmv2wu",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleSnsIcons",
+      "properties": {
+        "snsIconBgColor": "#333333",
+        "snsAlign": "center",
+        "snsIcons": [
+          {
+            "key": "home",
+            "show": true,
+            "url": "https://k-pet.co.kr/"
+          },
+          {
+            "key": "facebook",
+            "show": true,
+            "url": "https://www.facebook.com/kpetfair"
+          },
+          {
+            "key": "x",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "blog",
+            "show": true,
+            "url": "https://blog.naver.com/kpetfair"
+          },
+          {
+            "key": "youtube",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "instagram",
+            "show": true,
+            "url": "https://www.instagram.com/kpetfair/"
+          },
+          {
+            "key": "kakao",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "linkedin",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "zuzuzu",
+            "show": true,
+            "url": "https://kcoupet.com/"
+          },
+          {
+            "key": "en",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "jp",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "th",
+            "show": false,
+            "url": ""
+          }
+        ],
+        "paddingTop": "0px",
+        "paddingRight": "5px",
+        "paddingBottom": "15px",
+        "paddingLeft": "5px"
+      },
+      "styles": {},
+      "groupId": "group-1786610465765-tdmwmv2wu",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "12px",
+        "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7em;\">본 메일은 회원님의 수신동의 여부를 확인한 결과 회원님께서 수신동의를 하셨기에 발송되었습니다.</p><p style=\"margin:0; padding:0; line-height:1.7em;\">메일 수신을 원치 않으시면 <a href=\"#\" target=\"_blank\" style=\"text-decoration:none; color:#333333; font-weight:700;\">[수신거부]</a> 를 클릭하십시오.</p><p style=\"margin:0; padding:0; line-height:1.7em;\">본 메일은 발신전용 메일이므로 문의사항은 <strong>pet.es@esgroup.net</strong>으로 문의 바랍니다</p>",
+        "paddingTop": "10px",
+        "paddingRight": "25px",
+        "paddingBottom": "40px",
+        "paddingLeft": "25px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "textAlign": "center"
+      },
+      "styles": {},
+      "groupId": "group-1786610465765-tdmwmv2wu",
+      "rowIndex": 3,
+      "columnIndex": 0
+    }
+  ],
+  "groups": [
+    {
+      "id": "group-1786610457899-9i2w4ztu1",
+      "name": "기본 헤더",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1786610459140-5ss3b6bfz",
+      "name": "섹션 타이틀",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1786610459490-9ougdrggo",
+      "name": "모듈 04번",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "15px",
+        "paddingRight": "15px"
+      },
+      "rows": [
+        2
+      ],
+      "colWidths": [
+        [
+          50,
+          50
+        ]
+      ]
+    },
+    {
+      "id": "group-1786610459853-spx3120xt",
+      "name": "섹션 타이틀",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1786610460157-ye912aog1",
+      "name": "복수 이미지",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "15px",
+        "paddingRight": "15px"
+      },
+      "rows": [
+        2
+      ]
+    },
+    {
+      "id": "group-1786610460584-ujhrcrubk",
+      "name": "복수 이미지",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "15px",
+        "paddingRight": "15px"
+      },
+      "rows": [
+        2
+      ]
+    },
+    {
+      "id": "group-1786610461018-yc0vj7rso",
+      "name": "복수 이미지",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "15px",
+        "paddingRight": "15px"
+      },
+      "rows": [
+        2
+      ]
+    },
+    {
+      "id": "group-1786610461801-2028w3ihs",
+      "name": "섹션 타이틀",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1786610462058-o0l6u4560",
+      "name": "모듈 05번",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "15px",
+        "paddingRight": "15px",
+        "paddingBottom": "15px"
+      },
+      "rows": [
+        2
+      ],
+      "colWidths": [
+        [
+          50,
+          50
+        ]
+      ]
+    },
+    {
+      "id": "group-1786610462345-psqiin400",
+      "name": "모듈 05번",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "15px",
+        "paddingRight": "15px",
+        "paddingBottom": "15px"
+      },
+      "rows": [
+        2
+      ],
+      "colWidths": [
+        [
+          50,
+          50
+        ]
+      ]
+    },
+    {
+      "id": "group-1786610462632-kfao5jd7u",
+      "name": "모듈 05번",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "15px",
+        "paddingRight": "15px",
+        "paddingBottom": "15px"
+      },
+      "rows": [
+        2
+      ],
+      "colWidths": [
+        [
+          50,
+          50
+        ]
+      ]
+    },
+    {
+      "id": "group-1786610463040-bvfpbb7rb",
+      "name": "섹션 타이틀",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1786610463988-m92ffdlgd",
+      "name": "섹션 타이틀",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1786610464912-bkr5poqo3",
+      "name": "섹션 타이틀",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1786610465765-tdmwmv2wu",
+      "name": "하단 푸터",
+      "styles": {
+        "backgroundColor": "#e9e9e9",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1,
+        1,
+        1
+      ]
+    }
+  ]
+}

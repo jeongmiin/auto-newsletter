@@ -24,7 +24,7 @@ export const useEditorStore = defineStore('editor', () => {
    * 현재 작업의 소속 팀/템플릿 **id**.
    *
    * 표시명이 아니라 불변 id를 담는다 — 팀명이 조직개편으로 바뀌어도 이 값이 가리키는
-   * 대상은 그대로다(`templates-config.json`의 departments 규칙 참고). 헤더에 보여줄
+   * 대상은 그대로다(`public/templates/index.json`의 departments 규칙 참고). 헤더에 보여줄
    * 팀 이름은 이 id로 트리에서 찾아 쓴다.
    *
    * 앞으로 팀별 이미지 업로드 경로·저장 파일 메타데이터가 이 값을 참조한다.

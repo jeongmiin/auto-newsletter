@@ -9,6 +9,8 @@ import type {
   AdditionalContent,
   TableCell,
   NewsletterTemplate,
+  NewsletterTemplateBody,
+  NewsletterTemplateSummary,
   TemplateDepartment,
   ModuleGroup,
   ModuleGroupStyles,
@@ -75,15 +77,16 @@ export const useModuleStore = defineStore('module', () => {
   const selectedModuleId = ref<string | null>(null)
   const availableModules = ref<ModuleMetadata[]>([])
   /**
-   * 템플릿 카탈로그(templates-config.json) — **읽기 전용 자료라 얕게 담는다.**
+   * 템플릿 카탈로그 목차(public/templates/index.json) — 고르는 데 필요한 메타만 있다.
    *
-   * 0.9MB·객체 4천여 개짜리라, 보통 ref로 담으면 Vue가 그 전부를 반응형으로 감싼다.
-   * 카탈로그는 화면에서 고르기만 할 뿐 고쳐 쓰지 않으므로 감쌀 이유가 없고, 감싸면
-   * 읽을 때마다 프록시를 거치는 데다 개발 도구가 스토어 상태를 훑을 때도 이 전부를 따라간다.
-   * (통째로 갈아끼우는 대입만 하므로 얕은 ref로 충분하다)
+   * 본문(모듈·그룹)은 템플릿마다 `{본부}/{팀}/{id}.json`에 따로 있고, 실제로 고르거나
+   * 미리보기를 렌더할 때 loadTemplateBody가 그 파일만 읽어 templateBodies에 캐시한다.
+   * 읽기 전용 자료라 얕은 ref로 둔다(통째로 갈아끼우는 대입만 한다).
    */
-  const availableTemplates = shallowRef<NewsletterTemplate[]>([])
-  // 템플릿 선택 화면의 본부/팀 트리 (templates-config.json의 departments)
+  const availableTemplates = shallowRef<NewsletterTemplateSummary[]>([])
+  /** 읽어 둔 템플릿 본문 — id → 본문(진행 중인 요청도 같이 담아 두 번 읽지 않는다) */
+  const templateBodies = new Map<string, Promise<NewsletterTemplateBody>>()
+  // 템플릿 선택 화면의 본부/팀 트리 (index.json의 departments)
   const availableDepartments = ref<TemplateDepartment[]>([])
   const isDirty = ref(false) // 변경사항 추적
 
@@ -2724,15 +2727,16 @@ export const useModuleStore = defineStore('module', () => {
   }
 
   // ============= Newsletter Templates =============
-  /**
-   * 사용 가능한 뉴스레터 템플릿 카탈로그 로드
-   */
-  const loadAvailableTemplates = async (): Promise<NewsletterTemplate[]> => {
-    try {
-      const basePath = import.meta.env.BASE_URL || '/'
-      const configPath = normalizePath(`${basePath}templates/templates-config.json`)
+  /** 템플릿 파일들이 놓인 공개 경로 — `{base}templates/` */
+  const templatesBase = (): string => normalizePath(`${import.meta.env.BASE_URL || '/'}templates/`)
 
-      const response = await fetch(configPath)
+  /**
+   * 템플릿 카탈로그 **목차** 로드 — index.json 하나만 읽는다.
+   * 본문은 여기서 읽지 않는다(loadTemplateBody). 목록·필터·썸네일 표시에는 목차면 충분하다.
+   */
+  const loadAvailableTemplates = async (): Promise<NewsletterTemplateSummary[]> => {
+    try {
+      const response = await fetch(`${templatesBase()}index.json`)
       if (!response.ok) {
         throw new Error(`Failed to load templates: ${response.status}`)
       }
@@ -2742,9 +2746,18 @@ export const useModuleStore = defineStore('module', () => {
         throw new Error('Invalid templates configuration format')
       }
 
-      const validated = (data.templates as NewsletterTemplate[]).filter(
-        (t) => t && typeof t.id === 'string' && typeof t.name === 'string' && Array.isArray(t.modules),
-      )
+      // 본문이 목차에 섞여 들어와도(옛 형식) 메타만 남긴다 — 본문은 file로만 읽는다
+      const validated = (data.templates as Array<NewsletterTemplateSummary & Partial<NewsletterTemplateBody>>)
+        .filter((t) => t && typeof t.id === 'string' && typeof t.name === 'string' && typeof t.file === 'string')
+        .map(({ id, name, description, thumbnail, divisionId, teamId, file }) => ({
+          id,
+          name,
+          description,
+          ...(thumbnail ? { thumbnail } : {}),
+          ...(divisionId ? { divisionId } : {}),
+          ...(teamId ? { teamId } : {}),
+          file,
+        }))
 
       // 좌측 본부/팀 트리도 같은 파일에서 온다 (배열 순서 = 표시 순서).
       // id가 없는 항목은 버린다 — 템플릿이 teamId로 트리를 찾으므로 id 없는 팀은
@@ -2761,6 +2774,8 @@ export const useModuleStore = defineStore('module', () => {
             }))
         : []
       availableTemplates.value = validated
+      // 목차가 바뀌면 본문 캐시도 믿을 수 없다(같은 id가 다른 파일을 가리킬 수 있다)
+      templateBodies.clear()
       return validated
     } catch (error) {
       console.error('[loadAvailableTemplates] Failed:', error)
@@ -2771,21 +2786,53 @@ export const useModuleStore = defineStore('module', () => {
   }
 
   /**
+   * 템플릿 **본문**(모듈·그룹·전체 설정) 로드 — 목차의 `file`이 가리키는 파일 하나를 읽는다.
+   * 한 번 읽은 본문은 세션 동안 캐시한다(같은 템플릿을 미리보기·선택으로 여러 번 쓴다).
+   * @throws 목차에 없거나 파일을 못 읽으면 — 호출한 쪽이 사용자에게 알린다
+   */
+  const loadTemplateBody = (templateId: string): Promise<NewsletterTemplateBody> => {
+    const cached = templateBodies.get(templateId)
+    if (cached) return cached
+
+    const summary = availableTemplates.value.find((t) => t.id === templateId)
+    if (!summary?.file) return Promise.reject(new Error(`Template not found: ${templateId}`))
+
+    const request = (async () => {
+      const response = await fetch(`${templatesBase()}${summary.file}`)
+      if (!response.ok) throw new Error(`Failed to load template body: ${templateId} (${response.status})`)
+      const body = (await response.json()) as NewsletterTemplateBody
+      if (!body || !Array.isArray(body.modules)) throw new Error(`Invalid template body: ${templateId}`)
+      return body
+    })()
+    // 실패한 요청은 캐시에 남기지 않는다 — 다음 시도에서 다시 읽게
+    templateBodies.set(templateId, request)
+    request.catch(() => templateBodies.delete(templateId))
+    return request
+  }
+
+  /**
    * 템플릿을 현재 작업 영역에 로드
    * 모듈 ID는 충돌 방지를 위해 재생성됨
    */
   const loadTemplate = async (templateId: string): Promise<boolean> => {
-    const template = availableTemplates.value.find((t) => t.id === templateId)
-    if (!template) {
+    if (!availableTemplates.value.some((t) => t.id === templateId)) {
       console.error(`[loadTemplate] Template not found: ${templateId}`)
       return false
     }
 
     // 어디서 시간을 쓰는지 개발 중에만 콘솔에 남긴다 — '템플릿을 불러오는 중'이 길어질 때
-    // 모듈 자료를 받아오는 쪽인지, 모듈을 붙여 넣는 쪽인지 바로 갈라 보기 위한 것
+    // 자료를 받아오는 쪽인지, 모듈을 붙여 넣는 쪽인지 바로 갈라 보기 위한 것
     const startedAt = performance.now()
-    if (availableModules.value.length === 0) {
-      await loadAvailableModules()
+    let template: NewsletterTemplateBody
+    try {
+      // 본문과 모듈 정의는 서로 무관하니 같이 받는다
+      ;[template] = await Promise.all([
+        loadTemplateBody(templateId),
+        availableModules.value.length === 0 ? loadAvailableModules() : Promise.resolve(),
+      ])
+    } catch (error) {
+      console.error(`[loadTemplate] Failed to load template body: ${templateId}`, error)
+      return false
     }
     const fetchedAt = performance.now()
 
@@ -2854,7 +2901,7 @@ export const useModuleStore = defineStore('module', () => {
       const now = performance.now()
       console.info(
         `[템플릿] ${templateId} 모듈 ${modules.value.length}개 — ` +
-          `모듈 자료 ${Math.round(fetchedAt - startedAt)}ms · ` +
+          `자료 받기 ${Math.round(fetchedAt - startedAt)}ms · ` +
           `붙여 넣기 ${Math.round(now - fetchedAt)}ms · 합계 ${Math.round(now - startedAt)}ms`,
       )
     }
@@ -4194,10 +4241,16 @@ ${fullHtml}
    * - store를 건드리지 않고(clearAll 없이) 템플릿의 modules/groups/wrapSettings를 렌더한다.
    * - 템플릿 선택 화면의 iframe 썸네일에서 사용(680px 렌더 → CSS scale로 축소).
    */
-  const renderTemplateHtml = async (template: NewsletterTemplate): Promise<string> => {
-    if (availableModules.value.length === 0) {
-      await loadAvailableModules()
-    }
+  const renderTemplateHtml = async (
+    summary: NewsletterTemplateSummary | NewsletterTemplate,
+  ): Promise<string> => {
+    // 목차 항목만 받았으면 본문을 읽어 온다(완전한 템플릿이 오면 그대로 쓴다 — 내보내기 미리보기 등)
+    const [template] = await Promise.all([
+      'modules' in summary && Array.isArray(summary.modules)
+        ? Promise.resolve(summary as NewsletterTemplateBody)
+        : loadTemplateBody(summary.id),
+      availableModules.value.length === 0 ? loadAvailableModules() : Promise.resolve(),
+    ])
     const editorStore = useEditorStore()
     // 템플릿 modules → 임시 ModuleInstance[] (스토어에 추가하지 않음, id는 그룹 매핑용으로만 유일하면 됨)
     const mods: ModuleInstance[] = template.modules.map((md, idx) => ({
@@ -4470,6 +4523,7 @@ ${fullHtml}
     normalizeGroupContiguity,
     loadAvailableModules,
     loadAvailableTemplates,
+    loadTemplateBody,
     loadTemplate,
     exportCurrentAsTemplate,
     addModule,

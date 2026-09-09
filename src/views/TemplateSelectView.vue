@@ -160,7 +160,7 @@ import TeamTreeSidebar from '@/components/layout/TeamTreeSidebar.vue'
 import SearchField from '@/components/SearchField.vue'
 import TemplatePreviewDialog from '@/components/TemplatePreviewDialog.vue'
 import { getHistoryInstance } from '@/composables/useHistory'
-import type { NewsletterTemplate } from '@/types'
+import type { NewsletterTemplateSummary } from '@/types'
 
 const router = useRouter()
 const moduleStore = useModuleStore()
@@ -171,7 +171,7 @@ const editorStore = useEditorStore()
 const selectedTeam = ref<string>('') // '' = 전체, 그 외엔 팀 id
 const search = ref('')
 
-const templates = ref<NewsletterTemplate[]>([])
+const templates = ref<NewsletterTemplateSummary[]>([])
 const srcdocs = reactive<Record<string, string>>({})
 const applying = ref(false)
 
@@ -179,10 +179,10 @@ const applying = ref(false)
  * 고른 카드 — 카드를 누르는 순간 적용하지 않고 여기 담아 두었다가 '다음'에서 간다.
  * 빈 템플릿은 누르면 곧바로 골라지고, 템플릿은 호버 버튼(또는 미리보기 모달)에서 고른다.
  */
-type Selection = { kind: 'blank' } | { kind: 'template'; template: NewsletterTemplate }
+type Selection = { kind: 'blank' } | { kind: 'template'; template: NewsletterTemplateSummary }
 const selected = ref<Selection | null>(null)
 const isBlankSelected = computed(() => selected.value?.kind === 'blank')
-const isTemplateSelected = (t: NewsletterTemplate) =>
+const isTemplateSelected = (t: NewsletterTemplateSummary) =>
   selected.value?.kind === 'template' && selected.value.template.id === t.id
 /** 하단 안내에 적을 이름 — 카드 이름과 같은 표기 */
 const selectedName = computed(() => {
@@ -194,16 +194,16 @@ const selectedName = computed(() => {
 const selectBlank = () => {
   selected.value = { kind: 'blank' }
 }
-const selectTemplate = (t: NewsletterTemplate) => {
+const selectTemplate = (t: NewsletterTemplateSummary) => {
   selected.value = { kind: 'template', template: t }
 }
 
 /** 미리보기 모달에 띄운 템플릿 — null 이면 닫힘 */
-const previewTemplate = ref<NewsletterTemplate | null>(null)
-const openPreview = (t: NewsletterTemplate) => {
+const previewTemplate = ref<NewsletterTemplateSummary | null>(null)
+const openPreview = (t: NewsletterTemplateSummary) => {
   previewTemplate.value = t
 }
-const selectFromPreview = (t: NewsletterTemplate) => {
+const selectFromPreview = (t: NewsletterTemplateSummary) => {
   selectTemplate(t)
   previewTemplate.value = null
 }
@@ -212,7 +212,7 @@ const selectFromPreview = (t: NewsletterTemplate) => {
 // (localeCompare('ko')가 한글 → 영문 순서를 만든다. JSON 순서에 기대지 않고 화면에서 정렬한다)
 // 순서는 폐지된 조직까지 포함한 원본 트리로 매긴다 — 감춰진 팀의 옛 템플릿이
 // '전체'에서 맨 뒤로 밀려나지 않고 제자리를 지키게 하기 위해서다.
-const rankOf = (t: NewsletterTemplate): [number, number] => {
+const rankOf = (t: NewsletterTemplateSummary): [number, number] => {
   const list = moduleStore.availableDepartments
   const dIdx = list.findIndex((d) => d.id === t.divisionId)
   if (dIdx === -1) return [list.length, 0] // 트리에 없는 본부는 맨 뒤
@@ -245,7 +245,7 @@ const thumbUrlByFile: Record<string, string> = Object.fromEntries(
   Object.entries(THUMBNAILS).map(([p, url]) => [p.split('/').pop()!, url]),
 )
 /** 템플릿의 thumbnail(파일명)에 해당하는 이미지 URL. 없으면 undefined → iframe 폴백 */
-const thumbSrc = (t: NewsletterTemplate): string | undefined =>
+const thumbSrc = (t: NewsletterTemplateSummary): string | undefined =>
   t.thumbnail ? thumbUrlByFile[t.thumbnail] : undefined
 
 // 썸네일 iframe 문서 만들기 (680px로 렌더 → CSS scale로 축소해 고정 박스에 맞춤)
@@ -294,7 +294,7 @@ const startBlank = () => {
 }
 
 // 템플릿 적용 후 폴더 선택으로
-const applyTemplate = async (t: NewsletterTemplate) => {
+const applyTemplate = async (t: NewsletterTemplateSummary) => {
   if (applying.value) return
   applying.value = true
   try {
