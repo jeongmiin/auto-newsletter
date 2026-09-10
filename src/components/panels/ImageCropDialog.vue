@@ -9,7 +9,7 @@
  * - '적용하기'는 잘라낸 File 을 넘길 뿐이다. 올리는 일(같은 이름 확인 포함)은
  *   ImageUploadField 가 그대로 이어서 한다.
  */
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { Cropper } from 'vue-advanced-cropper'
 import 'vue-advanced-cropper/dist/style.css'
 import {
@@ -54,8 +54,9 @@ watch(
   (file) => {
     if (src.value) URL.revokeObjectURL(src.value)
     src.value = file ? URL.createObjectURL(file) : ''
-    // 새 파일마다 비율·좌표를 처음으로
+    // 새 파일마다 비율·방향·좌표를 처음으로
     presetIndex.value = 0
+    orientation.value = 'landscape'
     coords.value = { width: 0, height: 0 }
     imageSize.value = { width: 0, height: 0 }
     busy.value = false
@@ -64,7 +65,43 @@ watch(
 )
 
 const presetIndex = ref(0)
-const ratio = computed(() => ASPECT_PRESETS[presetIndex.value]?.ratio ?? null)
+
+/**
+ * 비율의 방향 — 프리셋(16:9·4:3·3:2)은 모두 **가로 기준**이라, 세로로 쓰려면 뒤집는다(9:16).
+ * 프리셋을 방향별로 두 배 늘리는 대신 이 스위치 하나로 접는다.
+ */
+type Orientation = 'landscape' | 'portrait'
+const ORIENTATIONS: ReadonlyArray<{ value: Orientation; label: string }> = [
+  { value: 'landscape', label: '가로' },
+  { value: 'portrait', label: '세로' },
+]
+const orientation = ref<Orientation>('landscape')
+/** 방향을 바꿔도 모양이 같은 비율(자유·1:1)에서는 고를 이유가 없다 */
+const canFlipOrientation = computed(() => {
+  const base = ASPECT_PRESETS[presetIndex.value]?.ratio
+  return base != null && base !== 1
+})
+
+const ratio = computed(() => {
+  const base = ASPECT_PRESETS[presetIndex.value]?.ratio ?? null
+  if (base === null) return null
+  return orientation.value === 'portrait' ? 1 / base : base
+})
+
+/**
+ * 방향 바꾸기 — 지금 상자의 **가로·세로를 맞바꾼다**(640×360 → 360×640).
+ *
+ * 비율만 바꾸고 두면 Cropper 가 지금 상자 **안에** 새 비율을 끼워 넣어서,
+ * 가로·세로를 오갈 때마다 상자가 계속 작아진다. 방향 전환은 크기를 바꾸려는 게 아니므로
+ * 바꾸기 전 크기를 들고 있다가 뒤집어 다시 넣는다(원본을 넘으면 Cropper 가 알아서 줄인다).
+ */
+const setOrientation = async (next: Orientation) => {
+  if (next === orientation.value || !canFlipOrientation.value) return
+  const { width, height } = coords.value
+  orientation.value = next
+  await nextTick()
+  if (width && height) cropper.value?.setCoordinates({ width: height, height: width })
+}
 /** stencil-props 는 undefined 여야 자유 비율이다(null 을 주면 0으로 취급될 수 있다) */
 const stencilProps = computed(() => ({ aspectRatio: ratio.value ?? undefined }))
 
@@ -104,12 +141,26 @@ const clampInt = (n: number, max: number) => {
  *
  * `change`(칸을 벗어나거나 Enter)에서만 받는다 — 글자를 칠 때마다 반영하면
  * '150'을 치는 동안 1 → 15 → 150 으로 자르는 상자가 계속 튄다.
+ *
+ * 반영이 끝나면 **확정된 값을 칸에 다시 써 넣는다.** 범위를 벗어난 값(예: 9999)은
+ * 잘려서 이전과 같은 값이 되는데, 그러면 `model-value`가 그대로라 PrimeVue 쪽이
+ * 다시 그리지 않아 칸에는 방금 친 값이 남는다 — 실제 크기와 칸이 어긋난다.
+ * (네이티브 input 일 때는 Vue 가 DOM 값과 비교해 되돌려 줬다.)
  */
+const syncInputValue = async (el: HTMLInputElement, get: () => number) => {
+  await nextTick()
+  const settled = String(get())
+  if (el.value !== settled) el.value = settled
+}
 const onWidthChange = (event: Event) => {
-  widthInput.value = Number((event.target as HTMLInputElement).value)
+  const el = event.target as HTMLInputElement
+  widthInput.value = Number(el.value)
+  void syncInputValue(el, () => coords.value.width)
 }
 const onHeightChange = (event: Event) => {
-  heightInput.value = Number((event.target as HTMLInputElement).value)
+  const el = event.target as HTMLInputElement
+  heightInput.value = Number(el.value)
+  void syncInputValue(el, () => coords.value.height)
 }
 
 /** 실제로 저장될 크기 — 화면에 알려 준다 */
@@ -189,6 +240,23 @@ const cancel = () => {
               @click="presetIndex = i"
             >
               {{ preset.label }}
+            </button>
+          </div>
+
+          <!-- 가로·세로 — 프리셋이 가로 기준이라 세로로 쓰려면 뒤집는다.
+               자유·1:1 은 뒤집어도 같은 모양이라 잠근다. -->
+          <div class="crop-seg" :class="{ 'is-disabled': !canFlipOrientation }">
+            <button
+              v-for="o in ORIENTATIONS"
+              :key="o.value"
+              type="button"
+              class="crop-seg-btn"
+              :class="{ 'is-active': orientation === o.value }"
+              :disabled="!canFlipOrientation"
+              :title="canFlipOrientation ? '' : '이 비율은 가로·세로가 같아요'"
+              @click="setOrientation(o.value)"
+            >
+              {{ o.label }}
             </button>
           </div>
         </div>
@@ -303,6 +371,16 @@ const cancel = () => {
   background: var(--white);
   color: var(--blue-500);
   box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+}
+/* 자유·1:1 처럼 방향을 바꿔도 같은 비율 — 숨기지 않고 흐리게 잠근다(자리가 움직이지 않게) */
+.crop-seg.is-disabled {
+  opacity: 0.45;
+}
+.crop-seg-btn:disabled {
+  cursor: not-allowed;
+}
+.crop-seg-btn:disabled:hover {
+  color: var(--gray-600);
 }
 
 .crop-num {

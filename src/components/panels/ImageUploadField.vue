@@ -207,7 +207,14 @@ const openCrop = async () => {
 
   loadingCrop.value = true
   try {
-    const res = await fetch(url, { mode: 'cors' })
+    // ⚠ `cache: 'reload'` 를 빼면 **우리 버킷의 이미지조차 거의 항상 막힌다.**
+    //
+    // 캔버스가 같은 주소를 먼저 평범한 <img> 로 불러오는데, 그 요청에는 Origin 이 없어
+    // S3 가 허용 헤더(Access-Control-Allow-Origin) 없이 응답한다. 응답에 `Vary: Origin` 이
+    // 붙어 있어 그 '허용 헤더 없는 응답'이 그대로 캐시에 남고, 여기의 fetch(교차 출처 요청)가
+    // 그걸 재사용하면서 차단된다 — 서버가 막는 게 아니라 캐시를 잘못 물려받는 것이다.
+    // 캐시를 건너뛰고 새로 받으면 Origin 이 실려 나가 정상 응답을 받는다.
+    const res = await fetch(url, { mode: 'cors', cache: 'reload' })
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const blob = await res.blob()
     const file = new File([blob], nameFromUrl(url) || 'image.png', {
@@ -217,7 +224,7 @@ const openCrop = async () => {
     if (invalid) throw new Error(invalid)
     cropSource.value = file
   } catch {
-    // 다른 서버의 이미지는 CORS 로 막히는 경우가 대부분 — 받지 못하면 다시 올리라고만 안내한다
+    // 그래도 못 받으면 정말 CORS 를 막는 다른 서버의 이미지다 — 다시 올리라고만 안내한다
     errorText.value = '이 이미지는 불러올 수 없어요. 삭제하고 다시 올린 뒤 다듬어 주세요.'
   } finally {
     loadingCrop.value = false
