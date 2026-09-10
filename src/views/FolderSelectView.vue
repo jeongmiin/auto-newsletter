@@ -351,15 +351,27 @@ const targetVolume = computed(() => {
 /** '여기로 저장'을 누를 수 있는지 — 팀 폴더 단계에서는 고른 전시회 폴더로 들어가는 버튼이다 */
 const canSave = computed(() => (atTeamLevel.value ? !!picked.value : !!targetVolume.value))
 /**
- * 하단 '저장위치' 표기 — 'gocaf / eng / vol01 /' (Figma 1468-9089).
+ * '저장위치' 표기 — 'gocaf / eng / vol01 /' (Figma 1468-9089).
  * 들어와 있는 폴더까지는 늘 보이고, 고른 폴더가 있으면 그 이름이 맨 뒤에 붙는다.
  * 팀 폴더 단계에서는 아직 전시회를 못 정했으니 비워 둔다(Figma 1500-9394).
+ *
+ * **앞 조각은 눌러서 그 자리로 돌아간다** — 따로 있던 경로 줄(fd-crumbs)의 역할을 여기로 합쳤다.
+ * 같은 길을 두 줄로 두 번 읽게 하던 것을 하나로 줄인 것이다.
+ *
+ * 돌아갈 수 있는 건 **지금 있는 자리보다 위**뿐이다:
+ *   - 전시회 폴더(맨 앞) → 폴더 안에 들어와 있을 때만 goUp(0)
+ *   - 들어와 있는 폴더 중 마지막 하나를 뺀 나머지 → goUp(i + 1)
+ * 지금 있는 자리와, 아직 들어가지 않은 '고른 폴더'는 갈 곳이 없어 글자로만 둔다.
  */
-const savePathLabel = computed(() => {
-  if (!hasTeam.value || atTeamLevel.value) return ''
-  const parts = [rootFolderName.value, ...openedPath.value]
-  if (picked.value) parts.push(picked.value.name)
-  return `${parts.join(' / ')} /`
+const savePathSegments = computed<Array<{ name: string; up: number | null }>>(() => {
+  if (!hasTeam.value || atTeamLevel.value) return []
+  const depth = openedPath.value.length
+  const segments = [{ name: rootFolderName.value, up: depth ? 0 : null }]
+  openedPath.value.forEach((name, i) => {
+    segments.push({ name, up: i < depth - 1 ? i + 1 : null })
+  })
+  if (picked.value) segments.push({ name: picked.value.name, up: null })
+  return segments
 })
 
 /**
@@ -445,26 +457,8 @@ const continueEditing = async () => {
         <main class="fd-main" :class="{ 'fd-main--nested': isNested }">
           <!--
             폴더 안에 들어와 있으면 머리가 통째로 바뀐다 (Figma 1484-1140):
-            맨 위에 지나온 경로, 그 아래 전시회 이름이 제목을 겸하고, 검색줄은 없다.
+            맨 위에 저장 위치(지나온 길 겸용), 그 아래 전시회 이름이 제목을 겸하고, 검색줄은 없다.
           -->
-          <nav v-if="isNested" class="fd-crumbs">
-            <button type="button" class="fd-crumb fd-crumb--link" @click="goUp(0)">
-              {{ rootFolderName }}
-            </button>
-            <template v-for="(segment, i) in openedPath" :key="segment">
-              <span class="fd-crumb-sep">&gt;</span>
-              <button
-                v-if="i < openedPath.length - 1"
-                type="button"
-                class="fd-crumb fd-crumb--link"
-                @click="goUp(i + 1)"
-              >
-                {{ segment }}
-              </button>
-              <span v-else class="fd-crumb">{{ segment }}</span>
-            </template>
-          </nav>
-
           <!-- 팀을 고르기 전에는 제목·검색 없이 안내만 (Figma 1488-2128) -->
           <template v-if="!isNested && hasTeam">
             <h1 class="fd-title">저장할 폴더를 선택해주세요.</h1>
@@ -476,6 +470,40 @@ const continueEditing = async () => {
               aria-label="폴더 검색"
             />
           </template>
+
+          <!--
+            저장 위치 — 어디에 넣는지와 지나온 길을 한 줄로 합쳤다.
+            앞 조각을 누르면 그 자리로 돌아간다(따로 있던 경로 줄의 역할).
+            같은 길을 두 줄로 두 번 읽게 하지 않고, 고르는 자리 바로 위에 한 번만 적는다.
+          -->
+          <p v-if="hasTeam" class="fd-savepath">
+            <!--
+              팀 폴더 단계에서는 아직 전시회를 안 골라 적을 것이 없다(Figma 1500-9394).
+              그래도 줄 자체는 남겨 **자리만 비워 둔다** — 안 그러면 전시회를 고르는 순간
+              이 줄이 끼어들며 아래 목록이 통째로 밀린다.
+            -->
+            <template v-if="savePathSegments.length">
+              <span class="fd-savepath-label">
+                <span class="material-symbols-outlined">drive_file_move</span>
+                저장위치
+              </span>
+              <span class="fd-savepath-value">
+                <template v-for="(seg, i) in savePathSegments" :key="`${i}-${seg.name}`">
+                  <button
+                    v-if="seg.up !== null"
+                    type="button"
+                    class="fd-savepath-link"
+                    :title="`${seg.name} 폴더로 돌아가기`"
+                    @click="goUp(seg.up)"
+                  >
+                    {{ seg.name }}
+                  </button>
+                  <span v-else>{{ seg.name }}</span>
+                  <span class="fd-savepath-sep">/</span>
+                </template>
+              </span>
+            </template>
+          </p>
 
           <!--
             어느 폴더를 보고 있는지 + 오른쪽 끝의 '폴더 만들기' 아이콘.
@@ -654,28 +682,21 @@ const continueEditing = async () => {
           </template>
         </main>
 
-        <!-- 하단 — 왼쪽에 저장 위치만, 오른쪽에 이전/여기로 저장 (템플릿 선택 화면과 같은 FlowFooter).
+        <!-- 하단 — 버튼만 둔다(저장 위치는 위 경로 줄로 옮겼다).
              최근 임시 저장은 줄의 배지가 알리고, 여기서는 그 폴더를 골랐을 때 버튼만 달라진다. -->
         <FlowFooter>
-          <template #info>
-            <!-- 라벨은 늘 두고, 전시회 폴더가 정해진 뒤에만 경로를 적는다 (Figma 1488-2128 / 1500-9394) -->
-            <p class="flow-info">
-              <span class="flow-info-label">
-                <span class="material-symbols-outlined">drive_file_move</span>
-                저장위치
-              </span>
-              <span v-if="savePathLabel" class="flow-info-value">{{ savePathLabel }}</span>
-            </p>
-          </template>
           <button type="button" class="flow-btn flow-btn--ghost" @click="goPrev">이전으로</button>
+          <!-- 최근 임시 저장이 있는 폴더를 고르면 '이어서 편집'만 남긴다 —
+               그 자리에서 새로 시작하면 저장해 둔 작업을 덮어쓰게 된다.
+               (그 폴더 안으로 들어가려면 줄을 더블클릭한다) -->
           <button
+            v-if="!pickedEditFile"
             type="button"
-            class="flow-btn"
-            :class="pickedEditFile ? 'flow-btn--ghost' : 'flow-btn--primary'"
-            :disabled="!canSave || restoring"
+            class="flow-btn flow-btn--primary"
+            :disabled="!canSave"
             @click="goNext"
           >
-            {{ pickedEditFile ? '새로 시작' : '여기로 저장' }}
+            여기로 저장
           </button>
           <button
             v-if="pickedEditFile"
@@ -738,34 +759,57 @@ const continueEditing = async () => {
   max-width: 100%;
 }
 
-/* 어느 폴더 안에 들어와 있는지 — gocaf > eng, 화면 맨 위(헤더 아래 40px) (Figma 1484-1140) */
-.fd-crumbs {
+/* 저장 위치 겸 지나온 길 — 폴더 목록 머리(.fd-context) 바로 위 한 줄 (Figma 1468-9089 / 1484-1140).
+   [아이콘 24][4px]라벨 15px gray-600 [12px] 경로 16px gray-700 */
+.fd-savepath {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin: 0 0 25px;
-  font-size: 17px;
-  line-height: 20px;
-  color: var(--gray-700);
+  gap: 12px;
+  min-width: 0;
+  /* 내용이 없는 팀 폴더 단계에서도 같은 높이를 잡는다(아이콘 24px = 이 줄의 높이) */
+  min-height: 24px;
+  margin: 30px 0 10px;
+  line-height: 24px;
 }
-.fd-crumb {
+/* 폴더 안에서는 이 줄이 화면 맨 위다 — 위 여백은 .fd-main--nested 의 padding 이 잡는다 */
+.fd-main--nested .fd-savepath {
+  margin-top: 0;
+}
+.fd-savepath-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  font-size: 15px;
+  color: var(--gray-600);
+}
+.fd-savepath-label .material-symbols-outlined {
+  font-size: 24px;
+}
+.fd-savepath-value {
+  min-width: 0;
+  font-size: 16px;
+  color: var(--gray-700);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* 눌러서 그 자리로 돌아가는 조각 — 지금 있는 자리와 고른 폴더는 글자로만 둔다 */
+.fd-savepath-link {
   padding: 0;
-  border: none;
+  border: 0;
   background: none;
-  font-size: 17px;
-  line-height: 20px;
-  color: var(--gray-700);
-}
-.fd-crumb--link {
+  font: inherit;
   color: var(--blue-500);
   text-decoration: underline;
   cursor: pointer;
 }
-.fd-crumb--link:hover {
+.fd-savepath-link:hover {
   color: var(--blue-600);
 }
-.fd-crumb-sep {
-  color: var(--gray-700);
+.fd-savepath-sep {
+  margin: 0 4px;
+  color: var(--gray-500);
 }
 .fd-main--nested {
   padding-top: 40px;
@@ -776,7 +820,6 @@ const continueEditing = async () => {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 50px;
 }
 .fd-context-name {
   font-size: 24px;
