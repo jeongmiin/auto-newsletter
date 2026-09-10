@@ -99,6 +99,19 @@ const clampInt = (n: number, max: number) => {
   return Math.min(Math.max(1, v), Math.max(1, max))
 }
 
+/**
+ * 입력 상자의 값을 상자 크기에 반영한다.
+ *
+ * `change`(칸을 벗어나거나 Enter)에서만 받는다 — 글자를 칠 때마다 반영하면
+ * '150'을 치는 동안 1 → 15 → 150 으로 자르는 상자가 계속 튄다.
+ */
+const onWidthChange = (event: Event) => {
+  widthInput.value = Number((event.target as HTMLInputElement).value)
+}
+const onHeightChange = (event: Event) => {
+  heightInput.value = Number((event.target as HTMLInputElement).value)
+}
+
 /** 실제로 저장될 크기 — 화면에 알려 준다 */
 const saved = computed(() => outputSize(coords.value, props.cropWidth))
 /** Cropper 가 결과 캔버스를 바로 이 폭으로 줄여 준다 */
@@ -184,24 +197,24 @@ const cancel = () => {
           <span class="crop-label">크기</span>
           <label class="crop-num">
             <span>너비</span>
-            <input
+            <InputText
               type="number"
               min="1"
               :max="imageSize.width || undefined"
-              :value="widthInput"
+              :model-value="String(widthInput)"
               :disabled="ratio !== null"
               :title="ratio !== null ? '비율이 잠겨 있어 높이에서 계산돼요' : ''"
-              @change="widthInput = Number(($event.target as HTMLInputElement).value)"
+              @change="onWidthChange"
             />
           </label>
           <label class="crop-num">
             <span>높이</span>
-            <input
+            <InputText
               type="number"
               min="1"
               :max="imageSize.height || undefined"
-              :value="heightInput"
-              @change="heightInput = Number(($event.target as HTMLInputElement).value)"
+              :model-value="String(heightInput)"
+              @change="onHeightChange"
             />
           </label>
           <span class="crop-unit">px (원본 기준)</span>

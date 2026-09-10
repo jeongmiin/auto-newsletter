@@ -50,7 +50,16 @@
                 <div class="blank-line"></div>
                 <div class="blank-button"></div>
               </div>
-              <div class="tpl-card-name">빈 템플릿</div>
+              <div class="tpl-card-name">
+                <span
+                  v-if="isBlankSelected"
+                  class="material-symbols-outlined tpl-card-check"
+                  aria-hidden="true"
+                >
+                  check_circle
+                </span>
+                빈 템플릿
+              </div>
             </button>
 
             <!-- 템플릿 카드 — 올리면 '미리보기'·'템플릿 선택하기'가 썸네일 위에 뜬다 (Figma 1468-9267).
@@ -98,7 +107,18 @@
                   </button>
                 </div>
               </div>
-              <div class="tpl-card-name">{{ t.name }}</div>
+              <!-- 고른 카드는 이름 왼쪽에 체크가 붙는다 (Figma 1589-8084).
+                   썸네일 테두리만으로는 목록을 훑을 때 어느 것을 골랐는지 눈에 잘 안 띈다. -->
+              <div class="tpl-card-name">
+                <span
+                  v-if="isTemplateSelected(t)"
+                  class="material-symbols-outlined tpl-card-check"
+                  aria-hidden="true"
+                >
+                  check_circle
+                </span>
+                {{ t.name }}
+              </div>
             </div>
 
             <!-- 결과 없음 -->
@@ -109,18 +129,8 @@
         </main>
 
         <!-- 하단 — 첫 걸음이라 '이전으로'는 늘 잠겨 있고, 카드를 고르면 '다음'이 켜진다.
-             왼쪽에 고른 이름을 적어 두어, 다른 카드로 바꿨을 때 무엇이 골라졌는지 바로 보이게 한다. -->
+             무엇을 골랐는지는 카드 이름 옆 체크가 알리므로 왼쪽 안내(info 슬롯)는 두지 않는다. -->
         <FlowFooter>
-          <template #info>
-            <p class="flow-info">
-              <span class="flow-info-label">
-                <span class="material-symbols-outlined">check_circle</span>
-                선택한 템플릿
-              </span>
-              <span v-if="selectedName" class="flow-info-value">{{ selectedName }}</span>
-              <span v-else class="flow-info-value flow-info-value--empty">아직 고르지 않았어요</span>
-            </p>
-          </template>
           <button type="button" class="flow-btn flow-btn--ghost" disabled>이전으로</button>
           <button
             type="button"
@@ -184,12 +194,6 @@ const selected = ref<Selection | null>(null)
 const isBlankSelected = computed(() => selected.value?.kind === 'blank')
 const isTemplateSelected = (t: NewsletterTemplateSummary) =>
   selected.value?.kind === 'template' && selected.value.template.id === t.id
-/** 하단 안내에 적을 이름 — 카드 이름과 같은 표기 */
-const selectedName = computed(() => {
-  const pick = selected.value
-  if (!pick) return ''
-  return pick.kind === 'blank' ? '빈 템플릿' : pick.template.name
-})
 
 const selectBlank = () => {
   selected.value = { kind: 'blank' }
@@ -543,10 +547,25 @@ const goNext = () => {
   font-size: 20px;
 }
 .tpl-card-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  /* 체크 아이콘(22px)이 글자(17px)보다 커서, 고를 때 카드가 커지며 아래 줄이 밀리지 않도록
+     고르기 전에도 같은 높이를 잡아 둔다 */
+  min-height: 22px;
   font-size: 14px;
   font-weight: 500;
   color: var(--gray-800);
   word-break: break-word;
+}
+/* 고른 카드 — 이름 왼쪽 체크 + 글자도 파랑 (Figma 1589-8084) */
+.tpl-card.is-selected .tpl-card-name {
+  color: var(--blue-500);
+}
+.tpl-card-check {
+  flex-shrink: 0;
+  font-size: 22px;
+  color: var(--blue-500);
 }
 .tpl-empty {
   color: var(--gray-400);
