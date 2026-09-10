@@ -267,6 +267,97 @@ onBeforeUnmount(() => {
   <div class="side-panel ai-tools-panel">
     <h2 class="panel-title">AI 도구</h2>
 
+    <!-- ── HTML 웹 링크 생성 ──
+         도구 목록은 빠른추가 카드(QuickAddCard)와 같은 모양의 버튼이고,
+         누르면 그 아래로 업로드 입력이 펼쳐진다. 도구가 늘면 이 section을 이어 붙인다. -->
+    <section class="ai-tool">
+      <button
+        type="button"
+        class="ui-card ai-tool-card"
+        :class="{ 'is-open': isOpen }"
+        :aria-expanded="isOpen"
+        @click="isOpen = !isOpen"
+      >
+        <span class="ai-tool-card-label">
+          HTML 웹 링크 생성
+          <!-- 펼치기 전에도 이 폴더에 링크가 있다는 걸 알 수 있게 -->
+          <span v-if="existing" class="ai-tool-badge">생성됨</span>
+        </span>
+        <span class="material-symbols-outlined ai-tool-card-icon">{{ isOpen ? 'remove' : 'add' }}</span>
+      </button>
+
+      <div v-if="isOpen" class="ai-tool-body">
+
+        <!-- 업로드 주소가 없으면(서버 미설정) 눌러도 실패할 UI를 아예 감춘다 — 이미지 업로드와 같은 규칙 -->
+        <p v-if="!uploadEnabled" class="ht-note">
+          업로드 주소가 설정되지 않아 지금은 링크를 만들 수 없어요.
+        </p>
+
+        <template v-else>
+          <!-- 올리는 중 -->
+          <div v-if="uploading" class="ht-box ht-box--busy">
+            <div class="ht-progress">
+              <div class="ht-progress-bar" :style="{ width: `${progress}%` }"></div>
+            </div>
+            <div class="ht-busy-row">
+              <span class="ht-busy-text">
+                {{ existing ? '최신 내용 반영 중' : '링크 만드는 중' }}… {{ progress }}%
+              </span>
+              <button type="button" class="ht-link-btn" @click="cancelUpload">취소</button>
+            </div>
+          </div>
+
+          <!-- 링크 카드 — 파일 이름·만든 시각. 전체 주소는 툴팁과 새 창 열기로만 -->
+          <div v-else-if="existing" class="ht-box ht-box--result">
+            <a
+              class="ht-link-card"
+              :href="existing.url"
+              :title="existing.url"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span class="material-symbols-outlined ht-link-icon">link</span>
+              <span class="ht-link-text">
+                <span class="ht-link-name">{{ existing.name }}</span>
+                <span class="ht-link-sub" :class="{ 'is-fresh': justUpdated }">{{ existingSub }}</span>
+              </span>
+              <span class="material-symbols-outlined ht-link-open" aria-hidden="true">open_in_new</span>
+            </a>
+            <div class="ht-result-actions">
+              <button type="button" class="ht-btn ht-btn--primary" @click="copyLink">
+                <span class="material-symbols-outlined">content_copy</span>
+                {{ copied ? '복사됨' : '링크 복사' }}
+              </button>
+              <!-- 같은 주소에 지금 작업물을 덮어쓴다 — 주소는 바뀌지 않는다 -->
+              <button
+                type="button"
+                class="ht-btn"
+                title="수정한 내용을 같은 주소에 다시 올려요"
+                @click="createLink"
+              >
+                최신 내용 반영
+              </button>
+            </div>
+          </div>
+
+          <!-- 폴더를 읽는 중 -->
+          <p v-else-if="checking" class="ht-note">이 폴더에 링크가 있는지 확인하는 중…</p>
+
+          <!-- 아직 만들기 전 — 버튼 하나 -->
+          <button v-else type="button" class="ht-make-btn" @click="createLink">
+            <span class="material-symbols-outlined">link</span>
+            HTML 링크 생성
+          </button>
+
+          <!--
+            저장 위치는 적지 않는다 — 폴더는 앞 걸음에서 이미 골랐고, 여기서 할 일은
+            링크를 만드는 것 하나다. 폴더가 없으면 눌렀을 때 아래 오류로 알려준다.
+          -->
+          <p v-if="errorText" class="ht-error">{{ errorText }}</p>
+        </template>
+      </div>
+    </section>
+
     <!-- ── Azure 다국어 번역 ── -->
     <section class="ai-tool">
       <button
@@ -360,97 +451,6 @@ onBeforeUnmount(() => {
           <p v-if="!translation.preview.length" class="hint-text tr-note">
             *글자만 번역하고 굵게·색상 같은 서식과 링크는 그대로 둬요. URL·색상·크기 값은 빼요.
           </p>
-        </template>
-      </div>
-    </section>
-
-    <!-- ── HTML 웹 링크 생성 ──
-         도구 목록은 빠른추가 카드(QuickAddCard)와 같은 모양의 버튼이고,
-         누르면 그 아래로 업로드 입력이 펼쳐진다. 도구가 늘면 이 section을 이어 붙인다. -->
-    <section class="ai-tool">
-      <button
-        type="button"
-        class="ui-card ai-tool-card"
-        :class="{ 'is-open': isOpen }"
-        :aria-expanded="isOpen"
-        @click="isOpen = !isOpen"
-      >
-        <span class="ai-tool-card-label">
-          HTML 웹 링크 생성
-          <!-- 펼치기 전에도 이 폴더에 링크가 있다는 걸 알 수 있게 -->
-          <span v-if="existing" class="ai-tool-badge">생성됨</span>
-        </span>
-        <span class="material-symbols-outlined ai-tool-card-icon">{{ isOpen ? 'remove' : 'add' }}</span>
-      </button>
-
-      <div v-if="isOpen" class="ai-tool-body">
-
-        <!-- 업로드 주소가 없으면(서버 미설정) 눌러도 실패할 UI를 아예 감춘다 — 이미지 업로드와 같은 규칙 -->
-        <p v-if="!uploadEnabled" class="ht-note">
-          업로드 주소가 설정되지 않아 지금은 링크를 만들 수 없어요.
-        </p>
-
-        <template v-else>
-          <!-- 올리는 중 -->
-          <div v-if="uploading" class="ht-box ht-box--busy">
-            <div class="ht-progress">
-              <div class="ht-progress-bar" :style="{ width: `${progress}%` }"></div>
-            </div>
-            <div class="ht-busy-row">
-              <span class="ht-busy-text">
-                {{ existing ? '최신 내용 반영 중' : '링크 만드는 중' }}… {{ progress }}%
-              </span>
-              <button type="button" class="ht-link-btn" @click="cancelUpload">취소</button>
-            </div>
-          </div>
-
-          <!-- 링크 카드 — 파일 이름·만든 시각. 전체 주소는 툴팁과 새 창 열기로만 -->
-          <div v-else-if="existing" class="ht-box ht-box--result">
-            <a
-              class="ht-link-card"
-              :href="existing.url"
-              :title="existing.url"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <span class="material-symbols-outlined ht-link-icon">link</span>
-              <span class="ht-link-text">
-                <span class="ht-link-name">{{ existing.name }}</span>
-                <span class="ht-link-sub" :class="{ 'is-fresh': justUpdated }">{{ existingSub }}</span>
-              </span>
-              <span class="material-symbols-outlined ht-link-open" aria-hidden="true">open_in_new</span>
-            </a>
-            <div class="ht-result-actions">
-              <button type="button" class="ht-btn ht-btn--primary" @click="copyLink">
-                <span class="material-symbols-outlined">content_copy</span>
-                {{ copied ? '복사됨' : '링크 복사' }}
-              </button>
-              <!-- 같은 주소에 지금 작업물을 덮어쓴다 — 주소는 바뀌지 않는다 -->
-              <button
-                type="button"
-                class="ht-btn"
-                title="수정한 내용을 같은 주소에 다시 올려요"
-                @click="createLink"
-              >
-                최신 내용 반영
-              </button>
-            </div>
-          </div>
-
-          <!-- 폴더를 읽는 중 -->
-          <p v-else-if="checking" class="ht-note">이 폴더에 링크가 있는지 확인하는 중…</p>
-
-          <!-- 아직 만들기 전 — 버튼 하나 -->
-          <button v-else type="button" class="ht-make-btn" @click="createLink">
-            <span class="material-symbols-outlined">link</span>
-            HTML 링크 생성
-          </button>
-
-          <!--
-            저장 위치는 적지 않는다 — 폴더는 앞 걸음에서 이미 골랐고, 여기서 할 일은
-            링크를 만드는 것 하나다. 폴더가 없으면 눌렀을 때 아래 오류로 알려준다.
-          -->
-          <p v-if="errorText" class="ht-error">{{ errorText }}</p>
         </template>
       </div>
     </section>
