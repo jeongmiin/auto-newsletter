@@ -1,11 +1,11 @@
 /**
- * 다국어 번역 상태 — AI 도구 패널(입력)과 캔버스 옆 번역 결과 패널(확인·수정)이 함께 쓴다.
+ * 다국어 번역 상태 — AI 도구 패널의 번역 화면(언어 고르기 · 결과 확인·수정)이 쓴다.
  *
  * 컴포넌트에 두지 않는 이유: 레일 메뉴를 옮기면 좌측 패널이 통째로 내려가 번역 결과가 사라진다.
  * 결과는 Azure 글자 수를 쓰고 받은 것이라, 다른 메뉴에 다녀와도 그대로 남아 있어야 한다.
  * (새로고침하면 작업물과 함께 사라진다 — 작업물 자체가 메모리에만 있다)
  */
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useEditorStore } from '@/stores/editorStore'
 import { useModuleStore } from '@/stores/moduleStore'
@@ -26,22 +26,10 @@ export const TRANSLATION_LANGUAGES: Array<{ value: TranslationLanguage; label: s
   { value: 'zh-Hans', label: '중국어(간체)' },
 ]
 
-const TARGET_LANGUAGE_CODE: Record<TranslationLanguage, string> = {
-  en: 'en',
-  ja: 'jp',
-  'zh-Hans': 'ch',
-}
-
 const FONT_LANGUAGE_BY_TARGET: Record<TranslationLanguage, FontLanguage> = {
   en: 'default',
   ja: 'ja',
   'zh-Hans': 'zh',
-}
-
-export interface TranslationPreviewGroup {
-  id: string
-  moduleName: string
-  items: TranslationChange[]
 }
 
 export const useTranslationStore = defineStore('translation', () => {
@@ -56,55 +44,25 @@ export const useTranslationStore = defineStore('translation', () => {
   const targetLanguage = ref<TranslationLanguage>('en')
   const translating = ref(false)
   const error = ref('')
-  /** 확인·수정 중인 번역 결과. 비어 있으면 결과 패널이 뜨지 않는다. */
+  /** 확인·수정 중인 번역 결과. 비어 있으면 결과 화면이 아니라 언어 고르기 화면이다. */
   const preview = ref<TranslationChange[]>([])
+  /** 결과 화면에서 눌러 둔 카드 — 파란 테두리로 표시하고 캔버스를 그 모듈로 옮긴다 */
+  const selectedUnitId = ref<string | null>(null)
   let controller: AbortController | null = null
-
-  /**
-   * 캔버스 옆 결과 도크를 탭으로 접어 둔 상태.
-   * AI 도구 메뉴에 다시 들어오면 펼쳐진 채로 시작한다 — 결과가 있는데 접힌 채 잊히지 않도록.
-   */
-  const dockCollapsed = ref(false)
-  const toggleDock = (): void => {
-    dockCollapsed.value = !dockCollapsed.value
-  }
-  watch(
-    () => editorStore.activeMenu,
-    (menu) => {
-      if (menu === 'ai') dockCollapsed.value = false
-    },
-  )
 
   const targetLanguageLabel = computed(
     () => TRANSLATION_LANGUAGES.find((l) => l.value === targetLanguage.value)?.label ?? '',
   )
-  /** 접힌 도크 탭에 보여줄 짧은 언어 표시 — 자리가 좁아 두 글자로 */
-  const targetLanguageCode = computed(() => TARGET_LANGUAGE_CODE[targetLanguage.value])
 
-  // 캔버스 전체가 대상이다. 문장은 태그를 뺀 텍스트 노드 단위라, 글자 수가 곧 Azure에 보내는 양이다.
+  // 캔버스 전체가 대상이다. 값 하나가 카드 한 장이고, 글자 수가 곧 Azure에 보내는 양이다.
   const units = computed(() =>
     collectTranslationUnits(moduleStore.modules, moduleStore.availableModules),
   )
   const characterCount = computed(() =>
     units.value.reduce((sum, unit) => sum + unit.source.length, 0),
   )
-
-  /** 결과는 모듈 단위로 묶어 보여준다 — 같은 모듈의 제목·본문이 한 카드에 모이도록 */
-  const previewGroups = computed<TranslationPreviewGroup[]>(() => {
-    const groups = new Map<string, TranslationPreviewGroup>()
-    for (const change of preview.value) {
-      const group = groups.get(change.moduleInstanceId)
-      if (group) group.items.push(change)
-      else {
-        groups.set(change.moduleInstanceId, {
-          id: change.moduleInstanceId,
-          moduleName: change.moduleName,
-          items: [change],
-        })
-      }
-    }
-    return [...groups.values()]
-  })
+  /** 결과 화면인지 — 확인·수정할 번역문이 있으면 결과 화면이다 */
+  const hasResult = computed(() => preview.value.length > 0)
 
   /** 언어를 바꾸면 이전 언어의 결과는 뜻이 없어 비운다 */
   const setTargetLanguage = (language: TranslationLanguage): void => {
@@ -115,15 +73,14 @@ export const useTranslationStore = defineStore('translation', () => {
 
   const clear = (): void => {
     preview.value = []
+    selectedUnitId.value = null
     error.value = ''
   }
 
   const request = async (): Promise<void> => {
     if (translating.value) return
     clear()
-    // 새 결과는 펼쳐진 도크에서 바로 보이게
-    dockCollapsed.value = false
-    // 문장 수집에는 모듈 메타데이터(어떤 속성이 번역 대상인지)가 필요하다
+    // 값 수집에는 모듈 메타데이터(어떤 속성이 번역 대상인지)가 필요하다
     if (!moduleStore.availableModules.length) await moduleStore.loadAvailableModules()
     const targets = units.value
     if (!targets.length) {
@@ -173,15 +130,13 @@ export const useTranslationStore = defineStore('translation', () => {
     panelOpen,
     targetLanguage,
     targetLanguageLabel,
-    targetLanguageCode,
     translating,
     error,
     preview,
-    previewGroups,
+    selectedUnitId,
+    hasResult,
     units,
     characterCount,
-    dockCollapsed,
-    toggleDock,
     setTargetLanguage,
     request,
     cancel,
