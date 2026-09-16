@@ -357,6 +357,13 @@ description: >-
 - **조립형(v2) 모듈의 노출/비노출**: 지금은 원본 모듈의 `show*` **스위치 토글**로 제어하지만, 앞으로는 **"그룹 안 원소 모듈을 삭제"** 하는 방식으로 전환 예정. (v2 = 원소 모듈 그룹이므로, 요소 삭제 = 비노출.) SNS 아이콘 등 토글 UI는 이 방향과 함께 재검토.
 
 ## 8) 반영 규칙
+
+> ⚠ **UI를 크게 고치기 전에 [references/api-cost-and-pitfalls.md](references/api-cost-and-pitfalls.md)를 먼저 읽을 것.**
+> 기능은 멀쩡한데 조용히 망가지는 종류(번역기 전송량 7배 급증, CSS 클래스 이름 충돌,
+> `<script setup>` 스코프 착각, `mounted` 치수 측정, Figma 플레이스홀더 등)를 실제 사례로 모아 뒀다.
+> 특히 **외부 API로 보내는 모양(payload)을 바꿨다면 전송량을 재고 무료 한도 기준 횟수로 보고**해야 한다
+> — `src/utils/__tests__/translationPayload.test.ts`가 상한을 지키지만, 상한을 올려 통과시키는 것은 금지.
+
 - **최소 변경**: 해당 노드가 바꾸는 것만. 렌더 관련은 **캔버스·내보내기 두 경로 모두** 반영했는지 확인.
 - **검증**: `npx vue-tsc --noEmit -p tsconfig.app.json` + `npx vitest run` 통과 확인. 필요시 dev 서버 기동해 스크린샷(Playwright: `NODE_PATH=<npx 캐시 경로>/node_modules node script.cjs` — 로컬에 playwright 브라우저 미설치 시 `npx playwright install chromium` 먼저).
 - **하위호환**: 기존 인스턴스/템플릿이 깨지지 않게 기본값·마이그레이션 유지(예: pointColor→pointColors 시 단일값 폴백, `__pointIndex` 미지정 시 0번 폴백).
