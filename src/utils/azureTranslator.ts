@@ -1,7 +1,8 @@
-import type {
-  TranslationChange,
-  TranslationLanguage,
-  TranslationUnit,
+import {
+  htmlToPlainText,
+  type TranslationChange,
+  type TranslationLanguage,
+  type TranslationUnit,
 } from '@/utils/newsletterTranslation'
 
 const endpoint = (import.meta.env.VITE_AZURE_TRANSLATE_URL ?? '').trim()
@@ -34,8 +35,12 @@ export async function translateUnits(
     body: JSON.stringify({
       sourceLanguage: 'ko',
       targetLanguage,
-      // 문장은 텍스트 노드 단위로 뽑혀 태그가 없다 — 항상 일반 텍스트로 보낸다
-      items: units.map(({ id, source }) => ({ id, text: source, format: 'plain' })),
+      // 리치 텍스트는 태그째 보낸다 — 번역기가 태그를 제자리에 돌려주므로 굵게·색상·링크가 살아 온다.
+      items: units.map(({ id, source, sourceHtml }) => ({
+        id,
+        text: sourceHtml ?? source,
+        format: sourceHtml ? 'html' : 'plain',
+      })),
     }),
     signal,
   })
@@ -51,8 +56,11 @@ export async function translateUnits(
   const missing = units.find((unit) => typeof translatedById.get(unit.id) !== 'string')
   if (missing) throw new TranslationError('번역 결과 일부가 누락되었습니다. 다시 시도해 주세요.')
 
-  return units.map((unit) => ({
-    ...unit,
-    translated: translatedById.get(unit.id)!,
-  }))
+  return units.map((unit) => {
+    const result = translatedById.get(unit.id)!
+    // 화면에는 태그를 뺀 평문만 보여 준다. 고치지 않고 적용하면 돌려받은 HTML을 그대로 쓴다.
+    return unit.sourceHtml
+      ? { ...unit, translated: htmlToPlainText(result), translatedHtml: result }
+      : { ...unit, translated: result }
+  })
 }
