@@ -2361,7 +2361,15 @@ export const useModuleStore = defineStore('module', () => {
    */
   const ungroup = (groupId: string): void => {
     modules.value.forEach((m) => {
-      if (m.groupId === groupId) delete m.groupId
+      if (m.groupId !== groupId) return
+      // rowIndex/columnIndex는 **그룹 안에서만** 뜻이 있는 값이다. 남겨 두면 나중에 다시 묶을 때
+      // createGroup이 그 배치를 존중해(조립형 모듈을 위한 규칙) 예전 행 나눔이 되살아난다 —
+      // 순서를 바꿔 놓아도 옛 2행 멤버가 맨 아래로 내려가고 한 줄짜리가 두 줄로 묶인다.
+      // 그룹을 벗어날 때는 세 값을 함께 지운다(1행·1컬럼으로 축소될 때와 같은 규칙).
+      delete m.groupId
+      delete m.rowIndex
+      delete m.columnIndex
+      delete m.fullWidth
     })
     const gi = groups.value.findIndex((g) => g.id === groupId)
     if (gi !== -1) groups.value.splice(gi, 1)

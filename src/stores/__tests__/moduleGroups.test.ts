@@ -300,4 +300,58 @@ describe('moduleStore - 그룹', () => {
       .filter((i) => i !== -1)
     expect(groupIndexes[1] - groupIndexes[0]).toBe(1)
   })
+
+  /**
+   * 그룹을 풀면 rowIndex/columnIndex 도 함께 지워야 한다.
+   *
+   * 남겨 두면 다시 묶을 때 createGroup 이 그 배치를 존중해(조립형 모듈용 규칙)
+   * 예전 행 나눔이 되살아난다 — 목록에서 순서를 바꿔 놓아도 옛 2행 멤버가 맨 아래로 내려가고,
+   * 한 줄로 묶고 싶은 그룹이 두 줄로 묶여 한 번 더 감싸진다.
+   */
+  describe('그룹 해제 후 다시 묶기', () => {
+    it('해제하면 그룹 안에서만 뜻이 있던 행·컬럼 값이 사라진다', () => {
+      const store = useModuleStore()
+      const ids = addModules(store, 3)
+      const gid = store.createGroup(ids)!
+      store.modules.find((m) => m.id === ids[2])!.rowIndex = 1
+
+      store.ungroup(gid)
+
+      for (const id of ids) {
+        const m = store.modules.find((x) => x.id === id)!
+        expect(m.groupId).toBeUndefined()
+        expect(m.rowIndex).toBeUndefined()
+        expect(m.columnIndex).toBeUndefined()
+      }
+    })
+
+    it('여러 행이던 그룹을 풀고 순서를 바꿔 다시 묶으면 한 줄짜리 그룹이 된다', () => {
+      const store = useModuleStore()
+      const ids = addModules(store, 4)
+
+      // 3개는 0행, 1개는 1행 (rows:[1,1]) — 사용자가 겪은 '그룹 02'와 같은 모양
+      const first = store.createGroup(ids)!
+      store.modules.find((m) => m.id === ids[3])!.rowIndex = 1
+      store.groups.find((g) => g.id === first)!.rows = [1, 1]
+
+      store.ungroup(first)
+
+      // 목록에서 네 번째를 두 번째 자리로 끌어 올린 뒤 다시 묶는다
+      const reordered = [ids[0]!, ids[3]!, ids[1]!, ids[2]!]
+      const at = new Map(reordered.map((id, i) => [id, i]))
+      store.modules.sort((a, b) => (at.get(a.id) ?? 0) - (at.get(b.id) ?? 0))
+      store.modules.forEach((m, i) => (m.order = i))
+
+      const second = store.createGroup(reordered)!
+
+      // 한 줄 = 감싸는 것도 한 번
+      expect(store.groups.find((g) => g.id === second)!.rows).toEqual([1])
+      // 끌어 올린 모듈이 맨 아래로 밀려나지 않는다
+      const shown = store.modules
+        .filter((m) => m.groupId === second)
+        .sort((a, b) => (a.rowIndex ?? 0) - (b.rowIndex ?? 0) || a.order - b.order)
+        .map((m) => m.id)
+      expect(shown).toEqual(reordered)
+    })
+  })
 })
