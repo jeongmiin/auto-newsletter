@@ -13,7 +13,13 @@
       "Bash(echo \"tsc exit: $?\")",
       "Bash(echo \"tsc: $?\")",
       "Bash(curl -sL -o figma-1589-5466.png \"https://www.figma.com/api/mcp/asset/f6eae431-6238-415d-96c9-8cf6b4b10896.png\")",
-      "Bash(curl -sL -o name-row.png \"https://www.figma.com/api/mcp/asset/5ef93539-05b5-4498-a0d5-1d563821544c.png\")"
+      "Bash(curl -sL -o name-row.png \"https://www.figma.com/api/mcp/asset/5ef93539-05b5-4498-a0d5-1d563821544c.png\")",
+      "Bash(DEPLOY_BASE=/auto-newsletter/ npx vite build)",
+      "Bash(MSYS_NO_PATHCONV=1 DEPLOY_BASE=/auto-newsletter/ npx vite build)",
+      "Bash(git log *)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\ESN-D0145\\AppData\\Local\\Temp\\claude\\d--Projects-auto-newsletter\\6e5bde4f-f058-4e45-971a-2909bdc5ce57\\scratchpad\\pw"
     ]
   }
 }

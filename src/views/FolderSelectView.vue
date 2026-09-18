@@ -527,6 +527,7 @@ const continueEditing = async () => {
               @click="startCreate"
             >
               <span class="material-symbols-outlined">create_new_folder</span>
+              폴더 추가하기
             </button>
           </div>
 
@@ -850,14 +851,16 @@ const continueEditing = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
   height: 48px;
   margin-left: auto;
   border: none;
   border-radius: 8px;
   background: none;
-  color: var(--gray-800);
+  color: var(--gray-700);
   cursor: pointer;
+  gap: 6px;
+  font-weight: 500;
+  padding: 0 1rem;
 }
 .fd-create-icon:hover,
 .fd-create-icon.is-accent {

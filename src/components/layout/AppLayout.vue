@@ -30,7 +30,7 @@
 
         <!-- 리사이즈 핸들 (좌측 패널 오른쪽 가장자리, 오른쪽으로 끌면 넓어짐) -->
         <div
-          class="resize-handle cursor-col-resize flex-shrink-0 relative group"
+          class="resize-handle w-1 cursor-col-resize flex-shrink-0 relative group"
           :class="{ 'is-resizing': isLeftResizing }"
           @mousedown="startLeftResize"
         >
@@ -44,9 +44,12 @@
       </div>
 
       <!-- 중앙 캔버스 (화면 크기 토글·실행취소는 상단 헤더로 이동 · 전체 삭제는 추후 추가 예정) -->
-      <div class="flex-1 flex flex-col min-w-0">
+      <!-- relative: 가이드 버튼이 이 열을 기준으로 붙는다 — 좌측 패널을 넓히면 같이 밀려난다 -->
+      <div class="flex-1 flex flex-col min-w-0 relative">
         <!-- 캔버스 영역 -->
         <CanvasArea class="flex-1" />
+        <!-- 캔버스 왼쪽 아래에 떠 있는 '?' 가이드 버튼 (캔버스와 함께 스크롤되지 않는다) -->
+        <GuideButton />
       </div>
 
       <!-- 우측 '모듈 순서' 패널 — 기본 닫힘. 레일의 '모듈 순서' 메뉴나 패널 왼쪽 탭으로 여닫는다 -->
@@ -71,6 +74,7 @@ import EditorSidebar from '@/components/editor/EditorSidebar.vue'
 import ModulePanel from '@/components/panels/ModulePanel.vue'
 import ModuleOutlinePanel from '@/components/editor/ModuleOutlinePanel.vue'
 import CanvasArea from '@/components/editor/CanvasArea.vue'
+import GuideButton from '@/components/editor/GuideButton.vue'
 import GlobalStylePanel from '@/components/panels/GlobalStylePanel.vue'
 import PointColorPanel from '@/components/panels/PointColorPanel.vue'
 import CategoryModulePanel from '@/components/panels/CategoryModulePanel.vue'
