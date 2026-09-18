@@ -22,7 +22,6 @@ import FlowStepsHeader from '@/components/layout/FlowStepsHeader.vue'
 import FlowFooter from '@/components/layout/FlowFooter.vue'
 import TeamTreeSidebar from '@/components/layout/TeamTreeSidebar.vue'
 import SearchField from '@/components/SearchField.vue'
-import emptyIcon from '@/assets/img/empty_icon.png'
 import emptyFolderIcon from '@/assets/img/empty_folder_icon.png'
 import emptyTeamIcon from '@/assets/img/empty_team_icon.png'
 import { useEditorStore } from '@/stores/editorStore'
@@ -554,17 +553,21 @@ const continueEditing = async () => {
             </p>
           </div>
 
-          <!-- 전시회 폴더(또는 팀 폴더) 자체가 비어 있을 때 -->
-          <div v-else-if="isEmptyState" class="fd-empty">
-            <img :src="emptyIcon" alt="" class="fd-empty-img" />
-            <p v-if="atTeamLevel" class="fd-empty-text">
-              이 팀에는 아직 전시회 폴더가 없어요.<br />
-              오른쪽 위 아이콘으로 전시회 폴더를 만들어 시작해 주세요.
-            </p>
-            <p v-else class="fd-empty-text">
-              아직 저장할 폴더가 없어요.<br />
-              오른쪽 위 아이콘으로 폴더를 새로 만들어 시작해 주세요.
-            </p>
+          <!--
+            전시회 폴더(또는 팀 폴더) 자체가 비어 있을 때 — 위 '빈 폴더 안'과 같은 생김새를 쓴다.
+            다만 **여기서는 '현재 위치에 저장'을 권하지 않는다**: 이 자리는 아직 저장할 자리가 아니라
+            (targetVolume이 비어 '여기로 저장'도 눌리지 않는다) 폴더를 만드는 것 말고는 길이 없다.
+          -->
+          <div v-else-if="isEmptyState" class="fd-empty fd-empty--folder">
+            <img :src="emptyFolderIcon" alt="" class="fd-empty-folder-img" />
+            <template v-if="atTeamLevel">
+              <p class="fd-empty-title">아직 전시회 폴더가 없어요</p>
+              <p class="fd-empty-text">오른쪽 위 아이콘으로 전시회 폴더를 만들어 시작해 주세요.</p>
+            </template>
+            <template v-else>
+              <p class="fd-empty-title">아직 폴더가 없어요</p>
+              <p class="fd-empty-text">오른쪽 위 버튼으로 폴더를 새로 만들어 시작해 주세요.</p>
+            </template>
           </div>
 
           <template v-else>
@@ -671,12 +674,10 @@ const continueEditing = async () => {
                 </button>
 
                 <!-- 검색어와 맞는 폴더가 없을 때 -->
-                <div v-if="isNoMatch" class="fd-empty fd-empty--inline">
-                  <img :src="emptyIcon" alt="" class="fd-empty-img" />
-                  <p class="fd-empty-text">
-                    검색한 폴더가 없어요.<br />
-                    오른쪽 위 아이콘으로 새로 만들거나 다시 검색해주세요.
-                  </p>
+                <div v-if="isNoMatch" class="fd-empty fd-empty--folder fd-empty--inline">
+                  <img :src="emptyFolderIcon" alt="" class="fd-empty-folder-img" />
+                  <p class="fd-empty-title">검색한 폴더가 없어요</p>
+                  <p class="fd-empty-text">오른쪽 위 아이콘으로 새로 만들거나 다시 검색해주세요.</p>
                 </div>
               </template>
             </div>
@@ -1104,14 +1105,9 @@ const continueEditing = async () => {
   flex-direction: column;
   gap: 1rem;
 }
-.fd-empty-img {
-  width: 289px;
-  height: 289px;
-  object-fit: contain;
-}
-/* 표 안(검색 결과 없음)에서 다시 쓸 때는 위 여백만 줄인다 */
+/* 표 안(검색 결과 없음)에서 다시 쓸 때는 위 여백만 줄인다.
+   --folder 보다 뒤에 와야 margin-top이 이긴다(같은 힘이면 나중에 적은 쪽) */
 .fd-empty--inline {
-  margin-top: 4rem;
   padding-bottom: 2rem;
 }
 .fd-empty-text {
@@ -1121,10 +1117,15 @@ const continueEditing = async () => {
   color: var(--gray-600);
   text-align: center;
 }
-/* 들어간 폴더가 비어 있을 때 — 제목 아래 79px, 284×245 일러스트 + 28px 제목 + 안내 (Figma 1488-1416) */
+/* 비어 있는 화면 공통 — 제목 아래 79px, 284×245 일러스트 + 28px 제목 + 안내 (Figma 1488-1416).
+   폴더가 하나도 없을 때·들어간 폴더가 비었을 때·검색 결과가 없을 때가 모두 이 생김새를 쓴다 */
 .fd-empty--folder {
   margin-top: 79px;
   gap: 0;
+}
+/* 표 안에서는 위가 이미 표 머리로 채워져 있어 여백을 줄인다 */
+.fd-empty--folder.fd-empty--inline {
+  margin-top: 4rem;
 }
 .fd-empty-folder-img {
   width: 284px;
