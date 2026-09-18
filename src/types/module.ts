@@ -78,6 +78,12 @@ export interface TableCell {
   align?: TableCellAlign   // 텍스트 정렬 (미지정 시 테이블 공통값)
   bgColor?: string         // 셀 배경색 (미지정 시 타입별 일괄 색상 사용)
   textColor?: string       // 셀 글자색 (미지정 시 타입별 일괄 색상 사용)
+  /**
+   * 셀 글자 크기 ('16px'). 미지정이면 기본값(TABLE_CELL_DEFAULT_FONT_SIZE).
+   * 셀 안에서 드래그로 고른 부분만 다르게 준 크기는 여기가 아니라 content HTML의
+   * 인라인 font-size로 들어간다 — 이 값은 그 지정이 없는 글자의 바탕 크기다.
+   */
+  fontSize?: string
   hidden?: boolean         // 병합으로 인해 숨겨진 셀 여부
   contentType?: 'text' | 'image'  // 셀 콘텐츠 종류 (미지정=text)
   imageUrl?: string        // contentType='image'일 때 이미지 URL

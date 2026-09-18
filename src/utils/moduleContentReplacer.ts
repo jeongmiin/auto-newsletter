@@ -322,12 +322,20 @@ interface TableCellType {
   align?: 'left' | 'center' | 'right' | 'justify'
   bgColor?: string
   textColor?: string
+  /** 셀 바탕 글자 크기 ('16px'). 미지정이면 TABLE_CELL_DEFAULT_FONT_SIZE */
+  fontSize?: string
   hidden?: boolean
   contentType?: 'text' | 'image'
   imageUrl?: string
   imageAlt?: string
   imageLink?: string
 }
+
+/**
+ * 셀에 크기를 따로 주지 않았을 때의 글자 크기.
+ * 오래 이 값으로 고정돼 있었으므로, 크기를 안 정한 기존 표가 그대로 보이도록 바꾸지 않는다.
+ */
+export const TABLE_CELL_DEFAULT_FONT_SIZE = '14px'
 
 /**
  * ModuleTable 콘텐츠 교체
@@ -431,7 +439,9 @@ export function replaceModuleTableContent(
 
         // 인라인 스타일 (이메일 호환성)
         const style = [
-          `font-size:14px`,
+          // 셀에 크기를 정했으면 그 값 — 드래그로 고른 부분만 다르게 준 크기는
+          // content HTML 안의 인라인 font-size로 들어가 이 값을 덮는다
+          `font-size:${cell.fontSize || TABLE_CELL_DEFAULT_FONT_SIZE}`,
           `font-weight:${fontWeight}`,
           `border:1px ${cellBorderColor} solid`,
           `background:${bgColor}`,

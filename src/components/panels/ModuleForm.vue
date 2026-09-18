@@ -1492,7 +1492,61 @@
                   <!-- 내용 (단일 선택만 편집) — 텍스트 모듈과 동일한 Quill 리치 에디터 -->
                   <div class="gg-field">
                     <label class="tbl-sec-label">내용</label>
-                    <div v-if="tableSelectedCells.length === 1 && firstSelCell" class="rte-field">
+                    <template v-if="tableSelectedCells.length === 1 && firstSelCell">
+                    <!-- 폰트 크기 — 텍스트 모듈의 '폰트 크기'와 같은 컨트롤 (Figma 640-3689).
+                         기준은 모듈 기본값이 아니라 **고른 셀**이고, 에디터 안에서 글자를 드래그하면
+                         그 부분에만 걸린다(배지 '선택 영역'). 툴바 바로 위에 두어 순서를 텍스트 모듈과 맞춘다. -->
+                    <div class="tbl-fs-field">
+                      <div class="gg-field-label fs-label-row">
+                        <span>
+                          폰트 크기
+                          <span v-if="isCellFontSizeSelectionTarget" class="fs-target-badge">선택 영역</span>
+                        </span>
+                        <button
+                          v-if="cellFontSizeHasInline"
+                          type="button"
+                          class="fs-reset-btn"
+                          @click.prevent="resetCellFontSizeToBase"
+                        >
+                          <span class="material-symbols-outlined">restart_alt</span>
+                          {{ isCellFontSizeSelectionTarget ? '선택 영역을 기본 크기로' : '개별 크기 모두 지우기' }}
+                        </button>
+                      </div>
+                      <div class="gg-margin-slider-row">
+                        <input
+                          type="range"
+                          :min="FONT_SIZE_MIN"
+                          :max="FONT_SIZE_MAX"
+                          step="1"
+                          :value="cellFontSizeNumber"
+                          @input="onCellFontSizeInput"
+                          class="gg-margin-slider"
+                        />
+                        <div class="gg-margin-value-field">
+                          <!-- 섞여 있을 때는 숫자 입력이 '--'를 담지 못해 텍스트 입력으로 그린다 -->
+                          <input
+                            v-if="isCellFontSizeMixed"
+                            type="text"
+                            value="--"
+                            @change="onCellFontSizeInput"
+                            @keydown.enter="blurTarget"
+                            class="gg-margin-value-input"
+                          />
+                          <input
+                            v-else
+                            type="number"
+                            :min="FONT_SIZE_MIN"
+                            :max="FONT_SIZE_MAX"
+                            :value="cellFontSizeNumber"
+                            @change="onCellFontSizeInput"
+                            @keydown.enter="blurTarget"
+                            class="gg-margin-value-input"
+                          />
+                          <span class="gg-margin-value-unit">px</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="rte-field" :style="{ '--rte-base-size': cellBaseFontSizeCss }">
                       <Editor
                         :model-value="firstSelCell.content"
                         @update:model-value="updateSelCellContent($event)"
@@ -1586,6 +1640,7 @@
                         </template>
                       </Editor>
                     </div>
+                    </template>
                     <p v-else class="tbl-multi-hint">여러 셀이 선택됐어요. 내용은 셀 하나만 선택해 편집하세요.</p>
                     <p class="hint-text">*셀 배경색·정렬은 지정하기 전까지 테이블 공통값을 따라요.</p>
                   </div>
@@ -1852,6 +1907,7 @@ import {
   toFontSizeValue,
   parseFontSize,
 } from '@/utils/quillFontSize'
+import { TABLE_CELL_DEFAULT_FONT_SIZE } from '@/utils/moduleContentReplacer'
 import {
   LETTER_SPACING_MIN,
   LETTER_SPACING_MAX,
@@ -2365,6 +2421,83 @@ const hasSelOwnStyle = computed(() =>
 )
 // undefined로 지우면 렌더러가 다시 공통값으로 폴백한다
 const resetSelOwnStyle = () => applyToSelected({ bgColor: undefined, align: undefined })
+
+// ===== 테이블 셀 글자 크기 (텍스트 모듈의 '폰트 크기'와 같은 컨트롤) =====
+// 텍스트 모듈은 '모듈 기본값(prop)'을 기준으로 삼지만, 표에는 그런 prop이 없고 크기를
+// 셀마다 다르게 주는 게 자연스럽다 — 그래서 기준이 **고른 셀**(cell.fontSize)이다.
+// 에디터 안에서 글자를 드래그하면 그 범위에만 인라인으로 걸린다(이 부분은 텍스트 모듈과 같다).
+// 컨트롤은 셀 하나만 골랐을 때만 나오므로(내용 편집과 같은 조건) 여러 셀 일괄 적용은 없다.
+
+/** 셀 에디터의 현재 서식 상태 — 선택 영역 여부·인라인 크기 유무를 여기서 읽는다 */
+const cellFontState = computed(() => editorFormatState[TABLE_CELL_KEY])
+/** 지금 조작 대상이 '드래그한 부분'인지 (아니면 셀 전체) */
+const isCellFontSizeSelectionTarget = computed(() => !!cellFontState.value?.hasSelection)
+/** 고른 범위에 크기가 섞여 있는지 — 값 자리에 '--'를 보여준다 */
+const isCellFontSizeMixed = computed(
+  () => isCellFontSizeSelectionTarget.value && !!cellFontState.value?.fontSizeMixed,
+)
+/** 되돌릴 인라인 크기가 있는지 — 고른 범위 기준(선택이 없으면 셀 본문 전체 기준) */
+const cellFontSizeHasInline = computed(() =>
+  isCellFontSizeSelectionTarget.value
+    ? !!cellFontState.value?.fontSizeInSelection
+    : !!cellFontState.value?.fontSizeAnywhere,
+)
+/** 셀의 바탕 크기(px) — 정한 적이 없으면 렌더러와 같은 기본값 */
+const cellBaseFontSizeNumber = computed(
+  () =>
+    parseFontSize(firstSelCell.value?.fontSize) ??
+    parseFontSize(TABLE_CELL_DEFAULT_FONT_SIZE) ??
+    14,
+)
+/** 에디터 본문을 캔버스와 같은 크기로 그리기 위한 값 */
+const cellBaseFontSizeCss = computed(() => `${cellBaseFontSizeNumber.value}px`)
+/** 컨트롤에 보일 값 — 고른 범위가 있으면 그 크기, 없거나 섞였으면 셀의 바탕 크기 */
+const cellFontSizeNumber = computed(() => {
+  if (isCellFontSizeSelectionTarget.value) {
+    const sel = parseFontSize(cellFontState.value?.fontSize)
+    if (sel !== null) return sel
+  }
+  return cellBaseFontSizeNumber.value
+})
+
+const onCellFontSizeInput = (event: Event) => {
+  const parsed = Number.parseInt((event.target as HTMLInputElement).value, 10)
+  const next = Math.min(
+    FONT_SIZE_MAX,
+    Math.max(FONT_SIZE_MIN, Number.isFinite(parsed) ? parsed : cellFontSizeNumber.value),
+  )
+  const quill = quillByKey[TABLE_CELL_KEY]
+  const range = quillRangeByKey[TABLE_CELL_KEY]
+  if (isCellFontSizeSelectionTarget.value && quill && range && range.length > 0) {
+    quill.formatText(range.index, range.length, 'fontSize', toFontSizeValue(next), 'user')
+    syncEditorFormatState(TABLE_CELL_KEY, quill, range)
+    return
+  }
+  applyToSelected({ fontSize: toFontSizeValue(next) })
+}
+
+/** 인라인 크기 지우기 — 고른 범위만, 선택이 없으면 셀 본문 전체. 셀의 바탕 크기는 그대로 둔다 */
+const resetCellFontSizeToBase = () => {
+  const quill = quillByKey[TABLE_CELL_KEY]
+  if (!quill) return
+  const range = quillRangeByKey[TABLE_CELL_KEY]
+  if (isCellFontSizeSelectionTarget.value && range && range.length > 0) {
+    quill.formatText(range.index, range.length, 'fontSize', false, 'user')
+  } else {
+    quill.formatText(0, quill.getLength(), 'fontSize', false, 'user')
+  }
+  syncEditorFormatState(TABLE_CELL_KEY, quill, quillRangeByKey[TABLE_CELL_KEY])
+}
+
+// 다른 셀로 옮겨 가도 에디터 컴포넌트는 그대로 살아 있어, 손대지 않으면 직전 셀의 선택 영역이
+// 남아 '선택 영역' 배지가 엉뚱하게 뜬다. 셀이 바뀌면 그 흔적을 지우고 새 내용으로 다시 읽는다.
+watch(firstSelCoord, () => {
+  quillRangeByKey[TABLE_CELL_KEY] = null
+  void nextTick(() => {
+    const quill = quillByKey[TABLE_CELL_KEY]
+    if (quill) syncEditorFormatState(TABLE_CELL_KEY, quill, null)
+  })
+})
 
 // 병합 / 병합 해제
 const canMergeSelection = computed(() => {

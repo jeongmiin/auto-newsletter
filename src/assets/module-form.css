@@ -1342,6 +1342,15 @@
   border-color: var(--blue-400);
   color: var(--blue-400);
 }
+/* 테이블 셀 '폰트 크기' — 텍스트 모듈의 폰트 크기 컨트롤과 같은 모양으로 서식 툴바 바로 위에 둔다.
+   .tbl-content 안의 gg-field-label은 여백이 0으로 눌려 있어 여기서 되살린다. */
+.module-form .tbl-fs-field {
+  margin-bottom: 16px;
+}
+.module-form .tbl-content .tbl-fs-field .gg-field-label {
+  margin-bottom: 8px;
+}
+
 .module-form .tbl-multi-hint {
   font-size: 13px;
   color: var(--gray-600);
