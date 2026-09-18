@@ -48,8 +48,11 @@
       <div class="flex-1 flex flex-col min-w-0 relative">
         <!-- 캔버스 영역 -->
         <CanvasArea class="flex-1" />
-        <!-- 캔버스 왼쪽 아래에 떠 있는 '?' 가이드 버튼 (캔버스와 함께 스크롤되지 않는다) -->
-        <GuideButton />
+        <!-- 캔버스 왼쪽 아래에 떠 있는 '?' 가이드 버튼 (캔버스와 함께 스크롤되지 않는다).
+             자리는 여기서 잡는다 — 버튼 자신은 생김새만 알고 어디에 놓일지는 모른다 -->
+        <div class="guide-fab-slot">
+          <GuideButton />
+        </div>
       </div>
 
       <!-- 우측 '모듈 순서' 패널 — 기본 닫힘. 레일의 '모듈 순서' 메뉴나 패널 왼쪽 탭으로 여닫는다 -->
@@ -156,6 +159,16 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* 가이드 버튼 자리 — 캔버스 열(relative) 왼쪽 아래. 열이 패널 폭을 따라 움직이므로 같이 밀려난다.
+   높이를 버튼에 맞춰 두어야 펼쳐질 때 아래 여백이 흔들리지 않는다 */
+.guide-fab-slot {
+  position: absolute;
+  left: 11px;
+  bottom: 18px;
+  z-index: 5;
+  line-height: 0;
+}
+
 /* 리사이즈 핸들 스타일 */
 .resize-handle {
   touch-action: none;

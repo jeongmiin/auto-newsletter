@@ -8,14 +8,18 @@
  *
  * 왼쪽 안내(`info` 슬롯)는 없앴다 — 템플릿 선택은 카드 이름 옆 체크가, 폴더 선택은
  * 목록 위 경로 줄이 같은 것을 알린다. 둘 다 고르는 자리 바로 옆이라 눈을 뗄 필요가 없다.
+ * 대신 왼쪽 끝에 가이드 버튼을 둔다 (Figma 1757-9529 / 1757-9388) — 바의 왼쪽 여백(85px)에
+ * 그대로 서고, `space-between` 이라 버튼이 펼쳐져도 오른쪽 버튼들은 밀리지 않는다.
  *
  * 슬롯: default — 오른쪽 버튼들. `.flow-btn` + `--ghost`/`--primary` 를 쓴다.
  * 버튼 스타일은 슬롯 내용(부모 스코프)에 닿아야 하므로 아래 <style> 은 전역이다.
  */
+import GuideButton from '@/components/editor/GuideButton.vue'
 </script>
 
 <template>
   <footer class="flow-footer">
+    <GuideButton />
     <div class="flow-footer-actions">
       <slot />
     </div>
@@ -26,10 +30,11 @@
 .flow-footer {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  /* 가이드 버튼은 왼쪽 끝, 버튼들은 오른쪽 끝 — 가이드가 펼쳐져도 버튼이 밀리지 않는다 */
+  justify-content: space-between;
   gap: 24px;
   height: 96px;
-  padding: 0 71px 0 85px;
+  padding: 0 85px;
   border-top: 1px solid var(--gray-200);
   background: var(--white);
   flex-shrink: 0;
