@@ -201,10 +201,12 @@
                 @click="mergeSelection"
               >합치기</button>
             </div>
+            <!-- 'SHIFT + 셀 선택'이라고 적었더니 Shift 와 + 키를 함께 누르는 사람이 나왔다.
+                 기호를 빼고 누르는 순서를 문장으로 풀어 적는다. -->
             <p class="hint-text">
               {{ canUnmergeSelection
                 ? '*합쳐진 셀이에요. 나누기를 누르면 원래 칸으로 돌아가요.'
-                : '*2개 이상 셀 합칠 시, SHIFT + 셀 선택하세요.' }}
+                : '*2개 이상 셀 합칠 시, SHIFT키를 누른 채로 셀을 선택하세요.' }}
             </p>
           </div>
 

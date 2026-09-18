@@ -130,7 +130,7 @@ onBeforeUnmount(() => clearTimeout(introTimer))
   flex-shrink: 0;
   display: inline-flex;
   justify-content: center;
-  width: 17px;
+  width: 16px;
   font-size: 22px;
   color: var(--blue-400);
 }

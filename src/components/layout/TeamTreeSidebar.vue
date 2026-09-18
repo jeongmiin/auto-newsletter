@@ -11,7 +11,7 @@
 import { computed, reactive } from 'vue'
 import { useModuleStore } from '@/stores/moduleStore'
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     /** 고른 팀 id — ''면 아직 아무 팀도 고르지 않은 상태 */
     modelValue: string
@@ -19,7 +19,11 @@ withDefaults(
     topLabel?: string
     /** 맨 윗칸을 눌린 상태로 보일지 */
     topActive?: boolean
-    /** 팀을 눌러 고를 수 있는지 — 끄면 지금 팀이 어디인지 보여주기만 한다 */
+    /**
+     * 팀을 눌러 고를 수 있는지 — 끄면 지금 팀이 어디인지 보여주기만 한다.
+     * 본부 접기/펼치기도 함께 잠근다: 고를 수 없는 트리를 접을 수 있게 두면
+     * 지금 어느 팀에 있는지를 스스로 감춰 버릴 수 있다.
+     */
     selectable?: boolean
   }>(),
   { topLabel: '', topActive: false, selectable: true },
@@ -42,8 +46,10 @@ const departments = computed(() =>
 // 부서 접기/펼치기 — 기본 펼침(기록에 없으면 열린 것으로 본다).
 // 트리를 비동기로 받아오므로 목록을 미리 채우지 않는다.
 const openDepts = reactive<Record<string, boolean>>({})
-const isOpen = (deptId: string) => openDepts[deptId] !== false
+// 고를 수 없는 트리는 늘 펼친 채로 둔다 — 접어 놓고 온 기록이 있어도 무시한다
+const isOpen = (deptId: string) => !props.selectable || openDepts[deptId] !== false
 const toggle = (deptId: string) => {
+  if (!props.selectable) return
   openDepts[deptId] = !isOpen(deptId)
 }
 </script>
@@ -61,7 +67,15 @@ const toggle = (deptId: string) => {
     </button>
 
     <div v-for="dept in departments" :key="dept.id" class="team-nav-dept">
-      <button type="button" class="team-nav-dept-head" @click="toggle(dept.id)">
+      <!-- 잠겨도 화살표는 그대로 둔다(생김새 유지) — 늘 펼친 상태이므로 아래 화살표로 고정된다 -->
+      <button
+        type="button"
+        class="team-nav-dept-head"
+        :class="{ 'is-locked': !selectable }"
+        :disabled="!selectable"
+        :aria-expanded="selectable ? isOpen(dept.id) : undefined"
+        @click="toggle(dept.id)"
+      >
         <span>{{ dept.name }}</span>
         <i
           class="pi text-xs text-gray-400"
@@ -162,6 +176,7 @@ const toggle = (deptId: string) => {
   border-radius: 0 5px 5px 0;
 }
 /* 고를 수 없는 상태 — 지금 팀이 어디인지 보여주기만 한다(흐리게 하지 않는다) */
+.team-nav-dept-head.is-locked,
 .team-nav-item.is-locked {
   cursor: default;
 }

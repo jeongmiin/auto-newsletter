@@ -65,10 +65,16 @@ const teamName = computed(
 /** 소속 팀이 정해졌는지 — 빈 템플릿은 이 화면에서 고르므로 처음에는 비어 있다 */
 const hasTeam = computed(() => !!editorStore.currentTeamId)
 /**
- * 여기서 팀을 고를 수 있는지 — 빈 템플릿일 때만.
- * 템플릿으로 시작했으면 그 템플릿의 팀이 곧 소속이라, 트리는 어디에 저장되는지만 보여준다.
+ * 여기서 팀을 고를 수 있는지 — 빈 템플릿으로 시작해 **전시회 폴더를 정하기 전까지만**.
+ *
+ * 템플릿으로 시작했으면 그 템플릿의 팀이 곧 소속이라 처음부터 고를 수 없다.
+ * 빈 템플릿은 이 화면에서 팀을 고르지만, 전시회 폴더까지 정하고 나면 함께 잠근다 —
+ * 그 뒤에 팀을 바꾸면 이미 고른 전시회가 남의 팀 아래 것이 되어 저장 자리가 어긋난다.
+ * 다시 고르려면 '이전으로'로 전시회 목록까지 돌아가면 풀린다(leaveExhibition).
  */
-const canPickTeam = computed(() => !editorStore.currentTemplateId)
+const canPickTeam = computed(
+  () => !editorStore.currentTemplateId && !editorStore.blankFolder,
+)
 const templateName = computed(() => editorStore.currentTemplateName || '빈 템플릿')
 /**
  * 빈 템플릿은 전시회 폴더를 모른 채 들어온다 — 그때는 **팀 폴더 안의 전시회 폴더 목록**을 먼저
@@ -334,6 +340,12 @@ const pickedEditFile = computed(() => {
 const isInsideEmpty = computed(() => isEmptyState.value && openedPath.value.length > 0)
 /** 지금 들어와 있는 자리 — 'gocaf/ vol53/' (빈 폴더 안내 문구용) */
 const currentLocationLabel = computed(() => `${[rootFolderName.value, ...openedPath.value].join('/ ')}/`)
+/**
+ * 지금 서 있는 폴더 이름 — 'vol53' (빈 폴더 안내의 제목용).
+ * 무엇이 비었는지를 이름으로 못 박는다 — 방금 만들고 들어온 폴더 앞에서
+ * '아직 폴더가 없어요'라고만 하면 만든 폴더가 사라진 줄 안다.
+ */
+const currentFolderName = computed(() => openedPath.value[openedPath.value.length - 1] ?? '')
 
 const goBack = () => router.push({ name: 'templates' })
 
@@ -357,17 +369,19 @@ const canSave = computed(() => (atTeamLevel.value ? !!picked.value : !!targetVol
  * **앞 조각은 눌러서 그 자리로 돌아간다** — 따로 있던 경로 줄(fd-crumbs)의 역할을 여기로 합쳤다.
  * 같은 길을 두 줄로 두 번 읽게 하던 것을 하나로 줄인 것이다.
  *
- * 돌아갈 수 있는 건 **지금 있는 자리보다 위**뿐이다:
- *   - 전시회 폴더(맨 앞) → 폴더 안에 들어와 있을 때만 goUp(0)
- *   - 들어와 있는 폴더 중 마지막 하나를 뺀 나머지 → goUp(i + 1)
- * 지금 있는 자리와, 아직 들어가지 않은 '고른 폴더'는 갈 곳이 없어 글자로만 둔다.
+ * **들어와 있는 폴더는 전부 누를 수 있다** — 전시회 폴더(goUp(0))부터 지금 서 있는 자리까지.
+ * 지금 자리를 눌러도 제자리지만 고른 폴더·검색어·만들던 줄이 풀려 그 폴더의 맨 처음 목록으로
+ * 돌아간다. 한 조각만 글자로 남겨 두면 '왜 여기만 안 눌리지'로 읽혀, 링크가 아니라 고장으로 보인다.
+ *
+ * 맨 뒤의 '고른 폴더'만 글자로 둔다 — 아직 들어가지 않은 자리라 돌아갈 곳이 없다.
  */
 const savePathSegments = computed<Array<{ name: string; up: number | null }>>(() => {
   if (!hasTeam.value || atTeamLevel.value) return []
-  const depth = openedPath.value.length
-  const segments = [{ name: rootFolderName.value, up: depth ? 0 : null }]
+  const segments: Array<{ name: string; up: number | null }> = [
+    { name: rootFolderName.value, up: 0 },
+  ]
   openedPath.value.forEach((name, i) => {
-    segments.push({ name, up: i < depth - 1 ? i + 1 : null })
+    segments.push({ name, up: i + 1 })
   })
   if (picked.value) segments.push({ name: picked.value.name, up: null })
   return segments
@@ -526,6 +540,12 @@ const continueEditing = async () => {
               @click="startCreate"
             >
               <span class="material-symbols-outlined">create_new_folder</span>
+              <!--
+                깊이에 따라 '하위 폴더 추가하기'로 바꿔 봤지만 되돌렸다.
+                이 버튼이 하는 일은 어느 깊이에서든 '지금 보고 있는 목록에 폴더를 하나 만든다'로 같은데,
+                이름만 달라지면 "만들어지는 자리가 바뀌었나?"로 읽힌다 — 저장 자리를 오해하는 쪽이 더 나쁘다.
+                어디에 생기는지는 바로 위 저장위치 줄과, 목록 맨 위에 끼어드는 입력 줄이 이미 보여준다.
+              -->
               폴더 추가하기
             </button>
           </div>
@@ -546,10 +566,12 @@ const continueEditing = async () => {
           <!-- 들어간 폴더가 비어 있을 때 — 새로 만들거나 그 자리에 바로 저장 (Figma 1488-1333) -->
           <div v-else-if="isInsideEmpty" class="fd-empty fd-empty--folder">
             <img :src="emptyFolderIcon" alt="" class="fd-empty-folder-img" />
-            <p class="fd-empty-title">아직 폴더가 없어요</p>
+            <p class="fd-empty-title">{{ currentFolderName }} 폴더가 비어 있어요</p>
+            <!-- 이 화면은 폴더 안에 들어와 있을 때만 뜨므로(isInsideEmpty), 여기서 만드는 폴더는 늘 하위 폴더다.
+                 흔한 쪽('여기 바로 저장')을 먼저 적는다 — 하위 폴더는 더 나눌 때만 쓴다. -->
             <p class="fd-empty-text">
-              새 폴더를 만들거나,<br />
-              현재 위치 <strong>{{ currentLocationLabel }}</strong> 에 저장할 수 있어요.
+              현재 위치 <strong>{{ currentLocationLabel }}</strong> 에 파일을 저장하거나,<br />
+              하위 폴더를 만들 수 있어요.
             </p>
           </div>
 
