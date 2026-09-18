@@ -101,15 +101,20 @@
       <div class="hright">
         <!-- 임시 저장 — 지금 작업을 회차 폴더에 올려 둔다(같은 이름으로 덮어써 최신 하나만 남는다).
              업로드 주소가 없으면 눌러도 실패할 버튼을 아예 감춘다(이미지 업로드와 같은 규칙).
-             말풍선은 두 가지 — 올린 직후 아래에 '저장 완료'(1542-6981), 저장 안 한 편집이 있을 때만
-             마우스를 올리면 '최근 편집 저장 안됨'. -->
+             올린 직후에는 버튼 아래에 '저장 완료' 말풍선을 띄운다(1542-6981). -->
+        <!-- 저장 안 한 편집이 있다는 알림은 **버튼 왼쪽에 그대로 적는다**.
+             말풍선으로 두면 마우스를 올려야만 보여, 정작 저장을 잊은 사람은 끝까지 모른다. -->
+        <Transition name="hunsaved">
+          <span v-if="canSaveToFolder && hasUnsavedEdits" class="hunsaved" role="status">
+            최근 편집 저장 안됨
+          </span>
+        </Transition>
         <span v-if="canSaveToFolder" class="hsave-wrap">
           <button
             type="button"
             class="hbtn hbtn--tint"
             :disabled="savingToFolder"
             @click="saveToFolder"
-            v-tooltip.bottom="{ value: '최근 편집 저장 안됨', disabled: !hasUnsavedEdits }"
           >
             <!-- 저장 안 한 편집이 있으면 구름 아이콘도 경고형으로 — 툴팁과 같은 조건 -->
             <span class="material-symbols-outlined">{{ hasUnsavedEdits ? 'cloud_alert' : 'cloud_done' }}</span>
@@ -692,6 +697,28 @@ const downloadForSend = (): Promise<void> => downloadHtml(false)
   white-space: nowrap;
   flex-shrink: 0;
 }
+/* 저장 안 한 편집 알림 — 임시 저장 버튼 왼쪽에 놓이는 글자.
+   버튼이 아니므로 채움/테두리 없이 글자만 둔다(옆 버튼들과 무게가 겹치지 않게). */
+.hunsaved {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gray-600);
+  white-space: nowrap;
+}
+/* 편집을 시작하는 순간 툭 나타나지 않도록 살짝 밀려 들어온다 */
+.hunsaved-enter-active,
+.hunsaved-leave-active {
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+.hunsaved-enter-from,
+.hunsaved-leave-to {
+  opacity: 0;
+  transform: translateX(6px);
+}
+
 /* 임시 저장 + '저장 완료' 말풍선 (1542-6981: 버튼 아래 8px, 진회색 카드에 흰 16px medium, 위쪽 꼬리) */
 .hsave-wrap {
   position: relative;
