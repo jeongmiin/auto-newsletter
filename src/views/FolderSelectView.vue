@@ -9,7 +9,7 @@
  * 줄을 다루는 규칙(화살표 버튼 없음):
  *   - 클릭으로 **고르고, 한 번 더 클릭하면 푼다** (안에 폴더가 있어도 같다)
  *   - **더블클릭**하면 안으로 들어간다 (빈 폴더에 또 폴더를 만들 때)
- *   - 1단계의 '여기로 저장'은 고른 폴더 **안으로 들어간다**(비어 있어도). 저장은 2단계에서 한다
+ *   - 1단계의 '저장하기'는 고른 폴더 **안으로 들어간다**(비어 있어도). 저장은 2단계에서 한다
  *   - 들어간 폴더가 비어 있으면 새 폴더를 만들거나 **그 자리에 바로 저장**할 수 있다 (1488-1333)
  *   - '이전으로'는 폴더 안이면 한 겹 위로, 맨 위면 템플릿 선택으로
  *
@@ -359,7 +359,7 @@ const targetVolume = computed(() => {
   if (isInsideEmpty.value) return normalizeVolume(openedPath.value.join('/'))
   return ''
 })
-/** '여기로 저장'을 누를 수 있는지 — 팀 폴더 단계에서는 고른 전시회 폴더로 들어가는 버튼이다 */
+/** '저장하기'를 누를 수 있는지 — 팀 폴더 단계에서는 고른 전시회 폴더로 들어가는 버튼이다 */
 const canSave = computed(() => (atTeamLevel.value ? !!picked.value : !!targetVolume.value))
 /**
  * '저장위치' 표기 — 'gocaf / eng / vol01 /' (Figma 1468-9089).
@@ -388,7 +388,7 @@ const savePathSegments = computed<Array<{ name: string; up: number | null }>>(()
 })
 
 /**
- * '여기로 저장'.
+ * '저장하기'.
  *   - 팀 폴더 단계(빈 템플릿)에서는 고른 전시회 폴더 **안으로 들어간다**.
  *   - 1단계(전시회 폴더 바로 아래)에서는 고른 폴더 **안으로 들어간다** — 안이 비어 있어도 마찬가지.
  *     2단계에서 폴더를 더 만들지, 그 자리에 바로 저장할지를 보고 정하게 하려는 것.
@@ -578,7 +578,7 @@ const continueEditing = async () => {
           <!--
             전시회 폴더(또는 팀 폴더) 자체가 비어 있을 때 — 위 '빈 폴더 안'과 같은 생김새를 쓴다.
             다만 **여기서는 '현재 위치에 저장'을 권하지 않는다**: 이 자리는 아직 저장할 자리가 아니라
-            (targetVolume이 비어 '여기로 저장'도 눌리지 않는다) 폴더를 만드는 것 말고는 길이 없다.
+            (targetVolume이 비어 '저장하기'도 눌리지 않는다) 폴더를 만드는 것 말고는 길이 없다.
           -->
           <div v-else-if="isEmptyState" class="fd-empty fd-empty--folder">
             <img :src="emptyFolderIcon" alt="" class="fd-empty-folder-img" />
@@ -720,7 +720,7 @@ const continueEditing = async () => {
             :disabled="!canSave"
             @click="goNext"
           >
-            여기로 저장
+            저장하기
           </button>
           <button
             v-if="pickedEditFile"
