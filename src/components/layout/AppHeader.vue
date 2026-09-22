@@ -189,7 +189,7 @@ const canvasWidth = computed(() => editorStore.canvasWidth)
 
 // 브레드크럼: 현재 템플릿명(빈 문서면 '빈 템플릿') → 클릭 시 템플릿 선택 페이지로 이동
 const currentTemplateName = computed(() => editorStore.currentTemplateName)
-const goTemplates = () => router.push('/templates')
+const goTemplates = () => router.push({ name: 'templates' })
 
 // 소속 팀 표시명 — 저장된 건 불변 id뿐이라 트리에서 찾아 쓴다.
 // (팀명이 바뀌어도 id는 그대로이므로 항상 최신 이름이 나온다)

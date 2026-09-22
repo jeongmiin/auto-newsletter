@@ -484,7 +484,7 @@ const scrollCanvas = (to: 'top' | 'bottom'): void => {
 
 // 빈 화면 빠른 시작: 템플릿 선택 화면으로 이동 (에디터 안에서 고르던 옛 목록 대신)
 const startFromTemplate = (): void => {
-  void router.push('/templates')
+  void router.push({ name: 'templates' })
 }
 // 빈 화면 빠른 시작: 재편집용 HTML 파일 열기
 const openFile = (): void => {

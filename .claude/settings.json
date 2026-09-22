@@ -12,7 +12,10 @@
       "Bash(echo \"TS EXIT: $?\")",
       "Bash(echo \"tsc exit: $?\")",
       "Bash(echo \"tsc: $?\")",
-      "Bash(echo \"\\(exit=$?\\)\")"
+      "Bash(echo \"\\(exit=$?\\)\")",
+      "Bash(curl -sI --max-time 10 https://newsletter.messeesang.com/gallery)",
+      "Bash(curl -sI --max-time 10 https://newsletter.messeesang.com/gallery/)",
+      "Edit(/.claude/skills/figma-builder/**)"
     ],
     "additionalDirectories": [
       "C:\\Users\\ESN-D0145\\AppData\\Local\\Temp\\claude\\d--Projects-auto-newsletter\\6e5bde4f-f058-4e45-971a-2909bdc5ce57\\scratchpad\\pw"

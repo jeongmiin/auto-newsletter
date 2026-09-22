@@ -5,7 +5,7 @@ const router = useRouter()
 
 const goToEditor = () => {
   // 에디터로 바로 가지 않고, 템플릿을 먼저 고르는 화면으로 이동
-  router.push('/templates')
+  router.push({ name: 'templates' })
 }
 
 const navLinks = [

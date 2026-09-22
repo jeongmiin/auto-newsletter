@@ -37,7 +37,7 @@ description: >-
 | 모듈 렌더 파이프라인(2경로) | `src/composables/useModuleRenderer.ts`(캔버스), `moduleStore.generateHtml()`(내보내기) — **둘 다 고쳐야 함** |
 | 모듈 정의 | `public/modules/*.html` + `public/modules/modules-config.json`(editableProps) + `src/utils/moduleConfigs.ts`(렌더 폴백/프로세서) |
 | 포인트 색상 적용 | `src/App.vue`(`--point-color` CSS 변수), `src/utils/pointColor.ts`(`resolvePointColors`) |
-| 라우팅/화면 | `src/router/index.ts` (`/`, `/templates`, `/editor`), `src/views/*` |
+| 라우팅/화면 | `src/router/index.ts` (`/`, `/design`=템플릿 선택, `/editor`), `src/views/*`. ⚠ 경로는 `public/` 폴더 이름과 겹치면 안 되고(서버에서 403), 다른 파일에서는 `{ name }`으로만 부른다 — `routePaths.test.ts`가 검사 |
 | 커스텀 속성 UI 패턴 | PropertiesPanel의 prop 타입: `table-editor`, `additional-contents`, `sns-icons` 참고 |
 
 핵심 개념(이미 구현됨): **행별 독립 컬럼 그룹 모델**(`ModuleGroup.rows[]` + `ModuleInstance.rowIndex`, `src/utils/groupLayout.ts`),
@@ -289,7 +289,7 @@ description: >-
 
   ### 21-2) 팀 배선 — 에디터가 소속 팀을 안다 (S3 업로드 선행 작업)
   - `editorStore`에 **`currentTeamId`/`currentTemplateId` + `setCurrentTemplate()`**. **저장은 불변 id만** 하고 헤더의 팀 이름은 `moduleStore.availableDepartments`에서 찾아 쓴다(팀명이 바뀌어도 최신 이름이 나온다 — 561d117의 id 체계와 같은 원칙).
-  - **router 가드**: `/editor`는 `currentTeamId`가 없으면 `/templates`로 되돌린다. 팀·템플릿 정보가 메모리에만 있어 **새로고침·직접 진입 시 팀이 비었다** → "에디터에 있다 = 팀이 있다"를 구조로 보장. (그 시점엔 작업 내용도 이미 사라진 뒤라 되돌리는 편이 정직하다.)
+  - **router 가드**: `/editor`는 `currentTeamId`가 없으면 템플릿 선택(`{ name: 'templates' }`, 경로 `/design`)으로 되돌린다. 팀·템플릿 정보가 메모리에만 있어 **새로고침·직접 진입 시 팀이 비었다** → "에디터에 있다 = 팀이 있다"를 구조로 보장. (그 시점엔 작업 내용도 이미 사라진 뒤라 되돌리는 편이 정직하다.)
   - **저장 파일에 `teamId` 기록**(`ProjectMetadata.teamId`). ⚠ **파일을 열 때 현재 팀을 덮어쓰지 않는다** — 에디터는 팀을 골라야 들어오고 파일 열기는 그 안에서 하는 동작이라, "지금 들어온 팀"이 작업의 소속이다. 파일 속 값은 만든 팀의 기록으로만 남는다. 이 규칙은 주석만으로는 뒤집히기 쉬워 **`projectFile.test.ts`에 테스트 3개로 고정**했다.
   - 빈 템플릿 적용 시에도 `teamId`는 유지(담당자가 바뀐 게 아니라 내용만 지운 것).
 

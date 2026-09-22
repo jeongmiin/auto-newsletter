@@ -217,7 +217,7 @@ const pickTemplate = async (t: NewsletterTemplate) => {
       templateName: t.name,
       teamId: t.teamId ?? null,
     })
-    router.push('/editor')
+    router.push({ name: 'editor' })
   } finally {
     applying.value = false
   }

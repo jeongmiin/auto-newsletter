@@ -24,7 +24,7 @@ const makeRouter = () =>
     history: createWebHistory(),
     routes: [
       { path: '/', name: 'landing', component: { template: '<div />' } },
-      { path: '/templates', name: 'templates', component: { template: '<div />' } },
+      { path: '/design', name: 'templates', component: { template: '<div />' } },
     ],
   })
 
@@ -80,7 +80,7 @@ describe("업데이트 공지 '오늘 하루 보지 않기'", () => {
   })
 
   it('처음 오면 템플릿 선택 화면에서 뜬다', async () => {
-    expect(isOpen(await mountAt('/templates'))).toBe(true)
+    expect(isOpen(await mountAt('/design'))).toBe(true)
   })
 
   it('랜딩에서는 뜨지 않는다', async () => {
@@ -88,7 +88,7 @@ describe("업데이트 공지 '오늘 하루 보지 않기'", () => {
   })
 
   it("체크하고 '확인'을 누르면 오늘 날짜가 기록된다", async () => {
-    const wrapper = await mountAt('/templates')
+    const wrapper = await mountAt('/design')
     await check(wrapper)
     await clickConfirm(wrapper)
 
@@ -100,7 +100,7 @@ describe("업데이트 공지 '오늘 하루 보지 않기'", () => {
   // X·ESC·바깥 클릭은 모두 Dialog가 update:visible(false)로 알린다.
   // 확인 버튼에만 걸려 있으면 이 경로로 닫은 사람은 체크하고도 다시 보게 된다.
   it('X·ESC로 닫아도 기록된다', async () => {
-    const wrapper = await mountAt('/templates')
+    const wrapper = await mountAt('/design')
     await check(wrapper)
     await closeFromDialog(wrapper)
 
@@ -110,33 +110,33 @@ describe("업데이트 공지 '오늘 하루 보지 않기'", () => {
   })
 
   it('체크하지 않고 닫으면 아무것도 기록하지 않는다', async () => {
-    const wrapper = await mountAt('/templates')
+    const wrapper = await mountAt('/design')
     await clickConfirm(wrapper)
 
     expect(localStorage.getItem(STORAGE_KEY)).toBeNull()
   })
 
   it('같은 날 다시 들어오면 뜨지 않는다', async () => {
-    const first = await mountAt('/templates')
+    const first = await mountAt('/design')
     await check(first)
     await clickConfirm(first)
 
-    expect(isOpen(await mountAt('/templates'))).toBe(false)
+    expect(isOpen(await mountAt('/design'))).toBe(false)
   })
 
   it('다음 날에는 다시 뜬다 — 하루만 숨기는 것이 요점이다', async () => {
-    const first = await mountAt('/templates')
+    const first = await mountAt('/design')
     await check(first)
     await clickConfirm(first)
 
     vi.setSystemTime(NEXT_DAY)
-    expect(isOpen(await mountAt('/templates'))).toBe(true)
+    expect(isOpen(await mountAt('/design'))).toBe(true)
   })
 
   // 날짜로 저절로 사라지게 두지 않았다 — 배포가 예정 시각보다 늦어지면 정작 안내가
   // 필요한 동안 아무것도 뜨지 않기 때문이다. 대신 9/28 머지 때 컴포넌트를 지운다.
   it('배포 예정 시각이 지나도 계속 뜬다 — 지우는 것은 사람이 한다', async () => {
     vi.setSystemTime(new Date('2026-09-28T18:00:01+09:00'))
-    expect(isOpen(await mountAt('/templates'))).toBe(true)
+    expect(isOpen(await mountAt('/design'))).toBe(true)
   })
 })

@@ -2,6 +2,16 @@ import { createRouter, createWebHistory } from 'vue-router'
 import LandingView from '../views/LandingView.vue'
 import { useEditorStore } from '@/stores/editorStore'
 
+/**
+ * 라우트 경로 규칙 — `src/router/__tests__/routePaths.test.ts`가 지킨다.
+ *
+ * 1. **경로는 `public/`의 폴더 이름과 겹치면 안 된다.** (`assets`도 빌드가 만드는 폴더라 금지)
+ *    화면 주소와 정적 파일이 서버에서 같은 이름 공간을 쓴다. 예전 `/templates`는
+ *    `public/templates/`와 이름이 같아서, 새로고침하면 서버가 화면 대신 그 폴더를 열려다
+ *    403을 냈다(앱 안에서 이동할 때는 서버에 묻지 않아 멀쩡했다). 그래서 `/design`이 됐다.
+ * 2. **경로 문자열은 이 파일에만 적는다.** 다른 곳에서는 `router.push({ name: '…' })`처럼
+ *    이름으로 부른다 — 경로를 바꿀 일이 생겨도 여기 한 줄만 고치면 되게.
+ */
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -11,7 +21,8 @@ const router = createRouter({
       component: LandingView,
     },
     {
-      path: '/templates',
+      // 템플릿 선택. 경로가 이름과 다른 건 `templates`가 public 폴더 이름이라서다(위 규칙 1)
+      path: '/design',
       name: 'templates',
       component: () => import('../views/TemplateSelectView.vue'),
     },
