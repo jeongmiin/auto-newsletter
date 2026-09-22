@@ -11,20 +11,8 @@
  * - 템플릿·폴더 선택(FlowFooter): 하단 바 왼쪽 끝에 놓는다.
  */
 import { onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue'
-
-/**
- * 내려받을 가이드 PDF.
- *
- * 파일은 `public/guide/` 에 둔다 — public 은 빌드가 손대지 않고 그대로 복사하므로
- * 파일만 바꿔 넣으면 코드를 고치지 않아도 된다.
- *
- * ⚠ 주소 앞에 `BASE_URL` 을 붙여야 한다. 배포는 `/auto-newsletter/` 같은 하위 경로에 올라가서,
- *   `/guide/...` 로 적으면 도메인 최상위를 찾아 404가 난다.
- */
-const GUIDE_FILE = 'guide/newsletter-guide.pdf'
-/** 내려받을 때 저장될 이름 */
-const GUIDE_SAVE_NAME = '뉴스레터 가이드.pdf'
-const guideUrl = `${import.meta.env.BASE_URL}${GUIDE_FILE}`
+// 랜딩의 '이용 가이드 내려받기'와 같은 파일이라 주소를 constants/guide.ts 한 곳에 둔다
+import { GUIDE_PDF_SAVE_NAME, GUIDE_PDF_URL } from '@/constants/guide'
 
 /**
  * 펼쳤을 때의 너비를 **글자를 직접 재서** 정한다.
@@ -88,8 +76,8 @@ onBeforeUnmount(() => clearTimeout(introTimer))
   <a
     class="guide-fab"
     :class="{ 'is-open': introOpen }"
-    :href="guideUrl"
-    :download="GUIDE_SAVE_NAME"
+    :href="GUIDE_PDF_URL"
+    :download="GUIDE_PDF_SAVE_NAME"
     :style="{ '--guide-open-width': `${openWidth}px` }"
     aria-label="뉴스레터 가이드 내려받기"
     @mouseenter="endIntro"

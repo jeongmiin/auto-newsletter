@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
+import { GUIDE_PDF_SAVE_NAME, GUIDE_PDF_URL } from '@/constants/guide'
+// ⚠ 로고는 **import 해서** 쓴다. 템플릿에 `/src/assets/...` 를 직접 적으면 dev 서버에서만
+//   보이고 빌드본에서는 그 주소가 그대로 남아 404가 난다(실제로 배포본에서 깨져 있었다).
+import logoUrl from '@/assets/img/logo/logo.png'
 
 const router = useRouter()
 
@@ -58,7 +62,7 @@ const features = [
     <nav class="fixed top-0 w-full z-50 bg-white border-b border-gray-200">
       <div class="flex justify-between items-center w-full max-w-screen-xl mx-auto xl:px-0 px-4 py-3 md:h-20">
         <div class="flex items-center">
-          <img src="/src/assets/img/logo/logo.png" alt="Logo" class="w-8 h-8" />
+          <img :src="logoUrl" alt="Logo" class="w-8 h-8" />
           <span class="md:text-xl font-bold">Newsletter Builder</span>
         </div>
         <div class="hidden md:flex gap-8 items-center">
@@ -191,6 +195,28 @@ const features = [
               <!-- 설명 (아래) -->
               <p class="text-base text-gray-500 !leading-relaxed break-keep">{{ step.desc }}</p>
             </div>
+
+            <!-- 이용 가이드 — 화면 캡처가 들어간 PDF. 에디터 안에서는 '?' 버튼(GuideButton)이
+                 같은 파일을 준다. 시작하기 전에 먼저 읽고 싶은 사람을 위해 여기에도 둔다. -->
+            <div
+              class="bg-blue-50 p-6 md:p-8 rounded-xl border border-blue-100 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6"
+            >
+              <div class="flex-1">
+                <h3 class="text-2xl font-bold text-gray-900 mb-3">이용 가이드</h3>
+                <p class="text-base text-gray-500 !leading-relaxed break-keep">
+                  화면을 따라 할 수 있도록 각 단계를 캡처와 함께 담았습니다. <br >
+                  에디터 안에서는 왼쪽 아래 <strong class="text-gray-800">?</strong> 버튼에서 언제든 받을 수 있어요.
+                </p>
+              </div>
+              <a
+                class="shrink-0 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 transition-colors text-white text-base font-bold no-underline"
+                :href="GUIDE_PDF_URL"
+                :download="GUIDE_PDF_SAVE_NAME"
+              >
+                <i class="pi pi-download text-sm"></i>
+                가이드 내려받기 (PDF)
+              </a>
+            </div>
           </div>
         </div>
       </section>
@@ -246,11 +272,11 @@ const features = [
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8 w-full px-4 md:px-10 py-12 max-w-screen-xl mx-auto">
         <div class="md:col-span-3">
           <div class="flex items-center mb-4">
-            <img src="/src/assets/img/logo/logo.png" alt="Logo" class="w-7 h-7" />
+            <img :src="logoUrl" alt="Logo" class="w-7 h-7" />
             <span class="text-lg font-bold text-blue-600">Newsletter Builder</span>
           </div>
           <p class="text-base text-gray-400 !leading-relaxed break-keep">
-            모듈 기반 HTML 뉴스레터 빌더. Vue 3, TypeScript, PrimeVue로 제작되었습니다.
+            모듈 기반 HTML 뉴스레터 빌더. UXD팀에서 제작되었습니다.
           </p>
         </div>
         <div class="flex flex-col gap-3">
