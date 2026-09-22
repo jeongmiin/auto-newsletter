@@ -82,7 +82,7 @@ describe('흐름 가드', () => {
 
   it('템플릿 선택·랜딩은 언제나 열린다', async () => {
     const router = await freshRouter()
-    await router.push('/templates')
+    await router.push('/design')
     expect(router.currentRoute.value.name).toBe('templates')
     await router.push('/')
     expect(router.currentRoute.value.name).toBe('landing')

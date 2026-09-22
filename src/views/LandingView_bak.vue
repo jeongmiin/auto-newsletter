@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const goToEditor = () => {
-  router.push('/editor')
+  router.push({ name: 'editor' })
 }
 
 const advancedFeatures = [

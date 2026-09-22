@@ -16,7 +16,8 @@
       "Bash(curl -sL -o name-row.png \"https://www.figma.com/api/mcp/asset/5ef93539-05b5-4498-a0d5-1d563821544c.png\")",
       "Bash(DEPLOY_BASE=/auto-newsletter/ npx vite build)",
       "Bash(MSYS_NO_PATHCONV=1 DEPLOY_BASE=/auto-newsletter/ npx vite build)",
-      "Bash(git log *)"
+      "Bash(git log *)",
+      "Edit(/.claude/skills/figma-builder/**)"
     ],
     "additionalDirectories": [
       "C:\\Users\\ESN-D0145\\AppData\\Local\\Temp\\claude\\d--Projects-auto-newsletter\\6e5bde4f-f058-4e45-971a-2909bdc5ce57\\scratchpad\\pw"
