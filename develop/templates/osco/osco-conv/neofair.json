@@ -1,0 +1,3101 @@
+{
+  "id": "neofair",
+  "wrapSettings": {
+    "backgroundColor": "#ffffff",
+    "borderEnabled": true,
+    "borderWidth": "15px",
+    "borderColor": "#0c999c",
+    "borderStyle": "solid",
+    "pointColor": "#0c999c",
+    "pointColors": [
+      "#0c999c",
+      "#111111",
+      "#e60000"
+    ],
+    "fontLanguage": "default",
+    "summary": "2026 뉴에너지 페어 오송 뉴스레터 입니다."
+  },
+  "modules": [
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/neofair/vol02/newenergy_logo.png",
+        "imageAlt": "로고",
+        "imageMaxWidth": "170px",
+        "imageAlign": "center",
+        "imageCrop": "",
+        "paddingTop": "30px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1790065776300-f55khcfes",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#dddddd",
+        "borderWidth": "0",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "20px",
+        "paddingRight": "20px"
+      },
+      "styles": {},
+      "groupId": "group-1790065776300-f55khcfes",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "20px",
+        "descriptionText": "<p style=\"line-height: 1.5; margin: 0; padding: 0;\">NEWSLETTER&nbsp;<strong>VOL.1</strong></p>",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "marginTop": "0",
+        "marginRight": "20px",
+        "marginBottom": "15px",
+        "marginLeft": "20px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111",
+        "textAlign": "center"
+      },
+      "styles": {},
+      "groupId": "group-1790065776300-f55khcfes",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/neofair/vol06/01.jpg",
+        "imageAlt": "메인 이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "imageCrop": "",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "showImageLink": true,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\"><strong style=\"font-size: 22px;\">&#91;2026&nbsp;뉴에너지&nbsp;페어&nbsp;오송&#93;&nbsp;사전등록&nbsp;시&nbsp;무료입장</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">에너지업계 종사자라면 주목하세요&#33;<br><br>대한민국 에너지 대전환을 이끌 태양광, 수소, ESS 분야의 최신 기술과 산업 흐름을 한자리에서 만날 수 있는 <strong>2026 뉴에너지 페어 오송&#40;NEO 2026&#41;</strong>이 열립니다.<br><br>분야별 특별관과 다양한 부대행사까지 마련된 <strong>NEO 2026</strong>에서 새로운 비즈니스 기회와 에너지 산업의 미래를 확인해보세요.</p>",
+        "paddingTop": "20px",
+        "paddingRight": "20px",
+        "paddingBottom": "0px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#999999",
+        "borderWidth": "1px",
+        "borderStyle": "dotted",
+        "dividerWidth": "100%",
+        "paddingTop": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">📆&nbsp;기간:&nbsp;2026.7.8.&#40;수&#41;&nbsp;–&nbsp;7.10.&#40;금&#41;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">🚩&nbsp;장소:&nbsp;청주오스코&#40;KTX&nbsp;오송역&nbsp;인근&#41;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">⏰&nbsp;시간:&nbsp;10:00&nbsp;–&nbsp;17:00&nbsp;&#40;입장마감&nbsp;16:30&#41;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*금요일&nbsp;16:00&nbsp;종료&nbsp;&#40;입장마감&nbsp;15:30&#41;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\"><strong>💡홈페이지에서&nbsp;사전등록&nbsp;시&nbsp;무료입장&nbsp;가능&#33;💡</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">🎟️&nbsp;정가&nbsp;10,000원&nbsp;→&nbsp;<strong style=\"color: #e60000; font-size: 18px;\">무료입장&nbsp;</strong></p>",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "0px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "홈페이지 →",
+        "buttonUrl": "https://bit.ly/4oN4NoI",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#06aeba",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "0px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "0px",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "5px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1790065776441-9u010rnqr",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "무료입장 신청 →",
+        "buttonUrl": "https://bit.ly/4gwJpSf",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#111111",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "0px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "0px",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "5px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1790065776441-9u010rnqr",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#333333",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1790065776486-cn8aup8e4",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "22px",
+        "descriptionText": "<div style=\"font-weight:700;\"><p style=\"line-height: 1.5; margin: 0; padding: 0; word-break: keep-all; text-align: center;\">부스&nbsp;배치도&nbsp;및&nbsp;참가기업&nbsp;보러가기</p></div>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "15px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1790065776486-cn8aup8e4",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all; text-align: center;\">NEO 2026 참가기업 리스트와 부스배치도가 공개되었습니다.<br><br>태양광, 수소, ESS는 물론 에너지 산업 지원, 공공투자·서비스 분야까지 에너지 산업의 다양한 기업과 기관을 한자리에서 만나보실 수 있습니다.<br><br>방문 전 참가기업 리스트를 확인하고, 관심 있는 부스를 미리 체크해보세요&#33;</p>",
+        "paddingTop": "0px",
+        "paddingRight": "30px",
+        "paddingBottom": "20px",
+        "paddingLeft": "30px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/neofair/vol06/02.jpg",
+        "imageAlt": "NEO 2026 참가기업 한 번에 확인하기",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "imageCrop": "",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "20px",
+        "paddingLeft": "0px",
+        "showImageLink": true,
+        "imageLinkUrl": "https://bit.ly/4vI6iXX",
+        "showBorderRadius": false,
+        "imageBorderRadius": "10px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#333333",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1790065776572-moyijqm8v",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "22px",
+        "descriptionText": "<div style=\"font-weight:700;\"><p style=\"line-height: 1.5; margin: 0; padding: 0; word-break: keep-all; text-align: center;\">NEO 2026 사전등록자 대상 이벤트</p></div>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "15px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1790065776572-moyijqm8v",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/neofair/vol06/08.jpg",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "imageCrop": "",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1790065776619-rur57w0u9",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7; text-align:left;\"><span style=\"font-weight:700;\">사전등록 인증 EVENT</span></p>",
+        "paddingTop": "5px",
+        "paddingRight": "10px",
+        "paddingBottom": "5px",
+        "paddingLeft": "10px",
+        "marginTop": "6px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "0px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111",
+        "textAlign": "left"
+      },
+      "styles": {},
+      "groupId": "group-1790065776619-rur57w0u9",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">사전등록하고&nbsp;댓글에&nbsp;정보&nbsp;남기면</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">추첨을&nbsp;통해&nbsp;커피&nbsp;쿠폰&nbsp;증정!</p>",
+        "paddingTop": "0px",
+        "paddingRight": "10px",
+        "paddingBottom": "0px",
+        "paddingLeft": "10px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "0px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "textAlign": "left"
+      },
+      "styles": {},
+      "groupId": "group-1790065776619-rur57w0u9",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/neofair/vol06/09.jpg",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "imageCrop": "",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1790065776678-pkw02txl7",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7; text-align:left;\"><span style=\"font-weight:700;\">NEO한 후기 EVENT</span></p>",
+        "paddingTop": "5px",
+        "paddingRight": "10px",
+        "paddingBottom": "5px",
+        "paddingLeft": "10px",
+        "marginTop": "6px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "0px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111",
+        "textAlign": "left"
+      },
+      "styles": {},
+      "groupId": "group-1790065776678-pkw02txl7",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">현장에서&nbsp;NEO와&nbsp;함께한&nbsp;후기를&nbsp;남겨주세요</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">추첨을&nbsp;통해&nbsp;치킨까지&nbsp;~?</p>",
+        "paddingTop": "0px",
+        "paddingRight": "10px",
+        "paddingBottom": "0px",
+        "paddingLeft": "10px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "0px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "textAlign": "left"
+      },
+      "styles": {},
+      "groupId": "group-1790065776678-pkw02txl7",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "참여하기 →",
+        "buttonUrl": "https://bit.ly/3Qmi2zX",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#111111",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "0px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "0px",
+        "paddingTop": "30px",
+        "paddingRight": "20px",
+        "paddingBottom": "30px",
+        "paddingLeft": "20px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "5px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#333333",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1790065776765-hpbkycmr1",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "22px",
+        "descriptionText": "<div style=\"font-weight:700;\"><p style=\"line-height: 1.5; margin: 0; padding: 0; word-break: keep-all; text-align: center;\">부대행사까지&nbsp;풍성하게&nbsp;즐기세요&#33;</p></div>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "15px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1790065776765-hpbkycmr1",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7; text-align:center;\"><strong>에너지인의 밤</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "0px",
+        "paddingBottom": "6px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "6px",
+        "marginLeft": "0px",
+        "bgColor": "#e5e5e5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111",
+        "textAlign": "center"
+      },
+      "styles": {},
+      "groupId": "group-1790065776833-hmt0gq30k",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/neofair/vol06/03.jpg",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "imageCrop": "",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1790065776833-hmt0gq30k",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\"><strong style=\"font-size: 16px;\">참가기업&nbsp;비즈니스&nbsp;네트워킹</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">유관&nbsp;산업&nbsp;관계자&nbsp;바이어&nbsp;간&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">교류와&nbsp;협력&nbsp;강화&nbsp;프로그램</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">일시:&nbsp;7.8.&#40;수&#41;&nbsp;17:00&nbsp;~&nbsp;19:30</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">장소:&nbsp;그랜드볼룸&nbsp;202호</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">신청: 참가기업, 바이어 대상 &#47; 선착순 사전 신청</p>",
+        "paddingTop": "10px",
+        "paddingRight": "0px",
+        "paddingBottom": "10px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1790065776833-hmt0gq30k",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleSmallButton",
+      "properties": {
+        "btn1Text": "자세히 보기 →",
+        "btn1Url": "https://bit.ly/43WbCuj",
+        "btn1BgColor": "#111111",
+        "btn1TextColor": "#FFFFFF",
+        "showBtn2": false,
+        "btn2Text": "버튼 2 →",
+        "btn2Url": "",
+        "btn2BgColor": "#e5e5e5",
+        "btn2TextColor": "#333333",
+        "showBtn3": false,
+        "btn3Text": "버튼 3 →",
+        "btn3Url": "",
+        "btn3BgColor": "#e5e5e5",
+        "btn3TextColor": "#333333",
+        "showBtn4": false,
+        "btn4Text": "버튼 4 →",
+        "btn4Url": "",
+        "btn4BgColor": "#e5e5e5",
+        "btn4TextColor": "#333333",
+        "align": "left",
+        "btnPaddingTop": "5px",
+        "btnPaddingRight": "20px",
+        "btnPaddingBottom": "5px",
+        "btnPaddingLeft": "20px",
+        "paddingTop": "5px",
+        "paddingRight": "0px",
+        "paddingBottom": "15px",
+        "paddingLeft": "0px",
+        "btnFontSize": "13px",
+        "showBorderRadius": true,
+        "btnBorderRadius": "30px",
+        "btnWidth": "100%"
+      },
+      "styles": {},
+      "groupId": "group-1790065776833-hmt0gq30k",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7; text-align:center;\"><strong>배터리 JOB 콘서트</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "0px",
+        "paddingBottom": "6px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "6px",
+        "marginLeft": "0px",
+        "bgColor": "#e5e5e5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111",
+        "textAlign": "center"
+      },
+      "styles": {},
+      "groupId": "group-1790065776833-hmt0gq30k",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/neofair/vol06/batteryjob.jpg",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "imageCrop": "",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1790065776833-hmt0gq30k",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\"><strong style=\"font-size: 16px;\">에너지&nbsp;산업&nbsp;취업박람회</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">현직자 TMI 토크 콘서트, 직무 밸런스 게임 등 맞춤형 취업 컨설팅 제공</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">일시:&nbsp;7.8.&#40;수&#41;&nbsp;10:00&nbsp;~&nbsp;17:00</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">장소:&nbsp;중회의실&nbsp;205-6호</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">신청:&nbsp;선착순&nbsp;사전&nbsp;신청</p>",
+        "paddingTop": "10px",
+        "paddingRight": "0px",
+        "paddingBottom": "10px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1790065776833-hmt0gq30k",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleSmallButton",
+      "properties": {
+        "btn1Text": "자세히 보기 →",
+        "btn1Url": "https://bit.ly/4oL6VwX",
+        "btn1BgColor": "#111111",
+        "btn1TextColor": "#FFFFFF",
+        "showBtn2": false,
+        "btn2Text": "버튼 2 →",
+        "btn2Url": "",
+        "btn2BgColor": "#e5e5e5",
+        "btn2TextColor": "#333333",
+        "showBtn3": false,
+        "btn3Text": "버튼 3 →",
+        "btn3Url": "",
+        "btn3BgColor": "#e5e5e5",
+        "btn3TextColor": "#333333",
+        "showBtn4": false,
+        "btn4Text": "버튼 4 →",
+        "btn4Url": "",
+        "btn4BgColor": "#e5e5e5",
+        "btn4TextColor": "#333333",
+        "align": "left",
+        "btnPaddingTop": "5px",
+        "btnPaddingRight": "20px",
+        "btnPaddingBottom": "5px",
+        "btnPaddingLeft": "20px",
+        "paddingTop": "5px",
+        "paddingRight": "0px",
+        "paddingBottom": "15px",
+        "paddingLeft": "0px",
+        "btnFontSize": "13px",
+        "showBorderRadius": true,
+        "btnBorderRadius": "30px",
+        "btnWidth": "100%"
+      },
+      "styles": {},
+      "groupId": "group-1790065776833-hmt0gq30k",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7; text-align:center;\"><strong>수출상담회</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "0px",
+        "paddingBottom": "6px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "6px",
+        "marginLeft": "0px",
+        "bgColor": "#e5e5e5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111",
+        "textAlign": "center"
+      },
+      "styles": {},
+      "groupId": "group-1790065776929-0hdsp60mh",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/neofair/vol06/05.jpg",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "imageCrop": "",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1790065776929-0hdsp60mh",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\"><strong style=\"font-size: 16px;\">해외&nbsp;판로&nbsp;확대&nbsp;지원&nbsp;수출&nbsp;상담</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">바이어와&nbsp;1:1&nbsp;미팅을&nbsp;진행하여</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">비즈니스로&nbsp;이어질&nbsp;수&nbsp;있는&nbsp;기회&nbsp;제공</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">일시:&nbsp;7.8.&#40;수&#41;-&nbsp;9.&#40;목&#41;&nbsp;10:00&nbsp;~&nbsp;17:00</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">장소:&nbsp;전시장&nbsp;내&nbsp;상담회장</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">신청:&nbsp;참가기업&nbsp;대상</p>",
+        "paddingTop": "10px",
+        "paddingRight": "0px",
+        "paddingBottom": "10px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1790065776929-0hdsp60mh",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleSmallButton",
+      "properties": {
+        "btn1Text": "자세히 보기 →",
+        "btn1Url": "https://bit.ly/3QEXKBz",
+        "btn1BgColor": "#111111",
+        "btn1TextColor": "#FFFFFF",
+        "showBtn2": false,
+        "btn2Text": "버튼 2 →",
+        "btn2Url": "",
+        "btn2BgColor": "#e5e5e5",
+        "btn2TextColor": "#333333",
+        "showBtn3": false,
+        "btn3Text": "버튼 3 →",
+        "btn3Url": "",
+        "btn3BgColor": "#e5e5e5",
+        "btn3TextColor": "#333333",
+        "showBtn4": false,
+        "btn4Text": "버튼 4 →",
+        "btn4Url": "",
+        "btn4BgColor": "#e5e5e5",
+        "btn4TextColor": "#333333",
+        "align": "left",
+        "btnPaddingTop": "5px",
+        "btnPaddingRight": "20px",
+        "btnPaddingBottom": "5px",
+        "btnPaddingLeft": "20px",
+        "paddingTop": "5px",
+        "paddingRight": "0px",
+        "paddingBottom": "15px",
+        "paddingLeft": "0px",
+        "btnFontSize": "13px",
+        "showBorderRadius": true,
+        "btnBorderRadius": "30px",
+        "btnWidth": "100%"
+      },
+      "styles": {},
+      "groupId": "group-1790065776929-0hdsp60mh",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7; text-align:center;\"><strong>병원시설 구매상담회</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "0px",
+        "paddingBottom": "6px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "6px",
+        "marginLeft": "0px",
+        "bgColor": "#e5e5e5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111",
+        "textAlign": "center"
+      },
+      "styles": {},
+      "groupId": "group-1790065776929-0hdsp60mh",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/neofair/vol06/06.jpg",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "imageCrop": "",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1790065776929-0hdsp60mh",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\"><strong style=\"font-size: 16px;\">국내&nbsp;병원&nbsp;및&nbsp;의료시설&nbsp;구매&nbsp;상담</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">병원시설&nbsp;수요자와&nbsp;1:1&nbsp;미팅을&nbsp;통해</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">납품과&nbsp;협력으로&nbsp;이어질&nbsp;상담&nbsp;제공</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">일시:&nbsp;7.9.&#40;목&#41;-10.&#40;금&#41;&nbsp;10:00&nbsp;~&nbsp;17:00</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">장소:&nbsp;전시장&nbsp;내&nbsp;상담회장</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">신청:&nbsp;참가기업&nbsp;대상</p>",
+        "paddingTop": "10px",
+        "paddingRight": "0px",
+        "paddingBottom": "10px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1790065776929-0hdsp60mh",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleSmallButton",
+      "properties": {
+        "btn1Text": "자세히 보기 →",
+        "btn1Url": "https://bit.ly/4eEHJDW",
+        "btn1BgColor": "#111111",
+        "btn1TextColor": "#FFFFFF",
+        "showBtn2": false,
+        "btn2Text": "버튼 2 →",
+        "btn2Url": "",
+        "btn2BgColor": "#e5e5e5",
+        "btn2TextColor": "#333333",
+        "showBtn3": false,
+        "btn3Text": "버튼 3 →",
+        "btn3Url": "",
+        "btn3BgColor": "#e5e5e5",
+        "btn3TextColor": "#333333",
+        "showBtn4": false,
+        "btn4Text": "버튼 4 →",
+        "btn4Url": "",
+        "btn4BgColor": "#e5e5e5",
+        "btn4TextColor": "#333333",
+        "align": "left",
+        "btnPaddingTop": "5px",
+        "btnPaddingRight": "20px",
+        "btnPaddingBottom": "5px",
+        "btnPaddingLeft": "20px",
+        "paddingTop": "5px",
+        "paddingRight": "0px",
+        "paddingBottom": "15px",
+        "paddingLeft": "0px",
+        "btnFontSize": "13px",
+        "showBorderRadius": true,
+        "btnBorderRadius": "30px",
+        "btnWidth": "100%"
+      },
+      "styles": {},
+      "groupId": "group-1790065776929-0hdsp60mh",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7; text-align:center;\"><strong>도슨트 투어</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "0px",
+        "paddingBottom": "6px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "6px",
+        "marginLeft": "0px",
+        "bgColor": "#e5e5e5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111",
+        "textAlign": "center"
+      },
+      "styles": {},
+      "groupId": "group-1790065777028-7ndtryeu3",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/neofair/vol06/07.jpg",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "imageCrop": "",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1790065777028-7ndtryeu3",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\"><strong style=\"font-size: 16px;\">전시&nbsp;해설형&nbsp;프로그램</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">각&nbsp;분야별&nbsp;대표&nbsp;기업과&nbsp;특별관을&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">한&nbsp;번에&nbsp;둘러볼&nbsp;수&nbsp;있는&nbsp;기회</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">일시:&nbsp;7.8.&#40;수&#41;-10.&#40;금&#41;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">장소:&nbsp;전시장</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">신청:&nbsp;선착순&nbsp;사전&nbsp;신청</p>",
+        "paddingTop": "10px",
+        "paddingRight": "0px",
+        "paddingBottom": "10px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1790065777028-7ndtryeu3",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleSmallButton",
+      "properties": {
+        "btn1Text": "자세히 보기 →",
+        "btn1Url": "https://bit.ly/4vaYk8F",
+        "btn1BgColor": "#111111",
+        "btn1TextColor": "#FFFFFF",
+        "showBtn2": false,
+        "btn2Text": "버튼 2 →",
+        "btn2Url": "",
+        "btn2BgColor": "#e5e5e5",
+        "btn2TextColor": "#333333",
+        "showBtn3": false,
+        "btn3Text": "버튼 3 →",
+        "btn3Url": "",
+        "btn3BgColor": "#e5e5e5",
+        "btn3TextColor": "#333333",
+        "showBtn4": false,
+        "btn4Text": "버튼 4 →",
+        "btn4Url": "",
+        "btn4BgColor": "#e5e5e5",
+        "btn4TextColor": "#333333",
+        "align": "left",
+        "btnPaddingTop": "5px",
+        "btnPaddingRight": "20px",
+        "btnPaddingBottom": "5px",
+        "btnPaddingLeft": "20px",
+        "paddingTop": "32px",
+        "paddingRight": "0px",
+        "paddingBottom": "15px",
+        "paddingLeft": "0px",
+        "btnFontSize": "13px",
+        "showBorderRadius": true,
+        "btnBorderRadius": "30px",
+        "btnWidth": "100%"
+      },
+      "styles": {},
+      "groupId": "group-1790065777028-7ndtryeu3",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7; text-align:center;\"><strong>에너지 전환 토크콘서트</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "0px",
+        "paddingBottom": "6px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "6px",
+        "marginLeft": "0px",
+        "bgColor": "#e5e5e5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111",
+        "textAlign": "center"
+      },
+      "styles": {},
+      "groupId": "group-1790065777028-7ndtryeu3",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/neofair/vol06/10.jpg",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "imageCrop": "",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1790065777028-7ndtryeu3",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\"><strong style=\"font-size: 16px;\">AI와&nbsp;에너지&nbsp;전환&nbsp;시대,<br>충북의&nbsp;미래&nbsp;성장&nbsp;방정식</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">에너지&nbsp;산업과&nbsp;미래&nbsp;기술을&nbsp;누구나&nbsp;쉽고&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">흥미롭게&nbsp;만나는&nbsp;대중&nbsp;강연&nbsp;무대</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">일시:&nbsp;7.10.&#40;금&#41;&nbsp;10:00&nbsp;~&nbsp;14:30</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">장소:&nbsp;전시장&nbsp;내&nbsp;컨퍼런스장&nbsp;2</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: keep-all;\">신청:&nbsp;선착순&nbsp;사전&nbsp;신청</p>",
+        "paddingTop": "10px",
+        "paddingRight": "0px",
+        "paddingBottom": "10px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1790065777028-7ndtryeu3",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleSmallButton",
+      "properties": {
+        "btn1Text": "자세히 보기 →",
+        "btn1Url": "https://bit.ly/3Ql3tfX",
+        "btn1BgColor": "#111111",
+        "btn1TextColor": "#FFFFFF",
+        "showBtn2": false,
+        "btn2Text": "버튼 2 →",
+        "btn2Url": "",
+        "btn2BgColor": "#e5e5e5",
+        "btn2TextColor": "#333333",
+        "showBtn3": false,
+        "btn3Text": "버튼 3 →",
+        "btn3Url": "",
+        "btn3BgColor": "#e5e5e5",
+        "btn3TextColor": "#333333",
+        "showBtn4": false,
+        "btn4Text": "버튼 4 →",
+        "btn4Url": "",
+        "btn4BgColor": "#e5e5e5",
+        "btn4TextColor": "#333333",
+        "align": "left",
+        "btnPaddingTop": "5px",
+        "btnPaddingRight": "20px",
+        "btnPaddingBottom": "5px",
+        "btnPaddingLeft": "20px",
+        "paddingTop": "5px",
+        "paddingRight": "0px",
+        "paddingBottom": "15px",
+        "paddingLeft": "0px",
+        "btnFontSize": "13px",
+        "showBorderRadius": true,
+        "btnBorderRadius": "30px",
+        "btnWidth": "100%"
+      },
+      "styles": {},
+      "groupId": "group-1790065777028-7ndtryeu3",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#333333",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1790065777104-iynx0fjj6",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "22px",
+        "descriptionText": "<div style=\"font-weight:700;\"><p style=\"line-height: 1.5; margin: 0; padding: 0; word-break: keep-all; text-align: center;\">전시장에서 만나는 산업 전략 세미나</p></div>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "15px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1790065777104-iynx0fjj6",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "18px",
+        "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; margin-bottom:6px;\">#DAY&nbsp;01</p>",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "0px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleTable",
+      "properties": {
+        "tableCells": [
+          [
+            {
+              "id": "cell-1790000000000-0000k",
+              "type": "th",
+              "content": "시간",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790000000000-0000l",
+              "type": "th",
+              "content": "주제",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790000000000-0000m",
+              "type": "th",
+              "content": "장소",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790000000000-0000n",
+              "type": "td",
+              "content": "10:00 ~ 16:10",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790000000000-0000o",
+              "type": "td",
+              "content": "<strong style=\"font-weight:700;\">2026년 태양광 발전 보급 확산에 따른</strong><br><strong style=\"font-weight:700;\">대응 방향과 주요 이슈 세미나</strong><br>(주최/주관) - 산업교육연구소",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            },
+            {
+              "id": "cell-1790000000000-0000p",
+              "type": "td",
+              "content": "207 - 208호",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            }
+          ],
+          [
+            {
+              "id": "cell-1790000000000-0000q",
+              "type": "td",
+              "content": "10:00 ~ 17:00",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790000000000-0000r",
+              "type": "td",
+              "content": "<strong style=\"font-weight:700;\">2026 PV시스템 상생 워크숍</strong><br>(주최/주관) - 한국태양에너지학회, 한국태양광공사협회, 한국에너지기술연구원",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            },
+            {
+              "id": "cell-1790000000000-0000s",
+              "type": "td",
+              "content": "209호",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            }
+          ],
+          [
+            {
+              "id": "cell-1790000000000-0000t",
+              "type": "td",
+              "content": "13:00 ~ 16:30",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790000000000-0000u",
+              "type": "td",
+              "content": "<strong style=\"font-weight:700;\">영농형 태양광 및 햇빛소득마을의 정책과 </strong><br><strong style=\"font-weight:700;\">사업추진방안 세미나</strong><br>(주최/주관) - (사)한국태양광산업협회, <br>가톨릭대학교 RIES사업단",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            },
+            {
+              "id": "cell-1790000000000-0000v",
+              "type": "td",
+              "content": "204호",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            }
+          ],
+          [
+            {
+              "id": "cell-1790000000000-0000w",
+              "type": "td",
+              "content": "10:00 ~ 16:00",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790000000000-0000x",
+              "type": "td",
+              "content": "<strong style=\"font-weight:700;\">수소안전 특별교육 세미나</strong><br>(주최/주관) - 한국가스안전공사",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            },
+            {
+              "id": "cell-1790000000000-0000y",
+              "type": "td",
+              "content": "203호",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            }
+          ],
+          [
+            {
+              "id": "cell-1790000000000-0000z",
+              "type": "td",
+              "content": "13:00 ~ 20:00",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790000000000-00010",
+              "type": "td",
+              "content": "<strong style=\"font-weight:700;\">제3회 수소 산업·진흥 안전기술 컨퍼런스</strong><br>(주최/주관) - 한국가스안전공사, 한국수소연합, 한국에너지기술평가원",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            },
+            {
+              "id": "cell-1790000000000-00011",
+              "type": "td",
+              "content": "201호",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            }
+          ],
+          [
+            {
+              "id": "cell-1790000000000-00012",
+              "type": "td",
+              "content": "10:00 ~ 17:00",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790000000000-00013",
+              "type": "td",
+              "content": "<strong style=\"font-weight:700;\">배터리 신(新)통상 시대, 규제의 벽을 넘는 </strong><br><strong style=\"font-weight:700;\">K-배터리 글로벌 전략 세미나</strong><br>(주최/주관) - 한국배터리산업협회",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            },
+            {
+              "id": "cell-1790000000000-00014",
+              "type": "td",
+              "content": "210호",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            }
+          ],
+          [
+            {
+              "id": "cell-1790000000000-00015",
+              "type": "td",
+              "content": "10:00 ~ 17:00",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790000000000-00016",
+              "type": "td",
+              "content": "<strong style=\"font-weight:700;\">2026 배터리 JOB 콘서트</strong><br>(주최/주관) - 충북에너지산학융합원",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            },
+            {
+              "id": "cell-1790000000000-00017",
+              "type": "td",
+              "content": "205 ~ 206호",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            }
+          ]
+        ],
+        "borderTopWidth": "2px",
+        "borderTopColor": "#333333",
+        "cellBorderColor": "#dddddd",
+        "headerBgColor": "#f6f6f6",
+        "headerTextColor": "#333333",
+        "headerAlign": "center",
+        "cellBgColor": "#ffffff",
+        "cellTextColor": "#333333",
+        "cellAlign": "left",
+        "paddingTop": "0px",
+        "paddingRight": "10px",
+        "paddingBottom": "20px",
+        "paddingLeft": "10px",
+        "tableColWidthOn": true,
+        "tableColWidths": [
+          "20%",
+          "",
+          "20%"
+        ]
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "18px",
+        "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; margin-bottom:6px;\">#DAY&nbsp;02</p>",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "0px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleTable",
+      "properties": {
+        "tableCells": [
+          [
+            {
+              "id": "cell-1790000000000-0001a",
+              "type": "th",
+              "content": "시간",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790000000000-0001b",
+              "type": "th",
+              "content": "주제",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790000000000-0001c",
+              "type": "th",
+              "content": "장소",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790000000000-0001d",
+              "type": "td",
+              "content": "10:30 ~ 20:00",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790000000000-0001e",
+              "type": "td",
+              "content": "<strong style=\"font-weight:700;\">2026 C-Mega Cluster 미래전략 써밋</strong><br>(주최/주관) - 산업통상부, 한국산업기술진흥원, 지역산업진흥원",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            },
+            {
+              "id": "cell-1790000000000-0001f",
+              "type": "td",
+              "content": "202호",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            }
+          ],
+          [
+            {
+              "id": "cell-1790000000000-0001g",
+              "type": "td",
+              "content": "10:00 ~ 16:00",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790000000000-0001h",
+              "type": "td",
+              "content": "<strong style=\"font-weight:700;\">수소안전 특별교육 세미나</strong><br>(주최/주관) - 한국가스안전공사",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            },
+            {
+              "id": "cell-1790000000000-0001i",
+              "type": "td",
+              "content": "203호",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            }
+          ],
+          [
+            {
+              "id": "cell-1790000000000-0001j",
+              "type": "td",
+              "content": "13:00 ~ 21:00",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790000000000-0001k",
+              "type": "td",
+              "content": "<strong style=\"font-weight:700;\">제3회 수소 산업·진흥 안전기술 컨퍼런스</strong><br>(주최/주관) - 한국가스안전공사, 한국수소연합, 한국에너지기술평가원",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            },
+            {
+              "id": "cell-1790000000000-0001l",
+              "type": "td",
+              "content": "201호",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            }
+          ],
+          [
+            {
+              "id": "cell-1790000000000-0001m",
+              "type": "td",
+              "content": "10:00 ~ 17:00",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790000000000-0001n",
+              "type": "td",
+              "content": "<strong style=\"font-weight:700;\">AI 데이터 센터 최근 동향과 기업의 대응 전략 세미나</strong><br>(주최/주관) - 산업교육연구소",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            },
+            {
+              "id": "cell-1790000000000-0001o",
+              "type": "td",
+              "content": "207 - 208호",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            }
+          ],
+          [
+            {
+              "id": "cell-1790000000000-0001p",
+              "type": "td",
+              "content": "10:00 ~ 12:00",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790000000000-0001q",
+              "type": "td",
+              "content": "<strong style=\"font-weight:700;\">청주산단 탄소중립 RE100 세미나</strong><br>(주최/주관) - 충북테크노파크",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            },
+            {
+              "id": "cell-1790000000000-0001r",
+              "type": "td",
+              "content": "204호",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            }
+          ],
+          [
+            {
+              "id": "cell-1790000000000-0001s",
+              "type": "td",
+              "content": "10:00 ~ 13:00",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790000000000-0001t",
+              "type": "td",
+              "content": "<strong style=\"font-weight:700;\">충북지역 국가 미래 전력망 </strong><br><strong style=\"font-weight:700;\">확보 정책 토론회</strong><br>(주최/주관) - 한국전력공사 중부건설본부",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            },
+            {
+              "id": "cell-1790000000000-0001u",
+              "type": "td",
+              "content": "205호",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            }
+          ],
+          [
+            {
+              "id": "cell-1790000000000-0001v",
+              "type": "td",
+              "content": "13:00 ~ 17:00",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790000000000-0001w",
+              "type": "td",
+              "content": "<strong style=\"font-weight:700;\">글로벌 에너지 전환과 국내 대응 전략 세미나</strong><br>(주최/주관) - 청주오스코",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            },
+            {
+              "id": "cell-1790000000000-0001x",
+              "type": "td",
+              "content": "206호",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            }
+          ],
+          [
+            {
+              "id": "cell-1790000000000-0001y",
+              "type": "td",
+              "content": "13:00 ~ 18:00",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790000000000-0001z",
+              "type": "td",
+              "content": "<strong style=\"font-weight:700;\">KEC 기반 기술 세미나 현장실무 및 도면해석</strong><br>(주최/주관) - 한국전기기술인협회",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            },
+            {
+              "id": "cell-1790000000000-00020",
+              "type": "td",
+              "content": "209 - 210호",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            }
+          ],
+          [
+            {
+              "id": "cell-1790000000000-00021",
+              "type": "td",
+              "content": "14:00 ~ 17:00",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790000000000-00022",
+              "type": "td",
+              "content": "<strong style=\"font-weight:700;\">에너지 비즈니스 실무 세미나</strong><br>(주최/주관) - 청주오스코",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            },
+            {
+              "id": "cell-1790000000000-00023",
+              "type": "td",
+              "content": "204호",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            }
+          ]
+        ],
+        "borderTopWidth": "2px",
+        "borderTopColor": "#333333",
+        "cellBorderColor": "#dddddd",
+        "headerBgColor": "#f6f6f6",
+        "headerTextColor": "#333333",
+        "headerAlign": "center",
+        "cellBgColor": "#ffffff",
+        "cellTextColor": "#333333",
+        "cellAlign": "left",
+        "paddingTop": "0px",
+        "paddingRight": "10px",
+        "paddingBottom": "20px",
+        "paddingLeft": "10px",
+        "tableColWidthOn": true,
+        "tableColWidths": [
+          "20%",
+          "",
+          "20%"
+        ]
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "18px",
+        "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; margin-bottom:6px;\">#DAY&nbsp;03</p>",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "0px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleTable",
+      "properties": {
+        "tableCells": [
+          [
+            {
+              "id": "cell-1790000000000-00026",
+              "type": "th",
+              "content": "시간",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790000000000-00027",
+              "type": "th",
+              "content": "주제",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790000000000-00028",
+              "type": "th",
+              "content": "장소",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790000000000-00029",
+              "type": "td",
+              "content": "10:30 ~ 13:10",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790000000000-0002a",
+              "type": "td",
+              "content": "<strong style=\"font-weight:700;\">신규(기존) 사업자·개인투자를 위한 태양광 재테크 성공 투자와 수익 창출 세미나</strong><br>(주최/주관) - 산업교육연구소",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            },
+            {
+              "id": "cell-1790000000000-0002b",
+              "type": "td",
+              "content": "209호",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            }
+          ],
+          [
+            {
+              "id": "cell-1790000000000-0002c",
+              "type": "td",
+              "content": "10:00 ~ 16:30",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790000000000-0002d",
+              "type": "td",
+              "content": "<strong style=\"font-weight:700;\">2026 충청북도 수소산업 미래동행 컨퍼런스</strong><br>(주최/주관) - 충청북도, 충북에너지산학융합원",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            },
+            {
+              "id": "cell-1790000000000-0002e",
+              "type": "td",
+              "content": "202호",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            }
+          ],
+          [
+            {
+              "id": "cell-1790000000000-0002f",
+              "type": "td",
+              "content": "10:00 ~ 16:00",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790000000000-0002g",
+              "type": "td",
+              "content": "<strong style=\"font-weight:700;\">수소안전 특별교육 세미나</strong><br>(주최/주관) - 한국가스안전공사",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            },
+            {
+              "id": "cell-1790000000000-0002h",
+              "type": "td",
+              "content": "203호",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            }
+          ],
+          [
+            {
+              "id": "cell-1790000000000-0002i",
+              "type": "td",
+              "content": "10:00 ~ 17:00",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790000000000-0002j",
+              "type": "td",
+              "content": "<strong style=\"font-weight:700;\">2026 C-Mega Cluster 미래전략 써밋</strong><br>(주최/주관) - 산업통상부, 한국산업기술진흥원, 지역산업진흥원",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            },
+            {
+              "id": "cell-1790000000000-0002k",
+              "type": "td",
+              "content": "205 - 6호",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            }
+          ],
+          [
+            {
+              "id": "cell-1790000000000-0002l",
+              "type": "td",
+              "content": "13:00 ~ 17:30",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790000000000-0002m",
+              "type": "td",
+              "content": "<strong style=\"font-weight:700;\">2026 충북 이차전지 오픈이노베이션 커넥트 데이</strong><br>(주최/주관) - 충북창조경제혁신센터",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            },
+            {
+              "id": "cell-1790000000000-0002n",
+              "type": "td",
+              "content": "210호",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            }
+          ],
+          [
+            {
+              "id": "cell-1790000000000-0002o",
+              "type": "td",
+              "content": "10:00 ~ 12:00",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790000000000-0002p",
+              "type": "td",
+              "content": "<strong style=\"font-weight:700;\">에너지산업융복합단지 활성화 교류회</strong><br>(주최/주관) - 충북테크노파크",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            },
+            {
+              "id": "cell-1790000000000-0002q",
+              "type": "td",
+              "content": "204호",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            }
+          ],
+          [
+            {
+              "id": "cell-1790000000000-0002r",
+              "type": "td",
+              "content": "13:30 ~ 17:00",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790000000000-0002s",
+              "type": "td",
+              "content": "<strong style=\"font-weight:700;\">2026년 제1차 병원 시설 통합 관리(FM) 기술 세미나</strong><br>(주최/주관) - 병원시설관리협회",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            },
+            {
+              "id": "cell-1790000000000-0002t",
+              "type": "td",
+              "content": "208호",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            }
+          ]
+        ],
+        "borderTopWidth": "2px",
+        "borderTopColor": "#333333",
+        "cellBorderColor": "#dddddd",
+        "headerBgColor": "#f6f6f6",
+        "headerTextColor": "#333333",
+        "headerAlign": "center",
+        "cellBgColor": "#ffffff",
+        "cellTextColor": "#333333",
+        "cellAlign": "left",
+        "paddingTop": "0px",
+        "paddingRight": "10px",
+        "paddingBottom": "20px",
+        "paddingLeft": "10px",
+        "tableColWidthOn": true,
+        "tableColWidths": [
+          "20%",
+          "",
+          "20%"
+        ]
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "세미나 신청하기 →",
+        "buttonUrl": "https://bit.ly/4gAuoPo",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#111111",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "0px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "0px",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "30px",
+        "paddingLeft": "20px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "5px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#333333",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1790065777363-jnkbs2nov",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "22px",
+        "descriptionText": "<div style=\"font-weight:700;\"><p style=\"line-height: 1.5; margin: 0; padding: 0; word-break: keep-all; text-align: center;\">뉴에너지 산업을 이끄는 핵심 컨퍼런스</p></div>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "15px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1790065777363-jnkbs2nov",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>[7.8.(수)] 수소 신산업 육성 및 액화수소 인프라 기술동향 심포지엄 | 한국수소및신에너지학회·한국가스안전공사</strong></p>",
+        "paddingTop": "11px",
+        "paddingRight": "11px",
+        "paddingBottom": "11px",
+        "paddingLeft": "11px",
+        "marginTop": "0px",
+        "marginRight": "20px",
+        "marginBottom": "4px",
+        "marginLeft": "20px",
+        "bgColor": "#eaeaea",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong>[7.8.(수)] 충북 에너지 전환 포럼 | 충북에너지산학융합원</strong></p>",
+        "paddingTop": "10px",
+        "paddingRight": "10px",
+        "paddingBottom": "10px",
+        "paddingLeft": "10px",
+        "marginTop": "0px",
+        "marginRight": "20px",
+        "marginBottom": "4px",
+        "marginLeft": "20px",
+        "bgColor": "#eaeaea",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong>[7.9.(목)] 분산·재생에너지 활성화 컨퍼런스 | 충북에너지산학융합원</strong></p>",
+        "paddingTop": "10px",
+        "paddingRight": "10px",
+        "paddingBottom": "10px",
+        "paddingLeft": "10px",
+        "marginTop": "0px",
+        "marginRight": "20px",
+        "marginBottom": "4px",
+        "marginLeft": "20px",
+        "bgColor": "#eaeaea",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong>[7.9.(목)] 주택용 ESS 단체표준 공청회 및 ESS용 전기차 사용후 배터리 기술워크숍 | 충북에너지산학융합원</strong></p>",
+        "paddingTop": "10px",
+        "paddingRight": "10px",
+        "paddingBottom": "10px",
+        "paddingLeft": "10px",
+        "marginTop": "0px",
+        "marginRight": "20px",
+        "marginBottom": "4px",
+        "marginLeft": "20px",
+        "bgColor": "#eaeaea",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"font-size: 14px;\">[7.10.(금)] 태양광 모듈, 시스템 건물형 태양광(BIPV) 기술 세미나 | 한국태양광발전학회·충북에너지산학융합원</strong></p>",
+        "paddingTop": "10px",
+        "paddingRight": "10px",
+        "paddingBottom": "10px",
+        "paddingLeft": "10px",
+        "marginTop": "0px",
+        "marginRight": "20px",
+        "marginBottom": "0px",
+        "marginLeft": "20px",
+        "bgColor": "#eaeaea",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "컨퍼런스 신청하기 →",
+        "buttonUrl": "https://bit.ly/4oJpv8D",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#111111",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "0px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "0px",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "30px",
+        "paddingLeft": "20px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "5px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#333333",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1790065777680-1v7cq5bnl",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "22px",
+        "descriptionText": "<div style=\"font-weight:700;\"><p style=\"line-height: 1.5; margin: 0; padding: 0; word-break: keep-all; text-align: center;\">청주오스코&nbsp;오시는&nbsp;길</p></div>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "15px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1790065777680-1v7cq5bnl",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/neofair/vol06/11.jpg",
+        "imageAlt": "청주오스코 오시는 길",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "imageCrop": "",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "showImageLink": true,
+        "imageLinkUrl": "https://neofair.co.kr/neo2026/%ec%98%a4%ec%8b%9c%eb%8a%94%ea%b8%b8",
+        "showBorderRadius": false,
+        "imageBorderRadius": "10px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleTable",
+      "properties": {
+        "tableCells": [
+          [
+            {
+              "id": "cell-1790000000000-00035",
+              "type": "th",
+              "content": "오시는 길",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790000000000-00036",
+              "type": "td",
+              "content": "충청북도 청주시 오송읍 오송생명로 250",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            }
+          ],
+          [
+            {
+              "id": "cell-1790000000000-00037",
+              "type": "th",
+              "content": "주차 요금",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790000000000-00038",
+              "type": "td",
+              "content": "■ 기본 30분 500원<br>■ 일 최대 요금(24H) 8,000원",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            }
+          ],
+          [
+            {
+              "id": "cell-1790000000000-00039",
+              "type": "th",
+              "content": "주차 문의",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790000000000-0003a",
+              "type": "td",
+              "content": "043-230-4009",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left"
+            }
+          ]
+        ],
+        "borderTopWidth": "2px",
+        "borderTopColor": "#333333",
+        "cellBorderColor": "#dddddd",
+        "headerBgColor": "#eaeaea",
+        "headerTextColor": "#000000",
+        "headerAlign": "center",
+        "cellBgColor": "#ffffff",
+        "cellTextColor": "#333333",
+        "cellAlign": "left",
+        "paddingTop": "20px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "tableColWidthOn": true,
+        "tableColWidths": [
+          "20%",
+          ""
+        ]
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "주차 안내 바로가기 →",
+        "buttonUrl": "https://bit.ly/4uPP3SY",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#111111",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "0px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "0px",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "30px",
+        "paddingLeft": "20px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "5px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7;\"><strong style=\"font-size: 18px;\">뉴에너지&nbsp;페어&nbsp;오송&nbsp;사무국</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.7; min-height: 1.5em;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.7;\">충청북도&nbsp;청주시&nbsp;흥덕구&nbsp;오송읍&nbsp;오송생명로&nbsp;250&nbsp;(28167)</p>",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "10px",
+        "paddingLeft": "0px",
+        "marginTop": "30px",
+        "marginRight": "25px",
+        "marginBottom": "0px",
+        "marginLeft": "25px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "textAlign": "center"
+      },
+      "styles": {},
+      "groupId": "group-1790065777853-8apz3a9ij",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleContactInfo",
+      "properties": {
+        "contactItems": [
+          {
+            "key": "phone",
+            "show": true,
+            "value": "043-230-4046"
+          },
+          {
+            "key": "email",
+            "show": true,
+            "value": "neofair@esgroup.net"
+          },
+          {
+            "key": "website",
+            "show": false,
+            "value": ""
+          },
+          {
+            "key": "fax",
+            "show": false,
+            "value": ""
+          }
+        ],
+        "contactFontSize": "13px",
+        "contactTextColor": "#333333",
+        "contactAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "25px",
+        "paddingBottom": "30px",
+        "paddingLeft": "25px"
+      },
+      "styles": {},
+      "groupId": "group-1790065777853-8apz3a9ij",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#aaaaaa",
+        "borderWidth": "1px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "15px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1790065777853-8apz3a9ij",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleSnsIcons",
+      "properties": {
+        "snsIconBgColor": "#333333",
+        "snsAlign": "center",
+        "snsIcons": [
+          {
+            "key": "home",
+            "show": true,
+            "url": "https://neofair.co.kr/"
+          },
+          {
+            "key": "facebook",
+            "show": true,
+            "url": "https://www.facebook.com/newenergyfair/"
+          },
+          {
+            "key": "x",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "blog",
+            "show": true,
+            "url": "https://blog.naver.com/neo_fair"
+          },
+          {
+            "key": "youtube",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "instagram",
+            "show": true,
+            "url": "https://www.instagram.com/new_energy_fair"
+          },
+          {
+            "key": "kakao",
+            "show": true,
+            "url": "https://pf.kakao.com/_Vxdxcpn"
+          },
+          {
+            "key": "linkedin",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "zuzuzu",
+            "show": false,
+            "url": "https://kcoupet.com/"
+          },
+          {
+            "key": "en",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "jp",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "th",
+            "show": false,
+            "url": ""
+          }
+        ],
+        "paddingTop": "0px",
+        "paddingRight": "5px",
+        "paddingBottom": "15px",
+        "paddingLeft": "5px"
+      },
+      "styles": {},
+      "groupId": "group-1790065777853-8apz3a9ij",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "12px",
+        "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7em;\">본 메일은 회원님의 수신동의 여부를 확인한 결과 회원님께서 수신동의를 하셨기에 발송되었습니다.</p><p style=\"margin:0; padding:0; line-height:1.7em;\">메일 수신을 원치 않으시면 <a href=\"https://edm.esfair.kr/RejectMail.aspx?code=WROKO\" target=\"_blank\" style=\"text-decoration:none; color:#333333; font-weight:700;\">[수신거부]</a> 를 클릭하십시오.</p><p style=\"margin:0; padding:0; line-height:1.7em;\">본 메일은 발신전용 메일이므로 문의사항은 <strong>neofair@esgroup.net</strong>으로 문의 바랍니다</p>",
+        "paddingTop": "10px",
+        "paddingRight": "25px",
+        "paddingBottom": "40px",
+        "paddingLeft": "25px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "textAlign": "center"
+      },
+      "styles": {},
+      "groupId": "group-1790065777853-8apz3a9ij",
+      "rowIndex": 3,
+      "columnIndex": 0
+    }
+  ],
+  "groups": [
+    {
+      "id": "group-1790065776300-f55khcfes",
+      "name": "기본 헤더",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1790065776441-9u010rnqr",
+      "name": "복수 버튼",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingTop": "10px",
+        "paddingRight": "15px",
+        "paddingBottom": "15px",
+        "paddingLeft": "15px"
+      },
+      "rows": [
+        2
+      ]
+    },
+    {
+      "id": "group-1790065776486-cn8aup8e4",
+      "name": "섹션 타이틀",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1790065776572-moyijqm8v",
+      "name": "섹션 타이틀",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1790065776619-rur57w0u9",
+      "name": "모듈 07번",
+      "styles": {
+        "paddingLeft": "15px",
+        "paddingRight": "15px"
+      },
+      "rows": [
+        2
+      ],
+      "colWidths": [
+        [
+          51,
+          50
+        ]
+      ]
+    },
+    {
+      "id": "group-1790065776678-pkw02txl7",
+      "name": "모듈 07번",
+      "styles": {
+        "paddingLeft": "15px",
+        "paddingRight": "15px"
+      },
+      "rows": [
+        2
+      ],
+      "colWidths": [
+        [
+          51,
+          50
+        ]
+      ]
+    },
+    {
+      "id": "group-1790065776765-hpbkycmr1",
+      "name": "섹션 타이틀",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1790065776833-hmt0gq30k",
+      "name": "모듈 06번",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "10px",
+        "paddingRight": "10px"
+      },
+      "rows": [
+        2
+      ],
+      "colWidths": [
+        [
+          50,
+          50
+        ]
+      ]
+    },
+    {
+      "id": "group-1790065776929-0hdsp60mh",
+      "name": "모듈 06번",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "10px",
+        "paddingRight": "10px"
+      },
+      "rows": [
+        2
+      ],
+      "colWidths": [
+        [
+          50,
+          50
+        ]
+      ]
+    },
+    {
+      "id": "group-1790065777028-7ndtryeu3",
+      "name": "모듈 06번",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "10px",
+        "paddingRight": "10px"
+      },
+      "rows": [
+        2
+      ],
+      "colWidths": [
+        [
+          50,
+          50
+        ]
+      ]
+    },
+    {
+      "id": "group-1790065777104-iynx0fjj6",
+      "name": "섹션 타이틀",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1790065777363-jnkbs2nov",
+      "name": "섹션 타이틀",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1790065777680-1v7cq5bnl",
+      "name": "섹션 타이틀",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1790065777853-8apz3a9ij",
+      "name": "하단 푸터",
+      "styles": {
+        "backgroundColor": "#e9e9e9",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1,
+        1,
+        1
+      ]
+    }
+  ]
+}

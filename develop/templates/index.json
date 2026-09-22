@@ -71,6 +71,16 @@
           "name": "레저산업팀"
         }
       ]
+    },
+    {
+      "id": "osco",
+      "name": "오스코사업본부",
+      "teams": [
+        {
+          "id": "osco-conv",
+          "name": "전시컨벤션팀"
+        }
+      ]
     }
   ],
   "templates": [
@@ -253,6 +263,15 @@
       "teamId": "leisure-ind",
       "thumbnail": "kfarm_temp.png",
       "file": "leisure/leisure-ind/kfarm.json"
+    },
+    {
+      "id": "neofair",
+      "name": "뉴에너지 페어 오송",
+      "description": "2026 뉴에너지 페어 오송(NEO) 뉴스레터 구성",
+      "divisionId": "osco",
+      "teamId": "osco-conv",
+      "thumbnail": "neofair_temp.png",
+      "file": "osco/osco-conv/neofair.json"
     }
   ]
 }
