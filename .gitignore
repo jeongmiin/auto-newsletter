@@ -14,6 +14,12 @@ dist-ssr
 coverage
 *.local
 
+# 실제 키가 들어가는 환경 파일.
+# 위 `*.local`로도 걸러지지만, 그 줄은 언제든 지워질 수 있어 따로 못 박아 둔다.
+# 커밋되는 것은 주소만 담은 .env.development / .env.production / .env.local.example 셋뿐이다.
+.env.local
+.env.*.local
+
 /cypress/videos/
 /cypress/screenshots/
 
