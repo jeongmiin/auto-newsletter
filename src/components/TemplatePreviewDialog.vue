@@ -66,7 +66,7 @@ const select = () => {
     :draggable="false"
     :dismissable-mask="true"
     class="tp-dialog"
-    :style="{ width: '680px', maxWidth: '96vw' }"
+    :style="{ width: '700px', maxWidth: '96vw' }"
     :pt="{ content: { class: 'tp-dialog-content' } }"
     @update:visible="(v: boolean) => !v && emit('close')"
   >
