@@ -617,7 +617,7 @@ const continueEditing = async () => {
                       <InputText
                         ref="newNameInput"
                         v-model="newName"
-                        placeholder="폴더명을 입력하세요"
+                        placeholder="폴더명을 입력하세요 (예: vol01, en)"
                         class="fd-new-input"
                         aria-label="새 폴더 이름"
                         @keydown.enter="createFolder"
