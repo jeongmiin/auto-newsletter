@@ -260,7 +260,7 @@ const downloadLabel = computed(() =>
     modal
     :draggable="false"
     class="un-dialog"
-    :style="{ width: 'min(600px, 92vw)' }"
+    :style="{ width: 'min(700px, 92vw)' }"
   >
     <template #header>
       <div class="un-head">
@@ -402,10 +402,10 @@ const downloadLabel = computed(() =>
 }
 
 .un-section {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 .un-h3 {
-  margin: 0 0 6px;
+  margin: 0 0 4px;
   font-size: 16px;
   font-weight: 700;
   color: var(--gray-800);
@@ -569,7 +569,7 @@ const downloadLabel = computed(() =>
   text-underline-offset: 2px;
 }
 .un-contact {
-  margin: 16px 0 0;
+  margin: 10px 0 0;
   font-size: 12px;
   color: var(--gray-500);
 }
@@ -579,6 +579,7 @@ const downloadLabel = computed(() =>
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  padding-top: 1rem;
 }
 .un-hide {
   display: flex;
