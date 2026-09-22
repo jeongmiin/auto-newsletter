@@ -87,6 +87,45 @@ describe("업데이트 공지 '오늘 하루 보지 않기'", () => {
     expect(isOpen(await mountAt('/'))).toBe(false)
   })
 
+  /**
+   * 주의 문구는 굵은 앞머리·붉은 버튼 이름·줄바꿈이 한 문단에 섞인다.
+   * 태그 사이 줄바꿈이 빈칸으로 새거나 반대로 글자가 붙는 일이 잦아 실제 결과를 못 박아 둔다.
+   */
+  it('주의 문구가 띄어쓰기 그대로 나오고, 버튼 이름은 따로 표시된다', async () => {
+    const wrapper = await mountAt('/design')
+    const first = wrapper.findAll('.un-caution-text')[0]
+
+    // 굵은 앞머리와 뒤 문장이 **한 칸 띄어** 이어진다.
+    // (태그 사이 줄바꿈이 먹혀 '않습니다.브라우저'로 붙어 버리기 쉬운 자리다)
+    expect(first.text()).toContain('저장되지 않습니다. 브라우저 창을')
+
+    // <br>로 끊어 줄별로 본다 — 줄 안의 띄어쓰기가 살아 있는지.
+    // 문구는 아직 다듬는 중이라 전문을 박지 않고, 버튼 이름이 든 줄만 확인한다.
+    const lines = first
+      .html()
+      .split(/<br[^>]*>/) // scoped CSS 속성이 붙어 `<br data-v-…="">`로 나온다
+      .map((chunk) =>
+        chunk
+          .replace(/<[^>]+>/g, '')
+          .replace(/\s+/g, ' ')
+          .trim(),
+      )
+    expect(lines.length).toBeGreaterThan(1)
+    expect(lines).toContain(
+      '중요한 작업은 [임시 저장] 버튼으로 서버에 임시 저장하거나, [저장용 내보내기]로 저장해 주세요.',
+    )
+    expect(first.findAll('.un-key').map((k) => k.text())).toEqual([
+      '[임시 저장]',
+      '[저장용 내보내기]',
+    ])
+
+    // 붉은색은 '지금 안 누르면 잃는다'는 뜻으로만 쓴다 — 알아 두기만 하면 되는 줄은 칠하지 않는다.
+    // 대괄호는 남아 있어야 버튼 이름인 줄 알아본다.
+    const second = wrapper.findAll('.un-caution-text')[1]
+    expect(second.text()).toContain('[파일 열기]')
+    expect(second.findAll('.un-key')).toHaveLength(0)
+  })
+
   it("체크하고 '확인'을 누르면 오늘 날짜가 기록된다", async () => {
     const wrapper = await mountAt('/design')
     await check(wrapper)

@@ -75,24 +75,68 @@ const features = [
  *
  * `lines`는 **줄을 나눌 자리**다 — 창 폭에 따라 접히게 두지 않고 여기서 끊는다.
  * 첫 줄은 `lead` 뒤에 이어 붙고, 그 다음부터 한 줄씩 내려간다.
+ *
+ * 글 안의 `[임시 저장]`처럼 **대괄호로 묶은 것은 버튼 이름**이다. 대괄호는 늘 보이고,
+ * `highlightKeys: true`를 준 줄에서만 붉게 칠한다 — 붉은색은 **지금 당장 누르지 않으면
+ * 잃는다**는 뜻으로 아껴 쓴다. 아래 두 항목처럼 알아 두기만 하면 되는 안내까지 붉으면
+ * 어느 것이 급한지 구분이 사라진다.
  */
 const cautions = [
   {
     lead: '작업 내용은 자동으로 저장되지 않습니다.',
+    /** 지금 눌러야 작업을 지킬 수 있는 버튼들이라 이름을 붉게 드러낸다 */
+    highlightKeys: true,
     lines: [
       '브라우저 창을 닫을 경우 작업 내용이 삭제됩니다.',
-      '중요한 작업은 [저장용 내보내기]로 저장해 주세요.',
+      '중요한 작업은 [임시 저장] 버튼으로 서버에 임시 저장하거나, [저장용 내보내기]로 저장해 주세요.',
+      '브라우저 창을 닫을 경우 작업 내용이 삭제됩니다.',
     ],
   },
   {
     lead: '',
+    highlightKeys: false,
     lines: ['저장한 파일은 [파일 열기]에서 다시 불러와 작업할 수 있습니다.'],
   },
   {
     lead: '',
+    highlightKeys: false,
     lines: ['업데이트 후 화면이 이상하게 보이면 Ctrl + F5로 새로고침해 주세요.'],
   },
 ]
+
+/**
+ * 주의 한 줄을 **화면에 그릴 조각들**로 편다.
+ *
+ * 굵은 앞머리 · 붉은 버튼 이름 · 보통 글자 · 줄바꿈이 한 문단 안에 섞인다. 이걸 템플릿에서
+ * 중첩 `v-for`로 짜면 태그 사이 줄바꿈이 그대로 빈칸이 되거나 반대로 붙어 버려서, 띄어쓰기가
+ * 마크업 생김새에 휘둘린다. 조각 목록을 여기서 만들어 두면 **띄어쓰기가 데이터에만** 있다.
+ *
+ * `[임시 저장]`처럼 대괄호로 묶은 것은 버튼 이름 — 대괄호는 **늘 그대로 보인다**(색을 못 보는
+ * 환경에서도 버튼 이름인 줄 알아보게). 붉게 칠하는 건 `highlightKeys`를 준 줄에서만이다.
+ */
+type Caution = { lead: string; highlightKeys?: boolean; lines: string[] }
+type CautionPart = { kind: 'lead' | 'key' | 'text' | 'br'; text?: string }
+
+const cautionParts = (item: Caution): CautionPart[] => {
+  const parts: CautionPart[] = []
+  if (item.lead) {
+    parts.push({ kind: 'lead', text: item.lead })
+    parts.push({ kind: 'text', text: ' ' })
+  }
+  item.lines.forEach((line, i) => {
+    if (i > 0) parts.push({ kind: 'br' })
+    if (!item.highlightKeys) {
+      // 대괄호는 글자 그대로 둔다 — 쪼갤 이유가 없다
+      parts.push({ kind: 'text', text: line })
+      return
+    }
+    for (const seg of line.split(/(\[[^\]]+\])/g)) {
+      if (!seg) continue
+      parts.push({ kind: seg.startsWith('[') ? 'key' : 'text', text: seg })
+    }
+  })
+  return parts
+}
 
 /** 로컬 시각 기준 'YYYY-MM-DD'. toISOString은 UTC라 밤 시간대에 날짜가 하루 밀린다. */
 const today = (): string => {
@@ -276,10 +320,13 @@ const downloadLabel = computed(() =>
       <ul class="un-caution-list">
         <li v-for="item in cautions" :key="item.lines[0]" class="un-caution-item">
           <span class="un-bullet" aria-hidden="true">•</span>
+          <!-- 띄어쓰기는 cautionParts가 정한다 — 여기 줄바꿈은 화면에 영향을 주지 않는다 -->
           <p class="un-caution-text">
-            <strong v-if="item.lead">{{ item.lead }}</strong>
-            <template v-for="(line, i) in item.lines" :key="line">
-              <br v-if="i > 0" />{{ line }}
+            <template v-for="(part, i) in cautionParts(item)" :key="i">
+              <br v-if="part.kind === 'br'" />
+              <strong v-else-if="part.kind === 'lead'">{{ part.text }}</strong>
+              <span v-else-if="part.kind === 'key'" class="un-key">{{ part.text }}</span>
+              <template v-else>{{ part.text }}</template>
             </template>
           </p>
         </li>
@@ -483,10 +530,17 @@ const downloadLabel = computed(() =>
   font-size: 14px;
   line-height: 1.6;
   color: var(--gray-750);
+  word-break: keep-all;
 }
 .un-caution-text strong {
   font-weight: 700;
   color: var(--gray-800);
+}
+/* 눌러야 할 버튼 이름 — 노란 상자 위에서도 읽히도록 red-400이 아니라 red-700을 쓴다
+   (red-400은 이 배경에서 대비 3.4:1로 본문 기준 4.5:1에 못 미친다. red-700은 5.6:1) */
+.un-key {
+  font-weight: 700;
+  color: var(--p-red-500);
 }
 
 .un-guide {
