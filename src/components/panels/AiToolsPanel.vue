@@ -1,22 +1,3 @@
-<script lang="ts">
-/**
- * 링크를 만들거나 폴더에서 찾은 **그때의 뉴스레터 내용**.
- *
- * 이걸 지금 내용과 견줘 '변경되었어요' 안내를 띄운다. 깃발 하나를 세우는 대신 내용을 통째로
- * 견주므로, 고쳤다가 되돌리면 안내도 함께 사라진다.
- *
- * ⚠ **이 값은 반드시 `<script setup>` 밖에 있어야 한다.** `<script setup>` 안의 코드는
- * 컴포넌트가 생길 때마다 다시 실행되는데, 이 패널은 레일 메뉴를 옮기면 통째로 사라졌다
- * 다시 생긴다. 안에 두면 돌아올 때마다 기준이 지워져서, 다른 메뉴에서 고치고 온 변경을
- * 영영 놓친다. 여기(모듈 스코프)에 있어야 패널보다 오래 산다.
- *
- * ⚠ 앱을 새로 연 뒤 **한 번도 고치지 않은 채** 예전 링크를 열면 기준이 없다. 그때는
- * 지금 내용이 링크와 같은지 알 길이 없으므로 안내를 띄우지 않고, 그 시점을 기준으로 삼는다
- * (작업 내용은 메모리에만 있어서 새로고침하면 어차피 사라진다 — 거짓 안내보다 낫다).
- */
-let linkBaseline: string | null = null
-</script>
-
 <script setup lang="ts">
 /**
  * AI 도구 패널 (좌측 레일 'AI 도구').
@@ -43,32 +24,24 @@ let linkBaseline: string | null = null
  */
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useToast } from 'primevue/usetoast'
-import { useEditorStore } from '@/stores/editorStore'
 import { useModuleStore } from '@/stores/moduleStore'
-import { useNewsletterDocument } from '@/composables/useNewsletterDocument'
-import { buildDownloadFileName } from '@/utils/projectFile'
 import { TRANSLATION_LANGUAGES, useTranslationStore } from '@/stores/translationStore'
+import { useWebLinkStore, webLinkToast } from '@/stores/webLinkStore'
 import type { TranslationLanguage } from '@/utils/newsletterTranslation'
-import {
-  MISSING_VOLUME_MESSAGE,
-  UploadError,
-  buildUploadDirectory,
-  isUploadEnabled,
-  savePathLabel,
-  uploadHtml,
-} from '@/utils/s3Upload'
-import { listFolders, objectUrl, toPrefix } from '@/utils/s3Browse'
 import toolTranslateIcon from '@/assets/img/ai/tool_translate.png'
 import toolWeblinkIcon from '@/assets/img/ai/tool_weblink.png'
 import stateEyesIcon from '@/assets/img/ai/state_eyes.png'
 import stateWeblinkIcon from '@/assets/img/ai/state_weblink.png'
 import stateTranslateIcon from '@/assets/img/ai/state_translate.png'
 
-const editorStore = useEditorStore()
 const moduleStore = useModuleStore()
 const toast = useToast()
-// 발송용 내려받기와 **같은 문서**를 만든다 — 링크로 열리는 것과 메일에 싣는 것이 달라지면 안 된다
-const { buildDocument } = useNewsletterDocument()
+
+// ── HTML 웹 링크 ──────────────────────────────────────────────────────
+// 상태와 동작은 webLinkStore에 있다 — 캔버스 오른쪽 아래 리마인드 팝업(WebLinkReminder)이
+// 같은 것을 보고, 메뉴를 옮겨 편집하는 동안에도 '반영 안 됨'을 계속 알린다.
+// 여기는 화면(카드·버튼)과 주소 복사만 맡는다.
+const webLink = useWebLinkStore()
 
 // ── Azure 뉴스레터 번역 ────────────────────────────────────────────────
 // 상태와 동작은 translationStore에 있다 — 결과는 캔버스 옆 TranslationPreviewPanel에 뜨고,
@@ -181,171 +154,36 @@ const activeToolLabel = computed(
   () => AI_TOOLS.find((tool) => tool.key === activeTool.value)?.label ?? '',
 )
 
-const uploading = ref(false)
-const errorText = ref('')
 /** 방금 복사했음을 잠깐 알리는 표시 */
 const copied = ref(false)
-let controller: AbortController | null = null
 let copiedTimer: ReturnType<typeof setTimeout> | null = null
 
-const uploadEnabled = isUploadEnabled()
+const uploadEnabled = webLink.enabled
 
-/** 올라갈 폴더 — 이미지와 같은 저장 폴더다. 폴더가 정해지지 않았으면 null. */
-const targetDirectory = computed(() =>
-  buildUploadDirectory(editorStore.uploadFolder, editorStore.wrapSettings.volume),
-)
-
-/** 올라갈 파일 이름 — 발송용 내려받기와 같은 규칙 */
-const targetFileName = computed(() =>
-  buildDownloadFileName(
-    editorStore.currentTemplateId ?? editorStore.blankFolder,
-    editorStore.wrapSettings.volume,
-    'send',
-  ),
-)
-
-/**
- * 폴더에 놓인 웹 링크(발송용 파일). 없으면 null.
- * 폴더를 읽어 채우고, 링크를 새로 만들면 그 결과로 바꾼다.
- */
-const existing = ref<{ url: string; name: string; at: Date | null } | null>(null)
-/** 폴더를 읽는 중 */
-const checking = ref(false)
-let checkController: AbortController | null = null
-
-const contentSignature = (): string =>
-  JSON.stringify({
-    m: moduleStore.modules,
-    g: moduleStore.groups,
-    w: editorStore.wrapSettings,
-  })
-
-/** 링크를 만든 뒤 뉴스레터가 바뀌었는지 */
-const contentChanged = ref(false)
-
-/** 지금 내용을 기준으로 삼는다 — 링크를 만들었거나 처음 찾았을 때 */
-const markLinkBaseline = (): void => {
-  linkBaseline = contentSignature()
-  contentChanged.value = false
-}
-
-const refreshContentChanged = (): void => {
-  contentChanged.value = linkBaseline !== null && linkBaseline !== contentSignature()
-}
-
-/**
- * 폴더에 발송용 파일이 있는지 읽는다.
- * 폴더 목록 조회(listFolders)가 폴더마다 발송용 파일을 알아내므로, 한 겹 위를 읽어 이 폴더를 찾는다
- * (폴더 선택 화면의 '발송 완료' 배지와 같은 근거를 쓴다).
- */
-const loadExisting = async () => {
-  checkController?.abort()
-  const directory = targetDirectory.value
-  if (!directory) {
-    existing.value = null
-    return
-  }
-  const prefix = toPrefix(directory) // 'e-dm/2026/newsletterbuilder/arch-plan/hobanexpo/eng/vol01/'
-  const parts = prefix.replace(/\/$/, '').split('/')
-  const folderName = parts.pop() ?? ''
-  const parentPrefix = `${parts.join('/')}/`
-
-  checkController = new AbortController()
-  checking.value = true
-  try {
-    const folders = await listFolders(parentPrefix, checkController.signal)
-    const file = folders.find((f) => f.name === folderName)?.sendFile
-    existing.value = file
-      ? { url: objectUrl(file.key), name: file.name, at: file.lastModified }
-      : null
-    // 링크를 처음 발견했으면 지금 내용을 기준으로 삼는다(위 linkBaseline 주석 참고)
-    if (file && linkBaseline === null) markLinkBaseline()
-  } catch (err) {
-    if (err instanceof DOMException && err.name === 'AbortError') return
-    // 읽지 못하면(네트워크·CORS) 없는 것으로 둔다 — 만들기 버튼은 그대로 쓸 수 있다
-    existing.value = null
-  } finally {
-    checking.value = false
-  }
-}
-
-// 도구를 펼칠 때, 그리고 펼친 채로 폴더가 바뀔 때 다시 읽는다 (접힌 동안은 읽지 않는다)
-watch(isOpen, (open) => {
-  if (!open) return
-  refreshContentChanged()
-  if (uploadEnabled) void loadExisting()
-})
-watch(targetDirectory, () => {
-  if (isOpen.value && uploadEnabled) void loadExisting()
-})
-
-// 이 화면을 보고 있는 동안 캔버스가 바뀌면 안내를 켜고 끈다.
-// (되돌리기로 원래 내용으로 돌아오면 안내도 다시 사라진다 — 깃발이 아니라 내용을 견주기 때문)
+// 도구를 펼칠 때, 그리고 펼친 채로 폴더가 바뀔 때 다시 읽는다 (접힌 동안은 읽지 않는다).
+// 펼쳐 둔 동안에는 리마인드 팝업을 띄우지 않는다 — 이 화면에 같은 안내가 이미 붙어 있다.
 watch(
-  [() => moduleStore.modules, () => moduleStore.groups, () => editorStore.wrapSettings],
-  () => {
-    if (isOpen.value) refreshContentChanged()
+  isOpen,
+  (open) => {
+    webLink.toolOpen = open
+    if (!open) return
+    webLink.refreshContentChanged()
+    if (uploadEnabled) void webLink.loadExisting()
   },
-  { deep: true },
+  { immediate: true },
+)
+watch(
+  () => webLink.targetDirectory,
+  () => {
+    if (isOpen.value && uploadEnabled) void webLink.loadExisting()
+  },
 )
 
-/**
- * 지금 작업물을 발송용 HTML로 만들어 폴더에 올리고 주소를 받는다.
- * 같은 이름으로 덮어쓰므로 몇 번을 눌러도 폴더의 파일과 주소는 하나로 유지된다 —
- * 그래서 두 번째부터는 '최신 내용 반영'이다.
- */
+/** 링크를 만들거나(처음) 최신 내용을 반영한다(두 번째부터) — 실제 동작은 스토어에 있다 */
 const createLink = async () => {
-  if (uploading.value) return
-  errorText.value = ''
-
-  if (!moduleStore.modules?.length) {
-    errorText.value = '먼저 모듈을 추가해 주세요.'
-    return
-  }
-
-  // 폴더가 정해지지 않았으면 올릴 자리가 없다 — 이미지 업로드와 같은 안내로 멈춘다.
-  const directory = targetDirectory.value
-  if (!directory) {
-    errorText.value = MISSING_VOLUME_MESSAGE
-    toast.add({
-      severity: 'warn',
-      summary: '저장할 폴더가 필요해요',
-      detail: MISSING_VOLUME_MESSAGE,
-      life: 6000,
-    })
-    return
-  }
-
-  const isUpdate = existing.value !== null
-  uploading.value = true
-  copied.value = false
-  controller = new AbortController()
-  try {
-    // 메타데이터를 뺀 발송용 — 메일에 실리는 것과 같은 파일이다
-    const document = await buildDocument(false)
-    const filename = targetFileName.value
-    const { url } = await uploadHtml(
-      new File([document], filename, { type: 'text/html' }),
-      directory,
-      { signal: controller.signal, overwrite: true },
-    )
-    existing.value = { url, name: filename, at: new Date() }
-    // 방금 올린 내용이 새 기준이다 — '변경되었어요' 안내가 사라진다
-    markLinkBaseline()
-    toast.add({
-      severity: 'success',
-      summary: isUpdate ? '최신 내용을 반영했어요' : '웹 링크가 만들어졌어요',
-      detail: isUpdate ? '주소는 그대로예요.' : '링크 복사로 주소를 가져가세요.',
-      life: 3000,
-    })
-  } catch (err) {
-    if (err instanceof DOMException && err.name === 'AbortError') return
-    errorText.value =
-      err instanceof UploadError ? err.message : '링크를 만드는 중 문제가 생겼어요. 다시 시도해 주세요.'
-  } finally {
-    uploading.value = false
-    controller = null
-  }
+  const result = await webLink.createLink()
+  const message = webLinkToast(result)
+  if (message) toast.add(message)
 }
 
 /**
@@ -354,8 +192,8 @@ const createLink = async () => {
  */
 const copyLink = async () => {
   // 올리는 중에는 이 버튼이 '최신 내용 반영 중'을 알리는 자리라 눌러도 아무 일도 일어나지 않는다
-  if (uploading.value) return
-  const url = existing.value?.url
+  if (webLink.uploading) return
+  const url = webLink.existing?.url
   if (!url) return
   let ok = false
   try {
@@ -389,27 +227,8 @@ const copyLink = async () => {
   copiedTimer = setTimeout(() => (copied.value = false), 2000)
 }
 
-/** 사람이 읽는 저장 위치 — 'gocaf / eng / vol01 /' (헤더·전체 설정과 같은 표기) */
-const savePath = computed(() =>
-  savePathLabel(editorStore.uploadFolder, editorStore.wrapSettings.volume),
-)
-
-/** 생성 일시 — '2026.09.14 오후 1:44' */
-const createdAtLabel = computed(() => {
-  const at = existing.value?.at
-  if (!at) return '알 수 없음'
-  const p = (n: number) => String(n).padStart(2, '0')
-  const hour = at.getHours()
-  const half = hour < 12 ? '오전' : '오후'
-  return (
-    `${at.getFullYear()}.${p(at.getMonth() + 1)}.${p(at.getDate())} ` +
-    `${half} ${hour % 12 || 12}:${p(at.getMinutes())}`
-  )
-})
-
 onBeforeUnmount(() => {
-  controller?.abort()
-  checkController?.abort()
+  // 올리기·폴더 읽기는 스토어가 들고 있어 패널이 내려가도 이어진다(리마인드 팝업이 같은 것을 본다)
   if (copiedTimer) clearTimeout(copiedTimer)
 })
 </script>
@@ -494,12 +313,12 @@ onBeforeUnmount(() => {
         </p>
 
         <!-- 폴더를 읽는 중 -->
-        <p v-else-if="checking && !existing" class="ht-note tool-note">
+        <p v-else-if="webLink.checking && !webLink.existing" class="ht-note tool-note">
           이 폴더에 링크가 있는지 확인하는 중…
         </p>
 
         <!-- 만들어진 링크 -->
-        <div v-else-if="existing" class="wl-done">
+        <div v-else-if="webLink.existing" class="wl-done">
           <div class="wl-done-head">
             <span class="wl-hero">
               <img :src="stateWeblinkIcon" width="103" height="103" alt="" />
@@ -510,15 +329,15 @@ onBeforeUnmount(() => {
           <dl class="wl-info">
             <div class="wl-info-row">
               <dt>생성 일시</dt>
-              <dd>{{ createdAtLabel }}</dd>
+              <dd>{{ webLink.createdAtLabel }}</dd>
             </div>
             <div class="wl-info-row">
               <dt>저장위치</dt>
-              <dd>{{ savePath }}</dd>
+              <dd>{{ webLink.savePath }}</dd>
             </div>
             <div class="wl-info-row">
               <dt>HTML 파일명</dt>
-              <dd>{{ existing.name }}</dd>
+              <dd>{{ webLink.existing.name }}</dd>
             </div>
             <!-- 주소 전체는 길고 읽히지 않아 감춘다 — 툴팁과 새 창 열기로만 -->
             <div class="wl-info-row">
@@ -526,8 +345,8 @@ onBeforeUnmount(() => {
               <dd>
                 <a
                   class="wl-open"
-                  :href="existing.url"
-                  :title="existing.url"
+                  :href="webLink.existing.url"
+                  :title="webLink.existing.url"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -538,7 +357,7 @@ onBeforeUnmount(() => {
           </dl>
 
           <!-- 링크를 만든 뒤 뉴스레터가 바뀌었다 — 같은 주소에 덮어쓴다(주소는 그대로) -->
-          <div v-if="contentChanged" class="wl-notice">
+          <div v-if="webLink.contentChanged" class="wl-notice">
             <div class="wl-notice-head">
               <span class="material-symbols-outlined wl-notice-icon" aria-hidden="true">
                 star_shine
@@ -558,14 +377,14 @@ onBeforeUnmount(() => {
           </span>
           <div class="wl-empty-text">
             <p class="wl-empty-title">“웹으로 보기”를 위한<br />HTML 링크를 생성해보세요</p>
-            <p v-if="savePath" class="wl-save">
+            <p v-if="webLink.savePath" class="wl-save">
               <span class="wl-save-name">
                 <span class="material-symbols-outlined wl-save-icon" aria-hidden="true">
                   drive_file_move
                 </span>
                 저장위치
               </span>
-              <span class="wl-save-value">{{ savePath }}</span>
+              <span class="wl-save-value">{{ webLink.savePath }}</span>
             </p>
           </div>
         </div>
@@ -575,26 +394,26 @@ onBeforeUnmount(() => {
            올리는 중이라는 것도 '복사됨'과 똑같이 버튼 글자만 바꿔 알린다(진행률 막대는 두지 않는다). -->
       <footer v-if="isOpen && uploadEnabled" class="tool-foot">
         <!-- 폴더가 없을 때처럼 눌러 봐야 아는 문제는 여기서 알린다 -->
-        <p v-if="errorText" class="ht-error">{{ errorText }}</p>
+        <p v-if="webLink.errorText" class="ht-error">{{ webLink.errorText }}</p>
         <button
-          v-if="existing"
+          v-if="webLink.existing"
           type="button"
           class="tool-cta"
-          :aria-busy="uploading"
+          :aria-busy="webLink.uploading"
           @click="copyLink"
         >
           <span class="material-symbols-outlined" aria-hidden="true">content_copy</span>
-          {{ uploading ? '최신 내용 반영 중' : copied ? '복사됨' : '링크 복사' }}
+          {{ webLink.uploading ? '최신 내용 반영 중' : copied ? '복사됨' : '링크 복사' }}
         </button>
         <button
           v-else
           type="button"
           class="tool-cta"
-          :disabled="checking"
-          :aria-busy="uploading"
+          :disabled="webLink.checking"
+          :aria-busy="webLink.uploading"
           @click="createLink"
         >
-          {{ uploading ? '링크 만드는 중' : '웹 링크 생성하기' }}
+          {{ webLink.uploading ? '링크 만드는 중' : '웹 링크 생성하기' }}
         </button>
       </footer>
 

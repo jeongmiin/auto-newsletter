@@ -53,6 +53,11 @@
         <div class="guide-fab-slot">
           <GuideButton />
         </div>
+        <!-- 캔버스 오른쪽 아래 — 웹 링크를 만든 뒤 내용을 고쳤는데 아직 반영하지 않았을 때만 뜬다.
+             AI 도구 안이 아니라 여기 두는 이유는 컴포넌트 주석 참고(다른 메뉴에서 고치는 동안 알려야 한다) -->
+        <div class="weblink-reminder-slot">
+          <WebLinkReminder />
+        </div>
       </div>
 
       <!-- 우측 '모듈 순서' 패널 — 기본 닫힘. 레일의 '모듈 순서' 메뉴나 패널 왼쪽 탭으로 여닫는다 -->
@@ -78,6 +83,7 @@ import ModulePanel from '@/components/panels/ModulePanel.vue'
 import ModuleOutlinePanel from '@/components/editor/ModuleOutlinePanel.vue'
 import CanvasArea from '@/components/editor/CanvasArea.vue'
 import GuideButton from '@/components/editor/GuideButton.vue'
+import WebLinkReminder from '@/components/editor/WebLinkReminder.vue'
 import GlobalStylePanel from '@/components/panels/GlobalStylePanel.vue'
 import PointColorPanel from '@/components/panels/PointColorPanel.vue'
 import CategoryModulePanel from '@/components/panels/CategoryModulePanel.vue'
@@ -167,6 +173,15 @@ onUnmounted(() => {
   bottom: 18px;
   z-index: 5;
   line-height: 0;
+}
+
+/* 리마인드 팝업 자리 — 가이드 버튼과 같은 높이의 반대쪽 구석.
+   '모듈 순서' 탭은 이 열 오른쪽 가장자리의 세로 가운데에 있어 서로 닿지 않는다 */
+.weblink-reminder-slot {
+  position: absolute;
+  right: 24px;
+  bottom: 18px;
+  z-index: 6;
 }
 
 /* 리사이즈 핸들 스타일 */
