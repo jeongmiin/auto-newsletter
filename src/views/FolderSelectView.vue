@@ -516,6 +516,9 @@ const continueEditing = async () => {
                 </template>
               </span>
             </template>
+            <span v-if="!isNested" class="fd-savepath-note">
+              * 폴더 삭제는 UXD팀에 문의해 주세요.
+            </span>
           </p>
 
           <!--
@@ -834,6 +837,15 @@ const continueEditing = async () => {
 .fd-savepath-sep {
   margin: 0 4px;
   color: var(--gray-500);
+}
+/* 폴더 삭제 안내 — 이 줄의 비어 있는 오른쪽 끝. 경로가 길어지면 경로가 먼저 줄고 안내는 그대로 남는다 */
+.fd-savepath-note {
+  margin-left: auto;
+  padding-left: 12px;
+  flex-shrink: 0;
+  font-size: 13px;
+  color: var(--gray-500);
+  white-space: nowrap;
 }
 .fd-main--nested {
   padding-top: 40px;
