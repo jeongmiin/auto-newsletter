@@ -365,6 +365,16 @@ describe('moduleContentReplacer', () => {
 
       expect(result).toContain('기조연설 (14:20~14:40)')
     })
+
+    // 자동 치환을 끈 모듈이라 치환자를 하나라도 빠뜨리면 발송 HTML 에 글자 그대로 나간다
+    it('글자 크기 치환자도 바꾸고, 없으면 16px 기본값을 쓴다', () => {
+      const html = '<div style="font-size: {{subtitleTextFontSize}};">{{subtitleText}}</div>'
+
+      expect(replaceModuleSubTitleContent(html, { subtitleText: 'a', subtitleTextFontSize: '18px' }))
+        .toContain('font-size: 18px;')
+      expect(replaceModuleSubTitleContent(html, { subtitleText: 'a' })).toContain('font-size: 16px;')
+      expect(replaceModuleSubTitleContent(html, { subtitleText: 'a' })).not.toContain('{{')
+    })
   })
 
   describe('replaceDefaultTemplate', () => {
