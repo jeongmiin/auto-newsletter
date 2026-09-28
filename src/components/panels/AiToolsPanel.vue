@@ -26,8 +26,9 @@ import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import { useModuleStore } from '@/stores/moduleStore'
 import { TRANSLATION_LANGUAGES, useTranslationStore } from '@/stores/translationStore'
-import { useWebLinkStore, webLinkToast } from '@/stores/webLinkStore'
+import { trackWebLink, useWebLinkStore, webLinkToast } from '@/stores/webLinkStore'
 import type { TranslationLanguage } from '@/utils/newsletterTranslation'
+import { track } from '@/analytics/umami'
 import toolTranslateIcon from '@/assets/img/ai/tool_translate.png'
 import toolWeblinkIcon from '@/assets/img/ai/tool_weblink.png'
 import stateEyesIcon from '@/assets/img/ai/state_eyes.png'
@@ -77,7 +78,10 @@ type ToolKey = (typeof AI_TOOLS)[number]['key']
  */
 const activeTool = ref<ToolKey | null>(translation.panelOpen ? 'translate' : null)
 const selectTool = (key: ToolKey): void => {
-  activeTool.value = activeTool.value === key ? null : key
+  const opening = activeTool.value !== key
+  activeTool.value = opening ? key : null
+  // 펼친 횟수만 센다 — 아래 적용·생성 이벤트와 견주면 '들어가 보고 안 쓴' 비율이 나온다
+  if (opening) track('tool_select', { tool: key })
 }
 // 스토어의 열림 상태를 고른 도구와 어긋나지 않게 맞춰 둔다(번역 대상 문장 수 집계가 이 값을 본다)
 watch(activeTool, (key) => {
@@ -141,6 +145,8 @@ const cancelTranslation = (): void => translation.clear()
 const applyTranslation = async (): Promise<void> => {
   const count = await translation.apply()
   if (!count) return
+  // 적용에 성공했을 때만 — 언어별 사용량이 Azure 과금과 바로 이어진다
+  track('translate_apply', { lang: translation.targetLanguage, count })
   toast.add({
     severity: 'success',
     summary: '번역을 적용했어요',
@@ -182,6 +188,7 @@ watch(
 /** 링크를 만들거나(처음) 최신 내용을 반영한다(두 번째부터) — 실제 동작은 스토어에 있다 */
 const createLink = async () => {
   const result = await webLink.createLink()
+  trackWebLink(result, 'panel')
   const message = webLinkToast(result)
   if (message) toast.add(message)
 }
@@ -222,6 +229,8 @@ const copyLink = async () => {
     })
     return
   }
+  // 실제로 클립보드에 들어갔을 때만 — 만든 링크를 가져가는지 보는 지표
+  track('web_link_copy')
   copied.value = true
   if (copiedTimer) clearTimeout(copiedTimer)
   copiedTimer = setTimeout(() => (copied.value = false), 2000)

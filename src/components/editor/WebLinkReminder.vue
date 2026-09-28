@@ -11,13 +11,15 @@
  * 상태와 실제 반영은 `webLinkStore`에 있다 — 패널과 이 팝업이 같은 것을 본다.
  */
 import { useToast } from 'primevue/usetoast'
-import { useWebLinkStore, webLinkToast } from '@/stores/webLinkStore'
+import { trackWebLink, useWebLinkStore, webLinkToast } from '@/stores/webLinkStore'
 
 const webLink = useWebLinkStore()
 const toast = useToast()
 
 const apply = async (): Promise<void> => {
   const result = await webLink.createLink()
+  // source 로 패널과 갈라 센다 — 이 팝업이 실제로 반영을 이끌어 내는지 보기 위해
+  trackWebLink(result, 'reminder')
   const message = webLinkToast(result)
   if (message) toast.add(message)
 }

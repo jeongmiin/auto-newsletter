@@ -26,6 +26,7 @@ import {
   uploadHtml,
 } from '@/utils/s3Upload'
 import { listFolders, objectUrl, toPrefix } from '@/utils/s3Browse'
+import { track } from '@/analytics/umami'
 
 /** 폴더에 놓인 발송용 파일 = 웹 링크 */
 export type WebLinkFile = { url: string; name: string; at: Date | null }
@@ -73,6 +74,21 @@ export const webLinkToast = (result: WebLinkResult): ToastMessageOptions | null 
       // 모듈 없음·업로드 실패는 화면 안 `errorText`로 알린다(말풍선까지 겹치면 시끄럽다)
       return null
   }
+}
+
+/** 웹 링크를 만든(반영한) 곳 — 리마인드 팝업이 실제로 반영을 이끌어 내는지 갈라 보기 위해 */
+export type WebLinkSource = 'panel' | 'reminder'
+
+/**
+ * 결과를 Umami 이벤트로 옮긴다 — 말풍선과 같은 이유로 부르는 쪽(패널·팝업)이 결과를 넘긴다.
+ *
+ * 성공한 경우만 센다. 처음 만든 것과 최신 내용 반영은 다른 이벤트다(같은 버튼이지만
+ * 묻는 것이 다르다 — 기능을 쓰는가 / 바뀐 내용을 잊지 않고 반영하는가).
+ * 실패·건너뜀은 세지 않는다 — 누른 횟수를 세면 사용량이 부풀어 보인다.
+ */
+export const trackWebLink = (result: WebLinkResult, source: WebLinkSource): void => {
+  if (result.status === 'created') track('web_link_create', { source })
+  else if (result.status === 'updated') track('web_link_refresh', { source })
 }
 
 /**
