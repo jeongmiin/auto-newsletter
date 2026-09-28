@@ -202,6 +202,24 @@
       "file": "conv/conv1/police.json"
     },
     {
+      "id": "police-en",
+      "name": "국제치안산업대전 영문",
+      "description": "국제치안산업대전(KPEX) 영문 뉴스레터 구성",
+      "divisionId": "conv",
+      "teamId": "conv1",
+      "thumbnail": "police-en_temp.png",
+      "file": "conv/conv1/police-en.json"
+    },
+    {
+      "id": "abmexpo",
+      "name": "아파트 건물관리산업전",
+      "description": "아파트 건물관리산업전 뉴스레터 구성",
+      "divisionId": "conv",
+      "teamId": "conv1",
+      "thumbnail": "abmexpo_temp.png",
+      "file": "conv/conv1/abmexpo.json"
+    },
+    {
       "id": "evinfra",
       "name": "전기차 충전인프라 산업전",
       "description": "전기차 충전인프라 산업전 뉴스레터 구성",
