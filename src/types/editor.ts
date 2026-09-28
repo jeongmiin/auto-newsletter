@@ -28,6 +28,13 @@ export interface WrapSettings {
   fontLanguage?: FontLanguage
   // 뉴스레터 한 줄 요약 (시각장애인을 위한 설명)
   summary?: string
+  /**
+   * 뉴스레터 회차 — 'vol01' 처럼 적는다.
+   *
+   * 이미지 업로드 폴더의 마지막 단계로 쓰인다(`/e-dm/{연도}/{템플릿id}/{회차}/`).
+   * 비어 있으면 어느 회차 폴더에 넣을지 정할 수 없으므로 업로드를 막는다.
+   */
+  volume?: string
 }
 
 export interface ExportOptions {

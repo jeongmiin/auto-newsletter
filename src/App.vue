@@ -3,7 +3,6 @@ import { watch } from 'vue'
 import { RouterView } from 'vue-router'
 import { useEditorStore } from '@/stores/editorStore'
 import { pointColorAt } from '@/utils/pointColor'
-import UpdateNoticeModal from '@/components/UpdateNoticeModal.vue'
 
 // 전역 포인트 색상(최대 3개)을 :root CSS 변수(--point-color-0/1/2)로 노출한다.
 // 본문(리치 텍스트)에서 '포인트 색상으로 사용'한 인라인 색상이 선택한 인덱스별로
@@ -21,18 +20,42 @@ watch(
   },
   { immediate: true, deep: true },
 )
+
+/**
+ * 확인창 안내의 `**강조**` 표기를 굵은 조각으로 나눈다.
+ *
+ * ConfirmDialog의 message는 **문자열만** 받아 태그를 실을 수 없다. v-html로 넣으면
+ * 안내 문구 전체가 마크업 통로가 되므로, 표기해 둔 자리만 굵게 만들고 나머지는 글자 그대로 둔다.
+ */
+const boldParts = (text?: string): Array<{ text: string; bold: boolean }> =>
+  (text ?? '')
+    .split(/\*\*(.+?)\*\*/g)
+    .map((part, i) => ({ text: part, bold: i % 2 === 1 }))
+    .filter((part) => part.text !== '')
 </script>
 
 <template>
   <Toast position="bottom-right" />
   <ConfirmDialog />
   <!--
-    9월 28일 개편 사전 안내(한시적) — 어느 화면으로 들어와도 한 번은 보게 여기에 둔다.
-    뜨는 건 '템플릿 선택'부터다(랜딩은 덮지 않는다). 랜딩으로 들어온 사람에게도 넘어가는
-    순간 뜨도록, 모달이 화면 이동을 지켜본다. 에디터에서도 뜬다: 만들던 작업을 파일로
-    받아 두라는 안내라, 거기 있는 사람이 곧 대상이다.
-    ⚠ 9/28 develop을 머지할 때 **이 줄과 컴포넌트를 반드시 지울 것** — 저절로 사라지지 않는다.
+    안내가 여러 줄인 확인창(새 작업·전체 삭제)은 글줄이 접히지 않도록 내용 폭에 맞추되 460px보다
+    좁아지지 않게 한다. 모양(제목 24px · 본문 17px · 버튼)은 main.css의 .confirm-wide (Figma 1542-6722).
+    (`confirm.require({ group: 'wide' })`로 이 대화상자를 쓴다)
   -->
-  <UpdateNoticeModal />
+  <ConfirmDialog
+    group="wide"
+    :style="{ width: 'auto', minWidth: '460px', maxWidth: 'min(680px, calc(100vw - 32px))' }"
+    :pt="{ root: { class: 'confirm-wide' } }"
+  >
+    <!-- 기본 슬롯 대신 직접 그린다 — `**…**`로 표기한 자리를 굵게 (클래스는 기본과 같게 유지) -->
+    <template #message="{ message }">
+      <span class="p-confirmdialog-message">
+        <template v-for="(part, i) in boldParts(message.message)" :key="i">
+          <strong v-if="part.bold">{{ part.text }}</strong>
+          <template v-else>{{ part.text }}</template>
+        </template>
+      </span>
+    </template>
+  </ConfirmDialog>
   <RouterView />
 </template>

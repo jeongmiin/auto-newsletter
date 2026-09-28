@@ -21,7 +21,7 @@
         />
       </div>
       <div class="qa-foot">
-        <span class="quick-add-label">{{ item.label }}</span>
+        <span class="quick-add-label" :style="labelStyle">{{ item.label }}</span>
         <span class="material-symbols-outlined quick-add-icon">add</span>
       </div>
     </template>
@@ -39,13 +39,13 @@
         >{{ t }}</span>
       </div>
       <div class="qa-foot">
-        <span class="quick-add-label">{{ item.label }}</span>
+        <span class="quick-add-label" :style="labelStyle">{{ item.label }}</span>
         <span class="material-symbols-outlined quick-add-icon">add</span>
       </div>
     </template>
-    <!-- 그 외: 라벨 + 추가 아이콘 한 줄 -->
+    <!-- 그 외: 라벨 + 추가 아이콘 한 줄 (텍스트 모듈은 실제 폰트 위계대로 라벨 크기가 달라진다) -->
     <template v-else>
-      <span class="quick-add-label">{{ item.label }}</span>
+      <span class="quick-add-label" :style="labelStyle">{{ item.label }}</span>
       <span class="material-symbols-outlined quick-add-icon">add</span>
     </template>
   </button>
@@ -70,6 +70,11 @@ const isButtonPreview = computed(
     props.item.preview === 'double-button' ||
     props.item.preview === 'small-button',
 )
+// 라벨 크기/굵기 — 텍스트 모듈처럼 폰트 위계가 있는 항목만 지정된다(없으면 공용 16px/500)
+const labelStyle = computed(() => ({
+  ...(props.item.labelFontSize ? { fontSize: props.item.labelFontSize } : {}),
+  ...(props.item.labelFontWeight ? { fontWeight: String(props.item.labelFontWeight) } : {}),
+}))
 // 버튼 미리보기에 그릴 버튼 라벨들 (각 모듈 기본 텍스트에 맞춤)
 const buttonPreviewLabels = computed<string[]>(() => {
   if (props.item.preview === 'double-button') return ['버튼 1 →', '버튼 2 →']

@@ -6,26 +6,15 @@
       <!-- 패널 제목 — 다른 레일 메뉴 패널과 같은 panel-title (Figma 1125-2974) -->
       <h2 class="panel-title">모듈</h2>
 
-      <!-- 모듈 검색 -->
-      <div class="mp-search">
-        <span class="material-symbols-outlined mp-search-icon">search</span>
-        <input
-          v-model="searchQuery"
-          type="text"
-          class="mp-search-input"
-          placeholder="모듈을 검색하세요"
-          spellcheck="false"
-        />
-        <button
-          v-if="searchQuery"
-          type="button"
-          class="mp-search-clear"
-          title="검색어 지우기"
-          @click="searchQuery = ''"
-        >
-          <span class="material-symbols-outlined">close</span>
-        </button>
-      </div>
+      <!-- 모듈 검색 — 좁은 좌측 패널이라 공용 검색창의 sm -->
+      <SearchField
+        v-model="searchQuery"
+        class="mp-search"
+        size="sm"
+        placeholder="모듈을 검색하세요"
+        aria-label="모듈 검색"
+        clearable
+      />
 
       <!-- 카테고리 탭 — 글자 폭에 맞추고, 패널을 넘치면 좌우 화살표로 넘긴다 (Figma 908-11145).
            PrimeVue Tabs(scrollable)가 넘침 감지와 화살표를 담당하고, 겉모습만 기존 밑줄 탭으로 덮어쓴다. -->
@@ -306,6 +295,7 @@ import Tabs from 'primevue/tabs'
 import TabList from 'primevue/tablist'
 import Tab from 'primevue/tab'
 import ModuleCard from './ModuleCard.vue'
+import SearchField from '@/components/SearchField.vue'
 import { useModuleThumbnails } from '@/composables/useModuleThumbnails'
 import { storeToRefs } from 'pinia'
 import { useModuleStore } from '@/stores/moduleStore'
@@ -668,9 +658,11 @@ onMounted(async () => {
 .panel-title {
   margin: 0 25px 20px;
 }
-/* 검색창 모양은 panels.css의 공용 .mp-search* — 여기선 패널 좌우 여백만 얹는다 */
+/* 검색창 모양은 공용 SearchField(sm) — 여기선 패널 좌우 여백만 얹는다 */
 .mp-search {
   margin: 0 25px;
+  /* 자식 컴포넌트의 루트라 폭 계산이 부모 padding과 겹치지 않게 */
+  width: auto;
 }
 
 /* 카테고리 탭 — 한 줄, 활성 탭 밑줄 (Figma 334-2630) */

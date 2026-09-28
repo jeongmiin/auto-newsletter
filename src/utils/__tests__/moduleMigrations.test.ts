@@ -178,6 +178,22 @@ describe('migrateModuleProperties — 모서리 둥글기 토글', () => {
   })
 })
 
+describe('migrateModuleProperties — 작은 버튼', () => {
+  it('버튼 너비 값은 건드리지 않는다 — 패널 옵션은 없어졌지만 옛 파일의 너비는 그대로 렌더된다', () => {
+    const next = migrateModuleProperties('ModuleSmallButton', { btnWidth: '100%' })
+    expect(next.btnWidth).toBe('100%')
+    expect(next.showBtnWidth).toBeUndefined()
+  })
+
+  it('둥글기 값이 남아 있으면 둥글기 토글을 켠다', () => {
+    const next = migrateModuleProperties('ModuleSmallButton', {
+      btnWidth: '120px',
+      btnBorderRadius: '30px',
+    })
+    expect(next.showBorderRadius).toBe(true)
+  })
+})
+
 describe('migrateModuleProperties — 옛 테이블 셀 내용(굵게 마커·줄바꿈)', () => {
   it('**굵게** 마커와 \n 줄바꿈을 HTML로 바꾼다', () => {
     const next = migrateModuleProperties('ModuleTable', {

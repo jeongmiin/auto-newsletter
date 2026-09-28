@@ -1,12 +1,14 @@
 import { ref, watch, computed, onScopeDispose, effectScope } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useModuleStore } from '@/stores/moduleStore'
-import type { ModuleInstance, ModuleGroup } from '@/types'
+import { useEditorStore } from '@/stores/editorStore'
+import type { ModuleInstance, ModuleGroup, WrapSettings } from '@/types'
 
 interface HistoryState {
   modules: ModuleInstance[]
   groups: ModuleGroup[]
   selectedModuleId: string | null
+  wrapSettings: WrapSettings
 }
 
 const MAX_HISTORY_SIZE = 50
@@ -16,7 +18,9 @@ const MAX_HISTORY_SIZE = 50
  */
 export function useHistory() {
   const moduleStore = useModuleStore()
+  const editorStore = useEditorStore()
   const { modules, groups, selectedModuleId } = storeToRefs(moduleStore)
+  const { wrapSettings } = storeToRefs(editorStore)
 
   // 히스토리 스택
   const undoStack = ref<HistoryState[]>([])
@@ -31,6 +35,7 @@ export function useHistory() {
       modules: JSON.parse(JSON.stringify(modules.value)),
       groups: JSON.parse(JSON.stringify(groups.value)),
       selectedModuleId: selectedModuleId.value,
+      wrapSettings: JSON.parse(JSON.stringify(wrapSettings.value)),
     }
   }
 
@@ -46,6 +51,9 @@ export function useHistory() {
     const restoredGroups: ModuleGroup[] = JSON.parse(JSON.stringify(snapshot.groups || []))
     groups.value.splice(0, groups.value.length, ...restoredGroups)
     selectedModuleId.value = snapshot.selectedModuleId
+    if (snapshot.wrapSettings) {
+      editorStore.applyLoadedWrapSettings(JSON.parse(JSON.stringify(snapshot.wrapSettings)))
+    }
 
     // debounce 시간(300ms)보다 길게 대기하여 watcher가 이 변경을 무시하도록 함
     setTimeout(() => {
@@ -122,7 +130,7 @@ export function useHistory() {
   let debounceTimer: ReturnType<typeof setTimeout> | null = null
 
   const stopWatcher = watch(
-    [modules, groups],
+    [modules, groups, wrapSettings],
     () => {
       if (isApplyingHistory.value) return
 
@@ -134,6 +142,25 @@ export function useHistory() {
     },
     { deep: true }
   )
+
+  /**
+   * 템플릿·파일을 통째로 불러오는 동안에는 감시를 멈춘다.
+   *
+   * 위 감시는 `deep: true`라, 모듈 하나를 넣거나 속성 하나를 바꿀 때마다 **모듈 배열 전체를
+   * 다시 훑는다.** 평소 편집(한 번에 한 곳)에서는 문제가 없지만, 템플릿을 불러올 때는
+   * 모듈 수십 개 × 속성 수백 개가 연달아 바뀌어 훑는 비용이 제곱으로 불어난다.
+   * 불러오는 동안에는 되돌릴 중간 상태도 없으니, 멈췄다가 끝나고 한 번만 저장하면 된다.
+   *
+   * (개발 서버나 Vue DevTools처럼 반응형 한 번의 비용이 비싼 환경에서 특히 크게 차이 난다)
+   */
+  const runBulk = async <T>(fn: () => T | Promise<T>): Promise<T> => {
+    stopWatcher.pause()
+    try {
+      return await fn()
+    } finally {
+      stopWatcher.resume()
+    }
+  }
 
   // 클린업: watcher와 타이머 정리
   onScopeDispose(() => {
@@ -156,6 +183,7 @@ export function useHistory() {
     canRedo,
     clearHistory,
     saveState,
+    runBulk,
     undoStackSize: () => undoStack.value.length,
     redoStackSize: () => redoStack.value.length,
   }

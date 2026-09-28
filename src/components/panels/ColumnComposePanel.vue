@@ -6,26 +6,14 @@
   <div v-if="target" class="side-panel column-compose-panel">
     <h2 class="panel-title">직접 구성</h2>
 
-    <!-- 모듈 검색 (모듈 패널과 동일한 채움형 검색창) -->
-    <div class="mp-search">
-      <span class="material-symbols-outlined mp-search-icon">search</span>
-      <input
-        v-model="searchQuery"
-        type="text"
-        class="mp-search-input"
-        placeholder="모듈을 검색하세요"
-        spellcheck="false"
-      />
-      <button
-        v-if="searchQuery"
-        type="button"
-        class="mp-search-clear"
-        title="검색어 지우기"
-        @click="searchQuery = ''"
-      >
-        <span class="material-symbols-outlined">close</span>
-      </button>
-    </div>
+    <!-- 모듈 검색 — 모듈 패널과 같은 공용 검색창(sm) -->
+    <SearchField
+      v-model="searchQuery"
+      size="sm"
+      placeholder="모듈을 검색하세요"
+      aria-label="모듈 검색"
+      clearable
+    />
 
     <!-- 자주 쓰는 원소 모듈 (카테고리 메뉴와 같은 QuickAddCard) — 전부 그룹을 만들지 않는 단일 모듈 -->
     <div class="quick-add-list">
@@ -60,6 +48,7 @@ import { useModuleStore } from '@/stores/moduleStore'
 import { useModuleThumbnails } from '@/composables/useModuleThumbnails'
 import ModuleCard from './ModuleCard.vue'
 import QuickAddCard from './QuickAddCard.vue'
+import SearchField from '@/components/SearchField.vue'
 import { pickQuickAddItems, type QuickAddItem } from '@/utils/quickAddItems'
 import type { ModuleMetadata } from '@/types'
 
@@ -135,7 +124,7 @@ const onQuickAdd = (item: QuickAddItem) => {
   gap: 20px;
 }
 
-/* 검색창(.mp-search*)은 panels.css 공용 스타일 — 모듈 패널과 완전히 같은 모양이다 */
+/* 검색창은 공용 SearchField(sm) — 모듈 패널과 완전히 같은 모양이다 */
 
 .quick-add-list {
   display: flex;

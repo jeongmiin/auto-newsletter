@@ -201,10 +201,12 @@
                 @click="mergeSelection"
               >합치기</button>
             </div>
+            <!-- 'SHIFT + 셀 선택'이라고 적었더니 Shift 와 + 키를 함께 누르는 사람이 나왔다.
+                 기호를 빼고 누르는 순서를 문장으로 풀어 적는다. -->
             <p class="hint-text">
               {{ canUnmergeSelection
                 ? '*합쳐진 셀이에요. 나누기를 누르면 원래 칸으로 돌아가요.'
-                : '*2개 이상 셀 합칠 시, SHIFT + 셀 선택하세요.' }}
+                : '*2개 이상 셀 합칠 시, SHIFT키를 누른 채로 셀을 선택하세요.' }}
             </p>
           </div>
 
@@ -269,14 +271,56 @@
           <div class="tbl-divider tbl-divider--wide"></div>
         </template>
 
+        <!-- 작은 버튼 '버튼 내용' 칩 (Figma 1227-42350) — 버튼 2~4 노출 스위치를 대신한다.
+             칩 = 지금 있는 버튼(클릭해서 편집 대상 전환), '+ 추가' = 다음 버튼 켜기,
+             활성 칩의 ✕ = 그 버튼 삭제. 아래 '버튼 N' 속성 그룹은 고른 칩 하나만 펼쳐 보여준다. -->
+        <div v-if="isSmallButtonModule" class="sbtn-block">
+          <div class="sbtn-head">
+            <span class="gg-acc-label">버튼 내용</span>
+            <span class="sbtn-max">(최대 {{ SMALL_BTN_MAX }}개)</span>
+          </div>
+          <div class="sbtn-chips">
+            <!-- 칩 하나에 '선택'과 '삭제' 두 동작이 있어 컨테이너는 div, 안에 버튼 둘을 둔다 -->
+            <div
+              v-for="slot in smallBtnSlots"
+              :key="`sbtn-${slot}`"
+              class="sbtn-chip"
+              :class="{ 'is-active': slot === activeSmallBtn }"
+            >
+              <button type="button" class="sbtn-chip-main" @click="activeSmallBtn = slot">
+                {{ smallBtnLabel(slot) }}
+              </button>
+              <!-- 활성 칩에만 ✕ (버튼이 하나만 남으면 지울 수 없다) -->
+              <button
+                v-if="slot === activeSmallBtn && smallBtnSlots.length > 1"
+                type="button"
+                class="sbtn-chip-x"
+                :aria-label="`${smallBtnLabel(slot)} 삭제`"
+                v-tooltip.top="'이 버튼 삭제'"
+                @click="removeSmallBtn(slot)"
+              >
+                <span class="material-symbols-outlined">close_small</span>
+              </button>
+            </div>
+            <button
+              v-if="smallBtnSlots.length < SMALL_BTN_MAX"
+              type="button"
+              class="sbtn-chip sbtn-chip--add"
+              @click="addSmallBtn"
+            >+ 추가</button>
+          </div>
+        </div>
+
         <div
           v-for="(group, gIdx) in propGroups"
-          v-show="isGroupInActiveTab(group)"
+          v-show="isGroupInActiveTab(group) && isSmallBtnGroupVisible(group)"
           :key="`grp-${gIdx}-${group.name || 'flat'}`"
           class="gg-acc-section"
           :class="{
             'gg-acc-section--flat': !group.name,
             'gg-acc-section--quad': isQuadSelfLabeledGroup(group) && !isStyleSection(group),
+            'gg-acc-section--btn': isSmallBtnGroup(group),
+            'gg-acc-section--divider': gIdx === smallBtnCommonStart,
           }"
         >
         <!-- 이름 있는 prop 그룹(레거시 모듈의 로고/타이틀 등 섹션) — Figma 352-1138의 접이식 헤더 패턴.
@@ -286,7 +330,7 @@
              · 스위치 on→off: 펼침 상태는 그대로 두고 내용만 흐리게(조작 불가)
              · chevron/라벨 클릭: 스위치와 무관하게 열고 닫는다 (기본 닫힘) -->
         <div
-          v-if="hasSectionHeader(group) || (gIdx === 0 && !isTableModule)"
+          v-if="hasSectionHeader(group) || (gIdx === 0 && !isTableModule && !isSmallBtnGroup(group))"
           class="gg-acc-header"
           :class="{ 'is-static': !isCollapsibleSection(group) }"
         >
@@ -342,7 +386,7 @@
         >
           <!-- 리치텍스트(textarea)는 위에 '폰트 크기'와 서식 툴바가 바로 붙으므로 별도 라벨을 두지 않는다(Figma 640-3689) -->
           <label
-            v-show="prop.type !== 'boolean' && prop.type !== 'checkbox' && prop.type !== 'textarea' && prop.type !== 'table-editor' && !isColorBlock(prop) && !isQuadStart(prop, group.props, index) && !isSingleSpacingField(prop) && !isBorderWidthField(prop) && !isPxWidthField(prop) && !isBorderStyleStart(prop)"
+            v-show="prop.type !== 'boolean' && prop.type !== 'checkbox' && prop.type !== 'textarea' && prop.type !== 'table-editor' && prop.type !== 'image-crop' && !isColorBlock(prop) && !isQuadStart(prop, group.props, index) && !isSingleSpacingField(prop) && !isBorderWidthField(prop) && !isPxWidthField(prop) && !isBorderStyleStart(prop)"
             class="gg-field-label"
             :class="{ 'fs-label-row': isFontSizeField(prop) }"
           >
@@ -842,6 +886,21 @@
             </Editor>
           </div>
 
+          <!-- 이미지 주소 — 업로드 + URL 직접 입력.
+               링크 URL(type:'url')과 달리 이미지 '원본'을 가리키는 필드만 여기로 온다
+               (modules-config.json에서 type:'image'로 표시). -->
+          <div v-else-if="prop.type === 'image'" class="space-y-2">
+            <ImageUploadField
+              :ref="(el) => setImageFieldRef(prop.key, el)"
+              :modelValue="String(selectedModule.properties[prop.key] || '')"
+              @update:modelValue="updateProperty(prop.key, $event)"
+              :placeholder="prop.placeholder || 'https://...'"
+              :placeholderUrl="imagePlaceholderUrl(prop)"
+              :cropWidth="prop.cropWidth"
+            />
+            <p v-if="prop.hint" class="hint-text" v-html="prop.hint"></p>
+          </div>
+
           <!-- URL 입력 -->
           <div v-else-if="prop.type === 'url'" class="space-y-2 gg-text-input">
             <InputText
@@ -946,6 +1005,21 @@
                 {{ opt.label }}
               </button>
             </div>
+          </div>
+
+          <!-- 이미지 다듬기 — 값이 없는 동작 버튼. target 이미지 필드(ImageUploadField)의 모달을 연다.
+               자리표시 이미지뿐이면 자를 게 없으므로 비활성화한다. -->
+          <div v-else-if="prop.type === 'image-crop'">
+            <button
+              type="button"
+              class="gg-crop-btn"
+              :disabled="!canCropImage(prop)"
+              :title="canCropImage(prop) ? '' : '이미지를 먼저 올려 주세요'"
+              @click="openImageCrop(prop)"
+            >
+              <span class="material-symbols-outlined">crop</span>
+              {{ prop.label || '이미지 다듬기' }}
+            </button>
           </div>
 
           <!-- 셀렉트 -->
@@ -1420,7 +1494,61 @@
                   <!-- 내용 (단일 선택만 편집) — 텍스트 모듈과 동일한 Quill 리치 에디터 -->
                   <div class="gg-field">
                     <label class="tbl-sec-label">내용</label>
-                    <div v-if="tableSelectedCells.length === 1 && firstSelCell" class="rte-field">
+                    <template v-if="tableSelectedCells.length === 1 && firstSelCell">
+                    <!-- 폰트 크기 — 텍스트 모듈의 '폰트 크기'와 같은 컨트롤 (Figma 640-3689).
+                         기준은 모듈 기본값이 아니라 **고른 셀**이고, 에디터 안에서 글자를 드래그하면
+                         그 부분에만 걸린다(배지 '선택 영역'). 툴바 바로 위에 두어 순서를 텍스트 모듈과 맞춘다. -->
+                    <div class="tbl-fs-field">
+                      <div class="gg-field-label fs-label-row">
+                        <span>
+                          폰트 크기
+                          <span v-if="isCellFontSizeSelectionTarget" class="fs-target-badge">선택 영역</span>
+                        </span>
+                        <button
+                          v-if="cellFontSizeHasInline"
+                          type="button"
+                          class="fs-reset-btn"
+                          @click.prevent="resetCellFontSizeToBase"
+                        >
+                          <span class="material-symbols-outlined">restart_alt</span>
+                          {{ isCellFontSizeSelectionTarget ? '선택 영역을 기본 크기로' : '개별 크기 모두 지우기' }}
+                        </button>
+                      </div>
+                      <div class="gg-margin-slider-row">
+                        <input
+                          type="range"
+                          :min="FONT_SIZE_MIN"
+                          :max="FONT_SIZE_MAX"
+                          step="1"
+                          :value="cellFontSizeNumber"
+                          @input="onCellFontSizeInput"
+                          class="gg-margin-slider"
+                        />
+                        <div class="gg-margin-value-field">
+                          <!-- 섞여 있을 때는 숫자 입력이 '--'를 담지 못해 텍스트 입력으로 그린다 -->
+                          <input
+                            v-if="isCellFontSizeMixed"
+                            type="text"
+                            value="--"
+                            @change="onCellFontSizeInput"
+                            @keydown.enter="blurTarget"
+                            class="gg-margin-value-input"
+                          />
+                          <input
+                            v-else
+                            type="number"
+                            :min="FONT_SIZE_MIN"
+                            :max="FONT_SIZE_MAX"
+                            :value="cellFontSizeNumber"
+                            @change="onCellFontSizeInput"
+                            @keydown.enter="blurTarget"
+                            class="gg-margin-value-input"
+                          />
+                          <span class="gg-margin-value-unit">px</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="rte-field" :style="{ '--rte-base-size': cellBaseFontSizeCss }">
                       <Editor
                         :model-value="firstSelCell.content"
                         @update:model-value="updateSelCellContent($event)"
@@ -1514,6 +1642,7 @@
                         </template>
                       </Editor>
                     </div>
+                    </template>
                     <p v-else class="tbl-multi-hint">여러 셀이 선택됐어요. 내용은 셀 하나만 선택해 편집하세요.</p>
                     <p class="hint-text">*셀 배경색·정렬은 지정하기 전까지 테이블 공통값을 따라요.</p>
                   </div>
@@ -1524,14 +1653,7 @@
                   <div class="tbl-divider"></div>
                   <div class="gg-field">
                     <label class="tbl-sec-label">이미지 파일</label>
-                    <div class="gg-text-input space-y-2">
-                      <label class="gg-field-label">이미지 파일 URL</label>
-                      <InputText
-                        :modelValue="selImageUrl"
-                        @update:modelValue="setSelImageUrl"
-                        placeholder="https://..."
-                      />
-                    </div>
+                    <ImageUploadField :modelValue="selImageUrl" @update:modelValue="setSelImageUrl" />
                     <div class="gg-text-input space-y-2 !mt-3">
                       <label class="gg-field-label">이미지 설명</label>
                       <InputText
@@ -1787,6 +1909,7 @@ import {
   toFontSizeValue,
   parseFontSize,
 } from '@/utils/quillFontSize'
+import { TABLE_CELL_DEFAULT_FONT_SIZE } from '@/utils/moduleContentReplacer'
 import {
   LETTER_SPACING_MIN,
   LETTER_SPACING_MAX,
@@ -1797,7 +1920,9 @@ import {
 } from '@/utils/quillLetterSpacing'
 import { POINT_COLOR_SUFFIX, POINT_COLOR_INDEX_SUFFIX, POINT_COLOR_CSS_VAR, pointColorCssVar, getPointColorIndex, pointColorAt } from '@/utils/pointColor'
 import { processQuillHtml } from '@/utils/quillHtmlProcessor'
+import { DEFAULT_IMAGE_URL, isPlaceholderImage } from '@/constants/defaults'
 import TableCellEditor from './TableCellEditor.vue'
+import ImageUploadField from './ImageUploadField.vue'
 import ColorAlphaPicker from '@/components/ColorAlphaPicker.vue'
 import HexColorInput from '@/components/HexColorInput.vue'
 import PointColorSwatchRow from '@/components/PointColorSwatchRow.vue'
@@ -2299,6 +2424,83 @@ const hasSelOwnStyle = computed(() =>
 // undefined로 지우면 렌더러가 다시 공통값으로 폴백한다
 const resetSelOwnStyle = () => applyToSelected({ bgColor: undefined, align: undefined })
 
+// ===== 테이블 셀 글자 크기 (텍스트 모듈의 '폰트 크기'와 같은 컨트롤) =====
+// 텍스트 모듈은 '모듈 기본값(prop)'을 기준으로 삼지만, 표에는 그런 prop이 없고 크기를
+// 셀마다 다르게 주는 게 자연스럽다 — 그래서 기준이 **고른 셀**(cell.fontSize)이다.
+// 에디터 안에서 글자를 드래그하면 그 범위에만 인라인으로 걸린다(이 부분은 텍스트 모듈과 같다).
+// 컨트롤은 셀 하나만 골랐을 때만 나오므로(내용 편집과 같은 조건) 여러 셀 일괄 적용은 없다.
+
+/** 셀 에디터의 현재 서식 상태 — 선택 영역 여부·인라인 크기 유무를 여기서 읽는다 */
+const cellFontState = computed(() => editorFormatState[TABLE_CELL_KEY])
+/** 지금 조작 대상이 '드래그한 부분'인지 (아니면 셀 전체) */
+const isCellFontSizeSelectionTarget = computed(() => !!cellFontState.value?.hasSelection)
+/** 고른 범위에 크기가 섞여 있는지 — 값 자리에 '--'를 보여준다 */
+const isCellFontSizeMixed = computed(
+  () => isCellFontSizeSelectionTarget.value && !!cellFontState.value?.fontSizeMixed,
+)
+/** 되돌릴 인라인 크기가 있는지 — 고른 범위 기준(선택이 없으면 셀 본문 전체 기준) */
+const cellFontSizeHasInline = computed(() =>
+  isCellFontSizeSelectionTarget.value
+    ? !!cellFontState.value?.fontSizeInSelection
+    : !!cellFontState.value?.fontSizeAnywhere,
+)
+/** 셀의 바탕 크기(px) — 정한 적이 없으면 렌더러와 같은 기본값 */
+const cellBaseFontSizeNumber = computed(
+  () =>
+    parseFontSize(firstSelCell.value?.fontSize) ??
+    parseFontSize(TABLE_CELL_DEFAULT_FONT_SIZE) ??
+    14,
+)
+/** 에디터 본문을 캔버스와 같은 크기로 그리기 위한 값 */
+const cellBaseFontSizeCss = computed(() => `${cellBaseFontSizeNumber.value}px`)
+/** 컨트롤에 보일 값 — 고른 범위가 있으면 그 크기, 없거나 섞였으면 셀의 바탕 크기 */
+const cellFontSizeNumber = computed(() => {
+  if (isCellFontSizeSelectionTarget.value) {
+    const sel = parseFontSize(cellFontState.value?.fontSize)
+    if (sel !== null) return sel
+  }
+  return cellBaseFontSizeNumber.value
+})
+
+const onCellFontSizeInput = (event: Event) => {
+  const parsed = Number.parseInt((event.target as HTMLInputElement).value, 10)
+  const next = Math.min(
+    FONT_SIZE_MAX,
+    Math.max(FONT_SIZE_MIN, Number.isFinite(parsed) ? parsed : cellFontSizeNumber.value),
+  )
+  const quill = quillByKey[TABLE_CELL_KEY]
+  const range = quillRangeByKey[TABLE_CELL_KEY]
+  if (isCellFontSizeSelectionTarget.value && quill && range && range.length > 0) {
+    quill.formatText(range.index, range.length, 'fontSize', toFontSizeValue(next), 'user')
+    syncEditorFormatState(TABLE_CELL_KEY, quill, range)
+    return
+  }
+  applyToSelected({ fontSize: toFontSizeValue(next) })
+}
+
+/** 인라인 크기 지우기 — 고른 범위만, 선택이 없으면 셀 본문 전체. 셀의 바탕 크기는 그대로 둔다 */
+const resetCellFontSizeToBase = () => {
+  const quill = quillByKey[TABLE_CELL_KEY]
+  if (!quill) return
+  const range = quillRangeByKey[TABLE_CELL_KEY]
+  if (isCellFontSizeSelectionTarget.value && range && range.length > 0) {
+    quill.formatText(range.index, range.length, 'fontSize', false, 'user')
+  } else {
+    quill.formatText(0, quill.getLength(), 'fontSize', false, 'user')
+  }
+  syncEditorFormatState(TABLE_CELL_KEY, quill, quillRangeByKey[TABLE_CELL_KEY])
+}
+
+// 다른 셀로 옮겨 가도 에디터 컴포넌트는 그대로 살아 있어, 손대지 않으면 직전 셀의 선택 영역이
+// 남아 '선택 영역' 배지가 엉뚱하게 뜬다. 셀이 바뀌면 그 흔적을 지우고 새 내용으로 다시 읽는다.
+watch(firstSelCoord, () => {
+  quillRangeByKey[TABLE_CELL_KEY] = null
+  void nextTick(() => {
+    const quill = quillByKey[TABLE_CELL_KEY]
+    if (quill) syncEditorFormatState(TABLE_CELL_KEY, quill, null)
+  })
+})
+
 // 병합 / 병합 해제
 const canMergeSelection = computed(() => {
   const cells = tableSelectedCells.value
@@ -2571,7 +2773,41 @@ const isAlignSegment = (prop: EditableProp): boolean => {
   return vals.includes('left') && vals.includes('center') && vals.includes('right')
 }
 /** 세그먼트에서 활성으로 보일 값 — 저장값이 없으면 그 속성의 기본값(제목 center / 내용 left 등) */
-const alignValueOf = (prop: EditableProp): string =>
+/**
+ * 이미지 필드에서 '삭제'했을 때 되돌릴 자리표시 이미지.
+ * modules-config.json에 적힌 그 필드의 기본 이미지를 쓴다 — 2단 이미지는 2단 자리표시로,
+ * 로고는 회색 로고로 돌아가야 모양이 어긋나지 않는다. 기본값이 없으면 1단 자리표시.
+ */
+const imagePlaceholderUrl = (prop: EditableProp): string => {
+  const fallback = typeof prop.default === 'string' ? prop.default.trim() : ''
+  return fallback || DEFAULT_IMAGE_URL
+}
+
+/**
+ * 이미지 다듬기(type:'image-crop') — 버튼은 '이미지 크기 조정' 그룹에 있고 모달·재업로드는
+ * 그 이미지의 ImageUploadField 가 맡는다. 그래서 필드 인스턴스를 key 로 붙잡아 둔다.
+ * 그룹은 v-show 로 접히므로 접혀 있어도 인스턴스는 살아 있다.
+ */
+type ImageFieldInstance = InstanceType<typeof ImageUploadField>
+const imageFieldRefs = new Map<string, ImageFieldInstance>()
+const setImageFieldRef = (key: string, el: unknown) => {
+  if (el) imageFieldRefs.set(key, el as ImageFieldInstance)
+  else imageFieldRefs.delete(key)
+}
+/** 다듬을 이미지의 현재 값 — target 이 없으면 같은 그룹의 관례 이름(imageUrl)을 쓴다 */
+const cropTargetValue = (prop: EditableProp): string =>
+  String(selectedModule.value?.properties[prop.target ?? 'imageUrl'] || '')
+/** 자리표시 이미지(모듈 기본 이미지)뿐이면 자를 게 없다 */
+const canCropImage = (prop: EditableProp): boolean => {
+  const value = cropTargetValue(prop)
+  return value !== '' && !isPlaceholderImage(value)
+}
+const openImageCrop = (prop: EditableProp) => {
+  if (!canCropImage(prop)) return
+  void imageFieldRefs.get(prop.target ?? 'imageUrl')?.openCrop()
+}
+
+const alignValueOf =(prop: EditableProp): string =>
   String(selectedModule.value?.properties[prop.key] || prop.default || 'center')
 
 /**
@@ -2588,6 +2824,88 @@ const onAlignSegmentPick = (prop: EditableProp, value: string) => {
   }
   updateProperty(prop.key, value)
 }
+
+// ===== 작은 버튼 '버튼 내용' 칩 (Figma 1209-40180 / 1227-42350) =====
+// 버튼 2~4의 노출 스위치(showBtn2/3/4)를 칩 목록으로 바꾼 UI. 데이터 모델은 그대로라
+// 렌더·내보내기 경로(removeSmallButtonsProcessor)는 손대지 않는다.
+//  · 칩 = 지금 있는 버튼 (클릭 = 편집 대상 전환)
+//  · '+ 추가' = 다음 슬롯을 켠다 (최대 4개)
+//  · 활성 칩의 ✕ = 그 버튼 삭제 (뒤 버튼 내용을 한 칸씩 당기고 마지막 슬롯을 끈다)
+const SMALL_BTN_MAX = 4
+const isSmallButtonModule = computed(() => selectedModule.value?.moduleId === 'ModuleSmallButton')
+const activeSmallBtn = ref(1)
+watch(() => selectedModule.value?.id, () => { activeSmallBtn.value = 1 })
+
+/** 지금 있는 버튼 슬롯 — 1번은 항상, 2~4는 showBtnN이 켜진 것만 (캔버스 렌더 순서와 동일) */
+const smallBtnSlots = computed<number[]>(() => {
+  const props = selectedModule.value?.properties ?? {}
+  const slots = [1]
+  for (let n = 2; n <= SMALL_BTN_MAX; n++) if (props[`showBtn${n}`] === true) slots.push(n)
+  return slots
+})
+// 활성 칩이 사라졌으면(삭제 등) 마지막 칩으로 되돌린다
+watch(smallBtnSlots, (slots) => {
+  if (!slots.includes(activeSmallBtn.value)) activeSmallBtn.value = slots[slots.length - 1] ?? 1
+})
+
+/** 칩 라벨 = 그 버튼의 텍스트(끝의 화살표는 떼고), 비어 있으면 '버튼 N' */
+const smallBtnLabel = (slot: number): string => {
+  const raw = String(selectedModule.value?.properties[`btn${slot}Text`] ?? '')
+    .replace(/[→>\s]+$/, '')
+    .trim()
+  return raw || `버튼 ${slot}`
+}
+
+const SMALL_BTN_FIELDS = ['Text', 'Url', 'BgColor', 'TextColor'] as const
+const readSmallBtn = (slot: number): unknown[] =>
+  SMALL_BTN_FIELDS.map((f) => selectedModule.value?.properties[`btn${slot}${f}`])
+const writeSmallBtn = (slot: number, values: unknown[]): void => {
+  SMALL_BTN_FIELDS.forEach((f, i) => {
+    const key = `btn${slot}${f}`
+    if (selectedModule.value?.properties[key] !== values[i]) updateProperty(key, values[i])
+  })
+}
+/** 그 슬롯을 설정 기본값으로 되돌린다 — 다시 추가했을 때 앞 버튼 내용이 남아 있지 않도록 */
+const resetSmallBtn = (slot: number): void =>
+  writeSmallBtn(
+    slot,
+    SMALL_BTN_FIELDS.map((f) => editableProps.value.find((p) => p.key === `btn${slot}${f}`)?.default ?? ''),
+  )
+
+const addSmallBtn = (): void => {
+  const next = [2, 3, 4].find((n) => !smallBtnSlots.value.includes(n))
+  if (!next) return
+  resetSmallBtn(next)
+  updateProperty(`showBtn${next}`, true)
+  activeSmallBtn.value = next
+}
+
+const removeSmallBtn = (slot: number): void => {
+  const slots = smallBtnSlots.value
+  const idx = slots.indexOf(slot)
+  if (slots.length <= 1 || idx === -1) return
+  const data = slots.map(readSmallBtn)
+  data.splice(idx, 1)
+  data.forEach((values, i) => writeSmallBtn(slots[i], values))
+  updateProperty(`showBtn${slots[slots.length - 1]}`, false)
+  activeSmallBtn.value = slots[Math.max(0, idx - 1)]
+}
+
+/** '버튼 1'~'버튼 4' 그룹(작은 버튼 전용) — 헤더 없이, 고른 칩 하나만 펼쳐서 보여준다 */
+const smallBtnGroupSlot = (group: PropGroup): number | null => {
+  if (!isSmallButtonModule.value || !group.name) return null
+  const m = /^버튼 ([1-4])$/.exec(group.name)
+  return m ? Number(m[1]) : null
+}
+const isSmallBtnGroup = (group: PropGroup): boolean => smallBtnGroupSlot(group) !== null
+const isSmallBtnGroupVisible = (group: PropGroup): boolean => {
+  const slot = smallBtnGroupSlot(group)
+  return slot === null || slot === activeSmallBtn.value
+}
+/** 버튼 칩 묶음과 공통 옵션(정렬·여백…) 사이의 구분선 위치 = 첫 '버튼 N' 아닌 섹션 */
+const smallBtnCommonStart = computed(() =>
+  isSmallButtonModule.value ? propGroups.value.findIndex((g) => !isSmallBtnGroup(g)) : -1,
+)
 
 // ===== 폰트 크기: 모듈 기본값 ↔ 선택 영역 크기 통합 컨트롤 (Figma 640-3689) =====
 // 드래그 선택이 있으면 그 범위의 인라인 크기를, 없으면 모듈 기본값(prop)을 대상으로 한다.
@@ -2855,7 +3173,9 @@ const STYLE_SECTION_RULES: Record<string, '*' | { exclude: string } | Set<string
   // 버튼: 핵심 입력(텍스트·링크·폰트·배경색·글자색)은 항상 펼친 채 두고 스타일만 접이식 카드로
   ModuleOneButton: { exclude: '버튼' },
   ModuleTwoButton: new Set(['테두리', '모서리 둥글기', '여백']),
-  ModuleSmallButton: { exclude: '공통' },
+  // 작은 버튼: 버튼 1~4는 '버튼 내용' 칩이 대신 관리하므로(헤더·아코디언 없이 항상 펼침)
+  // 4개 버튼에 공통으로 걸리는 옵션만 접이식 카드로 (Figma 1227-42350)
+  ModuleSmallButton: new Set(['정렬', '여백', '글자 크기', '모서리 둥글기']),
   // 연락처: 핵심 입력('연락처')은 항상 펼친 채 두고 여백만 접이식 카드로
   ModuleContactInfo: new Set(['여백']),
   // SNS 아이콘: 핵심 입력(배경색·정렬·구성 요소)은 항상 펼친 채 두고 여백만 접이식 카드로
@@ -2898,8 +3218,9 @@ const fieldChunks = (group: PropGroup): FieldChunk[] => {
   return chunks
 }
 
+// (작은 버튼의 '버튼 N' 그룹은 칩이 헤더 역할을 하므로 섹션 헤더를 두지 않는다 → 항상 펼침)
 const hasSectionHeader = (group: PropGroup): boolean =>
-  !!group.name && (!isQuadSelfLabeledGroup(group) || isStyleSection(group))
+  !!group.name && !isSmallBtnGroup(group) && (!isQuadSelfLabeledGroup(group) || isStyleSection(group))
 // 헤더 우측에 on/off 토글이 있는 그룹인지 — boolean 토글 또는 테두리 블록(on/off) 토글.
 const groupHasHeaderToggle = (group: PropGroup): boolean =>
   !!groupHeaderToggle(group) || !!groupBorderToggleProp(group)
@@ -2929,10 +3250,8 @@ const isSectionEnabled = (group: PropGroup): boolean => {
 const onSectionSwitch = (group: PropGroup, index: number, on: boolean): void => {
   const t = groupHeaderToggle(group)
   if (t) updateProperty(t.key, on)
-  else {
-    const b = groupBorderToggleProp(group)
-    if (b) toggleBorderOn(b, on)
-  }
+  const b = groupBorderToggleProp(group)
+  if (b) toggleBorderOn(b, on)
   if (on) setGroupPanelExpanded(group, index, true)
 }
 

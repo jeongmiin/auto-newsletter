@@ -177,6 +177,36 @@
   cursor: not-allowed;
 }
 
+/* 이미지 다듬기(type:'image-crop') — '이미지 크기 조정' 그룹 맨 아래의 전체 폭 기본 버튼.
+   정렬 세그먼트와 같은 높이·둥글기로 한 묶음처럼 보이게 한다. */
+.module-form .gg-crop-btn {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--blue-400);
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+.module-form .gg-crop-btn .material-symbols-outlined {
+  font-size: 18px;
+}
+.module-form .gg-crop-btn:hover {
+  background: var(--blue-500);
+}
+.module-form .gg-crop-btn:disabled {
+  background: var(--gray-200);
+  color: var(--gray-400);
+  cursor: not-allowed;
+}
+
 /* Quill 에디터를 이메일 기본 폰트로 통일 (입력 시 결과물과 동일하게 보이도록) */
 .module-form .ql-editor {
   font-family: AppleSDGothic, 'malgun gothic', 'nanum gothic', 'Noto Sans KR', sans-serif;
@@ -550,6 +580,105 @@
    남겨 간격이 들쭉날쭉해지므로 flex gap으로 일원화한다(숨긴 요소는 flow에서 빠져 gap 미적용). */
 .module-form .gg-acc-body {
   gap: 26px;
+}
+
+/* ── 작은 버튼 '버튼 내용' 칩 (Figma 1227-42350) ─────────────────────────
+   칩 = 지금 있는 버튼. 활성 칩은 파란 채움 + ✕(삭제), 마지막은 점선 '+ 추가'. */
+.module-form .sbtn-block {
+  padding-top: 26px;
+  margin-bottom: 26px;
+}
+.module-form .sbtn-head {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.module-form .sbtn-max {
+  font-size: 15px;
+  color: var(--gray-600);
+  letter-spacing: -0.15px;
+}
+.module-form .sbtn-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.module-form .sbtn-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 40px;
+  padding: 0 16px;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 32px;
+}
+.module-form .sbtn-chip.is-active{padding: 0 10px 0 16px;}
+.module-form .sbtn-chip:hover {
+  border-color: var(--gray-300);
+}
+.module-form .sbtn-chip.is-active,
+.module-form .sbtn-chip.is-active:hover {
+  background: var(--blue-400);
+  border-color: var(--blue-400);
+}
+.module-form .sbtn-chip-main {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gray-700);
+  background: none;
+  border: none;
+  padding: 0;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.module-form .sbtn-chip.is-active .sbtn-chip-main {
+  color: var(--white);
+  cursor: default;
+}
+.module-form .sbtn-chip-x {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--white);
+  cursor: pointer;
+}
+.module-form .sbtn-chip-x:hover {
+  background: rgb(255 255 255 / 25%);
+}
+.module-form .sbtn-chip-x .material-symbols-outlined {
+  font-size: 24px;
+}
+/* '+ 추가' — 점선 테두리 (Figma Button/Ghost/Medium, dashed) */
+.module-form .sbtn-chip--add {
+  border-style: dashed;
+  border-color: var(--gray-300);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gray-600);
+  cursor: pointer;
+}
+.module-form .sbtn-chip--add:hover {
+  border-color: var(--gray-400);
+  background: var(--gray-50);
+}
+/* 칩으로 고른 '버튼 N' 속성 그룹 — 섹션 헤더가 없으므로 구분선도 두지 않는다 */
+.module-form .gg-acc-section--btn {
+  border-top: none;
+}
+/* 버튼 내용과 공통 옵션(정렬·여백…) 사이 구분선 (Figma Line 45) */
+.module-form .gg-acc-section--divider {
+  border-top: 1px solid var(--gray-100);
 }
 
 /* flat 모듈의 인라인 토글(이미지 링크 사용·테두리 등) 위 구분선 —
@@ -1213,6 +1342,15 @@
   border-color: var(--blue-400);
   color: var(--blue-400);
 }
+/* 테이블 셀 '폰트 크기' — 텍스트 모듈의 폰트 크기 컨트롤과 같은 모양으로 서식 툴바 바로 위에 둔다.
+   .tbl-content 안의 gg-field-label은 여백이 0으로 눌려 있어 여기서 되살린다. */
+.module-form .tbl-fs-field {
+  margin-bottom: 16px;
+}
+.module-form .tbl-content .tbl-fs-field .gg-field-label {
+  margin-bottom: 8px;
+}
+
 .module-form .tbl-multi-hint {
   font-size: 13px;
   color: var(--gray-600);

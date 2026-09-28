@@ -1,6 +1,15 @@
 <template>
   <div class="side-panel global-style-panel">
-    <h2 class="panel-title">전체 스타일</h2>
+    <!-- 제목 아래에 저장 위치 한 줄 (Figma 1527-9088) — 에디터에 들어오기 전 '폴더 선택' 걸음에서
+         이미 정해진 값이라 여기선 보여주기만 한다. 지금 만드는 것이 어느 회차인지가 스타일보다
+         먼저 알아야 할 사실이라 제목 바로 아래에 둔다. 바꾸려면 전시회 선택부터 다시 고른다. -->
+    <div class="panel-head">
+      <h2 class="panel-title">전체 설정</h2>
+      <p class="vol-path" :title="volumePreview ? '바꾸려면 전시회 선택부터 다시 골라 주세요' : undefined">
+        <span class="material-symbols-outlined vol-folder-icon">drive_file_move</span>
+        <span class="vol-path-text">{{ volumePreview || '아직 정하지 않음' }}</span>
+      </p>
+    </div>
 
     <!-- 배경 색상 -->
     <div class="row-between">
@@ -114,6 +123,7 @@ import { computed } from 'vue'
 import { useEditorStore } from '@/stores/editorStore'
 import { normalizePxLength } from '@/utils/cssUnit'
 import { FONT_LANGUAGE_OPTIONS } from '@/utils/fontFamily'
+import { savePathLabel } from '@/utils/s3Upload'
 import ColorPopoverPicker from './ColorPopoverPicker.vue'
 
 const editorStore = useEditorStore()
@@ -146,6 +156,18 @@ const onWidthSlideEvent = (event: Event) => {
 const onSummaryInput = (event: Event) => {
   update('summary', (event.target as HTMLInputElement).value)
 }
+
+/**
+ * 지금 파일이 쌓이는 폴더 — '폴더 선택' 걸음에서 정한 값이라 여기선 읽기만 한다.
+ *
+ * **전시회와 폴더명만** 보여준다. 앞의 고정 경로(`/e-dm/{연도}/newsletterbuilder/`)는
+ * 모든 업로드가 같고, 그 다음 팀 조각도 상단 헤더의 팀 배지에 이미 나와 있어 중복이다.
+ *   '/e-dm/2026/newsletterbuilder/arch-plan/hobanexpo/vol01/' → 'hobanexpo/vol01'
+ *   '/e-dm/2026/newsletterbuilder/mice/blank/vol01/'          → 'blank/vol01'
+ */
+const volumePreview = computed(() =>
+  savePathLabel(editorStore.uploadFolder, wrapSettings.value.volume),
+)
 </script>
 
 <style scoped>
@@ -221,6 +243,36 @@ const onSummaryInput = (event: Event) => {
 }
 .summary-field::placeholder {
   color: var(--gray-500);
+}
+
+/* ===== 제목 + 저장 위치 (Figma 1527-9088) =====
+   제목 아래 12px에 [아이콘 22][8px]경로 15px gray-700. '폴더 선택'에서 정해진 값을 보여주기만 한다. */
+.panel-head {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.panel-head .panel-title {
+  margin: 0;
+}
+.vol-path {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  min-width: 0;
+  line-height: 24px;
+}
+.vol-folder-icon {
+  font-size: 22px;
+  color: var(--gray-700);
+  flex-shrink: 0;
+}
+.vol-path-text {
+  min-width: 0;
+  font-size: 15px;
+  color: var(--gray-700);
+  overflow-wrap: anywhere;
 }
 
 </style>

@@ -336,6 +336,17 @@ description: >-
     ② 캔버스 그룹 멤버 클릭: 아코디언 자동 펼침 · 블록/그룹 행 배경 투명 · 선택 멤버 `rgb(235,243,255)` + 라벨 `rgb(51,61,75)`.
     그룹 글자·화살표·아이콘은 두 상태 모두 `rgb(176,55,206)`.
 
+- **Phase 23 완료(2026-08-31)**: 작은 버튼(ModuleSmallButton) 속성 패널 — 버튼 2~4 노출 스위치 → **'버튼 내용' 칩** (Figma **1209-40180** / **1227-42350**).
+  - **데이터 모델은 그대로**(showBtn2/3/4 + btnN Text/Url/BgColor/TextColor). 렌더·내보내기(`removeSmallButtonsProcessor`)는 한 줄도 안 건드렸고, 바뀐 건 패널 표현뿐이다.
+  - **칩 동작**: 칩 = 지금 있는 버튼(클릭 = 편집 대상 전환, 라벨은 그 버튼의 텍스트에서 끝의 `→`를 뗀 것) · `+ 추가` = 다음 슬롯을 켜고 그 슬롯을 **설정 기본값으로 리셋**한 뒤 활성화(최대 4개) · 활성 칩의 `✕` = 삭제.
+    - **삭제는 '앞으로 당기기'**: 뒤 버튼들의 내용을 한 칸씩 당기고 마지막 슬롯을 끈다 → 칩 순서와 캔버스 렌더 순서가 항상 같고 중간에 빈 슬롯이 생기지 않는다(단순히 showBtnN만 끄면 `버튼 1 · 버튼 3`처럼 구멍이 남는다).
+    - 버튼이 하나만 남으면 `✕`를 감춘다(0개가 되면 모듈이 빈 칸으로 렌더된다).
+  - **`ModuleForm.vue` 일반 렌더러 재사용**: 텍스트/링크 URL/배경색/글자색은 config의 `버튼 N` 그룹을 그대로 쓰고, **칩으로 고른 그룹 하나만** 보여준다(`isSmallBtnGroupVisible`). `hasSectionHeader`가 `버튼 N` 그룹에 false를 반환해 섹션 헤더·아코디언이 사라지고 항상 펼쳐진다 — 색상 팝오버·포인트 색상 추종 등 기존 필드 기능이 전부 그대로 붙어 온다.
+  - **modules-config 재정렬**(키·기본값 불변): `버튼 1~4 → 정렬 → 여백 → 글자 크기 → 모서리 둥글기`. `STYLE_SECTION_RULES.ModuleSmallButton`을 `{exclude:'공통'}` → 공통 섹션 Set으로 바꿔 버튼 그룹만 접이식에서 뺐다. 라벨도 Figma대로(`링크`→`링크 URL`, `정렬`→`버튼 정렬`, `글자 크기`→`폰트 크기`).
+  - **'버튼 너비 직접 설정'은 2026-09-04 제거**(사용자 요청). `showBtnWidth` 토글·`btnWidth` 필드·전용 슬라이더(`isBtnWidthField`)·`onSectionSwitch`의 auto/120px 짝 처리·마이그레이션 블록을 모두 걷어냈다. `btnWidth` **속성 자체는 남는다**(기본 `auto`, 렌더는 그대로 존중) — 옛 파일·레거시 변환(`legacyToComposed`가 `smallBtnWidth`를 옮겨 넣음)에 남은 `100%` 같은 값이 겉모습을 바꾸지 않게 하려는 것. 패널에서 바꾸는 길만 없다.
+  - `index.html` icon_names에 **`close_small`** 추가.
+  - **검증**: `npm run build` 클린, `vitest` **740개** 통과(마이그레이션 테스트 4개 추가). `vite preview`+Playwright로 (1)추가 직후 칩 1개(활성·✕ 없음)+`+ 추가`, (2)`+ 추가` 2번 → 칩 3개·활성 칩만 ✕·캔버스 버튼 3개, (3)텍스트를 바꾸면 칩 라벨이 `사전등록`으로 따라옴, (4)칩 전환 시 그 버튼 값이 뜸, (5)1번 삭제 시 내용이 당겨지고(`버튼 2 · 사전등록`) 캔버스도 2개, (6)버튼 너비 토글 ON → 캔버스 `width:120px`, (7)공통 5개 섹션이 Figma 순서대로 뜨고 정렬은 아이콘 세그먼트·여백은 안쪽/바깥 두 카드로 렌더되는 것까지 확인.
+
 ## 향후 방향 (사용자 명시, 아직 미구현)
 - **팀별 이미지 업로드(S3)** (2026-08-12 협의): 이미지를 올리면 바로 링크가 잡히도록 하는 게 목표. **선행 배선은 모두 끝났다** — 팀 불변 id(561d117) · `editorStore.currentTeamId` · 팀 없이 에디터 진입 불가(router 가드) · 저장 파일 `teamId`(Phase 21-2).
   - 남은 것: **presign 엔드포인트**(이 앱은 GitHub Pages 정적 배포라 백엔드가 없다 → Lambda Function URL 등) + S3 CORS + 이미지 모듈 업로드 UI.
@@ -346,6 +357,13 @@ description: >-
 - **조립형(v2) 모듈의 노출/비노출**: 지금은 원본 모듈의 `show*` **스위치 토글**로 제어하지만, 앞으로는 **"그룹 안 원소 모듈을 삭제"** 하는 방식으로 전환 예정. (v2 = 원소 모듈 그룹이므로, 요소 삭제 = 비노출.) SNS 아이콘 등 토글 UI는 이 방향과 함께 재검토.
 
 ## 8) 반영 규칙
+
+> ⚠ **UI를 크게 고치기 전에 [references/api-cost-and-pitfalls.md](references/api-cost-and-pitfalls.md)를 먼저 읽을 것.**
+> 기능은 멀쩡한데 조용히 망가지는 종류(번역기 전송량 7배 급증, CSS 클래스 이름 충돌,
+> `<script setup>` 스코프 착각, `mounted` 치수 측정, Figma 플레이스홀더 등)를 실제 사례로 모아 뒀다.
+> 특히 **외부 API로 보내는 모양(payload)을 바꿨다면 전송량을 재고 무료 한도 기준 횟수로 보고**해야 한다
+> — `src/utils/__tests__/translationPayload.test.ts`가 상한을 지키지만, 상한을 올려 통과시키는 것은 금지.
+
 - **최소 변경**: 해당 노드가 바꾸는 것만. 렌더 관련은 **캔버스·내보내기 두 경로 모두** 반영했는지 확인.
 - **검증**: `npx vue-tsc --noEmit -p tsconfig.app.json` + `npx vitest run` 통과 확인. 필요시 dev 서버 기동해 스크린샷(Playwright: `NODE_PATH=<npx 캐시 경로>/node_modules node script.cjs` — 로컬에 playwright 브라우저 미설치 시 `npx playwright install chromium` 먼저).
 - **하위호환**: 기존 인스턴스/템플릿이 깨지지 않게 기본값·마이그레이션 유지(예: pointColor→pointColors 시 단일값 폴백, `__pointIndex` 미지정 시 0번 폴백).

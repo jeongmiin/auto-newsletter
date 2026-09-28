@@ -10,7 +10,7 @@
  */
 
 /** 공통 속성에서 선택하는 폰트 언어 키 */
-export type FontLanguage = 'default' | 'ja' | 'th'
+export type FontLanguage = 'default' | 'ja' | 'zh' | 'th'
 
 /** 언어별 font-family 스택 (기본 = 한국어·영어) */
 export const FONT_FAMILY_BY_LANGUAGE: Record<FontLanguage, string> = {
@@ -19,6 +19,8 @@ export const FONT_FAMILY_BY_LANGUAGE: Record<FontLanguage, string> = {
   // 일본어 — 모듈의 style="..." (큰따옴표) 속성 안에 인라인으로 들어가므로
   // 폰트명은 반드시 작은따옴표로 감싼다 (큰따옴표 사용 시 style 속성이 조기 종료되어 깨짐)
   ja: "'Hiragino Kaku Gothic ProN','Meiryo','Yu Gothic',Arial,sans-serif",
+  // 중국어 간체 — Windows/macOS의 기본 CJK 글꼴을 우선 사용한다.
+  zh: "'PingFang SC','Microsoft YaHei','Noto Sans SC',Arial,sans-serif",
   // 태국어
   th: 'Noto Sans Thai, Tahoma, Arial, sans-serif',
 }
@@ -27,6 +29,7 @@ export const FONT_FAMILY_BY_LANGUAGE: Record<FontLanguage, string> = {
 export const FONT_LANGUAGE_OPTIONS: { label: string; value: FontLanguage }[] = [
   { label: '한국어·영어 (기본)', value: 'default' },
   { label: '일본어', value: 'ja' },
+  { label: '중국어(간체)', value: 'zh' },
   { label: '태국어', value: 'th' },
 ]
 

@@ -19,8 +19,8 @@
           v-else-if="!hasSelection && activeCategory"
           :category="activeCategory"
         />
-        <!-- AI 도구 — 아직 준비 중(안내 패널) -->
-        <ComingSoonPanel v-else-if="!hasSelection && editorStore.activeMenu === 'ai'" />
+        <!-- AI 도구 — HTML 웹 링크 생성 -->
+        <AiToolsPanel v-else-if="!hasSelection && editorStore.activeMenu === 'ai'" />
         <SelectedItemPanel v-else-if="hasSelection" />
         <ModulePanel
           v-else
@@ -30,14 +30,12 @@
 
         <!-- 리사이즈 핸들 (좌측 패널 오른쪽 가장자리, 오른쪽으로 끌면 넓어짐) -->
         <div
-          class="resize-handle w-2 cursor-col-resize flex-shrink-0 relative group"
+          class="resize-handle w-1 cursor-col-resize flex-shrink-0 relative group"
           :class="{ 'is-resizing': isLeftResizing }"
           @mousedown="startLeftResize"
         >
           <div class="absolute inset-0 bg-gray-200 group-hover:bg-blue-100 transition-colors"></div>
-          <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center gap-1 opacity-40 group-hover:opacity-100 transition-opacity">
-            <div class="w-0.5 h-6 bg-gray-600 group-hover:bg-blue-500 rounded-full transition-colors"></div>
-          </div>
+          <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center gap-1 opacity-40 group-hover:opacity-100 transition-opacity"></div>
           <div
             class="absolute right-0 top-0 bottom-0 w-0.5 bg-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"
             :class="{ 'opacity-100': isLeftResizing }"
@@ -46,9 +44,20 @@
       </div>
 
       <!-- 중앙 캔버스 (화면 크기 토글·실행취소는 상단 헤더로 이동 · 전체 삭제는 추후 추가 예정) -->
-      <div class="flex-1 flex flex-col min-w-0">
+      <!-- relative: 가이드 버튼이 이 열을 기준으로 붙는다 — 좌측 패널을 넓히면 같이 밀려난다 -->
+      <div class="flex-1 flex flex-col min-w-0 relative">
         <!-- 캔버스 영역 -->
         <CanvasArea class="flex-1" />
+        <!-- 캔버스 왼쪽 아래에 떠 있는 '?' 가이드 버튼 (캔버스와 함께 스크롤되지 않는다).
+             자리는 여기서 잡는다 — 버튼 자신은 생김새만 알고 어디에 놓일지는 모른다 -->
+        <div class="guide-fab-slot">
+          <GuideButton />
+        </div>
+        <!-- 캔버스 오른쪽 아래 — 웹 링크를 만든 뒤 내용을 고쳤는데 아직 반영하지 않았을 때만 뜬다.
+             AI 도구 안이 아니라 여기 두는 이유는 컴포넌트 주석 참고(다른 메뉴에서 고치는 동안 알려야 한다) -->
+        <div class="weblink-reminder-slot">
+          <WebLinkReminder />
+        </div>
       </div>
 
       <!-- 우측 '모듈 순서' 패널 — 기본 닫힘. 레일의 '모듈 순서' 메뉴나 패널 왼쪽 탭으로 여닫는다 -->
@@ -73,12 +82,14 @@ import EditorSidebar from '@/components/editor/EditorSidebar.vue'
 import ModulePanel from '@/components/panels/ModulePanel.vue'
 import ModuleOutlinePanel from '@/components/editor/ModuleOutlinePanel.vue'
 import CanvasArea from '@/components/editor/CanvasArea.vue'
+import GuideButton from '@/components/editor/GuideButton.vue'
+import WebLinkReminder from '@/components/editor/WebLinkReminder.vue'
 import GlobalStylePanel from '@/components/panels/GlobalStylePanel.vue'
 import PointColorPanel from '@/components/panels/PointColorPanel.vue'
 import CategoryModulePanel from '@/components/panels/CategoryModulePanel.vue'
 import SelectedItemPanel from '@/components/panels/SelectedItemPanel.vue'
 import ColumnComposePanel from '@/components/panels/ColumnComposePanel.vue'
-import ComingSoonPanel from '@/components/panels/ComingSoonPanel.vue'
+import AiToolsPanel from '@/components/panels/AiToolsPanel.vue'
 import { useEditorStore } from '@/stores/editorStore'
 import { useModuleStore } from '@/stores/moduleStore'
 
@@ -154,6 +165,25 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* 가이드 버튼 자리 — 캔버스 열(relative) 왼쪽 아래. 열이 패널 폭을 따라 움직이므로 같이 밀려난다.
+   높이를 버튼에 맞춰 두어야 펼쳐질 때 아래 여백이 흔들리지 않는다 */
+.guide-fab-slot {
+  position: absolute;
+  left: 11px;
+  bottom: 18px;
+  z-index: 5;
+  line-height: 0;
+}
+
+/* 리마인드 팝업 자리 — 가이드 버튼과 같은 높이의 반대쪽 구석.
+   '모듈 순서' 탭은 이 열 오른쪽 가장자리의 세로 가운데에 있어 서로 닿지 않는다 */
+.weblink-reminder-slot {
+  position: absolute;
+  right: 24px;
+  bottom: 18px;
+  z-index: 6;
+}
+
 /* 리사이즈 핸들 스타일 */
 .resize-handle {
   touch-action: none;
