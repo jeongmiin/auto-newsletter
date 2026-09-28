@@ -1,0 +1,900 @@
+{
+  "id": "lawexposeoul",
+  "wrapSettings": {
+    "backgroundColor": "#ffffff",
+    "borderEnabled": false,
+    "borderWidth": "0px",
+    "borderColor": "#dddddd",
+    "borderStyle": "solid",
+    "pointColor": "#e94c09",
+    "pointColors": [
+      "#132c8d",
+      "#EFF0FF",
+      "#e94c09"
+    ],
+    "fontLanguage": "default",
+    "summary": "법률 산업 박람회 뉴스레터입니다."
+  },
+  "modules": [
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/lawexposeoul/vol12/main_visual.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "20px",
+        "paddingRight": "20px",
+        "paddingBottom": "10px",
+        "paddingLeft": "20px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": true,
+        "imageBorderRadius": "16px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong style=\"font-size: 16px;\">NEWSLETTER&nbsp;VOL.12</strong></p><p style=\"line-height: 2; margin: 0; padding: 0; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong style=\"color: #e94c09;\">Law&nbsp;Expo&nbsp;Seoul&nbsp;2026&nbsp;(법률&nbsp;산업&nbsp;박람회)</strong></p><p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>📆&nbsp;기&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;간</strong>&nbsp;:&nbsp;6월&nbsp;24일(수)&nbsp;–&nbsp;26일(금),&nbsp;3일간</p><p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>🚩&nbsp;장&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;소</strong>&nbsp;:&nbsp;양재&nbsp;aT센터&nbsp;제2전시장</p><p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>✅&nbsp;주&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;관</strong>&nbsp;:&nbsp;㈜법률신문사,&nbsp;(사)인하우스카운슬포럼,&nbsp;㈜메쎄이상</p><p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>📍&nbsp;후&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;원</strong>&nbsp;:&nbsp;개인정보전문가협회,&nbsp;대한공증인협회,&nbsp;대한법률구조공단,&nbsp;대한법무사협회,&nbsp;대한상사중재원,&nbsp;법학전문대학원협의회,&nbsp;전국정보보호정책협의회,&nbsp;한국공인노무사회,&nbsp;한국법학교수회,&nbsp;한국인공지능법학회,&nbsp;한국정보법학회,&nbsp;한국형사법무정책연구원</p><p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>📋&nbsp;컨퍼런스</strong>&nbsp;:&nbsp;Legal&nbsp;AX&nbsp;Summit,&nbsp;기업&nbsp;리스크&nbsp;관리&nbsp;컨퍼런스,&nbsp;커리어&nbsp;컨퍼런스,&nbsp;협단체&nbsp;전문&nbsp;세미나</p><p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>📢&nbsp;부대행사</strong>&nbsp;:&nbsp;리걸&nbsp;커넥트(네트워킹&nbsp;나잇),&nbsp;무료&nbsp;법률&nbsp;상담&nbsp;이벤트,&nbsp;커리어&amp;채용&nbsp;컨설팅,&nbsp;멘토링&nbsp;네트워킹&nbsp;런치,&nbsp;로스쿨&nbsp;AI&nbsp;챌린지</p><p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>💡&nbsp;특별관&nbsp;</strong>:&nbsp;리걸테크&nbsp;AX&nbsp;특별관</p>",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "0px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "전체 프로그램 →",
+        "buttonUrl": "#",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#EFF0FF",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "0px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "0px",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "100px",
+        "buttonBorderStyle": "solid",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000",
+        "buttonBgColor__usePoint": true,
+        "buttonTextColor__usePoint": true,
+        "buttonBorderColor__usePoint": true,
+        "buttonBgColor__pointIndex": 1
+      },
+      "styles": {},
+      "groupId": "group-1786610500461-bxpmoqvtr",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "참가기업 & 배치도 →",
+        "buttonUrl": "#",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#111111",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "0px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "0px",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "100px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000",
+        "buttonBgColor__usePoint": true
+      },
+      "styles": {},
+      "groupId": "group-1786610500461-bxpmoqvtr",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#333333",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1786610500703-txbwv0out",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "22px",
+        "descriptionText": "<div style=\"font-weight:700;\"><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">2일차&nbsp;현장&nbsp;대공개🔥</p></div>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "35px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1786610500703-txbwv0out",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\">법률 AI·리걸테크 솔루션부터 기업 리스크 관리, 법률 상담, 커리어 프로그램까지</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\">법률 산업의 주요 이슈를 현장에서 확인하세요.</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">&nbsp;</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\"><span style=\"color: var(--point-color-2, #e94c09);\">1년에 단 한 번 뿐인 국내 유일 법률 박람회, 내일 마지막!</span></p>",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "40px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/lawexposeoul/vol12/photo_01.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786610501036-6u0vzpheh",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/lawexposeoul/vol12/photo_02.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786610501036-6u0vzpheh",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/lawexposeoul/vol12/photo_03.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786610501274-q8qohv5lt",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/lawexposeoul/vol12/photo_04.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786610501274-q8qohv5lt",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/lawexposeoul/vol12/photo_05.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786610501491-zv8a8a9v7",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/lawexposeoul/vol12/photo_06.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786610501491-zv8a8a9v7",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/lawexposeoul/vol12/photo_07.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786610501709-x56w66r0z",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/lawexposeoul/vol12/photo_08.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786610501709-x56w66r0z",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "22px",
+        "descriptionText": "<div style=\"font-weight:700;\"><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">놓치지&nbsp;말아야할&nbsp;주요&nbsp;프로그램👀</p></div>",
+        "paddingTop": "40px",
+        "paddingRight": "20px",
+        "paddingBottom": "15px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "Module01-2",
+      "properties": {
+        "contentText": "<p style=\"word-break: keep-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\"><strong style=\"color: var(--point-color-2, #e94c09);\">• Law Expo Seoul 2026</strong></p><p style=\"word-break: keep-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">리걸테크부터 기업 리스크 관리 솔루션까지, 법률 산업 전반을 한자리에서 만날 수 있는 B2B 법률 산업 박람회</p>",
+        "contentTextFontSize": "14px",
+        "bgColor": "#fcfcfc",
+        "paddingTop": "20px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "20px",
+        "marginBottom": "20px",
+        "marginLeft": "20px",
+        "showCategory": true,
+        "categoryText": "박람회",
+        "categoryTextFontSize": "14px",
+        "categoryBgColor": "#666666",
+        "categoryTextColor": "#ffffff",
+        "categoryBorderRadius": "30px",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": true,
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#cccccc",
+        "categoryBgColor__usePoint": true
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "Module01-2",
+      "properties": {
+        "contentText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><span style=\"color: var(--point-color-2, #e94c09);\">• </span><strong style=\"color: var(--point-color-2, #e94c09);\">Legal AX Summit</strong><span style=\"color: #e94c09;\">&nbsp;</span>24(수) – 26(금), 10:00 – 16:30</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">국내 대표 리걸테크 기업과 사법부, 글로벌 IT 기업이 직접 공유하는 법률 AI 도입 실황</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">&nbsp;</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><span style=\"color: var(--point-color-2, #e94c09);\">• </span><strong style=\"color: var(--point-color-2, #e94c09);\">기업리스크 관리 컨퍼런스</strong><strong>&nbsp;</strong>26(금), 10:30 – 16:30</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">M&amp;A, 중대재해, 기술탈취, AI 규제 등 국내 최고 로펌 변호사들이 알려주는 현장에서 바로 적용 가능한 리스크 사전 관리 및 대응 전략</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">&nbsp;</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><span style=\"color: var(--point-color-2, #e94c09);\">• </span><strong style=\"color: var(--point-color-2, #e94c09);\">법률 전문 세미나</strong> 24(수) – 26(금), 세미나별 상이</p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">법조계 주요 협단체가 주관하는 전문 세미나. 법무, 노무, 세무, 특허 등 다양한 제도 변화가 산업에 미치는 영향 공유</p>",
+        "contentTextFontSize": "14px",
+        "bgColor": "#fcfcfc",
+        "paddingTop": "20px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "20px",
+        "marginBottom": "20px",
+        "marginLeft": "20px",
+        "showCategory": true,
+        "categoryText": "서밋&컨퍼런스",
+        "categoryTextFontSize": "14px",
+        "categoryBgColor": "#666666",
+        "categoryTextColor": "#ffffff",
+        "categoryBorderRadius": "30px",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": true,
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#cccccc",
+        "categoryBgColor__usePoint": true
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "Module01-2",
+      "properties": {
+        "contentText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"color: var(--point-color-2, #e94c09);\">• 무료법률상담</strong> 24(수) – 26(금), 10:30 – 16:00</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">기업상담부터 일반 민사·형사·가사 상담까지 1:1 무료 법률 상담 이벤트</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">&nbsp;</p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"color: var(--point-color-2, #e94c09);\">• 커리어 컨설팅</strong> 24(수) – 26(금), 10:00 – 17:00</p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">법조계 전반의 최신 채용 공고를 바탕으로 커리어 도약을 위한 맞춤 전략을 컨설팅 받을 수 있는 기회</p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">&nbsp;</p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"color: var(--point-color-2, #e94c09);\">• 큐레이션 투어</strong> 24(수) – 26(금)</p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">[코스 1] 13:30 – 14:30 법조인을 위한 리걸테크 투어</p><p style=\"word-break: keep-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">[코스 2] 15:00 – 15:40 기업 관계자(법무, 세무, 노무 등)를 위한 솔루션 투어</p>",
+        "contentTextFontSize": "14px",
+        "bgColor": "#fcfcfc",
+        "paddingTop": "20px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "20px",
+        "marginBottom": "20px",
+        "marginLeft": "20px",
+        "showCategory": true,
+        "categoryText": "부대행사",
+        "categoryTextFontSize": "14px",
+        "categoryBgColor": "#666666",
+        "categoryTextColor": "#ffffff",
+        "categoryBorderRadius": "30px",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": true,
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#cccccc",
+        "categoryBgColor__usePoint": true
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/lawexposeoul/vol10/banner_03.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "20px",
+        "paddingRight": "20px",
+        "paddingBottom": "40px",
+        "paddingLeft": "20px",
+        "showImageLink": true,
+        "imageLinkUrl": "#",
+        "showBorderRadius": true,
+        "imageBorderRadius": "16px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/lawexposeoul/vol04/footer.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": true,
+        "imageLinkUrl": "https://bit.ly/4llbuvE",
+        "showBorderRadius": true,
+        "imageBorderRadius": "16px 16px 0 0",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>법률&nbsp;산업&nbsp;박람회&nbsp;(주)메쎄이상</strong></p><p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">서울시&nbsp;마포구&nbsp;월드컵북로&nbsp;58길&nbsp;9&nbsp;ES타워&nbsp;(03922)</p>",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "10px",
+        "paddingLeft": "0px",
+        "marginTop": "30px",
+        "marginRight": "25px",
+        "marginBottom": "0px",
+        "marginLeft": "25px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#ffffff",
+        "textAlign": "center"
+      },
+      "styles": {},
+      "groupId": "group-1786610502729-7moban5mj",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleContactInfo",
+      "properties": {
+        "contactItems": [
+          {
+            "key": "website",
+            "show": true,
+            "value": "www.lawexposeoul.com "
+          },
+          {
+            "key": "phone",
+            "show": true,
+            "value": "02-6121-6495"
+          },
+          {
+            "key": "email",
+            "show": true,
+            "value": "les@esgroup.net"
+          },
+          {
+            "key": "fax",
+            "show": false,
+            "value": "02-6121-6363"
+          }
+        ],
+        "contactFontSize": "13px",
+        "contactTextColor": "#ffffff",
+        "contactAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "25px",
+        "paddingBottom": "30px",
+        "paddingLeft": "25px"
+      },
+      "styles": {},
+      "groupId": "group-1786610502729-7moban5mj",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#aaaaaa",
+        "borderWidth": "1px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "15px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1786610502729-7moban5mj",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleSnsIcons",
+      "properties": {
+        "snsIconBgColor": "#333333",
+        "snsAlign": "center",
+        "snsIcons": [
+          {
+            "key": "home",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "facebook",
+            "show": true,
+            "url": ""
+          },
+          {
+            "key": "x",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "blog",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "youtube",
+            "show": true,
+            "url": ""
+          },
+          {
+            "key": "instagram",
+            "show": true,
+            "url": ""
+          },
+          {
+            "key": "kakao",
+            "show": true,
+            "url": ""
+          },
+          {
+            "key": "linkedin",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "zuzuzu",
+            "show": false,
+            "url": "https://kcoupet.com/"
+          },
+          {
+            "key": "en",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "jp",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "th",
+            "show": false,
+            "url": ""
+          }
+        ],
+        "paddingTop": "0px",
+        "paddingRight": "5px",
+        "paddingBottom": "15px",
+        "paddingLeft": "5px",
+        "snsIconBgColor__usePoint": true
+      },
+      "styles": {},
+      "groupId": "group-1786610502729-7moban5mj",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "12px",
+        "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7em;\">본 메일은 회원님의 수신동의 여부를 확인한 결과 회원님께서 수신동의를 하셨기에 발송되었습니다.</p><p style=\"margin:0; padding:0; line-height:1.7em;\">메일 수신을 원치 않으시면 <a href=\"http://edm.esfair.kr/RejectMail.aspx?code=LEGAL\" target=\"_blank\" style=\"text-decoration:none; color:#ffffff; font-weight:700;\">[수신거부]</a> 를 클릭하십시오.</p><p style=\"margin:0; padding:0; line-height:1.7em;\">본 메일은 발신전용 메일이므로 문의사항은 <strong>les@esgroup.net </strong>으로 문의 바랍니다</p>",
+        "paddingTop": "10px",
+        "paddingRight": "25px",
+        "paddingBottom": "40px",
+        "paddingLeft": "25px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#ffffff",
+        "textAlign": "center"
+      },
+      "styles": {},
+      "groupId": "group-1786610502729-7moban5mj",
+      "rowIndex": 3,
+      "columnIndex": 0
+    }
+  ],
+  "groups": [
+    {
+      "id": "group-1786610500461-bxpmoqvtr",
+      "name": "복수 버튼",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingTop": "25px",
+        "paddingRight": "15px",
+        "paddingBottom": "15px",
+        "paddingLeft": "15px"
+      },
+      "rows": [
+        2
+      ]
+    },
+    {
+      "id": "group-1786610500703-txbwv0out",
+      "name": "섹션 타이틀",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1786610501036-6u0vzpheh",
+      "name": "복수 이미지",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "15px",
+        "paddingRight": "15px"
+      },
+      "rows": [
+        2
+      ]
+    },
+    {
+      "id": "group-1786610501274-q8qohv5lt",
+      "name": "복수 이미지",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "15px",
+        "paddingRight": "15px"
+      },
+      "rows": [
+        2
+      ]
+    },
+    {
+      "id": "group-1786610501491-zv8a8a9v7",
+      "name": "복수 이미지",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "15px",
+        "paddingRight": "15px"
+      },
+      "rows": [
+        2
+      ]
+    },
+    {
+      "id": "group-1786610501709-x56w66r0z",
+      "name": "복수 이미지",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "15px",
+        "paddingRight": "15px"
+      },
+      "rows": [
+        2
+      ]
+    },
+    {
+      "id": "group-1786610502729-7moban5mj",
+      "name": "하단 푸터",
+      "styles": {
+        "backgroundColor": "#08041f",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1,
+        1,
+        1
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1021 @@
+{
+  "id": "beautysum",
+  "wrapSettings": {
+    "backgroundColor": "#ffffff",
+    "borderEnabled": false,
+    "borderWidth": "0px",
+    "borderColor": "#dddddd",
+    "borderStyle": "solid",
+    "pointColor": "#287dfa",
+    "pointColors": [
+      "#287dfa"
+    ],
+    "fontLanguage": "default",
+    "summary": "뷰티썸 수원 뉴스레터입니다."
+  },
+  "modules": [
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/beautysumindia/vol03/main-sum.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "40px",
+        "paddingRight": "20px",
+        "paddingBottom": "40px",
+        "paddingLeft": "20px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"font-size: 20px; color: var(--point-color, #287dfa);\">소재에서 시작되는 브랜드 결정</strong></p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><span style=\"font-size: 16px;\">좋은 소재와 기술로 완성된 브랜드, 이제는 그 가치를 알아주는 바이어의 선택을 받을 차례! 뷰티썸 수원에서 만나보세요.</span></p><p style=\"word-break: break-all; line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">&nbsp;</p><p style=\"word-break: break-all; line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">💄 <strong>행사명 </strong>: 2026 뷰티썸 수원 (BeautySum Korea Suwon 2026)</p><p style=\"word-break: break-all; line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">📆 <strong>일정 </strong>: 2026년 11월 5일(목) ~ 7일(토)</p><p style=\"word-break: break-all; line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">🚩 <strong>장소 </strong>: 수원컨벤션센터 전시홀</p><p style=\"word-break: break-all; line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">✔️ <strong>주최 </strong>: 수원특례시</p><p style=\"word-break: break-all; line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">📌 <strong>주관 </strong>: 수원특례시, 수원컨벤션센터, (주)메쎄이상</p><p style=\"word-break: break-all; line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">🎯 <strong>프로그램 </strong>: 수출상담회, 제2회 화장품 소재 R&amp;D 세미나, 한-중 뷰티 비즈니스 포럼</p><p style=\"word-break: break-all; line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">🛍️ <strong>전시품목 </strong>: 브랜드 완제품, 에스테틱 의료기기, 기능성 원료, 친환경 용기</p>",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "0px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "행사소개 →",
+        "buttonUrl": "https://bit.ly/4mjR0Vg",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#111111",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "0px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "0px",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "5px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000",
+        "buttonBgColor__usePoint": true
+      },
+      "styles": {},
+      "groupId": "group-1786609743908-b65tinzz4",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": " 지난결과  →",
+        "buttonUrl": "https://bit.ly/4spwoMT",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#bdd7ee",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "0px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "0px",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "5px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000",
+        "buttonTextColor__usePoint": true
+      },
+      "styles": {},
+      "groupId": "group-1786609743908-b65tinzz4",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://d10d0o92rz7xfe.cloudfront.net/app/uploads/2026/04/27211130/ns1-scaled.jpg",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786609744138-vhev3f4qs",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://d10d0o92rz7xfe.cloudfront.net/app/uploads/2026/04/27211109/ns2-scaled.jpg",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786609744138-vhev3f4qs",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://d10d0o92rz7xfe.cloudfront.net/app/uploads/2026/04/27211115/ns3-scaled.jpg",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786609744351-thaf94d1i",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://d10d0o92rz7xfe.cloudfront.net/app/uploads/2026/04/27211123/ns4-scaled.jpg",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786609744351-thaf94d1i",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "22px",
+        "descriptionText": "<div style=\"font-weight:700;\"><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">뷰티썸 수원 참가기업 모집 중📢</p></div>",
+        "paddingTop": "30px",
+        "paddingRight": "20px",
+        "paddingBottom": "10px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1786609744565-i9eknl3aj",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">조기신청 할인 8월 31일까지</p>",
+        "paddingTop": "0px",
+        "paddingRight": "15px",
+        "paddingBottom": "20px",
+        "paddingLeft": "15px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1786609744565-i9eknl3aj",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\"><strong>[할인 정책]</strong></p>",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "0px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleTable",
+      "properties": {
+        "tableCells": [
+          [
+            {
+              "id": "cell-1785228048093-9d4js7iag",
+              "type": "th",
+              "content": "구분",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1785228048093-x9gmz2rii",
+              "type": "th",
+              "content": "할인금액",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            }
+          ],
+          [
+            {
+              "id": "cell-1785228068666-opxooq7qf",
+              "type": "td",
+              "content": "<strong style=\"font-weight:700;\">조기신청 할인</strong>(~8월 31일 까지)",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left",
+              "bgColor": "#f2f2f2"
+            },
+            {
+              "id": "cell-1785228068666-neinzk40h",
+              "type": "td",
+              "content": "600,000원(부스당)",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1785228048093-wa9lo45a7",
+              "type": "td",
+              "content": "<strong style=\"font-weight:700;\">연속참가 할인</strong><br>2025 뷰티썸 수원 참가기업 대상",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left",
+              "bgColor": "#f2f2f2"
+            },
+            {
+              "id": "cell-1785228048093-wjfs2qtz6",
+              "type": "td",
+              "content": "200,000원(부스당)",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ]
+        ],
+        "borderTopWidth": "1px",
+        "borderTopColor": "#333333",
+        "cellBorderColor": "#a7a7a7",
+        "headerBgColor": "#bdd7ee",
+        "headerTextColor": "#333333",
+        "headerAlign": "center",
+        "cellBgColor": "#ffffff",
+        "cellTextColor": "#333333",
+        "cellAlign": "left",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "10px",
+        "paddingLeft": "20px",
+        "tableColAligns": [
+          "center",
+          "center"
+        ],
+        "tableColWidths": [
+          "55%",
+          "45%"
+        ]
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">* 조기신청, 연속참가 할인 중복 가능</p>",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "40px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#666666"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7; text-align:center;\"><strong>독립부스(3m x 3m)</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "0px",
+        "paddingBottom": "6px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "6px",
+        "marginLeft": "0px",
+        "bgColor": "#bdd7ee",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111",
+        "textAlign": "center"
+      },
+      "styles": {},
+      "groupId": "group-1786609745273-dtv0hy2eo",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/beautysumindia/vol03/img-01.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786609745273-dtv0hy2eo",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">• <s>2,300,000원</s>(vat 별도)</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><span style=\"color: var(--point-color, #287dfa);\">→조기신청 기업: 1,700,000원</span></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><span style=\"color: var(--point-color, #287dfa);\">→2025 뷰티썸 수원 참가기업: 1,500,000원</span></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">• 2부스부터 신청가능</p>",
+        "paddingTop": "10px",
+        "paddingRight": "0px",
+        "paddingBottom": "10px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1786609745273-dtv0hy2eo",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7; text-align:center;\"><strong>조립부스(3m x 3m)</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "0px",
+        "paddingBottom": "6px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "6px",
+        "marginLeft": "0px",
+        "bgColor": "#bdd7ee",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111",
+        "textAlign": "center"
+      },
+      "styles": {},
+      "groupId": "group-1786609745273-dtv0hy2eo",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/beautysumindia/vol03/img-03.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786609745273-dtv0hy2eo",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">• <s>2,800,000원</s>(vat 별도)</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\"><span style=\"color: var(--point-color, #287dfa);\">→조기신청 기업: 2,200,000원</span></p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\"><span style=\"color: var(--point-color, #287dfa);\">→2025 뷰티썸 수원 참가기업: 2,000,000원</span></p>",
+        "paddingTop": "10px",
+        "paddingRight": "0px",
+        "paddingBottom": "10px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1786609745273-dtv0hy2eo",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\"><strong style=\"font-size: 16px;\">참가기업 대상 </strong><strong style=\"font-size: 16px; color: var(--point-color, #287dfa);\">해외유통사 매칭 수출상담회</strong><strong style=\"font-size: 16px;\"> 참여 기회🌏</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\">참가기업의 성공적인 해외 진출을 위해 검증된 유통사·바이어를 만날 수 있는</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\">1:1 매칭 수출상담회를 운영합니다. 해외 바이어가 제품을 직접 검토하고</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\">구매를 결정하는 실질적인 비즈니스 기회를 잡으세요.</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\"><strong>2025년 참여 바이어 국가</strong></p>",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "0px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1785228577402-b4w2vbhm2"
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/beautysumindia/vol03/img-06.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1785228577402-b4w2vbhm2"
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "17px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong style=\"color: var(--point-color, #287dfa);\">2026년 해외유통사 20개팀 참여 예정</strong></p>",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "0px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1785228577402-b4w2vbhm2"
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "출품 안내 →",
+        "buttonUrl": "https://bit.ly/4t20OWu",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#111111",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "0px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "0px",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "40px",
+        "paddingLeft": "20px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "5px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000",
+        "buttonBgColor__usePoint": true
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "13px",
+        "descriptionText": "<p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong style=\"font-size: 16px;\">뷰티썸 사무국 (주)메쎄이상</strong></p><p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">서울시 마포구 월드컵북로 58길 9 ES타워 (03922)</p>",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "10px",
+        "paddingLeft": "0px",
+        "marginTop": "30px",
+        "marginRight": "25px",
+        "marginBottom": "0px",
+        "marginLeft": "25px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "textAlign": "center"
+      },
+      "styles": {},
+      "groupId": "group-1786609746298-afrkw9g2q",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleContactInfo",
+      "properties": {
+        "contactItems": [
+          {
+            "key": "website",
+            "show": false,
+            "value": "www.koreabuild.co.kr"
+          },
+          {
+            "key": "phone",
+            "show": true,
+            "value": " +82-2-6121-6418  "
+          },
+          {
+            "key": "email",
+            "show": true,
+            "value": "beautysum@esgroup.net"
+          },
+          {
+            "key": "fax",
+            "show": false,
+            "value": "02-6121-6363"
+          }
+        ],
+        "contactFontSize": "13px",
+        "contactTextColor": "#333333",
+        "contactAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "25px",
+        "paddingBottom": "30px",
+        "paddingLeft": "25px"
+      },
+      "styles": {},
+      "groupId": "group-1786609746298-afrkw9g2q",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#aaaaaa",
+        "borderWidth": "1px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "15px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1786609746298-afrkw9g2q",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleSnsIcons",
+      "properties": {
+        "snsIconBgColor": "#333333",
+        "snsAlign": "center",
+        "snsIcons": [
+          {
+            "key": "home",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "facebook",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "x",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "blog",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "youtube",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "instagram",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "kakao",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "linkedin",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "zuzuzu",
+            "show": false,
+            "url": "https://kcoupet.com/"
+          },
+          {
+            "key": "en",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "jp",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "th",
+            "show": false,
+            "url": ""
+          }
+        ],
+        "paddingTop": "0px",
+        "paddingRight": "5px",
+        "paddingBottom": "15px",
+        "paddingLeft": "5px"
+      },
+      "styles": {},
+      "groupId": "group-1786609746298-afrkw9g2q",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "12px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"color: #d94251;\">BeautySum India New Delhi</strong>  <strong>&nbsp;</strong><a href=\"https://beautysumindia.com/\" rel=\"noopener noreferrer\" target=\"_blank\">WEB</a> ｜ <a href=\"https://www.instagram.com/beautysum_india/\" rel=\"noopener noreferrer\" target=\"_blank\">INSTAGRAM </a>｜<a href=\"https://www.linkedin.com/company/beautysum-india\" rel=\"noopener noreferrer\" target=\"_blank\">Linked in</a></p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"color: var(--point-color, #287dfa);\">BeautySum Korea Suwon</strong><strong>&nbsp;</strong>&nbsp;<a href=\"https://beautysumkorea.com/\" rel=\"noopener noreferrer\" target=\"_blank\">WEB</a>｜ <a href=\"https://www.instagram.com/beauty_suwon/\" rel=\"noopener noreferrer\" target=\"_blank\">INSTAGRAM</a> ｜<a href=\"http://pf.kakao.com/_yzLUn\" rel=\"noopener noreferrer\" target=\"_blank\">KAKAO</a></p>",
+        "paddingTop": "10px",
+        "paddingRight": "25px",
+        "paddingBottom": "40px",
+        "paddingLeft": "25px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "textAlign": "center"
+      },
+      "styles": {},
+      "groupId": "group-1786609746298-afrkw9g2q",
+      "rowIndex": 3,
+      "columnIndex": 0
+    }
+  ],
+  "groups": [
+    {
+      "id": "group-1786609743908-b65tinzz4",
+      "name": "복수 버튼",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingTop": "10px",
+        "paddingRight": "15px",
+        "paddingBottom": "40px",
+        "paddingLeft": "15px"
+      },
+      "rows": [
+        2
+      ]
+    },
+    {
+      "id": "group-1786609744138-vhev3f4qs",
+      "name": "복수 이미지",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "15px",
+        "paddingRight": "15px"
+      },
+      "rows": [
+        2
+      ]
+    },
+    {
+      "id": "group-1786609744351-thaf94d1i",
+      "name": "복수 이미지",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "15px",
+        "paddingRight": "15px"
+      },
+      "rows": [
+        2
+      ]
+    },
+    {
+      "id": "group-1786609744565-i9eknl3aj",
+      "name": "섹션 타이틀",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1786609745273-dtv0hy2eo",
+      "name": "모듈 06번",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "10px",
+        "paddingRight": "10px"
+      },
+      "rows": [
+        2
+      ],
+      "colWidths": [
+        [
+          50,
+          50
+        ]
+      ]
+    },
+    {
+      "id": "group-1786609746298-afrkw9g2q",
+      "name": "하단 푸터",
+      "styles": {
+        "backgroundColor": "#e9e9e9",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1785228577402-b4w2vbhm2",
+      "styles": {
+        "backgroundColor": "#eaeaea",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "15px",
+        "margin": "20px"
+      },
+      "name": "그룹 01"
+    }
+  ]
+}

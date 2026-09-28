@@ -1,0 +1,2331 @@
+{
+  "id": "bfs",
+  "wrapSettings": {
+    "backgroundColor": "#ffffff",
+    "borderEnabled": false,
+    "borderWidth": "0px",
+    "borderColor": "#dddddd",
+    "borderStyle": "solid",
+    "pointColor": "#E60013",
+    "pointColors": [
+      "#E60013"
+    ],
+    "fontLanguage": "default",
+    "summary": "건축 소방 안전 산업전 뉴스레터입니다."
+  },
+  "modules": [
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;; text-align: right;\"><a href=\"https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/bfs/vol03/bfs-newsletter-vol03.html\" rel=\"noopener noreferrer\" target=\"_blank\">👀 웹으로 보기</a></p>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "15px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/bfs/vol03/visual.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "15px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"font-size: 20px;\">국내 유일 건설 건축 특화 소방 안전 비즈니스 전시회</strong></p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"font-size: 20px;\">건축소방안전산업전</strong></p>",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "0px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "15px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\"><strong>✏️뉴스레터 3호 KEY POINT!</strong></p>",
+        "paddingTop": "20px",
+        "paddingRight": "20px",
+        "paddingBottom": "10px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "15px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">· 참가기업 특별 혜택✨ 비즈니스 매칭 프로그램</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">· 동시개최 ‘전기차충전인프라산업전’ 소개</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">· 무료 사전등록 OPEN 💌</p>",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "0px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#999999",
+        "borderWidth": "1px",
+        "borderStyle": "dotted",
+        "dividerWidth": "100%",
+        "paddingTop": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "paddingRight": "20px"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"font-size: 16px;\">2026 건축소방안전산업전</strong></p><p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">📆 <strong>기간 </strong>: 2026. 8. 5(수) - 8(토)</p><p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">⏰ <strong>시간 </strong>: 10:00-18:00</p><p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">🚩 <strong>장소 </strong>: 서울 코엑스(COEX) B홀</p><p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">🤝 <strong>주최 </strong>: (사)한국소방산업협회, ㈜메쎄이상</p><p style=\"line-height: 2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">⭐ <strong>국제인증 </strong>: 한국전시산업진흥회(AKEI) 국제인증전시회+</p>",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "0px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "자세히 보러가기 →",
+        "buttonUrl": "https://bit.ly/4wmEacK",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#111111",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "0px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "0px",
+        "paddingTop": "30px",
+        "paddingRight": "20px",
+        "paddingBottom": "40px",
+        "paddingLeft": "20px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "5px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#333333",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1786609792019-6cbuam7jn",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "22px",
+        "descriptionText": "<div style=\"font-weight:700;\"><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">CATEGORY🔥</p></div>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "15px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1786609792019-6cbuam7jn",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">건설·건축 현장의 화재안전 수요를 이끄는 핵심 품목을 소개합니다.</p>",
+        "paddingTop": "0",
+        "paddingRight": "15px",
+        "paddingBottom": "20px",
+        "paddingLeft": "15px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1786609792019-6cbuam7jn",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7; text-align:center;\"><strong>소방</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "0px",
+        "paddingBottom": "6px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "6px",
+        "marginLeft": "0px",
+        "bgColor": "#e5e5e5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#ffffff",
+        "bgColor__usePoint": true,
+        "textAlign": "center"
+      },
+      "styles": {},
+      "groupId": "group-1786609792336-lkdgxibxo",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/bfs/vol01/img01.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786609792336-lkdgxibxo",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "15px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">소방설비, 경보/감지 솔루션, 피난/구조 솔루션, 소방용 자재/부품, 내화/불연/방염</p>",
+        "paddingTop": "10px",
+        "paddingRight": "0px",
+        "paddingBottom": "10px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1786609792336-lkdgxibxo",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7; text-align:center;\"><strong>건축 방재</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "0px",
+        "paddingBottom": "6px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "6px",
+        "marginLeft": "0px",
+        "bgColor": "#e5e5e5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#ffffff",
+        "bgColor__usePoint": true,
+        "textAlign": "center"
+      },
+      "styles": {},
+      "groupId": "group-1786609792336-lkdgxibxo",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/bfs/vol01/img02.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786609792336-lkdgxibxo",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "15px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">내화 불연 건축자재, 구조 내화 성능 향상 기술, 확산 방지/제연 설비, 전기차 화재 솔루션</p>",
+        "paddingTop": "10px",
+        "paddingRight": "0px",
+        "paddingBottom": "10px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1786609792336-lkdgxibxo",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7; text-align:center;\"><strong>안전</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "0px",
+        "paddingBottom": "6px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "6px",
+        "marginLeft": "0px",
+        "bgColor": "#e5e5e5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#ffffff",
+        "bgColor__usePoint": true,
+        "textAlign": "center"
+      },
+      "styles": {},
+      "groupId": "group-1786609792718-0ebj8emkm",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/bfs/vol01/img03.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786609792718-0ebj8emkm",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "15px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">전기 안전, 실내환경 안전, 건설현장 안전,</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">산업 안전, 기타 안전 솔루션 등</p>",
+        "paddingTop": "10px",
+        "paddingRight": "0px",
+        "paddingBottom": "10px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1786609792718-0ebj8emkm",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7; text-align:center;\"><strong>스마트 안전</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "0px",
+        "paddingBottom": "6px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "6px",
+        "marginLeft": "0px",
+        "bgColor": "#e5e5e5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#ffffff",
+        "bgColor__usePoint": true,
+        "textAlign": "center"
+      },
+      "styles": {},
+      "groupId": "group-1786609792718-0ebj8emkm",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/bfs/vol01/img04.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786609792718-0ebj8emkm",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "15px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">AI 기반 예측/자동 감지, 센서 및 모니터링, 로봇/드론, 디지털 트윈 기반 건물 안전 관리, 스마트 PEE, 관제솔루션(CCTV)</p>",
+        "paddingTop": "10px",
+        "paddingRight": "0px",
+        "paddingBottom": "10px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1786609792718-0ebj8emkm",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "자세히 보러가기 →",
+        "buttonUrl": "https://bit.ly/4b5jQEl",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#111111",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "0px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "0px",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "40px",
+        "paddingLeft": "20px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "5px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#333333",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1786609793178-hbrjl2q7j",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "22px",
+        "descriptionText": "<div style=\"font-weight:700;\"><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">WHY 건축소방안전산업전?</p></div>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "15px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1786609793178-hbrjl2q7j",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">국내 유일 건설·건축 특화 소방·안전 비즈니스 전시회에서</p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">실수요 바이어와 새로운 비즈니스 기회를 만나보세요.</p>",
+        "paddingTop": "0",
+        "paddingRight": "15px",
+        "paddingBottom": "20px",
+        "paddingLeft": "15px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1786609793178-hbrjl2q7j",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/bfs/vol03/img_01.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786609793440-acy3f5xet",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7;\"><strong>건설·건축 비즈니스 시너지</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "10px",
+        "paddingBottom": "6px",
+        "paddingLeft": "10px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "#e5e5e5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#ffffff",
+        "bgColor__usePoint": true
+      },
+      "styles": {},
+      "groupId": "group-1786609793440-acy3f5xet",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\"><strong>건설사, 건축사사무소, 설계·시공사, 시설관리 등 핵심 바이어가 방문하는 최대 규모 전시회</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.7; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">✔️ 건설·건축 산업 핵심 바이어 방문</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">✔️ 설계·시공·유지관리까지 비즈니스 확대</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">✔️ 신규 프로젝트 및 협력 기회 창출</p>",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "marginTop": "4px",
+        "marginRight": "0px",
+        "marginBottom": "10px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1786609793440-acy3f5xet",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/bfs/vol03/img_02.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786609793725-wpu4z1wne",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7;\"><strong>실수요 바이어와 매칭</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "10px",
+        "paddingBottom": "6px",
+        "paddingLeft": "10px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "#e5e5e5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#ffffff",
+        "bgColor__usePoint": true
+      },
+      "styles": {},
+      "groupId": "group-1786609793725-wpu4z1wne",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\"><strong>건설사, 공공기관, 공동주택, 시설관리, 설계사 등 실수요 바이어 방문 및 1:1 상담 기회</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.7; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">✔️ 1:1 건축사 상담회</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">✔️ 기술협력·투자 상담회</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">✔️ 수출 상담회를 통한 글로벌 판로 개척 기회</p>",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "marginTop": "4px",
+        "marginRight": "0px",
+        "marginBottom": "10px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1786609793725-wpu4z1wne",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/bfs/vol03/img_03.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786609794008-fkdr6zzmg",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7;\"><strong>브랜드 인지도 강화</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "10px",
+        "paddingBottom": "6px",
+        "paddingLeft": "10px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "#e5e5e5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#ffffff",
+        "bgColor__usePoint": true
+      },
+      "styles": {},
+      "groupId": "group-1786609794008-fkdr6zzmg",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\"><strong>뉴스레터, SNS, 보도자료 등</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\"><strong>기업의 기술 및 제품 홍보 지원</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.7; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">✔️ 뉴스레터·SNS 공식 채널 내 홍보 지원</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">✔️ 보도자료 및 미디어 노출 지원</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">✔️ 세일즈 및 마케팅 효과 동시 지원</p>",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "marginTop": "4px",
+        "marginRight": "0px",
+        "marginBottom": "10px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1786609794008-fkdr6zzmg",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "참가신청 바로가기 →",
+        "buttonUrl": "https://bit.ly/4p2xD4q",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#111111",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "0px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "0px",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "40px",
+        "paddingLeft": "20px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "5px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#333333",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1786609794430-2227120x6",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "22px",
+        "descriptionText": "<div style=\"font-weight:700;\"><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">비즈니스 프로그램📝</p></div>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "15px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1786609794430-2227120x6",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">설계부터 구매, 투자, 해외 진출까지!</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">실질적인 비즈니스 기회를 제공하는 상담 프로그램을 운영합니다.</p>",
+        "paddingTop": "0",
+        "paddingRight": "15px",
+        "paddingBottom": "20px",
+        "paddingLeft": "15px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1786609794430-2227120x6",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/bfs/vol03/img_04.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786609794694-7w1bnn0uw",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7;\"><strong>1:1 건축사 상담회</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "10px",
+        "paddingBottom": "6px",
+        "paddingLeft": "10px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "#e5e5e5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#ffffff",
+        "bgColor__usePoint": true
+      },
+      "styles": {},
+      "groupId": "group-1786609794694-7w1bnn0uw",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\"><strong>1:1 건축사 상담회</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\"><strong>건축사사무소 및 설계 관계자와의 1:1 상담을 통해 설계 단계에서의 제품 적용 및 프로젝트 협력 기회를 제공합니다.</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.7; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\"><strong>👥핵심 바이어</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">건축사, 설계사, 엔지니어, CM 등</p>",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "marginTop": "4px",
+        "marginRight": "0px",
+        "marginBottom": "10px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1786609794694-7w1bnn0uw",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/bfs/vol03/img_05.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786609794979-pgk5mdnyx",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7;\"><strong>기술협력·투자 상담회</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "10px",
+        "paddingBottom": "6px",
+        "paddingLeft": "10px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "#e5e5e5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#ffffff",
+        "bgColor__usePoint": true
+      },
+      "styles": {},
+      "groupId": "group-1786609794979-pgk5mdnyx",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\"><strong>국내 건설사, 공공기관, 투자사와의 상담을 통해 기술 협력, 공동사업, 구매 검토 및 신규 프로젝트 연계 기회를 제공합니다.</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.7; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\"><strong>👥핵심 바이어</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">건설사, 투자사, 공공기관 등</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">(삼성물산, 현대건설, GS건설, 호반건설 등)</p>",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "marginTop": "4px",
+        "marginRight": "0px",
+        "marginBottom": "10px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1786609794979-pgk5mdnyx",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/bfs/vol03/img_06.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1786609795263-xpdqor49n",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7;\"><strong>해외바이어 초청 수출상담회</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "10px",
+        "paddingBottom": "6px",
+        "paddingLeft": "10px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "#e5e5e5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#ffffff",
+        "bgColor__usePoint": true
+      },
+      "styles": {},
+      "groupId": "group-1786609795263-xpdqor49n",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\"><strong>해외 바이어와의 매칭 상담을 통해 신규 거래처 발굴, 수출 상담 및 글로벌 시장 진출 기회를 제공합니다.</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.7; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\"><strong>👥핵심 바이어</strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">해외 바이어 · 유통사 · 수입업체 · 구매담당자</p>",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "marginTop": "4px",
+        "marginRight": "0px",
+        "marginBottom": "10px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1786609795263-xpdqor49n",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#333333",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1786609795534-voov1emsu",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "22px",
+        "descriptionText": "<div style=\"font-weight:700;\"><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"> SEMINAR✨</p></div>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "30px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1786609795534-voov1emsu",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/bfs/vol03/banner_seminar.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">최신 화재안전 정책, 소방시설 유지관리, 건축물 안전관리 등 <strong>산업 현장에서 필요한 실무 중심의 정보를 공유할 예정입니다.</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.7; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">세션 구성과 참가 신청은 순차적으로 안내드릴 예정이오니, <strong>많은 관심 부탁드립니다.</strong></p>",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "40px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#333333",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1786609796058-wwr77t1rj",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "22px",
+        "descriptionText": "<div style=\"font-weight:700;\"><p style=\"line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\">(동시개최)</p><p style=\"line-height: 1.5; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">전기차충전인프라산업전🔋</p></div>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "30px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1786609796058-wwr77t1rj",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/bfs/vol02/26_evinfra_key.jpg",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">전기차 충전 인프라 시장은 이제 설치를 넘어</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">화재 예방·안전관리·스마트 관제 중심으로 확대되고 있습니다.</p><p style=\"margin: 0; padding: 0; line-height: 1.7; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\"><strong>『전기차충전인프라산업전』은 공동주택·시설관리·CPO 등</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\"><strong>실수요 바이어와 충전·안전 솔루션을 연결하는 비즈니스 플랫폼입니다.</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.7; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">충전·관제·안전 솔루션 기업과</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">공동주택·시설관리·공공 분야 바이어와 비즈니스 기회를 창출하세요</p>",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "자세히 보기 →",
+        "buttonUrl": "https://bit.ly/3Svj3q5",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#111111",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "0px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "0px",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "40px",
+        "paddingLeft": "20px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "5px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#333333",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1786609796748-61gnm0yqm",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "22px",
+        "descriptionText": "<div style=\"font-weight:700;\"><p style=\"word-break: break-all; line-height: 1.5; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">수출바우처 활용 가능 전시회</p></div>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "30px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1786609796748-61gnm0yqm",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/bfs/vol01/img07.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "showImageLink": false,
+        "imageLinkUrl": "#",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">💡 참가비 부담 없이, 해외 판로 개척 기회를 확보하세요.</p><p style=\"margin: 0; padding: 0; line-height: 1.7; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">코리아빌드 ‘건축소방안전산업전’ 참가 기업은</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">산업통상자원부와 중소벤처기업부에서 주관하는</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">‘수출바우처사업-전시회 참가지원사업’의 대상으로 인정됩니다.</p><p style=\"margin: 0; padding: 0; line-height: 1.7; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">참가기업은 바우처 지원 한도 내에서 전시회 참가비를 정산하실 수 있으니,</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">적극적인 참가 검토와 활용 권장 드립니다.</p>",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "자세히 보기 →",
+        "buttonUrl": "https://buildingfiresafety.co.kr/notice/board/?uid=2&mod=document",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#111111",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "0px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "0px",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "40px",
+        "paddingLeft": "20px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "5px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#333333",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1786609797453-9rg8zvb8n",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "22px",
+        "descriptionText": "<div style=\"font-weight:700;\"><p style=\"line-height: 1.5; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">무료 사전등록 안내 🎫</p></div>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1786609797453-9rg8zvb8n",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">사전등록자 전용 혜택으로 입장료 부담 없이,</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">대기 없이 더욱 편리하게 전시회를 관람해보세요.</p><p style=\"margin: 0; padding: 0; line-height: 1.7; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">현장에서 시간을 줄이고 비즈니스에 집중할 수 있는 가장 쉬운 방법,</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">지금 사전등록으로 미리 준비하세요.</p>",
+        "paddingTop": "0",
+        "paddingRight": "15px",
+        "paddingBottom": "20px",
+        "paddingLeft": "15px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1786609797453-9rg8zvb8n",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/bfs/vol03/line_banner_register.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "40px",
+        "paddingLeft": "20px",
+        "showImageLink": true,
+        "imageLinkUrl": "https://bit.ly/449HU59",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/bfs/vol02/twosome_banner.jpg",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "40px",
+        "paddingLeft": "20px",
+        "showImageLink": true,
+        "imageLinkUrl": "https://buildingfiresafety.co.kr/registration/#/group-pre-reg/952",
+        "showBorderRadius": false,
+        "imageBorderRadius": "0px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "13px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"font-size: 16px;\">건축소방안전산업전 사무국 (주)메쎄이상</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">서울시 마포구 월드컵북로 58길 9 ES타워 (03922)</p>",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "10px",
+        "paddingLeft": "0px",
+        "marginTop": "30px",
+        "marginRight": "25px",
+        "marginBottom": "0px",
+        "marginLeft": "25px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#cccccc",
+        "textAlign": "center"
+      },
+      "styles": {},
+      "groupId": "group-1786609798136-yd8wcqunu",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleContactInfo",
+      "properties": {
+        "contactItems": [
+          {
+            "key": "website",
+            "show": true,
+            "value": "www.buildingfiresafety.co.kr "
+          },
+          {
+            "key": "phone",
+            "show": true,
+            "value": "02-6121-6284"
+          },
+          {
+            "key": "email",
+            "show": true,
+            "value": "buildingfiresafety@esgroup.net"
+          },
+          {
+            "key": "fax",
+            "show": false,
+            "value": "02-6121-6363"
+          }
+        ],
+        "contactFontSize": "13px",
+        "contactTextColor": "#cccccc",
+        "contactAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "25px",
+        "paddingBottom": "30px",
+        "paddingLeft": "25px"
+      },
+      "styles": {},
+      "groupId": "group-1786609798136-yd8wcqunu",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#aaaaaa",
+        "borderWidth": "1px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "15px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1786609798136-yd8wcqunu",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleSnsIcons",
+      "properties": {
+        "snsIconBgColor": "#333333",
+        "snsAlign": "center",
+        "snsIcons": [
+          {
+            "key": "home",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "facebook",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "x",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "blog",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "youtube",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "instagram",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "kakao",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "linkedin",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "zuzuzu",
+            "show": false,
+            "url": "https://kcoupet.com/"
+          },
+          {
+            "key": "en",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "jp",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "th",
+            "show": false,
+            "url": ""
+          }
+        ],
+        "paddingTop": "0px",
+        "paddingRight": "5px",
+        "paddingBottom": "15px",
+        "paddingLeft": "5px"
+      },
+      "styles": {},
+      "groupId": "group-1786609798136-yd8wcqunu",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "12px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; min-height: 1.5em; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">본 메일은 회원님의 수신동의 여부를 확인한 결과 회원님께서 수신동의를 하셨기에 발송되었습니다.</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">메일 수신을 원치 않으시면 <a href=\"http://edm.esfair.kr/RejectMail.aspx?code=firesafety\" rel=\"noopener noreferrer\" target=\"_blank\">[수신거부]</a> 를 클릭하십시오.</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">If you don&#39;t want this type of information or e-mail, please click the <a href=\"http://edm.esfair.kr/RejectMail.aspx?code=firesafety\" rel=\"noopener noreferrer\" target=\"_blank\">[unsubscription]</a></p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">본 메일은 발신전용 메일이므로 문의사항은 buildingfiresafety@esgroup.net으로 문의 바랍니다</p>",
+        "paddingTop": "10px",
+        "paddingRight": "25px",
+        "paddingBottom": "40px",
+        "paddingLeft": "25px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#cccccc",
+        "textAlign": "center"
+      },
+      "styles": {},
+      "groupId": "group-1786609798136-yd8wcqunu",
+      "rowIndex": 3,
+      "columnIndex": 0
+    }
+  ],
+  "groups": [
+    {
+      "id": "group-1786609792019-6cbuam7jn",
+      "name": "섹션 타이틀",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1786609792336-lkdgxibxo",
+      "name": "모듈 06번",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "10px",
+        "paddingRight": "10px"
+      },
+      "rows": [
+        2
+      ],
+      "colWidths": [
+        [
+          50,
+          50
+        ]
+      ]
+    },
+    {
+      "id": "group-1786609792718-0ebj8emkm",
+      "name": "모듈 06번",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "10px",
+        "paddingRight": "10px"
+      },
+      "rows": [
+        2
+      ],
+      "colWidths": [
+        [
+          50,
+          50
+        ]
+      ]
+    },
+    {
+      "id": "group-1786609793178-hbrjl2q7j",
+      "name": "섹션 타이틀",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1786609793440-acy3f5xet",
+      "name": "모듈 05번",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "15px",
+        "paddingRight": "15px",
+        "paddingBottom": "15px"
+      },
+      "rows": [
+        2
+      ],
+      "colWidths": [
+        [
+          50,
+          50
+        ]
+      ]
+    },
+    {
+      "id": "group-1786609793725-wpu4z1wne",
+      "name": "모듈 05번",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "15px",
+        "paddingRight": "15px",
+        "paddingBottom": "15px"
+      },
+      "rows": [
+        2
+      ],
+      "colWidths": [
+        [
+          50,
+          50
+        ]
+      ]
+    },
+    {
+      "id": "group-1786609794008-fkdr6zzmg",
+      "name": "모듈 05번",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "15px",
+        "paddingRight": "15px",
+        "paddingBottom": "15px"
+      },
+      "rows": [
+        2
+      ],
+      "colWidths": [
+        [
+          50,
+          50
+        ]
+      ]
+    },
+    {
+      "id": "group-1786609794430-2227120x6",
+      "name": "섹션 타이틀",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1786609794694-7w1bnn0uw",
+      "name": "모듈 05번",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "15px",
+        "paddingRight": "15px",
+        "paddingBottom": "15px"
+      },
+      "rows": [
+        2
+      ],
+      "colWidths": [
+        [
+          50,
+          50
+        ]
+      ]
+    },
+    {
+      "id": "group-1786609794979-pgk5mdnyx",
+      "name": "모듈 05번",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "15px",
+        "paddingRight": "15px",
+        "paddingBottom": "15px"
+      },
+      "rows": [
+        2
+      ],
+      "colWidths": [
+        [
+          50,
+          50
+        ]
+      ]
+    },
+    {
+      "id": "group-1786609795263-xpdqor49n",
+      "name": "모듈 05번",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "15px",
+        "paddingRight": "15px",
+        "paddingBottom": "15px"
+      },
+      "rows": [
+        2
+      ],
+      "colWidths": [
+        [
+          50,
+          50
+        ]
+      ]
+    },
+    {
+      "id": "group-1786609795534-voov1emsu",
+      "name": "섹션 타이틀",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1786609796058-wwr77t1rj",
+      "name": "섹션 타이틀",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1786609796748-61gnm0yqm",
+      "name": "섹션 타이틀",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1786609797453-9rg8zvb8n",
+      "name": "섹션 타이틀",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1786609798136-yd8wcqunu",
+      "name": "하단 푸터",
+      "styles": {
+        "backgroundColor": "#000000",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1,
+        1,
+        1
+      ]
+    }
+  ]
+}
