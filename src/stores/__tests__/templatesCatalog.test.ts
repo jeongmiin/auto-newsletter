@@ -129,8 +129,8 @@ global.fetch = vi.fn(async (url: any) => {
 }) as any
 
 describe('템플릿 카탈로그', () => {
-  it('22개 전시 템플릿이 있다', () => {
-    expect(catalog.templates).toHaveLength(22)
+  it('23개 전시 템플릿이 있다', () => {
+    expect(catalog.templates).toHaveLength(23)
   })
 
   it('목차의 file이 {본부}/{팀}/{id}.json 규칙을 따르고 그 파일이 있다', () => {
