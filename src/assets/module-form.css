@@ -264,6 +264,9 @@
 .module-form .ql-editor li[data-list='ordered'] > .ql-ui::before {
   content: counter(ql-list-0, decimal) '. ';
 }
+.module-form .ql-editor li[data-list]::before {
+  content: none !important;
+}
 
 /* 글자 크기(font-size) 드롭다운 픽커 — 선택 영역에 부분 적용(인라인) */
 .module-form .ql-snow .ql-picker.ql-fontSize {

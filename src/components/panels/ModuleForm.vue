@@ -1919,7 +1919,7 @@ import {
   parseLetterSpacing,
 } from '@/utils/quillLetterSpacing'
 import { POINT_COLOR_SUFFIX, POINT_COLOR_INDEX_SUFFIX, POINT_COLOR_CSS_VAR, pointColorCssVar, getPointColorIndex, pointColorAt } from '@/utils/pointColor'
-import { processQuillHtml } from '@/utils/quillHtmlProcessor'
+import { processQuillHtml, restoreListItemFormats } from '@/utils/quillHtmlProcessor'
 import { DEFAULT_IMAGE_URL, isPlaceholderImage } from '@/constants/defaults'
 import TableCellEditor from './TableCellEditor.vue'
 import ImageUploadField from './ImageUploadField.vue'
@@ -3850,19 +3850,23 @@ const onEditorLoad = (event: { instance: Quill }, key: string) => {
 }
 
 // PrimeVue Editor 핸들러 함수들 (HTML 후처리 적용)
+/**
+ * PrimeVue Editor 의 modelValue 는 getSemanticHTML 결과라 목록 항목(<li>)의 행간·자간·정렬이 빠져 온다.
+ * 에디터 DOM(quillByKey[key].root)에서 되살린 뒤 공용 후처리를 거친다. (onEditorLoad 가 같은 key 로 저장한다)
+ */
+const finishEditorHtml = (key: string, value: string): string =>
+  processQuillHtml(restoreListItemFormats(value, quillByKey[key]?.root))
+
 const handleEditorUpdate = (key: string, value: string) => {
-  const processedHtml = processQuillHtml(value)
-  updateProperty(key, processedHtml)
+  updateProperty(key, finishEditorHtml(key, value))
 }
 
 const handleContentTextUpdate = (textId: string, value: string) => {
-  const processedHtml = processQuillHtml(value)
-  updateContentTextField(textId, processedHtml)
+  updateContentTextField(textId, finishEditorHtml(textId, value))
 }
 
 const handleAdditionalContentUpdate = (contentId: string, value: string, propertyKey: string) => {
-  const processedHtml = processQuillHtml(value)
-  updateAdditionalContentData(contentId, 'text_content', processedHtml, propertyKey)
+  updateAdditionalContentData(contentId, 'text_content', finishEditorHtml(contentId, value), propertyKey)
 }
 
 // 동적 테이블 행 관리 함수들

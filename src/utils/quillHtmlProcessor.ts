@@ -230,8 +230,9 @@ export const convertQuillAlignToInline = (html: string): string => {
   // 각 정렬 클래스 처리
   Object.entries(alignMap).forEach(([className, alignValue]) => {
     // class="ql-align-xxx" 또는 class="other ql-align-xxx" 패턴 찾기
+    // (li 도 포함 — 목록 항목의 정렬은 restoreListItemFormats 가 클래스로 되살려 여기서 인라인이 된다)
     const classRegex = new RegExp(
-      `(<(?:p|h1|h2|h3)[^>]*?)class="([^"]*?${className}[^"]*?)"([^>]*?>)`,
+      `(<(?:p|h1|h2|h3|li)[^>]*?)class="([^"]*?${className}[^"]*?)"([^>]*?>)`,
       'gi',
     )
 
@@ -307,13 +308,50 @@ export const convertQuillListsToEmailHtml = (html: string): string => {
         frag.appendChild(curList)
       }
       delete li.dataset.list
-      li.setAttribute('style', 'margin:0;')
+      // 항목에 걸린 블록 서식(행간 line-height, 정렬 등)은 그대로 두고 margin 만 보탠다.
+      // 예전엔 style 을 'margin:0' 으로 통째로 덮어써서, 에디터에서 준 행간이 미리보기·발송 HTML 에서 사라졌다.
+      const own = (li.getAttribute('style') ?? '').trim().replace(/;+$/, '')
+      const parts = own ? [own] : []
+      if (!/(^|;)\s*margin\s*:/.test(own)) parts.push('margin:0')
+      li.setAttribute('style', `${parts.join('; ')};`)
       curList.appendChild(li)
     })
 
     listEl.replaceWith(frag)
   })
 
+  return container.innerHTML
+}
+
+/**
+ * PrimeVue Editor 가 넘기는 getSemanticHTML 결과에 목록 항목의 인라인 서식을 되살린다.
+ *
+ * Quill 2 의 getSemanticHTML 은 문단(<p>)은 여는 태그를 DOM 에서 그대로 베끼지만, 목록 항목은
+ * `<li>` 를 손으로 써 내려가서(core/editor.js convertListHTML) style(행간·자간·줄바꿈)과
+ * ql-align-* 클래스가 통째로 빠진다 — 그래서 목록에 준 행간이 캔버스·발송 HTML 에서 사라졌다.
+ * 에디터 DOM(quill.root)의 <li data-list> 에는 남아 있으므로, 순서대로 짝을 지어 옮겨 붙인다.
+ * 항목 수가 다르면(들여쓰기가 두 단계 이상 뛰어 감싸는 <li> 가 생긴 경우) 짝이 어긋나므로 손대지 않는다.
+ */
+export const restoreListItemFormats = (
+  semanticHtml: string,
+  editorRoot: ParentNode | null | undefined,
+): string => {
+  if (!semanticHtml || !editorRoot || typeof document === 'undefined') return semanticHtml
+  const sources = Array.from(editorRoot.querySelectorAll<HTMLElement>('li[data-list]'))
+  if (sources.length === 0) return semanticHtml
+
+  const container = document.createElement('div')
+  container.innerHTML = semanticHtml
+  const targets = Array.from(container.querySelectorAll<HTMLElement>('li'))
+  if (targets.length !== sources.length) return semanticHtml
+
+  sources.forEach((src, i) => {
+    const dst = targets[i]
+    const style = src.getAttribute('style')
+    if (style) dst.setAttribute('style', style)
+    const align = Array.from(src.classList).find((c) => c.startsWith('ql-align-'))
+    if (align) dst.classList.add(align)
+  })
   return container.innerHTML
 }
 
