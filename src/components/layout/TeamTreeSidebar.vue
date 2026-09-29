@@ -101,7 +101,7 @@ const toggle = (deptId: string) => {
 
 <style scoped>
 .team-nav {
-  width: 225px;
+  width: 235px;
   flex-shrink: 0;
   border-right: 1px solid #f5f5f5;
   padding: 20px 16px;
