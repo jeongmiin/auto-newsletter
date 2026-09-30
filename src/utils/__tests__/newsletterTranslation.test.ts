@@ -87,6 +87,16 @@ describe('newsletterTranslation', () => {
     expect(restoreSkeleton(html, attrs)).toBe(BODY_HTML)
   })
 
+  // 표 셀은 띄어쓰기를 &nbsp;로 저장한다 — 엔티티째 보내면 공백 하나가 6자로 잡힌다
+  it('띄어쓰기로 쓰인 &nbsp;는 일반 공백으로 보내고, 빈 줄 스페이서는 남긴다', () => {
+    const { html } = toSkeleton(
+      '<p><strong>Engineering&nbsp;Track</strong></p><p>&nbsp;</p><p>&nbsp;-&nbsp;사전신청&nbsp;:&nbsp;880,000원</p>',
+    )
+    expect(html).toBe(
+      '<p i="0"><strong i="1">Engineering Track</strong></p><p i="2">&nbsp;</p><p i="3"> - 사전신청 : 880,000원</p>',
+    )
+  })
+
   it('번역기가 태그 순서를 바꿔 돌려줘도 번호를 보고 제 속성을 찾아간다', () => {
     const { attrs } = toSkeleton(BODY_HTML)
     // <a>가 <strong> 앞으로 오도록 뒤집힌 상황

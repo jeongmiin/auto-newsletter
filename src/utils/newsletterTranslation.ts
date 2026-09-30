@@ -1,4 +1,5 @@
 import type { EditableProp, ModuleInstance, ModuleMetadata } from '@/types'
+import { normalizeNbspForWordBreak } from '@/utils/quillHtmlProcessor'
 import { sanitizeHtml } from '@/utils/sanitize'
 
 export type TranslationLanguage = 'en' | 'ja' | 'zh-Hans'
@@ -123,6 +124,10 @@ const SKELETON_INDEX_ATTR = 'i'
  * `<p style="margin:0;font-size:15px;line-height:1.6;color:#4e5968">` 같은 긴 속성이
  * 통째로 번역기 글자 수에 잡히므로, 보낼 때는 `<p i="3">`으로 줄인다.
  * 태그 이름과 구조는 그대로라 번역기가 서식을 제자리에 두는 데 문제가 없다.
+ *
+ * 띄어쓰기가 `&nbsp;`로 저장된 값(표 셀이 그렇다)은 공백 하나가 6자로 잡히므로 일반 공백으로
+ * 바꿔 보낸다. 화면·발송 HTML도 같은 규칙(`normalizeNbspForWordBreak`)으로 공백을 되돌리므로
+ * 결과는 같고, 빈 줄 스페이서(`<p>&nbsp;</p>`)는 그대로 둔다.
  */
 export function toSkeleton(html: string): { html: string; attrs: Array<Array<[string, string]>> } {
   const body = parseBody(html)
@@ -133,7 +138,7 @@ export function toSkeleton(html: string): { html: string; attrs: Array<Array<[st
     el.setAttribute(SKELETON_INDEX_ATTR, String(attrs.length))
     attrs.push(own)
   }
-  return { html: body.innerHTML, attrs }
+  return { html: normalizeNbspForWordBreak(body.innerHTML), attrs }
 }
 
 /**

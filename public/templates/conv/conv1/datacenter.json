@@ -1,0 +1,3473 @@
+{
+  "id": "datacenter",
+  "wrapSettings": {
+    "backgroundColor": "#ffffff",
+    "borderEnabled": false,
+    "borderWidth": "6px",
+    "borderColor": "#dddddd",
+    "borderStyle": "solid",
+    "pointColor": "#0046ff",
+    "pointColors": [
+      "#0046ff"
+    ],
+    "fontLanguage": "default",
+    "summary": "데이터센터 코리아 뉴스레터입니다."
+  },
+  "modules": [
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#000000",
+        "borderWidth": "3px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1790132279699-4u7wutp5z",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/datacenter/vol02/01.png",
+        "imageAlt": "로고",
+        "imageMaxWidth": "60%",
+        "imageAlign": "center",
+        "imageCrop": "",
+        "paddingTop": "30px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "",
+        "showBorderRadius": false,
+        "imageBorderRadius": "10px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1790132279699-4u7wutp5z",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#dddddd",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1790132279699-4u7wutp5z",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "20px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">NEWSLETTER <strong>VOL.4</strong></p>",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "15px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1790132279699-4u7wutp5z",
+      "rowIndex": 3,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/datacenter/vol04/main.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "imageCrop": "",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "showImageLink": true,
+        "imageLinkUrl": "https://bit.ly/3VfQ5f6",
+        "showBorderRadius": false,
+        "imageBorderRadius": "10px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "19px",
+        "descriptionText": "<p style=\"line-height: 1.4; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"font-size: 20px;\">AI 데이터센터의 미래를 설계하다</strong></p><p style=\"line-height: 1.4; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"font-size: 20px;\">2026 데이터센터코리아 글로벌 컨퍼런스</strong></p><p style=\"line-height: 1.4; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">&nbsp;</p><p style=\"line-height: 1.4; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"font-size: 20px;\">산업 전략부터 전력·냉각</strong><strong>·</strong><strong style=\"font-size: 20px;\">설계 기술까지</strong></p><p style=\"line-height: 1.4; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"font-size: 20px;\">국내외 전문가와 산업 리더가 제시하는</strong></p><p style=\"word-break: break-all; line-height: 1.4; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"font-size: 20px;\">데이터센터의 미래 성장 전략을 만나보세요!</strong></p>",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "0px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">2026 데이터센터코리아 글로벌 컨퍼런스는 데이터센터 산업의 정책 방향과 핵심 기술 이슈를 깊이 있게 조명하는 전문 컨퍼런스입니다.</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">국내외 전문가와 산업 리더가 한자리에 모여 주요 아젠다를 논의하고, 미래 성장 전략과 전문 인사이트를 공유합니다.</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">&nbsp;</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">Engineering, Strategy, Academy의 3개 전문 트랙을 통해 고밀도 인프라와 AI 데이터센터 전력·냉각</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"> 기술부터 사업·정책, 에너지 전환과 탄소중립, 지역 데이터센터 전략까지 산업의 주요 현안을 폭넓게</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">다룹니다.</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">또한 데이터센터의 기초부터 설계·시공·커미셔닝, 사업·투자까지 아우르는 전문 교육 프로그램도 함께</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"> 진행됩니다.</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">&nbsp;</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">데이터센터 산업의 새로운 흐름과 미래 성장 전략을 확인할 수 있는</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">‘2026 데이터센터 글로벌 컨퍼런스’에 많은 관심과 참여 바랍니다.</p>",
+        "paddingTop": "10px",
+        "paddingRight": "20px",
+        "paddingBottom": "0px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleTable",
+      "properties": {
+        "tableCells": [
+          [
+            {
+              "id": "cell-1790140941731-dhpw0ru43",
+              "type": "th",
+              "content": "<p>행사명</p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790140941731-9hfot0l1h",
+              "type": "td",
+              "content": "<p>2026&nbsp;데이터센터코리아&nbsp;글로벌&nbsp;컨퍼런스</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790140941731-8ijgltgf4",
+              "type": "th",
+              "content": "<p>기간</p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790140941731-fqnytdnmm",
+              "type": "td",
+              "content": "<p>2026.&nbsp;11.&nbsp;04(수)&nbsp;–&nbsp;06(금),&nbsp;3일간</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790140941731-kdxdh3oar",
+              "type": "th",
+              "content": "<p>장소</p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790140941731-nhuc4vzcv",
+              "type": "td",
+              "content": "<p>서울&nbsp;양재&nbsp;aT센터</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790140941731-9x9y8atwh",
+              "type": "th",
+              "content": "<p>주최,&nbsp;주관</p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790140941731-yq1otfnvd",
+              "type": "td",
+              "content": "<p>대한설비융합협회,&nbsp;㈜메쎄이상</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790140941731-xgfkchara",
+              "type": "th",
+              "content": "<p>후원</p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790140941731-9qz882bkb",
+              "type": "td",
+              "content": "<p>국토교통부,&nbsp;서울특별시,&nbsp;한국토지주택공사,&nbsp;한국기계전기전자시험연구원,&nbsp;서울특별시,&nbsp;중소기업중앙회,&nbsp;과학기술정보통신부,&nbsp;한국토지주택공사(LH)</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790140941731-dfgpvpfoo",
+              "type": "th",
+              "content": "<p>참가비</p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790140941731-5kt5sr1dz",
+              "type": "td",
+              "content": "<p><strong>Engineering&nbsp;Track&nbsp;/&nbsp;Strategy&nbsp;Track</strong></p><p>&nbsp;-&nbsp;사전신청&nbsp;:&nbsp;1개&nbsp;트랙당&nbsp;550,000원</p><p>&nbsp;-&nbsp;현장신청&nbsp;:&nbsp;1개&nbsp;세션별&nbsp;220,000원</p><p><strong>Academy&nbsp;Track&nbsp;</strong></p><p>&nbsp;-&nbsp;사전신청&nbsp;:&nbsp;880,000원</p><p>&nbsp;-&nbsp;현장신청&nbsp;:&nbsp;990,000원</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ]
+        ],
+        "borderTopWidth": "2px",
+        "borderTopColor": "#333333",
+        "cellBorderColor": "#dddddd",
+        "headerBgColor": "#f6f6f6",
+        "headerTextColor": "#333333",
+        "headerAlign": "center",
+        "cellBgColor": "#ffffff",
+        "cellTextColor": "#333333",
+        "cellAlign": "left",
+        "paddingTop": "20px",
+        "paddingRight": "20px",
+        "paddingBottom": "0px",
+        "paddingLeft": "20px",
+        "tableColWidths": [
+          "30%",
+          ""
+        ],
+        "tableColWidthOn": true
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "전시회 사전등록 →",
+        "buttonUrl": "https://bit.ly/4hI5AFe",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#002c6e",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "0px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "0px",
+        "paddingTop": "15px",
+        "paddingRight": "0px",
+        "paddingBottom": "20px",
+        "paddingLeft": "15px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "5px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000",
+        "buttonBgColor__pointIndex": 0,
+        "buttonBgColor__usePoint": false
+      },
+      "styles": {},
+      "groupId": "group-1790141260361-5oodqfqqe",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "컨퍼런스 신청 →",
+        "buttonUrl": "https://bit.ly/3VfQ5f6",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#111111",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "0px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "0px",
+        "paddingTop": "15px",
+        "paddingRight": "15px",
+        "paddingBottom": "20px",
+        "paddingLeft": "0px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "5px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000",
+        "buttonBgColor__pointIndex": 0,
+        "buttonBgColor__usePoint": true
+      },
+      "styles": {},
+      "groupId": "group-1790141260361-5oodqfqqe",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#000000",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1790141658931-afoj3ar2e",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "18px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong>2026 데이터센터코리아 글로벌 컨퍼런스</strong></p>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "15px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {},
+      "groupId": "group-1790141658931-afoj3ar2e",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleTable",
+      "properties": {
+        "tableCells": [
+          [
+            {
+              "id": "cell-1790141716712-ukclvcbu9",
+              "type": "th",
+              "content": "<p>일시</p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790141716712-ngusvb80g",
+              "type": "th",
+              "content": "<p>프로그램</p>",
+              "colspan": 3,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790141716712-2t5hbscou",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790141716712-1kbmolvk1",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            }
+          ],
+          [
+            {
+              "id": "cell-1790141716712-aad09xtb2",
+              "type": "th",
+              "content": "<p>11/4(수)&nbsp;오전</p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790141716712-16b9kxid9",
+              "type": "td",
+              "content": "<p><strong>[DATA&nbsp;CENTER&nbsp;KOREA&nbsp;2026&nbsp;포럼</strong>]</p><p><strong>「AI&nbsp;데이터센터&nbsp;기계설비&nbsp;산업발전&nbsp;세미나:&nbsp;제도에서&nbsp;현장의&nbsp;해법으로」</strong></p><p>&nbsp;<strong>주최</strong>&nbsp;:&nbsp;국토교통부&nbsp;AI시대&nbsp;데이터센터&nbsp;건설산업&nbsp;활성화&nbsp;포럼,</p><p>대한기계설비단체총연합회</p><p>&nbsp;<strong>주관</strong>&nbsp;:&nbsp;대한기계설비산업연구원,&nbsp;대한설비융합협회</p>",
+              "colspan": 3,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790141716712-btnnkicre",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790141716712-dzquj256x",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            }
+          ],
+          [
+            {
+              "id": "cell-1790141716712-xpub96moo",
+              "type": "th",
+              "content": "<p>일시</p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790141716712-lbenaxam1",
+              "type": "td",
+              "content": "<p>Engineering&nbsp;Track&nbsp;</p><p>&nbsp;(150석)</p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "contentType": "text",
+              "align": "center"
+            },
+            {
+              "id": "cell-1790141716712-xesh35efw",
+              "type": "td",
+              "content": "<p>Strategy&nbsp;Track</p><p>&nbsp;(150석)</p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "contentType": "text",
+              "align": "center"
+            },
+            {
+              "id": "cell-1790141716712-a0iubfcnj",
+              "type": "td",
+              "content": "<p>Academy&nbsp;Track</p><p>&nbsp;(150석)</p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "contentType": "text",
+              "align": "center"
+            }
+          ],
+          [
+            {
+              "id": "cell-1790141716712-7knkpa1w3",
+              "type": "th",
+              "content": "<p>11월&nbsp;4일&nbsp;(수)&nbsp;오후</p><p>13:20&nbsp;~&nbsp;16:30</p><p></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790141716712-no4vjcenb",
+              "type": "td",
+              "content": "<p>고밀도&nbsp;인프라&nbsp;</p><p>엔지니어링</p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "contentType": "text",
+              "align": "center"
+            },
+            {
+              "id": "cell-1790141716712-d14ouw8yi",
+              "type": "td",
+              "content": "<p>데이터센터&nbsp;</p><p>사업&nbsp;및&nbsp;정책&nbsp;방향</p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "contentType": "text",
+              "align": "center"
+            },
+            {
+              "id": "cell-1790141716712-010sbz6qm",
+              "type": "td",
+              "content": "<p>데이터센터란&nbsp;</p><p>무엇인가</p><p>-&nbsp;산업구조&nbsp;이해하기</p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "contentType": "text",
+              "align": "center"
+            }
+          ],
+          [
+            {
+              "id": "cell-1790141716712-1ws5i41ac",
+              "type": "th",
+              "content": "<p>11월&nbsp;5일&nbsp;(목)&nbsp;오전&nbsp;</p><p>&nbsp;09:00&nbsp;~&nbsp;12:00</p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790141716712-qx83oxeml",
+              "type": "td",
+              "content": "<p>AI&nbsp;데이터센터&nbsp;</p><p>전력&nbsp;인프라</p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "contentType": "text",
+              "align": "center"
+            },
+            {
+              "id": "cell-1790141716712-dqzdmb73v",
+              "type": "td",
+              "content": "<p>AI&nbsp;Factory</p><p>Infrastructure</p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "contentType": "text",
+              "align": "center"
+            },
+            {
+              "id": "cell-1790141716712-vkvqinhmc",
+              "type": "td",
+              "content": "<p>사업,&nbsp;투자&nbsp;</p><p>그리고&nbsp;정책</p><p>&nbsp;-&nbsp;어디에,&nbsp;어떤&nbsp;구조로</p><p>시작할&nbsp;것인가</p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "contentType": "text",
+              "align": "center"
+            }
+          ],
+          [
+            {
+              "id": "cell-1790141716712-1lcykmhwu",
+              "type": "th",
+              "content": "<p>11월&nbsp;5일&nbsp;(목)&nbsp;오후&nbsp;</p><p>&nbsp;13:00&nbsp;~&nbsp;17:00</p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790141716712-kloaaz0s1",
+              "type": "td",
+              "content": "<p>미래&nbsp;냉각&nbsp;솔루션</p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "contentType": "text",
+              "align": "center"
+            },
+            {
+              "id": "cell-1790141716712-o2apx83ek",
+              "type": "td",
+              "content": "<p>데이터센터&nbsp;</p><p>에너지&nbsp;전환&nbsp;&amp;&nbsp;</p><p>탄소중립</p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "contentType": "text",
+              "align": "center"
+            },
+            {
+              "id": "cell-1790141716712-8hfiiwfl2",
+              "type": "td",
+              "content": "<p>전력과&nbsp;냉각</p><p>&nbsp;-&nbsp;데이터센터를&nbsp;</p><p>움직이는&nbsp;두&nbsp;축</p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "contentType": "text",
+              "align": "center"
+            }
+          ],
+          [
+            {
+              "id": "cell-1790141716712-uh7rbvmkt",
+              "type": "th",
+              "content": "<p>11월&nbsp;6일&nbsp;(금)&nbsp;오전&nbsp;</p><p>&nbsp;09:00&nbsp;~&nbsp;11:50</p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790141716712-y7w99yp32",
+              "type": "td",
+              "content": "<p>데이터센터&nbsp;운영,&nbsp;</p><p>안전&nbsp;&amp;&nbsp;보안</p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "contentType": "text",
+              "align": "center"
+            },
+            {
+              "id": "cell-1790141716712-lys5dx9gk",
+              "type": "td",
+              "content": "<p>분산에너지&nbsp;시대,&nbsp;</p><p>지역&nbsp;데이터센터&nbsp;</p><p>유치&nbsp;전략</p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "contentType": "text",
+              "align": "center"
+            },
+            {
+              "id": "cell-1790141716712-he5uh45yx",
+              "type": "td",
+              "content": "<p>운명과&nbsp;다가올&nbsp;미래</p><p>-&nbsp;설계·시공·커미셔닝</p><p>실전&nbsp;사례</p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "contentType": "text",
+              "align": "center"
+            }
+          ]
+        ],
+        "borderTopWidth": "2px",
+        "borderTopColor": "#333333",
+        "cellBorderColor": "#dddddd",
+        "headerBgColor": "#f6f6f6",
+        "headerTextColor": "#333333",
+        "headerAlign": "center",
+        "cellBgColor": "#ffffff",
+        "cellTextColor": "#333333",
+        "cellAlign": "left",
+        "paddingTop": "20px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "tableColWidths": [
+          "22%",
+          "27%",
+          "",
+          "25%"
+        ],
+        "tableColWidthOn": true
+      },
+      "styles": {},
+      "groupId": "group-1790141658931-afoj3ar2e",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "18px",
+        "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong style=\"color: var(--point-color-0, #0046ff);\">DAY 1 오후 (11월 4일 수요일)</strong></p>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "5px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {},
+      "groupId": "group-1790141658931-afoj3ar2e",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleTable",
+      "properties": {
+        "tableCells": [
+          [
+            {
+              "id": "cell-1790143195238-m6ctmq2y8",
+              "type": "th",
+              "content": "<p>Engineering&nbsp;Track&nbsp;</p><p>&nbsp;(150석)</p>",
+              "colspan": 1,
+              "rowspan": 5,
+              "hidden": false
+            },
+            {
+              "id": "cell-1790143195238-88aj7oz9a",
+              "type": "td",
+              "content": "<p><strong>고밀도&nbsp;인프라&nbsp;엔지니어링</strong></p><p>좌장&nbsp;:&nbsp;채규호&nbsp;사장</p>",
+              "colspan": 1,
+              "rowspan": 5,
+              "hidden": false,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790143195238-v8l8s0769",
+              "type": "td",
+              "content": "<p><strong>13:20</strong></p><p><strong>~&nbsp;14:00</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143195238-stf6izcnc",
+              "type": "td",
+              "content": "<p><strong>마이크로&nbsp;채널&nbsp;D2C</strong></p><p>디포그&nbsp;김영모&nbsp;CTO</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143195238-4noyhih56",
+              "type": "th",
+              "content": "항목 2",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143195238-tidm7idn9",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143195238-9gbo6ss5r",
+              "type": "td",
+              "content": "<p><strong>14:00</strong></p><p><strong>~&nbsp;14:40</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143195238-xz1r27fq5",
+              "type": "td",
+              "content": "<p><strong>액체냉각&nbsp;심화기술</strong></p><p>버티브&nbsp;이수영&nbsp;부장</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790144151936-feuyoieaj",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790144151936-pa8aj48xt",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790144151936-e5eklm5ho",
+              "type": "td",
+              "content": "<p><strong>14:40</strong></p><p><strong>~&nbsp;14:50</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790144151936-sl637yn6p",
+              "type": "td",
+              "content": "<p><strong>Coffee&nbsp;Break</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143195238-1wme8o7do",
+              "type": "th",
+              "content": "항목 3",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143195238-ij3h9fe7t",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143195238-4qz7iiarg",
+              "type": "td",
+              "content": "<p><strong>14:50</strong></p><p><strong>~&nbsp;15:40</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143195238-4wr8ssco5",
+              "type": "td",
+              "content": "<p><strong>AI&nbsp;데이터센터&nbsp;솔루션</strong></p><p>Uptime&nbsp;Institute</p><p>Philip&nbsp;Hu&nbsp;(북아시아&nbsp;총괄)</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143195238-auxxl5w09",
+              "type": "th",
+              "content": "항목 4",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143195238-bie1kia2b",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143195238-lmq8fg60h",
+              "type": "td",
+              "content": "<p><strong>15:40</strong></p><p><strong>~&nbsp;16:30</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143195238-deliq1z0d",
+              "type": "td",
+              "content": "<p><strong>데이터센터의&nbsp;모듈화</strong></p><p>ARUP</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143327227-379n6ffqe",
+              "type": "th",
+              "content": "<p>Strategy&nbsp;Track</p><p>&nbsp;(150석)</p>",
+              "colspan": 1,
+              "rowspan": 5,
+              "hidden": false
+            },
+            {
+              "id": "cell-1790143327227-73mkpihus",
+              "type": "td",
+              "content": "<p><strong>데이터센터&nbsp;사업&nbsp;및</strong></p><p><strong>정책&nbsp;방향</strong></p><p>좌장&nbsp;:&nbsp;김동철&nbsp;부사장</p>",
+              "colspan": 1,
+              "rowspan": 5,
+              "hidden": false,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790143327227-aiki9fnfc",
+              "type": "td",
+              "content": "<p><strong>13:20</strong></p><p><strong>~&nbsp;14:00</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143327227-cnnuohro9",
+              "type": "td",
+              "content": "<p><strong>3대&nbsp;메가&nbsp;프로젝트</strong></p><p>산업부&nbsp;–&nbsp;강은철&nbsp;대표님</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143774144-jq1dz5zq0",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143774144-2mgk3tqvg",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143774144-1rsjwoasr",
+              "type": "td",
+              "content": "<p><strong>14:00</strong></p><p><strong>~&nbsp;14:50</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143774144-6wsjlxqow",
+              "type": "td",
+              "content": "<p><strong>일본의&nbsp;데이터센터&nbsp;</strong></p><p><strong>비즈니스와&nbsp;정책&nbsp;동향</strong></p><p>Esaki&nbsp;Hiroshi&nbsp;도쿄대학&nbsp;교수</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143783969-6tkb9n7ww",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143783969-pbabruqmf",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143783969-cp7dzi3x2",
+              "type": "td",
+              "content": "<p><strong>14:50</strong></p><p><strong>~&nbsp;15:00</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143783969-7wc3glqcu",
+              "type": "td",
+              "content": "<p><strong>Coffee&nbsp;Break</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143787839-hdn7n2mpb",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143787839-3o7bgrrh7",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143787839-39zegmrve",
+              "type": "td",
+              "content": "<p><strong>15:00</strong></p><p><strong>~&nbsp;15:40</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143787839-0wcwgwv4l",
+              "type": "td",
+              "content": "<p><strong>AI&nbsp;Factory.시대,</strong></p><p><strong>데이터센터의&nbsp;새로운&nbsp;패러다임</strong></p><p>LG&nbsp;CNS&nbsp;채민영&nbsp;단장</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143795947-y1gn4gz4v",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143795947-c43piathy",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143795947-ao0sjlg7q",
+              "type": "td",
+              "content": "<p><strong>15:40</strong></p><p><strong>~&nbsp;16:20</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143795947-8lk15gi6k",
+              "type": "td",
+              "content": "<p><strong>AI&nbsp;데이터센터&nbsp;특별법</strong></p><p>과기정통부&nbsp;</p><p>정보통신산업진흥원</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143915898-r03tx5qnz",
+              "type": "th",
+              "content": "<p>Academy&nbsp;Track</p><p>&nbsp;(150석)</p>",
+              "colspan": 1,
+              "rowspan": 5
+            },
+            {
+              "id": "cell-1790143915898-08rj5r20e",
+              "type": "td",
+              "content": "<p><strong>데이터센터란&nbsp;무엇인가</strong></p><p><strong>&nbsp;-&nbsp;산업구조&nbsp;이해하기</strong></p><p>좌장&nbsp;:&nbsp;이철희&nbsp;대표</p>",
+              "colspan": 1,
+              "rowspan": 5,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790143915898-eabyp2ene",
+              "type": "td",
+              "content": "<p><strong>12:30</strong></p><p><strong>~&nbsp;12:45</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143915898-4pzypektx",
+              "type": "td",
+              "content": "<p><strong>오리엔테이션</strong></p><p>김기홍&nbsp;위원장</p><p>대한설비융합협회&nbsp;</p><p>DC기술위원회&nbsp;위원장</p><p>기성이앤씨&nbsp;사장</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143927793-7rplg02xy",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143927793-5vccm87be",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143927793-0o0f3c9c3",
+              "type": "td",
+              "content": "<p><strong>12:45</strong></p><p><strong>~&nbsp;13:45</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143927793-e0imob3m4",
+              "type": "td",
+              "content": "<p><strong>데이터센터&nbsp;산업&nbsp;지형도와&nbsp;</strong></p><p><strong>밸류체인</strong></p><p>삼우건축&nbsp;유남선&nbsp;그룹장</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143924568-wemjueond",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143924568-843yupcpr",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143924568-388t8i33j",
+              "type": "td",
+              "content": "<p><strong>13:45</strong></p><p><strong>~&nbsp;14:45</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143924568-ps4kllcrf",
+              "type": "td",
+              "content": "<p><strong>데이터센터의&nbsp;물리적&nbsp;해부</strong></p><p>삼우건축&nbsp;유남선&nbsp;그룹장</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143919926-n6jo8q2yn",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143919926-o92i1qzcs",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143919926-c9bigcjzb",
+              "type": "td",
+              "content": "<p><strong>14:45</strong></p><p><strong>~&nbsp;15:45</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143919926-xrmwvkivy",
+              "type": "td",
+              "content": "<p><strong>AI&nbsp;데이터센터가&nbsp;바꾼&nbsp;</strong></p><p><strong>게임의&nbsp;규칙</strong></p><p>문주현&nbsp;국립&nbsp;한밭대&nbsp;교수</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143912395-xarphzgnv",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143912395-l70lo5ldt",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143912395-i4gf4luvj",
+              "type": "td",
+              "content": "<p><strong>15:45</strong></p><p><strong>~&nbsp;16:30</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143912395-6i6vu43tq",
+              "type": "td",
+              "content": "<p><strong>프로젝트&nbsp;라이프사이클과&nbsp;</strong></p><p><strong>발주처&nbsp;의사결정&nbsp;지점</strong></p><p>문주현&nbsp;국립&nbsp;한밭대&nbsp;교수</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ]
+        ],
+        "borderTopWidth": "2px",
+        "borderTopColor": "#333333",
+        "cellBorderColor": "#dddddd",
+        "headerBgColor": "#f6f6f6",
+        "headerTextColor": "#333333",
+        "headerAlign": "center",
+        "cellBgColor": "#ffffff",
+        "cellTextColor": "#333333",
+        "cellAlign": "left",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "tableColWidths": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "tableColWidthOn": true
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "18px",
+        "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong style=\"color: var(--point-color-0, #0046ff);\">DAY 2 오전 (11월 5일 목요일)</strong></p>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "15px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleTable",
+      "properties": {
+        "tableCells": [
+          [
+            {
+              "id": "cell-1790143195238-m6ctmq2y8",
+              "type": "th",
+              "content": "<p>Engineering&nbsp;Track&nbsp;</p><p>&nbsp;(150석)</p>",
+              "colspan": 1,
+              "rowspan": 5,
+              "hidden": false
+            },
+            {
+              "id": "cell-1790143195238-88aj7oz9a",
+              "type": "td",
+              "content": "<p><strong>AI&nbsp;데이터센터&nbsp;</strong></p><p><strong>전력&nbsp;인프라</strong></p><p>좌장&nbsp;:&nbsp;건축전기</p><p>설비기술사분회&nbsp;</p><p>한남현&nbsp;회장</p>",
+              "colspan": 1,
+              "rowspan": 5,
+              "hidden": false,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790143195238-v8l8s0769",
+              "type": "td",
+              "content": "<p><strong>09:00&nbsp;</strong></p><p><strong>~&nbsp;09:40</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143195238-stf6izcnc",
+              "type": "td",
+              "content": "<p><strong>800VDC·BESS와</strong></p><p><strong>MW급&nbsp;AI&nbsp;Factory&nbsp;전력설계</strong></p><p>LS일렉트릭&nbsp;김홍준&nbsp;매니저</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143195238-4noyhih56",
+              "type": "th",
+              "content": "항목 2",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143195238-tidm7idn9",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143195238-9gbo6ss5r",
+              "type": "td",
+              "content": "<p><strong>09:40</strong></p><p><strong>~&nbsp;10:20</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143195238-xz1r27fq5",
+              "type": "td",
+              "content": "<p><strong>고용량&nbsp;서버&nbsp;관련&nbsp;최신&nbsp;전력&nbsp;설비</strong></p><p>ABB&nbsp;코리아&nbsp;이승훈&nbsp;본부장</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790144151936-feuyoieaj",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790144151936-pa8aj48xt",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790144151936-e5eklm5ho",
+              "type": "td",
+              "content": "<p><strong>10:20</strong></p><p><strong>~&nbsp;10:30</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790144151936-sl637yn6p",
+              "type": "td",
+              "content": "<p><strong>Coffee&nbsp;Break</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143195238-1wme8o7do",
+              "type": "th",
+              "content": "항목 3",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143195238-ij3h9fe7t",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143195238-4qz7iiarg",
+              "type": "td",
+              "content": "<p><strong>10:30</strong></p><p><strong>~&nbsp;11:20</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143195238-4wr8ssco5",
+              "type": "td",
+              "content": "<p><strong>전기&nbsp;실무&nbsp;관련</strong></p><p>HPE</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143195238-auxxl5w09",
+              "type": "th",
+              "content": "항목 4",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143195238-bie1kia2b",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143195238-lmq8fg60h",
+              "type": "td",
+              "content": "<p><strong>11:20</strong></p><p><strong>~&nbsp;12:00</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143195238-deliq1z0d",
+              "type": "td",
+              "content": "<p><strong>전력의&nbsp;수급계획&nbsp;및&nbsp;공급망</strong></p><p>한국전력&nbsp;전력연구원</p><p>남수철&nbsp;책임</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143327227-379n6ffqe",
+              "type": "th",
+              "content": "<p>Strategy&nbsp;Track</p><p>&nbsp;(150석)</p>",
+              "colspan": 1,
+              "rowspan": 7,
+              "hidden": false
+            },
+            {
+              "id": "cell-1790143327227-73mkpihus",
+              "type": "td",
+              "content": "<p><strong>AI&nbsp;Factory&nbsp;Infrastructure</strong></p><p>좌장&nbsp;:&nbsp;강은철&nbsp;대표</p>",
+              "colspan": 1,
+              "rowspan": 7,
+              "hidden": false,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790143327227-aiki9fnfc",
+              "type": "td",
+              "content": "<p><strong>09:00</strong></p><p><strong>~&nbsp;09:30</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143327227-cnnuohro9",
+              "type": "td",
+              "content": "<p><strong>AI가&nbsp;바꾸는&nbsp;데이터센터의&nbsp;경계</strong></p><p>KT클라우드&nbsp;조현제&nbsp;매니저</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143774144-jq1dz5zq0",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143774144-2mgk3tqvg",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143774144-1rsjwoasr",
+              "type": "td",
+              "content": "<p><strong>09:30</strong></p><p><strong>~&nbsp;10:00</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143774144-6wsjlxqow",
+              "type": "td",
+              "content": "<p><strong>차세대&nbsp;300kW~MW급&nbsp;</strong></p><p><strong>랙스케일&nbsp;인프라</strong></p><p>슈퍼마이크로</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143783969-6tkb9n7ww",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143783969-pbabruqmf",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143783969-cp7dzi3x2",
+              "type": "td",
+              "content": "<p><strong>10:00</strong></p><p><strong>~&nbsp;10:30</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143783969-7wc3glqcu",
+              "type": "td",
+              "content": "<p><strong>AI&nbsp;데이터센터&nbsp;Reference</strong></p><p><strong>Architecture와&nbsp;개방형&nbsp;인프라</strong></p><p>지멘스</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143787839-hdn7n2mpb",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143787839-3o7bgrrh7",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143787839-39zegmrve",
+              "type": "td",
+              "content": "<p><strong>10:30</strong></p><p><strong>~&nbsp;10:40</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143787839-0wcwgwv4l",
+              "type": "td",
+              "content": "<p><strong>Coffee&nbsp;Break</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143795947-y1gn4gz4v",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143795947-c43piathy",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143795947-ao0sjlg7q",
+              "type": "td",
+              "content": "<p><strong>10:40</strong></p><p><strong>~&nbsp;11:10</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143795947-8lk15gi6k",
+              "type": "td",
+              "content": "<p><strong>고온수&nbsp;액체냉각과&nbsp;</strong></p><p><strong>CDU·열배출&nbsp;최적화</strong></p><p>델타일렉트로닉스</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790147565033-yw5bw4ozh",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790147565033-ftqozlp9w",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790147565033-qsm35uwt3",
+              "type": "td",
+              "content": "<p><strong>11:10</strong></p><p><strong>~&nbsp;11:40</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790147565033-ynpgdxock",
+              "type": "td",
+              "content": "<p><strong>AI&nbsp;데이터센터&nbsp;</strong></p><p><strong>디지털트윈과&nbsp;통합&nbsp;엔지니어링</strong></p><p>슈나이더&nbsp;일렉트릭</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790147555883-d1day0vq0",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790147555883-4mds5k0qo",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790147555883-01wpyvc0v",
+              "type": "td",
+              "content": "<p><strong>11:40</strong></p><p><strong>~&nbsp;12:10</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790147555883-53qm1i32r",
+              "type": "td",
+              "content": "<p><strong>AI&nbsp;데이터센터&nbsp;</strong></p><p><strong>공기단축과&nbsp;프리팹·커미셔닝</strong></p><p>댄포스</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143915898-r03tx5qnz",
+              "type": "th",
+              "content": "<p>Academy&nbsp;Track</p><p>&nbsp;(150석)</p>",
+              "colspan": 1,
+              "rowspan": 4
+            },
+            {
+              "id": "cell-1790143915898-08rj5r20e",
+              "type": "td",
+              "content": "<p><strong>사업,&nbsp;투자&nbsp;그리고&nbsp;정책</strong></p><p><strong>&nbsp;-&nbsp;어디에,&nbsp;어떤&nbsp;구조로&nbsp;</strong></p><p><strong>시작할&nbsp;것인가</strong></p><p>좌장&nbsp;:&nbsp;오명석&nbsp;전무</p>",
+              "colspan": 1,
+              "rowspan": 4,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790143915898-eabyp2ene",
+              "type": "td",
+              "content": "<p><strong>09:00</strong></p><p><strong>~&nbsp;10:15</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143915898-4pzypektx",
+              "type": "td",
+              "content": "<p><strong>정책·법제도&nbsp;지도</strong></p><p>유레드&nbsp;맹영재&nbsp;대표</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143927793-7rplg02xy",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143927793-5vccm87be",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143927793-0o0f3c9c3",
+              "type": "td",
+              "content": "<p><strong>10:15</strong></p><p><strong>~&nbsp;11:30</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143927793-e0imob3m4",
+              "type": "td",
+              "content": "<p><strong>입지&nbsp;선정과&nbsp;인허가&nbsp;실무</strong></p><p>더프리콘&nbsp;윤대중&nbsp;대표</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143924568-wemjueond",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143924568-843yupcpr",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143924568-388t8i33j",
+              "type": "td",
+              "content": "<p><strong>11:30</strong></p><p><strong>~&nbsp;12:15</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143924568-ps4kllcrf",
+              "type": "td",
+              "content": "<p><strong>사업구조·투자·PF</strong></p><p>더프리콘&nbsp;윤대중&nbsp;대표</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143919926-n6jo8q2yn",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143919926-o92i1qzcs",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143919926-c9bigcjzb",
+              "type": "td",
+              "content": "<p><strong>12:15</strong></p><p><strong>~&nbsp;13:00</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143919926-xrmwvkivy",
+              "type": "td",
+              "content": "<p><strong>성공적인&nbsp;DC건립을&nbsp;위한&nbsp;</strong></p><p><strong>체크리스트</strong></p><p>클리퍼스&nbsp;이영택&nbsp;대표</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ]
+        ],
+        "borderTopWidth": "2px",
+        "borderTopColor": "#333333",
+        "cellBorderColor": "#dddddd",
+        "headerBgColor": "#f6f6f6",
+        "headerTextColor": "#333333",
+        "headerAlign": "center",
+        "cellBgColor": "#ffffff",
+        "cellTextColor": "#333333",
+        "cellAlign": "left",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "tableColWidths": [
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "18px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"color: var(--point-color-0, #0046ff);\">DAY 2 오후 (11월 5일 목요일)</strong></p>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "15px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleTable",
+      "properties": {
+        "tableCells": [
+          [
+            {
+              "id": "cell-1790143195238-m6ctmq2y8",
+              "type": "th",
+              "content": "<p>Engineering&nbsp;Track&nbsp;</p><p>&nbsp;(150석)</p>",
+              "colspan": 1,
+              "rowspan": 5,
+              "hidden": false
+            },
+            {
+              "id": "cell-1790143195238-88aj7oz9a",
+              "type": "td",
+              "content": "<p><strong>미래&nbsp;냉각&nbsp;솔루션</strong></p><p>좌장&nbsp;:&nbsp;임정훈&nbsp;부장</p>",
+              "colspan": 1,
+              "rowspan": 5,
+              "hidden": false,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790143195238-v8l8s0769",
+              "type": "td",
+              "content": "<p><strong>13:00</strong></p><p><strong>~&nbsp;13:50</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143195238-stf6izcnc",
+              "type": "td",
+              "content": "<p><strong>해수&nbsp;냉각&nbsp;시스템</strong></p><p>Carrier&nbsp;Asia&nbsp;본부&nbsp;기술담당</p><p>CHONG&nbsp;WAI&nbsp;YEN</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143195238-4noyhih56",
+              "type": "th",
+              "content": "항목 2",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143195238-tidm7idn9",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143195238-9gbo6ss5r",
+              "type": "td",
+              "content": "<p><strong>13:50</strong></p><p><strong>~&nbsp;14:30</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143195238-xz1r27fq5",
+              "type": "td",
+              "content": "<p><strong>해수&nbsp;냉각&nbsp;수중&nbsp;데이터센터</strong></p><p>한국해양과학기술원(KIOST)</p><p>한택희&nbsp;박사&nbsp;(책임연구원)</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790144151936-feuyoieaj",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790144151936-pa8aj48xt",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790144151936-e5eklm5ho",
+              "type": "td",
+              "content": "<p><strong>14:30</strong></p><p><strong>~&nbsp;15:30</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790144151936-sl637yn6p",
+              "type": "td",
+              "content": "<p><strong>드라이쿨러&nbsp;활용전략</strong></p><p>트레인코리아㈜&nbsp;박혜정&nbsp;부장</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143195238-1wme8o7do",
+              "type": "th",
+              "content": "항목 3",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143195238-ij3h9fe7t",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143195238-4qz7iiarg",
+              "type": "td",
+              "content": "<p><strong>15:10</strong></p><p><strong>~&nbsp;16:10</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143195238-4wr8ssco5",
+              "type": "td",
+              "content": "<p><strong>LNG&nbsp;냉열&nbsp;활용&nbsp;데이터센터&nbsp;냉각</strong></p><p>기후에너지냉열협회</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143195238-auxxl5w09",
+              "type": "th",
+              "content": "항목 4",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143195238-bie1kia2b",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143195238-lmq8fg60h",
+              "type": "td",
+              "content": "<p><strong>16:10</strong></p><p><strong>~&nbsp;16:50</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143195238-deliq1z0d",
+              "type": "td",
+              "content": "<p><strong>고온수&nbsp;액체냉각과</strong></p><p><strong>CDU&nbsp;열배출&nbsp;최적화</strong></p><p>LG전자&nbsp;김영&nbsp;팀장</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143327227-379n6ffqe",
+              "type": "th",
+              "content": "<p>Strategy&nbsp;Track</p><p>&nbsp;(150석)</p>",
+              "colspan": 1,
+              "rowspan": 6,
+              "hidden": false
+            },
+            {
+              "id": "cell-1790143327227-73mkpihus",
+              "type": "td",
+              "content": "<p><strong>데이터센터&nbsp;에너지&nbsp;전환</strong></p><p><strong>&amp;&nbsp;탄소중립</strong></p><p>좌장&nbsp;:&nbsp;최종원&nbsp;박사&nbsp;(미정)</p>",
+              "colspan": 1,
+              "rowspan": 6,
+              "hidden": false,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790143327227-aiki9fnfc",
+              "type": "td",
+              "content": "<p><strong>13:00</strong></p><p><strong>~&nbsp;13:40</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143327227-cnnuohro9",
+              "type": "td",
+              "content": "<p><strong>ESG</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143774144-jq1dz5zq0",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143774144-2mgk3tqvg",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143774144-1rsjwoasr",
+              "type": "td",
+              "content": "<p><strong>13:40</strong></p><p><strong>~&nbsp;14:20</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143774144-6wsjlxqow",
+              "type": "td",
+              "content": "<p><strong>ESG</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143783969-6tkb9n7ww",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143783969-pbabruqmf",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143783969-cp7dzi3x2",
+              "type": "td",
+              "content": "<p><strong>14:20</strong></p><p><strong>~&nbsp;15:00</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143783969-7wc3glqcu",
+              "type": "td",
+              "content": "<p><strong>ESG</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143787839-hdn7n2mpb",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143787839-3o7bgrrh7",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143787839-39zegmrve",
+              "type": "td",
+              "content": "<p><strong>15:00</strong></p><p><strong>~&nbsp;15:20</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143787839-0wcwgwv4l",
+              "type": "td",
+              "content": "<p><strong>Coffee&nbsp;Break</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143795947-y1gn4gz4v",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143795947-c43piathy",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143795947-ao0sjlg7q",
+              "type": "td",
+              "content": "<p><strong>15:20</strong></p><p><strong>~&nbsp;16:10</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143795947-8lk15gi6k",
+              "type": "td",
+              "content": "<p><strong>데이터센터&nbsp;설계&nbsp;자동화&nbsp;</strong></p><p><strong>(시뮬레이션&nbsp;포함)</strong></p><p>AMD&nbsp;Lab&nbsp;마츠바라&nbsp;후지</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790147565033-yw5bw4ozh",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790147565033-ftqozlp9w",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790147565033-qsm35uwt3",
+              "type": "td",
+              "content": "<p><strong>16:10</strong></p><p><strong>~&nbsp;16:50</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790147565033-ynpgdxock",
+              "type": "td",
+              "content": "<p><strong>데이터센터&nbsp;탄소중립&nbsp;로드맵</strong></p><p>㈜파노텍&nbsp;정광우&nbsp;회장</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143915898-r03tx5qnz",
+              "type": "th",
+              "content": "<p>Academy&nbsp;Track</p><p>&nbsp;(150석)</p>",
+              "colspan": 1,
+              "rowspan": 4
+            },
+            {
+              "id": "cell-1790143915898-08rj5r20e",
+              "type": "td",
+              "content": "<p><strong>전력과&nbsp;냉각&nbsp;</strong></p><p><strong>&nbsp;-&nbsp;데이터센터를&nbsp;</strong></p><p><strong>움직이는&nbsp;두&nbsp;축</strong></p><p>좌장&nbsp;:&nbsp;진성오&nbsp;수석</p>",
+              "colspan": 1,
+              "rowspan": 4,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790143915898-eabyp2ene",
+              "type": "td",
+              "content": "<p><strong>14:00</strong></p><p><strong>~&nbsp;15:00</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143915898-4pzypektx",
+              "type": "td",
+              "content": "<p><strong>전력&nbsp;인프라&nbsp;A&nbsp;to&nbsp;Z</strong></p><p>이온&nbsp;임승범&nbsp;이사</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143927793-7rplg02xy",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143927793-5vccm87be",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143927793-0o0f3c9c3",
+              "type": "td",
+              "content": "<p><strong>15:00</strong></p><p><strong>~&nbsp;16:15</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143927793-e0imob3m4",
+              "type": "td",
+              "content": "<p><strong>냉각&nbsp;인프라&nbsp;A&nbsp;to&nbsp;Z</strong></p><p>국립한밭대&nbsp;조진균&nbsp;교수</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143924568-wemjueond",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143924568-843yupcpr",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143924568-388t8i33j",
+              "type": "td",
+              "content": "<p><strong>16:15</strong></p><p><strong>~&nbsp;17:00</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143924568-ps4kllcrf",
+              "type": "td",
+              "content": "<p><strong>PUE·WUE,</strong></p><p><strong>지표를&nbsp;읽고&nbsp;속지&nbsp;않는&nbsp;법</strong></p><p>국립한밭대&nbsp;조진균&nbsp;교수</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143919926-n6jo8q2yn",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143919926-o92i1qzcs",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143919926-c9bigcjzb",
+              "type": "td",
+              "content": "<p><strong>17:00</strong></p><p><strong>~&nbsp;17:30</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143919926-xrmwvkivy",
+              "type": "td",
+              "content": "<p><strong>[사례]</strong></p><p><strong>밀도별&nbsp;냉각·전력&nbsp;설계&nbsp;접근</strong></p><p>국립한밭대&nbsp;조진균&nbsp;교수</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ]
+        ],
+        "borderTopWidth": "2px",
+        "borderTopColor": "#333333",
+        "cellBorderColor": "#dddddd",
+        "headerBgColor": "#f6f6f6",
+        "headerTextColor": "#333333",
+        "headerAlign": "center",
+        "cellBgColor": "#ffffff",
+        "cellTextColor": "#333333",
+        "cellAlign": "left",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "tableColWidths": [
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "18px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"color: var(--point-color-0, #0046ff);\">DAY 3 오전 (11월 6일 금요일)</strong></p>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "15px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleTable",
+      "properties": {
+        "tableCells": [
+          [
+            {
+              "id": "cell-1790143195238-m6ctmq2y8",
+              "type": "th",
+              "content": "<p>Engineering&nbsp;Track&nbsp;</p><p>&nbsp;(150석)</p>",
+              "colspan": 1,
+              "rowspan": 4,
+              "hidden": false
+            },
+            {
+              "id": "cell-1790143195238-88aj7oz9a",
+              "type": "td",
+              "content": "<p><strong>데이터센터&nbsp;운영,</strong></p><p><strong>안전&nbsp;&amp;&nbsp;보안</strong></p><p>좌장&nbsp;:&nbsp;박종삼&nbsp;사장</p>",
+              "colspan": 1,
+              "rowspan": 4,
+              "hidden": false,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790143195238-v8l8s0769",
+              "type": "td",
+              "content": "<p><strong>09:40</strong></p><p><strong>~&nbsp;10:20</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143195238-stf6izcnc",
+              "type": "td",
+              "content": "<p><strong>리늄이온&nbsp;배터리룸&nbsp;화재방호전략</strong></p><p>경기북부소방재난본부</p><p>양철규&nbsp;교수</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143195238-4noyhih56",
+              "type": "th",
+              "content": "항목 2",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143195238-tidm7idn9",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143195238-9gbo6ss5r",
+              "type": "td",
+              "content": "<p><strong>10:30</strong></p><p><strong>~&nbsp;11:10</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143195238-xz1r27fq5",
+              "type": "td",
+              "content": "<p><strong>DCIM&nbsp;기반&nbsp;데이터센터&nbsp;통합&nbsp;운영</strong></p><p>하니웰㈜&nbsp;차윤경&nbsp;이사</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790144151936-feuyoieaj",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790144151936-pa8aj48xt",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790144151936-e5eklm5ho",
+              "type": "td",
+              "content": "<p><strong>11:10</strong></p><p><strong>~&nbsp;11:50</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790144151936-sl637yn6p",
+              "type": "td",
+              "content": "<p><strong>데이터센터&nbsp;운영&nbsp;솔루션</strong></p><p>㈜어니언소프트웨어&nbsp;조창희&nbsp;대표</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143195238-1wme8o7do",
+              "type": "th",
+              "content": "항목 3",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143195238-ij3h9fe7t",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143195238-4qz7iiarg",
+              "type": "td",
+              "content": "<p><strong>11:50</strong></p><p><strong>~&nbsp;12:30</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143195238-4wr8ssco5",
+              "type": "td",
+              "content": "<p><strong>최신&nbsp;데이터센터의&nbsp;물리보안</strong></p><p>에스원&nbsp;양재성&nbsp;부장</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143327227-379n6ffqe",
+              "type": "th",
+              "content": "<p>Strategy&nbsp;Track</p><p>&nbsp;(150석)</p>",
+              "colspan": 1,
+              "rowspan": 5,
+              "hidden": false
+            },
+            {
+              "id": "cell-1790143327227-73mkpihus",
+              "type": "td",
+              "content": "<p><strong>분산에너지&nbsp;시대,&nbsp;</strong></p><p><strong>지역&nbsp;데이터센터&nbsp;</strong></p><p><strong>유치&nbsp;전략</strong></p><p>좌장&nbsp;:&nbsp;김성구&nbsp;연구소장</p>",
+              "colspan": 1,
+              "rowspan": 5,
+              "hidden": false,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790143327227-aiki9fnfc",
+              "type": "td",
+              "content": "<p><strong>09:20</strong></p><p><strong>~&nbsp;09:50</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143327227-cnnuohro9",
+              "type": "td",
+              "content": "<p><strong>데이터센터와&nbsp;분산에너지&nbsp;</strong></p><p><strong>특화지역&nbsp;지정</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143774144-jq1dz5zq0",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143774144-2mgk3tqvg",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143774144-1rsjwoasr",
+              "type": "td",
+              "content": "<p><strong>09:50</strong></p><p><strong>~&nbsp;10:20</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143774144-6wsjlxqow",
+              "type": "td",
+              "content": "<p><strong>데이터센터와&nbsp;분산에너지&nbsp;</strong></p><p><strong>특화지역&nbsp;지정</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143783969-6tkb9n7ww",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143783969-pbabruqmf",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143783969-cp7dzi3x2",
+              "type": "td",
+              "content": "<p><strong>10:20</strong></p><p><strong>~&nbsp;10:30</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143783969-7wc3glqcu",
+              "type": "td",
+              "content": "<p><strong>Coffee&nbsp;Break</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143787839-hdn7n2mpb",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143787839-3o7bgrrh7",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143787839-39zegmrve",
+              "type": "td",
+              "content": "<p><strong>10:30</strong></p><p><strong>~&nbsp;11:00</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143787839-0wcwgwv4l",
+              "type": "td",
+              "content": "<p><strong>데이터센터와&nbsp;분산에너지&nbsp;</strong></p><p><strong>특화지역&nbsp;지정</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143795947-y1gn4gz4v",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143795947-c43piathy",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143795947-ao0sjlg7q",
+              "type": "td",
+              "content": "<p><strong>11:00</strong></p><p><strong>~&nbsp;11:40</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143795947-8lk15gi6k",
+              "type": "td",
+              "content": "<p><strong>태양광·풍력·조력&nbsp;등</strong></p><p><strong>PPA&nbsp;조달&nbsp;전략</strong></p><p>태양에너지학회&nbsp;</p><p>홍희기&nbsp;교수</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143915898-r03tx5qnz",
+              "type": "th",
+              "content": "<p>Academy&nbsp;Track</p><p>&nbsp;(150석)</p>",
+              "colspan": 1,
+              "rowspan": 5,
+              "hidden": false
+            },
+            {
+              "id": "cell-1790143915898-08rj5r20e",
+              "type": "td",
+              "content": "<p><strong>운명과&nbsp;다가올&nbsp;미래&nbsp;</strong></p><p><strong>-&nbsp;설계·시공</strong>·<strong>커미셔닝&nbsp;</strong></p><p><strong>실전&nbsp;사례</strong></p><p>좌장&nbsp;:&nbsp;이철희&nbsp;대표</p>",
+              "colspan": 1,
+              "rowspan": 5,
+              "align": "center",
+              "hidden": false
+            },
+            {
+              "id": "cell-1790143915898-eabyp2ene",
+              "type": "td",
+              "content": "<p><strong>09:00</strong></p><p><strong>~&nbsp;09:50</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143915898-4pzypektx",
+              "type": "td",
+              "content": "<p><strong>발주처가&nbsp;설계사에&nbsp;요구할&nbsp;것</strong></p><p>삼우엠이피&nbsp;이철희&nbsp;대표</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143927793-7rplg02xy",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143927793-5vccm87be",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143927793-0o0f3c9c3",
+              "type": "td",
+              "content": "<p><strong>09:50</strong></p><p><strong>~&nbsp;10:40</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143927793-e0imob3m4",
+              "type": "td",
+              "content": "<p><strong>시공&nbsp;사례&nbsp;—&nbsp;공기·자재·현장</strong></p><p>한화건설&nbsp;–&nbsp;노형래&nbsp;과장</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143924568-wemjueond",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143924568-843yupcpr",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143924568-388t8i33j",
+              "type": "td",
+              "content": "<p><strong>10:40</strong></p><p><strong>~&nbsp;11:25</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143924568-ps4kllcrf",
+              "type": "td",
+              "content": "<p><strong>커미셔닝&nbsp;사례&nbsp;①</strong></p><p>하이멕&nbsp;–&nbsp;박세훈&nbsp;담당</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790143919926-n6jo8q2yn",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143919926-o92i1qzcs",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790143919926-c9bigcjzb",
+              "type": "td",
+              "content": "<p><strong>11:25</strong></p><p><strong>~&nbsp;12:10</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790143919926-xrmwvkivy",
+              "type": "td",
+              "content": "<p><strong>커미셔닝&nbsp;사례&nbsp;②</strong></p><p>하이멕&nbsp;–&nbsp;박세훈&nbsp;담당</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1790640991902-rnp5shv7v",
+              "type": "th",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790640991902-2lf5ivrv2",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790640991902-k1jw5s90d",
+              "type": "td",
+              "content": "<p><strong>12:10</strong></p><p><strong>~&nbsp;12:30</strong></p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1790640991902-n14bqhu02",
+              "type": "td",
+              "content": "<p><strong>수료식</strong></p><p>연창근&nbsp;회장</p><p>홍민호&nbsp;대한설비융합협회&nbsp;부회장</p><p>/&nbsp;하이멕&nbsp;사장</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ]
+        ],
+        "borderTopWidth": "2px",
+        "borderTopColor": "#333333",
+        "cellBorderColor": "#dddddd",
+        "headerBgColor": "#f6f6f6",
+        "headerTextColor": "#333333",
+        "headerAlign": "center",
+        "cellBgColor": "#ffffff",
+        "cellTextColor": "#333333",
+        "cellAlign": "left",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "tableColWidths": [
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong>※ 컨퍼런스 신청 안내</strong></p><ul><li><span style=\"font-size: 14px;\">사전 신청 기간 : 2026년 11월 1일(일)까지 (선착순 마감)</span></li><li><span style=\"font-size: 14px;\">전시회 홈페이지(www.datacenterkorea.kr)에서 컨퍼런스 사전 신청이 가능합니다.</span></li><li><span style=\"font-size: 14px;\">컨퍼런스를 신청하시면 전시회 사전등록(무료 관람 예약)이 함께 완료됩니다.</span></li><li><span style=\"font-size: 14px;\">현장신청은 잔여 좌석에 한해 가능합니다.</span></li><li><span style=\"font-size: 14px;\">세부 내용은 일부 변경될 수 있으며, 컨퍼런스에 대한 자세한 정보는 홈페이지를 참고해 주시기 바랍니다.</span></li></ul>",
+        "paddingTop": "8px",
+        "paddingRight": "20px",
+        "paddingBottom": "8px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "컨퍼런스 신청 바로가기 →",
+        "buttonUrl": "https://bit.ly/3VfQ5f6",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#111111",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "20px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "20px",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "5px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000",
+        "buttonBgColor__pointIndex": 0,
+        "buttonBgColor__usePoint": true
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#000000",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1790642609027-p77nya5ho",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "18px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong>DATA CENTER KOREA 2025 </strong></p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\"><strong>스케치영상</strong></p>",
+        "paddingTop": "8px",
+        "paddingRight": "20px",
+        "paddingBottom": "8px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {},
+      "groupId": "group-1790642609027-p77nya5ho",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/newsletterbuilder/conv1/datacenter/vol04/movie.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "imageCrop": "",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "showImageLink": true,
+        "imageLinkUrl": "https://bit.ly/4hFRZOO",
+        "showBorderRadius": false,
+        "imageBorderRadius": "10px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#000000",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1790645803737-k1z4kff4w",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "24px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong style=\"font-size: 18px;\">사전등록 안내</strong></p>",
+        "paddingTop": "8px",
+        "paddingRight": "20px",
+        "paddingBottom": "8px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {},
+      "groupId": "group-1790645803737-k1z4kff4w",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\">2026 데이터센터코리아에 사전등록해야 하는 이유</p>",
+        "paddingTop": "8px",
+        "paddingRight": "20px",
+        "paddingBottom": "8px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {},
+      "groupId": "group-1790645803737-k1z4kff4w",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong style=\"color: var(--point-color-0, #0046ff); font-size: 16px;\">혜택 1. 무료 관람 + 무료초청 가능</strong></p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><span style=\"font-size: 16px;\">사전등록자는 무료로 입장 가능</span></p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><span style=\"font-size: 16px;\">+ 사전등록자는 지인에게 무료 초청장 발송 가능!</span></p>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "15px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "20px",
+        "marginBottom": "10px",
+        "marginLeft": "20px",
+        "bgColor": "#f5f5f5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "__moduleLabel": "모듈 01번"
+      },
+      "styles": {},
+      "groupId": "group-1790645803737-k1z4kff4w",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong style=\"font-size: 16px; color: var(--point-color-0, #0046ff);\">혜택 2. 빠른 입장</strong></p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><span style=\"font-size: 16px;\">입장 바코드 찍고 빠른 입장 가능!</span></p>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "15px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "20px",
+        "marginBottom": "10px",
+        "marginLeft": "20px",
+        "bgColor": "#f5f5f5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "__moduleLabel": "모듈 01번"
+      },
+      "styles": {},
+      "groupId": "group-1790645803737-k1z4kff4w",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong style=\"color: var(--point-color-0, #0046ff); font-size: 16px;\">혜택 3. 최신 소식 및 이벤트</strong></p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">데이터센터코리아 뉴스레터 및 문자를 통해 </p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">최신 소식 및 이벤트 내용 사전 숙지 가능!</p>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "15px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "20px",
+        "marginBottom": "10px",
+        "marginLeft": "20px",
+        "bgColor": "#f5f5f5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "__moduleLabel": "모듈 01번"
+      },
+      "styles": {},
+      "groupId": "group-1790645803737-k1z4kff4w",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<ul><li><span style=\"font-size: 14px;\">11월 3일(화)까지 사전등록하신 본인에 한해 무료 입장이 가능합니다.</span></li><li><span style=\"font-size: 14px;\">등록하신 분들에게 개막 전까지 휴대폰으로 입장 바코드가 발송됩니다. (개막 전날 또는 개막일 오전)</span></li><li><span style=\"font-size: 14px;\">입장 바코드를 받지 못한 사전등록자는 현장에서 이름, 휴대폰 번호 확인 후 입장 가능합니다.</span></li><li><span style=\"font-size: 14px;\">10인 이상의 단체 사전등록도 전시회 홈페이지에서 단체 사전등록 가능합니다.</span></li><li><span style=\"font-size: 14px;\">문의 : 평일 09:00 ~ 18:00 / 02-6121-6451</span></li></ul>",
+        "paddingTop": "8px",
+        "paddingRight": "20px",
+        "paddingBottom": "8px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "사전등록 바로가기 →",
+        "buttonUrl": "https://bit.ly/4hI5AFe",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#111111",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "20px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "20px",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "5px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000",
+        "buttonBgColor__pointIndex": 0,
+        "buttonBgColor__usePoint": true
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong>데이터센터코리아 사무국 </strong>(주)메쎄이상</p><p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><span style=\"font-size: 13px;\">서울시 마포구 월드컵북로 58길 9 ES타워 (03922)</span></p>",
+        "paddingTop": "30px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "textAlign": "center"
+      },
+      "styles": {},
+      "groupId": "group-1790647400243-q0sxjxw5c",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleContactInfo",
+      "properties": {
+        "contactItems": [
+          {
+            "key": "website",
+            "show": true,
+            "value": "www.datacenterkorea.kr"
+          },
+          {
+            "key": "phone",
+            "show": true,
+            "value": "02-6121-6451"
+          },
+          {
+            "key": "email",
+            "show": true,
+            "value": "dckorea@esgroup.net"
+          },
+          {
+            "key": "fax",
+            "show": false,
+            "value": "02-6121-6363"
+          }
+        ],
+        "contactFontSize": "13px",
+        "contactTextColor": "#333333",
+        "contactAlign": "center",
+        "paddingTop": "8px",
+        "paddingRight": "0px",
+        "paddingBottom": "10px",
+        "paddingLeft": "0px",
+        "websiteUrl": "www.datacenterkorea.kr",
+        "showWebsite": true,
+        "phone": "02-6121-6451",
+        "showPhone": true,
+        "email": "dckorea@esgroup.net",
+        "showEmail": true,
+        "fax": "02-6121-6363",
+        "showFax": false
+      },
+      "styles": {},
+      "groupId": "group-1790647400243-q0sxjxw5c",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#aaaaaa",
+        "borderWidth": "1px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "15px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1790647400243-q0sxjxw5c",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleSnsIcons",
+      "properties": {
+        "snsIconBgColor": "#333333",
+        "snsAlign": "center",
+        "snsIcons": [
+          {
+            "key": "home",
+            "show": true,
+            "url": "https://datacenterkorea.kr"
+          },
+          {
+            "key": "blog",
+            "show": true,
+            "url": "https://blog.naver.com/dckorea_kr"
+          },
+          {
+            "key": "kakao",
+            "show": true,
+            "url": "https://pf.kakao.com/_MvLBn"
+          },
+          {
+            "key": "instagram",
+            "show": true,
+            "url": "https://www.instagram.com/datacenter_kr/"
+          },
+          {
+            "key": "facebook",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "x",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "youtube",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "linkedin",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "zuzuzu",
+            "show": false,
+            "url": "https://kcoupet.com/"
+          },
+          {
+            "key": "en",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "jp",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "th",
+            "show": false,
+            "url": ""
+          }
+        ],
+        "paddingTop": "0px",
+        "paddingRight": "5px",
+        "paddingBottom": "10px",
+        "paddingLeft": "5px"
+      },
+      "styles": {},
+      "groupId": "group-1790647400243-q0sxjxw5c",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "12px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">본 메일은 회원님의 수신동의 여부를 확인한 결과 회원님께서 수신동의를 하셨기에 발송되었습니다.</p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">메일 수신을 원치 않으시면 <strong style=\"color: #333333;\"><a href=\"http://edm.esfair.kr/RejectMail.aspx?code=DTC\" rel=\"noopener noreferrer\" target=\"_blank\">[수신거부]</a></strong> 를 클릭하십시오.</p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">If you don&#39;t want this type of information or e-mail, please click the [<a href=\"http://edm.esfair.kr/RejectMail.aspx?code=DTC\" rel=\"noopener noreferrer\" target=\"_blank\">unsubscription</a>]</p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">본 메일은 발신전용 메일이므로 문의사항은 <strong>dckorea@esgroup.net</strong>으로 문의 바랍니다</p>",
+        "paddingTop": "10px",
+        "paddingRight": "25px",
+        "paddingBottom": "40px",
+        "paddingLeft": "25px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "textAlign": "center"
+      },
+      "styles": {},
+      "groupId": "group-1790647400243-q0sxjxw5c",
+      "rowIndex": 3,
+      "columnIndex": 0
+    }
+  ],
+  "groups": [
+    {
+      "id": "group-1790132279699-4u7wutp5z",
+      "name": "기본 헤더",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1790141260361-5oodqfqqe",
+      "name": "그룹 01",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        2
+      ]
+    },
+    {
+      "id": "group-1790141658931-afoj3ar2e",
+      "name": "섹션 타이틀",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1790642609027-p77nya5ho",
+      "name": "섹션 타이틀",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1790645803737-k1z4kff4w",
+      "name": "섹션 타이틀",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1790647400243-q0sxjxw5c",
+      "name": "하단 푸터",
+      "styles": {
+        "backgroundColor": "#e9e9e9",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1,
+        1,
+        1
+      ]
+    }
+  ]
+}
