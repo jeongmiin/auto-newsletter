@@ -211,6 +211,15 @@
       "file": "conv/conv1/police-en.json"
     },
     {
+      "id": "datacenter",
+      "name": "데이터센터코리아",
+      "description": "데이터센터코리아 뉴스레터 구성",
+      "divisionId": "conv",
+      "teamId": "conv1",
+      "thumbnail": "datacenter_temp.png",
+      "file": "conv/conv1/datacenter.json"
+    },
+    {
       "id": "abmexpo",
       "name": "아파트 건물관리산업전",
       "description": "아파트 건물관리산업전 뉴스레터 구성",
