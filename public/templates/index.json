@@ -299,6 +299,15 @@
       "teamId": "osco-conv",
       "thumbnail": "neofair_temp.png",
       "file": "osco/osco-conv/neofair.json"
+    },
+    {
+      "id": "aiee",
+      "name": "AI에듀엑스포",
+      "description": "AI 에듀 엑스포(AIEE) 뉴스레터 구성",
+      "divisionId": "osco",
+      "teamId": "osco-conv",
+      "thumbnail": "aiee_temp.png",
+      "file": "osco/osco-conv/aiee.json"
     }
   ]
 }

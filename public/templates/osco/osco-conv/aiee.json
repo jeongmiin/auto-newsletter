@@ -1,0 +1,2173 @@
+{
+  "id": "aiee",
+  "wrapSettings": {
+    "backgroundColor": "#f9f9f9",
+    "borderEnabled": false,
+    "borderWidth": "6px",
+    "borderColor": "#dddddd",
+    "borderStyle": "solid",
+    "pointColor": "#2563eb",
+    "pointColors": [
+      "#2563eb"
+    ],
+    "fontLanguage": "default",
+    "summary": "AI 에듀 엑스포 뉴스레터입니다."
+  },
+  "modules": [
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/newsletterbuilder/osco-conv/aiee/2026/260728_2026-ai-_-_ver4_.png",
+        "imageAlt": "로고",
+        "imageMaxWidth": "45%",
+        "imageAlign": "center",
+        "imageCrop": "",
+        "paddingTop": "30px",
+        "paddingRight": "0px",
+        "paddingBottom": "20px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "",
+        "showBorderRadius": false,
+        "imageBorderRadius": "10px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1790588828925-7mu1y3ox0",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#0395d0",
+        "borderWidth": "5px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1790588828925-7mu1y3ox0",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong style=\"font-size: 16px;\">NEWSLETTER VOL.2</strong></p>",
+        "paddingTop": "8px",
+        "paddingRight": "0px",
+        "paddingBottom": "8px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "textAlign": "left"
+      },
+      "styles": {},
+      "groupId": "group-1790588828925-7mu1y3ox0",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><a href=\"https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/newsletterbuilder/osco-conv/aiee/2026/aiee_2026_send.html\" rel=\"noopener noreferrer\" target=\"_blank\" style=\"font-size: 16px; color: #333333;\">👀 웹으로 보기</a></p>",
+        "paddingTop": "8px",
+        "paddingRight": "0px",
+        "paddingBottom": "8px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "textAlign": "right"
+      },
+      "styles": {},
+      "groupId": "group-1790588828925-7mu1y3ox0",
+      "rowIndex": 2,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#dddddd",
+        "borderWidth": "1px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1790588828925-7mu1y3ox0",
+      "rowIndex": 3,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/newsletterbuilder/osco-conv/aiee/2026/ai-_.png",
+        "imageAlt": "전시소개글",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "imageCrop": "",
+        "paddingTop": "20px",
+        "paddingRight": "0px",
+        "paddingBottom": "10px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "",
+        "showBorderRadius": false,
+        "imageBorderRadius": "10px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1790589142308-sks1ymd48",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#999999",
+        "borderWidth": "1px",
+        "borderStyle": "dotted",
+        "dividerWidth": "100%",
+        "paddingTop": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1790589142308-sks1ymd48",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "20px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"font-size: 19px;\">AI가 바꾸는 교실 충청이 여는 미래,</strong></p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"font-size: 19px; color: var(--point-color-0, #2563eb);\">『2026 AI 에듀 엑스포(AIEE 2026)』 </strong><strong style=\"font-size: 19px; color: #191f28;\">참가기업 조기신청이 내일 마감됩니다.</strong></p>",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1790589142308-sks1ymd48",
+      "rowIndex": 3,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">미래 교육 현장과 만나는 새로운 비즈니스 기회</p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">「2026 AI 에듀 엑스포」가 오는 11월 26일부터 28일까지 청주오스코에서 개최됩니다.</p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">&nbsp;</p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">AI·에듀테크 기업과 교육 현장을 연결하고,</p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">미래교육의 새로운 기술과 솔루션을 선보이는 비즈니스의 장.</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"color: #f04452; font-size: 18px;\">(D-1)</strong><strong style=\"font-size: 18px;\">&nbsp;</strong><span style=\"font-size: 18px;\">참가기업 조기신청은</span><strong style=\"font-size: 18px;\"> 내일, 9월 30일 마감됩니다.</strong></p>",
+        "paddingTop": "12px",
+        "paddingRight": "0px",
+        "paddingBottom": "12px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": true,
+        "borderPosition": "bottom",
+        "borderStyle": "dotted",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1790589142308-sks1ymd48",
+      "rowIndex": 4,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"font-size: 18px;\">📢 2026 AI 에듀 엑스포 행사 개요</strong></p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">📅 <strong>일정</strong> : 2026. 11. 26.(목) ~ 11. 28.(토)</p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">📍 <strong>장소</strong> : 청주오스코(OSCO) Hall 1</p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">⏰ <strong>시간</strong> : 10:00 - 17:00 (토요일 16시 마감)</p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">✅ <strong>주최</strong> : 청주오스코</p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">👥 <strong>후원</strong> : 충청북도교육청, 한국과학창의재단, EBS, 대한사립학교장회, ATC, 교사크리에이터협회 등</p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">&nbsp;</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;\">🔻AI EDU EXPO의 현장을 직접 확인해보세요! 지금 사전등록 시 무료입장 가능합니다.</p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">🎟️ 정가 <s>10,000원</s> → <span style=\"background-color: initial;\"><span style=\"background: linear-gradient(transparent 50%, #cce4ff 50%);\" data-highlight-color=\"#cce4ff\">무료입장</span></span></p>",
+        "paddingTop": "12px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1790589142308-sks1ymd48",
+      "rowIndex": 4,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "참가기업 신청하기 →",
+        "buttonUrl": "https://bit.ly/4iNTPhC",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#111111",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "0px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "0px",
+        "paddingTop": "20px",
+        "paddingRight": "0px",
+        "paddingBottom": "20px",
+        "paddingLeft": "0px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "5px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1790589142308-sks1ymd48",
+      "rowIndex": 5,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "무료입장 신청하기 →",
+        "buttonUrl": "https://bit.ly/4rzNXLb",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#111111",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "0px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "0px",
+        "paddingTop": "20px",
+        "paddingRight": "0px",
+        "paddingBottom": "20px",
+        "paddingLeft": "0px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "5px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1790589142308-sks1ymd48",
+      "rowIndex": 5,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#000000",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1790592452600-f1jwi7cf3",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "24px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong>WHY AI EDU EXPO?</strong></p>",
+        "paddingTop": "8px",
+        "paddingRight": "20px",
+        "paddingBottom": "4px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {},
+      "groupId": "group-1790592452600-f1jwi7cf3",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">왜 지금, AI EDU EXPO에 참가해야 할까요?</p>",
+        "paddingTop": "4px",
+        "paddingRight": "20px",
+        "paddingBottom": "8px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {},
+      "groupId": "group-1790592452600-f1jwi7cf3",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong style=\"color: #ffffff;\">① 교육 현장과의 만남</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "0px",
+        "paddingBottom": "6px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "#2563d4",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111",
+        "bgColor__pointIndex": 0,
+        "bgColor__usePoint": true
+      },
+      "styles": {},
+      "groupId": "group-1790591512271-mr7cyzetv",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">학교·교사·교육기관 등</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong>실제 교육 현장 관계자와 만나는 기회</strong></p>",
+        "paddingTop": "10px",
+        "paddingRight": "10px",
+        "paddingBottom": "10px",
+        "paddingLeft": "10px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "#f3f3f3",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1790591512271-mr7cyzetv",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong style=\"color: #ffffff;\">② 교육 행사 동시 개최</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "0px",
+        "paddingBottom": "6px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "#e5e5e5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111",
+        "bgColor__pointIndex": 0,
+        "bgColor__usePoint": true
+      },
+      "styles": {},
+      "groupId": "group-1790591512271-mr7cyzetv",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">다양한 교육 행사가 동시 개최되는</p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong>교육 관계자가 청주오스코에 모이는 3일</strong></p>",
+        "paddingTop": "10px",
+        "paddingRight": "10px",
+        "paddingBottom": "10px",
+        "paddingLeft": "10px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "#f3f3f3",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1790591512271-mr7cyzetv",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong style=\"color: #ffffff;\">③ 현장 중심 프로그램</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "0px",
+        "paddingBottom": "6px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "#e5e5e5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111",
+        "bgColor__pointIndex": 0,
+        "bgColor__usePoint": true
+      },
+      "styles": {},
+      "groupId": "group-1790591999496-kpqlmmodk",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">AI LIVE CLASSROOM을 통해</p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong>제품의 실제 교육현장 활용을 보여주는 기회</strong></p>",
+        "paddingTop": "10px",
+        "paddingRight": "10px",
+        "paddingBottom": "10px",
+        "paddingLeft": "10px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "#f3f3f3",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1790591999496-kpqlmmodk",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong style=\"color: #ffffff;\">④ 미래교육 비즈니스 연결</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "0px",
+        "paddingBottom": "6px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "#e5e5e5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111",
+        "bgColor__pointIndex": 0,
+        "bgColor__usePoint": true
+      },
+      "styles": {},
+      "groupId": "group-1790591999496-kpqlmmodk",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">AI·에듀테크 기업과 교육 수요자가 만나</p><p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong>새로운 협력과 비즈니스 접점을 만드는 자리</strong></p>",
+        "paddingTop": "10px",
+        "paddingRight": "10px",
+        "paddingBottom": "10px",
+        "paddingLeft": "10px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "#f3f3f3",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1790591999496-kpqlmmodk",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#000000",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "20px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1790592555805-z6g3v330z",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "24px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong>AI EDU EXPO에서 만나는 미래교육 솔루션</strong></p>",
+        "paddingTop": "8px",
+        "paddingRight": "20px",
+        "paddingBottom": "4px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {},
+      "groupId": "group-1790592555805-z6g3v330z",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">AI 기술부터 교육콘텐츠, 미래교실까지 미래교육 솔루션이 한자리에 모입니다.</p>",
+        "paddingTop": "4px",
+        "paddingRight": "20px",
+        "paddingBottom": "8px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {},
+      "groupId": "group-1790592555805-z6g3v330z",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong style=\"font-size: 16px; color: #ffffff;\">AI 디지털 학습 솔루션</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "10px",
+        "paddingBottom": "6px",
+        "paddingLeft": "10px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "#4083f3",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111",
+        "bgColor__pointIndex": 0,
+        "bgColor__usePoint": true
+      },
+      "styles": {},
+      "groupId": "group-1790591880958-taovbqk01",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/newsletterbuilder/osco-conv/aiee/2026/04_450x300.jpg",
+        "imageAlt": "AI 디지털 학습",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "imageCrop": "",
+        "paddingTop": "10px",
+        "paddingRight": "0px",
+        "paddingBottom": "8px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "",
+        "showBorderRadius": false,
+        "imageBorderRadius": "10px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1790591880958-taovbqk01",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">AI 튜터 · 맞춤형 학습 · 학습분석</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">디지털 학습 플랫폼 · LMS 등</p>",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "10px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1790591880958-taovbqk01",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong style=\"color: #ffffff;\">교육 콘텐츠·교수학습 지원</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "10px",
+        "paddingBottom": "6px",
+        "paddingLeft": "10px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "#e5e5e5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111",
+        "bgColor__pointIndex": 0,
+        "bgColor__usePoint": true
+      },
+      "styles": {},
+      "groupId": "group-1790591880958-taovbqk01",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/newsletterbuilder/osco-conv/aiee/2026/03_450x300.jpg",
+        "imageAlt": "교육 콘텐츠",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "imageCrop": "",
+        "paddingTop": "10px",
+        "paddingRight": "0px",
+        "paddingBottom": "8px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "",
+        "showBorderRadius": false,
+        "imageBorderRadius": "10px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1790591880958-taovbqk01",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">디지털 교육콘텐츠 · 교수학습 솔루션</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">교원지원 서비스 · 교육 플랫폼 등</p>",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "10px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1790591880958-taovbqk01",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong style=\"color: #ffffff;\">체험·미래역량 교육</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "10px",
+        "paddingBottom": "6px",
+        "paddingLeft": "10px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "#e5e5e5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111",
+        "bgColor__pointIndex": 0,
+        "bgColor__usePoint": true
+      },
+      "styles": {},
+      "groupId": "group-1790591873976-36j1w6egf",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/newsletterbuilder/osco-conv/aiee/2026/02_450x300.jpg",
+        "imageAlt": "VR",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "imageCrop": "",
+        "paddingTop": "10px",
+        "paddingRight": "0px",
+        "paddingBottom": "8px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "",
+        "showBorderRadius": false,
+        "imageBorderRadius": "10px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1790591873976-36j1w6egf",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">XR · AR · VR · 메타버스</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">코딩 · 로봇 · 실감형 교육콘텐츠 등</p>",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "10px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1790591873976-36j1w6egf",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong style=\"color: #ffffff;\">미래교실·교육환경</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "10px",
+        "paddingBottom": "6px",
+        "paddingLeft": "10px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "#e5e5e5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111",
+        "bgColor__pointIndex": 0,
+        "bgColor__usePoint": true
+      },
+      "styles": {},
+      "groupId": "group-1790591873976-36j1w6egf",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/newsletterbuilder/osco-conv/aiee/2026/01_450x300.jpg",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "imageCrop": "",
+        "paddingTop": "10px",
+        "paddingRight": "0px",
+        "paddingBottom": "8px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "",
+        "showBorderRadius": false,
+        "imageBorderRadius": "10px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1790591873976-36j1w6egf",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">스마트교실 · 전자칠판 · 교육기기</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">미래 학교공간 · 교육 인프라 등</p>",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "10px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1790591873976-36j1w6egf",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#000000",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "20px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1790592784796-2sf1zpo9i",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "24px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong>누구를 만날 수 있나요?</strong></p>",
+        "paddingTop": "8px",
+        "paddingRight": "20px",
+        "paddingBottom": "4px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {},
+      "groupId": "group-1790592784796-2sf1zpo9i",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">교육 현장의 다양한 관계자를 한자리에서 만나보세요.</p>",
+        "paddingTop": "4px",
+        "paddingRight": "20px",
+        "paddingBottom": "8px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {},
+      "groupId": "group-1790592784796-2sf1zpo9i",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">✔️<strong> 학교·교육 현장</strong> | 학교 관리자 · 현직 교사 · 교육 관계자</p>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "15px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "20px",
+        "marginBottom": "10px",
+        "marginLeft": "20px",
+        "bgColor": "#ebf3ff",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "__moduleLabel": "모듈 01번"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong>✔️ 교육청·교육기관 | </strong>교육청 · 교육 유관기관 관계자</p>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "15px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "20px",
+        "marginBottom": "10px",
+        "marginLeft": "20px",
+        "bgColor": "#ebf6ff",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "__moduleLabel": "모듈 01번"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">✔️<strong> AI·에듀테크 산업</strong> | AI · 에듀테크 · 교육콘텐츠 기업 관계자</p>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "15px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "20px",
+        "marginBottom": "10px",
+        "marginLeft": "20px",
+        "bgColor": "#ebf3ff",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "__moduleLabel": "모듈 01번"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong>✔️ 기관·협회 | </strong>교육 관련 기관 · 협회 및 산업 관계자</p>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "15px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "20px",
+        "marginBottom": "10px",
+        "marginLeft": "20px",
+        "bgColor": "#ebf6ff",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "__moduleLabel": "모듈 01번"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">✔️<strong> 학생·학부모</strong> | AI·미래교육 콘텐츠를 경험하는 교육 수요자</p>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "15px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "20px",
+        "marginBottom": "10px",
+        "marginLeft": "20px",
+        "bgColor": "#ebf3ff",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "__moduleLabel": "모듈 01번"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#000000",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "20px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1790593161883-qvcdbgjsr",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "24px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong>동시 개최 행사</strong></p>",
+        "paddingTop": "8px",
+        "paddingRight": "20px",
+        "paddingBottom": "4px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {},
+      "groupId": "group-1790593161883-qvcdbgjsr",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\">2026 AI 에듀 엑스포 개최기간, 교육 관련 행사가 청주오스코에서 함께 열립니다.</p>",
+        "paddingTop": "4px",
+        "paddingRight": "20px",
+        "paddingBottom": "8px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {},
+      "groupId": "group-1790593161883-qvcdbgjsr",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/newsletterbuilder/osco-conv/aiee/2026/260928_2.png",
+        "imageAlt": "이미지",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "imageCrop": "",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "showImageLink": false,
+        "imageLinkUrl": "",
+        "showBorderRadius": false,
+        "imageBorderRadius": "10px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#000000",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "20px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1790594070246-8o4mepuu3",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "24px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong style=\"color: #f04452;\">(D-1) </strong><strong>참가기업 조기신청 마감</strong></p>",
+        "paddingTop": "8px",
+        "paddingRight": "20px",
+        "paddingBottom": "4px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {},
+      "groupId": "group-1790594070246-8o4mepuu3",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\">교육 현장과 AI·에듀테크 산업이 만나는</p><p style=\"margin: 0; padding: 0; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong>[2026 AI 에듀 엑스포]</strong> 기업의 참여를 기다립니다.</p>",
+        "paddingTop": "4px",
+        "paddingRight": "20px",
+        "paddingBottom": "8px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {},
+      "groupId": "group-1790594070246-8o4mepuu3",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleTable",
+      "properties": {
+        "tableCells": [
+          [
+            {
+              "id": "cell-1790595203242-i5yn3pow1",
+              "type": "td",
+              "content": "<p><strong style=\"color: rgb(255, 255, 255);\">구분</strong></p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center",
+              "bgColor": "#2563eb",
+              "fontSize": "12px"
+            },
+            {
+              "id": "cell-1790595139298-jc3zu71lf",
+              "type": "td",
+              "content": "<p><strong style=\"color: rgb(255, 255, 255);\">독립부스</strong></p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "bgColor": "#2563eb",
+              "fontSize": "12px",
+              "align": "center"
+            },
+            {
+              "id": "cell-1790595139298-f55ry0ul2",
+              "type": "td",
+              "content": "<p><strong style=\"color: rgb(255, 255, 255);\">조립부스</strong></p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "bgColor": "#2563eb",
+              "align": "center",
+              "fontSize": "12px"
+            },
+            {
+              "id": "cell-1790595223500-5bs875ib4",
+              "type": "td",
+              "content": "<p><strong style=\"color: rgb(255, 255, 255);\">프리미엄부스</strong></p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "bgColor": "#2563eb",
+              "align": "center",
+              "fontSize": "12px"
+            }
+          ],
+          [
+            {
+              "id": "cell-1790595296303-2woedljih",
+              "type": "td",
+              "content": "<p><strong>내용</strong></p>",
+              "colspan": 1,
+              "rowspan": 2,
+              "align": "center",
+              "bgColor": "#f2f4f6",
+              "fontSize": "12px"
+            },
+            {
+              "id": "cell-1790595296303-wleczxb36",
+              "type": "td",
+              "content": "<p><span style=\"font-size: 12px;\">참가기업이&nbsp;전시장</span></p><p><span style=\"font-size: 12px;\">지정&nbsp;장치업체를&nbsp;통해&nbsp;디자인</span></p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790595296303-1ts2wrhgz",
+              "type": "td",
+              "content": "<p><span style=\"font-size: 12px;\">주최자가&nbsp;조립식&nbsp;부스를&nbsp;</span></p><p><span style=\"font-size: 12px;\">일괄&nbsp;설치</span></p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            },
+            {
+              "id": "cell-1790595296303-6fmb1lpui",
+              "type": "td",
+              "content": "<p><span style=\"font-size: 12px;\">규격화된&nbsp;고급형&nbsp;부스</span></p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center"
+            }
+          ],
+          [
+            {
+              "id": "cell-1790595203243-6lbfst3zw",
+              "type": "td",
+              "content": "<p>부스형태</p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "hidden": true
+            },
+            {
+              "id": "cell-1790595139298-b81vdopao",
+              "type": "td",
+              "content": "<p></p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "contentType": "image",
+              "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/newsletterbuilder/osco-conv/aiee/2026/image(3).png"
+            },
+            {
+              "id": "cell-1790595139298-aojhahd8x",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "contentType": "image",
+              "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/newsletterbuilder/osco-conv/aiee/2026/image(1).png"
+            },
+            {
+              "id": "cell-1790595223500-q9b0aypfa",
+              "type": "td",
+              "content": "내용",
+              "colspan": 1,
+              "rowspan": 1,
+              "contentType": "image",
+              "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/newsletterbuilder/osco-conv/aiee/2026/image(2).png"
+            }
+          ],
+          [
+            {
+              "id": "cell-1790595203243-m280y6dbs",
+              "type": "td",
+              "content": "<p><strong>제공사항</strong></p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center",
+              "bgColor": "#f2f4f6",
+              "fontSize": "12px"
+            },
+            {
+              "id": "cell-1790595139298-t7wuubyo9",
+              "type": "td",
+              "content": "<p><span style=\"font-size: 12px;\">부스&nbsp;면적만&nbsp;제공</span></p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "bgColor": "#ffffff",
+              "fontSize": "12px",
+              "align": "center"
+            },
+            {
+              "id": "cell-1790595139298-eoahzy4s0",
+              "type": "td",
+              "content": "<p><span style=\"font-size: 12px;\">홈페이지&nbsp;참고</span></p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center",
+              "fontSize": "12px"
+            },
+            {
+              "id": "cell-1790595223500-w4ei8xv6w",
+              "type": "td",
+              "content": "<p><span style=\"font-size: 12px;\">부스&nbsp;장치&nbsp;및&nbsp;시공</span></p><p><span style=\"font-size: 12px;\">(면적은&nbsp;별도&nbsp;독립부스&nbsp;신청&nbsp;필요)</span></p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center",
+              "fontSize": "12px"
+            }
+          ],
+          [
+            {
+              "id": "cell-1790595273465-ahz9pd6dh",
+              "type": "td",
+              "content": "<p><strong>참가비</strong></p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center",
+              "bgColor": "#f2f4f6",
+              "fontSize": "12px"
+            },
+            {
+              "id": "cell-1790595273465-xcivxdqdp",
+              "type": "td",
+              "content": "<p>1,800,000원/부스</p><p>(VAT&nbsp;별도)</p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center",
+              "fontSize": "12px"
+            },
+            {
+              "id": "cell-1790595273465-mxbr2cran",
+              "type": "td",
+              "content": "<p>2,200,000원/부스</p><p>(VAT&nbsp;별도)</p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "center",
+              "fontSize": "12px"
+            },
+            {
+              "id": "cell-1790595273465-11hck4kt3",
+              "type": "td",
+              "content": "<p><span style=\"font-size: 12px;\">부스&nbsp;규모&nbsp;및&nbsp;타입별&nbsp;금액&nbsp;상이</span></p>",
+              "colspan": 1,
+              "rowspan": 1,
+              "fontSize": "12px",
+              "align": "center"
+            }
+          ]
+        ],
+        "borderTopWidth": "0px",
+        "borderTopColor": "#333333",
+        "cellBorderColor": "#dddddd",
+        "headerBgColor": "#f6f6f6",
+        "headerTextColor": "#333333",
+        "headerAlign": "center",
+        "cellBgColor": "#ffffff",
+        "cellTextColor": "#333333",
+        "cellAlign": "left",
+        "paddingTop": "20px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "tableColWidths": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "tableColWidthOn": false
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><span style=\"font-size: 12px;\">✔️ 위치 선정은 신청 및 계약금 납입 순서, 참가규모 등을 기준으로 하며 주최자가 선정합니다.(고유권한)</span></p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><span style=\"font-size: 12px;\">✔️ 접수된 건의 취소는 주최사무국의 승인에 의해서만 진행되며, 취소 시점에 따라 위약금이 발생할 수 있습니다.</span></p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><span style=\"font-size: 12px;\">✔️ 자세한 출품 규정은 홈페이지(aiee.co.kr)내 모집공고를 필히 확인하시기 바랍니다.</span></p>",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "15px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "20px",
+        "marginBottom": "10px",
+        "marginLeft": "20px",
+        "bgColor": "#f5f5f5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "__moduleLabel": "모듈 01번"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "참가기업 신청하기 →",
+        "buttonUrl": "https://bit.ly/4iNTPhC",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#111111",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "20px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "20px",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "5px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong>AI 에듀 엑스포 사무국</strong></p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><span style=\"font-size: 14px;\">(주)메쎄이상 청주오스코사업단</span></p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><span style=\"font-size: 14px;\">충청북도 청주시 흥덕구 오송읍 오송생명로 250 (28167)</span></p>",
+        "paddingTop": "30px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "textAlign": "center"
+      },
+      "styles": {},
+      "groupId": "group-1790589170658-6ho3wntvn",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleContactInfo",
+      "properties": {
+        "contactItems": [
+          {
+            "key": "website",
+            "show": true,
+            "value": "aiee.co.kr"
+          },
+          {
+            "key": "phone",
+            "show": true,
+            "value": "043-230-4047"
+          },
+          {
+            "key": "email",
+            "show": true,
+            "value": "aiee@esgroup.net"
+          },
+          {
+            "key": "fax",
+            "show": false,
+            "value": "02-6121-6363"
+          }
+        ],
+        "contactFontSize": "13px",
+        "contactTextColor": "#333333",
+        "contactAlign": "center",
+        "paddingTop": "8px",
+        "paddingRight": "0px",
+        "paddingBottom": "10px",
+        "paddingLeft": "0px",
+        "websiteUrl": "aiee.co.kr",
+        "showWebsite": true,
+        "phone": "043-230-4047",
+        "showPhone": true,
+        "email": "aiee@esgroup.net",
+        "showEmail": true,
+        "fax": "02-6121-6363",
+        "showFax": false
+      },
+      "styles": {},
+      "groupId": "group-1790589170658-6ho3wntvn",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#aaaaaa",
+        "borderWidth": "1px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "15px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1790589170658-6ho3wntvn",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleSnsIcons",
+      "properties": {
+        "snsIconBgColor": "#333333",
+        "snsAlign": "center",
+        "snsIcons": [
+          {
+            "key": "home",
+            "show": true,
+            "url": "https://aiee.co.kr/"
+          },
+          {
+            "key": "facebook",
+            "show": true,
+            "url": "https://www.facebook.com/aieduexpo"
+          },
+          {
+            "key": "x",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "blog",
+            "show": true,
+            "url": "https://blog.naver.com/aieduexpo"
+          },
+          {
+            "key": "youtube",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "instagram",
+            "show": true,
+            "url": "https://www.instagram.com/ai_edu_expo"
+          },
+          {
+            "key": "kakao",
+            "show": true,
+            "url": "https://pf.kakao.com/_xnXWBX"
+          },
+          {
+            "key": "linkedin",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "zuzuzu",
+            "show": false,
+            "url": "https://kcoupet.com/"
+          },
+          {
+            "key": "en",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "jp",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "th",
+            "show": false,
+            "url": ""
+          }
+        ],
+        "paddingTop": "0px",
+        "paddingRight": "5px",
+        "paddingBottom": "10px",
+        "paddingLeft": "5px"
+      },
+      "styles": {},
+      "groupId": "group-1790589170658-6ho3wntvn",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "12px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">본 메일은 회원님의 수신동의 여부를 확인한 결과 회원님께서 수신동의를 하셨기에 발송되었습니다.</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">메일 수신을 원치 않으시면 <strong style=\"color: #333333;\"><a href=\"https://edm.esfair.kr/RejectMail.aspx?code=CETEF\" rel=\"noopener noreferrer\" target=\"_blank\">[수신거부]</a></strong> 를 클릭하십시오.</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\">본 메일은 발신전용 메일이므로 문의사항은 <strong>aiee@esgroup.net</strong>으로 문의 바랍니다</p>",
+        "paddingTop": "10px",
+        "paddingRight": "25px",
+        "paddingBottom": "40px",
+        "paddingLeft": "25px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "textAlign": "center"
+      },
+      "styles": {},
+      "groupId": "group-1790589170658-6ho3wntvn",
+      "rowIndex": 3,
+      "columnIndex": 0
+    }
+  ],
+  "groups": [
+    {
+      "id": "group-1790588828925-7mu1y3ox0",
+      "name": "뉴스 헤드라인 헤더",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1,
+        2,
+        1
+      ],
+      "keepInlineRows": [
+        null,
+        null,
+        true
+      ]
+    },
+    {
+      "id": "group-1790589142308-sks1ymd48",
+      "name": "이미지형 헤더",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "20px",
+        "paddingRight": "20px",
+        "marginLeft": "0px",
+        "marginRight": "0px"
+      },
+      "rows": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        2
+      ],
+      "keepInlineRows": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        true
+      ]
+    },
+    {
+      "id": "group-1790589170658-6ho3wntvn",
+      "name": "하단 푸터",
+      "styles": {
+        "backgroundColor": "#e9e9e9",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1790591512271-mr7cyzetv",
+      "name": "모듈 01-1번",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "15px",
+        "paddingRight": "15px",
+        "marginLeft": "0px",
+        "marginRight": "0px"
+      },
+      "rows": [
+        2
+      ]
+    },
+    {
+      "id": "group-1790591873976-36j1w6egf",
+      "name": "모듈 06번",
+      "rows": [
+        2
+      ],
+      "keepInlineRows": [
+        true
+      ],
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "15px",
+        "paddingRight": "15px",
+        "marginLeft": "0px",
+        "marginRight": "0px"
+      }
+    },
+    {
+      "id": "group-1790591880958-taovbqk01",
+      "name": "모듈 06번",
+      "rows": [
+        2
+      ],
+      "keepInlineRows": [
+        true
+      ],
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "15px",
+        "paddingRight": "15px",
+        "marginLeft": "0px",
+        "marginRight": "0px"
+      }
+    },
+    {
+      "id": "group-1790591999496-kpqlmmodk",
+      "name": "모듈 01-1번",
+      "rows": [
+        2
+      ],
+      "keepInlineRows": [
+        false
+      ],
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "15px",
+        "paddingRight": "15px",
+        "marginLeft": "0px",
+        "marginRight": "0px"
+      }
+    },
+    {
+      "id": "group-1790592452600-f1jwi7cf3",
+      "name": "섹션 타이틀",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1790592555805-z6g3v330z",
+      "name": "섹션 타이틀",
+      "rows": [
+        1,
+        1,
+        1
+      ],
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      }
+    },
+    {
+      "id": "group-1790592784796-2sf1zpo9i",
+      "name": "섹션 타이틀",
+      "rows": [
+        1,
+        1,
+        1
+      ],
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      }
+    },
+    {
+      "id": "group-1790593161883-qvcdbgjsr",
+      "name": "섹션 타이틀",
+      "rows": [
+        1,
+        1,
+        1
+      ],
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      }
+    },
+    {
+      "id": "group-1790594070246-8o4mepuu3",
+      "name": "섹션 타이틀",
+      "rows": [
+        1,
+        1,
+        1
+      ],
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      }
+    }
+  ]
+}
