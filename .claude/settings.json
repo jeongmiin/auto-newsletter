@@ -22,7 +22,8 @@
       "Bash(git log *)",
       "Edit(/.claude/skills/figma-builder/**)",
       "Bash(python3 -c \"pass\")",
-      "Bash(curl -s -o /dev/null http://localhost:4173/)"
+      "Bash(curl -s -o /dev/null http://localhost:4173/)",
+      "Bash(echo \"tsc exit=$?\")"
     ],
     "additionalDirectories": [
       "C:\\Users\\ESN-D0145\\AppData\\Local\\Temp\\claude\\d--Projects-auto-newsletter\\6e5bde4f-f058-4e45-971a-2909bdc5ce57\\scratchpad\\pw"

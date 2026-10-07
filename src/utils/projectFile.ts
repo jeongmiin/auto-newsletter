@@ -148,6 +148,11 @@ export interface RestoreResult {
  * 들어온 팀"이 작업의 소속이며, 다른 팀 파일을 열어 이어 작업해도 마찬가지다.
  * 파일 속 teamId는 만든 팀의 기록으로만 남는다.
  *
+ * 같은 이유로 `wrapSettings.volume`(회차 폴더)도 반영하지 않는다. 저장 자리는 에디터에
+ * 들어오기 전 폴더 선택에서 정해지며, 다른 회차에서 내려받은 파일을 열어 이어 작업해도
+ * 그 자리는 그대로여야 한다 — 파일의 회차를 따르면 'kor' 폴더를 만들어 들어왔는데
+ * 저장 위치가 'vol10_1007'로 바뀌어 엉뚱한 폴더에 올라간다.
+ *
  * @param toComposed true면 예전 편집 방식 모듈을 원소 모듈 그룹으로 바꿔 넣는다
  */
 export function restoreProject(
@@ -160,7 +165,10 @@ export function restoreProject(
   moduleStore.clearAll()
   if (projectData.wrapSettings) {
     // 포인트 색상 팔레트까지 '여는 파일이 정한다' — 앞서 열어 둔 템플릿의 색이 남으면 안 된다.
-    editorStore.applyLoadedWrapSettings(projectData.wrapSettings)
+    // 회차 폴더만은 예외다(위 주석) — 파일의 값을 떼고 지금 자리를 지킨다.
+    const wrapSettings = { ...projectData.wrapSettings }
+    delete wrapSettings.volume
+    editorStore.applyLoadedWrapSettings(wrapSettings)
   }
 
   let restoredCount = 0

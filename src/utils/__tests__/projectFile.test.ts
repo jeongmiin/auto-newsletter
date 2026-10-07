@@ -464,6 +464,28 @@ describe('projectFile — 소속 팀(teamId)', () => {
 
     expect(editorStore.currentTeamId, '파일의 팀으로 바뀌면 안 된다').toBe('arch-plan')
   })
+
+  /**
+   * 회차 폴더도 같은 규칙이다. 실제 사고: vol10_1007에서 내려받은 파일을 새로 만든 kor 폴더에서
+   * 열었더니 저장 위치가 vol10_1007로 되돌아가 엉뚱한 폴더에 올라갔다.
+   */
+  it('파일을 열어도 지금 고른 회차 폴더(저장 위치)를 덮어쓰지 않는다', () => {
+    const editorStore = useEditorStore()
+    editorStore.updateWrapSettings({ volume: 'kor' })
+
+    restoreProject(
+      {
+        modules: [],
+        wrapSettings: { backgroundColor: '#ffffff', pointColor: '#0f0cb0', volume: 'vol10_1007' },
+      },
+      false,
+    )
+
+    expect(editorStore.wrapSettings.volume, '파일의 회차로 바뀌면 안 된다').toBe('kor')
+    // 나머지 전체 스타일은 여는 파일이 정한다
+    expect(editorStore.wrapSettings.backgroundColor).toBe('#ffffff')
+    expect(editorStore.wrapSettings.pointColor).toBe('#0f0cb0')
+  })
 })
 
 describe('projectFile — 예전 파일 열기(새 편집 방식 변환)', () => {
