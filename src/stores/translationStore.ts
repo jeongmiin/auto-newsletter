@@ -110,7 +110,9 @@ export const useTranslationStore = defineStore('translation', () => {
   const apply = async (): Promise<number> => {
     if (!preview.value.length) return 0
     const history = getHistoryInstance()
-    // 적용 전과 적용 후를 각각 남겨 Ctrl+Z 한 번으로 번역 전 상태가 복원되게 한다.
+    // 적용 전 상태를 남겨 Ctrl+Z 한 번으로 번역 전 상태가 복원되게 한다.
+    // ⚠ 적용 후에는 따로 저장하지 않는다 — runBulk가 끝나면 멈춰 둔 감시가 되살아나 바뀐 상태를
+    //   한 번 저장한다. 여기서 또 저장하면 같은 상태가 두 번 쌓여 Ctrl+Z 첫 번째가 헛돈다.
     history.saveState()
     const next = applyTranslationChanges(moduleStore.modules, preview.value)
     // 번역한 언어에 맞는 글꼴 묶음으로 바꾼다(전체 설정의 '폰트'). 영어는 기본(한국어·영어) 묶음이다.
@@ -119,7 +121,6 @@ export const useTranslationStore = defineStore('translation', () => {
       moduleStore.replaceModulesForBulkEdit(next)
       editorStore.updateWrapSettings({ fontLanguage })
     })
-    history.saveState()
     const count = preview.value.length
     clear()
     return count
