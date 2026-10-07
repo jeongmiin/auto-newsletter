@@ -1,8 +1,10 @@
 /**
  * Azure Translator 키를 브라우저에 노출하지 않는 작은 서버 프록시 — **로컬 개발용**.
  *
+ * 맞춤법 검사(/api/proofread)도 여기서 받는다 — Gemini 키를 같은 방식으로 숨긴다(proofread-core.mjs).
+ *
  * 실행:
- *   npm run proxy:translate            (.env.local의 AZURE_TRANSLATOR_KEY를 자동으로 읽는다)
+ *   npm run proxy:translate            (.env.local의 AZURE_TRANSLATOR_KEY·GEMINI_API_KEY를 자동으로 읽는다)
  * 선택:
  *   AZURE_TRANSLATOR_REGION=koreacentral
  *   TRANSLATE_ALLOWED_ORIGINS=https://newsletter.example.com
@@ -14,6 +16,7 @@
 import http from 'node:http'
 import { loadEnvFile } from 'node:process'
 import { handleTranslation, parseAllowedOrigins, TranslateRequestError } from './translate-core.mjs'
+import { handleProofread } from './proofread-core.mjs'
 
 // .gitignore의 `*.local` 규칙으로 제외되는 로컬 비밀 설정을 자동으로 읽는다.
 // 셸에서 이미 설정한 환경변수는 Node가 우선하므로 CI/운영 배포 방식도 그대로 사용할 수 있다.
@@ -28,6 +31,10 @@ const azure = {
   key: (process.env.AZURE_TRANSLATOR_KEY || '').trim(),
   region: (process.env.AZURE_TRANSLATOR_REGION || '').trim(),
   endpoint: process.env.AZURE_TRANSLATOR_ENDPOINT,
+}
+const gemini = {
+  key: (process.env.GEMINI_API_KEY || '').trim(),
+  model: process.env.GEMINI_MODEL,
 }
 const allowedOrigins = parseAllowedOrigins(process.env.TRANSLATE_ALLOWED_ORIGINS)
 const maxBodyBytes = 2 * 1024 * 1024
@@ -78,9 +85,10 @@ const server = http.createServer(async (req, res) => {
     return res.end()
   }
   if (req.method === 'GET' && req.url === '/health') {
-    return json(res, 200, { ok: true, configured: !!azure.key }, origin)
+    return json(res, 200, { ok: true, configured: !!azure.key, proofread: !!gemini.key }, origin)
   }
-  if (req.method !== 'POST' || req.url !== '/api/translate') {
+  const isProofread = req.url === '/api/proofread'
+  if (req.method !== 'POST' || (req.url !== '/api/translate' && !isProofread)) {
     return json(res, 404, { error: 'Not found' }, origin)
   }
   if (origin && !allowedOrigins.has(origin)) {
@@ -88,15 +96,19 @@ const server = http.createServer(async (req, res) => {
   }
   try {
     const body = await readJson(req)
-    return json(res, 200, await handleTranslation(body, azure), origin)
+    const result = isProofread
+      ? await handleProofread(body, gemini)
+      : await handleTranslation(body, azure)
+    return json(res, 200, result, origin)
   } catch (error) {
     const status = error instanceof TranslateRequestError ? error.status : 500
-    const message = error instanceof Error ? error.message : '번역 중 오류가 발생했습니다.'
+    const message = error instanceof Error ? error.message : '요청을 처리하는 중 오류가 발생했습니다.'
     return json(res, status, { error: message }, origin)
   }
 })
 
 server.listen(port, '127.0.0.1', () => {
   process.stdout.write(`Azure Translator proxy: http://127.0.0.1:${port}/api/translate\n`)
-  if (!azure.key) process.stdout.write('AZURE_TRANSLATOR_KEY가 없어 요청은 설정 오류를 반환합니다.\n')
+  if (!azure.key) process.stdout.write('AZURE_TRANSLATOR_KEY가 없어 번역 요청은 설정 오류를 반환합니다.\n')
+  if (!gemini.key) process.stdout.write('GEMINI_API_KEY가 없어 맞춤법 검사 요청은 설정 오류를 반환합니다.\n')
 })

@@ -32,9 +32,14 @@ export default defineConfig(({ command }) => {
   }
 
   // Azure 키를 숨기는 번역 프록시. 로컬 기본 서버는 `npm run proxy:translate`로 띄운다.
+  // 맞춤법 검사(Gemini 키)도 같은 서버가 받는다.
   const translateTarget = process.env.TRANSLATE_PROXY_TARGET || 'http://localhost:5175'
   const translateProxy = {
     '/api/translate': {
+      target: translateTarget,
+      changeOrigin: true,
+    },
+    '/api/proofread': {
       target: translateTarget,
       changeOrigin: true,
     },

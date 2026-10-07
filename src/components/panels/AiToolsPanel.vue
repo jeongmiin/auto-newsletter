@@ -2,11 +2,15 @@
 /**
  * AI 도구 패널 (좌측 레일 'AI 도구').
  *
- * 도구는 둘이다.
+ * 도구는 셋이다.
  *
  * **다국어 번역** — 캔버스 전체의 한국어 문장을 영어·일본어·중국어(간체)로 번역해 미리 보여주고,
  * 확인·수정한 뒤 캔버스에 적용한다. 문장은 태그를 뺀 텍스트 노드 단위라 굵게·색상·링크 같은
  * 서식은 그대로 남고 글자만 바뀐다. Azure 키는 서버 프록시에만 있다(src/utils/azureTranslator.ts).
+ *
+ * **맞춤법 검사** — 캔버스 전체의 한국어 글에서 오탈자·띄어쓰기·맞춤법 오류를 찾아 카드로 보여주고,
+ * 사람이 고른 것만 캔버스에 적용한다. 고칠 구절만 갈아 끼우므로 서식은 그대로 남는다.
+ * Gemini 키는 서버 프록시에만 있다(src/utils/geminiProofreader.ts).
  *
  * **HTML 웹 링크 생성** — 아래 설명.
  *
@@ -26,6 +30,7 @@ import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import { useModuleStore } from '@/stores/moduleStore'
 import { TRANSLATION_LANGUAGES, useTranslationStore } from '@/stores/translationStore'
+import { useProofreadStore } from '@/stores/proofreadStore'
 import { trackWebLink, useWebLinkStore, webLinkToast } from '@/stores/webLinkStore'
 import type { TranslationLanguage } from '@/utils/newsletterTranslation'
 import { track } from '@/analytics/umami'
@@ -50,9 +55,14 @@ const webLink = useWebLinkStore()
 const translation = useTranslationStore()
 const translationLanguages = TRANSLATION_LANGUAGES
 
+// ── Gemini 맞춤법 검사 ─────────────────────────────────────────────────
+// 상태와 동작은 proofreadStore에 있다 — 번역과 같은 이유로 메뉴를 옮겨도 결과가 남는다.
+// 여기는 대상 요약·검사 요청·고칠 곳 고르기만 맡는다.
+const proofread = useProofreadStore()
+
 // 문장 수·글자 수는 모듈 메타데이터(어떤 속성이 번역 대상인지)가 있어야 셀 수 있다 — 펼칠 때 미리 읽어 둔다
 watch(
-  () => translation.panelOpen,
+  () => translation.panelOpen || proofread.panelOpen,
   (open) => {
     if (open && !moduleStore.availableModules.length) void moduleStore.loadAvailableModules()
   },
@@ -66,17 +76,23 @@ watch(
  * 분류별 묶음으로 나뉜다. 도구가 늘면 여기에 분류를 한 칸 더하고 묶음마다 그리드를
  * 한 번씩 돌리면 되도록, 카드 모양·간격은 배열 길이와 무관하게 맞춰 뒀다.
  */
-const AI_TOOLS = [
-  { key: 'weblink', label: 'HTML 웹 링크 생성', icon: toolWeblinkIcon },
-  { key: 'translate', label: '다국어 번역', icon: toolTranslateIcon },
-] as const
-type ToolKey = (typeof AI_TOOLS)[number]['key']
+type ToolKey = 'weblink' | 'translate' | 'proofread'
+/** 카드 그림은 이미지(`image`)이고, 아직 그림이 없는 도구는 머티리얼 심볼 이름(`icon`)으로 대신한다 */
+const AI_TOOLS: ReadonlyArray<{ key: ToolKey; label: string; image?: string; icon?: string }> = [
+  { key: 'weblink', label: 'HTML 웹 링크 생성', image: toolWeblinkIcon },
+  { key: 'translate', label: '다국어 번역', image: toolTranslateIcon },
+  { key: 'proofread', label: '맞춤법 검사', icon: 'spellcheck' },
+]
 
 /**
  * 지금 고른 도구 — 내용은 카드 아래에 펼쳐지고, 같은 카드를 다시 누르면 닫힌다.
- * 번역은 상태가 스토어에 있어 메뉴를 옮겼다 와도 남아 있으므로, 처음 값을 거기서 받아 온다.
+ * 번역·맞춤법 검사는 상태가 스토어에 있어 메뉴를 옮겼다 와도 남아 있으므로, 처음 값을 거기서 받아 온다.
  */
-const activeTool = ref<ToolKey | null>(translation.panelOpen ? 'translate' : null)
+const initialTool = (): ToolKey | null => {
+  if (translation.panelOpen) return 'translate'
+  return proofread.panelOpen ? 'proofread' : null
+}
+const activeTool = ref<ToolKey | null>(initialTool())
 const selectTool = (key: ToolKey): void => {
   const opening = activeTool.value !== key
   activeTool.value = opening ? key : null
@@ -86,11 +102,19 @@ const selectTool = (key: ToolKey): void => {
 // 스토어의 열림 상태를 고른 도구와 어긋나지 않게 맞춰 둔다(번역 대상 문장 수 집계가 이 값을 본다)
 watch(activeTool, (key) => {
   translation.panelOpen = key === 'translate'
+  proofread.panelOpen = key === 'proofread'
 })
 
 /** 웹 링크 도구를 펼쳤는지 — 아래 폴더 조회 watch가 이 값을 본다 */
 const isOpen = computed(() => activeTool.value === 'weblink')
 const isTranslate = computed(() => activeTool.value === 'translate')
+const isProofread = computed(() => activeTool.value === 'proofread')
+
+/** 카드 모서리에 띄울 숫자 — 들어가 보기 전에도 확인할 결과가 있다는 걸 알린다 */
+const toolBadge = (key: ToolKey): number => {
+  if (key === 'translate') return translation.preview.length
+  return key === 'proofread' ? proofread.suggestions.length : 0
+}
 
 /** 카드에 붙는 모듈 아이콘 — 모듈 순서 패널과 같은 규칙 */
 const CATEGORY_ICON: Record<string, string> = {
@@ -109,11 +133,18 @@ const unitIcon = (category: string): string => CATEGORY_ICON[category] ?? 'widge
  * `moduleStore.selectModule`을 쓰지 않는 이유: 모듈을 선택하면 좌측 패널이 속성 편집으로
  * 바뀌어 번역 화면이 통째로 사라진다. 여기서는 캔버스만 그 모듈로 옮긴다.
  */
-const selectUnit = (unitId: string, moduleInstanceId: string): void => {
-  translation.selectedUnitId = unitId
+const scrollToModule = (moduleInstanceId: string): void => {
   document
     .getElementById(`canvas-module-${moduleInstanceId}`)
     ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+}
+const selectUnit = (unitId: string, moduleInstanceId: string): void => {
+  translation.selectedUnitId = unitId
+  scrollToModule(moduleInstanceId)
+}
+const selectSuggestion = (id: string, moduleInstanceId: string): void => {
+  proofread.selectedId = id
+  scrollToModule(moduleInstanceId)
 }
 
 /**
@@ -154,6 +185,25 @@ const applyTranslation = async (): Promise<void> => {
     life: 4000,
   })
 }
+
+const applyProofread = async (): Promise<void> => {
+  const count = await proofread.apply()
+  if (!count) return
+  // 적용에 성공했을 때만 — 검사만 해 보고 안 쓴 것과 갈라 본다
+  track('proofread_apply', { count })
+  toast.add({
+    severity: 'success',
+    summary: '맞춤법을 고쳤어요',
+    detail: `${count}곳을 고쳤습니다. Ctrl+Z로 되돌릴 수 있어요.`,
+    life: 4000,
+  })
+}
+
+/** 맞춤법 검사 주 버튼의 글자 — 검사 중 · 다시 검사 · 처음 */
+const proofreadCta = computed(() => {
+  if (proofread.checking) return '검사하는 중'
+  return proofread.clean ? '다시 검사하기' : '맞춤법 검사하기'
+})
 
 /** 도구 화면 머리에 적는 이름 */
 const activeToolLabel = computed(
@@ -261,14 +311,20 @@ onBeforeUnmount(() => {
           class="ai-tool-card"
           @click="selectTool(tool.key)"
         >
-          <img class="ai-tool-icon" :src="tool.icon" width="36" height="36" alt="" />
+          <img
+            v-if="tool.image"
+            class="ai-tool-icon"
+            :src="tool.image"
+            width="36"
+            height="36"
+            alt=""
+          />
+          <span v-else class="material-symbols-outlined ai-tool-symbol" aria-hidden="true">
+            {{ tool.icon }}
+          </span>
           <span class="ai-tool-label">{{ tool.label }}</span>
-          <!-- 들어가 보기 전에도 확인할 번역 결과가 있다는 걸 알 수 있게 -->
-          <span
-            v-if="tool.key === 'translate' && translation.preview.length"
-            class="ai-tool-badge"
-            >{{ translation.preview.length }}</span
-          >
+          <!-- 들어가 보기 전에도 확인할 결과(번역문·고칠 곳)가 있다는 걸 알 수 있게 -->
+          <span v-if="toolBadge(tool.key)" class="ai-tool-badge">{{ toolBadge(tool.key) }}</span>
         </button>
       </div>
     </template>
@@ -530,6 +586,137 @@ onBeforeUnmount(() => {
           {{ translation.translating ? '번역하는 중' : '번역 결과 확인하기' }}
         </button>
       </footer>
+
+      <!-- ── Gemini 맞춤법 검사 ── -->
+      <div v-if="isProofread" class="tool-body tr-body">
+        <p v-if="!proofread.enabled" class="ht-note tool-note">
+          맞춤법 검사 서버 주소가 설정되지 않아 지금은 검사할 수 없어요.
+        </p>
+
+        <!-- 결과 — 고칠 곳 하나가 카드 한 장. 카드를 누르면 캔버스가 그 모듈로 옮겨간다 -->
+        <template v-else-if="proofread.hasResult">
+          <div class="tr-cards">
+            <div
+              v-for="item in proofread.suggestions"
+              :key="item.id"
+              class="tr-card pr-card"
+              :class="{
+                'is-selected': proofread.selectedId === item.id,
+                'is-off': !item.accepted,
+              }"
+              role="button"
+              tabindex="0"
+              @click="selectSuggestion(item.id, item.unit.moduleInstanceId)"
+              @keydown.enter.self="selectSuggestion(item.id, item.unit.moduleInstanceId)"
+            >
+              <span class="tr-card-head">
+                <span class="tr-card-name">
+                  <span class="material-symbols-outlined tr-card-icon" aria-hidden="true">
+                    {{ unitIcon(item.unit.category) }}
+                  </span>
+                  {{ item.unit.moduleName }}
+                </span>
+                <span v-if="item.unit.badge" class="tr-card-badge">{{ item.unit.badge }}</span>
+                <!-- 이 카드를 적용할지 — 클릭이 카드 선택으로 새지 않게 막는다 -->
+                <label class="pr-check" @click.stop>
+                  <input v-model="item.accepted" type="checkbox" />
+                  적용
+                </label>
+              </span>
+
+              <span class="tr-card-body pr-card-body">
+                <!-- 어느 문장인지 알아보게 앞뒤 글과 함께 -->
+                <span class="pr-line"
+                  >{{ item.before }}<del class="pr-before">{{ item.original }}</del
+                  >{{ item.after }}</span
+                >
+                <span class="pr-fix">
+                  <span class="material-symbols-outlined pr-fix-arrow" aria-hidden="true">
+                    arrow_forward
+                  </span>
+                  <span class="pr-after">{{ item.corrected }}</span>
+                </span>
+                <span v-if="item.reason" class="pr-reason">{{ item.reason }}</span>
+              </span>
+            </div>
+          </div>
+        </template>
+
+        <!-- 검사 중 -->
+        <p v-else-if="proofread.checking" class="ht-note tool-note">맞춤법을 검사하는 중…</p>
+
+        <!-- 검사했는데 고칠 곳이 없다 -->
+        <div v-else-if="proofread.clean" class="wl-empty tr-empty">
+          <span class="wl-hero">
+            <img :src="stateEyesIcon" width="103" height="103" alt="" />
+          </span>
+          <div class="wl-empty-text">
+            <p class="wl-empty-title">고칠 곳을 찾지 못했어요</p>
+            <p class="tr-empty-hint">내용을 고친 뒤에는 다시 검사해 보세요.</p>
+          </div>
+        </div>
+
+        <!-- 아직 돌리기 전 -->
+        <template v-else>
+          <p class="tr-scope-badge">전체 모듈 {{ moduleStore.modules.length }}개</p>
+
+          <div class="wl-empty tr-empty">
+            <span class="wl-hero">
+              <img :src="stateEyesIcon" width="103" height="103" alt="" />
+            </span>
+            <div class="wl-empty-text">
+              <p class="wl-empty-title">
+                오탈자·띄어쓰기·맞춤법을 찾아드려요.<br />“맞춤법 검사하기”를 눌러주세요
+              </p>
+              <p class="tr-empty-hint">
+                행사명·브랜드 같은 고유명사와 말투는 그대로 두고,<br />고칠 곳은 직접 골라서
+                적용해요.
+              </p>
+            </div>
+          </div>
+
+          <p class="tr-counts">
+            {{ proofread.units.length }}개 문장 ·
+            {{ proofread.characterCount.toLocaleString() }}자
+          </p>
+        </template>
+      </div>
+
+      <!-- 맞춤법 검사의 주 버튼 — 돌리기 전에는 '검사하기', 결과를 볼 때는 '취소 / 적용하기' -->
+      <footer v-if="isProofread && proofread.enabled" class="tool-foot">
+        <p v-if="proofread.error" class="ht-error">{{ proofread.error }}</p>
+
+        <template v-if="proofread.hasResult">
+          <p class="tr-foot-note">
+            *고른 {{ proofread.acceptedCount }}곳이 한 번에 적용돼요. AI 제안이니 확인 후 적용해
+            주세요.
+          </p>
+          <div class="tr-foot-actions">
+            <button type="button" class="tool-cta tool-cta--ghost" @click="proofread.clear()">
+              취소
+            </button>
+            <button
+              type="button"
+              class="tool-cta"
+              :disabled="!proofread.acceptedCount"
+              @click="applyProofread"
+            >
+              적용하기
+            </button>
+          </div>
+        </template>
+
+        <button
+          v-else
+          type="button"
+          class="tool-cta"
+          :disabled="!proofread.units.length || proofread.checking"
+          :aria-busy="proofread.checking"
+          @click="proofread.request()"
+        >
+          {{ proofreadCta }}
+        </button>
+      </footer>
     </section>
   </div>
 </template>
@@ -684,6 +871,8 @@ onBeforeUnmount(() => {
 .wl-save {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 10px;
   margin: 0;
   color: var(--gray-600);
@@ -1083,6 +1272,72 @@ onBeforeUnmount(() => {
   outline-offset: -2px;
 }
 
+/* ── 맞춤법 검사 — 카드 틀은 번역 카드(.tr-card)를 그대로 쓰고 속만 다르다 ── */
+.pr-card.is-off {
+  opacity: 0.55;
+}
+/* 적용 여부 — 머리 줄 오른쪽 끝 */
+.pr-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gray-700);
+  cursor: pointer;
+}
+.pr-check input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--blue-400);
+  cursor: pointer;
+}
+.pr-card-body {
+  gap: 10px;
+}
+/* 고칠 구절이 든 줄 — 앞뒤 글은 흐리게, 틀린 곳만 붉게 긋는다 */
+.pr-line {
+  font-size: 15px;
+  line-height: 1.6;
+  letter-spacing: -0.15px;
+  color: var(--gray-600);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.pr-before {
+  padding: 1px 3px;
+  border-radius: 4px;
+  background: var(--red-50);
+  color: var(--red-700);
+}
+.pr-fix {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+}
+.pr-fix-arrow {
+  flex-shrink: 0;
+  font-size: 20px;
+  color: var(--gray-500);
+}
+.pr-after {
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--blue-50);
+  color: var(--blue-600);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.pr-reason {
+  font-size: 13px;
+  color: var(--gray-500);
+}
+
 /* 발 — 안내 한 줄 + 취소·적용하기 */
 .tr-foot-note {
   margin: 0;
@@ -1132,6 +1387,17 @@ onBeforeUnmount(() => {
   flex-shrink: 0;
   width: 36px;
   height: 36px;
+}
+/* 그림이 아직 없는 도구 — 같은 자리(36px)에 심볼을 놓는다 */
+.ai-tool-symbol {
+  flex-shrink: 0;
+  /* 글꼴이 오기 전에는 심볼 이름이 글자로 보인다 — 자리를 넘쳐 카드를 밀지 않게 가둔다 */
+  width: 36px;
+  height: 36px;
+  overflow: hidden;
+  font-size: 36px;
+  line-height: 1;
+  color: var(--blue-400);
 }
 .ai-tool-label {
   font-size: 16px;

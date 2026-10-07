@@ -1,6 +1,7 @@
-// Cloudflare Worker 설정 — 번역 프록시(azure-translate-worker.mjs).
-// 사용법은 docs/azure-translator.md '운영 배포' 절. 비밀값(AZURE_TRANSLATOR_KEY)은 여기 넣지 않고
-// `npx wrangler secret put AZURE_TRANSLATOR_KEY --config scripts/wrangler.jsonc` 로 등록한다.
+// Cloudflare Worker 설정 — 번역·맞춤법 검사 프록시(azure-translate-worker.mjs).
+// 사용법은 docs/azure-translator.md '운영 배포' 절과 docs/gemini-proofread.md.
+// 비밀값(AZURE_TRANSLATOR_KEY·GEMINI_API_KEY)은 여기 넣지 않고
+// `npx wrangler secret put <이름> --config scripts/wrangler.jsonc` 로 등록한다.
 {
   "$schema": "https://unpkg.com/wrangler/config-schema.json",
   "name": "auto-newsletter-translate",
@@ -14,6 +15,8 @@
   "vars": {
     // Translator 리소스를 만든 지역. Global로 만들었으면 빈 문자열.
     "AZURE_TRANSLATOR_REGION": "koreacentral",
+    // 맞춤법 검사에 쓰는 Gemini 모델. 무료 등급에서 응답이 안정적인 모델로 둔다(docs/gemini-proofread.md).
+    "GEMINI_MODEL": "gemini-3.5-flash-lite",
     // 이 Worker를 부를 수 있는 사이트 — 로컬 개발, GitHub Pages(루트·/develop 모두 같은 출처), 운영 도메인.
     // 출처는 프로토콜+도메인까지만 적는다(경로 없음).
     "TRANSLATE_ALLOWED_ORIGINS": "http://localhost:5173,https://jeongmiin.github.io,https://newsletter.messeesang.com"

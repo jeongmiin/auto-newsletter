@@ -73,7 +73,7 @@ export function isTranslatableProp(prop: EditableProp): boolean {
 }
 
 /** 글이 든 텍스트 노드만 모은다. style/script 안은 글이 아니라 뺀다. */
-function textNodesIn(root: HTMLElement): Text[] {
+export function textNodesIn(root: HTMLElement): Text[] {
   const walker = root.ownerDocument.createTreeWalker(root, NodeFilter.SHOW_TEXT)
   const nodes: Text[] = []
   for (let node = walker.nextNode(); node; node = walker.nextNode()) {
@@ -84,7 +84,7 @@ function textNodesIn(root: HTMLElement): Text[] {
   return nodes
 }
 
-const parseBody = (html: string): HTMLElement =>
+export const parseBody = (html: string): HTMLElement =>
   new DOMParser().parseFromString(html, 'text/html').body
 
 /** 한 줄이 되는 덩어리 — 문단·목록 항목·표 칸처럼 줄바꿈으로 끊기는 요소 */
@@ -96,7 +96,7 @@ const BLOCK_SELECTOR = 'p,div,li,h1,h2,h3,h4,h5,h6,blockquote,pre,td,th'
  * 블록 안에 또 블록이 있으면 바깥쪽은 세지 않는다(같은 글이 두 번 나오지 않게).
  * 문단 태그가 아예 없는 값(인라인만 있는 짧은 글)은 전체를 한 줄로 본다.
  */
-function blockElements(body: HTMLElement): HTMLElement[] {
+export function blockElements(body: HTMLElement): HTMLElement[] {
   const leaves = [...body.querySelectorAll<HTMLElement>(BLOCK_SELECTOR)].filter(
     (el) => !el.querySelector(BLOCK_SELECTOR),
   )
@@ -321,7 +321,7 @@ export function collectTranslationUnits(
 }
 
 /** 경로의 마지막 앞까지 따라가 값을 담고 있는 객체를 돌려준다. 경로가 끊겨 있으면 null. */
-function resolveParent(
+export function resolveParent(
   root: ModuleInstance,
   path: TranslationPath,
 ): Record<string | number, unknown> | null {

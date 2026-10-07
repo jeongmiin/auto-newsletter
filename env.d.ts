@@ -27,6 +27,8 @@ interface ImportMetaEnv {
   readonly VITE_S3_BUCKET_URL?: string
   /** Azure 키를 보관하는 서버 프록시의 공개 주소. 비밀키 자체를 넣지 않는다. */
   readonly VITE_AZURE_TRANSLATE_URL?: string
+  /** Gemini 키를 보관하는 서버 프록시의 맞춤법 검사 주소. 비밀키 자체를 넣지 않는다. */
+  readonly VITE_PROOFREAD_URL?: string
 }
 
 interface ImportMeta {

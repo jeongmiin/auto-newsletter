@@ -13,8 +13,12 @@
  *
  * 설정은 scripts/wrangler.jsonc의 vars에 있다(허용 출처·Azure 지역).
  * 무료 플랜(하루 10만 요청)이면 충분하다 — 뉴스레터 한 통 번역이 요청 1~2개다.
+ *
+ * 맞춤법 검사(/api/proofread)도 이 Worker가 받는다 — Gemini 키(GEMINI_API_KEY)를 같은 방식으로
+ * 숨긴다(proofread-core.mjs). 키는 `npx wrangler secret put GEMINI_API_KEY --config scripts/wrangler.jsonc`.
  */
 import { handleTranslation, parseAllowedOrigins, TranslateRequestError } from './translate-core.mjs'
+import { handleProofread } from './proofread-core.mjs'
 
 const MAX_BODY_BYTES = 2 * 1024 * 1024
 
@@ -51,9 +55,15 @@ export default {
     }
 
     if (request.method === 'GET' && pathname === '/health') {
-      return json(200, { ok: true, configured: !!env.AZURE_TRANSLATOR_KEY }, origin, allowed)
+      return json(
+        200,
+        { ok: true, configured: !!env.AZURE_TRANSLATOR_KEY, proofread: !!env.GEMINI_API_KEY },
+        origin,
+        allowed,
+      )
     }
-    if (request.method !== 'POST' || pathname !== '/api/translate') {
+    const isProofread = pathname === '/api/proofread'
+    if (request.method !== 'POST' || (pathname !== '/api/translate' && !isProofread)) {
       return json(404, { error: 'Not found' }, origin, allowed)
     }
     // 공개 주소이므로 허용된 사이트의 브라우저 요청만 받는다(브라우저는 POST에 Origin을 항상 붙인다).
@@ -70,15 +80,20 @@ export default {
       const body = await request.json().catch(() => {
         throw new TranslateRequestError('요청 JSON 형식이 올바르지 않습니다.')
       })
-      const result = await handleTranslation(body, {
-        key: (env.AZURE_TRANSLATOR_KEY || '').trim(),
-        region: (env.AZURE_TRANSLATOR_REGION || '').trim(),
-        endpoint: env.AZURE_TRANSLATOR_ENDPOINT,
-      })
+      const result = isProofread
+        ? await handleProofread(body, {
+            key: (env.GEMINI_API_KEY || '').trim(),
+            model: env.GEMINI_MODEL,
+          })
+        : await handleTranslation(body, {
+            key: (env.AZURE_TRANSLATOR_KEY || '').trim(),
+            region: (env.AZURE_TRANSLATOR_REGION || '').trim(),
+            endpoint: env.AZURE_TRANSLATOR_ENDPOINT,
+          })
       return json(200, result, origin, allowed)
     } catch (error) {
       const status = error instanceof TranslateRequestError ? error.status : 500
-      const message = error instanceof Error ? error.message : '번역 중 오류가 발생했습니다.'
+      const message = error instanceof Error ? error.message : '요청을 처리하는 중 오류가 발생했습니다.'
       return json(status, { error: message }, origin, allowed)
     }
   },
