@@ -1070,6 +1070,7 @@
                     <Checkbox
                       :modelValue="item.show"
                       :binary="true"
+                      class="ui-checkbox"
                       @update:modelValue="setContactShow(prop.key, index, $event)"
                     />
                     <span class="cmp-label">{{ contactMeta[item.key]?.prefix }} {{ contactMeta[item.key]?.label }}</span>
@@ -1109,6 +1110,7 @@
                     <Checkbox
                       :modelValue="icon.show"
                       :binary="true"
+                      class="ui-checkbox"
                       @update:modelValue="setSnsIconShow(prop.key, index, $event)"
                     />
                     <img

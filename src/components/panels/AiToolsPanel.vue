@@ -28,6 +28,7 @@
  */
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useToast } from 'primevue/usetoast'
+import Checkbox from 'primevue/checkbox'
 import { useModuleStore } from '@/stores/moduleStore'
 import { TRANSLATION_LANGUAGES, useTranslationStore } from '@/stores/translationStore'
 import { useProofreadStore } from '@/stores/proofreadStore'
@@ -619,7 +620,7 @@ onBeforeUnmount(() => {
                 <span v-if="item.unit.badge" class="tr-card-badge">{{ item.unit.badge }}</span>
                 <!-- 이 카드를 적용할지 — 클릭이 카드 선택으로 새지 않게 막는다 -->
                 <label class="pr-check" @click.stop>
-                  <input v-model="item.accepted" type="checkbox" />
+                  <Checkbox v-model="item.accepted" :binary="true" class="ui-checkbox" />
                   적용
                 </label>
               </span>
@@ -642,8 +643,15 @@ onBeforeUnmount(() => {
           </div>
         </template>
 
-        <!-- 검사 중 -->
-        <p v-else-if="proofread.checking" class="ht-note tool-note">맞춤법을 검사하는 중…</p>
+        <!-- 검사 중 — 검사 전 화면과 같은 자리(가운데)에 그림 + 문구 -->
+        <div v-else-if="proofread.checking" class="wl-empty tr-empty">
+          <span class="wl-hero">
+            <img :src="stateEyesIcon" width="103" height="103" alt="" />
+          </span>
+          <div class="wl-empty-text">
+            <p class="wl-empty-title">맞춤법을 검사하는 중…</p>
+          </div>
+        </div>
 
         <!-- 검사했는데 고칠 곳이 없다 -->
         <div v-else-if="proofread.clean" class="wl-empty tr-empty">
@@ -1287,13 +1295,6 @@ onBeforeUnmount(() => {
   color: var(--gray-700);
   cursor: pointer;
 }
-.pr-check input {
-  width: 16px;
-  height: 16px;
-  margin: 0;
-  accent-color: var(--blue-400);
-  cursor: pointer;
-}
 .pr-card-body {
   gap: 10px;
 }
@@ -1346,6 +1347,7 @@ onBeforeUnmount(() => {
   line-height: 1.5;
   letter-spacing: -0.14px;
   color: var(--gray-700);
+  word-break: keep-all;
 }
 .tr-foot-actions {
   display: flex;

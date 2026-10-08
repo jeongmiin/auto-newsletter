@@ -7,6 +7,7 @@ import router from './router'
 import './assets/tokens.css'
 import './assets/main.css'
 import './assets/panels.css'
+import './assets/checkbox.css'
 import './assets/module-form.css'
 import 'primeicons/primeicons.css'
 

@@ -347,6 +347,13 @@ description: >-
   - `index.html` icon_names에 **`close_small`** 추가.
   - **검증**: `npm run build` 클린, `vitest` **740개** 통과(마이그레이션 테스트 4개 추가). `vite preview`+Playwright로 (1)추가 직후 칩 1개(활성·✕ 없음)+`+ 추가`, (2)`+ 추가` 2번 → 칩 3개·활성 칩만 ✕·캔버스 버튼 3개, (3)텍스트를 바꾸면 칩 라벨이 `사전등록`으로 따라옴, (4)칩 전환 시 그 버튼 값이 뜸, (5)1번 삭제 시 내용이 당겨지고(`버튼 2 · 사전등록`) 캔버스도 2개, (6)버튼 너비 토글 ON → 캔버스 `width:120px`, (7)공통 5개 섹션이 Figma 순서대로 뜨고 정렬은 아이콘 세그먼트·여백은 안쪽/바깥 두 카드로 렌더되는 것까지 확인.
 
+- **Phase 24 완료(2026-10-08)**: 공통 체크박스 (Figma **732-1332** "Checkbox Components").
+  - **`src/assets/checkbox.css`의 `.ui-checkbox`** — PrimeVue `<Checkbox>`에 클래스만 붙이면 24px · 1.5px gray/300 테두리 · radius 4, 다섯 상태(Default/Checked/Indeterminate/Disabled/Disabled-Checked). 작은 자리는 `ui-checkbox--sm`(20px, 모듈 순서 패널). 적용처 5곳: 맞춤법 검사 '적용'(네이티브 `<input>`을 PrimeVue로 교체) · 모듈 순서 · 구성 요소 · 연락처 · SNS 아이콘.
+  - 체크 표시는 Figma 에셋(`img/ui/checkbox-check.svg` 흰색 24px / `checkbox-check-disabled.svg` gray/400 20px)을 `::after` 배경으로 쓰고 PrimeVue 아이콘은 감춘다. 상태 판별은 루트의 `data-p-checked` / `data-p-indeterminate` / `data-p-disabled`.
+  - ⚠ **테마 CSS가 이 파일보다 뒤에 적용된다**(런타임 주입). 크기는 `.ui-checkbox.p-checkbox`, 호버는 `.ui-checkbox.p-checkbox:not(.p-disabled):has(.p-checkbox-input:hover) .p-checkbox-box`처럼 테마 선택자보다 길게 써야 이긴다 — 짧게 쓰면 20px(테마 기본)·호버 시 테마 색이 비친다.
+  - ⚠ **1.5px 테두리는 1배 화면에서 1px로 반올림**된다(Chrome 디바이스 픽셀 스냅). 체크 오버레이를 `inset:-1.5px`로 두면 1px씩 커지므로 `top/left:-1.5px` + 상자 크기로 못 박았다.
+  - **검증**: `vue-tsc` 클린, `vitest` 995개 통과, Playwright로 세 곳 모두 24/20px·blue/400 채움·해제 시 흰 배경+gray/300·호버 시 변화 없음 확인.
+
 ## 향후 방향 (사용자 명시, 아직 미구현)
 - **팀별 이미지 업로드(S3)** (2026-08-12 협의): 이미지를 올리면 바로 링크가 잡히도록 하는 게 목표. **선행 배선은 모두 끝났다** — 팀 불변 id(561d117) · `editorStore.currentTeamId` · 팀 없이 에디터 진입 불가(router 가드) · 저장 파일 `teamId`(Phase 21-2).
   - 남은 것: **presign 엔드포인트**(이 앱은 GitHub Pages 정적 배포라 백엔드가 없다 → Lambda Function URL 등) + S3 CORS + 이미지 모듈 업로드 UI.
