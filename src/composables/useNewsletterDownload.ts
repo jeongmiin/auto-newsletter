@@ -81,6 +81,12 @@ export function useNewsletterDownload() {
   const { buildDocument } = useNewsletterDocument()
 
   /**
+   * 이미 만든 HTML 문서를 주어진 이름으로 내려받는다 — 템플릿 저장용 내려받기처럼
+   * 지금 작업물이 아닌 것을 저장할 때. 안내(토스트)는 호출한 쪽이 띄운다.
+   */
+  const saveHtmlFile = (content: string, filename: string) => triggerDownload(content, filename)
+
+  /**
    * HTML 파일 다운로드. 안내(토스트)까지 여기서 띄운다.
    * @param includeMetadata true: 저장용(재편집 메타데이터 포함) / false: 발송용(메타데이터 제거)
    */
@@ -133,5 +139,5 @@ export function useNewsletterDownload() {
     }
   }
 
-  return { downloadHtml }
+  return { downloadHtml, saveHtmlFile }
 }

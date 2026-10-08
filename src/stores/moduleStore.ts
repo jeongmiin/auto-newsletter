@@ -4245,13 +4245,17 @@ ${fullHtml}
   }
 
   /**
-   * 템플릿 썸네일용 콘텐츠 HTML 생성.
-   * - store를 건드리지 않고(clearAll 없이) 템플릿의 modules/groups/wrapSettings를 렌더한다.
-   * - 템플릿 선택 화면의 iframe 썸네일에서 사용(680px 렌더 → CSS scale로 축소).
+   * 템플릿을 **스토어에 넣지 않고** 렌더·직렬화할 수 있는 임시 상태로 만든다.
+   * 미리보기(renderTemplateHtml)와 템플릿 저장용 내려받기(TemplatePreviewDialog)가 같이 쓴다 —
+   * 두 길이 갈라지면 미리보기와 내려받은 파일의 모양이 달라진다.
    */
-  const renderTemplateHtml = async (
+  const buildTemplateSource = async (
     summary: NewsletterTemplateSummary | NewsletterTemplate,
-  ): Promise<string> => {
+  ): Promise<{
+    modules: ModuleInstance[]
+    groups: ModuleGroup[]
+    wrapSettings: ReturnType<typeof useEditorStore>['wrapSettings']
+  }> => {
     // 목차 항목만 받았으면 본문을 읽어 온다(완전한 템플릿이 오면 그대로 쓴다 — 내보내기 미리보기 등)
     const [template] = await Promise.all([
       'modules' in summary && Array.isArray(summary.modules)
@@ -4281,9 +4285,19 @@ ${fullHtml}
     const pointColors =
       tplSettings.pointColors ??
       (tplSettings.pointColor ? [tplSettings.pointColor] : editorStore.wrapSettings.pointColors)
-    const wrapSettings = { ...editorStore.wrapSettings, ...tplSettings, pointColors }
-    return generateHtml(false, { modules: mods, groups: grps, wrapSettings })
+    // 회차(volume)는 에디터의 현재 값이지 템플릿의 것이 아니다 — 섞여 들어가지 않게 비운다
+    const wrapSettings = { ...editorStore.wrapSettings, ...tplSettings, pointColors, volume: '' }
+    return { modules: mods, groups: grps, wrapSettings }
   }
+
+  /**
+   * 템플릿 썸네일용 콘텐츠 HTML 생성.
+   * - store를 건드리지 않고(clearAll 없이) 템플릿의 modules/groups/wrapSettings를 렌더한다.
+   * - 템플릿 선택 화면의 iframe 썸네일에서 사용(680px 렌더 → CSS scale로 축소).
+   */
+  const renderTemplateHtml = async (
+    summary: NewsletterTemplateSummary | NewsletterTemplate,
+  ): Promise<string> => generateHtml(false, await buildTemplateSource(summary))
 
   /**
    * 모듈 미리보기용 콘텐츠 HTML 생성 (기본 속성으로 단발 렌더)
@@ -4565,6 +4579,7 @@ ${fullHtml}
     generateHtml,
     renderModulePreview,
     renderTemplateHtml,
+    buildTemplateSource,
     addTableRow,
     updateTableRow,
     removeTableRow,

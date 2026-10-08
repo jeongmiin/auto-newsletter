@@ -1,5 +1,6 @@
 import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
+import type { ModuleGroup, ModuleInstance, WrapSettings } from '@/types'
 import { processQuillHtml } from '@/utils/quillHtmlProcessor'
 import { serializeModule } from '@/utils/projectFile'
 
@@ -23,19 +24,32 @@ export function useNewsletterDocument() {
     return wrapDocument(finalHtml, includeMetadata)
   }
 
-  /** 본문 HTML을 문서로 감싼다 (본문을 이미 갖고 있을 때) */
-  const wrapDocument = (finalHtml: string, includeMetadata: boolean): string => {
+  /**
+   * 본문 HTML을 문서로 감싼다 (본문을 이미 갖고 있을 때).
+   * @param source 메타데이터에 담을 상태. 비우면 지금 작업물(스토어)이고, 템플릿 저장용 내려받기처럼
+   *               스토어에 없는 것을 문서로 만들 때 넘긴다.
+   */
+  const wrapDocument = (
+    finalHtml: string,
+    includeMetadata: boolean,
+    source?: {
+      modules: ModuleInstance[]
+      groups: ModuleGroup[]
+      wrapSettings: WrapSettings
+      teamId: string | null
+    },
+  ): string => {
     let metadataBlock = ''
     if (includeMetadata) {
       const projectState = {
         // 직렬화는 파일 열기(복원)와 짝이라 utils/projectFile에 공용으로 둔다 —
         // 여기서 필드를 빠뜨리면 다시 열었을 때 그대로 유실된다.
-        modules: moduleStore.modules.map(serializeModule),
-        groups: moduleStore.groups,
-        wrapSettings: editorStore.wrapSettings,
+        modules: (source?.modules ?? moduleStore.modules).map(serializeModule),
+        groups: source?.groups ?? moduleStore.groups,
+        wrapSettings: source?.wrapSettings ?? editorStore.wrapSettings,
         // 만든 팀을 기록해 둔다(표시명이 아니라 불변 id).
         // 다시 열 때 현재 작업 팀을 덮어쓰지는 않는다 — projectFile.ts의 teamId 주석 참고.
-        teamId: editorStore.currentTeamId,
+        teamId: source ? source.teamId : editorStore.currentTeamId,
       }
       // 콘텐츠의 '-->' 등으로 HTML 주석이 조기 종료되어 파일이 깨지는 것을 방지.
       // <, > 를 < / > 로 치환 → JSON 문자열 값 안에서만 등장하므로 JSON.parse가 복원(import 변경 불필요).

@@ -2,14 +2,22 @@
 /**
  * 템플릿 미리보기 모달 (Figma 1468-9405).
  *
- * 카드의 '미리보기'를 누르면 뜬다. 위에 PC/모바일 전환과 '이 템플릿 선택하기', 아래에 메일 본문.
- * 본문은 헤더 '미리보기'와 같은 문서(emailPreviewDoc)를 iframe 에 넣는다 — 스토어를
- * 건드리지 않고 그 템플릿만 렌더한다(renderTemplateHtml).
+ * 카드의 '미리보기'를 누르면 뜬다. 위에 PC/모바일 전환과 '템플릿 파일 받기'·'이 템플릿 선택하기',
+ * 아래에 메일 본문. 본문은 헤더 '미리보기'와 같은 문서(emailPreviewDoc)를 iframe 에 넣는다 —
+ * 스토어를 건드리지 않고 그 템플릿만 렌더한다(renderTemplateHtml).
+ *
+ * '템플릿 파일 받기'는 이 템플릿을 재편집용 HTML(`{템플릿id}.html`)로 내려받는다. 템플릿의 팀이 아닌
+ * 내 팀 폴더에서 이 디자인으로 시작하고 싶을 때 — 빈 템플릿으로 내 폴더를 만든 뒤 '파일 열기'로
+ * 이 파일을 불러오면 된다(템플릿을 고르면 저장 위치가 그 템플릿의 팀 폴더로 고정되기 때문).
  */
 import { ref, watch } from 'vue'
+import { useToast } from 'primevue/usetoast'
 import { useModuleStore } from '@/stores/moduleStore'
+import { useNewsletterDocument } from '@/composables/useNewsletterDocument'
+import { useNewsletterDownload } from '@/composables/useNewsletterDownload'
 import { processQuillHtml } from '@/utils/quillHtmlProcessor'
 import { buildEmailPreviewDocument } from '@/utils/emailPreviewDoc'
+import { track } from '@/analytics/umami'
 import type { NewsletterTemplateSummary } from '@/types'
 
 const props = defineProps<{
@@ -24,11 +32,16 @@ const emit = defineEmits<{
 }>()
 
 const moduleStore = useModuleStore()
+const toast = useToast()
+const { wrapDocument } = useNewsletterDocument()
+const { saveHtmlFile } = useNewsletterDownload()
 
 const mode = ref<'pc' | 'mobile'>('pc')
 const srcdoc = ref('')
 const loading = ref(false)
 const errorText = ref('')
+/** 저장용 파일을 만드는 중 — 버튼을 잠근다 */
+const downloading = ref(false)
 
 /** 템플릿이 바뀔 때마다 새로 렌더 — 닫히면(null) 비운다 */
 watch(
@@ -55,6 +68,41 @@ watch(
 
 const select = () => {
   if (props.template) emit('select', props.template)
+}
+
+/**
+ * 이 템플릿을 재편집용 HTML로 내려받는다 — 헤더의 '저장용 다운로드'와 같은 문서 형식이라
+ * 에디터의 '파일 열기'로 그대로 불러올 수 있다. 스토어에 넣지 않고 템플릿만 직렬화한다.
+ */
+const downloadForEdit = async () => {
+  const template = props.template
+  if (!template || downloading.value) return
+  downloading.value = true
+  try {
+    const source = await moduleStore.buildTemplateSource(template)
+    const body = processQuillHtml(await moduleStore.generateHtml(false, source))
+    const document = wrapDocument(body, true, { ...source, teamId: template.teamId ?? null })
+    const filename = `${template.id}.html`
+    const result = await saveHtmlFile(document, filename)
+    if (result === 'cancelled') return
+    track('template_download', { template: template.id })
+    toast.add({
+      severity: 'success',
+      summary: result === 'saved' ? '저장 완료' : '다운로드 시작됨',
+      detail: `${filename} · 빈 템플릿으로 내 폴더를 만든 뒤 '파일 열기'로 불러오세요`,
+      life: 4000,
+    })
+  } catch (err) {
+    console.warn('[TemplatePreview] 템플릿 파일 받기 실패:', template.id, err)
+    toast.add({
+      severity: 'error',
+      summary: '저장 실패',
+      detail: err instanceof Error ? err.message : '파일을 만들지 못했어요. 다시 시도해 주세요.',
+      life: 5000,
+    })
+  } finally {
+    downloading.value = false
+  }
 }
 </script>
 
@@ -94,6 +142,17 @@ const select = () => {
       </div>
 
       <div class="tp-head-right">
+        <!-- 재편집용 HTML 내려받기 — 내 팀 폴더에서 이 디자인으로 시작할 때 '파일 열기'로 불러온다 -->
+        <button
+          type="button"
+          class="tp-download-btn"
+          :disabled="downloading"
+          title="이 템플릿을 파일로 받아요. 빈 템플릿으로 내 폴더를 만든 뒤 '파일 열기'로 불러오면 돼요."
+          @click="downloadForEdit"
+        >
+          <span class="material-symbols-outlined" aria-hidden="true">download</span>
+          {{ downloading ? '만드는 중…' : '템플릿 파일 받기' }}
+        </button>
         <button type="button" class="tp-select-btn" @click="select">이 템플릿 선택하기</button>
         <button type="button" class="tp-close" title="닫기" @click="emit('close')">
           <span class="material-symbols-outlined">close</span>
@@ -181,6 +240,33 @@ const select = () => {
 }
 .tp-select-btn:hover {
   background: var(--blue-500);
+}
+/* 템플릿 파일 받기 — 선택 버튼 옆의 보조 버튼(흰 배경 + 테두리) */
+.tp-download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  background: var(--white);
+  color: var(--gray-700);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.tp-download-btn:hover:not(:disabled) {
+  background: var(--gray-50);
+  border-color: var(--gray-300);
+}
+.tp-download-btn:disabled {
+  color: var(--gray-400);
+  cursor: default;
+}
+.tp-download-btn .material-symbols-outlined {
+  font-size: 20px;
 }
 .tp-close {
   display: flex;
