@@ -151,6 +151,9 @@
       @select="selectFromPreview"
     />
 
+    <!-- '템플릿 파일 받기' 안내 — 처음 한 번(확인은 세션, 7일간 보지 않기는 그 기간) -->
+    <TemplateFileNoticeDialog />
+
     <!-- 템플릿 적용 중 오버레이 -->
     <div v-if="applying" class="tpl-overlay">
       <i class="pi pi-spin pi-spinner text-2xl text-blue-500"></i>
@@ -169,6 +172,7 @@ import FlowFooter from '@/components/layout/FlowFooter.vue'
 import TeamTreeSidebar from '@/components/layout/TeamTreeSidebar.vue'
 import SearchField from '@/components/SearchField.vue'
 import TemplatePreviewDialog from '@/components/TemplatePreviewDialog.vue'
+import TemplateFileNoticeDialog from '@/components/TemplateFileNoticeDialog.vue'
 import { getHistoryInstance } from '@/composables/useHistory'
 import type { NewsletterTemplateSummary } from '@/types'
 

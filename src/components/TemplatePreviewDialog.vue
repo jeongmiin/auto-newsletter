@@ -289,7 +289,7 @@ const downloadForEdit = async () => {
 .tp-body {
   display: flex;
   justify-content: center;
-  height: 670px;
+  height: 75vh;
   max-height: calc(92vh - 80px);
   padding: 20px;
   background: var(--white);
