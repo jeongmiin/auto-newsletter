@@ -12,6 +12,12 @@
   "workers_dev": true,
   // 버전별 미리보기 주소는 쓰지 않는다 — 같은 Worker가 다른 주소로도 열리는 걸 막는다
   "preview_urls": false,
+  // Gemini 호출을 북미에서 대신 하는 중계 객체(azure-translate-worker.mjs 의 GeminiRelay).
+  // 서비스 지역 밖 지점을 타는 요청이 "User location is not supported"로 막히는 것을 피한다 — 무료 플랜에서도 된다.
+  "durable_objects": {
+    "bindings": [{ "name": "GEMINI_RELAY", "class_name": "GeminiRelay" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["GeminiRelay"] }],
   "vars": {
     // Translator 리소스를 만든 지역. Global로 만들었으면 빈 문자열.
     "AZURE_TRANSLATOR_REGION": "koreacentral",

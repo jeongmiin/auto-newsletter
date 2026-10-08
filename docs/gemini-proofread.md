@@ -67,6 +67,22 @@ npm run deploy:translate
 
 ⚠ **Worker를 먼저 배포한 뒤 프런트를 올린다.** 순서가 바뀌면 도구는 보이는데 눌렀을 때 404가 난다.
 
+### Gemini 호출은 북미 고정 중계 객체를 거친다
+
+Worker는 요청이 들어온 Cloudflare 지점에서 돌고 바깥 호출도 거기서 나간다. 통신사 경로에 따라
+**Gemini API 서비스 지역이 아닌 지점**(응답 헤더 `cf-ray`의 끝 세 글자로 알 수 있다)을 타면 Google이
+`User location is not supported for the API use.`로 거절한다(2026-10-08 실측 — 로컬 프록시는 한국에서
+직접 부르므로 문제없었다).
+
+그래서 Gemini 호출만 **Durable Object `GeminiRelay`**(`azure-translate-worker.mjs`)가 대신 한다.
+DO는 처음 만들 때 `locationHint: 'enam'`(북미 동부)으로 지역을 못 박을 수 있어 늘 북미에서 나간다.
+무료 플랜에서도 쓸 수 있고(`wrangler.jsonc`의 `durable_objects`·`migrations`), 상태는 저장하지 않는다.
+번역(Azure)은 지역 제한이 없어 Worker가 직접 부른다.
+
+- 중계 객체를 다른 지역으로 옮기려면 `idFromName('relay')`의 이름을 바꾸거나 새 힌트로 새 객체를 만든다
+  — 힌트는 **처음 만들 때만** 적용된다.
+- `migrations`의 `tag`는 배포 이력이라 지우거나 바꾸지 않는다. 클래스를 하나 더 만들면 새 tag를 덧붙인다.
+
 ## API 계약
 
 요청 — 같은 글은 프런트가 한 번만 담아 보낸다:
