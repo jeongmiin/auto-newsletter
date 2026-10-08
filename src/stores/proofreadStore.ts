@@ -54,6 +54,16 @@ export const useProofreadStore = defineStore('proofread', () => {
     error.value = ''
   }
 
+  // 다른 뉴스레터로 넘어가면(템플릿 선택·빈 템플릿·파일 열기) 결과는 앞 글에 대한 것이라 뜻이 없다.
+  // 비우고 도구 메뉴로 돌아간다 — 안 그러면 다음 템플릿에서 앞 템플릿의 카드가 보인다.
+  // ⚠ loadTemplate 도 따로 본다 — 안에서 clearAll 을 부르지만 스토어 밖에서 부른 게 아니라 $onAction 에 안 잡힌다.
+  moduleStore.$onAction(({ name }) => {
+    if (name !== 'clearAll' && name !== 'loadTemplate') return
+    cancel()
+    clear()
+    panelOpen.value = false
+  })
+
   const request = async (): Promise<void> => {
     if (checking.value) return
     clear()

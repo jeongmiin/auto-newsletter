@@ -77,6 +77,16 @@ export const useTranslationStore = defineStore('translation', () => {
     error.value = ''
   }
 
+  // 다른 뉴스레터로 넘어가면(템플릿 선택·빈 템플릿·파일 열기) 번역 결과는 앞 글에 대한 것이라 뜻이 없다.
+  // 비우고 도구 메뉴로 돌아간다(맞춤법 검사와 같은 규칙).
+  // ⚠ loadTemplate 도 따로 본다 — 안에서 clearAll 을 부르지만 스토어 밖에서 부른 게 아니라 $onAction 에 안 잡힌다.
+  moduleStore.$onAction(({ name }) => {
+    if (name !== 'clearAll' && name !== 'loadTemplate') return
+    cancel()
+    clear()
+    panelOpen.value = false
+  })
+
   const request = async (): Promise<void> => {
     if (translating.value) return
     clear()
