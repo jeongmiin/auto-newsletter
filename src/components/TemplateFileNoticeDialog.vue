@@ -7,10 +7,10 @@
  * 공지는 늘 같은 틀로 나와야 "또 그 안내구나"로 읽힌다.
  *
  * 노출 규칙:
- * - '확인' → 이번 브라우저 세션에서는 다시 띄우지 않는다(sessionStorage).
+ * - 그냥 닫으면(확인·X·ESC·바깥 클릭) 아무것도 기억하지 않는다 → 템플릿 선택 화면에 다시 들어오면 또 뜬다.
  * - '7일간 보지 않기'를 켜고 닫으면 → 이 브라우저에서 7일 동안 띄우지 않는다(localStorage 에 만료 시각 저장).
  *   영구가 아니라 기한을 두는 이유: 한 번 끈 안내를 영영 못 보는 것보다, 일주일 뒤 한 번 더 보이는 쪽이 안전하다.
- *   어느 길(확인·ESC·X·바깥 클릭)로 닫아도 체크 상태를 반영한다 — visible 이 꺼지는 것을 본다.
+ *   어느 길로 닫아도 체크 상태를 반영한다 — visible 이 꺼지는 것을 본다.
  * - 기억 키에 안내 **버전**을 붙인다(NOTICE_KEY). 다음 안내를 띄울 때 키만 바꾸면 기한이 남은 사람에게도 새 안내가 간다.
  * - 저장소 접근은 try/catch — 시크릿 창·차단 설정에서는 그냥 매번 띄운다(안내가 안 뜨는 쪽보다 낫다).
  */
@@ -33,14 +33,6 @@ const steps = [
   { lead: '파일 열기', rest: '로 받은 파일 불러오기', strong: '' },
 ]
 
-/** 이번 세션에서 이미 닫았는가 */
-const seenThisSession = (): boolean => {
-  try {
-    return sessionStorage.getItem(NOTICE_KEY) === '1'
-  } catch {
-    return false
-  }
-}
 /** '7일간 보지 않기' 기한이 아직 남았는가 — 값은 만료 시각(ms). 지났거나 깨진 값이면 지우고 false */
 const hiddenUntilLater = (): boolean => {
   try {
@@ -52,24 +44,24 @@ const hiddenUntilLater = (): boolean => {
     return false
   }
 }
-const remember = (): void => {
+/** 체크하고 닫았을 때만 기억한다 — 7일 뒤 만료 */
+const hideForAWhile = (): void => {
   try {
-    if (hideChecked.value) localStorage.setItem(NOTICE_KEY, String(Date.now() + HIDE_MS))
-    else sessionStorage.setItem(NOTICE_KEY, '1')
+    localStorage.setItem(NOTICE_KEY, String(Date.now() + HIDE_MS))
   } catch {
     /* 저장 못 하면 다음에 또 띄울 뿐이다 */
   }
 }
 
 onMounted(() => {
-  if (seenThisSession() || hiddenUntilLater()) return
+  if (hiddenUntilLater()) return
   visible.value = true
 })
 
-// 어느 길로 닫아도(확인·ESC·X·바깥 클릭) 한 번 본 것은 기억한다 — 체크했으면 7일간
+// 어느 길로 닫아도(확인·ESC·X·바깥 클릭) 체크했으면 7일간 숨긴다. 체크 없이 닫으면 아무것도 남기지 않는다.
 watch(visible, (now, before) => {
   if (!(before && !now)) return
-  remember()
+  if (hideChecked.value) hideForAWhile()
 })
 </script>
 
