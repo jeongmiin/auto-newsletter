@@ -199,24 +199,31 @@ export async function handleTranslation(body, config) {
   if (total > MAX_TOTAL_CHARS) throw new TranslateRequestError('번역할 글이 너무 깁니다.')
 
   const resolved = { key: config.key, model: (config.model || DEFAULT_GEMINI_MODEL).trim() }
-  const translated = new Map()
-  let failed = []
-  for (const batch of batchesOf(items)) {
-    const result = await translateBatch(batch, body.targetLanguage, resolved)
-    for (const [id, text] of result.ok) translated.set(id, text)
-    failed.push(...result.failed)
+  // 묶음은 **동시에** 보낸다 — 생성 모델이라 묶음 하나가 5~10초인데, 차례로 보내면 한 편이 묶음 수만큼
+  // 늘어진다(실측 2묶음 9~11초 → 동시 5~6초). 한 편이 2~3묶음이라 무료 등급의 분당 한도 안에 든다.
+  const runAll = async (batches, strict) => {
+    const results = await Promise.all(
+      batches.map((batch) => translateBatch(batch, body.targetLanguage, resolved, strict)),
+    )
+    const ok = new Map()
+    const failed = []
+    for (const result of results) {
+      for (const [id, text] of result.ok) ok.set(id, text)
+      failed.push(...result.failed)
+    }
+    return { ok, failed }
   }
+  const translated = new Map()
+  const first = await runAll(batchesOf(items), false)
+  for (const [id, text] of first.ok) translated.set(id, text)
+  let failed = first.failed
   // 뼈대가 어긋난 항목은 **하나씩 따로** 한 번 더 묻는다 — 실측에서 긴 묶음 속 짧은 항목의 바깥 태그를
   // 빼먹는 일이 간혹 있었고(44개 중 1개꼴), 단독으로 다시 물으면 대개 맞게 온다.
   // 그래도 안 되면 사람이 다시 시도하게 알린다(틀린 서식을 캔버스에 넣지 않는다).
   if (failed.length) {
-    const retry = []
-    for (const batch of batchesOf(failed, MAX_BATCH_CHARS, 1)) {
-      const result = await translateBatch(batch, body.targetLanguage, resolved, true)
-      for (const [id, text] of result.ok) translated.set(id, text)
-      retry.push(...result.failed)
-    }
-    failed = retry
+    const retry = await runAll(batchesOf(failed, MAX_BATCH_CHARS, 1), true)
+    for (const [id, text] of retry.ok) translated.set(id, text)
+    failed = retry.failed
   }
   if (failed.length) {
     throw new TranslateRequestError(
