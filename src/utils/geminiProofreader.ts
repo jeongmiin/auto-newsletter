@@ -1,4 +1,4 @@
-import type { ProofreadCorrection, ProofreadItem } from '@/utils/newsletterProofread'
+import type { ProofreadCorrection, ProofreadItem, ProofreadLang } from '@/utils/newsletterProofread'
 
 const endpoint = (import.meta.env.VITE_PROOFREAD_URL ?? '').trim()
 
@@ -21,9 +21,13 @@ export class ProofreadError extends Error {
  *
  * 뉴스레터 한 편을 요청 **한 번**으로 보낸다 — 무료 등급은 하루 요청 횟수로 세기 때문에
  * 값마다 나눠 보내면 한 편에 한도를 다 쓴다. 한도 초과·서버 붐빔 안내는 프록시가 문구로 돌려준다.
+ *
+ * `hint` 는 뉴스레터의 주 언어(알 때만). 검사기는 항목마다 언어를 스스로 판단하므로 없어도 되고,
+ * 있으면 짧은 항목(버튼 글귀 등)의 언어를 가늠하는 데 참고한다.
  */
 export async function requestProofread(
   items: ProofreadItem[],
+  hint?: ProofreadLang,
   signal?: AbortSignal,
 ): Promise<ProofreadCorrection[]> {
   if (!endpoint) throw new ProofreadError('맞춤법 검사 서버 주소가 설정되지 않았습니다.')
@@ -32,7 +36,7 @@ export async function requestProofread(
   const response = await fetch(endpoint, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ items }),
+    body: JSON.stringify(hint ? { items, hint } : { items }),
     signal,
   })
 

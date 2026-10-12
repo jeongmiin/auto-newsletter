@@ -8,18 +8,29 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useModuleStore } from '@/stores/moduleStore'
+import { useEditorStore } from '@/stores/editorStore'
 import { getHistoryInstance } from '@/composables/useHistory'
 import { collectTranslationUnits } from '@/utils/newsletterTranslation'
 import {
   applyProofreadSuggestions,
   buildProofreadItems,
   toSuggestions,
+  type ProofreadLang,
   type ProofreadSuggestion,
 } from '@/utils/newsletterProofread'
 import { isProofreadEnabled, ProofreadError, requestProofread } from '@/utils/geminiProofreader'
+import type { FontLanguage } from '@/utils/fontFamily'
+
+/**
+ * 뉴스레터의 주 언어 힌트 — 전체 스타일의 글꼴 언어에서 가늠한다.
+ * 번역을 적용하면 글꼴 언어가 함께 바뀌므로(일본어·중국어) 그걸 그대로 쓴다.
+ * '기본'은 한국어·영어 공용이라 힌트를 주지 않는다 — 검사기가 항목마다 스스로 판단한다.
+ */
+const HINT_BY_FONT_LANGUAGE: Partial<Record<FontLanguage, ProofreadLang>> = { ja: 'ja', zh: 'zh' }
 
 export const useProofreadStore = defineStore('proofread', () => {
   const moduleStore = useModuleStore()
+  const editorStore = useEditorStore()
 
   /** 프록시 주소가 설정돼 있어 검사를 부를 수 있는지 (빌드 시점에 정해진다) */
   const enabled = isProofreadEnabled()
@@ -37,8 +48,9 @@ export const useProofreadStore = defineStore('proofread', () => {
   let controller: AbortController | null = null
 
   // 캔버스 전체가 대상이다. 글을 모으는 규칙은 번역과 같다(편집 필드 하나 = 값 하나).
+  // 다만 번역과 달리 한국어뿐 아니라 **글자가 든 값은 다** 모은다 — 번역한 영·일·중 뉴스레터도 검사한다.
   const units = computed(() =>
-    collectTranslationUnits(moduleStore.modules, moduleStore.availableModules),
+    collectTranslationUnits(moduleStore.modules, moduleStore.availableModules, { letters: 'any' }),
   )
   /** 실제로 보내는 글자 수 — 같은 글은 한 번만 보낸다 */
   const characterCount = computed(() =>
@@ -71,14 +83,15 @@ export const useProofreadStore = defineStore('proofread', () => {
     if (!moduleStore.availableModules.length) await moduleStore.loadAvailableModules()
     const { items, unitsByItemId } = buildProofreadItems(units.value)
     if (!items.length) {
-      error.value = '캔버스에서 검사할 한국어 문장을 찾지 못했어요.'
+      error.value = '캔버스에서 검사할 문장을 찾지 못했어요.'
       return
     }
 
     checking.value = true
     controller = new AbortController()
     try {
-      const corrections = await requestProofread(items, controller.signal)
+      const hint = HINT_BY_FONT_LANGUAGE[editorStore.wrapSettings.fontLanguage ?? 'default']
+      const corrections = await requestProofread(items, hint, controller.signal)
       suggestions.value = toSuggestions(corrections, unitsByItemId)
       clean.value = suggestions.value.length === 0
     } catch (error_) {

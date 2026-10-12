@@ -8,8 +8,9 @@
  * 확인·수정한 뒤 캔버스에 적용한다. 문장은 태그를 뺀 텍스트 노드 단위라 굵게·색상·링크 같은
  * 서식은 그대로 남고 글자만 바뀐다. Azure 키는 서버 프록시에만 있다(src/utils/azureTranslator.ts).
  *
- * **맞춤법 검사** — 캔버스 전체의 한국어 글에서 오탈자·띄어쓰기·맞춤법 오류를 찾아 카드로 보여주고,
+ * **맞춤법 검사** — 캔버스 전체의 글에서 오탈자·띄어쓰기·맞춤법 오류를 찾아 카드로 보여주고,
  * 사람이 고른 것만 캔버스에 적용한다. 고칠 구절만 갈아 끼우므로 서식은 그대로 남는다.
+ * 언어는 글 덩이마다 검사기가 판단한다(한국어·영어·일본어·중국어) — 번역한 뉴스레터도 그대로 검사한다.
  * Gemini 키는 서버 프록시에만 있다(src/utils/geminiProofreader.ts).
  *
  * **HTML 웹 링크 생성** — 아래 설명.
@@ -199,6 +200,9 @@ const applyProofread = async (): Promise<void> => {
     life: 4000,
   })
 }
+
+/** 카드의 언어 태그 설명 — 검사기가 항목마다 판단한 언어 */
+const proofreadLangLabel: Record<string, string> = { ko: '한국어', en: '영어', ja: '일본어', zh: '중국어' }
 
 /** 맞춤법 검사 주 버튼의 글자 — 검사 중 · 다시 검사 · 처음 */
 const proofreadCta = computed(() => {
@@ -618,6 +622,13 @@ onBeforeUnmount(() => {
                   {{ item.unit.moduleName }}
                 </span>
                 <span v-if="item.unit.badge" class="tr-card-badge">{{ item.unit.badge }}</span>
+                <!-- 어느 언어 기준으로 봤는지 — 한국어가 아닐 때만. 일본어 뉴스레터에 영어 제안이 섞이면 알아보게 -->
+                <span
+                  v-if="item.lang && item.lang !== 'ko'"
+                  class="tr-card-badge pr-lang"
+                  :title="`${proofreadLangLabel[item.lang]} 기준으로 검사`"
+                  >{{ item.lang.toUpperCase() }}</span
+                >
                 <!-- 이 카드를 적용할지 — 클릭이 카드 선택으로 새지 않게 막는다 -->
                 <label class="pr-check" @click.stop>
                   <Checkbox v-model="item.accepted" :binary="true" class="ui-checkbox" />
@@ -677,8 +688,8 @@ onBeforeUnmount(() => {
                 오탈자·띄어쓰기·맞춤법을 찾아드려요.<br />“맞춤법 검사하기”를 눌러주세요
               </p>
               <p class="tr-empty-hint">
-                행사명·브랜드 같은 고유명사와 말투는 그대로 두고,<br />고칠 곳은 직접 골라서
-                적용해요.
+                한국어·영어·일본어·중국어 글을 각 언어 기준으로 봐요.<br />행사명·브랜드 같은
+                고유명사와 말투는 그대로 두고,<br />고칠 곳은 직접 골라서 적용해요.
               </p>
             </div>
           </div>
@@ -1168,10 +1179,9 @@ onBeforeUnmount(() => {
 }
 .tr-empty-hint {
   margin: 0;
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.5;
-  letter-spacing: -0.15px;
-  color: var(--gray-700);
+  color: var(--gray-600);
   text-align: center;
   word-break: keep-all;
 }
@@ -1283,6 +1293,12 @@ onBeforeUnmount(() => {
 /* ── 맞춤법 검사 — 카드 틀은 번역 카드(.tr-card)를 그대로 쓰고 속만 다르다 ── */
 .pr-card.is-off {
   opacity: 0.55;
+}
+/* 언어 태그 — 한국어가 아닌 항목에만 붙는 작은 글자(EN·JA·ZH) */
+.pr-lang {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
 }
 /* 적용 여부 — 머리 줄 오른쪽 끝 */
 .pr-check {

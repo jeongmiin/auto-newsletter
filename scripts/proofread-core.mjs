@@ -26,17 +26,40 @@ const GEMINI_TIMEOUT_MS = 40_000
 /** 503(수요 과다)은 잠깐 뒤에 풀리는 일이 많아 한 번만 더 해 본다 */
 const RETRY_DELAY_MS = 1_500
 
-const SYSTEM_INSTRUCTION = `당신은 한국어 뉴스레터 교정자입니다. 입력은 {id, text} 목록(JSON)입니다.
-각 text 에서 **명백한 오류만** 찾아 고칩니다: 오탈자, 맞춤법, 띄어쓰기, 잘못 들어간 문장부호.
+/** 검사가 다루는 언어 — 번역 도구가 내는 언어(영·일·중)와 원문 한국어. 응답의 lang 도 이 중 하나로 받는다 */
+export const PROOFREAD_LANGS = ['ko', 'en', 'ja', 'zh']
 
-고치지 않는 것:
-- 고유명사·브랜드·회사·행사·사람 이름, 영문, 숫자·날짜·시간·금액 표기 방식, 이모지, 기호(→ • ※ 등)
+/**
+ * 다국어 교정 지시.
+ *
+ * 언어는 **항목(text) 단위로** 판단한다 — 일본어 뉴스레터 안에 영어 문단이 통째로 있으면 그 항목만 영어 기준으로
+ * 본다. 한 문장 안에 섞인 다른 문자(일본어 문장 속 영어 단어 등)는 대개 브랜드·행사명이라 건드리지 않는다.
+ * hint 는 "대개 이 언어"라는 참고일 뿐, 명백히 다른 언어인 항목은 그 언어 규칙을 따른다.
+ * 언어별 "고치지 않는 것"이 핵심이다 — 이게 없으면 영국식↔미국식 철자, 일본어 표기 흔들림, 간체↔번체처럼
+ * 오류가 아닌 선택을 교정하려 든다.
+ */
+const SYSTEM_INSTRUCTION = `당신은 뉴스레터 교정자입니다. 입력은 JSON {hint, items} 이고 items 는 {id, text} 목록입니다.
+각 text 의 언어를 **항목마다** 판단한 뒤, 그 언어의 맞춤법 기준으로 **명백한 오류만** 찾아 고칩니다:
+오탈자, 맞춤법, 띄어쓰기, 잘못 들어간 문장부호. hint 는 이 뉴스레터의 주 언어이지만 참고일 뿐입니다 —
+항목이 명백히 다른 언어이면 그 언어 기준으로 봅니다.
+
+모든 언어에서 고치지 않는 것:
+- 고유명사·브랜드·회사·행사·제품·사람 이름, 숫자·날짜·시간·금액 표기 방식, 이모지, 기호(→ • ※ 등), URL
+- 한 항목 안에서 주 언어와 **다른 문자로 적힌 조각**(한국어·일본어 문장 속 영어 단어 등) — 대개 이름입니다
 - 문체와 어투(구어체·광고 문구), 단어 선택, 문장 다듬기, 줄바꿈
 - 확신이 없는 것. 틀렸다고 단정할 수 없으면 내지 않습니다.
 
+언어별로 고치지 않는 것:
+- 한국어(ko): 외래어 표기 선택, 구어체 종결어미
+- 영어(en): 영국식·미국식 철자 차이(color/colour), 옥스퍼드 콤마, 제목·버튼의 대문자 스타일, 축약형(don't)
+- 일본어(ja): 표기 흔들림(表記ゆれ — 한자·히라가나·가타카나 선택, 送り仮名 차이), 경어 수준
+- 중국어(zh): 간체·번체 혼용, 전각·반각 문장부호 스타일, 지역별 어휘 차이
+
 출력 규칙:
-- original 은 해당 text 안에 **글자 그대로 있는** 가장 짧은 구절(오류가 든 어절과 필요하면 앞뒤 한 어절)
-- corrected 는 original 을 고친 것, reason 은 한 줄(20자 이내)
+- lang 은 그 항목을 어느 언어 기준으로 봤는지(ko·en·ja·zh 중 하나)
+- original 은 해당 text 안에 **글자 그대로 있는** 가장 짧은 구절(오류가 든 단어와 필요하면 앞뒤 한 단어)
+- corrected 는 original 을 고친 것
+- reason 은 **반드시 한국어로** 한 줄(20자 이내) — 영어·일본어·중국어 항목의 이유도 한국어로 씁니다(읽는 사람이 한국인)
 - 오류가 없으면 빈 목록`
 
 const RESPONSE_SCHEMA = {
@@ -45,12 +68,38 @@ const RESPONSE_SCHEMA = {
     type: 'OBJECT',
     properties: {
       id: { type: 'STRING' },
+      lang: { type: 'STRING', enum: PROOFREAD_LANGS },
       original: { type: 'STRING' },
       corrected: { type: 'STRING' },
       reason: { type: 'STRING' },
     },
-    required: ['id', 'original', 'corrected', 'reason'],
+    required: ['id', 'lang', 'original', 'corrected', 'reason'],
   },
+}
+
+/** 라틴 문자(영어 등) — 이 글자로 시작·끝나는 구절은 단어 경계에서만 찾는다 */
+const LATIN = /[A-Za-zÀ-ɏ]/
+const WORD_CHAR = /[A-Za-z0-9À-ɏ]/
+
+/**
+ * text 안에서 phrase 가 있는 자리. 영어처럼 띄어 쓰는 글은 **단어 경계**에서만 찾는다 —
+ * 'the' 를 'then' 안에서 찾아 바꾸면 안 된다. 한국어·일본어·중국어 구절은 경계 규칙 없이 그대로 찾는다.
+ * (프런트 src/utils/newsletterProofread.ts 의 indexOfPhrase 와 같은 규칙 — 둘을 같이 고친다)
+ */
+export function indexOfPhrase(text, phrase, from = 0) {
+  if (!phrase) return -1
+  const headBound = LATIN.test(phrase[0])
+  const tailBound = LATIN.test(phrase[phrase.length - 1])
+  let at = text.indexOf(phrase, from)
+  while (at !== -1) {
+    const before = at > 0 ? text[at - 1] : ''
+    const after = text[at + phrase.length] ?? ''
+    const headOk = !headBound || !WORD_CHAR.test(before)
+    const tailOk = !tailBound || !WORD_CHAR.test(after)
+    if (headOk && tailOk) return at
+    at = text.indexOf(phrase, at + 1)
+  }
+  return -1
 }
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
@@ -76,11 +125,11 @@ function geminiError(status, payload) {
   return new TranslateRequestError(detail, 502)
 }
 
-async function callGemini(items, config) {
+async function callGemini(items, hint, config) {
   const url = `${GEMINI_ENDPOINT}/models/${encodeURIComponent(config.model)}:generateContent`
   const body = JSON.stringify({
     systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION }] },
-    contents: [{ role: 'user', parts: [{ text: JSON.stringify(items) }] }],
+    contents: [{ role: 'user', parts: [{ text: JSON.stringify({ hint: hint || 'unknown', items }) }] }],
     generationConfig: {
       temperature: 0,
       // 고칠 곳 목록은 길어야 수백 줄이다 — 글 속에 섞인 지시문에 끌려 장문을 뱉어도 여기서 끊는다
@@ -120,7 +169,8 @@ async function callGemini(items, config) {
  * 모델이 돌려준 목록에서 **그대로 적용할 수 있는 것만** 남긴다.
  *
  * original 이 원문에 글자 그대로 없으면 화면에서 그 자리를 찾아 바꿀 수 없다 — 모델이 구절을
- * 다듬어 적었거나 없는 id를 지어낸 경우다. 고친 게 없는 항목(original === corrected)도 버린다.
+ * 다듬어 적었거나 없는 id를 지어낸 경우다. 영어 구절은 단어 경계에 있어야 한다(indexOfPhrase).
+ * 고친 게 없는 항목(original === corrected)도 버린다. lang 은 아는 값이 아니면 비운다.
  */
 export function usableCorrections(raw, items) {
   if (!Array.isArray(raw)) return []
@@ -134,21 +184,23 @@ export function usableCorrections(raw, items) {
     if (!original || original === corrected) continue
     // 고친 글에 태그가 섞여 올 이유가 없다 — 글 속 지시문에 끌려 마크업을 내면 통째로 버린다
     if (/[<>]/.test(corrected)) continue
-    if (!textById.get(id)?.includes(original)) continue
+    const text = textById.get(id)
+    if (typeof text !== 'string' || indexOfPhrase(text, original) === -1) continue
     // 같은 자리를 두 번 적어 보내는 일이 있다
     const key = `${id}\u0000${original}`
     if (seen.has(key)) continue
     seen.add(key)
-    out.push({ id, original, corrected, reason: typeof row.reason === 'string' ? row.reason : '' })
+    const lang = PROOFREAD_LANGS.includes(row.lang) ? row.lang : ''
+    out.push({ id, lang, original, corrected, reason: typeof row.reason === 'string' ? row.reason : '' })
   }
   return out
 }
 
 /**
  * POST /api/proofread 본문을 받아 고칠 곳 목록을 돌려준다.
- * @param body   { items: [{ id, text }] }
+ * @param body   { items: [{ id, text }], hint?: 'ko'|'en'|'ja'|'zh' } — hint 는 뉴스레터의 주 언어(있으면)
  * @param config { key, model? }
- * @returns      { corrections: [{ id, original, corrected, reason }] }
+ * @returns      { corrections: [{ id, lang, original, corrected, reason }] }
  */
 export async function handleProofread(body, config) {
   if (!config?.key) throw new TranslateRequestError('서버에 GEMINI_API_KEY가 설정되지 않았습니다.', 500)
@@ -166,7 +218,8 @@ export async function handleProofread(body, config) {
   const total = items.reduce((sum, item) => sum + item.text.length, 0)
   if (total > MAX_TOTAL_CHARS) throw new TranslateRequestError('검사할 글이 너무 깁니다.')
 
-  const payload = await callGemini(items, {
+  const hint = PROOFREAD_LANGS.includes(body.hint) ? body.hint : ''
+  const payload = await callGemini(items, hint, {
     key: config.key,
     model: (config.model || DEFAULT_GEMINI_MODEL).trim(),
   })

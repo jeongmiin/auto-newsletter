@@ -4,6 +4,7 @@ import { collectTranslationUnits } from '@/utils/newsletterTranslation'
 import {
   applyProofreadSuggestions,
   buildProofreadItems,
+  indexOfPhrase,
   toSuggestions,
 } from '@/utils/newsletterProofread'
 
@@ -47,7 +48,8 @@ const modules: ModuleInstance[] = [
   },
 ]
 
-const units = collectTranslationUnits(modules, metadata)
+// 맞춤법 검사는 어느 언어든 글자가 든 값을 다 모은다(스토어와 같은 옵션)
+const units = collectTranslationUnits(modules, metadata, { letters: 'any' })
 
 describe('buildProofreadItems', () => {
   it('같은 글은 한 번만 보내고, 그 글을 가진 값들을 짝지어 둔다', () => {
@@ -148,5 +150,60 @@ describe('applyProofreadSuggestions', () => {
     const { modules: next } = applyProofreadSuggestions(modules, suggest('1', '참석', '참석과 참석'))
     expect(next[0].properties.body).toContain('관심과 참석과 참석 부탁')
     expect(String(next[0].properties.body).match(/참석/g)).toHaveLength(2)
+  })
+})
+
+describe('영어처럼 띄어 쓰는 글 — 단어 경계', () => {
+  it('indexOfPhrase 는 라틴 구절을 단어 경계에서만, 한중일 구절은 그대로 찾는다', () => {
+    expect(indexOfPhrase('then the end', 'the')).toBe(5)
+    expect(indexOfPhrase('then', 'the')).toBe(-1)
+    expect(indexOfPhrase('상담회가개최됩니다', '개최')).toBe(4)
+    expect(indexOfPhrase('KAI에듀', 'AI에듀')).toBe(-1)
+  })
+
+  const english: ModuleInstance[] = [
+    {
+      id: 'en-1',
+      moduleId: 'TextModule',
+      order: 0,
+      styles: {},
+      properties: {
+        buttonText: 'Register now and then',
+        body: '<p>Then <strong>the</strong> show opens. Visit the booth.</p>',
+      },
+    },
+  ]
+  it('번역용 수집(기본)은 한국어가 든 값만, 검사용 수집은 글자가 든 값을 다 모은다', () => {
+    expect(collectTranslationUnits(english, metadata)).toEqual([])
+    expect(collectTranslationUnits(english, metadata, { letters: 'any' }).map((u) => u.source)).toEqual([
+      'Register now and then',
+      'Then the show opens. Visit the booth.',
+    ])
+    // 숫자·기호뿐인 값은 어느 모드에서도 안 모은다
+    const symbols: ModuleInstance[] = [
+      { id: 's', moduleId: 'TextModule', order: 0, styles: {}, properties: { buttonText: '→ 2026. 10. 15', body: '<p>₩30,000</p>' } },
+    ]
+    expect(collectTranslationUnits(symbols, metadata, { letters: 'any' })).toEqual([])
+  })
+
+  const enUnits = collectTranslationUnits(english, metadata, { letters: 'any' })
+  const { unitsByItemId } = buildProofreadItems(enUnits)
+
+  it('카드의 앞뒤 글도 단어 경계에 맞춘 자리에서 자른다', () => {
+    const [card] = toSuggestions(
+      [{ id: '1', lang: 'en', original: 'the show', corrected: 'the shows', reason: '' }],
+      unitsByItemId,
+    )
+    expect(card).toMatchObject({ lang: 'en', before: 'Then ', after: ' opens. Visit the booth.' })
+  })
+
+  it("서식 안의 'the' 를 바꿀 때 'Then' 은 건드리지 않고, 평문 값도 단어로만 바꾼다", () => {
+    const { modules: next, applied } = applyProofreadSuggestions(english, [
+      ...toSuggestions([{ id: '1', lang: 'en', original: 'the', corrected: 'The', reason: '' }], unitsByItemId),
+      ...toSuggestions([{ id: '0', lang: 'en', original: 'the', corrected: 'THE', reason: '' }], unitsByItemId),
+    ])
+    expect(applied).toBe(1) // 버튼 글귀 'Register now and then' 에는 단어 'the' 가 없다
+    expect(next[0].properties.body).toBe('<p>Then <strong>The</strong> show opens. Visit The booth.</p>')
+    expect(next[0].properties.buttonText).toBe('Register now and then')
   })
 })

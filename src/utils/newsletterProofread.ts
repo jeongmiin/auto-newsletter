@@ -24,9 +24,14 @@ export interface ProofreadItem {
   text: string
 }
 
+/** 검사가 다루는 언어 — 항목(글 한 덩이)마다 검사기가 판단한다. 번역 도구가 내는 언어와 원문 한국어 */
+export type ProofreadLang = 'ko' | 'en' | 'ja' | 'zh'
+
 /** 검사기가 돌려주는 고칠 곳 — `original`은 그 항목의 글 안에 글자 그대로 있는 구절이다 */
 export interface ProofreadCorrection {
   id: string
+  /** 어느 언어 기준으로 봤는지 — 모르면 빈 값 */
+  lang?: ProofreadLang | ''
   original: string
   corrected: string
   reason: string
@@ -36,6 +41,7 @@ export interface ProofreadCorrection {
 export interface ProofreadSuggestion {
   id: string
   unit: TranslationUnit
+  lang: ProofreadLang | ''
   original: string
   corrected: string
   reason: string
@@ -48,6 +54,46 @@ export interface ProofreadSuggestion {
 
 /** 카드에 보여 줄 앞뒤 글의 길이 */
 const CONTEXT_CHARS = 24
+
+/** 라틴 문자(영어 등) — 이 글자로 시작·끝나는 구절은 단어 경계에서만 찾는다 */
+const LATIN = /[A-Za-zÀ-ɏ]/
+const WORD_CHAR = /[A-Za-z0-9À-ɏ]/
+
+/**
+ * text 안에서 phrase 가 있는 자리. 영어처럼 띄어 쓰는 글은 **단어 경계**에서만 찾는다 —
+ * 'the' 를 'then' 안에서 찾아 바꾸면 안 된다. 한국어·일본어·중국어 구절은 경계 규칙 없이 그대로 찾는다.
+ * (프록시 scripts/proofread-core.mjs 의 indexOfPhrase 와 같은 규칙 — 둘을 같이 고친다)
+ */
+export function indexOfPhrase(text: string, phrase: string, from = 0): number {
+  if (!phrase) return -1
+  const headBound = LATIN.test(phrase[0]!)
+  const tailBound = LATIN.test(phrase[phrase.length - 1]!)
+  let at = text.indexOf(phrase, from)
+  while (at !== -1) {
+    const before = at > 0 ? text[at - 1]! : ''
+    const after = text[at + phrase.length] ?? ''
+    const headOk = !headBound || !WORD_CHAR.test(before)
+    const tailOk = !tailBound || !WORD_CHAR.test(after)
+    if (headOk && tailOk) return at
+    at = text.indexOf(phrase, at + 1)
+  }
+  return -1
+}
+
+/** 평문 값에서 구절을 전부 바꾼다(단어 경계 규칙 적용). 바꾼 횟수를 돌려준다 */
+function replaceAllPhrases(text: string, original: string, corrected: string): { text: string; count: number } {
+  let out = ''
+  let from = 0
+  let count = 0
+  for (;;) {
+    const at = indexOfPhrase(text, original, from)
+    if (at === -1) break
+    out += text.slice(from, at) + corrected
+    from = at + original.length
+    count += 1
+  }
+  return { text: out + text.slice(from), count }
+}
 
 /**
  * 보낼 목록을 만든다. **같은 글은 한 번만** 보낸다 —
@@ -89,14 +135,15 @@ export function toSuggestions(
     const { original, corrected } = correction
     if (!original || original === corrected) continue
     for (const unit of unitsByItemId.get(correction.id) ?? []) {
-      const line = unit.source.split('\n').find((text) => text.includes(original))
+      let at = -1
+      const line = unit.source.split('\n').find((text) => (at = indexOfPhrase(text, original)) !== -1)
       if (line === undefined) continue
-      const at = line.indexOf(original)
       const head = line.slice(0, at)
       const tail = line.slice(at + original.length)
       suggestions.push({
         id: `${unit.id}#${suggestions.length}`,
         unit,
+        lang: correction.lang ?? '',
         original,
         corrected,
         reason: correction.reason,
@@ -125,7 +172,7 @@ function replaceInBlock(block: HTMLElement, original: string, corrected: string)
   for (;;) {
     const nodes = textNodesIn(block)
     const joined = nodes.map((node) => asPlain(node.data)).join('')
-    const start = joined.indexOf(original, from)
+    const start = indexOfPhrase(joined, original, from)
     if (start === -1) return count
     const end = start + original.length
 
@@ -171,8 +218,9 @@ export function applyProofreadSuggestions(
     if (typeof current !== 'string') continue
 
     if (!unit.originalHtml) {
-      if (!current.includes(original)) continue
-      parent[key] = current.split(original).join(corrected)
+      const { text, count } = replaceAllPhrases(current, original, corrected)
+      if (!count) continue
+      parent[key] = text
       applied += 1
       continue
     }
