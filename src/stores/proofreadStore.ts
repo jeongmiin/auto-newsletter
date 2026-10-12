@@ -20,6 +20,7 @@ import {
 } from '@/utils/newsletterProofread'
 import { isProofreadEnabled, ProofreadError, requestProofread } from '@/utils/geminiProofreader'
 import type { FontLanguage } from '@/utils/fontFamily'
+import { track } from '@/analytics/umami'
 
 /**
  * 뉴스레터의 주 언어 힌트 — 전체 스타일의 글꼴 언어에서 가늠한다.
@@ -94,6 +95,9 @@ export const useProofreadStore = defineStore('proofread', () => {
       const corrections = await requestProofread(items, hint, controller.signal)
       suggestions.value = toSuggestions(corrections, unitsByItemId)
       clean.value = suggestions.value.length === 0
+      // 검사를 **실제로 돌린** 횟수 — 성공했을 때만 센다(실패·취소는 한도를 쓰지 않았거나 결과가 없다).
+      // 무료 한도(하루 요청 수) 관리와 "돌렸는데 적용은 안 한" 비율(proofread_apply 와 견줌)에 쓴다.
+      track('proofread_run', { suggestions: suggestions.value.length, chars: characterCount.value })
     } catch (error_) {
       if (error_ instanceof DOMException && error_.name === 'AbortError') return
       error.value =

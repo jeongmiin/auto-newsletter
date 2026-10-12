@@ -195,8 +195,8 @@ const applyTranslation = async (): Promise<void> => {
 const applyProofread = async (): Promise<void> => {
   const count = await proofread.apply()
   if (!count) return
-  // 적용에 성공했을 때만 — 검사만 해 보고 안 쓴 것과 갈라 본다
-  track('proofread_apply', { count })
+  // 적용 횟수는 따로 세지 않는다 — 사용량은 검사를 돌린 횟수(proofread_run, proofreadStore)로 본다.
+  // 고칠 곳이 없거나 손으로 고치는 경우가 많아 적용 수는 실제 사용을 작게 잡는다.
   toast.add({
     severity: 'success',
     summary: '맞춤법을 고쳤어요',
