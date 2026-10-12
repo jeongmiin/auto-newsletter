@@ -4,13 +4,13 @@
  *
  * 도구는 셋이다.
  *
- * **다국어 번역** — 캔버스 전체의 한국어 문장을 영어·일본어·중국어(간체)로 번역해 미리 보여주고,
+ * **다국어 번역** — 캔버스 전체의 한국어 문장을 영어·일본어·중국어(간체)·태국어로 번역해 미리 보여주고,
  * 확인·수정한 뒤 캔버스에 적용한다. 문장은 태그를 뺀 텍스트 노드 단위라 굵게·색상·링크 같은
- * 서식은 그대로 남고 글자만 바뀐다. Azure 키는 서버 프록시에만 있다(src/utils/azureTranslator.ts).
+ * 서식은 그대로 남고 글자만 바뀐다. Gemini 키는 서버 프록시에만 있다(src/utils/geminiTranslator.ts).
  *
  * **맞춤법 검사** — 캔버스 전체의 글에서 오탈자·띄어쓰기·맞춤법 오류를 찾아 카드로 보여주고,
  * 사람이 고른 것만 캔버스에 적용한다. 고칠 구절만 갈아 끼우므로 서식은 그대로 남는다.
- * 언어는 글 덩이마다 검사기가 판단한다(한국어·영어·일본어·중국어) — 번역한 뉴스레터도 그대로 검사한다.
+ * 언어는 글 덩이마다 검사기가 판단한다(한국어·영어·일본어·중국어·태국어) — 번역한 뉴스레터도 그대로 검사한다.
  * Gemini 키는 서버 프록시에만 있다(src/utils/geminiProofreader.ts).
  *
  * **HTML 웹 링크 생성** — 아래 설명.
@@ -52,7 +52,7 @@ const toast = useToast()
 // 여기는 화면(카드·버튼)과 주소 복사만 맡는다.
 const webLink = useWebLinkStore()
 
-// ── Azure 뉴스레터 번역 ────────────────────────────────────────────────
+// ── Gemini 뉴스레터 번역 ────────────────────────────────────────────────
 // 상태와 동작은 translationStore에 있다 — 결과는 캔버스 옆 TranslationPreviewPanel에 뜨고,
 // 메뉴를 옮겨도 남아 있다. 여기는 언어 고르기·대상 요약·번역 요청만 맡는다.
 const translation = useTranslationStore()
@@ -182,7 +182,7 @@ const cancelTranslation = (): void => translation.clear()
 const applyTranslation = async (): Promise<void> => {
   const count = await translation.apply()
   if (!count) return
-  // 적용에 성공했을 때만 — 언어별 사용량이 Azure 과금과 바로 이어진다
+  // 적용에 성공했을 때만 — 언어별 사용량이 Gemini 무료 한도 소모와 바로 이어진다
   track('translate_apply', { lang: translation.targetLanguage, count })
   toast.add({
     severity: 'success',
@@ -206,7 +206,7 @@ const applyProofread = async (): Promise<void> => {
 }
 
 /** 카드의 언어 태그 설명 — 검사기가 항목마다 판단한 언어 */
-const proofreadLangLabel: Record<string, string> = { ko: '한국어', en: '영어', ja: '일본어', zh: '중국어' }
+const proofreadLangLabel: Record<string, string> = { ko: '한국어', en: '영어', ja: '일본어', zh: '중국어', th: '태국어' }
 
 /** 맞춤법 검사 주 버튼의 글자 — 검사 중 · 다시 검사 · 처음 */
 const proofreadCta = computed(() => {
@@ -491,7 +491,7 @@ onBeforeUnmount(() => {
         </button>
       </footer>
 
-      <!-- ── Azure 다국어 번역 ── -->
+      <!-- ── Gemini 다국어 번역 ── -->
       <div v-if="isTranslate" class="tool-body tr-body">
         <p v-if="!translation.enabled" class="ht-note tool-note">
           번역 서버 주소가 설정되지 않아 지금은 번역할 수 없어요.
@@ -542,10 +542,15 @@ onBeforeUnmount(() => {
           </div>
         </template>
 
-        <!-- 번역 중 -->
-        <p v-else-if="translation.translating" class="ht-note tool-note">
-          {{ translation.targetLanguageLabel }}로 번역하는 중…
-        </p>
+        <!-- 번역 중 — 맞춤법 검사와 같은 자리(가운데)에 그림 + 문구 -->
+        <div v-else-if="translation.translating" class="wl-empty tr-empty">
+          <span class="wl-hero">
+            <img :src="stateEyesIcon" width="103" height="103" alt="" />
+          </span>
+          <div class="wl-empty-text">
+            <p class="wl-empty-title">{{ translation.targetLanguageLabel }}로 번역하는 중…</p>
+          </div>
+        </div>
 
         <!-- 아직 돌리기 전 -->
         <template v-else>
@@ -575,7 +580,7 @@ onBeforeUnmount(() => {
         <p v-if="translation.error" class="ht-error">{{ translation.error }}</p>
 
         <template v-if="translation.hasResult">
-          <p class="tr-foot-note">*모든 번역이 한 번에 적용돼요.</p>
+          <p class="tr-foot-note">*모든 번역이 한 번에 적용돼요. AI 제안이니 확인 후 적용해 주세요.</p>
           <div class="tr-foot-actions">
             <button type="button" class="tool-cta tool-cta--ghost" @click="cancelTranslation">
               취소
@@ -692,7 +697,7 @@ onBeforeUnmount(() => {
                 오탈자·띄어쓰기·맞춤법을 찾아드려요.<br />“맞춤법 검사하기”를 눌러주세요
               </p>
               <p class="tr-empty-hint">
-                한국어·영어·일본어·중국어 글을 각 언어 기준으로 봐요.<br />행사명·브랜드 같은
+                한국어·영어·일본어·중국어·태국어 글을 각 언어 기준으로 봐요.<br />행사명·브랜드 같은
                 고유명사와 말투는 그대로 두고,<br />고칠 곳은 직접 골라서 적용해요.
               </p>
             </div>

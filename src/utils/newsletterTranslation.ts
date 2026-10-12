@@ -2,7 +2,7 @@ import type { EditableProp, ModuleInstance, ModuleMetadata } from '@/types'
 import { normalizeNbspForWordBreak } from '@/utils/quillHtmlProcessor'
 import { sanitizeHtml } from '@/utils/sanitize'
 
-export type TranslationLanguage = 'en' | 'ja' | 'zh-Hans'
+export type TranslationLanguage = 'en' | 'ja' | 'zh-Hans' | 'th'
 export type TranslationPath = Array<string | number>
 
 /**

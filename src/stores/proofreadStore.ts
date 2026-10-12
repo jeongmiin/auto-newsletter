@@ -26,7 +26,7 @@ import type { FontLanguage } from '@/utils/fontFamily'
  * 번역을 적용하면 글꼴 언어가 함께 바뀌므로(일본어·중국어) 그걸 그대로 쓴다.
  * '기본'은 한국어·영어 공용이라 힌트를 주지 않는다 — 검사기가 항목마다 스스로 판단한다.
  */
-const HINT_BY_FONT_LANGUAGE: Partial<Record<FontLanguage, ProofreadLang>> = { ja: 'ja', zh: 'zh' }
+const HINT_BY_FONT_LANGUAGE: Partial<Record<FontLanguage, ProofreadLang>> = { ja: 'ja', zh: 'zh', th: 'th' }
 
 export const useProofreadStore = defineStore('proofread', () => {
   const moduleStore = useModuleStore()

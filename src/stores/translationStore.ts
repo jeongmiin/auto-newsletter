@@ -2,7 +2,7 @@
  * 다국어 번역 상태 — AI 도구 패널의 번역 화면(언어 고르기 · 결과 확인·수정)이 쓴다.
  *
  * 컴포넌트에 두지 않는 이유: 레일 메뉴를 옮기면 좌측 패널이 통째로 내려가 번역 결과가 사라진다.
- * 결과는 Azure 글자 수를 쓰고 받은 것이라, 다른 메뉴에 다녀와도 그대로 남아 있어야 한다.
+ * 결과는 Gemini 무료 한도(하루 요청 수)를 쓰고 받은 것이라, 다른 메뉴에 다녀와도 그대로 남아 있어야 한다.
  * (새로고침하면 작업물과 함께 사라진다 — 작업물 자체가 메모리에만 있다)
  */
 import { computed, ref } from 'vue'
@@ -16,7 +16,7 @@ import {
   type TranslationChange,
   type TranslationLanguage,
 } from '@/utils/newsletterTranslation'
-import { isTranslationEnabled, translateUnits, TranslationError } from '@/utils/azureTranslator'
+import { isTranslationEnabled, translateUnits, TranslationError } from '@/utils/geminiTranslator'
 import type { FontLanguage } from '@/utils/fontFamily'
 
 // PrimeVue Select의 options가 readonly 배열을 받지 않아 일반 배열로 둔다 — 고치지 말 것
@@ -24,12 +24,14 @@ export const TRANSLATION_LANGUAGES: Array<{ value: TranslationLanguage; label: s
   { value: 'en', label: '영어' },
   { value: 'ja', label: '일본어' },
   { value: 'zh-Hans', label: '중국어(간체)' },
+  { value: 'th', label: '태국어' },
 ]
 
 const FONT_LANGUAGE_BY_TARGET: Record<TranslationLanguage, FontLanguage> = {
   en: 'default',
   ja: 'ja',
   'zh-Hans': 'zh',
+  th: 'th',
 }
 
 export const useTranslationStore = defineStore('translation', () => {
@@ -54,7 +56,7 @@ export const useTranslationStore = defineStore('translation', () => {
     () => TRANSLATION_LANGUAGES.find((l) => l.value === targetLanguage.value)?.label ?? '',
   )
 
-  // 캔버스 전체가 대상이다. 값 하나가 카드 한 장이고, 글자 수가 곧 Azure에 보내는 양이다.
+  // 캔버스 전체가 대상이다. 값 하나가 카드 한 장이고, 글자 수가 곧 번역기에 보내는 양이다.
   const units = computed(() =>
     collectTranslationUnits(moduleStore.modules, moduleStore.availableModules),
   )

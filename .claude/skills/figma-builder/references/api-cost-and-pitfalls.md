@@ -45,7 +45,7 @@
 
 ```
 npm run dev              # 5173
-npm run proxy:translate  # 5175 — Azure 키를 브라우저에 노출하지 않으려는 별도 프로세스
+npm run proxy:translate  # 5175 — Gemini 키를 브라우저에 노출하지 않으려는 별도 프로세스
 ```
 
 ---

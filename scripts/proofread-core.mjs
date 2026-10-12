@@ -1,33 +1,24 @@
 /**
- * Gemini 맞춤법 검사 호출의 공통 부분 — 로컬 Node 프록시(azure-translate-proxy.mjs)와
- * Cloudflare Worker(azure-translate-worker.mjs)가 같이 쓴다(번역의 translate-core.mjs와 같은 자리).
+ * Gemini 맞춤법 검사 호출의 공통 부분 — 로컬 Node 프록시(translate-proxy.mjs)와
+ * Cloudflare Worker(translate-worker.mjs)가 같이 쓴다(번역의 translate-core.mjs와 같은 자리).
  *
- * 요청 검증 · Gemini 호출 · 응답 정리만 담당하고, HTTP(헤더·CORS)는 각 실행 환경이 맡는다.
+ * 요청 검증 · 지시문 · 응답 정리만 담당한다. Gemini 호출 자체(시간 제한·재시도·오류 문구)는
+ * gemini-core.mjs 가, HTTP(헤더·CORS)는 각 실행 환경이 맡는다.
  *
- * 무료 등급으로 쓴다 — 결제를 붙이지 않은 프로젝트의 키는 한도를 넘으면 과금되지 않고
- * 요청이 거절(429)된다. 그래서 429·503을 사람이 읽을 문구로 바꿔 돌려주는 게 이 파일의 큰 일이다.
+ * 모델 선택 근거(2026-10-01, 실제 뉴스레터 3편): Flash Lite 가 1~3초에 모두 응답했고 일부러 넣은
+ * 오류 15개를 다 찾으면서 고유명사를 건드린 제안이 없었다. 상위 Flash 는 무료 등급에서 503이 잦았다.
  */
-import { TranslateRequestError } from './translate-core.mjs'
+import { TranslateRequestError } from './request-error.mjs'
+import { callGeminiJson, DEFAULT_GEMINI_MODEL } from './gemini-core.mjs'
 
-/**
- * 기본 모델.
- *
- * 2026-10-01에 실제 뉴스레터 3편으로 견줬다: 3.7/3.8 Flash는 조금 더 꼼꼼하지만 무료 등급에서
- * 12번 중 10번이 503(수요 과다)이었고 11~16초가 걸렸다. Flash Lite는 1~3초에 3편 모두 응답했고,
- * 일부러 넣은 오류 15개를 다 찾으면서 고유명사를 건드린 제안이 없었다.
- */
-export const DEFAULT_GEMINI_MODEL = 'gemini-3.5-flash-lite'
-export const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta'
+export { DEFAULT_GEMINI_MODEL, GEMINI_ENDPOINT } from './gemini-core.mjs'
 
 const MAX_ITEMS = 400
 /** 뉴스레터 한 편은 3,000~7,000자다. 넉넉히 잡되, 붙여 넣은 긴 글로 한도를 태우지 않게 막는다 */
 const MAX_TOTAL_CHARS = 40_000
-const GEMINI_TIMEOUT_MS = 40_000
-/** 503(수요 과다)은 잠깐 뒤에 풀리는 일이 많아 한 번만 더 해 본다 */
-const RETRY_DELAY_MS = 1_500
 
 /** 검사가 다루는 언어 — 번역 도구가 내는 언어(영·일·중)와 원문 한국어. 응답의 lang 도 이 중 하나로 받는다 */
-export const PROOFREAD_LANGS = ['ko', 'en', 'ja', 'zh']
+export const PROOFREAD_LANGS = ['ko', 'en', 'ja', 'zh', 'th']
 
 /**
  * 다국어 교정 지시.
@@ -54,9 +45,10 @@ const SYSTEM_INSTRUCTION = `당신은 뉴스레터 교정자입니다. 입력은
 - 영어(en): 영국식·미국식 철자 차이(color/colour), 옥스퍼드 콤마, 제목·버튼의 대문자 스타일, 축약형(don't)
 - 일본어(ja): 표기 흔들림(表記ゆれ — 한자·히라가나·가타카나 선택, 送り仮名 차이), 경어 수준
 - 중국어(zh): 간체·번체 혼용, 전각·반각 문장부호 스타일, 지역별 어휘 차이
+- 태국어(th): 외래어 음차 표기(ทับศัพท์)의 선택, 문장 사이 띄어쓰기 스타일, 격식 수준(ครับ/ค่ะ 유무)
 
 출력 규칙:
-- lang 은 그 항목을 어느 언어 기준으로 봤는지(ko·en·ja·zh 중 하나)
+- lang 은 그 항목을 어느 언어 기준으로 봤는지(ko·en·ja·zh·th 중 하나)
 - original 은 해당 text 안에 **글자 그대로 있는** 가장 짧은 구절(오류가 든 단어와 필요하면 앞뒤 한 단어)
 - corrected 는 original 을 고친 것
 - reason 은 **반드시 한국어로** 한 줄(20자 이내) — 영어·일본어·중국어 항목의 이유도 한국어로 씁니다(읽는 사람이 한국인)
@@ -100,69 +92,6 @@ export function indexOfPhrase(text, phrase, from = 0) {
     at = text.indexOf(phrase, at + 1)
   }
   return -1
-}
-
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
-
-/**
- * Gemini 오류를 사람이 읽을 문구로.
- * 429는 '분당'과 '하루' 한도가 같은 코드로 온다 — 어느 쪽인지는 본문의 quotaId에만 적혀 있다.
- */
-function geminiError(status, payload) {
-  if (status === 429) {
-    const perDay = /PerDay/i.test(JSON.stringify(payload ?? ''))
-    return new TranslateRequestError(
-      perDay
-        ? '오늘 쓸 수 있는 무료 검사 횟수를 모두 썼어요. 내일 다시 시도해 주세요.'
-        : '검사 요청이 잠시 몰렸어요. 1분 뒤 다시 시도해 주세요.',
-      429,
-    )
-  }
-  if (status === 503) {
-    return new TranslateRequestError('지금 검사 서버가 붐벼요. 잠시 뒤 다시 시도해 주세요.', 503)
-  }
-  const detail = payload?.error?.message || `Gemini 오류 (${status})`
-  return new TranslateRequestError(detail, 502)
-}
-
-async function callGemini(items, hint, config) {
-  const url = `${GEMINI_ENDPOINT}/models/${encodeURIComponent(config.model)}:generateContent`
-  const body = JSON.stringify({
-    systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION }] },
-    contents: [{ role: 'user', parts: [{ text: JSON.stringify({ hint: hint || 'unknown', items }) }] }],
-    generationConfig: {
-      temperature: 0,
-      // 고칠 곳 목록은 길어야 수백 줄이다 — 글 속에 섞인 지시문에 끌려 장문을 뱉어도 여기서 끊는다
-      maxOutputTokens: 8192,
-      responseMimeType: 'application/json',
-      responseSchema: RESPONSE_SCHEMA,
-    },
-  })
-
-  for (let attempt = 0; ; attempt += 1) {
-    const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), GEMINI_TIMEOUT_MS)
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': config.key },
-        body,
-        signal: controller.signal,
-      })
-      const payload = await response.json().catch(() => null)
-      if (response.status === 503 && attempt === 0) {
-        await sleep(RETRY_DELAY_MS)
-        continue
-      }
-      if (!response.ok) throw geminiError(response.status, payload)
-      return payload
-    } catch (error) {
-      if (error instanceof TranslateRequestError) throw error
-      throw new TranslateRequestError('검사 서버에 연결하지 못했어요. 잠시 뒤 다시 시도해 주세요.', 502)
-    } finally {
-      clearTimeout(timeout)
-    }
-  }
 }
 
 /**
@@ -219,18 +148,13 @@ export async function handleProofread(body, config) {
   if (total > MAX_TOTAL_CHARS) throw new TranslateRequestError('검사할 글이 너무 깁니다.')
 
   const hint = PROOFREAD_LANGS.includes(body.hint) ? body.hint : ''
-  const payload = await callGemini(items, hint, {
+  const parsed = await callGeminiJson({
     key: config.key,
     model: (config.model || DEFAULT_GEMINI_MODEL).trim(),
+    systemInstruction: SYSTEM_INSTRUCTION,
+    input: { hint: hint || 'unknown', items },
+    responseSchema: RESPONSE_SCHEMA,
+    what: '검사',
   })
-
-  const text = (payload?.candidates?.[0]?.content?.parts ?? []).map((part) => part?.text ?? '').join('')
-  let parsed
-  try {
-    parsed = JSON.parse(text)
-  } catch {
-    // 답이 잘렸거나(출력 한도) 안전 필터에 막혀 빈 답이 온 경우
-    throw new TranslateRequestError('검사 결과를 읽지 못했어요. 다시 시도해 주세요.', 502)
-  }
   return { corrections: usableCorrections(parsed, items) }
 }

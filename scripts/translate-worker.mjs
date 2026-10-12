@@ -1,41 +1,39 @@
 /**
- * Azure Translator 프록시 — **Cloudflare Worker** 버전(배포본용).
+ * 번역·맞춤법 검사 프록시 — **Cloudflare Worker** 버전(배포본용).
  *
  * GitHub Pages(jeongmiin.github.io)와 운영 도메인(newsletter.messeesang.com)은 정적 호스팅이라
- * 서버 코드를 못 돌린다. 이 Worker가 그 자리를 맡는다: Azure 키는 Worker 시크릿에만 있고,
- * 브라우저는 Worker 주소(VITE_AZURE_TRANSLATE_URL)만 안다. 로직은 로컬 Node 프록시와 같다(translate-core.mjs).
+ * 서버 코드를 못 돌린다. 이 Worker가 그 자리를 맡는다: Gemini 키는 Worker 시크릿에만 있고,
+ * 브라우저는 Worker 주소(VITE_TRANSLATE_URL·VITE_PROOFREAD_URL)만 안다.
+ * 로직은 로컬 Node 프록시와 같다(translate-core.mjs · proofread-core.mjs).
  *
  * 배포(최초 한 번):
  *   npx wrangler login
- *   npx wrangler secret put AZURE_TRANSLATOR_KEY --config scripts/wrangler.jsonc
+ *   npx wrangler secret put GEMINI_API_KEY --config scripts/wrangler.jsonc
  *   npm run deploy:translate
  * 이후 코드가 바뀌면 npm run deploy:translate만 다시 실행한다.
  *
- * 설정은 scripts/wrangler.jsonc의 vars에 있다(허용 출처·Azure 지역).
- * 무료 플랜(하루 10만 요청)이면 충분하다 — 뉴스레터 한 통 번역이 요청 1~2개다.
+ * 설정은 scripts/wrangler.jsonc의 vars에 있다(허용 출처·모델).
+ * 무료 플랜(하루 10만 요청)이면 충분하다 — 뉴스레터 한 통 번역이 요청 2~3개다.
  *
- * 맞춤법 검사(/api/proofread)도 이 Worker가 받는다 — Gemini 키(GEMINI_API_KEY)를 같은 방식으로
- * 숨긴다(proofread-core.mjs). 키는 `npx wrangler secret put GEMINI_API_KEY --config scripts/wrangler.jsonc`.
- *
- * ⚠ Gemini 호출만은 Worker가 직접 하지 않고 **북미에 고정한 Durable Object(GeminiRelay)** 를 거친다.
+ * ⚠ Gemini 호출은 Worker가 직접 하지 않고 **북미에 고정한 Durable Object(GeminiRelay)** 를 거친다.
  *   Worker는 요청이 들어온 Cloudflare 지점에서 돌고 바깥 호출도 거기서 나간다. 통신사 경로에 따라
  *   Gemini API 서비스 지역이 아닌 지점을 타면 "User location is not supported"로 거절당한다
  *   (2026-10-08 실측). DO는 만들 때 locationHint 로 지역을 못 박을 수 있어 그 안에서
- *   부르면 늘 북미에서 나간다. 번역(Azure)은 지역 제한이 없어 그대로 둔다.
+ *   부르면 늘 북미에서 나간다. 번역도 Gemini 로 옮겼으므로 둘 다 중계 객체를 거친다.
  */
 import { handleTranslation, parseAllowedOrigins, TranslateRequestError } from './translate-core.mjs'
 import { handleProofread } from './proofread-core.mjs'
 import { DurableObject } from 'cloudflare:workers'
 
-/** 맞춤법 검사를 Gemini 서비스 지역(북미)에서 대신 부르는 중계 객체 — 상태는 쓰지 않는다 */
+/** Gemini 를 서비스 지역(북미)에서 대신 부르는 중계 객체 — 상태는 쓰지 않는다. 경로로 일을 고른다 */
 export class GeminiRelay extends DurableObject {
   async fetch(request) {
     try {
       const body = await request.json()
-      const result = await handleProofread(body, {
-        key: (this.env.GEMINI_API_KEY || '').trim(),
-        model: this.env.GEMINI_MODEL,
-      })
+      const config = { key: (this.env.GEMINI_API_KEY || '').trim(), model: this.env.GEMINI_MODEL }
+      const { pathname } = new URL(request.url)
+      const result =
+        pathname === '/translate' ? await handleTranslation(body, config) : await handleProofread(body, config)
       return Response.json(result)
     } catch (error) {
       const status = error instanceof TranslateRequestError ? error.status : 500
@@ -46,9 +44,9 @@ export class GeminiRelay extends DurableObject {
 }
 
 /** 중계 객체 하나를 북미(enam)에 만들어 두고 계속 쓴다 — locationHint 는 처음 만들 때만 적용된다 */
-const proofreadViaRelay = async (env, body) => {
+const viaRelay = async (env, path, body) => {
   const stub = env.GEMINI_RELAY.get(env.GEMINI_RELAY.idFromName('relay'), { locationHint: 'enam' })
-  const res = await stub.fetch('https://relay/proofread', {
+  const res = await stub.fetch(`https://relay${path}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -91,12 +89,9 @@ export default {
     }
 
     if (request.method === 'GET' && pathname === '/health') {
-      return json(
-        200,
-        { ok: true, configured: !!env.AZURE_TRANSLATOR_KEY, proofread: !!env.GEMINI_API_KEY },
-        origin,
-        allowed,
-      )
+      // 번역·맞춤법 검사 모두 Gemini 키 하나로 돈다
+      const configured = !!env.GEMINI_API_KEY
+      return json(200, { ok: true, configured, proofread: configured }, origin, allowed)
     }
     const isProofread = pathname === '/api/proofread'
     if (request.method !== 'POST' || (pathname !== '/api/translate' && !isProofread)) {
@@ -116,16 +111,8 @@ export default {
       const body = await request.json().catch(() => {
         throw new TranslateRequestError('요청 JSON 형식이 올바르지 않습니다.')
       })
-      if (isProofread) {
-        const { status, payload } = await proofreadViaRelay(env, body)
-        return json(status, payload, origin, allowed)
-      }
-      const result = await handleTranslation(body, {
-        key: (env.AZURE_TRANSLATOR_KEY || '').trim(),
-        region: (env.AZURE_TRANSLATOR_REGION || '').trim(),
-        endpoint: env.AZURE_TRANSLATOR_ENDPOINT,
-      })
-      return json(200, result, origin, allowed)
+      const { status, payload } = await viaRelay(env, isProofread ? '/proofread' : '/translate', body)
+      return json(status, payload, origin, allowed)
     } catch (error) {
       const status = error instanceof TranslateRequestError ? error.status : 500
       const message = error instanceof Error ? error.message : '요청을 처리하는 중 오류가 발생했습니다.'

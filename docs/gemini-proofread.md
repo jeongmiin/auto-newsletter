@@ -52,7 +52,7 @@ npm.cmd run dev
 
 ## 운영 배포 — Cloudflare Worker
 
-번역용 Worker(`scripts/azure-translate-worker.mjs`)가 맞춤법 검사도 받는다.
+번역용 Worker(`scripts/translate-worker.mjs`)가 맞춤법 검사도 받는다.
 
 ```powershell
 # 1) Gemini 키를 Worker 시크릿으로 등록 (프롬프트에 붙여 넣는다)
@@ -74,10 +74,10 @@ Worker는 요청이 들어온 Cloudflare 지점에서 돌고 바깥 호출도 �
 `User location is not supported for the API use.`로 거절한다(2026-10-08 실측 — 로컬 프록시는 한국에서
 직접 부르므로 문제없었다).
 
-그래서 Gemini 호출만 **Durable Object `GeminiRelay`**(`azure-translate-worker.mjs`)가 대신 한다.
+그래서 Gemini 호출만 **Durable Object `GeminiRelay`**(`translate-worker.mjs`)가 대신 한다.
 DO는 처음 만들 때 `locationHint: 'enam'`(북미 동부)으로 지역을 못 박을 수 있어 늘 북미에서 나간다.
 무료 플랜에서도 쓸 수 있고(`wrangler.jsonc`의 `durable_objects`·`migrations`), 상태는 저장하지 않는다.
-번역(Azure)은 지역 제한이 없어 Worker가 직접 부른다.
+번역도 Gemini 로 옮긴 뒤(docs/gemini-translate.md)로는 둘 다 같은 중계 객체를 거친다.
 
 - 중계 객체를 다른 지역으로 옮기려면 `idFromName('relay')`의 이름을 바꾸거나 새 힌트로 새 객체를 만든다
   — 힌트는 **처음 만들 때만** 적용된다.
@@ -85,12 +85,12 @@ DO는 처음 만들 때 `locationHint: 'enam'`(북미 동부)으로 지역을 �
 
 ## 다국어 — 언어는 항목(글 덩이)마다 검사기가 판단한다
 
-번역 도구가 내는 영어·일본어·중국어(간체)와 원문 한국어를 한 검사기로 본다. 모델은 그대로
+번역 도구가 내는 영어·일본어·중국어(간체)·태국어와 원문 한국어를 한 검사기로 본다. 모델은 그대로
 Flash Lite 이고 프롬프트만 다국어다(`scripts/proofread-core.mjs`의 `SYSTEM_INSTRUCTION`).
 
 - **항목 단위 판단**: 문단·제목·버튼 글귀 하나가 항목 하나다. 일본어 뉴스레터 안에 영어 문단이
   통째로 있으면 그 항목만 영어 기준으로 본다. 응답의 `lang`이 그 판단이고, 화면 카드에는 한국어가
-  아닐 때만 EN·JA·ZH 태그가 붙는다.
+  아닐 때만 EN·JA·ZH·TH 태그가 붙는다.
 - **힌트**: 전체 스타일의 글꼴 언어가 일본어·중국어면 `hint`로 보낸다(번역을 적용하면 글꼴 언어가
   같이 바뀐다). 참고값일 뿐이라 명백히 다른 언어인 항목은 그 언어 규칙을 따른다. '기본' 글꼴은
   한국어·영어 공용이라 힌트를 주지 않는다.
@@ -133,5 +133,5 @@ Flash Lite 이고 프롬프트만 다국어다(`scripts/proofread-core.mjs`의 `
 - 고칠 곳 하나가 카드 한 장이다. 카드마다 '적용'을 끌 수 있고, 고른 것만 한 번에 적용된다.
 - 고칠 **구절만** 갈아 끼운다 — 굵게·색상·링크 같은 서식은 그대로 남는다(`src/utils/newsletterProofread.ts`).
 - 검사기에는 고유명사·말투·줄바꿈을 건드리지 말라고 지시한다. 그래도 AI 제안이므로 자동 적용하지 않는다.
-- 한국어가 아닌 항목의 카드에는 언어 태그(EN·JA·ZH)가 붙는다 — 일본어 뉴스레터에 영어 제안이 섞여도 알아본다.
+- 한국어가 아닌 항목의 카드에는 언어 태그(EN·JA·ZH·TH)가 붙는다 — 일본어 뉴스레터에 영어 제안이 섞여도 알아본다.
 - 적용은 Ctrl+Z 한 번으로 되돌아간다.

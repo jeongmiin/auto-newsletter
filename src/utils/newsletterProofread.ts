@@ -25,7 +25,7 @@ export interface ProofreadItem {
 }
 
 /** 검사가 다루는 언어 — 항목(글 한 덩이)마다 검사기가 판단한다. 번역 도구가 내는 언어와 원문 한국어 */
-export type ProofreadLang = 'ko' | 'en' | 'ja' | 'zh'
+export type ProofreadLang = 'ko' | 'en' | 'ja' | 'zh' | 'th'
 
 /** 검사기가 돌려주는 고칠 곳 — `original`은 그 항목의 글 안에 글자 그대로 있는 구절이다 */
 export interface ProofreadCorrection {
