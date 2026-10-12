@@ -113,3 +113,14 @@ html, body{
   grid-template-columns: 308px;
   gap: 20px;
 }
+
+::highlight(proofread) {
+  background-color: #fde5e7;
+  color: #222222;
+  text-decoration: underline wavy #f04452;
+}
+::highlight(proofread-active) {
+  background-color: #f29ea8;
+  color: #222222;
+  text-decoration: underline wavy #c0202e;
+}

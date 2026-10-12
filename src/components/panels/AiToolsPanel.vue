@@ -33,6 +33,7 @@ import Checkbox from 'primevue/checkbox'
 import { useModuleStore } from '@/stores/moduleStore'
 import { TRANSLATION_LANGUAGES, useTranslationStore } from '@/stores/translationStore'
 import { useProofreadStore } from '@/stores/proofreadStore'
+import { requestScrollToSuggestion } from '@/utils/proofreadHighlight'
 import { trackWebLink, useWebLinkStore, webLinkToast } from '@/stores/webLinkStore'
 import type { TranslationLanguage } from '@/utils/newsletterTranslation'
 import { track } from '@/analytics/umami'
@@ -146,6 +147,9 @@ const selectUnit = (unitId: string, moduleInstanceId: string): void => {
 }
 const selectSuggestion = (id: string, moduleInstanceId: string): void => {
   proofread.selectedId = id
+  // 캔버스가 그 구절의 표시를 갱신하는 순간 거기로 스크롤한다(proofreadHighlight).
+  // 표시를 지원하지 않는 브라우저나 구절을 못 찾은 경우를 위해 모듈로는 먼저 간다.
+  requestScrollToSuggestion(id)
   scrollToModule(moduleInstanceId)
 }
 
