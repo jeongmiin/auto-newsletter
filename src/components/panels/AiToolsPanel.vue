@@ -42,6 +42,11 @@ import toolWeblinkIcon from '@/assets/img/ai/tool_weblink.png'
 import stateEyesIcon from '@/assets/img/ai/state_eyes.png'
 import stateWeblinkIcon from '@/assets/img/ai/state_weblink.png'
 import stateTranslateIcon from '@/assets/img/ai/state_translate.png'
+import toolSpellingIcon from '@/assets/img/ai/tool_spelling.png'
+import stateSpellingIcon from '@/assets/img/ai/state_spelling.png'
+import spellingIcon from '@/assets/img/spelling_icon.png'
+import translateIcon from '@/assets/img/translate_icon.png'
+import { useFakeProgress } from '@/composables/useFakeProgress'
 
 const moduleStore = useModuleStore()
 const toast = useToast()
@@ -52,16 +57,37 @@ const toast = useToast()
 // 여기는 화면(카드·버튼)과 주소 복사만 맡는다.
 const webLink = useWebLinkStore()
 
+/**
+ * 파일명을 (이름, 확장자)로 나눈다 — 긴 이름을 줄일 때 `.html`은 남기고 앞부분만 …으로 접기 위해.
+ * 확장자가 없으면 전부 이름이다.
+ */
+const splitFileName = (name: string): { stem: string; ext: string } => {
+  const at = name.lastIndexOf('.')
+  return at > 0 ? { stem: name.slice(0, at), ext: name.slice(at) } : { stem: name, ext: '' }
+}
+const linkFileName = computed(() => splitFileName(webLink.existing?.name ?? ''))
+
 // ── Gemini 뉴스레터 번역 ────────────────────────────────────────────────
 // 상태와 동작은 translationStore에 있다 — 결과는 캔버스 옆 TranslationPreviewPanel에 뜨고,
 // 메뉴를 옮겨도 남아 있다. 여기는 언어 고르기·대상 요약·번역 요청만 맡는다.
 const translation = useTranslationStore()
 const translationLanguages = TRANSLATION_LANGUAGES
+// 번역은 10초 안팎 걸린다 — 끝나는 시점을 모르니 시간으로 흉내 낸 진행률을 보여 준다(Figma 1974-11761).
+// 성공하면 100%를 잠깐 보여 준 뒤 결과로 넘어가고, 실패하면 바로 내린다.
+const translateProgress = useFakeProgress(
+  () => translation.translating,
+  () => translation.hasResult && !translation.error,
+)
 
 // ── Gemini 맞춤법 검사 ─────────────────────────────────────────────────
 // 상태와 동작은 proofreadStore에 있다 — 번역과 같은 이유로 메뉴를 옮겨도 결과가 남는다.
 // 여기는 대상 요약·검사 요청·고칠 곳 고르기만 맡는다.
 const proofread = useProofreadStore()
+// 검사도 같은 가짜 진행률(Figma 1980-15601). 성공은 고칠 곳이 있든 없든 오류가 없는 것이다.
+const proofreadProgress = useFakeProgress(
+  () => proofread.checking,
+  () => !proofread.error,
+)
 
 // 문장 수·글자 수는 모듈 메타데이터(어떤 속성이 번역 대상인지)가 있어야 셀 수 있다 — 펼칠 때 미리 읽어 둔다
 watch(
@@ -84,7 +110,7 @@ type ToolKey = 'weblink' | 'translate' | 'proofread'
 const AI_TOOLS: ReadonlyArray<{ key: ToolKey; label: string; image?: string; icon?: string }> = [
   { key: 'weblink', label: 'HTML 웹 링크 생성', image: toolWeblinkIcon },
   { key: 'translate', label: '다국어 번역', image: toolTranslateIcon },
-  { key: 'proofread', label: '맞춤법 검사', icon: 'spellcheck' },
+  { key: 'proofread', label: '맞춤법 검사', image: toolSpellingIcon },
 ]
 
 /**
@@ -178,6 +204,8 @@ const autoGrow = (event: Event): void => growTextarea(event.target as HTMLTextAr
 
 /** 결과를 버리고 언어 고르기 화면으로 되돌아간다 */
 const cancelTranslation = (): void => translation.clear()
+/** 결과 화면의 '다시 번역하기' — 지금 결과를 버리고 같은 언어로 한 번 더 받는다(무료 한도 2~3회 소모) */
+const retranslate = (): void => void translation.request()
 
 const applyTranslation = async (): Promise<void> => {
   const count = await translation.apply()
@@ -210,7 +238,7 @@ const proofreadLangLabel: Record<string, string> = { ko: '한국어', en: '영�
 
 /** 맞춤법 검사 주 버튼의 글자 — 검사 중 · 다시 검사 · 처음 */
 const proofreadCta = computed(() => {
-  if (proofread.checking) return '검사하는 중'
+  if (proofreadProgress.visible.value) return '검사하는 중'
   return proofread.clean ? '다시 검사하기' : '맞춤법 검사하기'
 })
 
@@ -349,6 +377,16 @@ onBeforeUnmount(() => {
             </span>
             <span class="tool-title">{{ activeToolLabel }}</span>
           </button>
+          <!-- 번역 결과를 보는 중 — 같은 언어로 한 번 더 돌린다 (Figma 1711-4645). 결과가 마음에 안 들 때 -->
+          <button
+            v-if="isTranslate && translation.hasResult && !translateProgress.visible.value"
+            type="button"
+            class="tool-head-action"
+            @click="retranslate"
+          >
+            <span class="material-symbols-outlined" aria-hidden="true">refresh</span>
+            다시 번역하기
+          </button>
         </div>
 
         <!-- 한국어 → 고른 언어. 결과를 보는 중에는 바꿀 수 없다(그 언어로 받은 결과라서) -->
@@ -409,9 +447,13 @@ onBeforeUnmount(() => {
               <dt>저장위치</dt>
               <dd>{{ webLink.savePath }}</dd>
             </div>
+            <!-- 이름이 길면 앞부분만 …으로 줄이고 확장자(.html)는 항상 보인다. 전체 이름은 툴팁으로 -->
             <div class="wl-info-row">
               <dt>HTML 파일명</dt>
-              <dd>{{ webLink.existing.name }}</dd>
+              <dd class="wl-file" :title="webLink.existing.name">
+                <span class="wl-file-stem">{{ linkFileName.stem }}</span
+                ><span class="wl-file-ext">{{ linkFileName.ext }}</span>
+              </dd>
             </div>
             <!-- 주소 전체는 길고 읽히지 않아 감춘다 — 툴팁과 새 창 열기로만 -->
             <div class="wl-info-row">
@@ -497,6 +539,33 @@ onBeforeUnmount(() => {
           번역 서버 주소가 설정되지 않아 지금은 번역할 수 없어요.
         </p>
 
+        <!-- 번역 중 (Figma 1974-11761) — 그림 + 문구 + 가짜 진행률. 결과보다 먼저 두어 100% 순간이 보이게 한다 -->
+        <div v-else-if="translateProgress.visible.value" class="tr-loading" aria-live="polite">
+          <div class="tr-loading-top">
+            <img :src="translateIcon" width="200" height="200" alt="" class="tr-loading-hero" />
+            <div class="tr-loading-text">
+              <p class="tr-loading-title">번역 중이에요...</p>
+              <p class="tr-loading-hint">
+                보통 10~15초 정도 걸려요.<br />내용이 많을수록 조금 더 걸릴 수 있어요.<br />다른 작업을
+                하다가 돌아오셔도 괜찮아요.
+              </p>
+            </div>
+          </div>
+          <div
+            class="tr-progress"
+            role="progressbar"
+            aria-label="번역 진행률"
+            :aria-valuenow="translateProgress.percent.value"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
+            <span class="tr-progress-track">
+              <span class="tr-progress-fill" :style="{ width: `${translateProgress.percent.value}%` }"></span>
+            </span>
+            <span class="tr-progress-label">{{ translateProgress.percent.value }}%</span>
+          </div>
+        </div>
+
         <!-- 결과 — 값 하나가 카드 한 장. 카드를 누르면 캔버스가 그 모듈로 옮겨간다 -->
         <template v-else-if="translation.hasResult">
           <div class="tr-cards">
@@ -542,16 +611,6 @@ onBeforeUnmount(() => {
           </div>
         </template>
 
-        <!-- 번역 중 — 맞춤법 검사와 같은 자리(가운데)에 그림 + 문구 -->
-        <div v-else-if="translation.translating" class="wl-empty tr-empty">
-          <span class="wl-hero">
-            <img :src="stateEyesIcon" width="103" height="103" alt="" />
-          </span>
-          <div class="wl-empty-text">
-            <p class="wl-empty-title">{{ translation.targetLanguageLabel }}로 번역하는 중…</p>
-          </div>
-        </div>
-
         <!-- 아직 돌리기 전 -->
         <template v-else>
           <p class="tr-scope-badge">전체 모듈 {{ moduleStore.modules.length }}개</p>
@@ -579,7 +638,8 @@ onBeforeUnmount(() => {
       <footer v-if="isTranslate && translation.enabled" class="tool-foot">
         <p v-if="translation.error" class="ht-error">{{ translation.error }}</p>
 
-        <template v-if="translation.hasResult">
+        <!-- 100%를 보여 주는 동안은 아직 로딩 화면이라 적용 버튼을 내밀지 않는다 -->
+        <template v-if="translation.hasResult && !translateProgress.visible.value">
           <p class="tr-foot-note">*모든 번역이 한 번에 적용돼요. AI 제안이니 확인 후 적용해 주세요.</p>
           <div class="tr-foot-actions">
             <button type="button" class="tool-cta tool-cta--ghost" @click="cancelTranslation">
@@ -593,11 +653,11 @@ onBeforeUnmount(() => {
           v-else
           type="button"
           class="tool-cta"
-          :disabled="!translation.units.length || translation.translating"
+          :disabled="!translation.units.length || translateProgress.visible.value"
           :aria-busy="translation.translating"
           @click="translation.request()"
         >
-          {{ translation.translating ? '번역하는 중' : '번역 결과 확인하기' }}
+          {{ translateProgress.visible.value ? '번역하는 중' : '번역 결과 확인하기' }}
         </button>
       </footer>
 
@@ -606,6 +666,33 @@ onBeforeUnmount(() => {
         <p v-if="!proofread.enabled" class="ht-note tool-note">
           맞춤법 검사 서버 주소가 설정되지 않아 지금은 검사할 수 없어요.
         </p>
+
+        <!-- 검사 중 (Figma 1980-15601) — 번역과 같은 로딩 틀. 결과보다 먼저 두어 100% 순간이 보이게 한다 -->
+        <div v-else-if="proofreadProgress.visible.value" class="tr-loading" aria-live="polite">
+          <div class="tr-loading-top">
+            <img :src="spellingIcon" width="200" height="200" alt="" class="tr-loading-hero" />
+            <div class="tr-loading-text">
+              <p class="tr-loading-title">검사 중이에요...</p>
+              <p class="tr-loading-hint">
+                보통 10초 정도 걸려요.<br />내용이 많을수록 조금 더 걸릴 수 있어요.<br />다른 작업을
+                하다가 돌아오셔도 괜찮아요.
+              </p>
+            </div>
+          </div>
+          <div
+            class="tr-progress"
+            role="progressbar"
+            aria-label="맞춤법 검사 진행률"
+            :aria-valuenow="proofreadProgress.percent.value"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
+            <span class="tr-progress-track">
+              <span class="tr-progress-fill" :style="{ width: `${proofreadProgress.percent.value}%` }"></span>
+            </span>
+            <span class="tr-progress-label">{{ proofreadProgress.percent.value }}%</span>
+          </div>
+        </div>
 
         <!-- 결과 — 고칠 곳 하나가 카드 한 장. 카드를 누르면 캔버스가 그 모듈로 옮겨간다 -->
         <template v-else-if="proofread.hasResult">
@@ -640,38 +727,34 @@ onBeforeUnmount(() => {
                 >
                 <!-- 이 카드를 적용할지 — 클릭이 카드 선택으로 새지 않게 막는다 -->
                 <label class="pr-check" @click.stop>
-                  <Checkbox v-model="item.accepted" :binary="true" class="ui-checkbox" />
+                  <Checkbox v-model="item.accepted" :binary="true" class="ui-checkbox ui-checkbox--sm" />
                   적용
                 </label>
               </span>
 
+              <!-- Figma 1994-4777: 앞뒤 글 속 틀린 곳에 붉은 밑줄 → 화살표 + 고친 글 → 회색 상자에 이유 -->
               <span class="tr-card-body pr-card-body">
-                <!-- 어느 문장인지 알아보게 앞뒤 글과 함께 -->
-                <span class="pr-line"
-                  >{{ item.before }}<del class="pr-before">{{ item.original }}</del
-                  >{{ item.after }}</span
-                >
-                <span class="pr-fix">
-                  <span class="material-symbols-outlined pr-fix-arrow" aria-hidden="true">
-                    arrow_forward
+                <span class="pr-change">
+                  <!-- 어느 문장인지 알아보게 앞뒤 글과 함께 -->
+                  <span class="pr-line"
+                    >{{ item.before }}<del class="pr-before">{{ item.original }}</del
+                    >{{ item.after }}</span
+                  >
+                  <span class="pr-fix">
+                    <span class="material-symbols-outlined pr-fix-arrow" aria-hidden="true">
+                      arrow_forward
+                    </span>
+                    <span class="pr-after">{{ item.corrected }}</span>
                   </span>
-                  <span class="pr-after">{{ item.corrected }}</span>
                 </span>
-                <span v-if="item.reason" class="pr-reason">{{ item.reason }}</span>
+                <span v-if="item.reason" class="pr-reason">
+                  <span class="material-symbols-outlined pr-reason-icon" aria-hidden="true">error</span>
+                  {{ item.reason }}
+                </span>
               </span>
             </div>
           </div>
         </template>
-
-        <!-- 검사 중 — 검사 전 화면과 같은 자리(가운데)에 그림 + 문구 -->
-        <div v-else-if="proofread.checking" class="wl-empty tr-empty">
-          <span class="wl-hero">
-            <img :src="stateEyesIcon" width="103" height="103" alt="" />
-          </span>
-          <div class="wl-empty-text">
-            <p class="wl-empty-title">맞춤법을 검사하는 중…</p>
-          </div>
-        </div>
 
         <!-- 검사했는데 고칠 곳이 없다 -->
         <div v-else-if="proofread.clean" class="wl-empty tr-empty">
@@ -688,14 +771,13 @@ onBeforeUnmount(() => {
         <template v-else>
           <p class="tr-scope-badge">전체 모듈 {{ moduleStore.modules.length }}개</p>
 
+          <!-- Figma 1980-15373 — 연필 그림(122 상자 그대로) + 한 줄 제목 + 두 줄 안내 -->
           <div class="wl-empty tr-empty">
             <span class="wl-hero">
-              <img :src="stateEyesIcon" width="103" height="103" alt="" />
+              <img :src="stateSpellingIcon" width="122" height="122" alt="" class="wl-hero-img--full" />
             </span>
             <div class="wl-empty-text">
-              <p class="wl-empty-title">
-                오탈자·띄어쓰기·맞춤법을 찾아드려요.<br />"맞춤법 검사하기"를 눌러주세요
-              </p>
+              <p class="wl-empty-title">오탈자·띄어쓰기·맞춤법을 찾아드려요.</p>
               <p class="tr-empty-hint">
                 한·영·일·중·태국어를 각 언어 기준으로 보고,<br />고유명사와 말투는 그대로 두고 고칠 곳만 찾아요.
               </p>
@@ -713,9 +795,10 @@ onBeforeUnmount(() => {
       <footer v-if="isProofread && proofread.enabled" class="tool-foot">
         <p v-if="proofread.error" class="ht-error">{{ proofread.error }}</p>
 
-        <template v-if="proofread.hasResult">
+        <!-- 100%를 보여 주는 동안은 아직 로딩 화면이라 적용 버튼을 내밀지 않는다 -->
+        <template v-if="proofread.hasResult && !proofreadProgress.visible.value">
           <p class="tr-foot-note">
-            *고른 {{ proofread.acceptedCount }}곳이 한 번에 적용돼요. AI 제안이니 확인 후 적용해
+            *선택된 {{ proofread.acceptedCount }}곳이 한 번에 적용돼요.<br />AI 제안이니 확인 후 적용해
             주세요.
           </p>
           <div class="tr-foot-actions">
@@ -737,7 +820,7 @@ onBeforeUnmount(() => {
           v-else
           type="button"
           class="tool-cta"
-          :disabled="!proofread.units.length || proofread.checking"
+          :disabled="!proofread.units.length || proofreadProgress.visible.value"
           :aria-busy="proofread.checking"
           @click="proofread.request()"
         >
@@ -803,6 +886,28 @@ onBeforeUnmount(() => {
   font-weight: 500;
   line-height: 1.5;
   letter-spacing: -0.2px;
+}
+/* 머리 오른쪽의 글자 버튼 — '다시 번역하기' (Figma 1711-4645: 아이콘 20 + 14px gray-600) */
+.tool-head-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 35px;
+  padding: 0 2px;
+  border: 0;
+  background: none;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.14px;
+  color: var(--gray-600);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.tool-head-action:hover {
+  color: var(--gray-800);
+}
+.tool-head-action .material-symbols-outlined {
+  font-size: 20px;
 }
 
 /* 본문 — 내용이 짧으면 가운데, 길면 위에서부터 (margin:auto 라 넘쳐도 잘리지 않는다) */
@@ -879,6 +984,11 @@ onBeforeUnmount(() => {
   width: 103px;
   height: 103px;
 }
+/* 여백이 그림 파일 안에 든 상태 그림(state_spelling 122×122)은 상자를 꽉 채운다 */
+.wl-hero img.wl-hero-img--full {
+  width: 122px;
+  height: 122px;
+}
 .wl-empty-text {
   display: flex;
   flex-direction: column;
@@ -951,7 +1061,7 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 20px;
   padding: 10px 0;
   font-size: 15px;
   color: var(--gray-700);
@@ -965,6 +1075,21 @@ onBeforeUnmount(() => {
   font-weight: 500;
   text-align: right;
   overflow-wrap: anywhere;
+}
+/* 파일명 — 한 줄로 두고 앞부분(이름)만 …으로 줄인다. 확장자는 줄어들지 않는다 */
+.wl-file {
+  display: flex;
+  justify-content: flex-end;
+  min-width: 0;
+}
+.wl-file-stem {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wl-file-ext {
+  flex-shrink: 0;
 }
 .wl-open {
   display: inline-flex;
@@ -1185,13 +1310,94 @@ onBeforeUnmount(() => {
   font-size: 14px;
   font-weight: 500;
 }
+/* 검사·번역 전 안내 (Figma 1980-15373: 15px Regular gray-700) */
 .tr-empty-hint {
   margin: 0;
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.5;
-  color: var(--gray-600);
+  letter-spacing: -0.15px;
+  color: var(--gray-700);
   text-align: center;
   word-break: keep-all;
+}
+
+/* ── 번역 중 로딩 (Figma 1974-11761) — 296px 폭, 그림·문구 묶음과 진행률 사이 60px ── */
+.tr-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 60px;
+  width: 296px;
+  margin: auto;
+}
+.tr-loading-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.tr-loading-hero {
+  display: block;
+  width: 200px;
+  height: 200px;
+}
+.tr-loading-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 263px;
+  text-align: center;
+  word-break: keep-all;
+}
+.tr-loading-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: -0.2px;
+  color: var(--gray-750);
+}
+.tr-loading-hint {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  letter-spacing: -0.15px;
+  color: var(--gray-700);
+}
+/* 진행률 — 246px 트랙 + 퍼센트. 채움은 폭만 바뀌므로 짧은 전환으로 틱 사이를 잇는다 */
+.tr-progress {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+.tr-progress-track {
+  position: relative;
+  display: block;
+  flex: 1 1 auto;
+  height: 8px;
+  overflow: hidden;
+  border-radius: 100px;
+  background: var(--gray-100);
+}
+.tr-progress-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  display: block;
+  border-radius: 100px;
+  background: var(--blue-300);
+  transition: width 0.2s linear;
+}
+.tr-progress-label {
+  flex-shrink: 0;
+  min-width: 34px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: -0.14px;
+  color: var(--gray-600);
+  text-align: right;
 }
 /* 몇 개를 몇 자 보내는지 — 발 바로 위, 오른쪽에 */
 .tr-counts {
@@ -1308,59 +1514,87 @@ onBeforeUnmount(() => {
   font-weight: 700;
   letter-spacing: 0.3px;
 }
-/* 적용 여부 — 머리 줄 오른쪽 끝 */
+/* 카드 머리와 몸 사이는 번역 카드(16)보다 조금 넓다 (Figma 1994-4777: 20) */
+.pr-card {
+  gap: 20px;
+}
+/* 적용 여부 — 머리 줄 오른쪽 끝. 체크박스 20px + '적용' */
 .pr-check {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   margin-left: auto;
   font-size: 14px;
   font-weight: 500;
+  line-height: 1.8;
+  letter-spacing: -0.14px;
   color: var(--gray-700);
   cursor: pointer;
 }
+/* 몸: (틀린 줄 + 고친 글) 묶음과 이유 상자 사이 26, 묶음 안은 16 */
 .pr-card-body {
-  gap: 10px;
+  gap: 26px;
 }
-/* 고칠 구절이 든 줄 — 앞뒤 글은 흐리게, 틀린 곳만 붉게 긋는다 */
+.pr-change {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+/* 고칠 구절이 든 줄 — 본문 크기 그대로 두고 틀린 곳에만 붉은 밑줄 */
 .pr-line {
-  font-size: 15px;
-  line-height: 1.6;
-  letter-spacing: -0.15px;
-  color: var(--gray-600);
+  font-size: 16px;
+  line-height: 1.8;
+  letter-spacing: -0.16px;
+  color: var(--gray-700);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
 .pr-before {
-  padding: 1px 3px;
-  border-radius: 4px;
-  background: var(--red-50);
   color: var(--red-700);
+  text-decoration: underline;
+  text-decoration-skip-ink: none;
+  text-underline-position: from-font;
 }
+/* 화살표 + 고친 글 */
 .pr-fix {
   display: flex;
-  align-items: flex-start;
-  gap: 4px;
+  align-items: center;
+  gap: 10px;
 }
 .pr-fix-arrow {
   flex-shrink: 0;
-  font-size: 20px;
-  color: var(--gray-500);
+  font-size: 24px;
+  color: var(--gray-800);
 }
 .pr-after {
-  padding: 1px 6px;
-  border-radius: 4px;
-  background: var(--blue-50);
-  color: var(--blue-600);
   font-size: 16px;
-  font-weight: 500;
-  line-height: 1.6;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: -0.16px;
+  color: var(--gray-800);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+/* 이유 — 회색 상자에 느낌표 아이콘 */
 .pr-reason {
-  font-size: 13px;
-  color: var(--gray-500);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 47px;
+  padding: 12px;
+  border-radius: 8px;
+  background: var(--gray-100);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: -0.15px;
+  color: var(--gray-700);
+  word-break: keep-all;
+}
+.pr-reason-icon {
+  flex-shrink: 0;
+  font-size: 20px;
+  color: var(--gray-600);
 }
 
 /* 발 — 안내 한 줄 + 취소·적용하기 */

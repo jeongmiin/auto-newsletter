@@ -10,9 +10,10 @@
  * 폴더를 읽는 것(loadExisting)은 AI 도구를 펼칠 때만 한다. 새로고침하면 작업물 자체가
  * 사라지므로(메모리에만 있다) '반영할 내용'도 함께 없어져, 들어오자마자 폴더를 뒤질 이유가 없다.
  */
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import type { ToastMessageOptions } from 'primevue/toast'
+import type { ModuleInstance } from '@/types'
 import { useEditorStore } from '@/stores/editorStore'
 import { useModuleStore } from '@/stores/moduleStore'
 import { useNewsletterDocument } from '@/composables/useNewsletterDocument'
@@ -76,8 +77,25 @@ export const webLinkToast = (result: WebLinkResult): ToastMessageOptions | null 
   }
 }
 
-/** 웹 링크를 만든(반영한) 곳 — 리마인드 팝업이 실제로 반영을 이끌어 내는지 갈라 보기 위해 */
-export type WebLinkSource = 'panel' | 'reminder'
+/**
+ * 웹 링크를 만든(반영한) 곳 — 어느 길이 실제로 쓰이는지 갈라 보기 위해.
+ * panel: AI 도구 화면 · reminder: '내용이 바뀌었어요' 팝업 · prompt: '웹으로 보기'를 눌렀을 때 뜨는 안내
+ */
+export type WebLinkSource = 'panel' | 'reminder' | 'prompt'
+
+/**
+ * 뉴스 헤드라인 헤더의 '웹으로 보기'인지 — 이걸 눌렀을 때만 링크 생성 안내를 띄운다(Figma 1964-11113).
+ * - 조립형 헤더: 그룹 안의 설명 텍스트 중 "웹으로 보기"(또는 "웹에서 보기") 링크가 든 것
+ * - 레거시 헤더(ModuleNewsHeader): 모듈 자체가 '웹으로 보기' 속성을 가진다
+ * 그룹에 속하지 않은 설명 텍스트는 같은 글이 있어도 제외한다 — 우선 헤더에서만 쓰기로 했다.
+ */
+const WEB_VIEW_LINK = /<a\b[^>]*>[^<]*웹(?:으로|에서)\s*보기/
+export const isWebViewModule = (module: ModuleInstance | null | undefined): boolean => {
+  if (!module) return false
+  if (module.moduleId === 'ModuleNewsHeader') return true
+  if (module.moduleId !== 'ModuleDescText' || !module.groupId) return false
+  return WEB_VIEW_LINK.test(String(module.properties?.descriptionText ?? ''))
+}
 
 /**
  * 결과를 Umami 이벤트로 옮긴다 — 말풍선과 같은 이유로 부르는 쪽(패널·팝업)이 결과를 넘긴다.
@@ -111,8 +129,8 @@ export const useWebLinkStore = defineStore('webLink', () => {
   // 발송용 내려받기와 **같은 문서**를 만든다 — 링크로 열리는 것과 메일에 싣는 것이 달라지면 안 된다
   const { buildDocument } = useNewsletterDocument()
 
-  /** 업로드 주소가 설정돼 있어 링크를 만들 수 있는지 (빌드 시점에 정해진다) */
-  const enabled = isUploadEnabled()
+  /** 업로드 주소가 설정돼 있어 링크를 만들 수 있는지 (빌드 시점에 정해진다 — ref 인 것은 테스트에서 켜기 위해서다) */
+  const enabled = ref(isUploadEnabled())
 
   const existing = ref<WebLinkFile | null>(null)
   /** 폴더를 읽는 중 */
@@ -171,6 +189,51 @@ export const useWebLinkStore = defineStore('webLink', () => {
   const showReminder = computed(
     () => !!existing.value && contentChanged.value && !toolOpen.value && !reminderDismissed.value,
   )
+
+  // ── '웹으로 보기'를 눌렀을 때의 링크 생성 안내 (Figma 1964-11113 · 1971-11436) ──────────
+  // 캔버스에서 헤더의 '웹으로 보기'를 고르면 오른쪽 아래에 "HTML 웹 링크를 생성할까요?"를 띄운다.
+  // AI 도구까지 가지 않고도 기능을 알아차리고 그 자리에서 만들고 복사하게 하려는 것이다.
+  /** 지금 고른 모듈이 헤더의 '웹으로 보기'인지 */
+  const webViewSelected = computed(() => isWebViewModule(moduleStore.selectedModule))
+  /** X로 닫은 모듈 — 같은 모듈을 고른 채로는 다시 띄우지 않는다. 다른 모듈을 골랐다가 돌아오면 또 띄운다 */
+  const promptDismissedFor = ref<string | null>(null)
+  /** 안내를 띄우기 전에 폴더를 읽어 둔 저장 위치 — 링크가 이미 있으면 '생성'이 아니라 '복사'를 보여 줘야 한다 */
+  let promptCheckedDirectory: string | null = null
+  const showPrompt = computed(
+    () =>
+      enabled.value &&
+      webViewSelected.value &&
+      !toolOpen.value &&
+      !showReminder.value &&
+      !checking.value &&
+      promptDismissedFor.value !== moduleStore.selectedModuleId,
+  )
+  /** 안내의 모양 — 링크가 없으면 만들기, 있으면 복사하기 */
+  const promptMode = computed<'create' | 'copy'>(() => (existing.value ? 'copy' : 'create'))
+  const dismissPrompt = (): void => {
+    promptDismissedFor.value = moduleStore.selectedModuleId
+  }
+  // '웹으로 보기'를 고르는 순간 폴더를 한 번 읽는다 — 안내가 '생성'인지 '복사'인지 맞게 나오도록.
+  // (AI 도구를 펼칠 때와 같은 조회다. 저장 위치가 바뀌었으면 다시 읽는다)
+  watch(webViewSelected, (on) => {
+    if (!on || !enabled.value) return
+    const directory = targetDirectory.value
+    if (!directory || promptCheckedDirectory === directory) return
+    promptCheckedDirectory = directory
+    void loadExisting()
+  })
+
+  /** 만들어진 링크 주소를 클립보드로. 복사가 막힌 환경이면 false */
+  const copyLink = async (): Promise<boolean> => {
+    const url = existing.value?.url
+    if (!url) return false
+    try {
+      await navigator.clipboard.writeText(url)
+      return true
+    } catch {
+      return false
+    }
+  }
 
   const contentSignature = (): string =>
     JSON.stringify({
@@ -312,6 +375,11 @@ export const useWebLinkStore = defineStore('webLink', () => {
     contentChanged,
     toolOpen,
     showReminder,
+    webViewSelected,
+    showPrompt,
+    promptMode,
+    dismissPrompt,
+    copyLink,
     targetDirectory,
     savePath,
     createdAtLabel,
