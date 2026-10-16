@@ -1,10 +1,10 @@
 /**
- * 번역·맞춤법 검사 프록시 — **Cloudflare Worker** 버전(배포본용).
+ * 번역·맞춤법 검사·모듈 조합 추천 프록시 — **Cloudflare Worker** 버전(배포본용).
  *
  * GitHub Pages(jeongmiin.github.io)와 운영 도메인(newsletter.messeesang.com)은 정적 호스팅이라
  * 서버 코드를 못 돌린다. 이 Worker가 그 자리를 맡는다: Gemini 키는 Worker 시크릿에만 있고,
- * 브라우저는 Worker 주소(VITE_TRANSLATE_URL·VITE_PROOFREAD_URL)만 안다.
- * 로직은 로컬 Node 프록시와 같다(translate-core.mjs · proofread-core.mjs).
+ * 브라우저는 Worker 주소(VITE_TRANSLATE_URL·VITE_PROOFREAD_URL·VITE_RECOMMEND_URL)만 안다.
+ * 로직은 로컬 Node 프록시와 같다(translate-core.mjs · proofread-core.mjs · recommend-core.mjs).
  *
  * 배포(최초 한 번):
  *   npx wrangler login
@@ -23,7 +23,17 @@
  */
 import { handleTranslation, parseAllowedOrigins, TranslateRequestError } from './translate-core.mjs'
 import { handleProofread } from './proofread-core.mjs'
+import { handleRecommend } from './recommend-core.mjs'
+import { handleTone } from './tone-core.mjs'
 import { DurableObject } from 'cloudflare:workers'
+
+/** 공개 경로 → 중계 객체 안의 경로 → 처리 함수. 번역·맞춤법 검사·모듈 조합 추천·어투 변환 모두 Gemini 키 하나로 돈다 */
+const ROUTES = {
+  '/api/translate': { relay: '/translate', handle: handleTranslation },
+  '/api/proofread': { relay: '/proofread', handle: handleProofread },
+  '/api/recommend': { relay: '/recommend', handle: handleRecommend },
+  '/api/tone': { relay: '/tone', handle: handleTone },
+}
 
 /** Gemini 를 서비스 지역(북미)에서 대신 부르는 중계 객체 — 상태는 쓰지 않는다. 경로로 일을 고른다 */
 export class GeminiRelay extends DurableObject {
@@ -32,8 +42,9 @@ export class GeminiRelay extends DurableObject {
       const body = await request.json()
       const config = { key: (this.env.GEMINI_API_KEY || '').trim(), model: this.env.GEMINI_MODEL }
       const { pathname } = new URL(request.url)
-      const result =
-        pathname === '/translate' ? await handleTranslation(body, config) : await handleProofread(body, config)
+      const route = Object.values(ROUTES).find((r) => r.relay === pathname)
+      if (!route) return Response.json({ error: 'Not found' }, { status: 404 })
+      const result = await route.handle(body, config)
       return Response.json(result)
     } catch (error) {
       const status = error instanceof TranslateRequestError ? error.status : 500
@@ -93,8 +104,8 @@ export default {
       const configured = !!env.GEMINI_API_KEY
       return json(200, { ok: true, configured, proofread: configured }, origin, allowed)
     }
-    const isProofread = pathname === '/api/proofread'
-    if (request.method !== 'POST' || (pathname !== '/api/translate' && !isProofread)) {
+    const route = ROUTES[pathname]
+    if (request.method !== 'POST' || !route) {
       return json(404, { error: 'Not found' }, origin, allowed)
     }
     // 공개 주소이므로 허용된 사이트의 브라우저 요청만 받는다(브라우저는 POST에 Origin을 항상 붙인다).
@@ -111,7 +122,7 @@ export default {
       const body = await request.json().catch(() => {
         throw new TranslateRequestError('요청 JSON 형식이 올바르지 않습니다.')
       })
-      const { status, payload } = await viaRelay(env, isProofread ? '/proofread' : '/translate', body)
+      const { status, payload } = await viaRelay(env, route.relay, body)
       return json(status, payload, origin, allowed)
     } catch (error) {
       const status = error instanceof TranslateRequestError ? error.status : 500

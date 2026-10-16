@@ -43,6 +43,14 @@ export default defineConfig(({ command }) => {
       target: translateTarget,
       changeOrigin: true,
     },
+    '/api/recommend': {
+      target: translateTarget,
+      changeOrigin: true,
+    },
+    '/api/tone': {
+      target: translateTarget,
+      changeOrigin: true,
+    },
   }
 
   return {

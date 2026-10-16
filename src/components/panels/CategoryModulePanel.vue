@@ -46,6 +46,7 @@ import { useModuleStore } from '@/stores/moduleStore'
 import { useModuleThumbnails } from '@/composables/useModuleThumbnails'
 import type { ModuleMetadata } from '@/types'
 import { QUICK_ADD_ITEMS, type QuickAddItem } from '@/utils/quickAddItems'
+import { COMPOSED_GROUP_SIDE_PADDING } from '@/constants/composedGroupPadding'
 
 type Category = 'text' | 'image' | 'button' | 'table'
 
@@ -79,21 +80,8 @@ const quickAddItems = computed(() => QUICK_ADD_ITEMS[props.category])
 
 // 조립형 그룹 모듈의 기본 좌·우 '안쪽' 여백(그룹 스타일 padding). 배경색이 이 여백까지 채워지도록.
 // 키 = 갤러리 모듈 id 또는 빠른추가 빌더 키.
-const GROUP_SIDE_PADDING: Record<string, string> = {
-  ModuleImageHeader: '20px',
-  Module02: '20px',
-  ModuleMultiImage: '15px',
-  ModuleTwoButton: '15px',
-  'Module01-1': '15px',
-  Module04: '15px',
-  Module05: '15px',
-  'Module05-3': '15px',
-  Module06: '15px',
-  Module07: '15px',
-  Module07_reverse: '15px',
-  Module10: '15px',
-  'Module10-1': '15px',
-}
+// 어디서 넣든 같도록 공용 표를 쓴다(모듈 패널·AI 도구 추천도 같은 표)
+const GROUP_SIDE_PADDING = COMPOSED_GROUP_SIDE_PADDING
 
 // 갤러리: 이 카테고리에 속하는 완성형 모듈. 클릭 시 v2 조립 템플릿이 있으면 그걸(onGalleryAdd),
 // 없으면 레거시 addModule로 폴백한다(moduleStore.composedBuilderMap 참고).

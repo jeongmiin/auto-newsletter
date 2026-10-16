@@ -141,25 +141,41 @@ export function usableTranslation(item, text) {
 }
 
 /**
- * 묶음 하나를 번역해 {id → text} 와 실패 항목을 돌려준다.
- * `strict` 는 재시도용 — 앞 시도에서 뼈대가 어긋난 항목이라고 알리고 온도를 조금 올려 같은 답을 피한다.
+ * "글만 바꾸고 뼈대는 그대로" 작업의 정의 — 번역과 어투 변환(tone-core.mjs)이 같은 엔진을 쓴다.
+ * @typedef {object} RewriteTask
+ * @property {string} systemInstruction  모델에 줄 지시문(서식 규칙 포함)
+ * @property {object} input              items 앞에 붙일 입력(target·tone 등)
+ * @property {string} strictNote         재시도 때 덧붙일 한 줄
+ * @property {string} what               오류 문구에 들어갈 일 이름('번역'·'어투 변환')
  */
-export async function translateBatch(items, targetLanguage, config, strict = false) {
+
+/** 번역 작업 — target 언어 하나 */
+const translationTask = (targetLanguage) => ({
+  systemInstruction: SYSTEM_INSTRUCTION,
+  input: { target: LANGUAGE_NAMES[targetLanguage] },
+  strictNote: '앞 시도에서 태그 뼈대가 원문과 달랐습니다. 태그와 i="숫자" 속성을 원문 그대로 두고 글만 번역하세요.',
+  what: '번역',
+})
+
+/**
+ * 묶음 하나를 작업에 맞게 다시 써서 {id → text} 와 실패 항목을 돌려준다.
+ * `strict` 는 재시도용 — 앞 시도에서 뼈대가 어긋난 항목이라고 알리고 온도를 조금 올려 같은 답을 피한다.
+ * @param {RewriteTask} task
+ */
+export async function rewriteBatch(items, task, config, strict = false) {
   const input = {
-    target: LANGUAGE_NAMES[targetLanguage],
-    ...(strict
-      ? { note: '앞 시도에서 태그 뼈대가 원문과 달랐습니다. 태그와 i="숫자" 속성을 원문 그대로 두고 글만 번역하세요.' }
-      : {}),
+    ...task.input,
+    ...(strict ? { note: task.strictNote } : {}),
     items: items.map(({ id, text, format }) => ({ id, text, format })),
   }
   const raw = await callGeminiJson({
     key: config.key,
     model: config.model,
-    systemInstruction: SYSTEM_INSTRUCTION,
+    systemInstruction: task.systemInstruction,
     input,
     responseSchema: RESPONSE_SCHEMA,
     temperature: strict ? 0.3 : 0,
-    what: '번역',
+    what: task.what,
   })
   const byId = new Map()
   for (const row of Array.isArray(raw) ? raw : []) {
@@ -176,6 +192,69 @@ export async function translateBatch(items, targetLanguage, config, strict = fal
   return { ok, failed, raw: byId }
 }
 
+/** 묶음 하나를 번역한다 — rewriteBatch 의 번역 전용 꼴(테스트·호환용) */
+export const translateBatch = (items, targetLanguage, config, strict = false) =>
+  rewriteBatch(items, translationTask(targetLanguage), config, strict)
+
+/**
+ * 요청 본문의 items 를 검증해 {id, text, format} 목록으로. 번역·어투 변환이 같은 규칙을 쓴다.
+ * @param {string} what  오류 문구에 들어갈 일 이름
+ */
+export function normalizeItems(rawItems, what = '번역') {
+  if (!Array.isArray(rawItems) || rawItems.length === 0) throw new TranslateRequestError(`${what}할 문장이 없습니다.`)
+  const items = rawItems.map((item) => {
+    if (!item || typeof item.id !== 'string' || typeof item.text !== 'string') {
+      throw new TranslateRequestError(`${what} 항목 형식이 올바르지 않습니다.`)
+    }
+    if (item.text.length > MAX_ITEM_CHARS) throw new TranslateRequestError(`${what}할 문장 하나가 너무 깁니다.`)
+    return { id: item.id, text: item.text, format: item.format === 'html' ? 'html' : 'plain' }
+  })
+  const total = items.reduce((sum, item) => sum + item.text.length, 0)
+  if (total > MAX_TOTAL_CHARS) throw new TranslateRequestError(`${what}할 글이 너무 깁니다.`)
+  return items
+}
+
+/**
+ * 항목 전부를 작업에 맞게 다시 쓴다 — 묶음 분할 · 동시 호출 · 뼈대 검증 · 실패 항목 단독 재시도.
+ * 돌려주는 값은 입력 순서 그대로의 [{id, text}].
+ *
+ * 묶음은 **동시에** 보낸다 — 생성 모델이라 묶음 하나가 5~10초인데, 차례로 보내면 한 편이 묶음 수만큼
+ * 늘어진다(실측 2묶음 9~11초 → 동시 5~6초). 한 편이 2~3묶음이라 무료 등급의 분당 한도 안에 든다.
+ * 뼈대가 어긋난 항목은 **하나씩 따로** 한 번 더 묻는다 — 실측에서 긴 묶음 속 짧은 항목의 바깥 태그를
+ * 빼먹는 일이 간혹 있었고(44개 중 1개꼴), 단독으로 다시 물으면 대개 맞게 온다.
+ * 그래도 안 되면 사람이 다시 시도하게 알린다(틀린 서식을 캔버스에 넣지 않는다).
+ * @param {RewriteTask} task
+ */
+export async function rewriteAll(items, task, config) {
+  const resolved = { key: config.key, model: (config.model || DEFAULT_GEMINI_MODEL).trim() }
+  const runAll = async (batches, strict) => {
+    const results = await Promise.all(batches.map((batch) => rewriteBatch(batch, task, resolved, strict)))
+    const ok = new Map()
+    const failed = []
+    for (const result of results) {
+      for (const [id, text] of result.ok) ok.set(id, text)
+      failed.push(...result.failed)
+    }
+    return { ok, failed }
+  }
+  const done = new Map()
+  const first = await runAll(batchesOf(items), false)
+  for (const [id, text] of first.ok) done.set(id, text)
+  let failed = first.failed
+  if (failed.length) {
+    const retry = await runAll(batchesOf(failed, MAX_BATCH_CHARS, 1), true)
+    for (const [id, text] of retry.ok) done.set(id, text)
+    failed = retry.failed
+  }
+  if (failed.length) {
+    throw new TranslateRequestError(
+      `${task.what} 결과 ${failed.length}곳의 서식이 원문과 달라 적용할 수 없어요. 다시 시도해 주세요.`,
+      502,
+    )
+  }
+  return items.map((item) => ({ id: item.id, text: done.get(item.id) }))
+}
+
 /**
  * POST /api/translate 본문을 받아 번역 결과를 돌려준다.
  * @param body   { sourceLanguage: 'ko', targetLanguage, items: [{ id, text, format? }] }
@@ -186,50 +265,6 @@ export async function handleTranslation(body, config) {
   if (!config?.key) throw new TranslateRequestError('서버에 GEMINI_API_KEY가 설정되지 않았습니다.', 500)
   if (body?.sourceLanguage !== 'ko') throw new TranslateRequestError('현재 원문 언어는 한국어만 지원합니다.')
   if (!TARGET_LANGUAGES.has(body?.targetLanguage)) throw new TranslateRequestError('지원하지 않는 대상 언어입니다.')
-  if (!Array.isArray(body?.items) || body.items.length === 0) throw new TranslateRequestError('번역할 문장이 없습니다.')
-
-  const items = body.items.map((item) => {
-    if (!item || typeof item.id !== 'string' || typeof item.text !== 'string') {
-      throw new TranslateRequestError('번역 항목 형식이 올바르지 않습니다.')
-    }
-    if (item.text.length > MAX_ITEM_CHARS) throw new TranslateRequestError('번역할 문장 하나가 너무 깁니다.')
-    return { id: item.id, text: item.text, format: item.format === 'html' ? 'html' : 'plain' }
-  })
-  const total = items.reduce((sum, item) => sum + item.text.length, 0)
-  if (total > MAX_TOTAL_CHARS) throw new TranslateRequestError('번역할 글이 너무 깁니다.')
-
-  const resolved = { key: config.key, model: (config.model || DEFAULT_GEMINI_MODEL).trim() }
-  // 묶음은 **동시에** 보낸다 — 생성 모델이라 묶음 하나가 5~10초인데, 차례로 보내면 한 편이 묶음 수만큼
-  // 늘어진다(실측 2묶음 9~11초 → 동시 5~6초). 한 편이 2~3묶음이라 무료 등급의 분당 한도 안에 든다.
-  const runAll = async (batches, strict) => {
-    const results = await Promise.all(
-      batches.map((batch) => translateBatch(batch, body.targetLanguage, resolved, strict)),
-    )
-    const ok = new Map()
-    const failed = []
-    for (const result of results) {
-      for (const [id, text] of result.ok) ok.set(id, text)
-      failed.push(...result.failed)
-    }
-    return { ok, failed }
-  }
-  const translated = new Map()
-  const first = await runAll(batchesOf(items), false)
-  for (const [id, text] of first.ok) translated.set(id, text)
-  let failed = first.failed
-  // 뼈대가 어긋난 항목은 **하나씩 따로** 한 번 더 묻는다 — 실측에서 긴 묶음 속 짧은 항목의 바깥 태그를
-  // 빼먹는 일이 간혹 있었고(44개 중 1개꼴), 단독으로 다시 물으면 대개 맞게 온다.
-  // 그래도 안 되면 사람이 다시 시도하게 알린다(틀린 서식을 캔버스에 넣지 않는다).
-  if (failed.length) {
-    const retry = await runAll(batchesOf(failed, MAX_BATCH_CHARS, 1), true)
-    for (const [id, text] of retry.ok) translated.set(id, text)
-    failed = retry.failed
-  }
-  if (failed.length) {
-    throw new TranslateRequestError(
-      `번역 결과 ${failed.length}곳의 서식이 원문과 달라 적용할 수 없어요. 다시 시도해 주세요.`,
-      502,
-    )
-  }
-  return { translations: items.map((item) => ({ id: item.id, text: translated.get(item.id) })) }
+  const items = normalizeItems(body?.items, '번역')
+  return { translations: await rewriteAll(items, translationTask(body.targetLanguage), config) }
 }

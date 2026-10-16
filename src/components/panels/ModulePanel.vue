@@ -302,6 +302,7 @@ import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
 import { useToast } from 'primevue/usetoast'
 import type { ModuleMetadata } from '@/types'
+import { COMPOSED_GROUP_SIDE_PADDING } from '@/constants/composedGroupPadding'
 
 const moduleStore = useModuleStore()
 const editorStore = useEditorStore()
@@ -429,22 +430,8 @@ const SINGLE_SIDE_OVERRIDES: Record<string, Record<string, string>> = {
   ModuleInlineText: { paddingLeft: '20px', paddingRight: '20px' },
 }
 
-// 조립형 그룹 모듈의 기본 좌·우 '안쪽' 여백(그룹 스타일 padding). 배경색이 이 여백까지 채워지도록.
-const GROUP_SIDE_PADDING: Record<string, string> = {
-  ModuleImageHeader: '20px',
-  Module02: '20px',
-  ModuleMultiImage: '15px',
-  ModuleTwoButton: '15px',
-  'Module01-1': '15px',
-  Module04: '15px',
-  Module05: '15px',
-  'Module05-3': '15px',
-  Module06: '15px',
-  Module07: '15px',
-  Module07_reverse: '15px',
-  Module10: '15px',
-  'Module10-1': '15px',
-}
+// 조립형 그룹 모듈의 기본 좌·우 '안쪽' 여백 — 어디서 넣든 같도록 공용 표를 쓴다(AI 도구 추천도 같은 표)
+const GROUP_SIDE_PADDING = COMPOSED_GROUP_SIDE_PADDING
 
 const addModule = (module: ModuleMetadata) => {
   onModuleLeave() // 추가 시 미리보기 닫기

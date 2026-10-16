@@ -1,6 +1,7 @@
 /**
  * Gemini 키를 브라우저에 노출하지 않는 작은 서버 프록시 — **로컬 개발용**.
- * 번역(/api/translate, translate-core.mjs)과 맞춤법 검사(/api/proofread, proofread-core.mjs)를 받는다.
+ * 번역(/api/translate, translate-core.mjs) · 맞춤법 검사(/api/proofread, proofread-core.mjs) ·
+ * 모듈 조합 추천(/api/recommend, recommend-core.mjs)을 받는다.
  *
  * 실행:
  *   npm run proxy:translate            (.env.local의 GEMINI_API_KEY를 자동으로 읽는다)
@@ -15,6 +16,8 @@ import http from 'node:http'
 import { loadEnvFile } from 'node:process'
 import { handleTranslation, parseAllowedOrigins, TranslateRequestError } from './translate-core.mjs'
 import { handleProofread } from './proofread-core.mjs'
+import { handleRecommend } from './recommend-core.mjs'
+import { handleTone } from './tone-core.mjs'
 
 // .gitignore의 `*.local` 규칙으로 제외되는 로컬 비밀 설정을 자동으로 읽는다.
 // 셸에서 이미 설정한 환경변수는 Node가 우선하므로 CI/운영 배포 방식도 그대로 사용할 수 있다.
@@ -81,8 +84,14 @@ const server = http.createServer(async (req, res) => {
     // 번역·맞춤법 검사 모두 Gemini 키 하나로 돈다
     return json(res, 200, { ok: true, configured: !!gemini.key, proofread: !!gemini.key }, origin)
   }
-  const isProofread = req.url === '/api/proofread'
-  if (req.method !== 'POST' || (req.url !== '/api/translate' && !isProofread)) {
+  const HANDLERS = {
+    '/api/translate': handleTranslation,
+    '/api/proofread': handleProofread,
+    '/api/recommend': handleRecommend,
+    '/api/tone': handleTone,
+  }
+  const handler = HANDLERS[req.url]
+  if (req.method !== 'POST' || !handler) {
     return json(res, 404, { error: 'Not found' }, origin)
   }
   if (origin && !allowedOrigins.has(origin)) {
@@ -90,9 +99,7 @@ const server = http.createServer(async (req, res) => {
   }
   try {
     const body = await readJson(req)
-    const result = isProofread
-      ? await handleProofread(body, gemini)
-      : await handleTranslation(body, gemini)
+    const result = await handler(body, gemini)
     return json(res, 200, result, origin)
   } catch (error) {
     const status = error instanceof TranslateRequestError ? error.status : 500
@@ -102,6 +109,6 @@ const server = http.createServer(async (req, res) => {
 })
 
 server.listen(port, '127.0.0.1', () => {
-  process.stdout.write(`Translate/proofread proxy (Gemini): http://127.0.0.1:${port}/api/translate · /api/proofread\n`)
+  process.stdout.write(`Translate/proofread proxy (Gemini): http://127.0.0.1:${port}/api/translate · /api/proofread · /api/recommend · /api/tone\n`)
   if (!gemini.key) process.stdout.write('GEMINI_API_KEY가 없어 번역·맞춤법 검사 요청은 설정 오류를 반환합니다.\n')
 })

@@ -29,6 +29,10 @@ interface ImportMetaEnv {
   readonly VITE_TRANSLATE_URL?: string
   /** Gemini 키를 보관하는 서버 프록시의 맞춤법 검사 주소. 비밀키 자체를 넣지 않는다. */
   readonly VITE_PROOFREAD_URL?: string
+  /** Gemini 키를 보관하는 서버 프록시의 모듈 조합 추천 주소. 비밀키 자체를 넣지 않는다. */
+  readonly VITE_RECOMMEND_URL?: string
+  /** Gemini 키를 보관하는 서버 프록시의 어투 변환 주소. 비밀키 자체를 넣지 않는다. */
+  readonly VITE_TONE_URL?: string
 }
 
 interface ImportMeta {

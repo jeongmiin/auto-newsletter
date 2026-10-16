@@ -13,6 +13,15 @@
  * 언어는 글 덩이마다 검사기가 판단한다(한국어·영어·일본어·중국어·태국어) — 번역한 뉴스레터도 그대로 검사한다.
  * Gemini 키는 서버 프록시에만 있다(src/utils/geminiProofreader.ts).
  *
+ * **모듈 조합 추천(만들기)** — 빈 템플릿에서 시작할 때 분야·목적·행사 정보를 보내면 우리 빌더의
+ * 조립형 모듈만으로 짠 구성안 2~3개가 온다. 하나를 고르면 헤더 → 본문 → 푸터 순으로 캔버스에 깔고
+ * 초안 문구까지 채운다(src/stores/recommendStore.ts). 모듈 선택지와 규칙은 서버 프롬프트가 쥔다
+ * (scripts/recommend-core.mjs). 디자인은 아직 없어 번역·맞춤법 검사 화면 틀을 그대로 쓴다.
+ *
+ * **톤 변환(다듬기)** — 다 쓴 글의 어투만 바꾼다(격식 있게 · 친근하게 · 간결하게). 값 모으기·보내기·적용은
+ * 번역과 같은 길(뼈대 HTML → 서식 유지)이고, 화면은 맞춤법 검사처럼 카드마다 적용 여부를 고른다
+ * (src/stores/toneStore.ts, scripts/tone-core.mjs).
+ *
  * **HTML 웹 링크 생성** — 아래 설명.
  *
  * 버튼 한 번으로 지금 작업물을 발송용 HTML(`{전시회}_{폴더}_send.html`)로 만들어
@@ -33,6 +42,12 @@ import Checkbox from 'primevue/checkbox'
 import { useModuleStore } from '@/stores/moduleStore'
 import { TRANSLATION_LANGUAGES, useTranslationStore } from '@/stores/translationStore'
 import { useProofreadStore } from '@/stores/proofreadStore'
+import { useRecommendStore } from '@/stores/recommendStore'
+import { useToneStore } from '@/stores/toneStore'
+import { TONES, type ToneKey } from '@/utils/geminiToner'
+import { useEditorStore } from '@/stores/editorStore'
+import { fieldsOrderedForTeam } from '@/constants/exhibitionFields'
+import { stepsOf, type RecommendOption } from '@/utils/newsletterRecommend'
 import { requestScrollToSuggestion } from '@/utils/proofreadHighlight'
 import { trackWebLink, useWebLinkStore, webLinkToast } from '@/stores/webLinkStore'
 import type { TranslationLanguage } from '@/utils/newsletterTranslation'
@@ -43,9 +58,12 @@ import stateEyesIcon from '@/assets/img/ai/state_eyes.png'
 import stateWeblinkIcon from '@/assets/img/ai/state_weblink.png'
 import stateTranslateIcon from '@/assets/img/ai/state_translate.png'
 import toolSpellingIcon from '@/assets/img/ai/tool_spelling.png'
+import toolBlockIcon from '@/assets/img/ai/tool_block.png'
 import stateSpellingIcon from '@/assets/img/ai/state_spelling.png'
-import spellingIcon from '@/assets/img/spelling_icon.png'
-import translateIcon from '@/assets/img/translate_icon.png'
+// 돌리는 동안 보여 주는 움직이는 그림 — 한 장에 2.7MB라 로딩 화면이 뜰 때만 받아 온다(import 는 주소만 준다)
+import spellingIcon from '@/assets/img/spelling_icon.gif'
+import translateIcon from '@/assets/img/translate_icon.gif'
+import toolToneIcon from '@/assets/img/ai/tool_tone_change.png'
 import { useFakeProgress } from '@/composables/useFakeProgress'
 
 const moduleStore = useModuleStore()
@@ -89,9 +107,78 @@ const proofreadProgress = useFakeProgress(
   () => !proofread.error,
 )
 
-// 문장 수·글자 수는 모듈 메타데이터(어떤 속성이 번역 대상인지)가 있어야 셀 수 있다 — 펼칠 때 미리 읽어 둔다
+// ── Gemini 모듈 조합 추천 ──────────────────────────────────────────────
+// 상태(입력·구성안)는 recommendStore에 있다 — 메뉴를 옮겨도 남는다. 여기는 입력 화면·구성안 고르기·깔기만 맡는다.
+const recommend = useRecommendStore()
+const editorStore = useEditorStore()
+// 추천도 같은 가짜 진행률. 보통 4~6초라 번역보다 빨리 끝난다
+const recommendProgress = useFakeProgress(
+  () => recommend.loading,
+  () => !recommend.error,
+)
+/** 분야 선택지 — 이 팀 분야가 맨 앞에 온다 */
+const recommendFields = computed(() => fieldsOrderedForTeam(editorStore.currentTeamId))
+/** 구성안 카드에 적을 모듈 줄 — 헤더·본문·푸터 이름과 첫 타이틀(있으면) */
+const optionRows = (option: RecommendOption) =>
+  stepsOf(option).map((step, index) => ({
+    key: `${step.module}-${index}`,
+    name: recommend.moduleLabel(step.module),
+    title: step.titles?.[0] ?? step.buttons?.[0] ?? '',
+  }))
+/** 입력 화면으로 돌아간다 — 결과만 버리고 입력은 남긴다 */
+const cancelRecommend = (): void => recommend.clear()
+/** 결과 화면의 '다시 추천받기' — 같은 입력으로 한 번 더 (무료 한도 1회) */
+const rerecommend = (): void => void recommend.request()
+const applyRecommend = async (): Promise<void> => {
+  const count = await recommend.apply()
+  if (!count) return
+  toast.add({
+    severity: 'success',
+    summary: '구성을 캔버스에 깔았어요',
+    detail: `모듈 ${count}개를 놓았습니다. 문구는 초안이니 다듬어 주세요. Ctrl+Z로 되돌릴 수 있어요.`,
+    life: 5000,
+  })
+}
+
+// ── Gemini 톤 변환 ─────────────────────────────────────────────────────
+// 상태와 동작은 toneStore에 있다 — 번역과 같은 이유로 메뉴를 옮겨도 결과가 남는다.
+// 여기는 어투 고르기·대상 요약·변환 요청·바뀐 글 고르기만 맡는다.
+const tone = useToneStore()
+const toneOptions = TONES
+// 변환도 같은 가짜 진행률. 번역처럼 한 편이 묶음 2~3회라 10초 안팎 걸린다
+const toneProgress = useFakeProgress(
+  () => tone.converting,
+  () => !tone.error,
+)
+const toneLabel = computed(() => TONES.find((t) => t.value === tone.tone)?.label ?? '')
+const selectToneUnit = (unitId: string, moduleInstanceId: string): void => {
+  tone.selectedUnitId = unitId
+  scrollToModule(moduleInstanceId)
+}
+/** 결과를 버리고 어투 고르기 화면으로 */
+const cancelTone = (): void => tone.clear()
+/** 결과 화면의 '다시 바꾸기' — 같은 어투로 한 번 더 받는다(무료 한도 2~3회 소모) */
+const reconvertTone = (): void => void tone.request()
+const applyTone = async (): Promise<void> => {
+  const count = await tone.apply()
+  if (!count) return
+  toast.add({
+    severity: 'success',
+    summary: '어투를 바꿨어요',
+    detail: `${count}곳을 바꿨습니다. Ctrl+Z로 되돌릴 수 있어요.`,
+    life: 4000,
+  })
+}
+/** 톤 변환 주 버튼의 글자 — 변환 중 · 다시 · 처음 */
+const toneCta = computed(() => {
+  if (toneProgress.visible.value) return '어투 바꾸는 중'
+  return tone.unchanged ? '다시 바꿔 보기' : '어투 바꿔 보기'
+})
+
+// 문장 수·글자 수는 모듈 메타데이터(어떤 속성이 번역 대상인지)가 있어야 셀 수 있다 — 펼칠 때 미리 읽어 둔다.
+// 추천은 구성안 카드에 모듈 이름을 적을 때 쓴다.
 watch(
-  () => translation.panelOpen || proofread.panelOpen,
+  () => translation.panelOpen || proofread.panelOpen || recommend.panelOpen || tone.panelOpen,
   (open) => {
     if (open && !moduleStore.availableModules.length) void moduleStore.loadAvailableModules()
   },
@@ -105,21 +192,25 @@ watch(
  * 분류별 묶음으로 나뉜다. 도구가 늘면 여기에 분류를 한 칸 더하고 묶음마다 그리드를
  * 한 번씩 돌리면 되도록, 카드 모양·간격은 배열 길이와 무관하게 맞춰 뒀다.
  */
-type ToolKey = 'weblink' | 'translate' | 'proofread'
+type ToolKey = 'weblink' | 'translate' | 'proofread' | 'recommend' | 'tone'
 /** 카드 그림은 이미지(`image`)이고, 아직 그림이 없는 도구는 머티리얼 심볼 이름(`icon`)으로 대신한다 */
 const AI_TOOLS: ReadonlyArray<{ key: ToolKey; label: string; image?: string; icon?: string }> = [
   { key: 'weblink', label: 'HTML 웹 링크 생성', image: toolWeblinkIcon },
   { key: 'translate', label: '다국어 번역', image: toolTranslateIcon },
   { key: 'proofread', label: '맞춤법 검사', image: toolSpellingIcon },
+  { key: 'recommend', label: '모듈 조합 추천', image: toolBlockIcon },
+  { key: 'tone', label: '톤 변환', image: toolToneIcon },
 ]
 
 /**
  * 지금 고른 도구 — 내용은 카드 아래에 펼쳐지고, 같은 카드를 다시 누르면 닫힌다.
- * 번역·맞춤법 검사는 상태가 스토어에 있어 메뉴를 옮겼다 와도 남아 있으므로, 처음 값을 거기서 받아 온다.
+ * 번역·맞춤법 검사·추천·톤 변환은 상태가 스토어에 있어 메뉴를 옮겼다 와도 남아 있으므로, 처음 값을 거기서 받아 온다.
  */
 const initialTool = (): ToolKey | null => {
   if (translation.panelOpen) return 'translate'
-  return proofread.panelOpen ? 'proofread' : null
+  if (proofread.panelOpen) return 'proofread'
+  if (recommend.panelOpen) return 'recommend'
+  return tone.panelOpen ? 'tone' : null
 }
 const activeTool = ref<ToolKey | null>(initialTool())
 const selectTool = (key: ToolKey): void => {
@@ -132,17 +223,23 @@ const selectTool = (key: ToolKey): void => {
 watch(activeTool, (key) => {
   translation.panelOpen = key === 'translate'
   proofread.panelOpen = key === 'proofread'
+  recommend.panelOpen = key === 'recommend'
+  tone.panelOpen = key === 'tone'
 })
 
 /** 웹 링크 도구를 펼쳤는지 — 아래 폴더 조회 watch가 이 값을 본다 */
 const isOpen = computed(() => activeTool.value === 'weblink')
 const isTranslate = computed(() => activeTool.value === 'translate')
 const isProofread = computed(() => activeTool.value === 'proofread')
+const isRecommend = computed(() => activeTool.value === 'recommend')
+const isTone = computed(() => activeTool.value === 'tone')
 
 /** 카드 모서리에 띄울 숫자 — 들어가 보기 전에도 확인할 결과가 있다는 걸 알린다 */
 const toolBadge = (key: ToolKey): number => {
   if (key === 'translate') return translation.preview.length
-  return key === 'proofread' ? proofread.suggestions.length : 0
+  if (key === 'proofread') return proofread.suggestions.length
+  if (key === 'recommend') return recommend.options.length
+  return key === 'tone' ? tone.changes.length : 0
 }
 
 /** 카드에 붙는 모듈 아이콘 — 모듈 순서 패널과 같은 규칙 */
@@ -386,6 +483,43 @@ onBeforeUnmount(() => {
           >
             <span class="material-symbols-outlined" aria-hidden="true">refresh</span>
             다시 번역하기
+          </button>
+          <!-- 구성안을 보는 중 — 같은 입력으로 한 번 더 받는다. 셋 다 마음에 안 들 때 -->
+          <button
+            v-if="isRecommend && recommend.hasResult && !recommendProgress.visible.value"
+            type="button"
+            class="tool-head-action"
+            @click="rerecommend"
+          >
+            <span class="material-symbols-outlined" aria-hidden="true">refresh</span>
+            다시 추천받기
+          </button>
+          <!-- 바뀐 글을 보는 중 — 같은 어투로 한 번 더 받는다 -->
+          <button
+            v-if="isTone && tone.hasResult && !toneProgress.visible.value"
+            type="button"
+            class="tool-head-action"
+            @click="reconvertTone"
+          >
+            <span class="material-symbols-outlined" aria-hidden="true">refresh</span>
+            다시 바꾸기
+          </button>
+        </div>
+
+        <!-- 어투 고르기 — 머리 아래 한 줄. 결과를 보는 중에는 바꿀 수 없다(그 어투로 받은 결과라서) -->
+        <div v-if="isTone" class="tn-tones" aria-label="어투">
+          <button
+            v-for="item in toneOptions"
+            :key="item.value"
+            type="button"
+            class="rc-chip"
+            :class="{ 'is-on': tone.tone === item.value }"
+            :aria-pressed="tone.tone === item.value"
+            :disabled="tone.hasResult || tone.converting"
+            :title="item.hint"
+            @click="tone.setTone(item.value as ToneKey)"
+          >
+            {{ item.label }}
           </button>
         </div>
 
@@ -825,6 +959,317 @@ onBeforeUnmount(() => {
           @click="proofread.request()"
         >
           {{ proofreadCta }}
+        </button>
+      </footer>
+
+      <!-- ── Gemini 모듈 조합 추천 (디자인 미정 — 번역·맞춤법 검사 틀을 그대로 쓴다) ── -->
+      <div v-if="isRecommend" class="tool-body tr-body">
+        <p v-if="!recommend.enabled" class="ht-note tool-note">
+          추천 서버 주소가 설정되지 않아 지금은 추천을 받을 수 없어요.
+        </p>
+
+        <!-- 받는 중 — 그림이 아직 없어 심볼로 대신한다. 결과보다 먼저 두어 100% 순간이 보이게 한다 -->
+        <div v-else-if="recommendProgress.visible.value" class="tr-loading" aria-live="polite">
+          <div class="tr-loading-top">
+            <span class="rc-loading-hero" aria-hidden="true">
+              <span class="material-symbols-outlined">dashboard</span>
+            </span>
+            <div class="tr-loading-text">
+              <p class="tr-loading-title">구성을 짜는 중이에요...</p>
+              <p class="tr-loading-hint">
+                보통 5초 정도 걸려요.<br />우리 빌더의 모듈만으로 2~3가지 구성안을 만들어요.
+              </p>
+            </div>
+          </div>
+          <div
+            class="tr-progress"
+            role="progressbar"
+            aria-label="구성 추천 진행률"
+            :aria-valuenow="recommendProgress.percent.value"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
+            <span class="tr-progress-track">
+              <span class="tr-progress-fill" :style="{ width: `${recommendProgress.percent.value}%` }"></span>
+            </span>
+            <span class="tr-progress-label">{{ recommendProgress.percent.value }}%</span>
+          </div>
+        </div>
+
+        <!-- 구성안 — 하나가 카드 한 장. 고른 카드가 '이 구성으로 시작하기'의 대상이다 -->
+        <template v-else-if="recommend.hasResult">
+          <p class="tr-scope-badge">{{ recommend.purpose }} · 구성안 {{ recommend.options.length }}개</p>
+          <div class="tr-cards rc-cards" aria-label="구성안">
+            <div
+              v-for="(option, index) in recommend.options"
+              :key="index"
+              class="tr-card rc-card"
+              :class="{ 'is-selected': recommend.selectedIndex === index }"
+              :aria-pressed="recommend.selectedIndex === index"
+              tabindex="0"
+              @click="recommend.selectedIndex = index"
+              @keydown.enter.self="recommend.selectedIndex = index"
+              @keydown.space.self.prevent="recommend.selectedIndex = index"
+            >
+              <span class="tr-card-head">
+                <span class="tr-card-name">
+                  <span class="material-symbols-outlined tr-card-icon rc-card-check" aria-hidden="true">
+                    {{ recommend.selectedIndex === index ? 'check_circle' : 'dashboard' }}
+                  </span>
+                  {{ option.name }}
+                </span>
+                <span class="tr-card-badge">모듈 {{ option.body.length + 2 }}개</span>
+              </span>
+              <span v-if="option.summary" class="rc-summary">{{ option.summary }}</span>
+              <!-- 깔릴 순서 그대로 — 헤더, 본문…, 푸터. 타이틀이 있으면 함께 보여 줘 무슨 내용인지 알게 -->
+              <ol class="rc-rows">
+                <li v-for="row in optionRows(option)" :key="row.key" class="rc-row">
+                  <span class="rc-row-name">{{ row.name }}</span>
+                  <span v-if="row.title" class="rc-row-title">{{ row.title }}</span>
+                </li>
+              </ol>
+            </div>
+          </div>
+        </template>
+
+        <!-- 아직 받기 전 — 분야(팀에서 미리 채움) · 목적 · 행사 정보 -->
+        <template v-else>
+          <div class="rc-form">
+            <div class="rc-field">
+              <p class="rc-label">전시 분야</p>
+              <div class="rc-chips" aria-label="전시 분야">
+                <button
+                  v-for="item in recommendFields"
+                  :key="item"
+                  type="button"
+                  class="rc-chip"
+                  :class="{ 'is-on': recommend.field === item }"
+                  :aria-pressed="recommend.field === item"
+                  @click="recommend.setField(item)"
+                >
+                  {{ item }}
+                </button>
+              </div>
+            </div>
+
+            <div class="rc-field">
+              <p class="rc-label">뉴스레터 목적</p>
+              <div class="rc-chips" aria-label="뉴스레터 목적">
+                <button
+                  v-for="item in recommend.purposes"
+                  :key="item"
+                  type="button"
+                  class="rc-chip"
+                  :class="{ 'is-on': recommend.purpose === item }"
+                  :aria-pressed="recommend.purpose === item"
+                  @click="recommend.purpose = item"
+                >
+                  {{ item }}
+                </button>
+              </div>
+            </div>
+
+            <div class="rc-field">
+              <label class="rc-label" for="rc-brief">행사 정보</label>
+              <textarea
+                id="rc-brief"
+                v-model="recommend.brief"
+                class="rc-textarea"
+                rows="6"
+                maxlength="2000"
+                placeholder="행사명, 일정, 장소, 꼭 넣을 내용을 적어 주세요.&#10;예) 코리아빌드위크 2026 / 8. 5(수)~8. 8(토) 코엑스 B홀 / 사전등록 시 무료 입장, 혁신기술 세미나·데모데이"
+              ></textarea>
+              <p class="rc-hint">적지 않은 일정·장소는 [일정]처럼 비워 두고 지어내지 않아요.</p>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <!-- 추천의 주 버튼 — 받기 전에는 '추천받기', 구성안을 볼 때는 '취소 / 이 구성으로 시작하기' -->
+      <footer v-if="isRecommend && recommend.enabled" class="tool-foot">
+        <p v-if="recommend.error" class="ht-error">{{ recommend.error }}</p>
+
+        <!-- 100%를 보여 주는 동안은 아직 로딩 화면이라 적용 버튼을 내밀지 않는다 -->
+        <template v-if="recommend.hasResult && !recommendProgress.visible.value">
+          <!-- 캔버스에 이미 모듈이 있을 때만 — 비우고 시작할지, 아래에 이어 붙일지 -->
+          <div v-if="moduleStore.modules.length" class="rc-mode" aria-label="적용 방식">
+            <button
+              type="button"
+              class="rc-chip"
+              :class="{ 'is-on': recommend.mode === 'replace' }"
+              :aria-pressed="recommend.mode === 'replace'"
+              @click="recommend.mode = 'replace'"
+            >
+              모듈 {{ moduleStore.modules.length }}개 비우고 시작
+            </button>
+            <button
+              type="button"
+              class="rc-chip"
+              :class="{ 'is-on': recommend.mode === 'append' }"
+              :aria-pressed="recommend.mode === 'append'"
+              @click="recommend.mode = 'append'"
+            >
+              맨 아래에 이어 붙이기
+            </button>
+          </div>
+          <p class="tr-foot-note">*문구는 AI 초안이에요. 깐 뒤에 다듬어 주세요.<br />Ctrl+Z로 되돌릴 수 있어요.</p>
+          <div class="tr-foot-actions">
+            <button type="button" class="tool-cta tool-cta--ghost" @click="cancelRecommend">취소</button>
+            <button type="button" class="tool-cta" @click="applyRecommend">이 구성으로 시작</button>
+          </div>
+        </template>
+
+        <button
+          v-else
+          type="button"
+          class="tool-cta"
+          :disabled="!recommend.canRequest || recommendProgress.visible.value"
+          :aria-busy="recommend.loading"
+          @click="recommend.request()"
+        >
+          {{ recommendProgress.visible.value ? '구성을 짜는 중' : '구성 추천받기' }}
+        </button>
+      </footer>
+
+      <!-- ── Gemini 톤 변환 (디자인 미정 — 번역·맞춤법 검사 틀을 그대로 쓴다) ── -->
+      <div v-if="isTone" class="tool-body tr-body">
+        <p v-if="!tone.enabled" class="ht-note tool-note">
+          어투 변환 서버 주소가 설정되지 않아 지금은 바꿀 수 없어요.
+        </p>
+
+        <!-- 바꾸는 중 — 결과보다 먼저 두어 100% 순간이 보이게 한다. 전용 그림이 올 때까지 도구 아이콘을 쓴다 -->
+        <div v-else-if="toneProgress.visible.value" class="tr-loading" aria-live="polite">
+          <div class="tr-loading-top">
+            <img :src="toolToneIcon" width="200" height="200" alt="" class="tr-loading-hero" />
+            <div class="tr-loading-text">
+              <p class="tr-loading-title">{{ toneLabel }} 바꾸는 중이에요...</p>
+              <p class="tr-loading-hint">
+                보통 10초 정도 걸려요.<br />내용이 많을수록 조금 더 걸릴 수 있어요.<br />다른 작업을
+                하다가 돌아오셔도 괜찮아요.
+              </p>
+            </div>
+          </div>
+          <div
+            class="tr-progress"
+            role="progressbar"
+            aria-label="어투 변환 진행률"
+            :aria-valuenow="toneProgress.percent.value"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
+            <span class="tr-progress-track">
+              <span class="tr-progress-fill" :style="{ width: `${toneProgress.percent.value}%` }"></span>
+            </span>
+            <span class="tr-progress-label">{{ toneProgress.percent.value }}%</span>
+          </div>
+        </div>
+
+        <!-- 결과 — 바뀐 값 하나가 카드 한 장. 번역 카드처럼 고칠 수 있고, 맞춤법 카드처럼 적용 여부를 고른다 -->
+        <template v-else-if="tone.hasResult">
+          <div class="tr-cards">
+            <div
+              v-for="item in tone.changes"
+              :key="item.id"
+              class="tr-card pr-card"
+              :class="{ 'is-selected': tone.selectedUnitId === item.id, 'is-off': !item.accepted }"
+              role="button"
+              tabindex="0"
+              @click="selectToneUnit(item.id, item.moduleInstanceId)"
+              @keydown.enter.self="selectToneUnit(item.id, item.moduleInstanceId)"
+            >
+              <span class="tr-card-head">
+                <span class="tr-card-name">
+                  <span class="material-symbols-outlined tr-card-icon" aria-hidden="true">
+                    {{ unitIcon(item.category) }}
+                  </span>
+                  {{ item.moduleName }}
+                </span>
+                <span v-if="item.badge" class="tr-card-badge">{{ item.badge }}</span>
+                <label class="pr-check" @click.stop>
+                  <Checkbox v-model="item.accepted" :binary="true" class="ui-checkbox ui-checkbox--sm" />
+                  적용
+                </label>
+              </span>
+
+              <span class="tr-card-body">
+                <span class="tr-field">
+                  <span class="tr-field-label">원문</span>
+                  <span class="tr-source">{{ item.source }}</span>
+                </span>
+                <span class="tr-field">
+                  <span class="tr-field-label">{{ toneLabel }}</span>
+                  <textarea
+                    v-auto-grow
+                    v-model="item.translated"
+                    class="tr-textarea"
+                    rows="1"
+                    aria-label="바뀐 글"
+                    @click.stop
+                    @input="autoGrow"
+                  ></textarea>
+                </span>
+              </span>
+            </div>
+          </div>
+        </template>
+
+        <!-- 바꿨는데 바뀐 글이 없다 — 이미 그 어투이거나 짧은 글뿐 -->
+        <div v-else-if="tone.unchanged" class="wl-empty tr-empty">
+          <span class="wl-hero">
+            <img :src="stateEyesIcon" width="103" height="103" alt="" />
+          </span>
+          <div class="wl-empty-text">
+            <p class="wl-empty-title">바꿀 곳을 찾지 못했어요</p>
+            <p class="tr-empty-hint">이미 그 어투이거나 짧은 글뿐이에요.<br />다른 어투를 골라 보세요.</p>
+          </div>
+        </div>
+
+        <!-- 아직 돌리기 전 -->
+        <template v-else>
+          <p class="tr-scope-badge">전체 모듈 {{ moduleStore.modules.length }}개</p>
+
+          <div class="wl-empty tr-empty">
+            <!-- 도구 아이콘(36px용)은 크게 키우면 깨진다 — 전용 그림이 올 때까지 번역의 상태 그림을 빌려 쓴다 -->
+            <span class="wl-hero">
+              <img :src="stateTranslateIcon" width="103" height="103" alt="" />
+            </span>
+            <div class="wl-empty-text">
+              <p class="wl-empty-title">어투를 고른 뒤,<br />“어투 바꿔 보기”를 눌러주세요</p>
+              <p class="tr-empty-hint">
+                내용·정보·서식은 그대로 두고 말투만 바꿔요.<br />카드마다 적용할지 고를 수 있어요.
+              </p>
+            </div>
+          </div>
+
+          <p class="tr-counts">{{ tone.units.length }}개 문장 · {{ tone.characterCount.toLocaleString() }}자</p>
+        </template>
+      </div>
+
+      <!-- 톤 변환의 주 버튼 — 돌리기 전에는 '바꿔 보기', 결과를 볼 때는 '취소 / 적용하기' -->
+      <footer v-if="isTone && tone.enabled" class="tool-foot">
+        <p v-if="tone.error" class="ht-error">{{ tone.error }}</p>
+
+        <template v-if="tone.hasResult && !toneProgress.visible.value">
+          <p class="tr-foot-note">
+            *선택된 {{ tone.acceptedCount }}곳이 한 번에 적용돼요.<br />AI 제안이니 확인 후 적용해 주세요.
+          </p>
+          <div class="tr-foot-actions">
+            <button type="button" class="tool-cta tool-cta--ghost" @click="cancelTone">취소</button>
+            <button type="button" class="tool-cta" :disabled="!tone.acceptedCount" @click="applyTone">
+              적용하기
+            </button>
+          </div>
+        </template>
+
+        <button
+          v-else
+          type="button"
+          class="tool-cta"
+          :disabled="!tone.units.length || toneProgress.visible.value"
+          :aria-busy="tone.converting"
+          @click="tone.request()"
+        >
+          {{ toneCta }}
         </button>
       </footer>
     </section>
@@ -1595,6 +2040,176 @@ onBeforeUnmount(() => {
   flex-shrink: 0;
   font-size: 20px;
   color: var(--gray-600);
+}
+
+/* ── 모듈 조합 추천 — 디자인 미정. 번역·맞춤법 검사의 틀(.tr-*)에 입력 칩·구성안 카드만 더한다 ── */
+/* 받는 중 그림 자리 — 그림이 없어 심볼을 같은 크기(200) 상자 가운데에 */
+.rc-loading-hero {
+  display: grid;
+  place-items: center;
+  width: 200px;
+  height: 200px;
+}
+.rc-loading-hero .material-symbols-outlined {
+  font-size: 96px;
+  color: var(--blue-300);
+}
+
+/* 입력 — 분야 · 목적 · 행사 정보 */
+.rc-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 20px;
+}
+.rc-field {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.rc-label {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: -0.15px;
+  color: var(--gray-700);
+}
+.rc-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.rc-chip {
+  height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--gray-200);
+  border-radius: 100px;
+  background: var(--white);
+  color: var(--gray-700);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.14px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    border-color 0.12s,
+    background-color 0.12s,
+    color 0.12s;
+}
+.rc-chip:hover {
+  border-color: var(--blue-300);
+}
+.rc-chip.is-on {
+  border-color: var(--blue-400);
+  background: var(--blue-50);
+  color: var(--blue-600);
+}
+.rc-textarea {
+  width: 100%;
+  min-height: 150px;
+  padding: 12px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--gray-100);
+  color: var(--gray-750);
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.6;
+  resize: vertical;
+}
+.rc-textarea::placeholder {
+  color: var(--gray-500);
+}
+.rc-textarea:focus {
+  outline: 2px solid var(--blue-400);
+  outline-offset: -2px;
+}
+.rc-hint {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--gray-500);
+  word-break: keep-all;
+}
+
+/* 구성안 카드 — 카드 틀은 .tr-card. 고른 카드는 체크 아이콘이 파랗다 */
+.rc-cards {
+  margin-top: 16px;
+}
+.rc-card {
+  gap: 12px;
+}
+.rc-card.is-selected .rc-card-check {
+  color: var(--blue-500);
+}
+.rc-summary {
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: -0.14px;
+  color: var(--gray-600);
+  word-break: keep-all;
+}
+/* 깔릴 순서 — 번호 매긴 줄. 번호는 브라우저 기본 대신 작은 회색 글자 */
+.rc-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: rc-row;
+}
+.rc-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--gray-750);
+}
+.rc-row::before {
+  counter-increment: rc-row;
+  content: counter(rc-row);
+  flex-shrink: 0;
+  min-width: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--gray-500);
+  text-align: right;
+}
+.rc-row-name {
+  flex-shrink: 0;
+  font-weight: 500;
+}
+.rc-row-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--gray-600);
+}
+/* 발 — 비우고 시작 / 이어 붙이기 */
+.rc-mode {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ── 톤 변환 — 머리 아래 어투 칩 한 줄(번역의 언어 행 자리). 칩 모양은 추천의 .rc-chip 그대로 ── */
+.tn-tones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--gray-200);
+}
+.rc-chip:disabled {
+  cursor: default;
+}
+.rc-chip:disabled:not(.is-on) {
+  color: var(--gray-400);
 }
 
 /* 발 — 안내 한 줄 + 취소·적용하기 */
