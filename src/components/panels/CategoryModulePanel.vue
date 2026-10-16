@@ -192,6 +192,7 @@ const onGalleryAdd = (module: ModuleMetadata) => {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  padding-top: 26px;
 }
 .gallery-title {
   font-size: 16px;

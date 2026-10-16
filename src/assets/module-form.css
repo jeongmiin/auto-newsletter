@@ -177,21 +177,22 @@
   cursor: not-allowed;
 }
 
-/* 이미지 다듬기(type:'image-crop') — '이미지 크기 조정' 그룹 맨 아래의 전체 폭 기본 버튼.
-   정렬 세그먼트와 같은 높이·둥글기로 한 묶음처럼 보이게 한다. */
+/* 자르기(type:'image-crop') — '이미지 파일' 섹션의 이미지 설명 아래, 전체 폭 고스트 버튼 (Figma 1994-1847).
+   핵심 입력 사이에 놓이므로 채운 색이 아니라 테두리만 둔다. */
 .module-form .gg-crop-btn {
   width: 100%;
   height: 40px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
-  border: 0;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 0 14px;
+  border: 1px solid var(--gray-200);
   border-radius: 8px;
-  background: var(--blue-400);
-  color: var(--white);
+  background: var(--white);
+  color: var(--gray-800);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
   transition: background-color 0.12s ease;
 }
@@ -199,10 +200,11 @@
   font-size: 18px;
 }
 .module-form .gg-crop-btn:hover {
-  background: var(--blue-500);
+  background: var(--gray-50);
 }
 .module-form .gg-crop-btn:disabled {
-  background: var(--gray-200);
+  background: var(--gray-100);
+  border-color: var(--gray-100);
   color: var(--gray-400);
   cursor: not-allowed;
 }
@@ -300,7 +302,7 @@
   font-family: 'Material Symbols Outlined';
   font-size: 20px;
   line-height: 1;
-  color: var(--gray-700);
+  color: var(--gray-500);
 }
 /* 팔레트를 여는 픽커라 캐럿은 두지 않는다(글자색·배경색 픽커와 동일) */
 .module-form .ql-snow .ql-picker.ql-highlightMarker .ql-picker-label svg {
@@ -916,7 +918,7 @@
   border: none;
   background: none;
   cursor: pointer;
-  color: var(--gray-700);
+  color: var(--gray-500);
 }
 .module-form .rte-field .rte-tb-btn.is-active {
   background: var(--blue-50);

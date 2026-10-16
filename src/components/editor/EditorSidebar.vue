@@ -38,7 +38,9 @@ const { confirmBlankTemplate } = useBlankTemplate()
 // 캔버스에서 모듈/그룹을 편집 중(속성 패널 노출)이면 어떤 레일 메뉴도 활성 표시하지 않는다.
 // AppLayout의 패널 전환 조건과 동일 — 캔버스 빈 영역 클릭으로 선택이 풀리면 직전 메뉴가 다시 is-active 된다.
 const hasSelection = computed(
-  () => (!!moduleStore.selectedModuleId || !!moduleStore.selectedGroupId) && !editorStore.forceRailPanel,
+  () =>
+    (!!moduleStore.selectedModuleId || !!moduleStore.selectedGroupId || !!moduleStore.selectedRow) &&
+    !editorStore.forceRailPanel,
 )
 
 // 레일 메뉴 (Figma node 316-2071 순서/아이콘 기준, Material Symbols)
@@ -58,7 +60,7 @@ const items = computed<
   { key: 'button', label: '버튼', icon: 'ads_click' },
   { key: 'table', label: '테이블', icon: 'border_all' },
   { key: 'table', label: '', icon: '', divider: true },
-  { key: 'ai', label: 'AI 도구', icon: 'auto_awesome' },
+  { key: 'ai', label: 'AI 도구', icon: 'wand_stars' },
   { key: 'ai', label: '', icon: '', divider: true },
   { key: 'order', label: '모듈 순서', icon: '123' },
 ])

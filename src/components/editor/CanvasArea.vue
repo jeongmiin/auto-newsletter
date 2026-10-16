@@ -562,17 +562,14 @@ const selectModule = (moduleId: string) => {
     return
   }
   if (selectedModuleId.value === moduleId) {
-    // 이미 선택된 열을 또 누름 → 행 전체로 되돌린다
+    // 이미 선택된 열을 또 누름 → 행 전체로 되돌린다 (selectRow 가 모듈 선택을 함께 푼다)
     selectedRow.value = owner
-    moduleStore.clearSelection()
   } else if (isRowActive(owner)) {
-    // 이 행을 보고 있는 중(행 전체 선택 또는 반대편 열 선택) → 누른 열로 내려간다
-    selectedRow.value = null
+    // 이 행을 보고 있는 중(행 전체 선택 또는 반대편 열 선택) → 누른 열로 내려간다 (selectModule 이 행 선택을 푼다)
     moduleStore.selectModule(moduleId)
   } else {
     // 바깥에서 처음 누름 → 우선 행 전체
     selectedRow.value = owner
-    moduleStore.clearSelection()
   }
 }
 
@@ -591,7 +588,7 @@ const rowOfModule = (moduleId: string): RowRef | null => {
 const onCanvasBlankClick = (e: MouseEvent): void => {
   const target = e.target as HTMLElement | null
   if (target?.closest('.canvas-container')) return // 컨테이너 내부(모듈/툴바) 클릭은 무시
-  if (moduleStore.selectedModuleId || moduleStore.selectedGroupId) {
+  if (moduleStore.selectedModuleId || moduleStore.selectedGroupId || moduleStore.selectedRow) {
     moduleStore.clearSelection()
   }
 }
@@ -706,7 +703,17 @@ const canDragGroupRow = (item: DisplayItem): boolean => groupRows(item).length >
  */
 type RowRef = { groupId: string; rowIndex: number }
 const hoveredRow = ref<RowRef | null>(null)
-const selectedRow = ref<RowRef | null>(null)
+/**
+ * 행 전체 선택은 스토어(moduleStore.selectedRow)에 있다 — 좌측 패널이 그 행의 레이아웃·너비 조정을
+ * 보여 줘야 해서다. 여기서는 전처럼 읽고 쓸 수 있게 감싼다. 쓰면 모듈·그룹 선택이 함께 풀린다.
+ */
+const selectedRow = computed<RowRef | null>({
+  get: () => moduleStore.selectedRow,
+  set: (value) => {
+    if (value) moduleStore.selectRow(value.groupId, value.rowIndex)
+    else moduleStore.selectedRow = null
+  },
+})
 
 const sameRow = (a: RowRef | null, groupId: string, rowIndex: number): boolean =>
   !!a && a.groupId === groupId && a.rowIndex === rowIndex
