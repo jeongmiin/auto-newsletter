@@ -23,6 +23,9 @@ coverage
 /cypress/videos/
 /cypress/screenshots/
 
+# 팀별 폴더 현황 보고서(npm run report:folders) — 그때그때 뽑는 결과물이라 올리지 않는다
+reports/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

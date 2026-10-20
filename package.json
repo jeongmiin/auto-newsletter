@@ -18,6 +18,7 @@
     "mock:upload": "node scripts/mock-s3-upload.mjs",
     "proxy:translate": "node scripts/translate-proxy.mjs",
     "deploy:translate": "npx --yes wrangler@4 deploy --config scripts/wrangler.jsonc",
+    "report:folders": "node scripts/folder-report.mjs",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
