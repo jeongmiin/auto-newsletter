@@ -330,20 +330,15 @@ const pickedFolder = computed(() =>
     ? (folders.value.find((f) => f.name === picked.value?.name) ?? null)
     : null,
 )
-/** 고른 폴더에 놓인 임시 저장 파일 — 있으면 '이어서 편집'을 내민다. 오래된 것도 열 수는 있다(아래 참고) */
-const pickedEditFile = computed(() => pickedFolder.value?.editFile ?? null)
 /**
- * 그 파일이 최근(EDIT_FILE_FRESH_DAYS) 것인지 — 줄의 배지와 같은 기준.
- * 최근 것이면 '이어서 편집'만 내밀어 저장해 둔 작업을 덮어쓰지 않게 하고,
- * 오래된 것(지난 회차의 흔적일 때가 많다)은 '저장하기'를 기본으로 두되 저장 날짜를 붙인 '이어서 편집'을 옆에 남긴다 —
- * 파일은 폴더에 그대로 있으니 열 길은 막지 않는다(2026-10-23: 17일 지난 파일을 못 열어 "왜 기존 템플릿이지?"가 됐다).
+ * 고른 폴더에 놓인 임시 저장 파일 — 있으면 **나이와 상관없이** 그 상태로 들어간다.
+ * 최근(EDIT_FILE_FRESH_DAYS) 것이면 줄의 배지와 함께 버튼도 '이어서 편집'이라 알리고,
+ * 오래된 것은 배지 없이 버튼이 '저장하기'로 보이지만 누르면 똑같이 저장해 둔 작업을 불러온다 —
+ * 파일이 폴더에 그대로 있는데 템플릿 초기 상태가 뜨면 "왜 기존 템플릿이지?"가 된다(2026-10-23, 고카프 67).
  */
+const pickedEditFile = computed(() => pickedFolder.value?.editFile ?? null)
+/** 버튼 글자 — 최근 임시 저장만 '이어서 편집'이라 부른다(배지와 같은 기준) */
 const pickedEditIsFresh = computed(() => isFreshEditFile(pickedEditFile.value))
-/** 오래된 임시 저장의 버튼 글자 — '이어서 편집 (10월 6일 저장)' */
-const staleEditLabel = computed(() => {
-  const at = pickedEditFile.value?.lastModified
-  return at ? `이어서 편집 (${at.getMonth() + 1}월 ${at.getDate()}일 저장)` : '이어서 편집'
-})
 
 /** 안이 빈 폴더에 들어와 있는지 — 이때는 새 폴더 없이 그 자리에 바로 저장할 수도 있다 (Figma 1488-1333) */
 const isInsideEmpty = computed(() => isEmptyState.value && openedPath.value.length > 0)
@@ -722,36 +717,27 @@ const continueEditing = async () => {
              최근 임시 저장은 줄의 배지가 알리고, 여기서는 그 폴더를 골랐을 때 버튼만 달라진다. -->
         <FlowFooter>
           <button type="button" class="flow-btn flow-btn--ghost" @click="goPrev">이전으로</button>
-          <!-- 최근 임시 저장이 있는 폴더를 고르면 '이어서 편집'만 남긴다 —
-               그 자리에서 새로 시작하면 저장해 둔 작업을 덮어쓰게 된다.
-               오래된 임시 저장이면 '저장하기'가 기본이고, 날짜를 붙인 '이어서 편집'을 옆에 둔다.
+          <!-- 임시 저장이 있는 폴더를 고르면 버튼 하나가 그 파일을 불러온다 —
+               그 자리에서 새로 시작하면 저장해 둔 작업을 덮어쓰게 되므로 새로 시작 버튼은 두지 않는다.
+               글자만 다르다: 최근 것은 '이어서 편집', 오래된 것은 '저장하기'(배지도 없다).
                (그 폴더 안으로 들어가려면 줄을 더블클릭한다) -->
           <button
-            v-if="pickedEditFile && !pickedEditIsFresh"
-            type="button"
-            class="flow-btn flow-btn--ghost"
-            :disabled="restoring"
-            @click="continueEditing"
-          >
-            {{ restoring ? '불러오는 중…' : staleEditLabel }}
-          </button>
-          <button
-            v-if="!pickedEditFile || !pickedEditIsFresh"
+            v-if="!pickedEditFile"
             type="button"
             class="flow-btn flow-btn--primary"
-            :disabled="!canSave || restoring"
+            :disabled="!canSave"
             @click="goNext"
           >
             저장하기
           </button>
           <button
-            v-if="pickedEditFile && pickedEditIsFresh"
+            v-else
             type="button"
             class="flow-btn flow-btn--primary"
             :disabled="restoring"
             @click="continueEditing"
           >
-            {{ restoring ? '불러오는 중…' : '이어서 편집' }}
+            {{ restoring ? '불러오는 중…' : pickedEditIsFresh ? '이어서 편집' : '저장하기' }}
           </button>
         </FlowFooter>
       </div>
