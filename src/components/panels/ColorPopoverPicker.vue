@@ -236,6 +236,12 @@ interface Props {
   /** true면 그라디언트+휴 상시 노출의 '풀 피커' 모달로 표시(포인트 색상 추가·수정용).
    *  false면 팔레트+포인트 스와치 중심의 컴팩트 모달(모듈 색상 필드용). */
   fullPicker?: boolean
+  /**
+   * 컴팩트 모달을 트리거 옆이 아니라 **좌측 패널 바깥**(포인트 색상 풀 피커와 같은 자리)에 연다.
+   * 에디터 툴바의 글자 색상·배경 색상·셀 배경색처럼 트리거가 패널 안 깊숙이 있어, 트리거 옆에 열면
+   * 고치고 있는 글(에디터)을 가려서 색을 바꿔도 결과를 볼 수 없을 때 쓴다.
+   */
+  outsidePanel?: boolean
   /** 포인트 색상 "추종" 모드: 스와치 클릭 시 리터럴 픽 대신 select-point(index) emit,
    *  추종 중이면 수동 색상 입력을 잠근다. (모듈 색상 필드용 — 전체 스타일은 미지정=리터럴) */
   pointFollow?: boolean
@@ -248,6 +254,7 @@ const props = withDefaults(defineProps<Props>(), {
   showAlpha: true,
   triggerVariant: 'swatch',
   fullPicker: false,
+  outsidePanel: false,
   pointFollow: false,
   activeIndex: null,
 })
@@ -484,15 +491,26 @@ const POPOVER_WIDTH = 262
 const FULL_PICKER_LEFT = 400
 const FULL_PICKER_TOP = 180
 
+/**
+ * 좌측 패널의 오른쪽 가장자리 — 패널은 끌어서 넓힐 수 있어(--left-panel-width) 상수로 두면 넓힌 패널을
+ * 덮는다. AppLayout 의 리사이즈 핸들이 늘 그 가장자리에 있으므로 그 자리를 읽고, 없으면(다른 화면) 기본값.
+ */
+const panelRightEdge = (): number => {
+  const handle = document.querySelector('.resize-handle')
+  return handle ? handle.getBoundingClientRect().right : FULL_PICKER_LEFT
+}
+
 const computePosition = () => {
   const el = triggerEl.value
   if (!el) return
   const rect = el.getBoundingClientRect()
   const margin = 8
+  // 패널 바깥 고정 자리 — 포인트 색상 풀 피커와, 에디터 툴바의 색상(outsidePanel)이 같은 자리를 쓴다
+  const anchored = props.fullPicker || props.outsidePanel
 
   let left: number
-  if (props.fullPicker) {
-    left = FULL_PICKER_LEFT
+  if (anchored) {
+    left = panelRightEdge() + margin
   } else {
     left = rect.right + margin
     if (left + POPOVER_WIDTH > window.innerWidth - margin) {
@@ -502,6 +520,8 @@ const computePosition = () => {
   // 좁은 창에서 화면 밖으로 나가지 않게 양쪽을 눌러 둔다
   left = Math.max(margin, Math.min(left, window.innerWidth - POPOVER_WIDTH - margin))
 
+  // 세로는 풀 피커만 고정이다. 에디터 툴바 색상(outsidePanel)은 가로만 패널 밖으로 빼고
+  // 세로는 트리거(툴바 줄) 높이에 맞춘다 — 고치는 글 바로 옆에서 색을 고르게 하려는 것이다.
   const top = props.fullPicker
     ? FULL_PICKER_TOP
     : Math.max(margin, Math.min(rect.top, window.innerHeight - 520))

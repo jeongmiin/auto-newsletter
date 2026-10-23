@@ -6,8 +6,19 @@
   <div v-if="target" class="side-panel column-compose-panel">
     <h2 class="panel-title">직접 구성</h2>
 
+    <!-- 테이블은 1단과 똑같이 크기를 먼저 고른다 — 카드를 누르자마자 2×2 가 들어가면
+         그 뒤 '테이블' 메뉴에서 고른 크기가 새 테이블로 아래에 붙어 버린다 -->
+    <template v-if="tableStep">
+      <button type="button" class="compose-back" @click="tableStep = false">
+        <span class="material-symbols-outlined" aria-hidden="true">arrow_back_ios</span>
+        모듈 목록으로
+      </button>
+      <TableSizePicker @add="onAddTable" />
+    </template>
+
     <!-- 모듈 검색 — 모듈 패널과 같은 공용 검색창(sm) -->
     <SearchField
+      v-else
       v-model="searchQuery"
       size="sm"
       placeholder="모듈을 검색하세요"
@@ -16,7 +27,7 @@
     />
 
     <!-- 자주 쓰는 원소 모듈 (카테고리 메뉴와 같은 QuickAddCard) — 전부 그룹을 만들지 않는 단일 모듈 -->
-    <div class="quick-add-list">
+    <div v-if="!tableStep" class="quick-add-list">
       <QuickAddCard
         v-for="item in quickAddItems"
         :key="item.label"
@@ -25,7 +36,7 @@
       />
     </div>
 
-    <div class="module-card-grid">
+    <div v-if="!tableStep" class="module-card-grid">
       <ModuleCard
         v-for="module in filteredModules"
         :key="module.id"
@@ -49,6 +60,7 @@ import { useModuleThumbnails } from '@/composables/useModuleThumbnails'
 import ModuleCard from './ModuleCard.vue'
 import QuickAddCard from './QuickAddCard.vue'
 import SearchField from '@/components/SearchField.vue'
+import TableSizePicker from './TableSizePicker.vue'
 import { pickQuickAddItems, type QuickAddItem } from '@/utils/quickAddItems'
 import type { ModuleMetadata } from '@/types'
 
@@ -59,6 +71,8 @@ const { thumbs, observeCard, measureThumbHeight, thumbIframeHeight, thumbBoxHeig
 
 const target = computed(() => moduleStore.columnTarget)
 const searchQuery = ref('')
+/** 테이블 카드를 골라 크기 선택 화면을 보고 있는지 */
+const tableStep = ref(false)
 
 // 상단 빠른추가 — 그룹을 만들지 않는(=컬럼 안에 그대로 들어가는) 원소 모듈만 고른다
 const quickAddItems = pickQuickAddItems([
@@ -102,7 +116,22 @@ onMounted(() => {
  * 그룹 바깥에 붙는다. addModule은 columnTarget을 보고 그 (행, 컬럼)에 정확히 넣는다.
  */
 const onAdd = (module: ModuleMetadata) => {
+  // 테이블은 바로 넣지 않고 크기부터 고른다(1단의 '테이블 추가' 메뉴와 같은 흐름)
+  if (module.id === 'ModuleTable') {
+    tableStep.value = true
+    return
+  }
   moduleStore.addModule(module)
+}
+
+/** 고른 크기의 테이블을 대상 컬럼에 넣는다 — addModule 이 columnTarget 을 보고 그 칸에 넣는다 */
+const onAddTable = (rows: number, cols: number) => {
+  const meta = moduleStore.availableModules.find((m) => m.id === 'ModuleTable')
+  if (!meta) return
+  moduleStore.addModule(meta)
+  const id = moduleStore.selectedModuleId
+  if (id) moduleStore.setCustomTableSize(id, rows, cols)
+  tableStep.value = false
 }
 
 /** 빠른추가 — 모듈을 넣은 뒤 기본 여백 등 오버라이드를 얹는다(추가된 모듈이 선택 상태다) */
@@ -131,6 +160,25 @@ const onQuickAdd = (item: QuickAddItem) => {
   flex-direction: column;
   gap: 10px;
   flex-shrink: 0;
+}
+/* 크기 선택 화면에서 모듈 목록으로 돌아가는 링크 */
+.compose-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 14px;
+  color: var(--gray-600);
+  cursor: pointer;
+}
+.compose-back:hover {
+  color: var(--gray-800);
+}
+.compose-back .material-symbols-outlined {
+  font-size: 16px;
 }
 .module-card-grid {
   display: flex;

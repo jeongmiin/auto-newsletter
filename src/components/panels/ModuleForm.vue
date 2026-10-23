@@ -31,82 +31,15 @@
               >{{ n }}단</button>
             </div>
           </template>
-          <!-- 너비 조정 (Figma 926-8769 · 977-7717) — 기준은 항상 '첫 번째 열'이고 두 번째 열은
-               100-첫번째로 자동 계산된다. 추천 비율(프리셋)과 직접 조정(슬라이더)은 같은 값을 쓰므로
-               어느 쪽으로 바꿔도 나머지 한쪽과 아래 프리뷰 막대가 함께 따라온다.
-               데스크톱 기준이고, 모바일에서는 아래 '가로 유지'가 꺼져 있으면 세로로 쌓인다. -->
-          <div v-if="showLayoutSection && moduleColumnInfo.columns > 1" class="mt-6">
-            <p class="gg-field-label !mb-4">너비 조정</p>
-            <div class="wadj-tabs">
-              <button
-                type="button"
-                class="wadj-tab"
-                :class="{ 'is-active': widthTab === 'preset' }"
-                @click="widthTab = 'preset'"
-              >
-                <span class="material-symbols-outlined">fit_width</span>추천 비율
-              </button>
-              <button
-                type="button"
-                class="wadj-tab"
-                :class="{ 'is-active': widthTab === 'custom' }"
-                @click="widthTab = 'custom'"
-              >
-                <span class="material-symbols-outlined">edit</span>직접 조정
-              </button>
-            </div>
-
-            <!-- 추천 비율 -->
-            <div v-if="widthTab === 'preset'" class="wadj-presets">
-              <button
-                v-for="p in WIDTH_PRESETS"
-                :key="`wpreset-${p}`"
-                type="button"
-                class="wadj-preset"
-                :class="{ 'is-active': firstColumnWidth === p }"
-                @click="setFirstColumnWidth(p)"
-              >{{ p }} : {{ 100 - p }}</button>
-            </div>
-
-            <!-- 직접 조정 -->
-            <div v-else class="wadj-custom">
-              <p class="gg-field-label !mb-2.5">첫 번째 열 너비</p>
-              <div class="gg-margin-slider-row">
-                <input
-                  type="range"
-                  min="10"
-                  max="90"
-                  step="1"
-                  :value="firstColumnWidth"
-                  @input="onFirstColumnWidthInput($event)"
-                  class="gg-margin-slider"
-                />
-                <div class="gg-margin-value-field">
-                  <input
-                    type="number"
-                    min="10"
-                    max="90"
-                    :value="firstColumnWidth"
-                    @change="onFirstColumnWidthInput($event)"
-                    @keydown.enter="blurTarget"
-                    class="gg-margin-value-input"
-                  />
-                  <span class="gg-margin-value-unit">%</span>
-                </div>
-              </div>
-              <p class="hint-text">*두 번째 열 너비는 자동으로 계산돼요</p>
-            </div>
-
-            <!-- 비율 프리뷰 — 막대 폭이 실제 비율이라 값과 모양을 함께 확인할 수 있다 -->
-            <div class="wadj-preview">
-              <div class="wadj-preview-bar is-first" :style="{ flexGrow: firstColumnWidth }">
-                {{ firstColumnWidth }}%
-              </div>
-              <div class="wadj-preview-bar" :style="{ flexGrow: 100 - firstColumnWidth }">
-                {{ 100 - firstColumnWidth }}%
-              </div>
-            </div>
-          </div>
+          <!-- 너비 조정 (Figma 926-8769 · 977-7717) — 열을 나누는 중(빈 열이 있을 때)에만 여기 보인다.
+               두 열이 다 찬 행은 캔버스에서 행 전체를 골라 RowLayoutPanel 에서 조정한다(같은 컴포넌트). -->
+          <ColumnWidthControls
+            v-if="showLayoutSection && moduleColumnInfo.columns > 1 && selectedModule.groupId"
+            class="mt-6"
+            :group-id="selectedModule.groupId"
+            :row-index="moduleColumnInfo.rowIndex"
+            :columns="moduleColumnInfo.columns"
+          />
           <!-- 모바일에서도 가로 유지 — 켜면 좁은 폭에서도 세로로 쌓지 않고 컬럼 비율 그대로 나란히 둔다.
                (뉴스 헤드라인 헤더의 '제목 | 웹으로 보기'처럼 한 줄로 읽혀야 하는 행에 쓴다)
                레이아웃 조작과 달리 '다 채워진 2단'에서 오히려 필요한 설정이라 계속 노출한다. -->
@@ -360,7 +293,7 @@
             @update:modelValue="onSectionSwitch(group, gIdx, $event)"
             @click.stop
           />
-          <!-- 그 외 스타일 섹션(이미지 크기 조정·모서리 둥글기·여백)은 켜고 끌 속성이 없다.
+          <!-- 그 외 스타일 섹션(크기 및 정렬·모서리 둥글기·여백)은 켜고 끌 속성이 없다.
                스위치를 두면 아코디언 상태와 뒤엉키므로 chevron/라벨만으로 열고 닫는다. -->
         </div>
         <div
@@ -369,7 +302,7 @@
           v-show="isSectionOpen(group, gIdx)"
         >
         <!-- 섹션 필드 래퍼: 접이식 카드 섹션에서는 이 래퍼가 하나의 회색 카드가 되어
-             한 섹션의 여러 속성(예: 이미지 크기 조정의 최대 너비+정렬)을 한 카드에 담는다.
+             한 섹션의 여러 속성(예: 크기 및 정렬의 최대 너비+정렬)을 한 카드에 담는다.
              4방향 여백(quad)은 블록마다 자기 카드를 갖는다 — 텍스트 '여백' 섹션의 안쪽/바깥 여백이 각각 한 카드.
              카드가 아닌 섹션에서는 display:contents 로 레이아웃에 영향 없음. -->
         <div
@@ -831,6 +764,7 @@
                          @mousedown.prevent로 에디터 선택 영역을 유지한다. -->
                     <ColorPopoverPicker
                       title="글자 색상"
+                      outside-panel
                       :modelValue="editorColorModel(prop.key, 'color')"
                       :pointColors="wrapPointColors"
                       pointFollow
@@ -849,6 +783,7 @@
                     </ColorPopoverPicker>
                     <ColorPopoverPicker
                       title="배경 색상"
+                      outside-panel
                       :modelValue="editorColorModel(prop.key, 'background')"
                       :pointColors="wrapPointColors"
                       pointFollow
@@ -1007,7 +942,7 @@
             </div>
           </div>
 
-          <!-- 이미지 다듬기 — 값이 없는 동작 버튼. target 이미지 필드(ImageUploadField)의 모달을 연다.
+          <!-- 자르기(이미지 다듬기) — 값이 없는 동작 버튼. target 이미지 필드(ImageUploadField)의 모달을 연다.
                자리표시 이미지뿐이면 자를 게 없으므로 비활성화한다. -->
           <div v-else-if="prop.type === 'image-crop'">
             <button
@@ -1018,7 +953,7 @@
               @click="openImageCrop(prop)"
             >
               <span class="material-symbols-outlined">crop</span>
-              {{ prop.label || '이미지 다듬기' }}
+              {{ prop.label || '자르기' }}
             </button>
           </div>
 
@@ -1070,6 +1005,7 @@
                     <Checkbox
                       :modelValue="item.show"
                       :binary="true"
+                      class="ui-checkbox"
                       @update:modelValue="setContactShow(prop.key, index, $event)"
                     />
                     <span class="cmp-label">{{ contactMeta[item.key]?.prefix }} {{ contactMeta[item.key]?.label }}</span>
@@ -1109,6 +1045,7 @@
                     <Checkbox
                       :modelValue="icon.show"
                       :binary="true"
+                      class="ui-checkbox"
                       @update:modelValue="setSnsIconShow(prop.key, index, $event)"
                     />
                     <img
@@ -1588,6 +1525,7 @@
                             <span class="ql-formats rte-tb-grp">
                               <ColorPopoverPicker
                                 title="글자 색상"
+                                outside-panel
                                 :modelValue="editorColorModel(TABLE_CELL_KEY, 'color')"
                                 :pointColors="wrapPointColors"
                                 pointFollow
@@ -1610,6 +1548,7 @@
                                    부모가 받아 처리할 게 없어 아무 일도 일어나지 않는다. -->
                               <ColorPopoverPicker
                                 title="셀 배경색"
+                                outside-panel
                                 :modelValue="selEffectiveBg"
                                 :pointColors="wrapPointColors"
                                 @update:modelValue="setSelBgColor($event)"
@@ -1927,6 +1866,7 @@ import ColorAlphaPicker from '@/components/ColorAlphaPicker.vue'
 import HexColorInput from '@/components/HexColorInput.vue'
 import PointColorSwatchRow from '@/components/PointColorSwatchRow.vue'
 import ColorPopoverPicker from './ColorPopoverPicker.vue'
+import ColumnWidthControls from './ColumnWidthControls.vue'
 import BorderSideSelector from './BorderSideSelector.vue'
 import draggable from 'vuedraggable'
 import { parseBorderSides, serializeBorderSides } from '@/utils/borderSides'
@@ -2072,24 +2012,7 @@ const setColumnsTo = (n: number) => {
 }
 // ===== 너비 조정 — 기준은 '첫 번째 열'(두 번째 열은 100-첫번째로 자동) =====
 // 추천 비율 프리셋(Figma 977-7684): 왼쪽 열이 가질 %만 담는다.
-const WIDTH_PRESETS = [50, 60, 40, 80, 20] as const
-const widthTab = ref<'preset' | 'custom'>('preset')
-
-const firstColumnWidth = computed<number>(() => {
-  const gid = selectedModule.value?.groupId
-  if (!gid) return Math.round(100 / Math.max(moduleColumnInfo.value.columns, 1))
-  return moduleStore.columnWidthOf(gid, moduleColumnInfo.value.rowIndex, 0)
-})
-const setFirstColumnWidth = (pct: number) => {
-  const gid = selectedModule.value?.groupId
-  if (!gid) return
-  // setColumnWidth가 나머지 폭을 다른 컬럼에 분배한다(2단이면 정확히 100-pct)
-  moduleStore.setColumnWidth(gid, moduleColumnInfo.value.rowIndex, 0, pct)
-}
-const onFirstColumnWidthInput = (event: Event) => {
-  const n = Number.parseInt((event.target as HTMLInputElement).value, 10)
-  if (Number.isFinite(n)) setFirstColumnWidth(n)
-}
+// 너비 조정 UI 는 ColumnWidthControls 로 뺐다 — 행 전체를 고른 패널(RowLayoutPanel)과 같이 쓴다.
 
 // ===== 모바일에서도 가로 유지 — 이 모듈이 속한 '행' 단위 설정 =====
 const rowKeepInlineOn = computed<boolean>(() => {
@@ -2716,7 +2639,7 @@ const normalizePxField = (prop: EditableProp) => {
 const isFontSizeField = (prop: EditableProp): boolean =>
   prop.type === 'text' && /fontsize$/i.test(prop.key)
 
-// ===== 이미지 크기 조정 (Figma 686-3949) =====
+// ===== 크기 및 정렬 (Figma 686-3949 · 이름은 1994-1847) =====
 // 최대 너비: 슬라이더 + % 값 필드. (*MaxWidth 키의 text 필드)
 // 테두리 위치 — 그룹 스타일과 동일한 아이콘 다중 선택으로 렌더한다.
 // 값은 properties에 문자열 하나로만 저장할 수 있어 'top,bottom'처럼 이어 붙인다(구버전 'both'도 해석).
@@ -2784,7 +2707,7 @@ const imagePlaceholderUrl = (prop: EditableProp): string => {
 }
 
 /**
- * 이미지 다듬기(type:'image-crop') — 버튼은 '이미지 크기 조정' 그룹에 있고 모달·재업로드는
+ * 자르기(type:'image-crop') — 버튼은 '이미지 파일' 섹션(이미지 설명 아래)에 있고 모달·재업로드는
  * 그 이미지의 ImageUploadField 가 맡는다. 그래서 필드 인스턴스를 key 로 붙잡아 둔다.
  * 그룹은 v-show 로 접히므로 접혀 있어도 인스턴스는 살아 있다.
  */
@@ -3155,7 +3078,7 @@ const isQuadSelfLabeledGroup = (group: { name?: string | null; props: EditablePr
 // 타이틀 옆 화살표(chevron) + 열릴 때 본문에 배경 카드. 헤더(화살표+타이틀)를 클릭하면 열고/닫는다.
 // 섹션 헤더(타이틀 행)를 갖는 그룹 — 이름 있고 quad-self-labeled(헤더 없음)가 아닌 그룹.
 // 스타일 섹션 — '링크 추가'처럼 접이식 카드(화살표 + 헤더 토글 + 회색 본문 카드)로 통일한다(Figma 요청).
-// 별도 on/off 속성이 없는 섹션(이미지 크기 조정·모서리 둥글기·여백·배경색)은 토글이 UI 펼침 상태를 제어하고,
+// 별도 on/off 속성이 없는 섹션(크기 및 정렬·모서리 둥글기·여백·배경색)은 토글이 UI 펼침 상태를 제어하고,
 // 실제 on/off 속성이 있는 섹션(링크 추가=showImageLink, 테두리=showBorder/borderStyle)은 그 속성이 토글을 담당한다.
 // - 이미지 모듈: '이미지 파일'(핵심 필드)을 뺀 전 섹션
 // - 텍스트 모듈: 여백 · 배경색 · 모서리 둥글기 · 테두리 (내용 섹션은 핵심 필드라 제외)

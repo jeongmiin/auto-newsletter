@@ -119,7 +119,23 @@ export const useModuleStore = defineStore('module', () => {
       useEditorStore().forceRailPanel = selectedByAdd
     }
     selectedByAdd = false
+    // 모듈이나 그룹을 고르면 '행 전체' 선택은 풀린다 — 셋은 서로 배타적이다
+    if (modId || grpId) selectedRow.value = null
   })
+
+  /**
+   * [행별 컬럼] 다단 행을 '행 전체'로 고른 상태 — 캔버스에서 2단 행을 처음 누르면 열이 아니라 행이 잡힌다.
+   * 좌측 패널은 이때 그 행의 레이아웃·너비 조정(RowLayoutPanel)을 보여 준다. 열(모듈)을 고르면 풀린다.
+   */
+  const selectedRow = ref<{ groupId: string; rowIndex: number } | null>(null)
+  const selectRow = (groupId: string, rowIndex: number): void => {
+    selectedByAdd = false
+    selectedModuleId.value = null
+    selectedGroupId.value = null
+    selectedRow.value = { groupId, rowIndex }
+    // 사용자가 직접 고른 것이므로 속성 패널로 전환한다(selectModule 과 같은 이유)
+    useEditorStore().forceRailPanel = false
+  }
 
   // 선택 모듈이 (테이블 셀 선택 대상과) 다른 모듈로 바뀌면 셀 선택 해제.
   // 셀 클릭 흐름은 selectModule → selectTableCell 순서라 같은 모듈이면 moduleId가 일치해 유지된다.
@@ -2008,6 +2024,8 @@ export const useModuleStore = defineStore('module', () => {
    * 모듈 선택
    */
   const selectModule = (moduleId: string): void => {
+    // 직접 고른 것이다 — 추가 직후 선택이 어떤 이유로든 감시에 안 잡혀 깃발이 남아 있어도 팔레트로 되돌리지 않는다
+    selectedByAdd = false
     selectedModuleId.value = moduleId
     selectedGroupId.value = null
     // 사용자가 직접 선택한 것이므로 속성 패널로 전환한다.
@@ -2418,6 +2436,7 @@ export const useModuleStore = defineStore('module', () => {
    * 그룹 선택 (속성 패널에서 그룹 스타일 편집)
    */
   const selectGroup = (groupId: string): void => {
+    selectedByAdd = false
     selectedGroupId.value = groupId
     selectedModuleId.value = null
     // 사용자가 직접 선택한 것이므로 즉시 속성(그룹 스타일) 패널로 전환한다.
@@ -2430,6 +2449,7 @@ export const useModuleStore = defineStore('module', () => {
   const clearSelection = (): void => {
     selectedModuleId.value = null
     selectedGroupId.value = null
+    selectedRow.value = null
   }
 
   /**
@@ -4513,6 +4533,8 @@ ${fullHtml}
     deleteGroup,
     selectGroup,
     clearSelection,
+    selectedRow,
+    selectRow,
     updateGroupStyle,
     setGroupName,
     ensureGroupNames,

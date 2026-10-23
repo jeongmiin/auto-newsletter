@@ -64,10 +64,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, nextTick } from 'vue'
+import { computed, onBeforeUnmount, ref, watch, nextTick } from 'vue'
 import type { ModuleInstance } from '@/types'
 import { useModuleRenderer } from '@/composables/useModuleRenderer'
 import { useModuleStore } from '@/stores/moduleStore'
+import { useProofreadStore } from '@/stores/proofreadStore'
+import { clearModuleHighlights, setModuleHighlights } from '@/utils/proofreadHighlight'
 
 interface Props {
   module: ModuleInstance
@@ -148,6 +150,25 @@ watch(
   () => nextTick(applyCellHighlight),
   { deep: true, immediate: true },
 )
+
+// ── 맞춤법 검사 표시 ─────────────────────────────────────────────
+// 이 모듈을 가리키는 카드의 구절에 물결 밑줄(CSS Highlight — DOM 은 그대로).
+// 적용을 끈 카드는 표시하지 않되, 누른 카드는 끈 상태여도 어디인지 보여 준다.
+const proofread = useProofreadStore()
+const proofreadMarks = computed(() =>
+  proofread.suggestions.filter(
+    (item) =>
+      item.unit.moduleInstanceId === props.module.id &&
+      (item.accepted || item.id === proofread.selectedId),
+  ),
+)
+watch(
+  [renderedHtml, proofreadMarks, () => proofread.selectedId],
+  // v-html 이 DOM 에 반영된 다음 Range 를 잡는다
+  () => nextTick(() => setModuleHighlights(props.module.id, contentEl.value, proofreadMarks.value, proofread.selectedId)),
+  { immediate: true },
+)
+onBeforeUnmount(() => clearModuleHighlights(props.module.id))
 </script>
 
 <style scoped>

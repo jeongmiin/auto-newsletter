@@ -2,7 +2,7 @@ import type { EditableProp, ModuleInstance, ModuleMetadata } from '@/types'
 import { normalizeNbspForWordBreak } from '@/utils/quillHtmlProcessor'
 import { sanitizeHtml } from '@/utils/sanitize'
 
-export type TranslationLanguage = 'en' | 'ja' | 'zh-Hans'
+export type TranslationLanguage = 'en' | 'ja' | 'zh-Hans' | 'th'
 export type TranslationPath = Array<string | number>
 
 /**
@@ -50,6 +50,18 @@ const LINE_SEPARATOR = '\n'
 const TRANSLATABLE_KEY = /(text|title|description|content|label|alt|summary|companyinfo|header)$/i
 const NON_CONTENT_KEY = /(font|size|color|width|height|padding|margin|radius|border|lineheight|url|email)$/i
 const KOREAN_TEXT = /[가-힣ㄱ-ㅎㅏ-ㅣ]/
+/** 어느 문자든 글자 하나 — 숫자·기호뿐인 값(가격·화살표)은 거른다 */
+const ANY_LETTER = /\p{L}/u
+
+/**
+ * 값을 어떤 글로 볼지 — 번역은 **한국어가 든 값**만(원문이 한국어다), 맞춤법 검사는 **글자가 든 값 모두**
+ * (번역한 영·일·중 뉴스레터도 검사하므로).
+ */
+export type CollectLetters = 'korean' | 'any'
+export interface CollectOptions {
+  letters?: CollectLetters
+}
+const ACCEPT_BY_LETTERS: Record<CollectLetters, RegExp> = { korean: KOREAN_TEXT, any: ANY_LETTER }
 
 const isHtml = (value: string): boolean => /<([a-z][\w-]*)(?:\s[^>]*)?>/i.test(value)
 
@@ -73,7 +85,7 @@ export function isTranslatableProp(prop: EditableProp): boolean {
 }
 
 /** 글이 든 텍스트 노드만 모은다. style/script 안은 글이 아니라 뺀다. */
-function textNodesIn(root: HTMLElement): Text[] {
+export function textNodesIn(root: HTMLElement): Text[] {
   const walker = root.ownerDocument.createTreeWalker(root, NodeFilter.SHOW_TEXT)
   const nodes: Text[] = []
   for (let node = walker.nextNode(); node; node = walker.nextNode()) {
@@ -84,7 +96,7 @@ function textNodesIn(root: HTMLElement): Text[] {
   return nodes
 }
 
-const parseBody = (html: string): HTMLElement =>
+export const parseBody = (html: string): HTMLElement =>
   new DOMParser().parseFromString(html, 'text/html').body
 
 /** 한 줄이 되는 덩어리 — 문단·목록 항목·표 칸처럼 줄바꿈으로 끊기는 요소 */
@@ -96,7 +108,7 @@ const BLOCK_SELECTOR = 'p,div,li,h1,h2,h3,h4,h5,h6,blockquote,pre,td,th'
  * 블록 안에 또 블록이 있으면 바깥쪽은 세지 않는다(같은 글이 두 번 나오지 않게).
  * 문단 태그가 아예 없는 값(인라인만 있는 짧은 글)은 전체를 한 줄로 본다.
  */
-function blockElements(body: HTMLElement): HTMLElement[] {
+export function blockElements(body: HTMLElement): HTMLElement[] {
   const leaves = [...body.querySelectorAll<HTMLElement>(BLOCK_SELECTOR)].filter(
     (el) => !el.querySelector(BLOCK_SELECTOR),
   )
@@ -180,6 +192,8 @@ interface UnitContext {
   module: ModuleInstance
   moduleName: string
   category: string
+  /** 값에 이 글자가 있어야 수집한다 (CollectOptions.letters) */
+  accept: RegExp
 }
 
 function pushString(
@@ -190,7 +204,11 @@ function pushString(
   path: TranslationPath,
   value: unknown,
 ): void {
-  if (typeof value !== 'string' || !KOREAN_TEXT.test(value)) return
+  if (typeof value !== 'string') return
+  // 글자 검사는 태그를 뺀 글에 한다 — 태그 이름(p·strong)이 글자로 잡히면 안 된다
+  const html = isHtml(value)
+  const plain = html ? htmlToPlainText(value) : value
+  if (!ctx.accept.test(plain)) return
   const base = {
     id: `${ctx.module.id}:${path.join('.')}`,
     moduleInstanceId: ctx.module.id,
@@ -201,15 +219,14 @@ function pushString(
     ...(badge ? { badge } : {}),
   }
 
-  if (!isHtml(value)) {
+  if (!html) {
     units.push({ ...base, source: value })
     return
   }
 
   // 리치 텍스트 — 값 하나가 카드 한 장. 사람에겐 평문, 번역기에는 속성을 뗀 뼈대를 보낸다.
-  const source = htmlToPlainText(value)
-  if (!source.trim()) return
-  units.push({ ...base, source, sourceHtml: toSkeleton(value).html, originalHtml: value })
+  if (!plain.trim()) return
+  units.push({ ...base, source: plain, sourceHtml: toSkeleton(value).html, originalHtml: value })
 }
 
 function collectStructured(
@@ -297,16 +314,21 @@ const ALT_KEY = /alt$/i
 const propBadge = (prop: EditableProp): string | undefined =>
   ALT_KEY.test(prop.key) ? prop.label : undefined
 
-/** 캔버스의 모든 모듈에서 실제 한국어가 들어 있는 편집 필드를 값 단위로 수집한다. */
+/**
+ * 캔버스의 모든 모듈에서 글이 들어 있는 편집 필드를 값 단위로 수집한다.
+ * 기본은 **한국어가 든 값**만(번역용). 맞춤법 검사처럼 어느 언어든 봐야 하면 `{ letters: 'any' }`.
+ */
 export function collectTranslationUnits(
   modules: ModuleInstance[],
   metadata: ModuleMetadata[],
+  options: CollectOptions = {},
 ): TranslationUnit[] {
   const units: TranslationUnit[] = []
+  const accept = ACCEPT_BY_LETTERS[options.letters ?? 'korean']
   for (const module of modules) {
     const meta = metadata.find((item) => item.id === module.moduleId)
     if (!meta) continue
-    const ctx: UnitContext = { module, moduleName: meta.name, category: meta.category }
+    const ctx: UnitContext = { module, moduleName: meta.name, category: meta.category, accept }
     for (const prop of meta.editableProps) {
       if (!isTranslatableProp(prop)) continue
       const value = module.properties[prop.key]
@@ -321,7 +343,7 @@ export function collectTranslationUnits(
 }
 
 /** 경로의 마지막 앞까지 따라가 값을 담고 있는 객체를 돌려준다. 경로가 끊겨 있으면 null. */
-function resolveParent(
+export function resolveParent(
   root: ModuleInstance,
   path: TranslationPath,
 ): Record<string | number, unknown> | null {

@@ -1,0 +1,99 @@
+/*
+ * 공통 체크박스 (Figma 732-1332 "Checkbox Components").
+ *
+ * PrimeVue <Checkbox> 에 `ui-checkbox` 클래스를 붙이면 Figma 스펙으로 바뀐다 —
+ * 24px · 1.5px 테두리 gray/300 · radius 4. 상태는 다섯 가지다:
+ *   Default(흰 배경) · Checked(blue/400 채움 + 흰 체크) · Indeterminate(blue/400 + 흰 바)
+ *   · Disabled(gray/100 채움) · Disabled-Checked(gray/300 채움 + gray/400 체크)
+ * 더 작은 자리(모듈 순서 패널, 20px)는 `ui-checkbox--sm`을 더한다 — 체크 표시도 같이 줄어든다.
+ *
+ * 체크 표시는 PrimeVue 아이콘 대신 Figma 에셋(img/ui/checkbox-check*.svg)을 쓴다.
+ * 상태는 PrimeVue 가 루트에 다는 data-p-checked / data-p-indeterminate / data-p-disabled 로 본다.
+ *
+ * ⚠ PrimeVue 테마 CSS는 런타임에 <head> 뒤쪽에 들어가 이 파일보다 뒤에 적용된다.
+ *   호버·포커스 규칙은 테마 선택자(`.p-checkbox:not(.p-disabled):has(.p-checkbox-input:hover) …`)보다
+ *   구체적이어야 이긴다 — 아래 긴 선택자들이 그 이유다. 줄이면 호버 시 테마 색이 비친다.
+ */
+
+/* 테마가 루트에 `--p-checkbox-width`로 크기를 주므로(.p-checkbox 한 단계) 한 단계 더 붙여 이긴다 */
+.ui-checkbox.p-checkbox {
+  --ui-checkbox-size: 20px;
+  width: var(--ui-checkbox-size);
+  height: var(--ui-checkbox-size);
+  flex-shrink: 0;
+}
+.ui-checkbox--sm.p-checkbox {
+  --ui-checkbox-size: 20px;
+}
+
+.ui-checkbox .p-checkbox-box,
+.ui-checkbox.p-checkbox:not(.p-disabled):has(.p-checkbox-input:hover) .p-checkbox-box {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border: 1.5px solid var(--gray-300);
+  border-radius: 4px;
+  background: var(--white);
+  box-shadow: none;
+  transition:
+    background-color 0.12s,
+    border-color 0.12s;
+}
+/* 체크·바는 ::after 로 그린다 */
+.ui-checkbox .p-checkbox-icon {
+  display: none;
+}
+
+/* Checked · Indeterminate — blue/400 채움 */
+.ui-checkbox[data-p-checked='true'] .p-checkbox-box,
+.ui-checkbox[data-p-indeterminate='true'] .p-checkbox-box,
+.ui-checkbox.p-checkbox[data-p-checked='true']:not(.p-disabled):has(.p-checkbox-input:hover) .p-checkbox-box,
+.ui-checkbox.p-checkbox[data-p-indeterminate='true']:not(.p-disabled):has(.p-checkbox-input:hover) .p-checkbox-box {
+  border-color: var(--blue-400);
+  background: var(--blue-400);
+}
+/* 체크 표시 — 에셋은 테두리를 포함한 24px 기준이라 테두리 두께만큼 바깥으로 뺀다 */
+.ui-checkbox[data-p-checked='true'] .p-checkbox-box::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* 상자 크기로 못 박는다 — 1.5px 테두리는 1배 화면에서 1px로 반올림돼 inset 계산이 1px씩 어긋난다 */
+  width: 18px;
+  height: 18px;
+  background: url('./img/ui/checkbox-check.svg') center / 100% 100% no-repeat;
+}
+.ui-checkbox[data-p-indeterminate='true'] .p-checkbox-box::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50%;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--white);
+  transform: translate(-50%, -50%);
+}
+
+/* Disabled — gray/100 채움, 체크돼 있으면 gray/300 채움 + gray/400 체크 */
+.ui-checkbox[data-p-disabled='true'] .p-checkbox-box {
+  border-color: var(--gray-300);
+  background: var(--gray-100);
+  cursor: not-allowed;
+}
+.ui-checkbox[data-p-disabled='true'][data-p-checked='true'] .p-checkbox-box {
+  background: var(--gray-300);
+}
+/* 비활성 체크 에셋은 20px 기준(24px 상자의 5/6) — 상자 크기에 비례해 줄인다 */
+.ui-checkbox[data-p-disabled='true'][data-p-checked='true'] .p-checkbox-box::after {
+  width: calc(var(--ui-checkbox-size) * 5 / 6);
+  height: calc(var(--ui-checkbox-size) * 5 / 6);
+  background-image: url('./img/ui/checkbox-check-disabled.svg');
+}
+
+/* 키보드 포커스 — Figma 에는 없지만 접근성을 위해 테두리 바깥 링만 남긴다 */
+.ui-checkbox.p-checkbox:has(.p-checkbox-input:focus-visible) .p-checkbox-box {
+  outline: 2px solid var(--blue-300);
+  outline-offset: 2px;
+  box-shadow: none;
+}

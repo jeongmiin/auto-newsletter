@@ -25,8 +25,15 @@ interface ImportMetaEnv {
    * 비워 두면 코드의 기본값(운영 버킷)을 쓴다 — 이미지 주소에 이미 공개된 값이다.
    */
   readonly VITE_S3_BUCKET_URL?: string
-  /** Azure 키를 보관하는 서버 프록시의 공개 주소. 비밀키 자체를 넣지 않는다. */
-  readonly VITE_AZURE_TRANSLATE_URL?: string
+  /**
+   * 올리는 자리의 빌더 단계 — `/e-dm/{연도}/{이 값}/{팀}/…`. 운영은 `newsletterbuilder`,
+   * develop·로컬은 `newsletterbuilder-dev`. 비우면 운영 이름이다(src/utils/s3Upload.ts BUILDER_ROOT).
+   */
+  readonly VITE_BUILDER_ROOT?: string
+  /** Gemini 키를 보관하는 서버 프록시의 번역 주소. 비밀키 자체를 넣지 않는다. */
+  readonly VITE_TRANSLATE_URL?: string
+  /** Gemini 키를 보관하는 서버 프록시의 맞춤법 검사 주소. 비밀키 자체를 넣지 않는다. */
+  readonly VITE_PROOFREAD_URL?: string
 }
 
 interface ImportMeta {

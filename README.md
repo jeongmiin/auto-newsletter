@@ -39,7 +39,7 @@ https://jeongmiin.github.io/auto-newsletter/
 - **이미지 업로드** — 제작한 이미지를 팀 폴더로 바로 업로드(S3)
 - **임시 저장** — 작업 중인 뉴스레터를 서버에 올려 두고 나중에 이어서 편집
 - **HTML 웹 링크 생성** — 발송용 HTML을 올려 '웹으로 보기' 주소를 만들고, 내용이 바뀌면 리마인드
-- **다국어 번역** — Azure 기반 영어·일본어·중국어(간체). 서식·링크는 두고 글자만 번역, 적용 전 검토
+- **다국어 번역** — Gemini 기반 영어·일본어·중국어(간체)·태국어. 서식·링크는 두고 글자만 번역, 적용 전 검토
 - **내보내기** — 저장용(재편집 가능)·발송용 HTML 내려받기, 코드 복사
 
 ## 모듈 카테고리
@@ -91,19 +91,19 @@ npm run format     # Prettier
 | `VITE_S3_UPLOAD_URL` | 이미지·HTML 업로드 엔드포인트 |
 | `VITE_S3_BUCKET_URL` | 폴더 목록 조회 |
 | `VITE_S3_PUBLIC_BASE` | 업로드된 파일의 공개 주소 |
-| `VITE_AZURE_TRANSLATE_URL` | 번역 프록시 주소 |
+| `VITE_TRANSLATE_URL` | 번역 프록시 주소 |
 
 주소가 비어 있으면 해당 기능의 UI가 **아예 나타나지 않습니다**(눌러야 실패하는 버튼을 두지 않습니다).
 
-Azure 키는 프런트엔드에 넣지 않고 프록시에만 둡니다 — 연결·키 보관 방식은
-[`docs/azure-translator.md`](docs/azure-translator.md)를 참고하세요.
+Gemini 키는 프런트엔드에 넣지 않고 프록시에만 둡니다 — 연결·키 보관 방식은
+[`docs/gemini-translate.md`](docs/gemini-translate.md)를 참고하세요.
 로컬 개발용 키는 `.env.local.example`을 `.env.local`로 복사해 채웁니다.
 
 ### 로컬 보조 서버
 
 ```sh
 npm run mock:upload       # S3 업로드 목 서버 (업로드 기능 로컬 테스트용)
-npm run proxy:translate   # Azure 번역 프록시 (로컬)
+npm run proxy:translate   # 번역·맞춤법 검사 프록시 (로컬, Gemini 키)
 npm run deploy:translate  # 번역 워커를 Cloudflare에 배포
 ```
 

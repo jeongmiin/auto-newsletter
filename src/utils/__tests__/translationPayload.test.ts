@@ -84,7 +84,7 @@ describe('번역 전송량', () => {
       ratio,
       `번역기에 보내는 양이 보이는 글자의 ${ratio.toFixed(1)}배입니다(상한 ${MAX_PAYLOAD_RATIO}배).\n` +
         `  보이는 글자 ${totals.visible.toLocaleString()}자 → 실제 전송 ${totals.sent.toLocaleString()}자\n` +
-        `  Azure 무료 한도는 월 200만 자이고 태그·속성도 글자로 셉니다.\n` +
+        `  Gemini 무료 한도는 요청 수·토큰으로 세고 태그·속성도 토큰을 먹습니다.\n` +
         `  태그를 통째로 보내고 있지 않은지 확인하세요(newsletterTranslation.toSkeleton).`,
     ).toBeLessThanOrEqual(MAX_PAYLOAD_RATIO)
   })

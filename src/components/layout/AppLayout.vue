@@ -100,7 +100,9 @@ const moduleStore = useModuleStore()
 // 단, 레일 메뉴를 방금 명시적으로 클릭했으면(forceRailPanel) 선택이 남아있어도 그 메뉴를 그대로 보여준다
 // — 그룹 멤버를 선택한 채로 카테고리 메뉴에서 원소 모듈을 추가하면 그 그룹에 삽입되는 흐름을 유지하기 위함.
 const hasSelection = computed(
-  () => (!!moduleStore.selectedModuleId || !!moduleStore.selectedGroupId) && !editorStore.forceRailPanel,
+  () =>
+    (!!moduleStore.selectedModuleId || !!moduleStore.selectedGroupId || !!moduleStore.selectedRow) &&
+    !editorStore.forceRailPanel,
 )
 
 // 캔버스 빈 컬럼의 '직접 구성'으로 대상 컬럼이 지정된 상태 → 그 컬럼의 '구성 요소' 패널을 보여준다.

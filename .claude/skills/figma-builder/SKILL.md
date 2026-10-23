@@ -316,7 +316,7 @@ description: >-
   - **포인트 색상 팝오버**: 풀 피커를 **좌측 패널 바깥 고정 위치**(left 400 / top 180, 화면 밖으로 안 나가게 클램프)에서 연다. 그리고 **포인트 색상 추종 중에도 팔레트·HEX·투명도를 쓸 수 있게** `.manual-locked` 제거. ⚠ 잠금만 풀면 **고른 색이 반영되지 않는다**(렌더가 계속 포인트 색상으로 해소) → `handleColorInput`/`onColorInput`에서 **추종을 먼저 해제**해야 한다(ModuleForm·GroupPropertiesPanel 양쪽).
   - **Quill 목록 자동 변환**: 기본 프리픽스 `/^\s*?(\d+\.|-|\*|\[ ?\]|\[x\])$/`의 `\d+\.`가 **`2023. `같은 날짜를 목록으로 바꾼다** → `disableNumericListAutofill()`로 숫자 항목만 제거(`-`/`*`/`[ ]`는 유지), `main.ts`에서 다른 Quill 등록과 함께 1회 호출. Quill 내부 구조에 기대는 코드라 **회귀 테스트 10개**로 고정(패치 전 기본 동작이 실제로 변환하는지까지 확인).
   - **컬럼 2단 허용**: `ModuleImg`·`ModuleOneButton`·`ModuleSmallButton`의 `maxColumns`를 **2**로(설명 텍스트와 동일). '복수 버튼'은 그 자체가 버튼 2개라 1 유지. ⚠ 분할 후 선택이 풀리고 좌측이 '모듈' 패널로 돌아가는 건 **기존 동작**(설명 텍스트도 동일).
-  - **이미지 모듈 속성 순서**: `이미지 → 이미지 크기 조정 → 여백 → 링크 추가 → 모서리 둥글기 → 테두리`. 패널은 `editableProps` 순서대로 섹션을 그리므로 config에서 `링크 추가`만 뒤로 옮겼다. (첫 섹션 라벨은 config의 `이미지 파일`이 아니라 **모듈 종류 라벨**이 나온다.)
+  - **이미지 모듈 속성 순서**: `이미지(파일·설명·자르기) → 크기 및 정렬 → 여백 → 링크 추가 → 모서리 둥글기 → 테두리`. 패널은 `editableProps` 순서대로 섹션을 그리므로 config에서 `링크 추가`만 뒤로 옮겼다. (첫 섹션 라벨은 config의 `이미지 파일`이 아니라 **모듈 종류 라벨**이 나온다.)
   - **안내 문구 `~해요`체 통일**: config `hint` 55건 + 패널 하드코딩 8건. ⚠ `합니다|입니다`만 찾으면 **`됩니다`·`습니다`·`집니다`를 놓친다**(11개). 어미만 갈지 말고 문장을 다듬을 것.
 
   - **검증**: `npm run build` 클린, `vitest` **648개** 통과(신규: projectFile teamId 3개, quillListAutofill 10개). Playwright로 헤더 여백 20여 항목·탭 스펙 13항목을 Figma 값과 1:1 대조, 팀 유지(진입→저장→다른 팀 진입→열기), 그룹 이름(모듈명/`그룹 02·03·04`), 호버 시 툴바·핸들 opacity 0 → 클릭 시 1, 색상 팝오버 추종 해제 후 속성 반영까지 확인.
@@ -346,6 +346,13 @@ description: >-
   - **'버튼 너비 직접 설정'은 2026-09-04 제거**(사용자 요청). `showBtnWidth` 토글·`btnWidth` 필드·전용 슬라이더(`isBtnWidthField`)·`onSectionSwitch`의 auto/120px 짝 처리·마이그레이션 블록을 모두 걷어냈다. `btnWidth` **속성 자체는 남는다**(기본 `auto`, 렌더는 그대로 존중) — 옛 파일·레거시 변환(`legacyToComposed`가 `smallBtnWidth`를 옮겨 넣음)에 남은 `100%` 같은 값이 겉모습을 바꾸지 않게 하려는 것. 패널에서 바꾸는 길만 없다.
   - `index.html` icon_names에 **`close_small`** 추가.
   - **검증**: `npm run build` 클린, `vitest` **740개** 통과(마이그레이션 테스트 4개 추가). `vite preview`+Playwright로 (1)추가 직후 칩 1개(활성·✕ 없음)+`+ 추가`, (2)`+ 추가` 2번 → 칩 3개·활성 칩만 ✕·캔버스 버튼 3개, (3)텍스트를 바꾸면 칩 라벨이 `사전등록`으로 따라옴, (4)칩 전환 시 그 버튼 값이 뜸, (5)1번 삭제 시 내용이 당겨지고(`버튼 2 · 사전등록`) 캔버스도 2개, (6)버튼 너비 토글 ON → 캔버스 `width:120px`, (7)공통 5개 섹션이 Figma 순서대로 뜨고 정렬은 아이콘 세그먼트·여백은 안쪽/바깥 두 카드로 렌더되는 것까지 확인.
+
+- **Phase 24 완료(2026-10-08)**: 공통 체크박스 (Figma **732-1332** "Checkbox Components").
+  - **`src/assets/checkbox.css`의 `.ui-checkbox`** — PrimeVue `<Checkbox>`에 클래스만 붙이면 24px · 1.5px gray/300 테두리 · radius 4, 다섯 상태(Default/Checked/Indeterminate/Disabled/Disabled-Checked). 작은 자리는 `ui-checkbox--sm`(20px, 모듈 순서 패널). 적용처 5곳: 맞춤법 검사 '적용'(네이티브 `<input>`을 PrimeVue로 교체) · 모듈 순서 · 구성 요소 · 연락처 · SNS 아이콘.
+  - 체크 표시는 Figma 에셋(`img/ui/checkbox-check.svg` 흰색 24px / `checkbox-check-disabled.svg` gray/400 20px)을 `::after` 배경으로 쓰고 PrimeVue 아이콘은 감춘다. 상태 판별은 루트의 `data-p-checked` / `data-p-indeterminate` / `data-p-disabled`.
+  - ⚠ **테마 CSS가 이 파일보다 뒤에 적용된다**(런타임 주입). 크기는 `.ui-checkbox.p-checkbox`, 호버는 `.ui-checkbox.p-checkbox:not(.p-disabled):has(.p-checkbox-input:hover) .p-checkbox-box`처럼 테마 선택자보다 길게 써야 이긴다 — 짧게 쓰면 20px(테마 기본)·호버 시 테마 색이 비친다.
+  - ⚠ **1.5px 테두리는 1배 화면에서 1px로 반올림**된다(Chrome 디바이스 픽셀 스냅). 체크 오버레이를 `inset:-1.5px`로 두면 1px씩 커지므로 `top/left:-1.5px` + 상자 크기로 못 박았다.
+  - **검증**: `vue-tsc` 클린, `vitest` 995개 통과, Playwright로 세 곳 모두 24/20px·blue/400 채움·해제 시 흰 배경+gray/300·호버 시 변화 없음 확인.
 
 ## 향후 방향 (사용자 명시, 아직 미구현)
 - **팀별 이미지 업로드(S3)** (2026-08-12 협의): 이미지를 올리면 바로 링크가 잡히도록 하는 게 목표. **선행 배선은 모두 끝났다** — 팀 불변 id(561d117) · `editorStore.currentTeamId` · 팀 없이 에디터 진입 불가(router 가드) · 저장 파일 `teamId`(Phase 21-2).

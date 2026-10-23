@@ -37,6 +37,9 @@ jobs:
         env:
           NODE_ENV: production
           DEPLOY_BASE: /auto-newsletter/develop/
+          # 운영과 같은 버킷을 쓰므로 올리는 자리를 나눈다 — 테스트 폴더가 운영 목록에 섞이지 않게
+          # (.env.production 의 newsletterbuilder 를 덮어쓴다. src/utils/s3Upload.ts BUILDER_ROOT 참고)
+          VITE_BUILDER_ROOT: newsletterbuilder-dev
 
       - name: Verify build output
         run: |

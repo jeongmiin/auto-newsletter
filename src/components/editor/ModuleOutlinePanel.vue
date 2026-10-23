@@ -167,6 +167,7 @@
                   <Checkbox
                     :modelValue="isChecked(item.module.id)"
                     :binary="true"
+                    class="ui-checkbox ui-checkbox--sm"
                     @update:modelValue="toggleChecked(item.module.id)"
                   />
                 </span>
@@ -718,18 +719,6 @@ const setHover = (moduleId: string | null): void => {
   line-height: 1.6;
   color: var(--gray-500);
   word-break: keep-all;
-}
-
-/* PrimeVue 체크박스를 Figma 스펙(20px, radius 4, var(--gray-300))에 맞춤 */
-.order-slot :deep(.p-checkbox) {
-  width: 20px;
-  height: 20px;
-}
-.order-slot :deep(.p-checkbox-box) {
-  width: 20px;
-  height: 20px;
-  border-radius: 4px;
-  border-color: var(--gray-300);
 }
 
 /* 드래그 중 자리 표시(ghost) */

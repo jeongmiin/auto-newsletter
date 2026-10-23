@@ -30,6 +30,7 @@
               <Checkbox
                 :modelValue="true"
                 :binary="true"
+                class="ui-checkbox"
                 @update:modelValue="toggleElement(row.kind, $event)"
               />
               <span class="cmp-label">{{ labelOf(row.kind) }}</span>
@@ -45,6 +46,7 @@
           <Checkbox
             :modelValue="false"
             :binary="true"
+            class="ui-checkbox"
             @update:modelValue="toggleElement(el.kind, $event)"
           />
           <span class="cmp-label">{{ el.label }}</span>

@@ -5,7 +5,7 @@ import {
   type TranslationUnit,
 } from '@/utils/newsletterTranslation'
 
-const endpoint = (import.meta.env.VITE_AZURE_TRANSLATE_URL ?? '').trim()
+const endpoint = (import.meta.env.VITE_TRANSLATE_URL ?? '').trim()
 
 export const isTranslationEnabled = (): boolean => endpoint !== ''
 
@@ -21,6 +21,12 @@ export class TranslationError extends Error {
   }
 }
 
+/**
+ * 값 목록을 번역 프록시(Gemini)에 보내고 번역문을 받는다.
+ *
+ * 프록시는 뉴스레터 한 편을 3,000자 안팎 묶음 2~3회로 나눠 보낸다 — 무료 등급은 하루 요청 횟수로 센다.
+ * 한도 초과·서버 붐빔·서식이 어긋난 결과는 프록시가 문구로 돌려준다(src 쪽에서는 그대로 보여 준다).
+ */
 export async function translateUnits(
   units: TranslationUnit[],
   targetLanguage: TranslationLanguage,

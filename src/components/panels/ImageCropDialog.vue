@@ -206,7 +206,7 @@ const cancel = () => {
   <Dialog
     :visible="visible"
     modal
-    header="이미지 다듬기"
+    header="이미지 자르기"
     :closable="!locked"
     :draggable="false"
     class="crop-dialog"

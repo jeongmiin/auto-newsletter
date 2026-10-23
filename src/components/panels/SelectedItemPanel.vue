@@ -8,6 +8,13 @@
       </div>
     </template>
 
+    <!-- 1-b) 2단 행 '전체' 선택(캔버스에서 행을 처음 누름) → 그 행의 레이아웃·너비 조정만 노출 -->
+    <template v-else-if="moduleStore.selectedRow">
+      <div class="flex-1 overflow-y-auto overflow-x-hidden">
+        <RowLayoutPanel />
+      </div>
+    </template>
+
     <!-- 2) 모듈 선택(그룹 멤버 드릴다운 또는 단독) → 그 모듈의 속성 폼만 노출.
          멤버 간 이동/삭제·그룹 스타일은 캔버스 선택으로 전환한다(아코디언 목록 없음). -->
     <template v-else-if="selectedModule">
@@ -23,6 +30,7 @@ import { computed } from 'vue'
 import { useModuleStore } from '@/stores/moduleStore'
 import GroupPropertiesPanel from './GroupPropertiesPanel.vue'
 import ModuleForm from './ModuleForm.vue'
+import RowLayoutPanel from './RowLayoutPanel.vue'
 
 const moduleStore = useModuleStore()
 
