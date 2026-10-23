@@ -22,7 +22,11 @@
       "Bash(git log *)",
       "Edit(/.claude/skills/figma-builder/**)",
       "Bash(python3 -c \"pass\")",
-      "Bash(curl -s -o /dev/null http://localhost:4173/)"
+      "Bash(curl -s -o /dev/null http://localhost:4173/)",
+      "Bash(curl -s -m 20 -X POST -H \"Origin: http://localhost:5173\" -F \"file=@C:/Users/ESN-D0~1/AppData/Local/Temp/claude/d--Projects-auto-newsletter/f8aea1f0-46cd-4b5f-94b1-fa381b9b8a9c/scratchpad/dot.png;filename=path-check.png\" -F \"directory=/e-dm/2026/newsletterbuilder-dev/arch-plan/blank/path-check/\" -F \"override=Y\" https://fms.esfair.kr/api/files/s3upload)",
+      "Bash(curl -s -m 10 \"https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/?list-type=2&prefix=e-dm/2026/newsletterbuilder-dev/\")",
+      "Bash(export MSYS_NO_PATHCONV=1 MSYS2_ARG_CONV_EXCL=\"*\")",
+      "Bash(curl -s -m 10 \"https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/?list-type=2&prefix=C:/Program%20Files/Git/e-dm/\")"
     ],
     "additionalDirectories": [
       "C:\\Users\\ESN-D0145\\AppData\\Local\\Temp\\claude\\d--Projects-auto-newsletter\\6e5bde4f-f058-4e45-971a-2909bdc5ce57\\scratchpad\\pw"

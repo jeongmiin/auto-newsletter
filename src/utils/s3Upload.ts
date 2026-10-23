@@ -249,8 +249,15 @@ export function normalizeVolume(volume?: string | null): string {
  *
  * 이 한 단계가 있어야 전시회가 직접 만들어 온 폴더(`e-dm/2026/police/` 등)와 섞이지 않는다.
  * S3에 이 이름으로 팀 폴더가 이미 준비돼 있다.
+ *
+ * **환경마다 다르다** (`VITE_BUILDER_ROOT`): 운영은 `newsletterbuilder`, develop 미리보기와 로컬 개발은
+ * `newsletterbuilder-dev`. 세 환경이 같은 버킷·같은 업로드 API를 쓰므로, 이 한 단계를 나누지 않으면
+ * 테스트하며 만든 `test` 폴더가 운영 폴더 선택 화면과 팀별 보고서에 그대로 섞인다(2026-10-23 실측).
+ * 폴더 목록 읽기(s3Browse)도 이 경로로 시작하므로 develop에서는 운영 폴더가 보이지 않는다 —
+ * 실제 회차에서 '이어서 편집'을 확인하는 테스트는 운영에서 한다.
+ * 값이 없으면 운영 이름으로 떨어진다 — 테스트 러너(vitest)는 .env.development 를 읽지 않는다.
  */
-export const BUILDER_ROOT = 'newsletterbuilder'
+export const BUILDER_ROOT = (import.meta.env.VITE_BUILDER_ROOT ?? '').trim() || 'newsletterbuilder'
 
 /**
  * 아직 전시회를 못 정한 뉴스레터의 자리 — `{팀}/blank/`.
