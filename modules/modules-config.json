@@ -438,7 +438,7 @@
         },
         {
           "key": "imageCrop",
-          "label": "이미지 다듬기",
+          "label": "자르기",
           "type": "image-crop",
           "target": "imageUrl",
           "group": "이미지"
@@ -1509,12 +1509,19 @@
           "group": "이미지 파일"
         },
         {
+          "key": "imageCrop",
+          "label": "자르기",
+          "type": "image-crop",
+          "target": "imageUrl",
+          "group": "이미지 파일"
+        },
+        {
           "key": "imageMaxWidth",
           "label": "이미지 최대 너비",
           "type": "text",
           "default": "100%",
           "placeholder": "예: 100%, 280px",
-          "group": "이미지 크기 조정"
+          "group": "크기 및 정렬"
         },
         {
           "key": "imageAlign",
@@ -1535,14 +1542,7 @@
               "value": "right"
             }
           ],
-          "group": "이미지 크기 조정"
-        },
-        {
-          "key": "imageCrop",
-          "label": "이미지 다듬기",
-          "type": "image-crop",
-          "target": "imageUrl",
-          "group": "이미지 크기 조정"
+          "group": "크기 및 정렬"
         },
         {
           "key": "paddingTop",
@@ -1761,7 +1761,7 @@
         },
         {
           "key": "leftImageCrop",
-          "label": "이미지 다듬기",
+          "label": "자르기",
           "type": "image-crop",
           "target": "leftImageUrl",
           "group": "왼쪽 이미지"
@@ -1856,7 +1856,7 @@
         },
         {
           "key": "rightImageCrop",
-          "label": "이미지 다듬기",
+          "label": "자르기",
           "type": "image-crop",
           "target": "rightImageUrl",
           "group": "오른쪽 이미지"
