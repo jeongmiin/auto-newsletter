@@ -23,6 +23,11 @@ import menuShot from '@/assets/img/notice/ai-tools-menu.png'
  * v1: 템플릿 파일 받기 안내 · v2: AI 도구 업데이트 안내(7일 숨김이 남은 사람에게도 새로 보이게)
  */
 const NOTICE_KEY = 'notice.template-file.v2'
+/**
+ * 공지를 띄울지 — 지금은 **끔**. 10/23 업데이트 공지는 배포 전에만 쓰고 운영 반영(develop 머지)과 함께 내렸다.
+ * 다음 공지 때 내용을 바꾸고 NOTICE_KEY 버전을 올린 뒤 true 로 켠다.
+ */
+const NOTICE_ENABLED = false
 /** '보지 않기'가 유지되는 기간 */
 const HIDE_DAYS = 7
 const HIDE_MS = HIDE_DAYS * 24 * 60 * 60 * 1000
@@ -78,7 +83,7 @@ const hideForAWhile = (): void => {
 }
 
 onMounted(() => {
-  if (hiddenUntilLater()) return
+  if (!NOTICE_ENABLED || hiddenUntilLater()) return
   visible.value = true
 })
 
