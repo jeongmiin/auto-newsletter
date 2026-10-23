@@ -330,10 +330,19 @@ const pickedFolder = computed(() =>
     ? (folders.value.find((f) => f.name === picked.value?.name) ?? null)
     : null,
 )
-/** 고른 폴더에 놓인 **최근** 임시 저장 파일 — 있으면 '이어서 편집'을 내민다 (배지와 같은 기준) */
-const pickedEditFile = computed(() => {
-  const file = pickedFolder.value?.editFile
-  return file && isFreshEditFile(file) ? file : null
+/** 고른 폴더에 놓인 임시 저장 파일 — 있으면 '이어서 편집'을 내민다. 오래된 것도 열 수는 있다(아래 참고) */
+const pickedEditFile = computed(() => pickedFolder.value?.editFile ?? null)
+/**
+ * 그 파일이 최근(EDIT_FILE_FRESH_DAYS) 것인지 — 줄의 배지와 같은 기준.
+ * 최근 것이면 '이어서 편집'만 내밀어 저장해 둔 작업을 덮어쓰지 않게 하고,
+ * 오래된 것(지난 회차의 흔적일 때가 많다)은 '저장하기'를 기본으로 두되 저장 날짜를 붙인 '이어서 편집'을 옆에 남긴다 —
+ * 파일은 폴더에 그대로 있으니 열 길은 막지 않는다(2026-10-23: 17일 지난 파일을 못 열어 "왜 기존 템플릿이지?"가 됐다).
+ */
+const pickedEditIsFresh = computed(() => isFreshEditFile(pickedEditFile.value))
+/** 오래된 임시 저장의 버튼 글자 — '이어서 편집 (10월 6일 저장)' */
+const staleEditLabel = computed(() => {
+  const at = pickedEditFile.value?.lastModified
+  return at ? `이어서 편집 (${at.getMonth() + 1}월 ${at.getDate()}일 저장)` : '이어서 편집'
 })
 
 /** 안이 빈 폴더에 들어와 있는지 — 이때는 새 폴더 없이 그 자리에 바로 저장할 수도 있다 (Figma 1488-1333) */
@@ -715,18 +724,28 @@ const continueEditing = async () => {
           <button type="button" class="flow-btn flow-btn--ghost" @click="goPrev">이전으로</button>
           <!-- 최근 임시 저장이 있는 폴더를 고르면 '이어서 편집'만 남긴다 —
                그 자리에서 새로 시작하면 저장해 둔 작업을 덮어쓰게 된다.
+               오래된 임시 저장이면 '저장하기'가 기본이고, 날짜를 붙인 '이어서 편집'을 옆에 둔다.
                (그 폴더 안으로 들어가려면 줄을 더블클릭한다) -->
           <button
-            v-if="!pickedEditFile"
+            v-if="pickedEditFile && !pickedEditIsFresh"
+            type="button"
+            class="flow-btn flow-btn--ghost"
+            :disabled="restoring"
+            @click="continueEditing"
+          >
+            {{ restoring ? '불러오는 중…' : staleEditLabel }}
+          </button>
+          <button
+            v-if="!pickedEditFile || !pickedEditIsFresh"
             type="button"
             class="flow-btn flow-btn--primary"
-            :disabled="!canSave"
+            :disabled="!canSave || restoring"
             @click="goNext"
           >
             저장하기
           </button>
           <button
-            v-if="pickedEditFile"
+            v-if="pickedEditFile && pickedEditIsFresh"
             type="button"
             class="flow-btn flow-btn--primary"
             :disabled="restoring"
