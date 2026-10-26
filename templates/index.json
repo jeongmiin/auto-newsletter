@@ -157,6 +157,15 @@
       "file": "growth/growth-str/beautysum.json"
     },
     {
+      "id": "amtec",
+      "name": "지속가능화학위크",
+      "description": "지속가능화학위크 뉴스레터 구성",
+      "divisionId": "growth",
+      "teamId": "growth-str",
+      "thumbnail": "amtec_temp.png",
+      "file": "growth/growth-str/amtec.json"
+    },
+    {
       "id": "khospital",
       "name": "KHF",
       "description": "KHF 뉴스레터 구성",
