@@ -1,0 +1,1966 @@
+{
+  "id": "amtec",
+  "wrapSettings": {
+    "backgroundColor": "#ffffff",
+    "borderEnabled": false,
+    "borderWidth": "6px",
+    "borderColor": "#dddddd",
+    "borderStyle": "solid",
+    "pointColor": "#0000aa",
+    "pointColors": [
+      "#0000aa"
+    ],
+    "fontLanguage": "default"
+  },
+  "modules": [
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/newsletterbuilder/growth-str/amtec/eng/vol01/amtec_logo.png",
+        "imageAlt": "로고",
+        "imageCrop": "",
+        "imageMaxWidth": "70%",
+        "imageAlign": "center",
+        "paddingTop": "20px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "",
+        "showBorderRadius": false,
+        "imageBorderRadius": "10px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "20px",
+        "descriptionText": "<p style=\"margin:0; padding:0; line-height:1.7; text-align:center;\">NEWSLETTER <strong>VOL.1</strong></p>",
+        "paddingTop": "5px",
+        "paddingRight": "0px",
+        "paddingBottom": "5px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><a href=\"https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/newsletterbuilder/growth-str/amtec/eng/vol01/amtec_eng_vol01_send.html\" rel=\"noopener noreferrer\" target=\"_blank\">View on</a><span class=\"ql-cursor\">﻿</span><a href=\"https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/newsletterbuilder/growth-str/amtec/eng/vol01/amtec_eng_vol01_send.html\" rel=\"noopener noreferrer\" target=\"_blank\"> the Web &gt;</a></p>",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "8px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/newsletterbuilder/growth-str/amtec/eng/vol01/main.png",
+        "imageAlt": "이미지",
+        "imageCrop": "",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "showImageLink": false,
+        "imageLinkUrl": "",
+        "showBorderRadius": false,
+        "imageBorderRadius": "10px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "20px",
+        "descriptionText": "<p style=\"word-break: keep-all; line-height: 1.4; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\"><strong>A paradigm shift in manufacturing technologies for industrial advancement</strong></p>",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "0px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleTable",
+      "properties": {
+        "tableCells": [
+          [
+            {
+              "id": "cell-1792632576901-iwlzftymz",
+              "type": "th",
+              "content": "<p>Title</p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1792632576901-xd7jlguv5",
+              "type": "td",
+              "content": "<p>Advanced&nbsp;Material&nbsp;Tech&nbsp;Week&nbsp;Korea&nbsp;2027&nbsp;(AMTEC&nbsp;KOREA&nbsp;2027)</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1792632576901-icskfkx3u",
+              "type": "th",
+              "content": "<p>Dates</p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1792632576901-siybofktt",
+              "type": "td",
+              "content": "<p>Mar.&nbsp;24(Wed)&nbsp;–&nbsp;26(Fri),&nbsp;2027&nbsp;&nbsp;|10:00–17:00&nbsp;(16:30&nbsp;on&nbsp;the&nbsp;final&nbsp;day)</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1792632576901-mpljusjaw",
+              "type": "th",
+              "content": "<p>Venue</p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1792632576901-lg4wdx4b2",
+              "type": "td",
+              "content": "<p>Songdo&nbsp;ConvensiA,&nbsp;Incheon,&nbsp;South&nbsp;Korea</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1792632576901-no5vyc94q",
+              "type": "th",
+              "content": "<p>Organizer&nbsp;/&nbsp;Host</p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1792632576901-glsjau9na",
+              "type": "td",
+              "content": "<p>MESSE&nbsp;ESANG&nbsp;Co.,&nbsp;Ltd.&nbsp;/&nbsp;Incheon&nbsp;Tourism&nbsp;Organization</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ],
+          [
+            {
+              "id": "cell-1792632576901-72obnb9n0",
+              "type": "th",
+              "content": "<p>Certification</p>",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "id": "cell-1792632576901-4j1oq6yno",
+              "type": "td",
+              "content": "<p>AKEI&nbsp;Approved&nbsp;International&nbsp;Exhibition+</p>",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ]
+        ],
+        "borderTopWidth": "0px",
+        "borderTopColor": "#333333",
+        "cellBorderColor": "#dddddd",
+        "headerBgColor": "#f6f6f6",
+        "headerTextColor": "#333333",
+        "headerAlign": "center",
+        "cellBgColor": "#ffffff",
+        "cellTextColor": "#333333",
+        "cellAlign": "left",
+        "paddingTop": "20px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "tableColWidths": [
+          "30%",
+          ""
+        ],
+        "tableColWidthOn": true
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "Learn More →",
+        "buttonUrl": "https://eng.chemexpokorea.com/",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#0000aa",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "0px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "0px",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "5px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#000000",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "20px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1792633401366-b4cq7fyzl",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "22px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong>4 EXHIBITIONS</strong></p>",
+        "paddingTop": "8px",
+        "paddingRight": "20px",
+        "paddingBottom": "8px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {},
+      "groupId": "group-1792633401366-b4cq7fyzl",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;; text-align: center;\">Coatingㅣ SurTech ㅣ Material ㅣ Testing Korea 2027 — from materials development to ultra-thin coating and surface treatment, process-specific inspection and performance testing: one vertically integrated platform for end-to-end manufacturing technologies.</p>",
+        "paddingTop": "8px",
+        "paddingRight": "20px",
+        "paddingBottom": "8px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {},
+      "groupId": "group-1792633401366-b4cq7fyzl",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/newsletterbuilder/growth-str/amtec/eng/vol01/booth_map.png",
+        "imageAlt": "이미지",
+        "imageCrop": "",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "10px",
+        "paddingLeft": "20px",
+        "showImageLink": false,
+        "imageLinkUrl": "",
+        "showBorderRadius": false,
+        "imageBorderRadius": "10px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1792633401366-b4cq7fyzl",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/newsletterbuilder/growth-str/amtec/eng/vol01/scale.png",
+        "imageAlt": "이미지",
+        "imageCrop": "",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "showImageLink": false,
+        "imageLinkUrl": "",
+        "showBorderRadius": false,
+        "imageBorderRadius": "10px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1792633401366-b4cq7fyzl",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "Download 2027 Brochure →",
+        "buttonUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/newsletterbuilder/growth-str/amtec/eng/vol01/2027_AMTEC_KOREA_Brochure.pdf",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#0000aa",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "0px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "0px",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "5px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1792635141974-mow62odt5",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "2026 Post Show Report →",
+        "buttonUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/newsletterbuilder/growth-str/amtec/eng/vol01/Post_Report_2026.pdf",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#0000aa",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "0px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "0px",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "5px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1792635141974-mow62odt5",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#dddddd",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#000000",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1792635701042-iijp3m8b2",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "22px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong>2027 SPECIAL PAVILIONS</strong></p>",
+        "paddingTop": "8px",
+        "paddingRight": "20px",
+        "paddingBottom": "8px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {},
+      "groupId": "group-1792635701042-iijp3m8b2",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"word-break: keep-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;; text-align: center;\"><span style=\"font-size: 14px;\">Three themed pavilions where materials, surface technologies and testing meet the industries that need them most.</span></p>",
+        "paddingTop": "8px",
+        "paddingRight": "20px",
+        "paddingBottom": "8px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {},
+      "groupId": "group-1792635701042-iijp3m8b2",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/newsletterbuilder/growth-str/amtec/eng/vol01/pavilions_01.jpg",
+        "imageAlt": "이미지",
+        "imageCrop": "",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "8px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "",
+        "showBorderRadius": false,
+        "imageBorderRadius": "10px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1792635813374-v61doxfv1",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "18px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"color: #ffffff; font-size: 14px;\">01. AI &amp; Automation Pavilion</strong></p>",
+        "paddingTop": "4px",
+        "paddingRight": "10px",
+        "paddingBottom": "8px",
+        "paddingLeft": "10px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "#0000aa",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1792635813374-v61doxfv1",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"word-break: keep-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">A special pavilion gathering AI &amp; automation exhibitors from all four shows, showcasing how machine vision and data analytics are replacing experience-based judgment in formulation, plating control, and defect inspection.</p>",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "10px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1792635813374-v61doxfv1",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/newsletterbuilder/growth-str/amtec/eng/vol01/pavilions_02.jpg",
+        "imageAlt": "이미지",
+        "imageCrop": "",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "8px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "",
+        "showBorderRadius": false,
+        "imageBorderRadius": "10px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1792636337851-t888ki41k",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "18px",
+        "descriptionText": "<p style=\"line-height: 1.2; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"color: #ffffff; font-size: 14px;\">02. Thermal Solutions Pavilion</strong></p>",
+        "paddingTop": "4px",
+        "paddingRight": "10px",
+        "paddingBottom": "8px",
+        "paddingLeft": "10px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "#0000aa",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1792636337851-t888ki41k",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">A specialized pavilion for THERMAL CONTROL materials, components &amp; technologies-for high-heat electronic systems in the age of AI and electrification</p>",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "10px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1792636337851-t888ki41k",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/newsletterbuilder/growth-str/amtec/eng/vol01/pavilions_03.jpg",
+        "imageAlt": "이미지",
+        "imageCrop": "",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "8px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "",
+        "showBorderRadius": false,
+        "imageBorderRadius": "10px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1792636422746-31mtf56u1",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.2; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"color: #ffffff; font-size: 14px;\">03. Mobility Perception Sensor Pavilion</strong></p>",
+        "paddingTop": "4px",
+        "paddingRight": "10px",
+        "paddingBottom": "8px",
+        "paddingLeft": "10px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "#0000aa",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1792636422746-31mtf56u1",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"word-break: keep-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">A special pavilion leading future mobility innovation by showcasing R&amp;D and industrial advances in perception-sensor technologies and diverse services that use them.</p>",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "10px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1792636422746-31mtf56u1",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#000000",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "20px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1792636554203-sk1fbf5ao",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "22px",
+        "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\"><strong>TARGET BUYER MATCHING SERVICE</strong></p>",
+        "paddingTop": "8px",
+        "paddingRight": "20px",
+        "paddingBottom": "8px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {},
+      "groupId": "group-1792636554203-sk1fbf5ao",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"line-height: 1.4; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;; text-align: center;\"><span style=\"font-size: 14px;\">ADVANCED MATERIAL AND TECH WEEK KOREA, connecting advanced industries such as semiconductors, secondary batteries, and automotive electronics, is a B2B business hub where high-value purchasing and R&amp;D demand comes together.</span></p><p style=\"line-height: 1.4; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;; text-align: center;\"><span style=\"font-size: 14px;\">Select three preferred Korean buyers, and we guarantee at least one confirmed 1:1 business meeting with a matched buyer.</span></p>",
+        "paddingTop": "8px",
+        "paddingRight": "20px",
+        "paddingBottom": "8px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {},
+      "groupId": "group-1792636554203-sk1fbf5ao",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "20px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong style=\"color: var(--point-color-0, #0000aa); font-size: 15px;\">WHO PARTICIPATES?</strong></p>",
+        "paddingTop": "8px",
+        "paddingRight": "20px",
+        "paddingBottom": "8px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong style=\"color: #ffffff;\">Overseas Exhibitors</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "0px",
+        "paddingBottom": "6px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "#e5e5e5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111",
+        "bgColor__pointIndex": 0,
+        "bgColor__usePoint": true
+      },
+      "styles": {},
+      "groupId": "group-1792639738653-b7rub9ein",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;; text-align: center;\"><strong>Exhibitors at 2027 AMTEC KOREA</strong></p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;; text-align: center;\">&nbsp;</p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\"><strong style=\"color: #f04452;\">Benefits</strong></p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">• Select 3 buyers → 1+ confirmed meeting</p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">• 1:1 with Purchasing &amp; R&amp;D PICs</p>",
+        "paddingTop": "10px",
+        "paddingRight": "10px",
+        "paddingBottom": "10px",
+        "paddingLeft": "10px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "#f3f3f3",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1792639738653-b7rub9ein",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;; text-align: center;\"><strong style=\"color: #ffffff;\">Korean Buyers</strong></p>",
+        "paddingTop": "6px",
+        "paddingRight": "0px",
+        "paddingBottom": "6px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "#e5e5e5",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111",
+        "bgColor__pointIndex": 0,
+        "bgColor__usePoint": true
+      },
+      "styles": {},
+      "groupId": "group-1792639738653-b7rub9ein",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;; text-align: center;\"><strong>Enterprise &amp; mid-sized procurement / R&amp;D buyers reviewing new suppliers</strong></p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\"><strong style=\"color: #f04452;\">Benefits</strong></p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">• Fast sourcing of new overseas solutions</p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">• Direct talks for faster negotiation &amp; evaluation</p>",
+        "paddingTop": "10px",
+        "paddingRight": "10px",
+        "paddingBottom": "10px",
+        "paddingLeft": "10px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "#f3f3f3",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1792639738653-b7rub9ein",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "20px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong style=\"font-size: 15px; color: #0000aa;\">HOW TO APPLY AND PARTICIPATE</strong></p>",
+        "paddingTop": "8px",
+        "paddingRight": "20px",
+        "paddingBottom": "8px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"word-break: keep-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;; text-align: center;\"><strong style=\"color: var(--point-color-0, #0000aa);\">Step 01</strong></p><p style=\"word-break: keep-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;; text-align: center;\">Review Exhibitor List &amp; Apply for Meetings</p>",
+        "paddingTop": "7px",
+        "paddingRight": "20px",
+        "paddingBottom": "7px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "20px",
+        "marginBottom": "10px",
+        "marginLeft": "20px",
+        "bgColor": "#ecf9ff",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "__moduleLabel": "모듈 01번"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;; text-align: center;\"><strong style=\"color: var(--point-color-0, #0000aa);\">Step 02</strong></p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;; text-align: center;\">Request &amp; Confirm Meetings</p>",
+        "paddingTop": "7px",
+        "paddingRight": "20px",
+        "paddingBottom": "7px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "20px",
+        "marginBottom": "10px",
+        "marginLeft": "20px",
+        "bgColor": "#ecf9ff",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "__moduleLabel": "모듈 01번"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;; text-align: center;\"><strong style=\"color: var(--point-color-0, #0000aa);\">Step 03</strong></p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;; text-align: center;\">Meet with Exhibitors During the Exhibition</p>",
+        "paddingTop": "7px",
+        "paddingRight": "20px",
+        "paddingBottom": "7px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "20px",
+        "marginBottom": "10px",
+        "marginLeft": "20px",
+        "bgColor": "#ecf9ff",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "__moduleLabel": "모듈 01번"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#000000",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "20px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1792648802874-ru394o091",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "22px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong style=\"font-size: 24px;\">RESERVE YOUR BOOTH</strong></p>",
+        "paddingTop": "8px",
+        "paddingRight": "20px",
+        "paddingBottom": "8px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {},
+      "groupId": "group-1792648802874-ru394o091",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/newsletterbuilder/growth-str/amtec/eng/vol01/booth_01.png",
+        "imageAlt": "이미지",
+        "imageCrop": "",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "8px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "",
+        "showBorderRadius": false,
+        "imageBorderRadius": "10px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1792648853804-tc43075lv",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "18px",
+        "descriptionText": "<p style=\"line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;\"><strong style=\"font-size: 16px;\">[Space only] 3,850 USD</strong></p>",
+        "paddingTop": "4px",
+        "paddingRight": "0px",
+        "paddingBottom": "8px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1792648853804-tc43075lv",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<ul><li style=\"line-height: 1.7; word-break: keep-all;\">Only Booth Space will be provided. (1 Booth = 9 sqm (3m*3m)</li><li style=\"line-height: 1.7; word-break: keep-all;\">Exhibitor must employ the contractors designated by venue for the construction and erection of their stand</li><li style=\"line-height: 1.7; word-break: keep-all;\">Required minimum 18m2</li></ul>",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "10px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1792648853804-tc43075lv",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/newsletterbuilder/growth-str/amtec/eng/vol01/booth_02.png",
+        "imageAlt": "이미지",
+        "imageCrop": "",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "8px",
+        "paddingLeft": "0px",
+        "showImageLink": false,
+        "imageLinkUrl": "",
+        "showBorderRadius": false,
+        "imageBorderRadius": "10px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1792649503929-ny5ryzxtw",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong style=\"font-size: 16px;\">[Shell-Scheme] 4,400 USD</strong></p>",
+        "paddingTop": "4px",
+        "paddingRight": "0px",
+        "paddingBottom": "8px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#111111"
+      },
+      "styles": {},
+      "groupId": "group-1792649503929-ny5ryzxtw",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "14px",
+        "descriptionText": "<ul><li style=\"line-height: 1.7; word-break: keep-all;\"> Organizer will construct the standard booth (1 Booth = 9 sqm (3m*3m)</li><li style=\"line-height: 1.7; word-break: keep-all;\">Information Desk, 1 Chair, 1kW Electricity Supply, 1 Double Outlet (2 Sockets), Flooring, Lighting, Company Name Fascia Board, Booth Structure</li></ul>",
+        "paddingTop": "0px",
+        "paddingRight": "0px",
+        "paddingBottom": "10px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333"
+      },
+      "styles": {},
+      "groupId": "group-1792649503929-ny5ryzxtw",
+      "rowIndex": 0,
+      "columnIndex": 1
+    },
+    {
+      "moduleId": "ModuleOneButton",
+      "properties": {
+        "buttonText": "EXHIBITOR ONLINE-REGISTER →",
+        "buttonUrl": "https://eng.chemexpokorea.com/participation-guide/",
+        "buttonFontSize": "15px",
+        "buttonBgColor": "#111111",
+        "buttonTextColor": "#ffffff",
+        "buttonPaddingTop": "15px",
+        "buttonPaddingRight": "20px",
+        "buttonPaddingBottom": "15px",
+        "buttonPaddingLeft": "20px",
+        "paddingTop": "15px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "showBorderRadius": true,
+        "buttonBorderRadius": "5px",
+        "buttonBorderStyle": "none",
+        "buttonBorderWidth": "1px",
+        "buttonBorderColor": "#000000",
+        "buttonBgColor__pointIndex": 0,
+        "buttonBgColor__usePoint": true
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "20px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: break-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong style=\"color: #0000aa; font-size: 15px;\">WHO VISITS?</strong></p>",
+        "paddingTop": "8px",
+        "paddingRight": "20px",
+        "paddingBottom": "8px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;; text-align: center;\"><strong>AMTEC KOREA</strong> is the most visited exhibition by the best new materials,</p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;; text-align: center;\">advanced technologies, and manufacturing companies in Korea.</p>",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "8px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/newsletterbuilder/growth-str/amtec/eng/vol01/visitors.png",
+        "imageAlt": "이미지",
+        "imageCrop": "",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "showImageLink": false,
+        "imageLinkUrl": "",
+        "showBorderRadius": false,
+        "imageBorderRadius": "10px",
+        "imageBorderStyle": "solid",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#dedede"
+      },
+      "styles": {}
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#000000",
+        "borderWidth": "2px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "20px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1792650113074-b9x5cahtf",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "24px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;; text-align: center;\"><strong style=\"font-size: 22px;\">2027 Pre-registration</strong></p>",
+        "paddingTop": "8px",
+        "paddingRight": "20px",
+        "paddingBottom": "8px",
+        "paddingLeft": "20px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999"
+      },
+      "styles": {},
+      "groupId": "group-1792650113074-b9x5cahtf",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleImg",
+      "properties": {
+        "imageUrl": "https://esang-newsletter.s3.ap-northeast-2.amazonaws.com/e-dm/2026/newsletterbuilder/growth-str/amtec/eng/vol01/register.png",
+        "imageAlt": "이미지",
+        "imageCrop": "",
+        "imageMaxWidth": "100%",
+        "imageAlign": "center",
+        "paddingTop": "0px",
+        "paddingRight": "20px",
+        "paddingBottom": "20px",
+        "paddingLeft": "20px",
+        "showImageLink": true,
+        "imageLinkUrl": "https://eng.chemexpokorea.com/visitor-guideline/",
+        "showBorderRadius": false,
+        "imageBorderRadius": "10px",
+        "imageBorderStyle": "none",
+        "imageBorderWidth": "1px",
+        "imageBorderColor": "#000000"
+      },
+      "styles": {},
+      "groupId": "group-1792650113074-b9x5cahtf",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "16px",
+        "descriptionText": "<p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><strong>AMTEC KOREA</strong> MESSE ESANG Co., LTd.</p><p style=\"word-break: break-all; line-height: 1.7; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: break-word;\"><span style=\"font-size: 13px;\">ES Tower, 9, World Cup Buk-Ro 58-Gil, Mapo-Gu, Seoul, Korea</span></p>",
+        "paddingTop": "30px",
+        "paddingRight": "0px",
+        "paddingBottom": "0px",
+        "paddingLeft": "0px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "textAlign": "center"
+      },
+      "styles": {},
+      "groupId": "group-1792651675974-wj2tkmcnp",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleContactInfo",
+      "properties": {
+        "contactItems": [
+          {
+            "key": "website",
+            "show": true,
+            "value": "eng.chemexpokorea.com"
+          },
+          {
+            "key": "phone",
+            "show": true,
+            "value": "+82-2-6121-6374"
+          },
+          {
+            "key": "email",
+            "show": true,
+            "value": "chemexpo@esgroup.net"
+          },
+          {
+            "key": "fax",
+            "show": false,
+            "value": "02-6121-6363"
+          }
+        ],
+        "contactFontSize": "13px",
+        "contactTextColor": "#333333",
+        "contactAlign": "center",
+        "paddingTop": "8px",
+        "paddingRight": "0px",
+        "paddingBottom": "10px",
+        "paddingLeft": "0px",
+        "websiteUrl": "eng.chemexpokorea.com",
+        "showWebsite": true,
+        "phone": "+82-2-6121-6374",
+        "showPhone": true,
+        "email": "chemexpo@esgroup.net",
+        "showEmail": true,
+        "fax": "02-6121-6363",
+        "showFax": false
+      },
+      "styles": {},
+      "groupId": "group-1792651675974-wj2tkmcnp",
+      "rowIndex": 0,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDivider",
+      "properties": {
+        "borderColor": "#aaaaaa",
+        "borderWidth": "1px",
+        "borderStyle": "solid",
+        "dividerWidth": "100%",
+        "paddingTop": "0px",
+        "paddingBottom": "15px",
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      "styles": {},
+      "groupId": "group-1792651675974-wj2tkmcnp",
+      "rowIndex": 1,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleSnsIcons",
+      "properties": {
+        "snsIconBgColor": "#333333",
+        "snsAlign": "center",
+        "snsIcons": [
+          {
+            "key": "home",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "facebook",
+            "show": true,
+            "url": "https://www.facebook.com/chemweek"
+          },
+          {
+            "key": "x",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "blog",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "youtube",
+            "show": true,
+            "url": "https://www.youtube.com/channel/UCP3ilhZQDQRzQ2VaSID0foA"
+          },
+          {
+            "key": "instagram",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "kakao",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "linkedin",
+            "show": true,
+            "url": "https://www.linkedin.com/company/chemexpo/"
+          },
+          {
+            "key": "zuzuzu",
+            "show": false,
+            "url": "https://kcoupet.com/"
+          },
+          {
+            "key": "en",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "jp",
+            "show": false,
+            "url": ""
+          },
+          {
+            "key": "th",
+            "show": false,
+            "url": ""
+          }
+        ],
+        "paddingTop": "0px",
+        "paddingRight": "5px",
+        "paddingBottom": "10px",
+        "paddingLeft": "5px"
+      },
+      "styles": {},
+      "groupId": "group-1792651675974-wj2tkmcnp",
+      "rowIndex": 2,
+      "columnIndex": 0
+    },
+    {
+      "moduleId": "ModuleDescText",
+      "properties": {
+        "fontSize": "12px",
+        "descriptionText": "<p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">This e-mail is from MESSEESANG CO., Ltd., the organizer of AMTEC KOREA.</p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">It was sent after confirming the receipt agreement of the computer system If you don’t want this type of information or e-mail, Please click the <strong><a href=\"#\" rel=\"noopener noreferrer\" target=\"_blank\">[unsubscription]</a></strong></p><p style=\"line-height: 1.7; word-break: keep-all; margin: 0; padding: 0; word-wrap: break-word; overflow-wrap: anywhere;\">This e-mail is for outgoing only. For inquires, Please contact <strong>chemexpo@esgroup.net</strong></p>",
+        "paddingTop": "10px",
+        "paddingRight": "25px",
+        "paddingBottom": "40px",
+        "paddingLeft": "25px",
+        "marginTop": "0px",
+        "marginRight": "0px",
+        "marginBottom": "0px",
+        "marginLeft": "0px",
+        "bgColor": "transparent",
+        "showBorderRadius": false,
+        "borderRadius": "8px",
+        "showBorder": false,
+        "borderPosition": "bottom",
+        "borderStyle": "solid",
+        "borderWidth": "1px",
+        "borderColor": "#999999",
+        "textColor": "#333333",
+        "textAlign": "center"
+      },
+      "styles": {},
+      "groupId": "group-1792651675974-wj2tkmcnp",
+      "rowIndex": 3,
+      "columnIndex": 0
+    }
+  ],
+  "groups": [
+    {
+      "id": "group-1792633401366-b4cq7fyzl",
+      "name": "섹션 타이틀",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1792635141974-mow62odt5",
+      "name": "복수 버튼",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "15px",
+        "paddingRight": "15px",
+        "marginLeft": "0px",
+        "marginRight": "0px"
+      },
+      "rows": [
+        2
+      ]
+    },
+    {
+      "id": "group-1792635701042-iijp3m8b2",
+      "name": "섹션 타이틀",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1792635813374-v61doxfv1",
+      "name": "모듈 07번",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "15px",
+        "paddingRight": "15px",
+        "marginLeft": "0px",
+        "marginRight": "0px"
+      },
+      "rows": [
+        2
+      ]
+    },
+    {
+      "id": "group-1792636337851-t888ki41k",
+      "name": "모듈 07번",
+      "rows": [
+        2
+      ],
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "15px",
+        "paddingRight": "15px",
+        "marginLeft": "0px",
+        "marginRight": "0px"
+      }
+    },
+    {
+      "id": "group-1792636422746-31mtf56u1",
+      "name": "모듈 07번",
+      "rows": [
+        2
+      ],
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "15px",
+        "paddingRight": "15px",
+        "marginLeft": "0px",
+        "marginRight": "0px"
+      }
+    },
+    {
+      "id": "group-1792636554203-sk1fbf5ao",
+      "name": "섹션 타이틀",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1792639738653-b7rub9ein",
+      "name": "모듈 01-1번",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "15px",
+        "paddingRight": "15px",
+        "marginLeft": "0px",
+        "marginRight": "0px"
+      },
+      "rows": [
+        2
+      ]
+    },
+    {
+      "id": "group-1792648802874-ru394o091",
+      "name": "섹션 타이틀",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1792648853804-tc43075lv",
+      "name": "모듈 07번",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "15px",
+        "paddingRight": "15px",
+        "marginLeft": "0px",
+        "marginRight": "0px"
+      },
+      "rows": [
+        2
+      ]
+    },
+    {
+      "id": "group-1792649503929-ny5ryzxtw",
+      "name": "모듈 07번",
+      "rows": [
+        2
+      ],
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px",
+        "paddingLeft": "15px",
+        "paddingRight": "15px",
+        "marginLeft": "0px",
+        "marginRight": "0px"
+      }
+    },
+    {
+      "id": "group-1792650113074-b9x5cahtf",
+      "name": "섹션 타이틀",
+      "styles": {
+        "backgroundColor": "",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "group-1792651675974-wj2tkmcnp",
+      "name": "하단 푸터",
+      "styles": {
+        "backgroundColor": "#e9e9e9",
+        "borderWidth": "0px",
+        "borderStyle": "solid",
+        "borderColor": "#dddddd",
+        "borderSides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ],
+        "padding": "0px",
+        "margin": "0px"
+      },
+      "rows": [
+        1,
+        1,
+        1,
+        1
+      ]
+    }
+  ]
+}
