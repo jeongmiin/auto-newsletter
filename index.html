@@ -2,6 +2,17 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8">
+    <!-- GitHub Pages 루트(jeongmiin.github.io/auto-newsletter/)는 옛 주소다 — 운영은 newsletter.messeesang.com 이다.
+         두 곳이 같은 S3·같은 Worker를 쓰므로 옛 주소로 작업해도 결과는 섞인다. 들어오면 운영으로 보낸다.
+         /auto-newsletter/develop/ 미리보기만 남긴다. 앱이 뜨기 전에 돌려보내려고 모듈 스크립트보다 앞에 둔다. -->
+    <script>
+      if (
+        location.hostname === 'jeongmiin.github.io' &&
+        !location.pathname.startsWith('/auto-newsletter/develop')
+      ) {
+        location.replace('https://newsletter.messeesang.com/')
+      }
+    </script>
     <link rel="icon" href="/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Newsletter Builder</title>
