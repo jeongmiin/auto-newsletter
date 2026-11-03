@@ -15,7 +15,7 @@ vi.mock('@/utils/s3Upload', async (importOriginal) => {
   return {
     ...actual,
     isUploadEnabled: () => true,
-    buildUploadDirectory: () => 'e-dm/2026/test/vol01/',
+    buildUploadDirectory: (_folder: string, volume?: string) => `e-dm/2026/test/${volume || 'vol01'}/`,
     uploadHtml: vi.fn(async () => ({ url: 'https://example.com/test_send.html' })),
   }
 })
@@ -51,6 +51,64 @@ const withLink = async () => {
   expect(result.status).toBe('created')
   return { modules, webLink }
 }
+
+describe('예전 링크를 처음 찾았을 때', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+  })
+
+  /** 폴더에 발송용 파일이 있고, 그 파일을 받으면 `uploaded`가 오는 상태 */
+  const findLink = async (uploaded: string) => {
+    const { listFolders } = await import('@/utils/s3Browse')
+    vi.mocked(listFolders).mockResolvedValueOnce([
+      { name: 'vol01', itemCount: 1, hasChildren: false, lastModified: null, sendFile: { key: 'x/test_send.html', name: 'test_send.html', lastModified: null } },
+    ])
+    vi.stubGlobal('fetch', vi.fn(async () => new Response(uploaded)))
+    const modules = useModuleStore()
+    const webLink = useWebLinkStore()
+    modules.addModule(meta)
+    await webLink.loadExisting()
+    vi.unstubAllGlobals()
+    return { modules, webLink }
+  }
+
+  it('올라간 파일이 지금 캔버스와 같으면 뜨지 않는다', async () => {
+    const { webLink } = await findLink('<html>\n</html>')
+    webLink.refreshContentChanged()
+    expect(webLink.existing).not.toBeNull()
+    expect(webLink.showReminder).toBe(false)
+  })
+
+  it('올라간 파일이 지금 캔버스와 다르면 처음부터 뜬다 — 링크 뒤 고친 작업을 이어서 연 경우', async () => {
+    const { webLink } = await findLink('<html>옛 내용</html>')
+    webLink.refreshContentChanged()
+    expect(webLink.contentChanged).toBe(true)
+    expect(webLink.showReminder).toBe(true)
+  })
+
+  it('다른 회차로 옮기면 앞 회차의 기준을 버린다', async () => {
+    const modules = useModuleStore()
+    const webLink = useWebLinkStore()
+    modules.addModule(meta)
+    await webLink.createLink()
+    modules.addModule(meta)
+    webLink.refreshContentChanged()
+    expect(webLink.contentChanged).toBe(true)
+    const { useEditorStore } = await import('../editorStore')
+    useEditorStore().updateWrapSettings({ volume: 'vol02' })
+    await Promise.resolve()
+    webLink.refreshContentChanged()
+    expect(webLink.existing).toBeNull()
+    expect(webLink.contentChanged).toBe(false)
+  })
+
+  it('다르다고 뜬 뒤 반영하면 사라진다', async () => {
+    const { webLink } = await findLink('<html>옛 내용</html>')
+    await webLink.createLink()
+    webLink.refreshContentChanged()
+    expect(webLink.showReminder).toBe(false)
+  })
+})
 
 describe('웹 링크 리마인드', () => {
   beforeEach(() => {

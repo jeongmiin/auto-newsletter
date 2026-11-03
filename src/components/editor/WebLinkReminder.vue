@@ -23,6 +23,18 @@ const webLink = useWebLinkStore()
 const moduleStore = useModuleStore()
 const toast = useToast()
 
+// 에디터에 들어오자마자(그리고 저장 위치가 바뀔 때마다) 그 폴더의 웹 링크를 한 번 찾는다.
+// ⚠ 예전에는 AI 도구를 열거나 '웹으로 보기'를 골라야만 찾았다. 그 전에는 링크가 '없는' 것으로 알아
+//   아무리 고쳐도 "변경되었어요"가 뜨지 않았고, 고친 뒤에 AI 도구를 열면 고친 내용이 기준이 됐다.
+//   들어온 순간 찾으면 기준이 '열었을 때의 내용'(올라간 파일과 견준 결과)이 되어 그 뒤 고친 것을 알린다.
+watch(
+  () => webLink.targetDirectory,
+  (directory) => {
+    if (directory && webLink.enabled) void webLink.loadExisting()
+  },
+  { immediate: true },
+)
+
 const apply = async (): Promise<void> => {
   const result = await webLink.createLink()
   // source 로 패널과 갈라 센다 — 이 팝업이 실제로 반영을 이끌어 내는지 보기 위해

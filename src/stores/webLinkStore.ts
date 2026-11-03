@@ -251,11 +251,16 @@ export const useWebLinkStore = defineStore('webLink', () => {
    * 스토어에 있으니 좌측 패널이 내려갔다 올라와도 기준이 남는다 — 예전에는 이 값을 패널의
    * `<script setup>` 밖(모듈 스코프)에 따로 빼 두어야 했다.
    *
-   * ⚠ 앱을 새로 연 뒤 **한 번도 고치지 않은 채** 예전 링크를 찾으면 기준이 없다. 그때는 지금
-   * 내용이 링크와 같은지 알 길이 없으므로 안내를 띄우지 않고 그 시점을 기준으로 삼는다
-   * (작업 내용은 메모리에만 있어 새로고침하면 어차피 사라진다 — 거짓 안내보다 낫다).
+   * 앱을 새로 연 뒤 예전 링크를 **처음 찾았을 때**는 견줄 기준이 없다. 그때는 폴더에 올라가 있는
+   * 발송용 파일을 실제로 받아, 지금 캔버스로 만든 발송용 문서와 견준다(`judgeFoundLink`).
+   * 같으면 지금을 기준으로 삼고, 다르면 처음부터 '변경되었어요'를 띄운다.
+   * ⚠ 예전에는 견주지 않고 찾은 시점을 기준으로 삼았다. 그러면 링크를 만든 뒤 고친 작업을
+   *   '이어서 편집'으로 다시 열면 이미 바뀐 내용이 기준이 되어 안내가 영영 뜨지 않았다
+   *   (2026-11-03 메가주 jp_ver: 링크 07:58, 임시 저장 10:08 — 반영 안내 없음).
    */
   let linkBaseline: string | null = null
+  /** 기준을 알 수 없을 때 쓰는 값 — 어떤 서명과도 같지 않아 '바뀜'으로 읽힌다(반영하면 새 기준으로 바뀐다) */
+  const STALE_BASELINE = '\u0000stale'
   const markBaseline = (): void => {
     linkBaseline = contentSignature()
     contentChanged.value = false
@@ -265,6 +270,22 @@ export const useWebLinkStore = defineStore('webLink', () => {
     if (!checkTimer) checkTimer = setInterval(refreshContentChanged, CHECK_INTERVAL_MS)
   }
 
+  /**
+   * 저장 위치(폴더·회차)가 바뀌면 기준도 버린다 — 링크는 폴더마다 하나라 기준도 폴더마다 따로다.
+   * ⚠ 예전에는 앞 회차에서 만든 기준이 남아, 다른 회차를 열면 그 링크와 상관없는 내용과 견줬다
+   *   (같은 날 jp_ver·thai_ver를 오가며 작업하면 안내가 엉뚱하게 뜨거나 안 떴다).
+   * 다음 조회(loadExisting)가 그 폴더의 파일과 견줘 새 기준을 정한다.
+   */
+  watch(targetDirectory, (next, prev) => {
+    if (next === prev) return
+    checkController?.abort()
+    linkBaseline = null
+    existing.value = null
+    contentChanged.value = false
+    reminderDismissed.value = false
+    promptCheckedDirectory = null
+  })
+
   const refreshContentChanged = (): void => {
     // 링크가 없으면 견줄 기준도 없다 — 서명을 만들지 않고 빠져나간다(늘 도는 감시라 값이 싸야 한다)
     contentChanged.value = linkBaseline !== null && linkBaseline !== contentSignature()
@@ -272,6 +293,32 @@ export const useWebLinkStore = defineStore('webLink', () => {
     // 닫자마자 같은 안내가 또 뜨지 않게 하려는 것 — 다시 낡았을 때 한 번 더 알린다.
     // ⚠ 감시(watch)가 아니라 여기서 바로 푼다 — 감시는 다음 틱에 돌아 순서가 흐려진다.
     if (!contentChanged.value) reminderDismissed.value = false
+  }
+
+  /** 견주기 전에 공백 차이를 지운다 — 업로드·내려받기 사이에 줄바꿈이 달라져도 같은 문서로 본다 */
+  const normalizeDocument = (html: string): string =>
+    html.replace(/>\s+</g, '><').replace(/\s+/g, ' ').trim()
+
+  /**
+   * 이 세션에서 처음 찾은 링크가 지금 캔버스와 같은지 판단해 기준을 정한다.
+   * 파일을 못 받으면(네트워크·CORS) 예전처럼 지금을 기준으로 둔다 — 거짓 안내보다 낫다.
+   */
+  const judgeFoundLink = async (url: string, signal: AbortSignal): Promise<void> => {
+    try {
+      const [uploaded, current] = await Promise.all([
+        fetch(url, { cache: 'no-store', signal }).then((res) => (res.ok ? res.text() : Promise.reject(res.status))),
+        buildDocument(false),
+      ])
+      if (linkBaseline !== null) return // 기다리는 사이 링크를 새로 만들었다
+      markBaseline()
+      if (normalizeDocument(uploaded) !== normalizeDocument(current)) {
+        linkBaseline = STALE_BASELINE
+        contentChanged.value = true
+      }
+    } catch (err) {
+      if (err instanceof DOMException && err.name === 'AbortError') return
+      if (linkBaseline === null) markBaseline()
+    }
   }
 
   /**
@@ -299,8 +346,8 @@ export const useWebLinkStore = defineStore('webLink', () => {
       existing.value = file
         ? { url: objectUrl(file.key), name: file.name, at: file.lastModified }
         : null
-      // 링크를 처음 발견했으면 지금 내용을 기준으로 삼는다(위 linkBaseline 주석 참고)
-      if (file && linkBaseline === null) markBaseline()
+      // 링크를 처음 발견했으면 올라가 있는 파일과 지금 내용을 견줘 기준을 정한다(위 linkBaseline 주석 참고)
+      if (file && linkBaseline === null) await judgeFoundLink(objectUrl(file.key), checkController.signal)
     } catch (err) {
       if (err instanceof DOMException && err.name === 'AbortError') return
       // 읽지 못하면(네트워크·CORS) 없는 것으로 둔다 — 만들기 버튼은 그대로 쓸 수 있다
