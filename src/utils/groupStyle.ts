@@ -221,22 +221,31 @@ export function normalizeColumnWidths(
  * 컬럼별 내부 HTML 배열을 fluid-hybrid 컬럼 레이아웃으로 감싼다.
  * @param columnHtml columnHtml[i] = i번 컬럼에 들어갈 결합 HTML(빈 문자열 허용)
  * @param keepInline true면 모바일에서도 세로로 쌓지 않고 가로 배치를 유지한다
+ * @param mobileReverse true면 모바일에서 쌓일 때 **오른쪽 칸이 위로** 온다(PC 배치는 그대로).
+ *   메일은 인라인만 믿을 수 있어(국내 웹메일이 <style>을 지운다) 미디어쿼리·flex order 대신
+ *   **dir 속성**을 쓴다: 칸을 거꾸로 적고 바깥에 dir="rtl"을 주면 PC에서는 inline-block이
+ *   오른쪽부터 놓여 원래 배치가 되고, 좁아져 쌓일 때는 적힌 순서(오른쪽 칸 먼저)대로 쌓인다.
+ *   칸 안은 dir="ltr"로 되돌려 글 방향·정렬이 뒤집히지 않게 한다. 너비도 같이 뒤집어 적는다.
+ *   keepInline 행에서는 쌓이지 않으므로 무시한다.
  */
 export function buildColumnLayoutHtml(
   columnHtml: string[],
   widths?: number[],
   keepInline?: boolean,
+  mobileReverse?: boolean,
 ): string {
   const n = Math.min(Math.max(columnHtml.length, 1), 4)
-  const cells = columnHtml
-    .slice(0, n)
+  const reverse = !!mobileReverse && !keepInline && n > 1
+  const order = Array.from({ length: n }, (_, i) => (reverse ? n - 1 - i : i))
+  const cellDir = reverse ? ' dir="ltr"' : ''
+  const cells = order
     .map(
-      (inner, i) =>
-        `<div style="${columnCellStyle(n, widths?.[i], keepInline)}">${inner || '&nbsp;'}</div>`,
+      (i) =>
+        `<div${cellDir} style="${columnCellStyle(n, widths?.[i], keepInline)}">${columnHtml[i] || '&nbsp;'}</div>`,
     )
     .join('')
   // font-size:0 로 inline-block 사이 공백(gap) 제거, letter-spacing:0 보정
-  return `<div style="font-size:0; letter-spacing:0;">${cells}</div>`
+  return `<div${reverse ? ' dir="rtl"' : ''} style="font-size:0; letter-spacing:0;">${cells}</div>`
 }
 
 /**

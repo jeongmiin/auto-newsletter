@@ -25,6 +25,13 @@
     <!-- ⚠ 툴바 컨테이너에는 툴팁을 걸지 않는다. 버튼마다 이미 툴팁이 있어서
          버튼에 마우스를 올리면 컨테이너 툴팁(모듈 이름)과 겹쳐 두 개가 함께 뜬다. -->
     <div class="module-toolbar" :class="{ 'is-visible': isSelected, 'is-left': toolbarOnLeft }">
+      <!-- 2단 행의 칸 색 — 행 패널의 '모바일 배치' 카드와 같은 색이다(utils/columnColor) -->
+      <span
+        v-if="columnInfo?.color"
+        class="module-toolbar-color"
+        :style="{ background: columnInfo.color }"
+        aria-hidden="true"
+      ></span>
       <button
         type="button"
         class="module-toolbar-btn"
@@ -76,7 +83,7 @@ interface Props {
   index: number
   isSelected: boolean
   /** 컬럼 그룹 멤버일 때 좌/우 이동 버튼 표시용 (컬럼 수 + 현재 컬럼) */
-  columnInfo?: { columns: number; columnIndex: number }
+  columnInfo?: { columns: number; columnIndex: number; color?: string }
   /**
    * 위/아래 이동 가능 여부. 그룹 멤버는 전역 order가 아니라 **그룹 안 위치**로 판단해야 해서
    * 캔버스가 직접 넘겨준다(2단 행 안의 모듈은 혼자 위아래로 못 움직이므로 둘 다 false).
@@ -209,6 +216,18 @@ onBeforeUnmount(() => clearModuleHighlights(props.module.id))
 .module-toolbar.is-left {
   right: auto;
   left: -55px;
+}
+/* 툴바 위에 떠 있는 칸 색 점 */
+.module-toolbar-color {
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  border: 2px solid var(--white);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--gray-200);
 }
 /* 호버로는 열지 않는다 — 선택(is-visible)했을 때만 */
 .module-toolbar.is-visible {

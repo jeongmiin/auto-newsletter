@@ -355,3 +355,42 @@ describe('moduleStore - 그룹', () => {
     })
   })
 })
+
+describe('moduleStore - 모바일 배치와 좌우 자리 바꾸기', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+    vi.clearAllMocks()
+  })
+
+  /** 2단 한 행짜리 그룹 — [A | B] */
+  const twoColumnRow = () => {
+    const store = useModuleStore()
+    const [a, b] = addModules(store, 2)
+    const gid = store.createGroup([a, b])!
+    store.modules.find((m) => m.id === b)!.columnIndex = 1
+    store.groups.find((g) => g.id === gid)!.rows = [2]
+    return { store, gid, a, b }
+  }
+  const leftOf = (store: ReturnType<typeof useModuleStore>) => store.modules.find((m) => (m.columnIndex ?? 0) === 0)!.id
+
+  it('좌우를 바꾸면 모바일 배치도 같이 뒤집혀, 모바일에서 위에 오던 내용이 그대로 위에 남는다', () => {
+    const { store, gid, a } = twoColumnRow()
+    // 처음: [A | B], 모바일 왼쪽 칸 먼저 → A가 위
+    expect(store.rowMobileReversed(gid, 0)).toBe(false)
+    store.swapRowColumns(gid, 0)
+    // 바꾼 뒤: [B | A] — A가 오른쪽으로 갔으니 '오른쪽 칸 먼저'가 되어 A가 계속 위
+    expect(leftOf(store)).not.toBe(a)
+    expect(store.rowMobileReversed(gid, 0)).toBe(true)
+    // 한 번 더 바꾸면 처음으로
+    store.swapRowColumns(gid, 0)
+    expect(leftOf(store)).toBe(a)
+    expect(store.rowMobileReversed(gid, 0)).toBe(false)
+  })
+
+  it('모바일에서도 가로 유지 행은 쌓이지 않으니 모바일 배치를 건드리지 않는다', () => {
+    const { store, gid } = twoColumnRow()
+    store.setRowKeepInline(gid, 0, true)
+    store.swapRowColumns(gid, 0)
+    expect(store.rowMobileReversed(gid, 0)).toBe(false)
+  })
+})
