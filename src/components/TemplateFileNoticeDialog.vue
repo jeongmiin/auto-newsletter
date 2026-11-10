@@ -1,96 +1,61 @@
 <script setup lang="ts">
 /**
- * 공지 팝업 — 템플릿 선택 화면에 들어오면 한 번 띄운다. 지금 내용은 **AI 도구 업데이트 안내**(2026-10-23 18:00 배포).
+ * 공지 팝업 — 템플릿 선택 화면에 들어오면 한 번 띄운다. 지금 내용은 **2단 모듈 '모바일 배치' 안내**.
  *
  * 모양은 9월 28일 개편 사전 안내 모달(UpdateNoticeModal, 770423f)을 그대로 잇는다 —
- * 머리의 확성기 아이콘, 파란 리드, 항목, 회색 상자, 아래 체크박스 + 확인.
- * 공지는 늘 같은 틀로 나와야 "또 그 안내구나"로 읽힌다. (파일 이름은 앞 공지 때 것을 그대로 쓴다 — 자리는 같다)
+ * 머리의 확성기 아이콘, 파란 리드, 그림 상자, 회색 순서 상자, 아래 체크박스 + 확인.
+ * 공지는 늘 같은 틀로 나와야 "또 그 안내구나"로 읽힌다. (파일 이름은 처음 공지 때 것을 그대로 쓴다 — 자리는 같다)
  *
  * 노출 규칙:
  * - 그냥 닫으면(확인·X·ESC·바깥 클릭) 아무것도 기억하지 않는다 → 템플릿 선택 화면에 다시 들어오면 또 뜬다.
- * - '7일간 보지 않기'를 켜고 닫으면 → 이 브라우저에서 7일 동안 띄우지 않는다(localStorage 에 만료 시각 저장).
- *   영구가 아니라 기한을 두는 이유: 한 번 끈 안내를 영영 못 보는 것보다, 일주일 뒤 한 번 더 보이는 쪽이 안전하다.
+ * - '다시 보지 않기'를 켜고 닫으면 → 이 브라우저에서 **이 안내는** 다시 띄우지 않는다(localStorage).
+ *   기억 키에 안내 버전을 붙이므로(NOTICE_KEY), 다음 안내는 키만 바꾸면 끈 사람에게도 새로 간다.
  *   어느 길로 닫아도 체크 상태를 반영한다 — visible 이 꺼지는 것을 본다.
- * - 기억 키에 안내 **버전**을 붙인다(NOTICE_KEY). 다음 안내를 띄울 때 키만 바꾸면 기한이 남은 사람에게도 새 안내가 간다.
  * - 저장소 접근은 try/catch — 시크릿 창·차단 설정에서는 그냥 매번 띄운다(안내가 안 뜨는 쪽보다 낫다).
  */
 import { onMounted, ref, watch } from 'vue'
-import railShot from '@/assets/img/notice/ai-tools-rail.png'
-import menuShot from '@/assets/img/notice/ai-tools-menu.png'
+import rowShot from '@/assets/img/notice/mobile-layout-row.png'
+import panelShot from '@/assets/img/notice/mobile-layout-panel.png'
+import beforeShot from '@/assets/img/notice/mobile-layout-before.png'
+import afterShot from '@/assets/img/notice/mobile-layout-after.png'
 
 /**
  * 안내 버전 — 내용이 바뀌어 다시 보여줘야 하면 끝 숫자를 올린다.
- * v1: 템플릿 파일 받기 안내 · v2: AI 도구 업데이트 안내(7일 숨김이 남은 사람에게도 새로 보이게)
+ * v1: 템플릿 파일 받기 · v2: AI 도구 업데이트(10/23) · v3: 2단 모듈 모바일 배치
  */
-const NOTICE_KEY = 'notice.template-file.v2'
-/**
- * 공지를 띄울지 — 지금은 **끔**. 10/23 업데이트 공지는 배포 전에만 쓰고 운영 반영(develop 머지)과 함께 내렸다.
- * 다음 공지 때 내용을 바꾸고 NOTICE_KEY 버전을 올린 뒤 true 로 켠다.
- */
-const NOTICE_ENABLED = false
-/** '보지 않기'가 유지되는 기간 */
-const HIDE_DAYS = 7
-const HIDE_MS = HIDE_DAYS * 24 * 60 * 60 * 1000
-
-/** 배포 시각 — 이 전에는 "됩니다", 지나면 "되었습니다"로 리드가 바뀐다(공지를 거둘 때까지 글이 낡지 않게) */
-const RELEASE_AT = new Date('2026-10-23T18:00:00+09:00')
-const released = Date.now() >= RELEASE_AT.getTime()
-
-/** 이번 배포로 바뀌는 점 — 도구별로 줄 단위(lines 한 항목 = 한 줄). tag 는 신규/개선 구분 */
-const changes = [
-  {
-    tool: '다국어 번역',
-    tag: '개선',
-    lines: ['태국어가 추가되고 번역이 더 빨라집니다. 번역 중 진행률이 보이고, 결과 화면에서 ‘다시 번역하기’로 추가 번역을 할 수 있습니다.'],
-  },
-  {
-    tool: '맞춤법 검사',
-    tag: '신규',
-    lines: [
-      '작성된 뉴스레터 내용의 오탈자, 띄어쓰기, 맞춤법을 카드로 보여주고, 선택한 카드만 적용하거나 전체 적용을 할 수 있습니다.',
-      '한국어·영어·일본어·중국어·태국어를 각 언어 기준으로 봅니다.',
-    ],
-  },
-]
-
-/** 어디서 쓰는지 — 순서가 핵심이라 번호 태그로 보여준다 */
-const steps = [
-  { lead: '에디터', rest: ' 왼쪽 메뉴 맨 아래 ', strong: 'AI 도구' },
-  { lead: '쓰고 싶은 도구', rest: ' 카드를 누르면 바로 시작됩니다', strong: '' },
-]
+const NOTICE_KEY = 'notice.template-file.v3'
+/** 공지를 띄울지 — 공지를 내릴 때 false 로 끈다(컴포넌트·그림은 다음 공지 때 다시 쓴다) */
+const NOTICE_ENABLED = true
 
 const visible = ref(false)
 const hideChecked = ref(false)
 
-/** '7일간 보지 않기' 기한이 아직 남았는가 — 값은 만료 시각(ms). 지났거나 깨진 값이면 지우고 false */
-const hiddenUntilLater = (): boolean => {
+/** '다시 보지 않기'를 눌러 둔 안내인가 */
+const hiddenForGood = (): boolean => {
   try {
-    const until = Number(localStorage.getItem(NOTICE_KEY))
-    if (Number.isFinite(until) && until > Date.now()) return true
-    localStorage.removeItem(NOTICE_KEY)
-    return false
+    return localStorage.getItem(NOTICE_KEY) === 'hidden'
   } catch {
     return false
   }
 }
-/** 체크하고 닫았을 때만 기억한다 — 7일 뒤 만료 */
-const hideForAWhile = (): void => {
+/** 체크하고 닫았을 때만 기억한다 */
+const hideForGood = (): void => {
   try {
-    localStorage.setItem(NOTICE_KEY, String(Date.now() + HIDE_MS))
+    localStorage.setItem(NOTICE_KEY, 'hidden')
   } catch {
     /* 저장 못 하면 다음에 또 띄울 뿐이다 */
   }
 }
 
 onMounted(() => {
-  if (!NOTICE_ENABLED || hiddenUntilLater()) return
+  if (!NOTICE_ENABLED || hiddenForGood()) return
   visible.value = true
 })
 
-// 어느 길로 닫아도(확인·ESC·X·바깥 클릭) 체크했으면 7일간 숨긴다. 체크 없이 닫으면 아무것도 남기지 않는다.
+// 어느 길로 닫아도(확인·ESC·X·바깥 클릭) 체크했으면 다시 띄우지 않는다. 체크 없이 닫으면 아무것도 남기지 않는다.
 watch(visible, (now, before) => {
   if (!(before && !now)) return
-  if (hideChecked.value) hideForAWhile()
+  if (hideChecked.value) hideForGood()
 })
 </script>
 
@@ -105,44 +70,63 @@ watch(visible, (now, before) => {
     <template #header>
       <div class="tfn-head">
         <span class="material-symbols-outlined tfn-head-icon" aria-hidden="true">campaign</span>
-        <span class="tfn-head-title">AI 도구가 업데이트됩니다 — 다국어 번역 개선, 맞춤법 검사 추가</span>
+        <span class="tfn-head-title">2단 모듈에 ‘모바일 배치’ 기능 추가</span>
       </div>
     </template>
 
-    <!-- 줄은 문장 단위로 고정한다 — 창 폭(600px)에서 한 줄에 들어가는 길이로 끊어 두었다 -->
-    <p v-if="!released" class="tfn-lead">
-      오늘 <strong>10월 23일(금) 오후 6시</strong>에 AI 도구의 다국어 번역과 맞춤법 검사가 업데이트됩니다.<br />
-      배포 중에는 두 기능을 잠시 사용할 수 없습니다.  작업 중인 파일은 <strong>임시 저장</strong>을 해주세요.
+    <p class="tfn-lead is-first">
+      PC에서 좌우로 배치한 이미지와 텍스트가 모바일에서 위아래로 쌓이면서 원하는 순서와 다르게 보였나요?
     </p>
-    <p v-else class="tfn-lead">
-      <strong>10월 23일(금) 오후 6시</strong>에 AI 도구의 다국어 번역과 맞춤법 검사가 업데이트되었습니다.<br />
-      에디터 왼쪽 메뉴의 AI 도구에서 바로 써 볼 수 있습니다.
+    <p class="tfn-lead">
+      이제 <strong>PC 화면의 배치는 그대로 유지</strong>하면서, 모바일 화면에서 콘텐츠가 표시되는 순서를
+      <strong>자유롭게 설정</strong>할 수 있어요.
     </p>
+    <!-- 미리 알리는 안내 — 기능은 아래 날짜에 반영된다. 반영 뒤에는 이 줄을 지운다 -->
+    <p class="tfn-date"><span class="tfn-date-tag">반영 일정</span>2026년 11월 13일(금)</p>
 
     <section class="tfn-section">
-      <h3 class="tfn-h3">이렇게 달라집니다.</h3>
-      <div v-for="item in changes" :key="item.tool" class="tfn-feature">
-        <span class="tfn-tag" :class="{ 'tfn-tag--new': item.tag === '신규' }">{{ item.tag }}</span>
-        <p class="tfn-feature-text">
-          <strong class="block">{{ item.tool }}</strong>
-          <template v-for="(line, i) in item.lines" :key="line"><br v-if="i" />{{ line }}</template>
-        </p>
+      <h3 class="tfn-h3">이렇게 활용해 보세요</h3>
+      <!-- 같은 뉴스레터(모듈 07 → 07 반대 방향)를 모바일 보기로 찍은 그림 — 두 번째 행만 '이미지 위'로 바꿨다 -->
+      <div class="tfn-compare">
+        <figure class="tfn-compare-item">
+          <img :src="beforeShot" width="780" height="1626" alt="기존: 모바일에서 이미지, 글, 글, 이미지 순서로 쌓임" />
+          <figcaption>기존 배치 <span>이미지 → 글 → 글 → 이미지</span></figcaption>
+        </figure>
+        <span class="material-symbols-outlined tfn-where-arrow" aria-hidden="true">arrow_forward</span>
+        <figure class="tfn-compare-item is-after">
+          <img :src="afterShot" width="780" height="1626" alt="모바일 배치 적용: 이미지, 글, 이미지, 글 순서로 쌓임" />
+          <figcaption>모바일 배치 적용 <span>이미지 → 글 → 이미지 → 글</span></figcaption>
+        </figure>
       </div>
     </section>
 
     <section class="tfn-section">
-      <h3 class="tfn-h3">메뉴 위치</h3>
-      <!-- 왼쪽 메뉴의 'AI 도구' 버튼 → 도구 카드 화면. 둘 다 에디터를 그대로 찍은 그림(2배 해상도) -->
+      <h3 class="tfn-h3">어디에서 설정하나요?</h3>
+      <!-- 캔버스에서 2단 행을 고른 모습(A·B 표시) → 왼쪽 패널의 모바일 배치 카드. 둘 다 에디터를 그대로 찍은 그림(2배 해상도) -->
       <div class="tfn-where">
-        <img :src="railShot" width="160" height="146" alt="에디터 왼쪽 메뉴의 AI 도구 버튼" class="tfn-where-rail" />
+        <img :src="rowShot" width="1456" height="538" alt="2단 행을 클릭하면 칸마다 A, B 표시가 붙은 캔버스" class="tfn-where-row" />
         <span class="material-symbols-outlined tfn-where-arrow" aria-hidden="true">arrow_forward</span>
-        <img :src="menuShot" width="720" height="718" alt="AI 도구 카드 화면: HTML 웹 링크 생성, 다국어 번역, 맞춤법 검사" class="tfn-where-menu" />
+        <img :src="panelShot" width="674" height="406" alt="왼쪽 패널의 모바일 배치 카드 두 장" class="tfn-where-panel" />
       </div>
       <div class="tfn-flow">
-        <div v-for="(step, i) in steps" :key="step.lead" class="tfn-flow-row">
-          <span class="tfn-flow-tag">{{ i + 1 }}</span>
+        <div class="tfn-flow-row">
+          <span class="tfn-flow-tag">1</span>
           <span class="tfn-flow-steps">
-            <strong>{{ step.lead }}</strong>{{ step.rest }}<strong v-if="step.strong">{{ step.strong }}</strong>
+            <strong>2단 모듈</strong>을 선택하면 각 칸에 <strong>A·B 표시</strong>가 나타납니다.
+          </span>
+        </div>
+        <div class="tfn-flow-row">
+          <span class="tfn-flow-tag">2</span>
+          <span class="tfn-flow-steps">
+            왼쪽 설정 패널 하단의 <strong>‘모바일 배치’</strong>에서 위쪽에 표시할 칸을 선택하세요.
+          </span>
+        </div>
+        <div class="tfn-flow-row is-top">
+          <span class="tfn-flow-tag">3</span>
+          <span class="tfn-flow-steps">
+            <strong>모바일 미리보기</strong>에서는 행 중앙의
+            <span class="material-symbols-outlined tfn-flow-icon" aria-label="위아래 바꾸기">swap_vert</span>을 클릭하여 표시 순서를 바로 변경할 수 있습니다.
+            <span class="tfn-flow-note">(모바일에서만 적용)</span>
           </span>
         </div>
       </div>
@@ -154,7 +138,7 @@ watch(visible, (now, before) => {
       <div class="tfn-footer">
         <label class="tfn-hide">
           <Checkbox v-model="hideChecked" binary input-id="template-file-notice-hide" />
-          <span>{{ HIDE_DAYS }}일간 보지 않기</span>
+          <span>다시 보지 않기</span>
         </label>
         <button type="button" class="tfn-btn" @click="visible = false">확인</button>
       </div>
@@ -188,6 +172,26 @@ watch(visible, (now, before) => {
   color: var(--gray-700);
   word-break: keep-all;
 }
+.tfn-lead.is-first {
+  margin-bottom: 8px;
+}
+.tfn-date {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: -8px 0 24px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gray-800);
+}
+.tfn-date-tag {
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--blue-100);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--blue-600);
+}
 .tfn-lead strong {
   font-weight: 700;
   color: var(--blue-500);
@@ -203,43 +207,6 @@ watch(visible, (now, before) => {
   color: var(--gray-800);
 }
 
-/* 바뀌는 점 — 신규/개선 태그 + 도구 이름 + 한 줄 */
-.tfn-feature {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-.tfn-tag {
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  height: 22px;
-  /* 글줄 첫 줄 가운데에 맞춘다 */
-  margin-top: 1px;
-  padding: 0 8px;
-  border-radius: 6px;
-  background: var(--blue-100);
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--blue-600);
-}
-.tfn-tag--new {
-  background: var(--yellow-400);
-  color: var(--white);
-}
-.tfn-feature-text {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.6;
-  color: var(--gray-700);
-  word-break: keep-all;
-}
-.tfn-feature-text strong {
-  font-weight: 600;
-  color: var(--gray-800);
-}
-
 /* 어디에 있는지 — 왼쪽 메뉴 버튼 → 도구 카드 화면. 그림 둘을 한 줄에 */
 .tfn-where {
   display: flex;
@@ -251,9 +218,10 @@ watch(visible, (now, before) => {
   border-radius: 10px;
   background: var(--white);
 }
-.tfn-where-rail {
-  flex-shrink: 0;
-  width: 80px;
+/* 왼쪽: 캔버스에서 행을 고른 모습(넓은 그림) · 오른쪽: 패널 카드 */
+.tfn-where-row {
+  min-width: 0;
+  flex: 1.4;
   height: auto;
   border: 1px solid var(--gray-200);
   border-radius: 8px;
@@ -263,13 +231,60 @@ watch(visible, (now, before) => {
   font-size: 22px;
   color: var(--gray-500);
 }
-.tfn-where-menu {
+.tfn-where-panel {
   min-width: 0;
   flex: 1;
-  max-width: 300px;
   height: auto;
   border: 1px solid var(--gray-200);
   border-radius: 8px;
+}
+
+/* 이럴 때 써요 — 모바일 보기 전/후 그림을 나란히. 세로로 긴 그림이라 높이를 묶는다 */
+.tfn-compare {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 14px;
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  background: var(--gray-50);
+}
+.tfn-compare-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+.tfn-compare-item img {
+  display: block;
+  width: auto;
+  height: 220px;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  background: var(--white);
+}
+.tfn-compare-item figcaption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gray-700);
+}
+.tfn-compare-item figcaption span {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--gray-500);
+}
+.tfn-compare-item.is-after img {
+  border-color: var(--blue-400);
+  box-shadow: 0 0 0 2px var(--blue-100);
+}
+.tfn-compare-item.is-after figcaption {
+  color: var(--blue-500);
 }
 
 /* 순서 상자 — 개편 안내의 기존/변경 상자와 같은 모양에 번호 태그를 단다 */
@@ -306,6 +321,29 @@ watch(visible, (now, before) => {
 .tfn-flow-steps strong {
   font-weight: 700;
   color: var(--blue-500);
+}
+/* 줄이 둘로 넘어가는 순서는 번호를 첫 줄에 맞춘다 */
+.tfn-flow-row.is-top {
+  align-items: flex-start;
+}
+/* 캔버스의 ⇅ 버튼과 같은 모양 — 흰 동그라미 안 아이콘 */
+.tfn-flow-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin: 0 2px;
+  vertical-align: middle;
+  border: 1px solid var(--gray-300);
+  border-radius: 50%;
+  background: var(--white);
+  font-size: 16px;
+  color: var(--gray-700);
+}
+.tfn-flow-note {
+  display: block;
+  font-size: 13px;
+  color: var(--gray-500);
 }
 
 .tfn-contact {
