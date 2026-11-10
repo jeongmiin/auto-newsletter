@@ -275,13 +275,12 @@
                       :dir="row.mobileReverse ? 'ltr' : undefined"
                       :style="colCellStyle(row.columns, row.widths?.[col - 1], row.keepInline)"
                     >
-                      <!-- 행 전체를 골랐을 때 칸마다 색 점 — 패널의 '모바일 배치' 카드와 같은 색(utils/columnColor) -->
+                      <!-- 행 전체를 골랐을 때 칸마다 A·B 동그라미 — 패널의 '모바일 배치' 카드와 같은 모양(utils/columnColor) -->
                       <span
                         v-if="isRowSelected(item.id, rowIdx) && columnColor(row, col - 1)"
-                        class="col-color-dot"
-                        :style="{ background: columnColor(row, col - 1) }"
+                        class="col-badge col-badge--floating absolute -top-[13px] -left-[5px] z-[25] pointer-events-none"
                         aria-hidden="true"
-                      ></span>
+                      >{{ columnLetter(row, col - 1) }}</span>
                       <div
                         v-for="member in row.cells[col - 1]"
                         :key="member.id"
@@ -296,7 +295,7 @@
                           :module="member"
                           :index="member.order"
                           :is-selected="selectedModuleId === member.id"
-                          :column-info="{ columns: row.columns, columnIndex: member.columnIndex ?? 0, color: columnColor(row, col - 1) }"
+                          :column-info="{ columns: row.columns, columnIndex: member.columnIndex ?? 0, color: columnColor(row, col - 1), label: columnLetter(row, col - 1) }"
                           :can-move-up="canMoveInCell(row.cells[col - 1], member.id, 'up')"
                           :can-move-down="canMoveInCell(row.cells[col - 1], member.id, 'down')"
                           @select="selectModule"
@@ -847,6 +846,11 @@ const columnColor = (row: GroupRowLayout<ModuleInstance>, columnIndex: number): 
   const slots = columnColorSlots(row.swapped)
   return COLUMN_COLORS[slots[columnIndex]]?.css
 }
+/** 칸 이름(A·B) — 색 점 안에 적는다. 패널의 'A 칸 위 / B 칸 위' 카드와 같다 */
+const columnLetter = (row: GroupRowLayout<ModuleInstance>, columnIndex: number): string | undefined => {
+  if (row.columns !== 2 || row.keepInline) return undefined
+  return COLUMN_COLORS[columnColorSlots(row.swapped)[columnIndex]]?.name
+}
 /** 모바일 보기에서 이 행이 세로로 쌓여 보이는지 — '모바일에서도 가로 유지' 행은 나란히 남는다 */
 const isStackedOnMobile = (row: GroupRowLayout<ModuleInstance>): boolean =>
   canvasWidth.value === 'mobile' && !row.keepInline
@@ -1124,20 +1128,6 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
   font-size: 14px;
   min-height: 40px;
   position: relative;
-}
-/* 행을 골랐을 때 칸 왼쪽 위 모서리에 뜨는 칸 색 점 — 모바일 배치 카드와 같은 색.
-   ⚠ 가운데 두면 행 사이 경계에 뜨는 좌우 바꾸기 버튼(.row-swap-btn)과 겹친다 */
-.col-color-dot {
-  position: absolute;
-  top: -8px;
-  left: -2px;
-  z-index: 25;
-  width: 16px;
-  height: 16px;
-  border: 2px solid var(--white);
-  border-radius: 50%;
-  box-shadow: 0 0 0 1px var(--gray-300);
-  pointer-events: none;
 }
 
 /* ===== 행 호버/선택 (Figma 1125-3629) =====
