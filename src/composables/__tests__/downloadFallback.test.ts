@@ -70,6 +70,34 @@ describe('다운로드 — 저장 창 실패 시 일반 다운로드로', () => 
     expect(anchorClicks[0]).toMatch(/_edit\.html$/)
   })
 
+  it('저장을 누른 뒤 오류 없이 멈추면(쓰기가 끝나지 않음) 시간을 재서 일반 다운로드로 받는다', async () => {
+    vi.useFakeTimers()
+    ;(window as PickerWindow).showSaveFilePicker = async () => ({
+      name: 'x.html',
+      createWritable: () => new Promise(() => {}), // 끝나지 않는다
+    })
+    const pending = useNewsletterDownload().downloadHtml(true)
+    await vi.advanceTimersByTimeAsync(8000)
+    expect(await pending).toBe('triggered')
+    expect(anchorClicks).toHaveLength(1)
+    expect(toastAdd.mock.calls[0][0].detail).toContain('WriteStalled')
+    vi.useRealTimers()
+  })
+
+  it('저장 창이 닫혀 화면으로 돌아왔는데 결과가 오지 않으면 일반 다운로드로 받는다', async () => {
+    vi.useFakeTimers()
+    ;(window as PickerWindow).showSaveFilePicker = () => new Promise(() => {})
+    const pending = useNewsletterDownload().downloadHtml(false)
+    // 창이 떠 있는 동안에는 아무리 오래 걸려도 넘어가지 않는다
+    await vi.advanceTimersByTimeAsync(60000)
+    expect(anchorClicks).toHaveLength(0)
+    window.dispatchEvent(new Event('focus'))
+    await vi.advanceTimersByTimeAsync(4000)
+    expect(await pending).toBe('triggered')
+    expect(toastAdd.mock.calls[0][0].detail).toContain('PickerStalled')
+    vi.useRealTimers()
+  })
+
   it('사용자가 저장 창을 취소하면 아무것도 받지 않는다', async () => {
     ;(window as PickerWindow).showSaveFilePicker = async () => {
       throw new DOMException('cancel', 'AbortError')

@@ -50,7 +50,53 @@ interface TriggerResult {
  * 고른 파일이 디스크에 남지 않았다(같은 파일·같은 계정이 다른 랩탑에서는 정상, 시크릿 창·캐시 삭제로도 그대로).
  * 저장 창 경로는 임시 파일(.crswap)에 쓴 뒤 이름을 바꾸는데, 이 단계는 브라우저 버전·회사 정책·보안 프로그램·
  * OneDrive 동기화에 막힐 수 있다. 일반 다운로드는 이런 것에 덜 걸리므로, 원인이 무엇이든 파일은 남게 한다.
+ * 실패는 두 가지로 온다 — 오류가 나는 경우(catch)와 **아무 반응 없이 멈추는 경우**(아래 시간 재기).
  */
+/** 저장 창을 닫고 화면으로 돌아온 뒤, 고른 파일을 돌려받기까지 기다리는 시간 */
+const PICKER_STALL_MS = 4000
+/** 파일을 고른 뒤 쓰기(열기·쓰기·마무리)가 끝나기까지 기다리는 시간 — HTML 한 장이라 정상이면 1초도 안 걸린다 */
+const WRITE_STALL_MS = 8000
+
+/** 오류 없이 멈춰 버린 경우 — name 이 안내·집계의 사유가 된다 */
+class SaveStalledError extends Error {
+  constructor(stage: 'PickerStalled' | 'WriteStalled') {
+    super(stage)
+    this.name = stage
+  }
+}
+
+/**
+ * 저장 창을 띄운다. 창이 닫혀 화면으로 돌아왔는데도(창 focus) 결과가 오지 않으면 멈춘 것으로 본다.
+ * 사용자가 창에서 오래 고르는 동안에는 재지 않는다 — 창이 떠 있는 동안 화면은 focus 를 받지 않는다.
+ */
+function pickWithStallGuard<T>(open: () => Promise<T>): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    let timer: ReturnType<typeof setTimeout> | undefined
+    const onFocus = () => {
+      clearTimeout(timer)
+      timer = setTimeout(() => reject(new SaveStalledError('PickerStalled')), PICKER_STALL_MS)
+    }
+    const onBlur = () => clearTimeout(timer)
+    window.addEventListener('focus', onFocus)
+    window.addEventListener('blur', onBlur)
+    open()
+      .then(resolve, reject)
+      .finally(() => {
+        clearTimeout(timer)
+        window.removeEventListener('focus', onFocus)
+        window.removeEventListener('blur', onBlur)
+      })
+  })
+}
+
+/** 쓰기 단계가 정해진 시간 안에 끝나지 않으면 멈춘 것으로 본다 */
+function withWriteStallGuard<T>(work: Promise<T>): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => reject(new SaveStalledError('WriteStalled')), WRITE_STALL_MS)
+    work.then(resolve, reject).finally(() => clearTimeout(timer))
+  })
+}
+
 async function triggerDownload(content: string, filename: string): Promise<TriggerResult> {
   const blob = new Blob([content], { type: 'text/html; charset=utf-8' })
 
@@ -58,13 +104,21 @@ async function triggerDownload(content: string, filename: string): Promise<Trigg
   let fallbackReason: string | undefined
   if (typeof showSaveFilePicker === 'function') {
     try {
-      const handle = await showSaveFilePicker({
-        suggestedName: filename,
-        types: [{ description: 'HTML 파일', accept: { 'text/html': ['.html'] } }],
-      })
-      const writable = await handle.createWritable()
-      await writable.write(blob)
-      await writable.close()
+      const handle = await pickWithStallGuard(() =>
+        showSaveFilePicker({
+          suggestedName: filename,
+          types: [{ description: 'HTML 파일', accept: { 'text/html': ['.html'] } }],
+        }),
+      )
+      // 현장 확인(2026-11-13): 문제 PC에서는 저장 창에서 '저장'을 누른 뒤 **오류도 안내도 없이 멈췄다**.
+      // 오류가 나지 않으니 catch 만으로는 넘어가지 못한다 — 시간을 재서 멈춘 것을 알아챈다.
+      await withWriteStallGuard(
+        (async () => {
+          const writable = await handle.createWritable()
+          await writable.write(blob)
+          await writable.close()
+        })(),
+      )
       // 저장 창에서 이름을 바꿨으면 바꾼 이름으로 안내한다 — 확장자를 지워도 Chrome이 .html 을 붙여 준다
       return { result: 'saved', savedName: handle.name || filename }
     } catch (err) {
