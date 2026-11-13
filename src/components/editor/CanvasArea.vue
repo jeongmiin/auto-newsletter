@@ -184,9 +184,20 @@
                      @mouseleave="hoveredRow = null"
                    >
                   <!-- 좌우 자리 바꾸기 (Figma 1125-9661) — 행 한가운데 뜨는 원형 버튼.
-                       다단 행 안 모듈은 위아래로 못 움직이므로, 이동 수단은 좌우 교체뿐이다. -->
+                       다단 행 안 모듈은 위아래로 못 움직이므로, 이동 수단은 좌우 교체뿐이다.
+                       모바일 보기에서 세로로 쌓인 행은 '위아래 순서 바꾸기'가 된다 — 모바일 순서만 바꾸고 PC는 그대로
+                       (행 패널의 '모바일 배치'와 같은 값을 바꾼다). 쌓여 보이는데 '좌우'를 내밀면 헷갈린다. -->
                   <button
-                    v-if="row.columns > 1 && isRowVisible(item.id, rowIdx)"
+                    v-if="row.columns > 1 && isRowVisible(item.id, rowIdx) && isStackedOnMobile(row)"
+                    type="button"
+                    class="row-swap-btn no-drag"
+                    v-tooltip.top="'위아래 순서 바꾸기 (모바일에서만)'"
+                    @click.stop="moduleStore.setRowMobileReverse(item.id, rowIdx, !row.mobileReverse)"
+                  >
+                    <span class="material-symbols-outlined">swap_vert</span>
+                  </button>
+                  <button
+                    v-else-if="row.columns > 1 && isRowVisible(item.id, rowIdx)"
                     type="button"
                     class="row-swap-btn no-drag"
                     v-tooltip.top="'좌우 자리 바꾸기'"
@@ -254,13 +265,22 @@
                   </div>
 
                   <!-- 다단 행 (.col-row: font-size:0 으로 셀 사이 공백 제거 → 폭 균등 분할) -->
-                  <div v-if="row.columns > 1" class="col-row">
+                  <!-- '모바일에서 오른쪽 칸 먼저' 행은 메일 HTML과 똑같이 칸을 거꾸로 그리고 dir="rtl"로 PC 배치를 되돌린다
+                       (buildColumnLayoutHtml) — 에디터의 모바일 보기가 실제 메일과 같게 쌓인다 -->
+                  <div v-if="row.columns > 1" class="col-row" :dir="row.mobileReverse ? 'rtl' : undefined">
                     <div
-                      v-for="col in row.columns"
+                      v-for="col in colOrder(row)"
                       :key="`col-${rowIdx}-${col}`"
                       class="col-cell"
+                      :dir="row.mobileReverse ? 'ltr' : undefined"
                       :style="colCellStyle(row.columns, row.widths?.[col - 1], row.keepInline)"
                     >
+                      <!-- 행 전체를 골랐을 때 칸마다 A·B 동그라미 — 패널의 '모바일 배치' 카드와 같은 모양(utils/columnColor) -->
+                      <span
+                        v-if="isRowSelected(item.id, rowIdx) && columnColor(row, col - 1)"
+                        class="col-badge col-badge--floating absolute -top-[13px] -left-[5px] z-[25] pointer-events-none"
+                        aria-hidden="true"
+                      >{{ columnLetter(row, col - 1) }}</span>
                       <div
                         v-for="member in row.cells[col - 1]"
                         :key="member.id"
@@ -275,7 +295,7 @@
                           :module="member"
                           :index="member.order"
                           :is-selected="selectedModuleId === member.id"
-                          :column-info="{ columns: row.columns, columnIndex: member.columnIndex ?? 0 }"
+                          :column-info="{ columns: row.columns, columnIndex: member.columnIndex ?? 0, color: columnColor(row, col - 1), label: columnLetter(row, col - 1) }"
                           :can-move-up="canMoveInCell(row.cells[col - 1], member.id, 'up')"
                           :can-move-down="canMoveInCell(row.cells[col - 1], member.id, 'down')"
                           @select="selectModule"
@@ -452,6 +472,7 @@ import type { DisplayItem, ModuleGroup, ModuleInstance } from '@/types'
 import { groupDivStyle, resolveGroupStyles, columnCellStyle } from '@/utils/groupStyle'
 import { resolveWrapBorderCss } from '@/utils/wrapBorder'
 import { computeGroupLayout, type GroupRowLayout } from '@/utils/groupLayout'
+import { COLUMN_COLORS, columnColorSlots } from '@/utils/columnColor'
 
 const moduleStore = useModuleStore()
 const editorStore = useEditorStore()
@@ -816,6 +837,28 @@ const onGroupRowDrop = (
 }
 
 // 컬럼 셀 인라인 스타일 (캔버스·이메일 공용 fluid-hybrid)
+/**
+ * 2단 행 칸의 고유 색(css 값). 색은 칸 내용을 따라가서 좌우를 바꿔도 그대로다(utils/columnColor).
+ * 모바일 배치가 뜻이 있는 행(2단, 가로 유지 아님)에만 붙인다 — 그 밖에는 색으로 구분할 일이 없다.
+ */
+const columnColor = (row: GroupRowLayout<ModuleInstance>, columnIndex: number): string | undefined => {
+  if (row.columns !== 2 || row.keepInline) return undefined
+  const slots = columnColorSlots(row.swapped)
+  return COLUMN_COLORS[slots[columnIndex]]?.css
+}
+/** 칸 이름(A·B) — 색 점 안에 적는다. 패널의 'A 칸 위 / B 칸 위' 카드와 같다 */
+const columnLetter = (row: GroupRowLayout<ModuleInstance>, columnIndex: number): string | undefined => {
+  if (row.columns !== 2 || row.keepInline) return undefined
+  return COLUMN_COLORS[columnColorSlots(row.swapped)[columnIndex]]?.name
+}
+/** 모바일 보기에서 이 행이 세로로 쌓여 보이는지 — '모바일에서도 가로 유지' 행은 나란히 남는다 */
+const isStackedOnMobile = (row: GroupRowLayout<ModuleInstance>): boolean =>
+  canvasWidth.value === 'mobile' && !row.keepInline
+/** 행의 칸을 그릴 순서(1부터) — '모바일에서 오른쪽 칸 먼저' 행은 거꾸로 그린다(위 템플릿 주석 참고) */
+const colOrder = (row: GroupRowLayout<ModuleInstance>): number[] => {
+  const cols = Array.from({ length: row.columns }, (_, i) => i + 1)
+  return row.mobileReverse ? cols.reverse() : cols
+}
 const colCellStyle = (columns: number, widthPct?: number, keepInline?: boolean): string =>
   columnCellStyle(columns, widthPct, keepInline)
 
@@ -1084,6 +1127,7 @@ const isColTarget = (groupId: string, rowIdx: number, colIdx: number): boolean =
   /* 부모(col-row)의 font-size:0 을 셀 내부에서 복원 (콘텐츠는 자체 인라인 크기 사용) */
   font-size: 14px;
   min-height: 40px;
+  position: relative;
 }
 
 /* ===== 행 호버/선택 (Figma 1125-3629) =====

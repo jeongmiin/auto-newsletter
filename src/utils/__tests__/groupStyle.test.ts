@@ -315,6 +315,30 @@ describe('groupStyle', () => {
       expect(html).toContain('font-size:0')
     })
 
+    describe('모바일에서 오른쪽 칸 먼저(mobileReverse)', () => {
+      it('칸을 거꾸로 적고 바깥에 dir="rtl", 칸 안에 dir="ltr"을 준다 — PC 배치는 그대로, 모바일은 오른쪽 칸이 위로', () => {
+        const html = buildColumnLayoutHtml(['<p>글</p>', '<img src="x">'], [60, 40], false, true)
+        expect(html.startsWith('<div dir="rtl"')).toBe(true)
+        expect(html.indexOf('<img src="x">')).toBeLessThan(html.indexOf('<p>글</p>'))
+        expect((html.match(/<div dir="ltr"/g) || []).length).toBe(2)
+        // 너비도 칸과 같이 뒤집혀 오른쪽 칸(40%)이 먼저 적힌다 — PC에서 원래 비율이 유지된다
+        expect(html.indexOf('min-width:40.0000%')).toBeLessThan(html.indexOf('min-width:60.0000%'))
+      })
+
+      it('<style>·미디어쿼리 없이 인라인 속성만 쓴다', () => {
+        const html = buildColumnLayoutHtml(['A', 'B'], undefined, false, true)
+        expect(html).not.toMatch(/<style|@media|order:/)
+      })
+
+      it('끄면 지금과 똑같다', () => {
+        expect(buildColumnLayoutHtml(['A', 'B'], [60, 40], false, false)).toBe(buildColumnLayoutHtml(['A', 'B'], [60, 40]))
+      })
+
+      it('모바일에서도 가로 유지 행에서는 무시한다 — 쌓이지 않으니 순서가 뜻이 없다', () => {
+        expect(buildColumnLayoutHtml(['A', 'B'], undefined, true, true)).toBe(buildColumnLayoutHtml(['A', 'B'], undefined, true))
+      })
+    })
+
     it('빈 컬럼은 &nbsp;로 자리를 유지한다', () => {
       const html = buildColumnLayoutHtml(['<p>A</p>', ''])
       expect(html).toContain('&nbsp;')

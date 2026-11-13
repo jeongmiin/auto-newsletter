@@ -2020,6 +2020,26 @@ export const useModuleStore = defineStore('module', () => {
     isDirty.value = true
   }
 
+  /** [행별 컬럼] 그 행이 모바일에서 오른쪽 칸을 먼저 보이는지 (미지정이면 false = 왼쪽 칸 먼저) */
+  const rowMobileReversed = (groupId: string, rowIndex: number): boolean =>
+    !!groups.value.find((g) => g.id === groupId)?.mobileReverseRows?.[rowIndex]
+
+  /**
+   * [행별 컬럼] 모바일에서 세로로 쌓일 때 오른쪽 칸을 먼저 보일지 정한다(PC 배치는 그대로).
+   * [내용 | 이미지] 행 다음에 [이미지 | 내용] 행이 오면 모바일에서 내용이 연달아 붙는데, 이걸로 이미지 먼저로 맞춘다.
+   */
+  const setRowMobileReverse = (groupId: string, rowIndex: number, on: boolean): void => {
+    const group = groups.value.find((g) => g.id === groupId)
+    if (!group || rowIndex < 0) return
+    if (!group.mobileReverseRows) {
+      if (!on) return
+      group.mobileReverseRows = []
+    }
+    group.mobileReverseRows[rowIndex] = on
+    triggerRef(groups)
+    isDirty.value = true
+  }
+
   /**
    * 모듈 선택
    */
@@ -2376,6 +2396,8 @@ export const useModuleStore = defineStore('module', () => {
       // 행별 컬럼 너비·'모바일에서도 가로 유지'도 함께 승계 — 빠뜨리면 복제본만 레이아웃이 달라진다
       colWidths: group.colWidths ? JSON.parse(JSON.stringify(group.colWidths)) : undefined,
       keepInlineRows: group.keepInlineRows ? [...group.keepInlineRows] : undefined,
+      mobileReverseRows: group.mobileReverseRows ? [...group.mobileReverseRows] : undefined,
+      swappedRows: group.swappedRows ? [...group.swappedRows] : undefined,
       styles: JSON.parse(JSON.stringify(group.styles)),
     })
 
@@ -2600,6 +2622,21 @@ export const useModuleStore = defineStore('module', () => {
     slots.forEach((slot, i) => {
       modules.value[slot] = reordered[i]
     })
+
+    // '모바일 배치'는 자리(오른쪽 칸 먼저)로 저장되므로, 좌우를 바꾸면 같이 뒤집어 **모바일 순서를 내용 기준으로 유지**한다.
+    // 안 그러면 '이미지 위'로 골라 둔 행이 좌우를 바꾸는 순간 모바일에서 글이 위로 올라간다.
+    // (가로 유지 행은 쌓이지 않아 순서가 뜻이 없으니 건드리지 않는다)
+    if (maxCol === 1 && !rowKeepsInline(groupId, rowIndex)) {
+      setRowMobileReverse(groupId, rowIndex, !rowMobileReversed(groupId, rowIndex))
+    }
+    // 칸 고유 색도 내용을 따라가도록 '바뀜' 표시를 뒤집는다(utils/columnColor)
+    const swappedGroup = groups.value.find((g) => g.id === groupId)
+    if (swappedGroup && maxCol === 1) {
+      const flags = swappedGroup.swappedRows ?? []
+      flags[rowIndex] = !flags[rowIndex]
+      swappedGroup.swappedRows = flags
+      triggerRef(groups)
+    }
 
     reorderModules()
     triggerRef(modules)
@@ -4202,7 +4239,7 @@ export const useModuleStore = defineStore('module', () => {
             // 다단 행: 컬럼별 HTML로 fluid-hybrid 레이아웃(모바일 100% 세로 스택).
             // '모바일에서도 가로 유지'(keepInline) 행은 좁은 폭에서도 나란히 남는다.
             const columnHtml = row.cells.map((cell) => cell.map((m) => htmlById[m.id]).join('\n') + '\n')
-            inner += buildColumnLayoutHtml(columnHtml, row.widths, row.keepInline)
+            inner += buildColumnLayoutHtml(columnHtml, row.widths, row.keepInline, row.mobileReverse)
           }
         }
         const resolvedGroupStyles = resolveGroupStyles(group.styles, wrapSettings.pointColors)
@@ -4541,6 +4578,8 @@ ${fullHtml}
     ensureKeepInlineDefaults,
     rowKeepsInline,
     setRowKeepInline,
+    rowMobileReversed,
+    setRowMobileReverse,
     swapRowColumns,
     duplicateRow,
     deleteRow,

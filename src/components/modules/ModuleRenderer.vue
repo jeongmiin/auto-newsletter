@@ -25,6 +25,12 @@
     <!-- ⚠ 툴바 컨테이너에는 툴팁을 걸지 않는다. 버튼마다 이미 툴팁이 있어서
          버튼에 마우스를 올리면 컨테이너 툴팁(모듈 이름)과 겹쳐 두 개가 함께 뜬다. -->
     <div class="module-toolbar" :class="{ 'is-visible': isSelected, 'is-left': toolbarOnLeft }">
+      <!-- 2단 행의 칸 이름(A·B) — 행 패널의 '모바일 배치' 카드와 같은 모양이다(utils/columnColor) -->
+      <span
+        v-if="columnInfo?.color"
+        class="col-badge col-badge--floating absolute -top-8 left-1/2 -ml-3"
+        aria-hidden="true"
+      >{{ columnInfo.label }}</span>
       <button
         type="button"
         class="module-toolbar-btn"
@@ -76,7 +82,7 @@ interface Props {
   index: number
   isSelected: boolean
   /** 컬럼 그룹 멤버일 때 좌/우 이동 버튼 표시용 (컬럼 수 + 현재 컬럼) */
-  columnInfo?: { columns: number; columnIndex: number }
+  columnInfo?: { columns: number; columnIndex: number; color?: string; label?: string }
   /**
    * 위/아래 이동 가능 여부. 그룹 멤버는 전역 order가 아니라 **그룹 안 위치**로 판단해야 해서
    * 캔버스가 직접 넘겨준다(2단 행 안의 모듈은 혼자 위아래로 못 움직이므로 둘 다 false).

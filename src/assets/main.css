@@ -124,3 +124,24 @@ html, body{
   color: #222222;
   text-decoration: underline wavy #c0202e;
 }
+
+/* ===== 2단 칸 이름 배지(A·B) =====
+   캔버스의 칸 위(.col-row) · 모듈 툴바 위(ModuleRenderer) · 행 패널의 모바일 배치 카드(RowLayoutPanel)가 같이 쓴다.
+   모양만 여기서 정하고, 위치는 쓰는 곳에서 Tailwind 로 잡는다(absolute·top·left 등). */
+.col-badge {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--gray-400);
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--gray-800);
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1;
+}
+/* 캔버스 위에 떠 있는 배지 — 사진 위에서도 묻히지 않게 옅은 그림자 */
+.col-badge--floating {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}

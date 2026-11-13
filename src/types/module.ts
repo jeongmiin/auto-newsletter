@@ -208,6 +208,18 @@ export interface ModuleGroup {
    */
   keepInlineRows?: boolean[]
   /**
+   * 행별 '모바일에서 오른쪽 칸 먼저' 여부 — mobileReverseRows[rowIndex] = true면 그 2단 행이 좁은 폭에서
+   * 세로로 쌓일 때 오른쪽 칸이 위로 온다(PC 배치는 그대로). 예: [내용 | 이미지] 행을 모바일에서 이미지 먼저.
+   * 메일 HTML에서는 칸 순서를 뒤집어 적고 dir="rtl"로 PC 배치를 되돌린다 — 인라인 속성만 쓴다(buildColumnLayoutHtml).
+   * '모바일에서도 가로 유지' 행에는 쌓이지 않으므로 의미가 없다. 미지정이면 왼쪽 칸 먼저(기존 동작).
+   */
+  mobileReverseRows?: boolean[]
+  /**
+   * 행별 '좌우 자리를 바꾼 상태' — 캔버스의 ⇄를 누를 때마다 뒤집힌다. 칸 고유 색(utils/columnColor)이
+   * 내용을 따라가게 하는 데만 쓴다(처음 왼쪽 칸 = 파랑). 메일 HTML에는 영향이 없다.
+   */
+  swappedRows?: boolean[]
+  /**
    * [레거시] 그룹 전체의 단일 컬럼 분할 수 (1~4).
    * 행별 독립 컬럼 모델(rows) 도입 이후에는 rows로 대체된다. 마이그레이션 용도로만 읽는다.
    */
