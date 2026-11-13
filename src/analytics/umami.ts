@@ -22,6 +22,8 @@
  * - `web_link_create {source}` / `web_link_refresh {source}` / `web_link_copy`  웹 링크 생성·갱신·복사
  *   적용 여부까지 보고 싶어지면 이름을 늘리지 말고 같은 이름에 `step: 'run' | 'apply'` 속성을 붙인다.
  * (그 밖에 헤더의 `download_for_save`·`copy_html`·`open_file` 은 data-umami-event 대신 track() 으로 찍는다.)
+ * - `download_fallback {kind, reason}`  저장 창으로 저장하지 못해 일반 다운로드로 받음(kind: edit·send, reason: 오류 이름).
+ *                                       특정 PC에서만 저장이 안 된다는 문의가 오면 이 수와 reason 으로 원인을 본다.
  */
 
 type UmamiProps = Record<string, string | number | boolean>

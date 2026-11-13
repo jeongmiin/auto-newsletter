@@ -10,6 +10,7 @@ import { useModuleStore } from '@/stores/moduleStore'
 import { useEditorStore } from '@/stores/editorStore'
 import { buildDownloadFileName } from '@/utils/projectFile'
 import { useNewsletterDocument } from '@/composables/useNewsletterDocument'
+import { track } from '@/analytics/umami'
 
 export type DownloadResult =
   | 'saved' // File System Access API로 디스크 저장 확인됨
@@ -24,6 +25,7 @@ interface SaveFilePickerWindow {
     suggestedName?: string
     types?: Array<{ description?: string; accept: Record<string, string[]> }>
   }) => Promise<{
+    name: string
     createWritable: () => Promise<{
       write: (data: Blob) => Promise<void>
       close: () => Promise<void>
@@ -31,38 +33,50 @@ interface SaveFilePickerWindow {
   }>
 }
 
+interface TriggerResult {
+  result: 'saved' | 'triggered' | 'cancelled'
+  /** 실제로 저장한 이름 — 저장 창에서 바꿨으면 바꾼 이름 */
+  savedName: string
+  /** 저장 창으로 저장하다 실패해 일반 다운로드로 넘어갔으면 그 이유(오류 이름) */
+  fallbackReason?: string
+}
+
 /**
  * 파일 저장 트리거
- * - File System Access API 지원 시: 실제 디스크 쓰기 성공/실패(디스크 풀·권한·취소)를 감지
- * - 미지원 시: 기존 anchor 다운로드로 폴백 (URL 해제는 지연시켜 조기 취소로 인한 저장 실패 방지)
+ * - File System Access API 지원 시: 저장 창을 띄우고 실제 디스크 쓰기 성공/취소를 감지
+ * - 미지원 시, 또는 **저장 창 경로가 실패하면**: 일반(anchor) 다운로드로 넘어간다
+ *
+ * 저장 창 경로가 실패해도 넘어가는 이유(2026-11): Chrome 157로 올라간 일부 랩탑에서만 저장 창으로
+ * 고른 파일이 디스크에 남지 않았다(같은 파일·같은 계정이 다른 랩탑에서는 정상, 시크릿 창·캐시 삭제로도 그대로).
+ * 저장 창 경로는 임시 파일(.crswap)에 쓴 뒤 이름을 바꾸는데, 이 단계는 브라우저 버전·회사 정책·보안 프로그램·
+ * OneDrive 동기화에 막힐 수 있다. 일반 다운로드는 이런 것에 덜 걸리므로, 원인이 무엇이든 파일은 남게 한다.
  */
-async function triggerDownload(
-  content: string,
-  filename: string,
-): Promise<'saved' | 'triggered' | 'cancelled'> {
+async function triggerDownload(content: string, filename: string): Promise<TriggerResult> {
   const blob = new Blob([content], { type: 'text/html; charset=utf-8' })
 
   const showSaveFilePicker = (window as unknown as SaveFilePickerWindow).showSaveFilePicker
+  let fallbackReason: string | undefined
   if (typeof showSaveFilePicker === 'function') {
-    let handle
     try {
-      handle = await showSaveFilePicker({
+      const handle = await showSaveFilePicker({
         suggestedName: filename,
         types: [{ description: 'HTML 파일', accept: { 'text/html': ['.html'] } }],
       })
+      const writable = await handle.createWritable()
+      await writable.write(blob)
+      await writable.close()
+      // 저장 창에서 이름을 바꿨으면 바꾼 이름으로 안내한다 — 확장자를 지워도 Chrome이 .html 을 붙여 준다
+      return { result: 'saved', savedName: handle.name || filename }
     } catch (err) {
       // 사용자가 대화상자를 취소한 경우는 실패가 아님
-      if (err instanceof DOMException && err.name === 'AbortError') return 'cancelled'
-      throw err
+      if (err instanceof DOMException && err.name === 'AbortError') return { result: 'cancelled', savedName: filename }
+      // 그 밖의 실패는 일반 다운로드로 넘어간다 — 원인은 안내와 집계에 남긴다
+      fallbackReason = err instanceof Error ? err.name || 'Error' : 'Unknown'
+      console.warn('[download] 저장 창으로 저장하지 못해 일반 다운로드로 받습니다', err)
     }
-    // 쓰기 단계의 실패(디스크 공간 부족 등)는 상위 catch로 전파되어 정확히 안내됨
-    const writable = await handle.createWritable()
-    await writable.write(blob)
-    await writable.close()
-    return 'saved'
   }
 
-  // 폴백: anchor 다운로드 (쓰기 결과 감지 불가) — revoke를 지연시켜 큰 파일 조기 취소 방지
+  // 일반 다운로드 (쓰기 결과 감지 불가) — revoke를 지연시켜 큰 파일 조기 취소 방지
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.href = url
@@ -71,7 +85,7 @@ async function triggerDownload(
   link.click()
   link.remove()
   setTimeout(() => URL.revokeObjectURL(url), 1000)
-  return 'triggered'
+  return { result: 'triggered', savedName: filename, fallbackReason }
 }
 
 export function useNewsletterDownload() {
@@ -84,7 +98,8 @@ export function useNewsletterDownload() {
    * 이미 만든 HTML 문서를 주어진 이름으로 내려받는다 — 템플릿 저장용 내려받기처럼
    * 지금 작업물이 아닌 것을 저장할 때. 안내(토스트)는 호출한 쪽이 띄운다.
    */
-  const saveHtmlFile = (content: string, filename: string) => triggerDownload(content, filename)
+  const saveHtmlFile = async (content: string, filename: string) =>
+    (await triggerDownload(content, filename)).result
 
   /**
    * HTML 파일 다운로드. 안내(토스트)까지 여기서 띄운다.
@@ -105,7 +120,7 @@ export function useNewsletterDownload() {
         includeMetadata ? 'edit' : 'send',
       )
 
-      const result = await triggerDownload(fullHtmlDocument, filename)
+      const { result, savedName, fallbackReason } = await triggerDownload(fullHtmlDocument, filename)
       // 사용자가 저장 대화상자를 취소 → 저장표시·토스트 없이 종료(작업 상태 유지)
       if (result === 'cancelled') return 'cancelled'
 
@@ -113,10 +128,19 @@ export function useNewsletterDownload() {
       if (includeMetadata) moduleStore.markAsSaved()
 
       const kindLabel = includeMetadata
-        ? `${filename} (저장용 · 다시 불러와 편집 가능)`
-        : `${filename} (발송용 · 메타데이터 제거됨)`
+        ? `${savedName} (저장용 · 다시 불러와 편집 가능)`
+        : `${savedName} (발송용 · 메타데이터 제거됨)`
       if (result === 'saved') {
         toast.add({ severity: 'success', summary: '저장 완료', detail: kindLabel, life: 3000 })
+      } else if (fallbackReason) {
+        // 저장 창 경로가 실패해 일반 다운로드로 받았다 — 어디에 남았는지와 이유를 알려 준다(문의 때 캡처 한 장으로 원인이 보이게)
+        track('download_fallback', { kind: includeMetadata ? 'edit' : 'send', reason: fallbackReason })
+        toast.add({
+          severity: 'warn',
+          summary: '다운로드 폴더에 받았어요',
+          detail: `저장 창으로 저장하지 못해 ${kindLabel} 을(를) 다운로드 폴더에 받았어요. 브라우저 다운로드 목록을 확인하세요. (사유: ${fallbackReason})`,
+          life: 8000,
+        })
       } else {
         // 폴백 경로 — 앱이 저장 완료를 확정할 수 없으므로 정직하게 안내
         toast.add({
