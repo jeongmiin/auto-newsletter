@@ -25,7 +25,7 @@ import afterShot from '@/assets/img/notice/mobile-layout-after.png'
  */
 const NOTICE_KEY = 'notice.template-file.v3'
 /** 공지를 띄울지 — 공지를 내릴 때 false 로 끈다(컴포넌트·그림은 다음 공지 때 다시 쓴다) */
-const NOTICE_ENABLED = true
+const NOTICE_ENABLED = false
 
 const visible = ref(false)
 const hideChecked = ref(false)
