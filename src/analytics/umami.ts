@@ -24,6 +24,10 @@
  * (그 밖에 헤더의 `download_for_save`·`copy_html`·`open_file` 은 data-umami-event 대신 track() 으로 찍는다.)
  * - `download_fallback {kind, reason}`  저장 창으로 저장하지 못해 일반 다운로드로 받음(kind: edit·send, reason: 오류 이름).
  *                                       특정 PC에서만 저장이 안 된다는 문의가 오면 이 수와 reason 으로 원인을 본다.
+ *                                       reason 중 PickerBlocked·PickerNotShown·PickerStalled·WriteStalled·WriteAborted 는
+ *                                       오류 없이 막히거나 멈춘 경우에 앱이 붙인 이름이다(useNewsletterDownload 참고).
+ * - `download_failed {kind, stage, reason}`  파일을 끝내 받지 못함. stage: build(파일 만들기 — 모듈 템플릿을 못 받음·
+ *                                       시간 초과) · save(저장). 성공만 세는 규칙의 예외 — 실패 원인을 보려는 이벤트다.
  */
 
 type UmamiProps = Record<string, string | number | boolean>

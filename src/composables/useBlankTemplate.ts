@@ -74,7 +74,9 @@ export function useBlankTemplate() {
    */
   const backupAndRestart = async (): Promise<void> => {
     const result = await downloadHtml(true)
-    if (result === 'cancelled' || result === 'failed') return
+    // 파일이 남았거나(saved·triggered) 남길 것이 없을 때(empty)만 비운다.
+    // 취소·실패는 물론, 다른 내려받기가 진행 중이라 아무것도 안 한 경우(busy)도 그대로 둔다.
+    if (result !== 'saved' && result !== 'triggered' && result !== 'empty') return
     restartBlank()
   }
 

@@ -240,6 +240,41 @@ export const useModuleStore = defineStore('module', () => {
     return path.replace(/\/+/g, '/')
   }
 
+  /** 모듈 템플릿(HTML 한 장) 요청이 이 시간 안에 끝나지 않으면 실패로 본다 */
+  const MODULE_TEMPLATE_TIMEOUT_MS = 10000
+
+  /**
+   * 모듈 템플릿 HTML 을 받아 온다 — 내보내기(generateHtml)용.
+   *
+   * 시간 제한을 두는 이유: fetch 는 스스로 끝나지 않는다. 프록시·보안 프로그램이 요청을 붙잡으면
+   * 내보내기가 오류도 안내도 없이 영원히 멈춘다(내려받기 버튼이 "아무 반응 없음"으로 보인다).
+   * 시간 초과는 AbortError 가 아닌 일반 오류로 바꿔 던진다 — 호출한 쪽들이 AbortError 를
+   * '사용자가 그만둠'으로 읽어 조용히 넘어가기 때문이다.
+   */
+  const loadModuleTemplate = async (moduleId: string): Promise<string> => {
+    const basePath = import.meta.env.BASE_URL || '/'
+    const modulePath = normalizePath(`${basePath}modules/${moduleId}.html`)
+    const controller = new AbortController()
+    let timedOut = false
+    const timer = setTimeout(() => {
+      timedOut = true
+      controller.abort()
+    }, MODULE_TEMPLATE_TIMEOUT_MS)
+    try {
+      const response = await fetch(modulePath, { signal: controller.signal })
+      if (!response.ok) {
+        console.error('[generateHtml] ❌ Failed:', modulePath, response.status)
+        throw new Error(`Failed to load module HTML: ${response.status}`)
+      }
+      return await response.text()
+    } catch (error) {
+      if (timedOut) throw new Error(`Module HTML timed out: ${modulePath}`)
+      throw error
+    } finally {
+      clearTimeout(timer)
+    }
+  }
+
   /**
    * 사용 가능한 모듈 메타데이터 로드
    */
@@ -4131,6 +4166,9 @@ export const useModuleStore = defineStore('module', () => {
   /**
    * 전체 HTML 생성
    * @param wrapWithDocument - true면 완전한 HTML 문서로 감싸고, false면 콘텐츠만 반환
+   * @param options.strict - true면 모듈 하나라도 만들지 못했을 때 오류를 던진다.
+   *   **파일로 남는 길**(내려받기·임시 저장·웹 링크·복사)이 쓴다 — 건너뛰면 모듈이 빠진 파일이
+   *   '저장 완료'로 나가고, 받는 사람만 알아챈다. 미리보기·썸네일은 건너뛰고 나머지를 보여 준다.
    */
   const generateHtml = async (
     wrapWithDocument: boolean = false,
@@ -4139,6 +4177,7 @@ export const useModuleStore = defineStore('module', () => {
       groups: ModuleGroup[]
       wrapSettings: ReturnType<typeof useEditorStore>['wrapSettings']
     },
+    options?: { strict?: boolean },
   ): Promise<string> => {
     const editorStore = useEditorStore()
     // source가 주어지면 그 데이터를 렌더(템플릿 썸네일 등), 없으면 현재 스토어 상태를 렌더
@@ -4146,7 +4185,16 @@ export const useModuleStore = defineStore('module', () => {
     const srcModules = source?.modules ?? modules.value
     const srcGroups = source?.groups ?? groups.value
 
-    const basePath = import.meta.env.BASE_URL || '/'
+    // 0) 모듈 템플릿을 **한꺼번에** 받아 둔다(같은 모듈은 한 번만).
+    // 하나씩 차례로 받으면 느린 PC에서 수 초가 걸려, 내려받기 버튼을 누른 '사용자 동작'의 유효 시간이
+    // 지나 버린다(저장 창이 거부된다). 실패는 아래 모듈별 처리에서 다룬다 — 여기서는 삼키지 않고 들고만 있는다.
+    const templates = new Map<string, Promise<string>>()
+    for (const module of srcModules) {
+      if (templates.has(module.moduleId)) continue
+      const pending = loadModuleTemplate(module.moduleId)
+      pending.catch(() => {}) // 아래에서 await 하기 전에 실패해도 '처리 안 된 거부'로 새지 않게
+      templates.set(module.moduleId, pending)
+    }
 
     // 1) 모듈별 HTML을 순서대로 생성 (그룹/컬럼 정보와 함께 보관)
     const rendered: Array<{
@@ -4159,14 +4207,7 @@ export const useModuleStore = defineStore('module', () => {
     }> = []
     for (const module of [...srcModules].sort((a, b) => a.order - b.order)) {
       try {
-        const modulePath = normalizePath(`${basePath}modules/${module.moduleId}.html`)
-
-        const response = await fetch(modulePath)
-        if (!response.ok) {
-          console.error('[generateHtml] ❌ Failed:', modulePath, response.status)
-          throw new Error(`Failed to load module HTML: ${response.status}`)
-        }
-        let html = await response.text()
+        let html = await templates.get(module.moduleId)!
 
         // 렌더 대상(source)의 포인트 색상으로 — 템플릿 미리보기가 현재 에디터 색으로 물들지 않게
         html = await replaceModuleContent(html, module, wrapSettings.pointColors)
@@ -4200,6 +4241,11 @@ export const useModuleStore = defineStore('module', () => {
           `[generateHtml] Failed to generate HTML for module ${module.moduleId}:`,
           error,
         )
+        if (options?.strict) {
+          throw new Error(
+            `'${module.moduleId}' 모듈을 불러오지 못해 파일을 만들지 못했어요. 네트워크를 확인하고 다시 시도해 주세요.`,
+          )
+        }
       }
     }
 

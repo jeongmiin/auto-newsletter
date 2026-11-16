@@ -20,7 +20,10 @@ export function useNewsletterDocument() {
    *                        false면 뺀다(발송용 — 메일에 그대로 실린다)
    */
   const buildDocument = async (includeMetadata: boolean): Promise<string> => {
-    const finalHtml = processQuillHtml(await moduleStore.generateHtml())
+    // strict: 모듈 하나라도 못 만들면 실패로 끝낸다 — 모듈이 빠진 파일을 '완료'로 내보내지 않는다
+    const finalHtml = processQuillHtml(
+      await moduleStore.generateHtml(false, undefined, { strict: true }),
+    )
     return wrapDocument(finalHtml, includeMetadata)
   }
 

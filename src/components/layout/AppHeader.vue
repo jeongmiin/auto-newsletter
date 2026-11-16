@@ -145,12 +145,15 @@
         <button
           type="button"
           class="hbtn hbtn--primary"
+          :disabled="isDownloading"
           @click="downloadForSend"
           data-umami-event="download_for_send"
           v-tooltip.bottom="'메일 발송용 HTML을 내려받습니다'"
         >
+          <!-- 받는 중에는 글자로 알린다 — 느린 PC에서 '눌렀는데 아무 반응이 없다'로 보이지 않게.
+               저장용 다운로드('더 보기' 메뉴)와 레일 '새 작업'이 받는 중일 때도 같이 잠긴다. -->
           <span class="material-symbols-outlined">send</span>
-          <span>발송용 다운로드</span>
+          <span>{{ isDownloading ? '받는 중…' : '발송용 다운로드' }}</span>
         </button>
 
         <!-- 자주 쓰지 않는 동작은 한 단계 안으로 (Figma 1125-3110) -->
@@ -210,7 +213,7 @@ const { importHtmlFile } = useNewsletterImport()
 const { confirmClearHere } = useBlankTemplate()
 // 내려받기·복사·임시 저장·웹 링크가 모두 같은 문서를 쓰도록 한 곳에서 만든다
 const { buildDocument } = useNewsletterDocument()
-const { downloadHtml: downloadNewsletterHtml } = useNewsletterDownload()
+const { downloadHtml: downloadNewsletterHtml, isDownloading } = useNewsletterDownload()
 
 // 실행취소/다시실행 (전역 히스토리 싱글턴)
 const history = getHistoryInstance()
