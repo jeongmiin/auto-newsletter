@@ -193,6 +193,15 @@
       "file": "growth/mice/slw.json"
     },
     {
+      "id": "fmx",
+      "name": "건물유지관리산업전",
+      "description": "건물유지관리산업전 뉴스레터 구성",
+      "divisionId": "conv",
+      "teamId": "conv1",
+      "thumbnail": "fmx_temp.png",
+      "file": "conv/conv1/fmx.json"
+    },
+    {
       "id": "bfs",
       "name": "건축 소방 안전 산업전",
       "description": "건축 소방 안전 산업전 뉴스레터 구성",
